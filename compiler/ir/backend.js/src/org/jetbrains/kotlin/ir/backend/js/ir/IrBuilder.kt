@@ -54,23 +54,25 @@ object JsIrBuilder {
         origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
     ): IrConstructorCall {
         val owner = target.owner
-        val parent = owner.parentAsClass
+        val irClass = owner.parentAsClass
+
         return IrConstructorCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            type ?: owner.returnType,
+            owner.returnType,
             target,
-            typeArgumentsCount = parent.typeParameters.size,
-            valueArgumentsCount = owner.valueParameters.size,
+            typeArgumentsCount = irClass.typeParameters.size,
             constructorTypeArgumentsCount = owner.typeParameters.size,
+            valueArgumentsCount = owner.valueParameters.size,
             origin = origin
         ).apply {
             typeArguments?.let {
-                assert(typeArguments.size == typeArgumentsCount)
+                assert(it.size == typeArgumentsCount)
                 it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
             }
+
             constructorTypeArguments?.let {
-                assert(constructorTypeArguments.size == constructorTypeArgumentsCount)
+                assert(it.size == typeArgumentsCount)
                 it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
             }
         }

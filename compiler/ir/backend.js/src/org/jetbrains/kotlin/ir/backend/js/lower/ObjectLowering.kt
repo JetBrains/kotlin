@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -113,8 +114,9 @@ class ObjectUsageLowering(
                     )
                     //find `superCall` and put after
                     (irBody as IrBlockBody).statements.transformFlat {
-                        if (it is IrDelegatingConstructorCall) listOf(setToNull, it, initInstanceField)
-                        else if (it is IrVariable && it.origin === ES6_THIS_VARIABLE_ORIGIN) {
+                        if (it is IrDelegatingConstructorCall) {
+                            listOfNotNull(setToNull.takeIf { _ -> !it.symbol.owner.returnType.isAny() }, it, initInstanceField)
+                        } else if (it is IrVariable && it.origin === ES6_THIS_VARIABLE_ORIGIN) {
                             initInstanceField.value = JsIrBuilder.buildGetValue(it.symbol)
                             listOf(it, initInstanceField)
                         } else null

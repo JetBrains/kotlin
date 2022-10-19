@@ -150,7 +150,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
         }
     }
 
-    private class ThisUsageReplaceTransformer(
+    class ThisUsageReplaceTransformer(
         val constructor: IrConstructorSymbol,
         val function: IrFunctionSymbol,
         symbolMapping: Map<IrValueSymbol, IrValueSymbol>
@@ -267,7 +267,7 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
         val target = expression.symbol.owner
         return if (target.isSecondaryConstructorCall) {
             val factory = with(context) {
-                if (es6mode) mapping.secondaryConstructorToDelegate[target]
+                if (es6mode) mapping.secondaryConstructorToFactory[target]
                     ?: compilationException(
                         "Not found IrFunction for secondary ctor",
                         expression

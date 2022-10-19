@@ -10,14 +10,20 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -43,7 +49,7 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
     private val unitType = context.irBuiltIns.unitType
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
-        val declaration = irClass.addConstructor {
+        val declaration = irClass.addConstructor(0) {
             origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
             isPrimary = true
             visibility = DescriptorVisibilities.PRIVATE
@@ -54,6 +60,36 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
         }
 
         return declaration
+    }
+}
+
+class AddSuperCallToSyntheticPrimaryConstructors(val context: JsIrBackendContext) : DeclarationTransformer {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (!context.es6mode || declaration !is IrConstructor || !declaration.isPrimary || declaration.origin != PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) {
+            return null
+        }
+
+        val superClass = declaration.parentAsClass.superTypes
+            .firstOrNull { !it.isInterface() && !it.isAny() }
+            ?.classOrNull
+            ?.owner
+
+        if (superClass != null) {
+            val primaryConstructor = superClass.primaryConstructor ?: return null
+            (declaration.body as IrBlockBody).statements.add(
+                0,
+                IrDelegatingConstructorCallImpl(
+                    declaration.startOffset,
+                    declaration.endOffset,
+                    context.irBuiltIns.unitType,
+                    primaryConstructor.symbol,
+                    valueArgumentsCount = primaryConstructor.valueParameters.size,
+                    typeArgumentsCount = primaryConstructor.typeParameters.size
+                )
+            )
+        }
+
+        return null
     }
 }
 

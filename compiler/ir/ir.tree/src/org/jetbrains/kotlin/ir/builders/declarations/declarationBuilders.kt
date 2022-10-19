@@ -225,14 +225,16 @@ inline fun IrFactory.buildConstructor(builder: IrFunctionBuilder.() -> Unit): Ir
         buildConstructor(this)
     }
 
-inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructor =
+inline fun IrClass.addConstructor(position: Int, builder: IrFunctionBuilder.() -> Unit = {}): IrConstructor =
     factory.buildConstructor {
         builder()
         returnType = defaultType
     }.also { constructor ->
-        declarations.add(constructor)
+        declarations.add(position, constructor)
         constructor.parent = this@addConstructor
     }
+inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructor =
+    addConstructor(declarations.lastIndex + 1, builder)
 
 fun <D> buildReceiverParameter(
     parent: D,

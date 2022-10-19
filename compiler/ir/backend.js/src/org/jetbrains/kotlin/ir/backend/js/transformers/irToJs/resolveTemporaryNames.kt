@@ -75,6 +75,7 @@ private fun JsNode.computeScopes(): Scope {
         var currentScope: Scope = rootScope
 
         override fun visitClass(x: JsClass) {
+            x.name?.let { currentScope.declaredNames += it }
             // We need it to not rename methods and fields inside class body
             // Because if they are in clash with something, it means overriding
             x.constructor?.accept(this)

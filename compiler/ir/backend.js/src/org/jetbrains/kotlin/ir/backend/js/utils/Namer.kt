@@ -19,6 +19,7 @@ object Namer {
     val DELEGATE = "\$delegate"
 
     val IMPLICIT_RECEIVER_NAME = "this"
+    val SYNTHETIC_RECEIVER_NAME = "\$this"
 
     val ARGUMENTS = JsNameRef("arguments")
 
@@ -37,4 +38,8 @@ object Namer {
     const val KCALLABLE_ARITY = "\$arity"
 
     const val SHARED_BOX_V = "_v"
+
+    val SECONDARY_INIT = "\$secondary"
+    val SECONDARY_PARAMS = "\$secondaryParams"
+    val SUPER_PARAMS = "\$superParams"
 }

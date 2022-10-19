@@ -603,6 +603,13 @@ private val primaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
     prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
+private val es6AddSuperCallToSyntheticPrimaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
+    ::AddSuperCallToSyntheticPrimaryConstructors,
+    name = "AddSuperCallToSyntheticPrimaryConstructors",
+    description = "Add super calls to synthetic primary constructors",
+    prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
 private val delegateToPrimaryConstructorLoweringPhase = makeBodyLoweringPhase(
     ::DelegateToSyntheticPrimaryConstructor,
     name = "DelegateToSyntheticPrimaryConstructor",
@@ -676,24 +683,18 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
     )
 )
 
-private val es6AddInternalParametersToConstructorPhase = makeBodyLoweringPhase(
-    ::ES6AddInternalParametersToConstructorPhase,
-    name = "ES6CreateInitFunctionPhase",
-    description = "Add `box` and `resultType` params, create init functions for constructors"
-)
-
-private val es6ConstructorLowering = makeBodyLoweringPhase(
+private val es6ConstructorLowering = makeDeclarationTransformerPhase(
     ::ES6ConstructorLowering,
     name = "ES6ConstructorLoweringPhase",
     description = "Lower constructors",
-    prerequisite = setOf(es6AddInternalParametersToConstructorPhase)
+    prerequisite = setOf(es6AddSuperCallToSyntheticPrimaryConstructorLoweringPhase, primaryConstructorLoweringPhase)
 )
 
 private val secondaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
     ::SecondaryConstructorLowering,
     name = "SecondaryConstructorLoweringPhase",
     description = "Generate static functions for each secondary constructor",
-    prerequisite = setOf(innerClassesLoweringPhase)
+    prerequisite = setOf(innerClassesLoweringPhase, es6ConstructorLowering)
 )
 
 private val secondaryFactoryInjectorLoweringPhase = makeBodyLoweringPhase(
@@ -862,6 +863,7 @@ val loweringList = listOf<Lowering>(
     jsClassUsageInReflectionPhase,
     propertiesLoweringPhase,
     primaryConstructorLoweringPhase,
+    es6AddSuperCallToSyntheticPrimaryConstructorLoweringPhase,
     delegateToPrimaryConstructorLoweringPhase,
     annotationConstructorLowering,
     initializersLoweringPhase,
@@ -904,7 +906,6 @@ val loweringList = listOf<Lowering>(
     defaultParameterCleanerPhase,
     captureStackTraceInThrowablesPhase,
     throwableSuccessorsLoweringPhase,
-    es6AddInternalParametersToConstructorPhase,
     es6ConstructorLowering,
     varargLoweringPhase,
     multipleCatchesLoweringPhase,
