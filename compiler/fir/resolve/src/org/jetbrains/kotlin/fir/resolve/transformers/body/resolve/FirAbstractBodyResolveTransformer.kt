@@ -76,7 +76,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     open class BodyResolveTransformerComponents(
         override val session: FirSession,
         override val scopeSession: ScopeSession,
-        val transformer: FirBodyResolveTransformer,
+        val transformer: FirAbstractBodyResolveTransformerDispatcher,
         val context: BodyResolveContext
     ) : BodyResolveComponents() {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
