@@ -86,7 +86,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
 
         val dependencies = mutableSetOf(context.module) + moduleDescriptors + builtIns.builtInsModule
         @Suppress("UNCHECKED_CAST")
-        context.module.safeAs<ModuleDescriptorImpl>()?.setDependencies(dependencies.toList() as List<ModuleDescriptorImpl>, friendModuleDescriptors.toSet() as Set<ModuleDescriptorImpl>)
+        context.module.setDependencies(dependencies.toList() as List<ModuleDescriptorImpl>, friendModuleDescriptors.toSet() as Set<ModuleDescriptorImpl>)
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
