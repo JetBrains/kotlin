@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -158,21 +157,6 @@ fun compileIr(
     } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
 
     return LoweredIr(context, moduleFragment, allModules, moduleToName)
-}
-
-fun generateJsCode(
-    context: JsIrBackendContext,
-    moduleFragment: IrModuleFragment,
-    nameTables: NameTables
-): String {
-    if (context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)) {
-        collectNativeImplementations(context, moduleFragment)
-    }
-    moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
-    jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
-
-    val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
-    return transformer.generateModule(listOf(moduleFragment)).outputs[TranslationMode.FULL]!!.jsCode
 }
 
 fun CompilationOutputs.writeSourceMapIfPresent(outputJsFile: File) {
