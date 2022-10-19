@@ -241,7 +241,10 @@ class Merger(
 
         if (generateScriptModule) {
             with(program.globalBlock) {
-                statements.addWithComment("block: polyfills", polyfillDeclarationBlock.statements)
+                polyfillDeclarationBlock.statements
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { statements.addWithComment("block: polyfills", it) }
+
                 statements.addWithComment("block: imports", importStatements)
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements)
@@ -265,7 +268,10 @@ class Merger(
                 }
             }
 
-            program.globalBlock.statements.addWithComment("block: polyfills", polyfillDeclarationBlock.statements)
+            polyfillDeclarationBlock.statements
+                .takeIf { it.isNotEmpty() }
+                ?.let { program.globalBlock.statements.addWithComment("block: polyfills", it) }
+
             program.globalBlock.statements += ModuleWrapperTranslation.wrap(
                 moduleName,
                 rootFunction,

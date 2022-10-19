@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -90,6 +88,7 @@ class IrModuleToJsTransformerTmp(
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
     private val removeUnusedAssociatedObjects: Boolean = true,
 ) {
+    private val shouldGeneratePolyfills = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
     private val mainModuleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
@@ -233,7 +232,9 @@ class IrModuleToJsTransformerTmp(
         )
 
         val result = JsIrProgramFragment(file.fqName.asString()).apply {
-            polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(file)
+            if (shouldGeneratePolyfills) {
+                polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(file)
+            }
         }
 
         val internalModuleName = ReservedJsNames.makeInternalModuleName().takeIf { !isEsModules }

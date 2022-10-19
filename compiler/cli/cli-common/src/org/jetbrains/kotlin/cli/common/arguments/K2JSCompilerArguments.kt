@@ -268,6 +268,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var generateDts: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xgenerate-polyfills",
+        description = "Generate polyfills for features from the ES6+ standards."
+    )
+    var generatePolyfills: Boolean by FreezableVar(true)
+
+    @Argument(
         value = "-Xstrict-implicit-export-types",
         description = "Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only."
     )

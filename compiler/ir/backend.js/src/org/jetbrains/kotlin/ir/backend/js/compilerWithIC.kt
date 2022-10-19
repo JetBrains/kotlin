@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSepara
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 
@@ -53,8 +54,12 @@ class JsIrCompilerWithIC(
         dirtyFiles: Collection<IrFile>,
         mainArguments: List<String>?
     ): List<JsIrFragmentAndBinaryAst> {
+        val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
+
         allModules.forEach {
-            collectNativeImplementations(context, it)
+            if (shouldGeneratePolyfills) {
+                collectNativeImplementations(context, it)
+            }
             moveBodilessDeclarationsToSeparatePlace(context, it)
         }
 
