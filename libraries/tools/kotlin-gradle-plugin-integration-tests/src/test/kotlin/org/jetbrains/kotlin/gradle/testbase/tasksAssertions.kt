@@ -9,6 +9,26 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 
 /**
+ * Asserts given tasks are not present in the build task graph
+ */
+fun BuildResult.assertTasksAreNotInTaskGraph(vararg tasks: String) {
+    val presentTasks = tasks.filter { task(it) != null }
+    assert(presentTasks.isEmpty()) {
+        printBuildOutput()
+        "Tasks ${tasks.joinToString(prefix = "[", postfix = "]")} shouldn't be present in the task graph, but $presentTasks were present"
+    }
+}
+
+/**
+ * Returns all the affected during the build tasks, whose [org.gradle.api.Task.getPath] satisfies the [pattern]
+ */
+fun BuildResult.findTasksByPattern(pattern: Regex): Set<String> {
+    return tasks.map { it.path }.filter { taskPath ->
+        pattern.matches(taskPath)
+    }.toSet()
+}
+
+/**
  * Asserts given [tasks] have 'SUCCESS' execution state.
  */
 fun BuildResult.assertTasksExecuted(vararg tasks: String) {
@@ -49,6 +69,13 @@ fun BuildResult.assertTasksUpToDate(vararg tasks: String) {
             "Task $task didn't have 'UP-TO-DATE' state: ${task(task)?.outcome}"
         }
     }
+}
+
+/**
+ * Asserts given [tasks] have 'UP-TO-DATE' execution state.
+ */
+fun BuildResult.assertTasksUpToDate(tasks: Collection<String>) {
+    assertTasksUpToDate(*tasks.toTypedArray())
 }
 
 /**
