@@ -9,6 +9,7 @@ where advanced options include:
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
+  -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
   -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.
   -Xir-base-class-in-metadata Write base class into metadata
   -Xir-build-cache           Use compiler to build cache

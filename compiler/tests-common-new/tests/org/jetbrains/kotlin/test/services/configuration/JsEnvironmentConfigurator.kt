@@ -291,6 +291,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, TYPED_ARRAYS in registeredDirectives)
 
+        configuration.put(JSConfigurationKeys.GENERATE_POLYFILLS, true)
         configuration.put(JSConfigurationKeys.GENERATE_REGION_COMMENTS, true)
 
         configuration.put(
