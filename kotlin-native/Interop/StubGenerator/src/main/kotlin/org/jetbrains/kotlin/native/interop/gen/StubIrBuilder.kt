@@ -335,7 +335,8 @@ class StubIrBuilder(private val context: StubIrContext) {
         nativeIndex.enums.forEach { generateStubsForEnum(it) }
         nativeIndex.functions.filter { it.name !in excludedFunctions }.forEach { generateStubsForFunction(it) }
         nativeIndex.typedefs.forEach { generateStubsForTypedef(it) }
-        nativeIndex.globals.filter { it.name !in excludedFunctions }.forEach { generateStubsForGlobal(it) }
+        // globals are sorted, so its numbering is stable and thus testable with golden data
+        nativeIndex.globals.filter { it.name !in excludedFunctions }.sortedBy { it.name }.forEach { generateStubsForGlobal(it) }
         nativeIndex.macroConstants.filter { it.name !in excludedMacros }.forEach { generateStubsForMacroConstant(it) }
         nativeIndex.wrappedMacros.filter { it.name !in excludedMacros }.forEach { generateStubsForWrappedMacro(it) }
 
