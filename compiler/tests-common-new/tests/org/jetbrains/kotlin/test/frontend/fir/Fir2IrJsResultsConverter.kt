@@ -132,6 +132,7 @@ private fun loadResolvedLibraries(
     val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
     return resolvedLibraries.map { resolvedLibrary ->
+        // resolvedLibrary.library.libraryName in fact resolves to (modified) file path, which is confising and maybe should be refactored
         testServices.jsLibraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
             val storageManager = LockBasedStorageManager("ModulesStructure")
 
