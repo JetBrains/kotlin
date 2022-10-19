@@ -1,3 +1,4 @@
+// IGNORE_LEAKED_INTERNAL_TYPES: KT-54517
 // MODULE: lib
 // FILE: l1.kt
 package ann
