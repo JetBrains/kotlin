@@ -72,8 +72,6 @@ public expect annotation class JsExport() {
     @Retention(AnnotationRetention.BINARY)
     @Target(CLASS, PROPERTY, FUNCTION)
     @SinceKotlin("1.8")
-    // Suppress until bootstrapping
-    @Suppress("NESTED_OPTIONAL_EXPECTATION")
     @OptionalExpectation
     public annotation class Ignore()
 }
