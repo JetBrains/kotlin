@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
@@ -65,6 +67,8 @@ interface SourceCompilerForInline {
     fun getContextLabels(): Map<String, Label?>
 
     fun reportSuspensionPointInsideMonitor(stackTraceElement: String)
+
+    fun unboxSealedInlineClass(lambdaInfo: LambdaInfo, argumentIndex: Int, mv: InstructionAdapter)
 }
 
 fun GenerationState.trackLookup(container: FqName, functionName: String, location: LocationInfo) {
