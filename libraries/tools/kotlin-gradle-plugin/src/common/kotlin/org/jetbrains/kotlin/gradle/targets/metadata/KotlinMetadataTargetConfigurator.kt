@@ -357,10 +357,10 @@ class KotlinMetadataTargetConfigurator :
                 project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
                 compilation
             )
-        }
 
-        if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
-            compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
+            if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
+                compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
+            }
         }
     }
 

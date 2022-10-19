@@ -244,11 +244,25 @@ abstract class TransformMetadataDependencies
         )
 
         return metadataArtifact.read { compositeMetadataArtifactContent ->
-            sourceSets.mapNotNull { sourceSet ->
-                val metadataBinary = compositeMetadataArtifactContent.getSourceSet(sourceSet).metadataBinary ?: return@mapNotNull null
-                val outputBinaryFile = outputsDir.resolve(metadataBinary.relativeFile)
-                metadataBinary.copyTo(outputBinaryFile)
-                outputBinaryFile
+            sourceSets.flatMap { sourceSet ->
+                val sourceSetContent = compositeMetadataArtifactContent.getSourceSet(sourceSet)
+                val result = mutableListOf<File>()
+
+                val metadataBinary = sourceSetContent.metadataBinary
+                if (metadataBinary != null) {
+                    val outputBinaryFile = outputsDir.resolve(metadataBinary.relativeFile)
+                    metadataBinary.copyTo(outputBinaryFile)
+                    result += outputBinaryFile
+                }
+
+                val metadataCinteropBinaries = sourceSetContent.cinteropMetadataBinaries
+                for (metadataCinteropBinaryContent in metadataCinteropBinaries) {
+                    val outputBinaryFile = outputsDir.resolve(metadataCinteropBinaryContent.relativeFile)
+                    metadataCinteropBinaryContent.copyTo(outputBinaryFile)
+                    result += outputBinaryFile
+                }
+
+                result
             }
         }
     }
