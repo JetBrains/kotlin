@@ -1,0 +1,3 @@
+language = C
+headers = stdarg.h
+headerFilter = stdarg.h
