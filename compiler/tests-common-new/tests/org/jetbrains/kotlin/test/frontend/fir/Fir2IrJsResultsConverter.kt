@@ -64,8 +64,9 @@ class Fir2IrJsResultsConverter(
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val fir2IrExtensions = Fir2IrExtensions.Default
-        val firFiles = inputArtifact.firAnalyzerFacade.runResolution()
-        val (irModuleFragment, components) = inputArtifact.firAnalyzerFacade.convertToJsIr(firFiles, fir2IrExtensions, module, configuration, testServices)
+        val firFiles = inputArtifact.allFirFiles.values
+        val (irModuleFragment, components) =
+            inputArtifact.firAnalyzerFacade.convertToJsIr(firFiles, fir2IrExtensions, module, configuration, testServices)
 
         val sourceFiles = firFiles.mapNotNull { it.sourceFile }
         val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
@@ -90,7 +91,7 @@ class Fir2IrJsResultsConverter(
 }
 
 fun AbstractFirAnalyzerFacade.convertToJsIr(
-    firFiles: List<FirFile>,
+    firFiles: Collection<FirFile>,
     fir2IrExtensions: Fir2IrExtensions,
     module: TestModule,
     configuration: CompilerConfiguration,
