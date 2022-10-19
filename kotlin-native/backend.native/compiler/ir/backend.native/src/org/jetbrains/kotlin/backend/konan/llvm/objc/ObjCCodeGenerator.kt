@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.getARCRetainAutoreleasedReturnValueMar
 import org.jetbrains.kotlin.backend.konan.llvm.*
 
 internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
+    val generationState = codegen.generationState
     val context = codegen.context
     val llvm = codegen.llvm
 

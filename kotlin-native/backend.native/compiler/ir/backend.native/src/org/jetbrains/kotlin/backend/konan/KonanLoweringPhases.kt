@@ -150,7 +150,7 @@ internal val sharedVariablesPhase = makeKonanFileLoweringPhase(
 )
 
 internal val inventNamesForLocalClasses = makeKonanFileLoweringPhase(
-        { NativeInventNamesForLocalClasses(it) },
+        { NativeInventNamesForLocalClasses(it.generationState) },
         name = "InventNamesForLocalClasses",
         description = "Invent names for local classes and anonymous objects"
 )
@@ -186,7 +186,7 @@ internal val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeKonan
 
 internal val inlinePhase = makeKonanFileOpPhase(
         { context, irFile ->
-            FunctionInlining(context, NativeInlineFunctionResolver(context)).lower(irFile)
+            FunctionInlining(context, NativeInlineFunctionResolver(context, context.generationState)).lower(irFile)
         },
         name = "Inline",
         description = "Functions inlining",
@@ -250,10 +250,10 @@ internal val initializersPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(enumConstructorsPhase)
 )
 
-internal val objectClassesPhase = makeKonanFileLoweringPhase(
-        ::ObjectClassLowering,
+internal val objectClassesPhase = makeKonanFileOpPhase(
+        op = { context, irFile -> ObjectClassLowering(context.generationState).lower(irFile) },
         name = "ObjectClasses",
-        description = "Enum constructors lowering"
+        description = "Object classes lowering"
 )
 
 internal val localFunctionsPhase = makeKonanFileOpPhase(
@@ -333,13 +333,13 @@ internal val testProcessorPhase = makeKonanFileOpPhase(
 )
 
 internal val delegationPhase = makeKonanFileLoweringPhase(
-        ::PropertyDelegationLowering,
+        { PropertyDelegationLowering(it.generationState) },
         name = "Delegation",
         description = "Delegation lowering"
 )
 
 internal val functionReferencePhase = makeKonanFileLoweringPhase(
-        ::FunctionReferenceLowering,
+        { FunctionReferenceLowering(it.generationState) },
         name = "FunctionReference",
         description = "Function references lowering",
         prerequisite = setOf(delegationPhase, localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
@@ -382,7 +382,7 @@ internal val builtinOperatorPhase = makeKonanFileLoweringPhase(
 )
 
 internal val interopPhase = makeKonanFileLoweringPhase(
-        ::InteropLowering,
+        { InteropLowering(it.generationState) },
         name = "Interop",
         description = "Interop lowering",
         prerequisite = setOf(inlinePhase, localFunctionsPhase, functionReferencePhase)
@@ -397,7 +397,7 @@ internal val varargPhase = makeKonanFileLoweringPhase(
 
 internal val coroutinesPhase = makeKonanFileOpPhase(
         { context, irFile ->
-            NativeSuspendFunctionsLowering(context).lower(irFile)
+            NativeSuspendFunctionsLowering(context.generationState).lower(irFile)
             AddContinuationToNonLocalSuspendFunctionsLowering(context).lower(irFile)
             NativeAddContinuationToFunctionCallsLowering(context).lower(irFile)
             AddFunctionSupertypeToSuspendFunctionLowering(context).lower(irFile)
@@ -483,7 +483,7 @@ internal val exportInternalAbiPhase = makeKonanFileLoweringPhase(
 )
 
 internal val useInternalAbiPhase = makeKonanFileLoweringPhase(
-        ::ImportCachesAbiTransformer,
+        { ImportCachesAbiTransformer(it.generationState) },
         name = "UseInternalAbi",
         description = "Use internal ABI functions to access private entities"
 )

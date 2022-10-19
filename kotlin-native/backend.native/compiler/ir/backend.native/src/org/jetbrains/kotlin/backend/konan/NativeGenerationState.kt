@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
+import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
@@ -40,7 +42,7 @@ internal class FileLowerState {
             "$prefix${cStubCount++}"
 }
 
-internal class NativeGenerationState(private val context: Context, val cacheDeserializationStrategy: CacheDeserializationStrategy?) {
+internal class NativeGenerationState(val context: Context, val cacheDeserializationStrategy: CacheDeserializationStrategy?) {
     private val config = context.config
 
     private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
@@ -75,7 +77,7 @@ internal class NativeGenerationState(private val context: Context, val cacheDese
 
     val llvmModuleSpecification by lazy {
         if (config.produce.isCache)
-            CacheLlvmModuleSpecification(context, config.cachedLibraries,
+            CacheLlvmModuleSpecification(this, config.cachedLibraries,
                     PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy!!))
         else DefaultLlvmModuleSpecification(config.cachedLibraries)
     }
@@ -83,8 +85,8 @@ internal class NativeGenerationState(private val context: Context, val cacheDese
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
 
     private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
-    private val llvmDelegate = lazy { Llvm(context, LLVMModuleCreateWithNameInContext("out", llvmContext)!!) }
-    private val debugInfoDelegate = lazy { DebugInfo(context) }
+    private val llvmDelegate = lazy { Llvm(this, LLVMModuleCreateWithNameInContext("out", llvmContext)!!) }
+    private val debugInfoDelegate = lazy { DebugInfo(this) }
 
     val llvmContext = LLVMContextCreate()!!
     val llvmImports = Llvm.ImportsImpl(context)
@@ -93,6 +95,14 @@ internal class NativeGenerationState(private val context: Context, val cacheDese
     val debugInfo by debugInfoDelegate
     val cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations
+
+    lateinit var bitcodeFileName: String
+
+    lateinit var compilerOutput: List<ObjectFile>
+
+    val coverage by lazy { CoverageManager(this) }
+
+    lateinit var objCExport: ObjCExport
 
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()
 

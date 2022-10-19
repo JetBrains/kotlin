@@ -8,26 +8,27 @@ package org.jetbrains.kotlin.backend.konan.llvm.objc
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 
-internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
-    val config = context.config
+internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLVMModuleRef? {
+    val config = generationState.context.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
 
-    val patchBuilder = PatchBuilder(context)
+    val patchBuilder = PatchBuilder(generationState.objCExport.namer)
     patchBuilder.addObjCPatches()
 
     val bitcodeFile = config.objCNativeLibrary
-    val parsedModule = parseBitcodeFile(context.generationState.llvmContext, bitcodeFile)
+    val parsedModule = parseBitcodeFile(generationState.llvmContext, bitcodeFile)
 
-    patchBuilder.buildAndApply(parsedModule, context.generationState.llvm)
+    patchBuilder.buildAndApply(parsedModule, generationState.llvm)
     return parsedModule
 }
 
-private class PatchBuilder(val context: Context) {
+private class PatchBuilder(val objCExportNamer: ObjCExportNamer) {
     enum class GlobalKind(val prefix: String) {
         OBJC_CLASS("OBJC_CLASS_\$_"),
         OBJC_METACLASS("OBJC_METACLASS_\$_"),
@@ -50,8 +51,6 @@ private class PatchBuilder(val context: Context) {
 
     val globalPatches = mutableListOf<GlobalPatch>()
     val literalPatches = mutableListOf<LiteralPatch>()
-
-    val objCExportNamer = context.objCExport.namer
 
     // Note: exported classes anyway use the same prefix,
     // so using more unique private prefix wouldn't help to prevent any clashes.

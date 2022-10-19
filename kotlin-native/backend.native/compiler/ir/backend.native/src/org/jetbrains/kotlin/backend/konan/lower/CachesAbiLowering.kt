@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
@@ -145,9 +146,10 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
     }
 }
 
-internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPass, IrElementTransformerVoid() {
-    private val cachesAbiSupport = context.cachesAbiSupport
-    private val llvmImports = context.generationState.llvmImports
+internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass, IrElementTransformerVoid() {
+    private val cachesAbiSupport = generationState.context.cachesAbiSupport
+    private val innerClassesSupport = generationState.context.innerClassesSupport
+    private val llvmImports = generationState.llvmImports
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -162,9 +164,9 @@ internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPa
         val property = field.correspondingPropertySymbol?.owner
 
         return when {
-            context.generationState.llvmModuleSpecification.containsDeclaration(field) -> expression
+            generationState.llvmModuleSpecification.containsDeclaration(field) -> expression
 
-            irClass?.isInner == true && context.innerClassesSupport.getOuterThisField(irClass) == field -> {
+            irClass?.isInner == true && innerClassesSupport.getOuterThisField(irClass) == field -> {
                 val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
                 llvmImports.add(irClass.llvmSymbolOrigin)
                 return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {

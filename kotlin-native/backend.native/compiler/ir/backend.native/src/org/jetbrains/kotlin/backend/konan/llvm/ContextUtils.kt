@@ -136,10 +136,13 @@ internal sealed class Lifetime(val slotType: SlotType) {
  * Provides utility methods to the implementer.
  */
 internal interface ContextUtils : RuntimeAware {
+    val generationState: NativeGenerationState
+
     val context: Context
+        get() = generationState.context
 
     override val runtime: Runtime
-        get() = context.generationState.llvm.runtime
+        get() = generationState.llvm.runtime
 
     val argumentAbiInfo: TargetAbiInfo
         get() = context.targetAbiInfo
@@ -153,17 +156,17 @@ internal interface ContextUtils : RuntimeAware {
         get() = runtime.targetData
 
     val llvm: Llvm
-        get() = context.generationState.llvm
+        get() = generationState.llvm
 
     val staticData: KotlinStaticData
-        get() = context.generationState.llvm.staticData
+        get() = generationState.llvm.staticData
 
     /**
      * TODO: maybe it'd be better to replace with [IrDeclaration::isEffectivelyExternal()],
      * or just drop all [else] branches of corresponding conditionals.
      */
     fun isExternal(declaration: IrDeclaration): Boolean {
-        return !context.generationState.llvmModuleSpecification.containsDeclaration(declaration)
+        return !generationState.llvmModuleSpecification.containsDeclaration(declaration)
     }
 
     /**
@@ -192,7 +195,7 @@ internal interface ContextUtils : RuntimeAware {
                     llvm.externalFunction(proto)
                 }
             } else {
-                context.generationState.llvmDeclarations.forFunctionOrNull(this)
+                generationState.llvmDeclarations.forFunctionOrNull(this)
             }
         }
 
@@ -217,7 +220,7 @@ internal interface ContextUtils : RuntimeAware {
                 constPointer(importGlobal(typeInfoSymbolName, runtime.typeInfoType,
                         origin = this.llvmSymbolOrigin))
             } else {
-                context.generationState.llvmDeclarations.forClass(this).typeInfo
+                generationState.llvmDeclarations.forClass(this).typeInfo
             }
         }
 
@@ -294,8 +297,9 @@ internal class ConstFloat64(llvm: Llvm, val value: Double) : ConstValue {
 }
 
 @Suppress("FunctionName", "PropertyName", "PrivatePropertyName")
-internal class Llvm(private val context: Context, val module: LLVMModuleRef) : RuntimeAware {
-    val llvmContext = context.generationState.llvmContext
+internal class Llvm(private val generationState: NativeGenerationState, val module: LLVMModuleRef) : RuntimeAware {
+    private val context = generationState.context
+    val llvmContext = generationState.llvmContext
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LlvmCallable {
         if (LLVMGetNamedFunction(module, name) != null) {
@@ -357,7 +361,7 @@ internal class Llvm(private val context: Context, val module: LLVMModuleRef) : R
         }
     }
 
-    val imports get() = context.generationState.llvmImports
+    val imports get() = generationState.llvmImports
 
     class ImportsImpl(private val context: Context) : LlvmImports {
 
@@ -450,11 +454,11 @@ internal class Llvm(private val context: Context, val module: LLVMModuleRef) : R
     }
 
     private fun shouldContainBitcode(library: KonanLibrary): Boolean {
-        if (!context.generationState.llvmModuleSpecification.containsLibrary(library)) {
+        if (!generationState.llvmModuleSpecification.containsLibrary(library)) {
             return false
         }
 
-        if (!context.generationState.llvmModuleSpecification.isFinal) {
+        if (!generationState.llvmModuleSpecification.isFinal) {
             return true
         }
 
@@ -464,11 +468,11 @@ internal class Llvm(private val context: Context, val module: LLVMModuleRef) : R
 
     val additionalProducedBitcodeFiles = mutableListOf<String>()
 
-    val staticData = KotlinStaticData(context, this, module)
+    val staticData = KotlinStaticData(generationState, this, module)
 
     private val target = context.config.target
 
-    override val runtime get() = context.generationState.runtime
+    override val runtime get() = generationState.runtime
 
     val targetTriple = runtime.target
 

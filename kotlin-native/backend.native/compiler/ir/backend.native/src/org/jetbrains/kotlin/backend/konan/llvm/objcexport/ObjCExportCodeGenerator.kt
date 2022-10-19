@@ -215,7 +215,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
     val runtime get() = codegen.runtime
     val staticData get() = codegen.staticData
 
-    val rttiGenerator = RTTIGenerator(context)
+    val rttiGenerator = RTTIGenerator(generationState)
 
     private val objcTerminate: LlvmCallable by lazy {
         llvm.externalFunction(LlvmFunctionProto(
@@ -287,7 +287,7 @@ internal class ObjCExportBlockCodeGenerator(codegen: CodeGenerator) : ObjCExport
         // 1. Enumerates [BuiltInFictitiousFunctionIrClassFactory] built classes, which may be incomplete otherwise.
         // 2. Modifies stdlib global initializers.
         // 3. Defines runtime-declared globals.
-        require(context.generationState.shouldDefineFunctionClasses)
+        require(generationState.shouldDefineFunctionClasses)
     }
 
     fun generate() {
@@ -499,7 +499,7 @@ internal class ObjCExportCodeGenerator(
             descriptorToAdapter[adapter.objCName] = typeAdapter
 
             if (irClass != null) {
-                if (!context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+                if (!generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
                     setObjCExportTypeInfo(irClass, typeAdapter = typeAdapter)
                 } else {
                     // Optimization: avoid generating huge initializers;
@@ -527,7 +527,7 @@ internal class ObjCExportCodeGenerator(
         emitSortedAdapters(placedClassAdapters, "Kotlin_ObjCExport_sortedClassAdapters")
         emitSortedAdapters(placedInterfaceAdapters, "Kotlin_ObjCExport_sortedProtocolAdapters")
 
-        if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+        if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
             replaceExternalWeakOrCommonGlobal(
                 "Kotlin_ObjCExport_initTypeAdapters",
                 llvm.constInt1(true),
@@ -555,7 +555,7 @@ internal class ObjCExportCodeGenerator(
         if (determineLinkerOutput(context) == LinkerOutputKind.STATIC_LIBRARY) {
             // Might be affected by https://youtrack.jetbrains.com/issue/KT-42254.
             // The code below generally follows [replaceExternalWeakOrCommonGlobal] implementation.
-            if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+            if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
                 // So the compiler uses caches. If a user is linking two such static frameworks into a single binary,
                 // the linker might fail with a lot of "duplicate symbol" errors due to KT-42254.
                 // Adding a similar symbol that would explicitly hint to take a look at the YouTrack issue if reported.
@@ -701,14 +701,14 @@ private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobal(
         origin: CompiledKlibModuleOrigin
 ) {
     // TODO: A similar mechanism is used in `IrToBitcode.overrideRuntimeGlobal`. Consider merging them.
-    if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+    if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
         val global = codegen.importGlobal(name, value.llvmType, origin)
         externalGlobalInitializers[global] = value
     } else {
-        context.generationState.llvmImports.add(origin)
+        generationState.llvmImports.add(origin)
         val global = staticData.placeGlobal(name, value, isExported = true)
 
-        if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+        if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
             // Note: actually this is required only if global's weak/common definition is in another object file,
             // but it is simpler to do this for all globals, considering that all usages can't be removed by DCE anyway.
             llvm.usedGlobals += global.llvmGlobal
@@ -745,7 +745,7 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
 
 private fun ObjCExportCodeGeneratorBase.setOwnWritableTypeInfo(irClass: IrClass, writableTypeInfoValue: Struct) {
     require(!codegen.isExternal(irClass))
-    val writeableTypeInfoGlobal = context.generationState.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal!!
+    val writeableTypeInfoGlobal = generationState.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal!!
     writeableTypeInfoGlobal.setLinkage(LLVMLinkage.LLVMExternalLinkage)
     writeableTypeInfoGlobal.setInitializer(writableTypeInfoValue)
 }
@@ -872,7 +872,7 @@ private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses get() =
         .filter { it.descriptor.isMappedFunctionClass() }
 
 private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
-    require(context.generationState.shouldDefineFunctionClasses)
+    require(generationState.shouldDefineFunctionClasses)
     mappedFunctionNClasses.forEach { functionClass ->
         val convertToRetained = kotlinFunctionToRetainedBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
 
@@ -882,7 +882,7 @@ private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
 }
 
 private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
-    require(context.generationState.shouldDefineFunctionClasses)
+    require(generationState.shouldDefineFunctionClasses)
     val functionClassesByArity = mappedFunctionNClasses.associateBy { it.arity }
 
     val arityLimit = (functionClassesByArity.keys.maxOrNull() ?: -1) + 1
@@ -956,7 +956,7 @@ private fun ObjCExportCodeGenerator.emitCollectionConverters() {
 }
 
 private fun ObjCExportFunctionGenerationContextBuilder.setupBridgeDebugInfo() {
-    val location = setupBridgeDebugInfo(this.objCExportCodegen.context, function)
+    val location = setupBridgeDebugInfo(this.objCExportCodegen.generationState, function)
     startLocation = location
     endLocation = location
 }
@@ -967,7 +967,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         suffix: String,
         genBody: ObjCExportFunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
-    val functionType = objCFunctionType(context, methodBridge)
+    val functionType = objCFunctionType(generationState, methodBridge)
     val functionName = "objc2kotlin_$suffix"
     val result = functionGenerator(functionType, functionName) {
         if (debugInfo) {
@@ -1107,7 +1107,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                         // Release init receiver, as required by convention.
                         objcReleaseFromRunnableThreadState(param(0))
                     }
-                    Zero(returnType.toLlvmRetType(context).llvmType).llvm
+                    Zero(returnType.toLlvmRetType(generationState).llvmType).llvm
                 }
             }
 
@@ -1138,7 +1138,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             MethodBridge.ReturnValue.Void -> null
             MethodBridge.ReturnValue.HashCode -> {
                 val kotlinHashCode = targetResult!!
-                if (codegen.context.is64BitNSInteger()) zext(kotlinHashCode, llvm.int64Type) else kotlinHashCode
+                if (generationState.is64BitNSInteger()) zext(kotlinHashCode, llvm.int64Type) else kotlinHashCode
             }
             is MethodBridge.ReturnValue.Mapped -> if (LLVMTypeOf(targetResult!!) == llvm.voidType) {
                 returnBridge.bridge.makeNothing(llvm)
@@ -1332,7 +1332,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         val retainAutoreleasedTargetResult = methodBridge.returnBridge.isAutoreleasedObjCReference()
 
-        val objCFunctionType = objCFunctionType(context, methodBridge)
+        val objCFunctionType = objCFunctionType(generationState, methodBridge)
         val objcMsgSend = msgSender(objCFunctionType)
 
         // Using terminatingExceptionHandler, so any exception thrown by the method will lead to the termination,
@@ -1370,7 +1370,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             MethodBridge.ReturnValue.Void -> null
 
             MethodBridge.ReturnValue.HashCode -> {
-                if (codegen.context.is64BitNSInteger()) {
+                if (generationState.is64BitNSInteger()) {
                     val low = trunc(targetResult, llvm.int32Type)
                     val high = trunc(shr(targetResult, 32, signed = false), llvm.int32Type)
                     xor(low, high)
@@ -1877,7 +1877,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
             MethodBridgeReceiver.Static, valueParameters = emptyList()
     )
 
-    val functionType = objCFunctionType(context, methodBridge)
+    val functionType = objCFunctionType(generationState, methodBridge)
     val functionName = "objc2kotlin_$suffix"
     val imp = functionGenerator(functionType, functionName) {
         switchToRunnable = true
@@ -1975,9 +1975,9 @@ private fun ObjCExportCodeGenerator.createThrowableAsErrorAdapter(): ObjCExportC
     return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
-private fun objCFunctionType(context: Context, methodBridge: MethodBridge): LlvmFunctionSignature {
-    val paramTypes = methodBridge.paramBridges.map { it.toLlvmParamType(context.generationState.llvm) }
-    val returnType = methodBridge.returnBridge.toLlvmRetType(context)
+private fun objCFunctionType(generationState: NativeGenerationState, methodBridge: MethodBridge): LlvmFunctionSignature {
+    val paramTypes = methodBridge.paramBridges.map { it.toLlvmParamType(generationState.llvm) }
+    val returnType = methodBridge.returnBridge.toLlvmRetType(generationState)
     return LlvmFunctionSignature(returnType, paramTypes, isVararg = false)
 }
 
@@ -2006,21 +2006,21 @@ private fun MethodBridgeParameter.toLlvmParamType(llvm: Llvm): LlvmParamType = w
 }
 
 private fun MethodBridge.ReturnValue.toLlvmRetType(
-        context: Context
+        generationState: NativeGenerationState
 ): LlvmRetType {
-    val llvm = context.generationState.llvm
+    val llvm = generationState.llvm
     return when (this) {
         MethodBridge.ReturnValue.Suspend,
         MethodBridge.ReturnValue.Void -> LlvmRetType(llvm.voidType)
 
-        MethodBridge.ReturnValue.HashCode -> LlvmRetType(if (context.is64BitNSInteger()) llvm.int64Type else llvm.int32Type)
+        MethodBridge.ReturnValue.HashCode -> LlvmRetType(if (generationState.is64BitNSInteger()) llvm.int64Type else llvm.int32Type)
         is MethodBridge.ReturnValue.Mapped -> this.bridge.toLlvmParamType(llvm)
         MethodBridge.ReturnValue.WithError.Success -> ValueTypeBridge(ObjCValueType.BOOL).toLlvmParamType(llvm)
 
         MethodBridge.ReturnValue.Instance.InitResult,
         MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.toLlvmParamType(llvm)
 
-        is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.toLlvmRetType(context)
+        is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.toLlvmRetType(generationState)
     }
 }
 
@@ -2040,22 +2040,22 @@ internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): St
         }
     }
 
-    val returnTypeEncoding = methodBridge.returnBridge.getObjCEncoding(context)
+    val returnTypeEncoding = methodBridge.returnBridge.getObjCEncoding(generationState)
 
     val paramSize = paramOffset
     return "$returnTypeEncoding$paramSize$params"
 }
 
-private fun MethodBridge.ReturnValue.getObjCEncoding(context: Context): String = when (this) {
+private fun MethodBridge.ReturnValue.getObjCEncoding(generationState: NativeGenerationState): String = when (this) {
     MethodBridge.ReturnValue.Suspend,
     MethodBridge.ReturnValue.Void -> "v"
-    MethodBridge.ReturnValue.HashCode -> if (context.is64BitNSInteger()) "Q" else "I"
+    MethodBridge.ReturnValue.HashCode -> if (generationState.is64BitNSInteger()) "Q" else "I"
     is MethodBridge.ReturnValue.Mapped -> this.bridge.objCEncoding
     MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.encoding
 
     MethodBridge.ReturnValue.Instance.InitResult,
     MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.objCEncoding
-    is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.getObjCEncoding(context)
+    is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.getObjCEncoding(generationState)
 }
 
 private val MethodBridgeParameter.objCEncoding: String get() = when (this) {
@@ -2071,10 +2071,10 @@ private val TypeBridge.objCEncoding: String get() = when (this) {
     is ValueTypeBridge -> this.objCValueType.encoding
 }
 
-private fun Context.is64BitNSInteger(): Boolean {
-    val configurables = this.config.platform.configurables
+private fun NativeGenerationState.is64BitNSInteger(): Boolean {
+    val configurables = context.config.platform.configurables
     require(configurables is AppleConfigurables) {
         "Target ${configurables.target} has no support for NSInteger type."
     }
-    return generationState.llvm.nsIntegerTypeWidth == 64L
+    return llvm.nsIntegerTypeWidth == 64L
 }

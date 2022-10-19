@@ -56,10 +56,11 @@ internal fun produceObjCExportInterface(context: Context): ObjCExportedInterface
 }
 
 internal class ObjCExport(
-        val context: Context,
+        val generationState: NativeGenerationState,
         private val exportedInterface: ObjCExportedInterface?,
         private val codeSpec: ObjCExportCodeSpec?
 ) {
+    private val context = generationState.context
     private val target get() = context.config.target
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
 
@@ -68,7 +69,7 @@ internal class ObjCExport(
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
 
-        if (context.generationState.shouldDefineFunctionClasses) {
+        if (generationState.shouldDefineFunctionClasses) {
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 
@@ -101,7 +102,7 @@ internal class ObjCExport(
     }
 
     private fun produceFrameworkSpecific(headerLines: List<String>) {
-        val frameworkDirectory = File(context.generationState.outputFile)
+        val frameworkDirectory = File(generationState.outputFile)
         val frameworkName = frameworkDirectory.name.removeSuffix(".framework")
         val frameworkBuilder = FrameworkBuilder(
                 context.config,
@@ -154,7 +155,7 @@ internal class ObjCExport(
         val result = Command(clangCommand).getResult(withErrors = true)
 
         if (result.exitCode == 0) {
-            context.generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
+            generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
         } else {
             // Note: ignoring compile errors intentionally.
             // In this case resulting framework will likely be unusable due to compile errors when importing it.

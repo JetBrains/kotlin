@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-internal class KotlinObjCClassInfoGenerator(override val context: Context) : ContextUtils {
+internal class KotlinObjCClassInfoGenerator(override val generationState: NativeGenerationState) : ContextUtils {
     fun generate(irClass: IrClass) {
         assert(irClass.isFinalClass)
 
-        val objCLLvmDeclarations = context.generationState.llvmDeclarations.forClass(irClass).objCDeclarations!!
+        val objCLLvmDeclarations = generationState.llvmDeclarations.forClass(irClass).objCDeclarations!!
 
         val instanceMethods = generateInstanceMethodDescs(irClass)
 
@@ -148,7 +148,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         return constPointer(function)
     }
 
-    private val codegen = CodeGenerator(context)
+    private val codegen = CodeGenerator(generationState)
 
     companion object {
         const val createdClassFieldIndex = 11

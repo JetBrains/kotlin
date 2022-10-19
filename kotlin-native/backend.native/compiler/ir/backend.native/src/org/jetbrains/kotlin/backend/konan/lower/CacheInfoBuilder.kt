@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_FUNCTION_CLASS
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.ir.IrElement
@@ -16,34 +16,37 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-internal class CacheInfoBuilder(private val context: Context, private val moduleDeserializer: KonanIrLinker.KonanPartialModuleDeserializer) {
-    fun build() = with(moduleDeserializer) {
-        moduleFragment.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
+internal class CacheInfoBuilder(
+        private val generationState: NativeGenerationState,
+        private val moduleDeserializer: KonanIrLinker.KonanPartialModuleDeserializer,
+        private val irModule: IrModuleFragment
+) {
+    fun build() = irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            declaration.acceptChildrenVoid(this)
+
+            if (!declaration.isInterface && !declaration.isLocal
+                    && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
+            ) {
+                val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields()
+                generationState.classFields.add(moduleDeserializer.buildClassFields(declaration, declaredFields))
             }
+        }
 
-            override fun visitClass(declaration: IrClass) {
-                declaration.acceptChildrenVoid(this)
+        override fun visitFunction(declaration: IrFunction) {
+            // Don't need to visit the children here: classes would be all local and wouldn't be handled anyway,
+            // as for functions - both their callees will be handled and inline bodies will be built for the top function.
 
-                if (!declaration.isInterface && !declaration.isLocal
-                        && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
-                ) {
-                    context.generationState.classFields.add(buildClassFields(declaration, context.getLayoutBuilder(declaration).getDeclaredFields()))
-                }
+            if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
+                generationState.inlineFunctionBodies.add(moduleDeserializer.buildInlineFunctionReference(declaration))
+                trackCallees(declaration)
             }
-
-            override fun visitFunction(declaration: IrFunction) {
-                // Don't need to visit the children here: classes would be all local and wouldn't be handled anyway,
-                // as for functions - both their callees will be handled and inline bodies will be built for the top function.
-
-                if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
-                    context.generationState.inlineFunctionBodies.add(buildInlineFunctionReference(declaration))
-                    trackCallees(declaration)
-                }
-            }
-        })
-    }
+        }
+    })
 
     private val IrDeclaration.isExported
         get() = with(KonanManglerIr) { isExported(compatibleMode = moduleDeserializer.compatibilityMode.oldSignatures) }
@@ -61,9 +64,9 @@ internal class CacheInfoBuilder(private val context: Context, private val module
 
             private fun processFunction(function: IrFunction) {
                 if (function.getPackageFragment() !is IrExternalPackageFragment) {
-                    context.generationState.calledFromExportedInlineFunctions.add(function)
+                    generationState.calledFromExportedInlineFunctions.add(function)
                     (function as? IrConstructor)?.constructedClass?.let {
-                        context.generationState.constructedFromExportedInlineFunctions.add(it)
+                        generationState.constructedFromExportedInlineFunctions.add(it)
                     }
                     if (function.isInline && !function.isExported) {
                         // An exported inline function calls a non-exported inline function:
@@ -76,13 +79,13 @@ internal class CacheInfoBuilder(private val context: Context, private val module
             override fun visitGetObjectValue(expression: IrGetObjectValue) {
                 expression.acceptChildrenVoid(this)
 
-                processFunction(context.getObjectClassInstanceFunction(expression.symbol.owner))
+                processFunction(generationState.context.getObjectClassInstanceFunction(expression.symbol.owner))
             }
 
             override fun visitGetEnumValue(expression: IrGetEnumValue) {
                 expression.acceptChildrenVoid(this)
 
-                processFunction(context.enumsSupport.getValueGetter(expression.symbol.owner.parentAsClass))
+                processFunction(generationState.context.enumsSupport.getValueGetter(expression.symbol.owner.parentAsClass))
             }
 
             override fun visitCall(expression: IrCall) {

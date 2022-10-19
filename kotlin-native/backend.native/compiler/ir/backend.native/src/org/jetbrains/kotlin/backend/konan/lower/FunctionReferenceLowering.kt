@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class FunctionReferenceLowering(val context: Context) : FileLoweringPass {
+internal class FunctionReferenceLowering(val generationState: NativeGenerationState) : FileLoweringPass {
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
     companion object {
@@ -136,9 +137,9 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
             fun transformFunctionReference(expression: IrFunctionReference, samSuperType: IrType? = null): IrExpression {
                 val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: irFile
-                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
+                val irBuilder = generationState.context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
                         expression.startOffset, expression.endOffset)
-                val (clazz, newExpression) = FunctionReferenceBuilder(irFile, parent, expression, context, irBuilder, samSuperType).build()
+                val (clazz, newExpression) = FunctionReferenceBuilder(irFile, parent, expression, generationState, irBuilder, samSuperType).build()
                 generatedClasses.add(clazz)
                 return newExpression
             }
@@ -153,16 +154,17 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             val irFile: IrFile,
             val parent: IrDeclarationParent,
             val functionReference: IrFunctionReference,
-            val context: Context,
+            val generationState: NativeGenerationState,
             val irBuilder: IrBuilderWithScope,
             val samSuperType: IrType? = null,
     ) {
         data class BuiltFunctionReference(val functionReferenceClass: IrClass, val functionReferenceExpression: IrExpression)
 
+        private val context = generationState.context
         private val irBuiltIns = context.irBuiltIns
         private val symbols = context.ir.symbols
         private val irFactory = context.irFactory
-        private val fileLowerState = context.generationState.fileLowerState
+        private val fileLowerState = generationState.fileLowerState
 
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
@@ -202,7 +204,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             createParameterDeclarations()
 
             // copy the generated name for IrClass, partially solves KT-47194
-            context.generationState.copyLocalClassName(functionReference, this)
+            generationState.copyLocalClassName(functionReference, this)
         }
 
         private val functionReferenceThis = functionReferenceClass.thisReceiver!!

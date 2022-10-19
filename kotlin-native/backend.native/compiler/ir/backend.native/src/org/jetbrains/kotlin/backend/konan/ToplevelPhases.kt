@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
@@ -92,13 +91,12 @@ internal val createSymbolTablePhase = konanUnitPhase(
 
 internal val objCExportPhase = konanUnitPhase(
         op = {
-            val objcInterface = when {
+            objCExportedInterface = when {
                 !config.target.family.isAppleFamily -> null
                 config.produce != CompilerOutputKind.FRAMEWORK -> null
                 else -> produceObjCExportInterface(this)
             }
-            val codeSpec = objcInterface?.createCodeSpec(symbolTable!!)
-            objCExport = ObjCExport(this, objcInterface, codeSpec)
+            objCExportCodeSpec = objCExportedInterface?.createCodeSpec(symbolTable!!)
         },
         name = "ObjCExport",
         description = "Objective-C header generation",
@@ -135,7 +133,7 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
             if (moduleDeserializer == null) {
                 require(module.descriptor.isFromInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
             } else {
-                CacheInfoBuilder(this, moduleDeserializer).build()
+                CacheInfoBuilder(this.generationState, moduleDeserializer, module).build()
             }
         },
         name = "BuildAdditionalCacheInfo",
@@ -216,25 +214,25 @@ internal val serializerPhase = konanUnitPhase(
 )
 
 internal val saveAdditionalCacheInfoPhase = konanUnitPhase(
-        op = { CacheStorage(this).saveAdditionalCacheInfo() },
+        op = { CacheStorage(generationState).saveAdditionalCacheInfo() },
         name = "SaveAdditionalCacheInfo",
         description = "Save additional cache info (inline functions bodies and fields of classes)"
 )
 
 internal val objectFilesPhase = konanUnitPhase(
-        op = { compilerOutput = BitcodeCompiler(this).makeObjectFiles(bitcodeFileName) },
+        op = { this.generationState.compilerOutput = BitcodeCompiler(this.generationState).makeObjectFiles(this.generationState.bitcodeFileName) },
         name = "ObjectFiles",
         description = "Bitcode to object file"
 )
 
 internal val linkerPhase = konanUnitPhase(
-        op = { Linker(this).link(compilerOutput) },
+        op = { Linker(this.generationState).link(this.generationState.compilerOutput) },
         name = "Linker",
         description = "Linker"
 )
 
 internal val finalizeCachePhase = konanUnitPhase(
-        op = { CacheStorage(this).renameOutput() },
+        op = { CacheStorage(this.generationState).renameOutput() },
         name = "FinalizeCache",
         description = "Finalize cache (rename temp to the final dist)"
 )
@@ -393,7 +391,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
                 context.irModule!!.addFile(NaiveSourceBasedFileEntryImpl("entryPointOwner"), FqName("kotlin.native.internal.abi"))
             }
 
-            file.addChild(makeEntryPoint(context))
+            file.addChild(makeEntryPoint(context.generationState))
         }
 )
 

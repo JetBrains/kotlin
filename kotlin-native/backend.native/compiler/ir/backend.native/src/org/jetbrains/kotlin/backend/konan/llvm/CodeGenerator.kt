@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 
 
-internal class CodeGenerator(override val context: Context) : ContextUtils {
+internal class CodeGenerator(override val generationState: NativeGenerationState) : ContextUtils {
     fun llvmFunction(function: IrFunction): LlvmCallable =
             llvmFunctionOrNull(function)
                     ?: error("no function ${function.name} in ${function.file.fqName}")
@@ -32,7 +32,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun llvmFunctionOrNull(function: IrFunction): LlvmCallable? =
             function.llvmFunctionOrNull
 
-    val llvmDeclarations = context.generationState.llvmDeclarations
+    val llvmDeclarations = generationState.llvmDeclarations
     val intPtrType = LLVMIntPtrTypeInContext(llvm.llvmContext, llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
     internal val immThreeIntPtrType = LLVMConstInt(intPtrType, 3, 1)!!
@@ -350,7 +350,7 @@ internal class StackLocalsManagerImpl(
                 call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
         } else {
             val type = llvmDeclarations.forClass(stackLocal.irClass).bodyType
-            for (field in context.getLayoutBuilder(stackLocal.irClass).fields) {
+            for (field in context.getLayoutBuilder(stackLocal.irClass).getFields(llvm)) {
                 val fieldIndex = field.index
                 val fieldType = LLVMStructGetTypeAtIndex(type, fieldIndex)!!
 
@@ -427,8 +427,8 @@ internal abstract class FunctionGenerationContext(
             irFunction = builder.irFunction
     )
 
-    override val context = codegen.context
-    val llvmDeclarations = codegen.llvmDeclarations
+    override val generationState = codegen.generationState
+    val llvmDeclarations = generationState.llvmDeclarations
     val vars = VariableManager(this)
     private val basicBlockToLastLocation = mutableMapOf<LLVMBasicBlockRef, LocationInfoRange>()
 
@@ -496,7 +496,7 @@ internal abstract class FunctionGenerationContext(
     init {
         irFunction?.let {
             if (!irFunction.isExported()) {
-                if (!context.config.producePerFileCache || irFunction !in context.generationState.calledFromExportedInlineFunctions)
+                if (!context.config.producePerFileCache || irFunction !in generationState.calledFromExportedInlineFunctions)
                     LLVMSetLinkage(function, LLVMLinkage.LLVMInternalLinkage) // (Cannot do this before the function body is created)
             }
         }
@@ -544,7 +544,7 @@ internal abstract class FunctionGenerationContext(
             val slotAddress = LLVMBuildAlloca(builder, type, name)!!
             variableLocation?.let {
                 DIInsertDeclaration(
-                        builder = codegen.context.generationState.debugInfo.builder,
+                        builder = generationState.debugInfo.builder,
                         value = slotAddress,
                         localVariable = it.localVariable,
                         location = it.location,
@@ -1354,7 +1354,7 @@ internal abstract class FunctionGenerationContext(
                     val expr = longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
                             runtime.pointerSize * slot.toLong()).toCValues()
                     DIInsertDeclaration(
-                            builder       = codegen.context.generationState.debugInfo.builder,
+                            builder       = generationState.debugInfo.builder,
                             value         = slots,
                             localVariable = variable.localVariable,
                             location      = variable.location,

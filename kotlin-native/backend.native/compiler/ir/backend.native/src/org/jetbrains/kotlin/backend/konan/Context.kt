@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisRes
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
@@ -64,8 +65,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     lateinit var bindingContext: BindingContext
 
     lateinit var moduleDescriptor: ModuleDescriptor
-
-    lateinit var objCExport: ObjCExport
 
     lateinit var cAdapterGenerator: CAdapterGenerator
 
@@ -190,10 +189,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
         InteropBuiltIns(this.builtIns)
     }
 
-    lateinit var bitcodeFileName: String
-    lateinit var library: KonanLibraryLayout
+    var objCExportedInterface: ObjCExportedInterface? = null
+    var objCExportCodeSpec: ObjCExportCodeSpec? = null
 
-    val coverage by lazy { CoverageManager(this) }
+    lateinit var library: KonanLibraryLayout
 
     fun separator(title: String) {
         println("\n\n--- ${title} ----------------------\n")
@@ -228,8 +227,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
 
     internal val stdlibModule
         get() = this.builtIns.any.module
-
-    lateinit var compilerOutput: List<ObjectFile>
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 

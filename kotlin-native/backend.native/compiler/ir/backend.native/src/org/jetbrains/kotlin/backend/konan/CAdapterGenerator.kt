@@ -719,7 +719,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     fun generateBindings(codegen: CodeGenerator) = BindingsBuilder(codegen).build()
 
     inner class BindingsBuilder(val codegen: CodeGenerator) : ContextUtils {
-        override val context = this@CAdapterGenerator.context
+        override val generationState = codegen.generationState
 
         internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
         private lateinit var outputStreamWriter: PrintWriter
@@ -929,7 +929,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         val exportedSymbols = mutableListOf<String>()
 
         private fun makeGlobalStruct(top: ExportedElementScope) {
-            val headerFile = context.generationState.outputFiles.cAdapterHeader
+            val headerFile = generationState.outputFiles.cAdapterHeader
             outputStreamWriter = headerFile.printWriter()
 
             val exportedSymbol = "${prefix}_symbols"
@@ -1014,7 +1014,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             outputStreamWriter.close()
             println("Produced library API in ${prefix}_api.h")
 
-            outputStreamWriter = context.generationState.tempFiles
+            outputStreamWriter = generationState.tempFiles
                     .cAdapterCpp
                     .printWriter()
 
@@ -1154,7 +1154,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             outputStreamWriter.close()
 
             if (context.config.target.family == Family.MINGW) {
-                outputStreamWriter = context.generationState.outputFiles
+                outputStreamWriter = generationState.outputFiles
                         .cAdapterDef
                         .printWriter()
                 output("EXPORTS")

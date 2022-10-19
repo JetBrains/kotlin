@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -29,9 +30,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-internal class NativeSuspendFunctionsLowering(ctx: Context) : AbstractSuspendFunctionsLowering<Context>(ctx) {
+internal class NativeSuspendFunctionsLowering(
+        generationState: NativeGenerationState
+) : AbstractSuspendFunctionsLowering<Context>(generationState.context) {
     private val symbols = context.ir.symbols
-    private val fileLowerState = context.generationState.fileLowerState
+    private val fileLowerState = generationState.fileLowerState
 
     override val stateMachineMethodName = Name.identifier("invokeSuspend")
 

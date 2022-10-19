@@ -167,26 +167,27 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
  * Initialize static boxing.
  * If output target is native binary then the cache is created.
  */
-internal fun initializeCachedBoxes(context: Context) {
+internal fun initializeCachedBoxes(generationState: NativeGenerationState) {
     BoxCache.values().forEach { cache ->
         val cacheName = "${cache.name}_CACHE"
         val rangeStart = "${cache.name}_RANGE_FROM"
         val rangeEnd = "${cache.name}_RANGE_TO"
-        initCache(cache, context, cacheName, rangeStart, rangeEnd,
-                declareOnly = !context.generationState.shouldDefineCachedBoxes
-        ).also { context.generationState.llvm.boxCacheGlobals[cache] = it }
+        initCache(cache, generationState, cacheName, rangeStart, rangeEnd,
+                declareOnly = !generationState.shouldDefineCachedBoxes
+        ).also { generationState.llvm.boxCacheGlobals[cache] = it }
     }
 }
 
 /**
  * Adds global that refers to the cache.
  */
-private fun initCache(cache: BoxCache, context: Context, cacheName: String,
+private fun initCache(cache: BoxCache, generationState: NativeGenerationState, cacheName: String,
                       rangeStartName: String, rangeEndName: String, declareOnly: Boolean) : StaticData.Global {
 
+    val context = generationState.context
     val kotlinType = context.irBuiltIns.getKotlinClass(cache)
-    val staticData = context.generationState.llvm.staticData
-    val llvm = context.generationState.llvm
+    val staticData = generationState.llvm.staticData
+    val llvm = generationState.llvm
     val llvmType = kotlinType.defaultType.toLLVMType(llvm)
     val llvmBoxType = llvm.structType(llvm.runtime.objHeaderType, llvmType)
     val (start, end) = context.config.target.getBoxCacheRange(cache)
@@ -207,14 +208,15 @@ private fun initCache(cache: BoxCache, context: Context, cacheName: String,
     }
 }
 
-internal fun IrConstantPrimitive.toBoxCacheValue(context: Context): ConstValue? {
+internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerationState): ConstValue? {
+    val irBuiltIns = generationState.context.irBuiltIns
     val cacheType = when (value.type) {
-        context.irBuiltIns.booleanType -> BoxCache.BOOLEAN
-        context.irBuiltIns.byteType -> BoxCache.BYTE
-        context.irBuiltIns.shortType -> BoxCache.SHORT
-        context.irBuiltIns.charType -> BoxCache.CHAR
-        context.irBuiltIns.intType -> BoxCache.INT
-        context.irBuiltIns.longType -> BoxCache.LONG
+        irBuiltIns.booleanType -> BoxCache.BOOLEAN
+        irBuiltIns.byteType -> BoxCache.BYTE
+        irBuiltIns.shortType -> BoxCache.SHORT
+        irBuiltIns.charType -> BoxCache.CHAR
+        irBuiltIns.intType -> BoxCache.INT
+        irBuiltIns.longType -> BoxCache.LONG
         else -> return null
     }
     val value = when (value.kind) {
@@ -226,9 +228,9 @@ internal fun IrConstantPrimitive.toBoxCacheValue(context: Context): ConstValue? 
         IrConstKind.Long -> value.value as Long
         else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
     }
-    val (start, end) = context.config.target.getBoxCacheRange(cacheType)
+    val (start, end) = generationState.context.config.target.getBoxCacheRange(cacheType)
     return if (value in start..end) {
-        context.generationState.llvm.let { llvm ->
+        generationState.llvm.let { llvm ->
             llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(llvm, value.toInt() - start)?.getElementPtr(llvm, 0)
         }
     } else {

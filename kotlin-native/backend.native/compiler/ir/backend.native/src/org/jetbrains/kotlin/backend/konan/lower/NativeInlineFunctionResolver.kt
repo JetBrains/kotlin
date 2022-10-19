@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -37,16 +38,16 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
 }
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
-internal class NativeInlineFunctionResolver(override val context: Context) : DefaultInlineFunctionResolver(context) {
+internal class NativeInlineFunctionResolver(override val context: Context, val generationState: NativeGenerationState) : DefaultInlineFunctionResolver(context) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = super.getFunctionDeclaration(symbol)
 
-        context.generationState.loweredInlineFunctions[function]?.let { return it.irFunction }
+        generationState.loweredInlineFunctions[function]?.let { return it.irFunction }
 
         val packageFragment = function.getPackageFragment()
         val (possiblyLoweredFunction, shouldLower) = if (packageFragment !is IrExternalPackageFragment) {
             context.inlineFunctionsSupport.getNonLoweredInlineFunction(function, copy = context.config.producePerFileCache).also {
-                context.generationState.loweredInlineFunctions[function] =
+                generationState.loweredInlineFunctions[function] =
                         InlineFunctionOriginInfo(it, packageFragment as IrFile, function.startOffset, function.endOffset)
             } to true
         } else {
@@ -58,7 +59,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
                 "No IR and no cache for ${function.render()}"
             }
             val (shouldLower, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
-            context.generationState.loweredInlineFunctions[function] = deserializedInlineFunction
+            generationState.loweredInlineFunctions[function] = deserializedInlineFunction
             function to shouldLower
         }
 
@@ -66,7 +67,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
 
         val body = possiblyLoweredFunction.body ?: return possiblyLoweredFunction
 
-        PreInlineLowering(context).lower(body, possiblyLoweredFunction, context.generationState.loweredInlineFunctions[function]!!.irFile)
+        PreInlineLowering(context).lower(body, possiblyLoweredFunction, generationState.loweredInlineFunctions[function]!!.irFile)
 
         ArrayConstructorLowering(context).lower(body, possiblyLoweredFunction)
 
@@ -80,7 +81,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
 
         LocalClassesInInlineLambdasLowering(context).lower(body, possiblyLoweredFunction)
 
-        if (context.generationState.llvmModuleSpecification.containsDeclaration(function)) {
+        if (generationState.llvmModuleSpecification.containsDeclaration(function)) {
             // Do not extract local classes off of inline functions from cached libraries.
             LocalClassesInInlineFunctionsLowering(context).lower(body, possiblyLoweredFunction)
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, possiblyLoweredFunction)

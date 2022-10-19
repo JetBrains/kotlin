@@ -36,7 +36,7 @@ internal sealed class RuntimeLinkageStrategy {
      * Links all runtime modules into a single one and optimizes it.
      */
     class LinkAndOptimize(
-            private val context: Context,
+            private val generationState: NativeGenerationState,
             private val runtimeNativeLibraries: List<LLVMModuleRef>
     ) : RuntimeLinkageStrategy() {
 
@@ -44,15 +44,15 @@ internal sealed class RuntimeLinkageStrategy {
             if (runtimeNativeLibraries.isEmpty()) {
                 return emptyList()
             }
-            val runtimeModule = LLVMModuleCreateWithNameInContext("runtime", context.generationState.llvmContext)!!
+            val runtimeModule = LLVMModuleCreateWithNameInContext("runtime", generationState.llvmContext)!!
             runtimeNativeLibraries.forEach {
-                val failed = llvmLinkModules2(context, runtimeModule, it)
+                val failed = llvmLinkModules2(generationState, runtimeModule, it)
                 if (failed != 0) {
                     throw Error("Failed to link ${it.getName()}")
                 }
             }
-            val config = createLTOPipelineConfigForRuntime(context)
-            LlvmOptimizationPipeline(config, runtimeModule, context).use {
+            val config = createLTOPipelineConfigForRuntime(generationState)
+            LlvmOptimizationPipeline(config, runtimeModule, generationState.context).use {
                 it.run()
             }
             return listOf(runtimeModule)
@@ -63,12 +63,13 @@ internal sealed class RuntimeLinkageStrategy {
         /**
          * Choose runtime linkage strategy based on current compiler configuration and [BinaryOptions.linkRuntime].
          */
-        internal fun pick(context: Context, runtimeLlvmModules: List<LLVMModuleRef>): RuntimeLinkageStrategy {
-            val binaryOption = context.config.configuration.get(BinaryOptions.linkRuntime)
+        internal fun pick(generationState: NativeGenerationState, runtimeLlvmModules: List<LLVMModuleRef>): RuntimeLinkageStrategy {
+            val config = generationState.context.config
+            val binaryOption = config.configuration.get(BinaryOptions.linkRuntime)
             return when {
                 binaryOption == RuntimeLinkageStrategyBinaryOption.Raw -> Raw(runtimeLlvmModules)
-                binaryOption == RuntimeLinkageStrategyBinaryOption.Optimize -> LinkAndOptimize(context, runtimeLlvmModules)
-                context.config.debug -> LinkAndOptimize(context, runtimeLlvmModules)
+                binaryOption == RuntimeLinkageStrategyBinaryOption.Optimize -> LinkAndOptimize(generationState, runtimeLlvmModules)
+                config.debug -> LinkAndOptimize(generationState, runtimeLlvmModules)
                 else -> Raw(runtimeLlvmModules)
             }
 
