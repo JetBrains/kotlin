@@ -84,11 +84,15 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = listOf("sealedInlineClasses"))
             }
 
             testClass<AbstractIrBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = listOf("sealedInlineClasses"))
+            }
+
+            testClass<AbstractIrBlackBoxCodegenTest>("IrBlackBoxSealedInlineClassesTestGenerated") {
+                model("codegen/box/sealedInlineClasses")
             }
 
             testClass<AbstractSteppingTest> {
@@ -242,7 +246,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = listOf("sealedInlineClasses"))
             }
 
             testClass<AbstractFirBlackBoxCodegenTest>("FirBlackBoxModernJdkCodegenTestGenerated") {
@@ -286,7 +290,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractFirBlackBoxCodegenTest>(
                 suiteTestClassName = "FirSpecificBlackBoxCodegenTestGenerated"
             ) {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = listOf("sealedInlineClasses"))
                 model("codegen/boxWithStdLib")
             }
 
