@@ -273,7 +273,6 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
 extra["kotlinJpsPluginMavenDependencies"] = listOf(
     ":kotlin-daemon-client",
     ":kotlin-build-common",
-    ":kotlin-reflect",
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
@@ -720,13 +719,13 @@ tasks {
 
     register("publishIdeArtifacts") {
         idePluginDependency {
-            dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:publish" })
+            dependsOn((rootProject.extra["kotlinJpsPluginMavenDependencies"] as List<String>).map { "$it:publish" })
         }
     }
 
     register("installIdeArtifacts") {
         idePluginDependency {
-            dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:install" })
+            dependsOn((rootProject.extra["kotlinJpsPluginMavenDependencies"] as List<String>).map { "$it:install" })
         }
     }
 }
