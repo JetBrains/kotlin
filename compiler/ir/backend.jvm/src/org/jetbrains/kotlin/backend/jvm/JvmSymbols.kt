@@ -729,6 +729,15 @@ class JvmSymbols(
     }
     val illegalArgumentExceptionCtorString = illegalArgumentException.constructors.single()
 
+    val classCastException = createClass(FqName("java.lang.ClassCastException")) { irClass ->
+        irClass.addConstructor {
+            name = Name.special("<init>")
+        }.apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
+    }
+    val classCastExceptionCtorString = classCastException.constructors.single()
+
     val jvmMethodType: IrSimpleFunctionSymbol =
         irFactory.buildFun {
             name = Name.special("<jvm-method-type>")

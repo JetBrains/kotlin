@@ -358,7 +358,6 @@ internal abstract class JvmValueClassAbstractLowering(
     final override fun visitFunctionExpression(expression: IrFunctionExpression) = super.visitFunctionExpression(expression)
     final override fun visitClassReference(expression: IrClassReference) = super.visitClassReference(expression)
     final override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = super.visitInstanceInitializerCall(expression)
-    final override fun visitTypeOperator(expression: IrTypeOperatorCall) = super.visitTypeOperator(expression)
     final override fun visitWhen(expression: IrWhen) = super.visitWhen(expression)
     final override fun visitBranch(branch: IrBranch): IrBranch = super.visitBranch(branch)
     final override fun visitElseBranch(branch: IrElseBranch): IrElseBranch = super.visitElseBranch(branch)

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -148,6 +147,31 @@ class MemoizedInlineClassReplacements(
             }.apply {
                 parent = irClass
                 createDispatchReceiverParameter()
+            }
+        }
+
+    /**
+     * Get the is-check function for sealed inline class child. The function checks, that
+     * underlying value of sealed inline class has the same underlying type of the child.
+     *
+     * Note, that for noinline sealed inline class children are checked as usual.
+     */
+    val getIsSealedInlineChildFunction: (Pair<IrClass, IrClass>) -> IrSimpleFunction =
+        storageManager.createMemoizedFunction { (top, child) ->
+            require(top.isSealedInline && child.isChildOfSealedInlineClass()) {
+                "Expected sealed inline class child, but got ${child.render()}, which is not a child of ${top.render()}"
+            }
+            irFactory.buildFun {
+                name = Name.identifier("is-${child.name}")
+                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
+                returnType = context.irBuiltIns.booleanType
+            }.apply {
+                parent = top
+                copyTypeParametersFrom(top)
+                addValueParameter {
+                    name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
+                    type = context.irBuiltIns.anyNType
+                }
             }
         }
 

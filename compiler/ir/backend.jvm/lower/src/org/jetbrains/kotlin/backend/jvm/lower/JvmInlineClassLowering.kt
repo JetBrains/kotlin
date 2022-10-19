@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.backend.common.DefaultInlineClassesUtils.getInlineCl
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.isChildOfSealedInlineClass
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
@@ -60,6 +61,160 @@ internal class JvmInlineClassLowering(
 
     override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isInline || isSealedInline
 
+    /**
+     * In case of is checks of sealed inline classes, we generate is-Name functions on top and
+     * replace all is checks with calls to these functions.
+     */
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        if (expression.typeOperand.isInlineChildOfSealedInlineClass()) {
+            val transformed = super.visitTypeOperator(expression) as IrTypeOperatorCall
+            val top = transformed.typeOperand.findTopSealedInlineSuperClass()
+            val isCheck = context.inlineClassReplacements.getIsSealedInlineChildFunction(top to transformed.typeOperand.classOrNull!!.owner)
+            val underlyingType = transformed.typeOperand.unboxInlineClass()
+            val currentScopeSymbol = (currentScope?.irElement as? IrSymbolOwner)?.symbol
+                ?: error("${currentScope?.irElement?.render()} is not valid symbol owner")
+
+            when (transformed.operator) {
+                IrTypeOperator.INSTANCEOF -> {
+                    // if (top != null) false else Top.is-Child(top)
+                    with(context.createIrBuilder(currentScopeSymbol)) {
+                        return irBlock {
+                            val tmp = irTemporary(transformed.argument)
+                            +irIfNull(
+                                context.irBuiltIns.booleanType, irGet(tmp), irFalse(),
+                                irCall(isCheck.symbol).apply {
+                                    putValueArgument(0, coerceFromSealedInlineClass(top, irGet(tmp)))
+                                }
+                            )
+                        }
+                    }
+                }
+
+                IrTypeOperator.NOT_INSTANCEOF -> {
+                    // if (top != null) true else Top.is-Child(top).not()
+                    with(context.createIrBuilder(currentScopeSymbol)) {
+                        return irBlock {
+                            val tmp = irTemporary(transformed.argument)
+                            +irIfNull(
+                                context.irBuiltIns.booleanType, irGet(tmp), irTrue(),
+                                irNot(irCall(isCheck.symbol).apply {
+                                    putValueArgument(0, coerceFromSealedInlineClass(top, irGet(tmp)))
+                                })
+                            )
+                        }
+                    }
+                }
+
+                IrTypeOperator.CAST -> {
+                    // if (Top.is-Child(top)) top else CCE
+                    return generateAsCheckForSealedInlineClass(currentScopeSymbol, transformed, top, isCheck, underlyingType) {
+                        irThrow(
+                            irCall(this@JvmInlineClassLowering.context.ir.symbols.classCastExceptionCtorString).apply {
+                                putValueArgument(
+                                    0,
+                                    irString("Cannot cast to sealed inline class subclass ${expression.typeOperand.classFqName}")
+                                )
+                            }
+                        )
+                    }
+                }
+
+                IrTypeOperator.SAFE_CAST -> {
+                    // if (Top.is-Child(top)) top else null
+                    return generateAsCheckForSealedInlineClass(currentScopeSymbol, transformed, top, isCheck, underlyingType) { irNull() }
+                }
+
+                else -> {
+                    return transformed
+                }
+            }
+        } else if (expression.typeOperand.isNoinlineChildOfSealedInlineClass()) {
+            val transformed = super.visitTypeOperator(expression) as IrTypeOperatorCall
+            val top = transformed.typeOperand.findTopSealedInlineSuperClass()
+            val currentScopeSymbol = (currentScope?.irElement as? IrSymbolOwner)?.symbol
+                ?: error("${currentScope?.irElement?.render()} is not valid symbol owner")
+
+            when (expression.operator) {
+                IrTypeOperator.CAST -> {
+                    transformed.argument = coerceFromSealedInlineClass(top, expression.argument)
+                    return transformed
+                }
+
+                IrTypeOperator.SAFE_CAST -> {
+                    with(context.createIrBuilder(currentScopeSymbol)) {
+                        return irBlock {
+                            val tmp = irTemporary(transformed.argument)
+                            +irIfNull(
+                                transformed.type, irGet(tmp), irNull(),
+                                irAs(coerceFromSealedInlineClass(top, irGet(tmp)), transformed.typeOperand)
+                            )
+                        }
+                    }
+                }
+
+                IrTypeOperator.INSTANCEOF -> {
+                    with(context.createIrBuilder(currentScopeSymbol)) {
+                        return irBlock {
+                            val tmp = irTemporary(transformed.argument)
+                            +irIfNull(
+                                transformed.type, irGet(tmp), irFalse(),
+                                irIs(coerceFromSealedInlineClass(top, irGet(tmp)), transformed.typeOperand)
+                            )
+                        }
+                    }
+                }
+
+                IrTypeOperator.NOT_INSTANCEOF -> {
+                    with(context.createIrBuilder(currentScopeSymbol)) {
+                        return irBlock {
+                            val tmp = irTemporary(transformed.argument)
+                            +irIfNull(
+                                transformed.type, irGet(tmp), irTrue(),
+                                irNotIs(coerceFromSealedInlineClass(top, irGet(tmp)), transformed.typeOperand)
+                            )
+                        }
+                    }
+                }
+
+                else -> {
+                    return transformed
+                }
+            }
+        }
+
+        return super.visitTypeOperator(expression)
+    }
+
+    private fun generateAsCheckForSealedInlineClass(
+        currentScopeSymbol: IrSymbol,
+        expression: IrTypeOperatorCall,
+        top: IrClass,
+        isCheck: IrSimpleFunction,
+        underlyingType: IrType,
+        onFail: IrBuilderWithScope.() -> IrExpression
+    ): IrExpression {
+        with(context.createIrBuilder(currentScopeSymbol)) {
+            return irBlock {
+                val tmp = irTemporary(expression.argument)
+                +irIfNull(
+                    expression.type, irGet(tmp), onFail(),
+                    irBlock {
+                        val unboxedTmp = irTemporary(coerceFromSealedInlineClass(top, irGet(tmp)))
+                        +irWhen(
+                            expression.type, listOf(
+                                irBranch(
+                                    irCall(isCheck.symbol).also { it.putValueArgument(0, irGet(unboxedTmp)) },
+                                    coerceInlineClasses(irGet(unboxedTmp), underlyingType, expression.typeOperand)
+                                ),
+                                irElseBranch(onFail())
+                            )
+                        )
+                    }
+                )
+            }
+        }
+    }
+
     override fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction =
         context.irFactory.buildFun {
             updateFrom(source)
@@ -74,7 +229,6 @@ internal class JvmInlineClassLowering(
             // a continuation class.
             copyAttributes(source)
         }
-
 
     override val specificMangle: SpecificMangle
         get() = SpecificMangle.Inline
@@ -107,13 +261,18 @@ internal class JvmInlineClassLowering(
     }
 
     override fun handleSpecificNewClass(declaration: IrClass) {
+        require(!declaration.isSealedInline && !declaration.isChildOfSealedInlineClass())
+
         val irConstructor = declaration.primaryConstructor!!
+
         // The field getter is used by reflection and cannot be removed here unless it is internal.
         declaration.declarations.removeIf {
             (it == irConstructor && declaration.modality != Modality.SEALED) ||
                     (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
         }
+
         buildPrimaryInlineClassConstructor(declaration, irConstructor)
+        // For sealed inline class subclasses boxing and unboxing is done via top's box-impl and unbox-impl
         buildBoxFunction(declaration)
         buildUnboxFunction(declaration)
         buildSpecializedEqualsMethodIfNeeded(declaration)
@@ -268,8 +427,8 @@ internal class JvmInlineClassLowering(
             return null
 
         // We don't specialize calls when both arguments are boxed.
-        val leftIsUnboxed = left.type.unboxInlineClass() != left.type
-        val rightIsUnboxed = right.type.unboxInlineClass() != right.type
+        val leftIsUnboxed = unboxInlineClass(left.type) != left.type
+        val rightIsUnboxed = unboxInlineClass(right.type) != right.type
         if (!leftIsUnboxed && !rightIsUnboxed)
             return null
 
@@ -320,6 +479,12 @@ internal class JvmInlineClassLowering(
         } else {
             equals(left, right)
         }
+    }
+
+    private fun unboxInlineClass(type: IrType): IrType? {
+        val irClass = type.classOrNull?.owner ?: return null
+        return if (irClass.isSealedInline) context.irBuiltIns.anyNType
+        else type.unboxInlineClass()
     }
 
     override fun visitCall(expression: IrCall): IrExpression =
@@ -559,3 +724,5 @@ internal class JvmInlineClassLowering(
         valueClass.declarations += function
     }
 }
+
+internal fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }

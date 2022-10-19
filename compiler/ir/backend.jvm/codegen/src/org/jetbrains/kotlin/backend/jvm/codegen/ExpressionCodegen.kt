@@ -996,6 +996,9 @@ class ExpressionCodegen(
                     mv.checkcast(boxedRightType)
                 } else {
                     assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
+                    if (result.irType.classOrNull?.owner?.isSealedInline == true) {
+                        MaterialValue(this, boxedLeftType, result.irType).materializeAt(boxedRightType, typeOperand)
+                    }
                     TypeIntrinsics.checkcast(mv, kotlinType, boxedRightType, false)
                 }
                 MaterialValue(this, boxedRightType, expression.type)
@@ -1008,11 +1011,16 @@ class ExpressionCodegen(
             }
 
             IrTypeOperator.INSTANCEOF -> {
-                expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
+                val result = expression.argument.accept(this, data)
+                result.materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
+
                 if (typeOperand.isReifiedTypeParameter) {
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
                     mv.instanceOf(type)
+                } else if (result.irType.let { it.classOrNull?.owner?.isSealedInline == true && it.isNullable() }) {
+                    val topType = typeMapper.boxType(typeOperand.findTopSealedInlineSuperClass().defaultType)
+                    mv.instanceOf(topType)
                 } else {
                     TypeIntrinsics.instanceOf(mv, kotlinType, type)
                 }
@@ -1507,7 +1515,7 @@ class ExpressionCodegen(
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {
             val asmType = typeMapper.mapType(classType)
-            if (wrapPrimitives || classType.getClass()?.isSingleFieldValueClass == true || !isPrimitive(asmType)) {
+            if (wrapPrimitives || classType.getClass()?.isInlineOrSealedInline == true || !isPrimitive(asmType)) {
                 v.aconst(typeMapper.boxType(classType))
             } else {
                 v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")

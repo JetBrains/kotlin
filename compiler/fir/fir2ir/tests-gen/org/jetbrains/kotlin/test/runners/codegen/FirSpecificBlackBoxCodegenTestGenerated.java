@@ -24,7 +24,7 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
     public class Box {
         @Test
         public void testAllFilesPresentInBox() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "sealedInlineClasses");
         }
 
         @Test
