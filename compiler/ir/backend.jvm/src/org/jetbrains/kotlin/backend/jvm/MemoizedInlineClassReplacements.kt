@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -55,7 +56,7 @@ class MemoizedInlineClassReplacements(
                         null
 
                 // Mangle all functions in the body of an inline class
-                (it.parent as? IrClass)?.isSingleFieldValueClass == true ->
+                (it.parent as? IrClass)?.isInlineOrSealedInline == true ->
                     when {
                         it.isValueClassTypedEquals -> createStaticReplacement(it).also {
                             it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
@@ -84,7 +85,7 @@ class MemoizedInlineClassReplacements(
         }
 
     override fun quickCheckIfFunctionIsNotApplicable(function: IrFunction) = !(
-            function.parent.let { (it is IrClass && it.isSingleFieldValueClass) } ||
+            function.parent.let { (it is IrClass && it.isInlineOrSealedInline ) } ||
                     function.dispatchReceiverParameter?.type?.isInlineClassType() == true ||
                     function.extensionReceiverParameter?.type?.isInlineClassType() == true ||
                     function.valueParameters.any { it.type.isInlineClassType() } || function.returnType.isInlineClassType()
@@ -97,7 +98,7 @@ class MemoizedInlineClassReplacements(
      */
     val getBoxFunction: (IrClass) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isSingleFieldValueClass)
+            require(irClass.isInlineOrSealedInline && irClass.superTypes.none { it.isInlineClassType() })
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.BOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
@@ -107,7 +108,7 @@ class MemoizedInlineClassReplacements(
                 copyTypeParametersFrom(irClass)
                 addValueParameter {
                     name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
-                    type = irClass.inlineClassRepresentation!!.underlyingType
+                    type = context.irBuiltIns.getInlineClassUnderlyingType(irClass)
                 }
             }
         }
@@ -118,7 +119,7 @@ class MemoizedInlineClassReplacements(
      */
     val getUnboxFunction: (IrClass) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isSingleFieldValueClass)
+            require((irClass.isInlineOrSealedInline) && irClass.superTypes.none { it.isInlineClassType() })
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
@@ -131,7 +132,7 @@ class MemoizedInlineClassReplacements(
 
     private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
-        require(irClass.isSingleFieldValueClass)
+        require(irClass.isInlineOrSealedInline)
         return specializedEqualsCache.computeIfAbsent(irClass) {
             irFactory.buildFun {
                 name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
@@ -142,7 +143,10 @@ class MemoizedInlineClassReplacements(
                 parent = irClass
                 // We ignore type arguments here, since there is no good way to go from type arguments to types in the IR anyway.
                 val typeArgument =
-                    IrSimpleTypeImpl(irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf())
+                    if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
+                    else IrSimpleTypeImpl(
+                        irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf()
+                    )
                 addValueParameter {
                     name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
                     type = typeArgument

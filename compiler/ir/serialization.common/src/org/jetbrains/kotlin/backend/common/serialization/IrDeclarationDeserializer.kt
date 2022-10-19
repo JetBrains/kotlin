@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkError
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkSymbolType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -379,6 +376,7 @@ class IrDeclarationDeserializer(
 
                 valueClassRepresentation = when {
                     !flags.isValue -> null
+                    flags.modality == Modality.SEALED -> SealedInlineClassRepresentation()
                     proto.hasMultiFieldValueClassRepresentation() && proto.hasInlineClassRepresentation() ->
                         error("Class cannot be both inline and multi-field value: $name")
                     proto.hasInlineClassRepresentation() -> deserializeInlineClassRepresentation(proto.inlineClassRepresentation)

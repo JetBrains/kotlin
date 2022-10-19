@@ -91,7 +91,8 @@ object AbstractTypeMapper {
                 val typeParameter = typeConstructor.asTypeParameter()
                 val upperBound = typeParameter.representativeUpperBound()
                 val upperBoundIsPrimitiveOrInlineClass =
-                    upperBound.typeConstructor().isInlineClass() || upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
+                    upperBound.typeConstructor().let { it.isInlineClass() || it.isSealedInlineClass() } ||
+                            upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
                 val newType = if (upperBoundIsPrimitiveOrInlineClass && type.isNullableType())
                     upperBound.makeNullable()
                 else upperBound
@@ -178,10 +179,11 @@ object AbstractTypeMapper {
             }
         }
 
-        val asmType = if (mode.isForAnnotationParameter && type.isKClass())
-            AsmTypes.JAVA_CLASS_TYPE
-        else
-            Type.getObjectType(context.getClassInternalName(typeConstructor))
+        val asmType = when {
+            !mode.needInlineClassWrapping && typeConstructor.isSealedInlineClass() && !type.isNullableType() -> AsmTypes.OBJECT_TYPE
+            mode.isForAnnotationParameter && type.isKClass() -> AsmTypes.JAVA_CLASS_TYPE
+            else -> Type.getObjectType(context.getClassInternalName(typeConstructor))
+        }
 
         with(context) { sw?.writeGenericType(type, asmType, mode) }
         return asmType

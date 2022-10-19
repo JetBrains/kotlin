@@ -200,7 +200,7 @@ val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
                 parent is IrClass && current is IrClass && !current.isInner ->
                     null
                 // Inline class constructor inherits the same type parameters as the inline class itself
-                current.isJvmInlineClassConstructor ->
+                current.isInlineClassConstructor ->
                     null
                 else ->
                     parent

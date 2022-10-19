@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
-class InlineClassRepresentation<Type : SimpleTypeMarker> constructor(
+class InlineClassRepresentation<Type : SimpleTypeMarker>(
     val underlyingPropertyName: Name,
     val underlyingType: Type,
 ) : ValueClassRepresentation<Type>() {
@@ -22,4 +22,15 @@ class InlineClassRepresentation<Type : SimpleTypeMarker> constructor(
 
     override fun toString(): String =
         "InlineClassRepresentation(underlyingPropertyName=$underlyingPropertyName, underlyingType=$underlyingType)"
+}
+
+class SealedInlineClassRepresentation<Type : SimpleTypeMarker> : ValueClassRepresentation<Type>() {
+    override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
+        get() = emptyList()
+
+    override fun containsPropertyWithName(name: Name): Boolean = false
+
+    override fun getPropertyTypeByName(name: Name): Type? = null
+
+    override fun toString(): String = "SealedInlineClassRepresentation"
 }

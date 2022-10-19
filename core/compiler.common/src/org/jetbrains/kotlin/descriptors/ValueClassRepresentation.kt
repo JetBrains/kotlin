@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.descriptors.ValueClassKind.Inline
-import org.jetbrains.kotlin.descriptors.ValueClassKind.MultiField
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
@@ -20,30 +18,24 @@ sealed class ValueClassRepresentation<Type : SimpleTypeMarker> {
         is InlineClassRepresentation -> InlineClassRepresentation(underlyingPropertyName, transform(underlyingType))
         is MultiFieldValueClassRepresentation ->
             MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { (name, type) -> name to transform(type) })
+        is SealedInlineClassRepresentation<*> -> SealedInlineClassRepresentation()
     }
 }
 
-enum class ValueClassKind { Inline, MultiField }
-
-fun <Type : SimpleTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringKind(
-    fields: List<Pair<Name, Type>>,
-): ValueClassKind = when {
-    fields.size > 1 -> MultiField
-    fields.isEmpty() -> error("Value classes cannot have 0 fields")
-    else -> {
-        val type = fields.single().second
-        with(this) {
-            when {
-                type.isNullableType() -> Inline
-                !type.typeConstructor().isMultiFieldValueClass() -> Inline
-                else -> MultiField
+fun <Type : SimpleTypeMarker> createValueClassRepresentation(
+    context: TypeSystemCommonBackendContext, fields: List<Pair<Name, Type>>
+): ValueClassRepresentation<Type> =
+    when {
+        fields.isEmpty() -> SealedInlineClassRepresentation()
+        fields.size > 1 -> MultiFieldValueClassRepresentation(fields)
+        else -> {
+            val type = fields.single().second
+            with (context) {
+                when {
+                    type.isNullableType() -> InlineClassRepresentation(fields.single().first, type)
+                    !type.typeConstructor().isMultiFieldValueClass() -> InlineClassRepresentation(fields.single().first, type)
+                    else -> MultiFieldValueClassRepresentation(fields)
+                }
             }
         }
-    }
-}
-
-fun <Type : SimpleTypeMarker> createValueClassRepresentation(context: TypeSystemCommonBackendContext, fields: List<Pair<Name, Type>>) =
-    when (context.valueClassLoweringKind(fields)) {
-        Inline -> InlineClassRepresentation(fields[0].first, fields[0].second)
-        MultiField -> MultiFieldValueClassRepresentation(fields)
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.DefaultInlineClassesUtils.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
@@ -54,6 +55,8 @@ internal class JvmInlineClassLowering(
         }
     }
 
+    override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isInline || isSealedInline
+
     override fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction =
         context.irFactory.buildFun {
             updateFrom(source)
@@ -68,8 +71,6 @@ internal class JvmInlineClassLowering(
             // a continuation class.
             copyAttributes(source)
         }
-
-    override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isSingleFieldValueClass
 
     override val specificMangle: SpecificMangle
         get() = SpecificMangle.Inline
@@ -350,6 +351,7 @@ internal class JvmInlineClassLowering(
                     .specializeEqualsCall(leftOp, rightOp)
                     ?: expression
             }
+
             else ->
                 super.visitCall(expression)
         }
@@ -367,10 +369,9 @@ internal class JvmInlineClassLowering(
         }
 
     private inline fun IrCall.isSpecializedInlineClassEqualityCheck(calleePredicate: (IrSimpleFunctionSymbol) -> Boolean): Boolean {
-
         if (!calleePredicate(symbol)) return false
 
-        val leftClass = getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isSingleFieldValueClass }
+        val leftClass = getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isInline || it.isSealedInline }
             ?: return false
 
         // Before version 1.4, we cannot rely on the Result.equals-impl0 method
@@ -383,7 +384,7 @@ internal class JvmInlineClassLowering(
         val parent = field.parent
         if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
             parent is IrClass &&
-            parent.isSingleFieldValueClass &&
+            parent.isInline &&
             field.name == parent.inlineClassFieldName
         ) {
             val receiver = expression.receiver!!.transform(this, null)
@@ -512,7 +513,7 @@ internal class JvmInlineClassLowering(
                 } else {
                     val underlyingClass = underlyingType.getClass()
                     // We can't directly compare unboxed values of underlying inline class as this class can have custom equals
-                    if (underlyingClass?.isSingleFieldValueClass == true && !underlyingType.isNullable()) {
+                    if (underlyingClass?.isInline == true && !underlyingType.isNullable()) {
                         val underlyingClassEq =
                             context.inlineClassReplacements.getSpecializedEqualsMethod(underlyingClass, context.irBuiltIns)
                         irCall(underlyingClassEq).apply {

@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -44,9 +46,8 @@ import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegationResolver
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 @ObsoleteDescriptorBasedAPI
@@ -102,8 +104,38 @@ class ClassGenerator(
 
             generateFakeOverrideMemberDeclarations(irClass, ktClassOrObject)
 
-            irClass.valueClassRepresentation = classDescriptor.valueClassRepresentation?.mapUnderlyingType { type ->
-                type.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: $classDescriptor")
+            if (ktClassOrObject is KtClassOrObject) {
+                if (classDescriptor.isInlineClass() || classDescriptor.isSealedInlineClass()) {
+                    irClass.valueClassRepresentation =
+                        if (irClass.modality == Modality.SEALED)
+                            SealedInlineClassRepresentation()
+                        else {
+                            val representation = classDescriptor.valueClassRepresentation
+                                ?: error("Unknown representation for inline class: $classDescriptor")
+                            representation.mapUnderlyingType { type ->
+                                val irType = type.toIrType() as? IrSimpleType
+                                    ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+
+                                if (classDescriptor.isInlineClass() && classDescriptor.getSuperClassOrAny().isSealedInlineClass() &&
+                                    type.isPrimitiveNumberType()
+                                ) {
+                                    irType.makeNullable() as? IrSimpleType
+                                        ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+                                } else irType
+                            }
+                        }
+
+                    val isSealedInlineSubclassOfSealedInlineClass =
+                        classDescriptor.getSuperClassOrAny().isSealedInlineClass() && classDescriptor.isSealedInlineClass()
+
+                    if (!isSealedInlineSubclassOfSealedInlineClass) {
+                        generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
+                    }
+                } else if (classDescriptor.isMultiFieldValueClass()) {
+                    irClass.valueClassRepresentation = classDescriptor.valueClassRepresentation?.mapUnderlyingType { type ->
+                        type.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: $classDescriptor")
+                    }
+                }
             }
 
             if (irClass.isSingleFieldValueClass && ktClassOrObject is KtClassOrObject) {

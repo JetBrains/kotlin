@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
@@ -20,7 +22,21 @@ val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_N
 
 // FIXME: DeserializedClassDescriptor in reflection do not have @JvmInline annotation, that we
 // FIXME: would like to check as well.
-fun DeclarationDescriptor.isInlineClass(): Boolean = this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation
+fun DeclarationDescriptor.isInlineClass(): Boolean {
+    val isJvmBackend = module.platform?.singleOrNull()?.oldFashionedDescription?.startsWith("JVM") == true
+
+    return this is ClassDescriptor && isSingleFieldValueClass() &&
+            (!isJvmBackend || isInline || (isValue && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)))
+}
+
+fun DeclarationDescriptor.isSealedInlineClass(): Boolean =
+    this is ClassDescriptor && valueClassRepresentation is SealedInlineClassRepresentation
+
+fun DeclarationDescriptor.isInlineOrSealedInlineClass(): Boolean =
+    isInlineClass() || isSealedInlineClass()
+
+fun DeclarationDescriptor.isSingleFieldValueClass(): Boolean =
+    this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation
 
 fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
     this is ClassDescriptor && this.valueClassRepresentation is MultiFieldValueClassRepresentation
@@ -28,12 +44,15 @@ fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
 fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass()
 
 fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
-    (constructor.declarationDescriptor as? ClassDescriptor)?.inlineClassRepresentation?.underlyingType
+    (constructor.declarationDescriptor as? ClassDescriptor)?.let {
+        if (it.isSealedInlineClass()) it.module.builtIns.nullableAnyType
+        else it.inlineClassRepresentation?.underlyingType
+    }
 
 fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
     val declarationDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
     return when {
-        declarationDescriptor.isInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
+        declarationDescriptor.isInlineOrSealedInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
         declarationDescriptor.isMultiFieldValueClass() ->
             declarationDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.map { it.type } ?: emptyList()
         else -> emptyList()
@@ -45,6 +64,16 @@ fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?
 
 fun KotlinType.needsMfvcFlattening(): Boolean =
     constructor.declarationDescriptor?.run { isMultiFieldValueClass() && !isNullableType() } == true
+
+fun KotlinType.isNoinlineChildOfSealedInlineClass(): Boolean =
+    constructor.declarationDescriptor?.let {
+        (it as? ClassDescriptor)?.getSuperClassOrAny()?.isSealedInlineClass() == true && !it.isInlineOrSealedInlineClass()
+    } == true
+
+fun KotlinType.isInlineChildOfSealedInlineClass(): Boolean =
+    constructor.declarationDescriptor?.let {
+        (it as? ClassDescriptor)?.getSuperClassOrAny()?.isSealedInlineClass() == true && it.isInlineOrSealedInlineClass()
+    } == true
 
 fun KotlinType.substitutedUnderlyingType(): KotlinType? =
     unsubstitutedUnderlyingType()?.let { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }

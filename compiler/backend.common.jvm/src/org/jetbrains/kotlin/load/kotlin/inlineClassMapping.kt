@@ -12,12 +12,16 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 internal fun TypeSystemCommonBackendContext.computeUnderlyingType(inlineClassType: KotlinTypeMarker): KotlinTypeMarker? {
     if (!shouldUseUnderlyingType(inlineClassType)) return null
 
+    if (inlineClassType.typeConstructor().isSealedInlineClass()) return nullableAnyType()
+
     val underlyingType = inlineClassType.getUnsubstitutedUnderlyingType() ?: return null
     return underlyingType.typeConstructor().getTypeParameterClassifier()?.getRepresentativeUpperBound()
         ?: inlineClassType.getSubstitutedUnderlyingType()
 }
 
 internal fun TypeSystemCommonBackendContext.shouldUseUnderlyingType(inlineClassType: KotlinTypeMarker): Boolean {
+    if (inlineClassType.typeConstructor().isSealedInlineClass() && inlineClassType.isNullableType()) return true
+
     val underlyingType = inlineClassType.getUnsubstitutedUnderlyingType() ?: return false
 
     return !inlineClassType.isMarkedNullable() ||
