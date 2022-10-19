@@ -142,11 +142,12 @@ internal open class CInteropCommonizerTask
                     }
 
                     is SharedCommonizerTarget -> {
-                        val targetSourceSets = sourceSetsByTarget[target].orEmpty()
-                        val groupSourceSets = sourceSetsByGroup[group].orEmpty().toSet()
-                        targetSourceSets.intersect(groupSourceSets)
-                            .filterIsInstance<DefaultKotlinSourceSet>()
-                            .map { sourceSet -> project.createCInteropMetadataDependencyClasspath(sourceSet) }
+                        emptyList()
+//                        val targetSourceSets = sourceSetsByTarget[target].orEmpty()
+//                        val groupSourceSets = sourceSetsByGroup[group].orEmpty().toSet()
+//                        targetSourceSets.intersect(groupSourceSets)
+//                            .filterIsInstance<DefaultKotlinSourceSet>()
+//                            .map { sourceSet -> project.createCInteropMetadataDependencyClasspath(sourceSet) }
                     }
                 }
 
