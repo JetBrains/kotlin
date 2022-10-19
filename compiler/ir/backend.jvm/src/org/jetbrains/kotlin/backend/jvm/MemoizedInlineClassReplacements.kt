@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -175,6 +177,44 @@ class MemoizedInlineClassReplacements(
             }
         }
 
+    /**
+     * For method in children of sealed inline classes we generate method in the top.
+     */
+    val getSealedInlineClassChildFunctionInTop: (Pair<IrClass, SimpleFunctionWithoutReceiver>) -> IrSimpleFunction =
+        storageManager.createMemoizedFunction { (top, method) ->
+            require(top.isSealedInline) {
+                "Expected method in sealed inline class child"
+            }
+            irFactory.buildFun {
+                name = Name.identifier(InlineClassAbi.functionNameBase(method.function))
+                origin = JvmLoweredDeclarationOrigin.GENERATED_SEALED_INLINE_CLASS_METHOD
+                returnType = method.function.returnType
+            }.apply {
+                parent = top
+                copyTypeParameters(method.function.typeParameters)
+
+                copyPropertyIfNeeded(method.function)
+
+                val substitutionMap = method.function.typeParameters.map { it.symbol }.zip(typeParameters.map { it.defaultType }).toMap()
+                // Replace dispatch parameter from child to top
+                dispatchReceiverParameter = factory.createValueParameter(
+                    startOffset, endOffset, origin,
+                    IrValueParameterSymbolImpl(),
+                    name, -1,
+                    top.defaultType.substitute(substitutionMap),
+                    null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                ).also { parameter ->
+                    parameter.parent = this
+                }
+                extensionReceiverParameter = method.function.extensionReceiverParameter?.copyTo(this)
+
+                val shift = valueParameters.size
+                valueParameters = method.function.valueParameters.map {
+                    it.copyTo(this, index = it.index + shift, type = it.type.substitute(substitutionMap))
+                }
+            }
+        }
+
     private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
         require(irClass.isInlineOrSealedInline)
@@ -256,7 +296,11 @@ class MemoizedInlineClassReplacements(
                 }
             }
             valueParameters = newValueParameters
-            context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
+            context.multiFieldValueClassReplacements.run {
+                bindingNewFunctionToParameterTemplateStructure[function]?.also {
+                    bindingNewFunctionToParameterTemplateStructure[this@buildReplacement] = it
+                }
+            }
         }
 
     private fun buildReplacement(
@@ -289,6 +333,12 @@ class MemoizedInlineClassReplacements(
             // The [updateFrom] call will set the modality to FINAL for constructors, while the JVM backend would use OPEN here.
             modality = Modality.OPEN
         }
+        if (function is IrSimpleFunction && function.modality == Modality.ABSTRACT &&
+            function.parentAsClass.isSealedInline &&
+            replacementOrigin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+        ) {
+            modality = Modality.OPEN
+        }
         origin = when {
             function.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER ->
                 JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
@@ -300,7 +350,49 @@ class MemoizedInlineClassReplacements(
                 replacementOrigin
         }
         name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
+    }.apply {
+        if (function is IrSimpleFunction) {
+            copyPropertyIfNeeded(function)
+        }
+
+        body()
     }
 
     override fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? = null
+
+    private fun IrSimpleFunction.copyPropertyIfNeeded(function: IrSimpleFunction) {
+        val propertySymbol = function.correspondingPropertySymbol
+        if (propertySymbol != null) {
+            val property = commonBuildProperty(propertySymbol)
+            when (function.withoutReceiver()) {
+                propertySymbol.owner.getter?.withoutReceiver() -> property.getter = this
+                propertySymbol.owner.setter?.withoutReceiver() -> property.setter = this
+                else -> error("Orphaned property getter/setter: ${function.render()}")
+            }
+        }
+    }
+
+    class SimpleFunctionWithoutReceiver(
+        val function: IrSimpleFunction
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (other === this) return true
+            if (other !is SimpleFunctionWithoutReceiver) return false
+            return function.name == other.function.name &&
+                    function.typeParameters == other.function.typeParameters &&
+                    function.returnType == other.function.returnType &&
+                    function.extensionReceiverParameter == other.function.extensionReceiverParameter &&
+                    function.valueParameters == other.function.valueParameters
+        }
+
+        override fun hashCode(): Int {
+            return function.name.hashCode() xor
+                    function.typeParameters.hashCode() xor
+                    function.returnType.hashCode() xor
+                    function.extensionReceiverParameter.hashCode() xor
+                    function.valueParameters.hashCode()
+        }
+    }
 }
+
+fun IrSimpleFunction.withoutReceiver() = MemoizedInlineClassReplacements.SimpleFunctionWithoutReceiver(this)

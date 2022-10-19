@@ -341,7 +341,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // Generate common bridges
         val generated = mutableMapOf<Method, Bridge>()
 
-        for (override in irFunction.allOverridden()) {
+        // Do not generate additional bridges for functions, inherited from sealed inline classes in addition to functions from interfaces
+        val trulyOverridden = irFunction.allOverridden().filterNot {
+            it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+        }
+        for (override in trulyOverridden) {
             if (override.isFakeOverride) continue
 
             val signature = override.jvmMethod

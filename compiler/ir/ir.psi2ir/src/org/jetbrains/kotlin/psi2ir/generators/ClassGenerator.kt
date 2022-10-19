@@ -132,13 +132,6 @@ class ClassGenerator(
                                 } else irType
                             }
                         }
-
-                    val isSealedInlineSubclassOfSealedInlineClass =
-                        classDescriptor.getSuperClassOrAny().isSealedInlineClass() && classDescriptor.isSealedInlineClass()
-
-                    if (!isSealedInlineSubclassOfSealedInlineClass) {
-                        generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
-                    }
                 } else if (classDescriptor.isMultiFieldValueClass()) {
                     irClass.valueClassRepresentation = classDescriptor.valueClassRepresentation?.mapUnderlyingType { type ->
                         type.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: $classDescriptor")

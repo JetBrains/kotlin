@@ -172,6 +172,9 @@ fun IrBuilderWithScope.irEqeqeqWithoutBox(arg1: IrExpression, arg2: IrExpression
         arg2
     )
 
+fun IrBuilderWithScope.irAndand(arg1: IrExpression, arg2: IrExpression) =
+    context.andand(startOffset, endOffset, arg1, arg2)
+
 fun IrBuilderWithScope.irNull() =
     irNull(context.irBuiltIns.nothingNType)
 
