@@ -12,8 +12,13 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotation
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.custom
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.name.ClassId
 
@@ -46,11 +51,21 @@ internal class KtFirAnnotationListForType private constructor(
             useSiteSession: FirSession,
             token: KtLifetimeToken,
         ): KtAnnotationsList {
-            return if (coneType.customAnnotations.isEmpty()) {
-                KtEmptyAnnotationsList(token)
-            } else {
-                KtFirAnnotationListForType(coneType, useSiteSession, token)
+            if (coneType.customAnnotations.isEmpty()) {
+                return KtEmptyAnnotationsList(token)
             }
+
+            if (coneType.attributes.custom?.owningSymbol == null) {
+                val hasAnnotationsWithUnresolvedArguments = coneType.customAnnotations.filterIsInstance<FirAnnotationCall>()
+                    .any { it.argumentList !is FirResolvedArgumentList }
+
+                if (hasAnnotationsWithUnresolvedArguments) {
+                    error("$coneType has annotations with unresolved arguments mapping, but no symbol responsible for their resolution")
+                }
+            }
+
+            coneType.attributes.custom?.owningSymbol?.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+            return KtFirAnnotationListForType(coneType, useSiteSession, token)
         }
     }
 }

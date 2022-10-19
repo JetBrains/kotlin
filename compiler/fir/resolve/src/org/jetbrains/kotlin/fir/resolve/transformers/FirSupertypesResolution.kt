@@ -366,7 +366,7 @@ open class FirSupertypeResolverVisitor(
         val resolvedTypesRefs = transformer.withFile(useSiteFile) {
             resolveSuperTypeRefs(
                 transformer,
-                ScopeClassDeclaration(scopes, classDeclarationsStack)
+                ScopeClassDeclaration(scopes, classDeclarationsStack, classLikeDeclaration.symbol)
             )
         }
 

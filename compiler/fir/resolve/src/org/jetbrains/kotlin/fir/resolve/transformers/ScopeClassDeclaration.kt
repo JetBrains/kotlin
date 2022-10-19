@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 data class ScopeClassDeclaration(
     val scopes: List<FirScope>,
     val containingDeclarations: List<FirDeclaration>,
-    val topContainer: FirDeclaration? = null
+    val owningSymbol: FirBasedSymbol<*>?,
+    val topContainer: FirDeclaration? = null,
 )
