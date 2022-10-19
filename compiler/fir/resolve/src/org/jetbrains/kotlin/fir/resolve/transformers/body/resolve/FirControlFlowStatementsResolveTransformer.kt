@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTransformer) :
+class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
     FirPartialBodyResolveTransformer(transformer) {
 
     private val syntheticCallGenerator: FirSyntheticCallGenerator get() = components.syntheticCallGenerator
