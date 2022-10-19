@@ -66,6 +66,8 @@ where advanced options include:
   -Xeffect-system            Enable experimental language feature: effect system
   -Xenable-builder-inference Use the builder inference by default, for all calls with lambdas which can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
+  -Xklib-enable-signature-clash-checks
+                             Enable the checks on uniqueness of signatures
   -Xexpect-actual-linker     Enable experimental expect/actual linker
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.

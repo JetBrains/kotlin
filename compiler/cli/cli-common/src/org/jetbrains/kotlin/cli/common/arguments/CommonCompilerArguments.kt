@@ -409,6 +409,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var normalizeAbsolutePath: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xklib-enable-signature-clash-checks",
+        description = "Enable the checks on uniqueness of signatures"
+    )
+    var enableSignatureClashChecks: Boolean by FreezableVar(true)
+
     @Argument(value = "-Xenable-incremental-compilation", description = "Enable incremental compilation")
     var incrementalCompilation: Boolean? by FreezableVar(null)
 

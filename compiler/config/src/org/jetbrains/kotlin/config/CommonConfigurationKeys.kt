@@ -72,6 +72,10 @@ object CommonConfigurationKeys {
         CompilerConfigurationKey.create<Boolean>("Normalize absolute paths in klib (replace file separator with '/')")
 
     @JvmField
+    val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS =
+        CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
+
+    @JvmField
     val INCREMENTAL_COMPILATION =
         CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
 
