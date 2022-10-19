@@ -143,9 +143,21 @@ public class InteropIndexerNoFModulesTestGenerated extends AbstractNativeInterop
         }
 
         @Test
-        @TestMetadata("topStdargH")
-        public void testTopStdargH() throws Exception {
-            runTest("native/native.tests/testData/Interop/Indexer/builtins/builtinsDefs/topStdargH/");
+        @TestMetadata("filterStdargH")
+        public void testFilterStdargH() throws Exception {
+            runTest("native/native.tests/testData/Interop/Indexer/builtins/builtinsDefs/filterStdargH/");
+        }
+
+        @Test
+        @TestMetadata("fullA")
+        public void testFullA() throws Exception {
+            runTest("native/native.tests/testData/Interop/Indexer/builtins/builtinsDefs/fullA/");
+        }
+
+        @Test
+        @TestMetadata("fullStdargH")
+        public void testFullStdargH() throws Exception {
+            runTest("native/native.tests/testData/Interop/Indexer/builtins/builtinsDefs/fullStdargH/");
         }
     }
 }
