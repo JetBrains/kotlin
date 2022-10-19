@@ -84,7 +84,7 @@ class FirTypeDeserializer(
                 val builder = builders[index]
                 builder.apply {
                     proto.upperBounds(typeTable).mapTo(bounds) {
-                        buildResolvedTypeRef { type = type(it) }
+                        buildResolvedTypeRef { type = type(it, builder.containingDeclarationSymbol) }
                     }
                     addDefaultBoundIfNecessary()
                 }.build()
@@ -105,16 +105,16 @@ class FirTypeDeserializer(
         }
     }
 
-    fun type(proto: ProtoBuf.Type): ConeKotlinType {
+    fun type(proto: ProtoBuf.Type, owningSymbol: FirBasedSymbol<*>?): ConeKotlinType {
         val annotations = annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-        val attributes = annotations.computeTypeAttributes(moduleData.session)
-        return type(proto, attributes)
+        val attributes = annotations.computeTypeAttributes(moduleData.session, owningSymbol = owningSymbol)
+        return type(proto, attributes, owningSymbol)
     }
 
-    fun type(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeKotlinType {
+    fun type(proto: ProtoBuf.Type, attributes: ConeAttributes, owningSymbol: FirBasedSymbol<*>?): ConeKotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
-            val lowerBound = simpleType(proto, attributes)
-            val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!, attributes)
+            val lowerBound = simpleType(proto, attributes, owningSymbol)
+            val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!, attributes, owningSymbol)
 
             val isDynamic = lowerBound == moduleData.session.builtinTypes.nothingType.coneType &&
                     upperBound == moduleData.session.builtinTypes.nullableAnyType.coneType
@@ -126,7 +126,8 @@ class FirTypeDeserializer(
             }
         }
 
-        return simpleType(proto, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+        return simpleType(proto, attributes, owningSymbol)
+            ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
     }
 
     private fun typeParameterSymbol(typeParameterId: Int): ConeTypeParameterLookupTag? =
@@ -144,7 +145,7 @@ class FirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeSimpleKotlinType? {
+    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes, owningSymbol: FirBasedSymbol<*>?): ConeSimpleKotlinType? {
         val constructor = typeSymbol(proto) ?: return null
         if (constructor is ConeTypeParameterLookupTag) {
             return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable).let {
@@ -159,14 +160,14 @@ class FirTypeDeserializer(
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
             argumentList + outerType(typeTable)?.collectAllArguments().orEmpty()
 
-        val arguments = proto.collectAllArguments().map(this::typeArgument).toTypedArray()
+        val arguments = proto.collectAllArguments().map { typeArgument(it, owningSymbol) }.toTypedArray()
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
             createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable, attributes)
         } else {
             ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable, attributes)
         }
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
-        return simpleType(abbreviatedTypeProto, attributes)
+        return simpleType(abbreviatedTypeProto, attributes, owningSymbol)
     }
 
     private fun createSuspendFunctionTypeForBasicCase(
@@ -241,7 +242,7 @@ class FirTypeDeserializer(
     }
 
 
-    private fun typeArgument(typeArgumentProto: ProtoBuf.Type.Argument): ConeTypeProjection {
+    private fun typeArgument(typeArgumentProto: ProtoBuf.Type.Argument, owningSymbol: FirBasedSymbol<*>?): ConeTypeProjection {
         if (typeArgumentProto.projection == ProtoBuf.Type.Argument.Projection.STAR) {
             return ConeStarProjection
         }
@@ -249,7 +250,7 @@ class FirTypeDeserializer(
         val variance = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(typeTable)
             ?: return ConeErrorType(ConeSimpleDiagnostic("No type recorded", DiagnosticKind.DeserializationError))
-        val coneType = type(type)
+        val coneType = type(type, owningSymbol)
         return coneType.toTypeProjection(variance)
     }
 }

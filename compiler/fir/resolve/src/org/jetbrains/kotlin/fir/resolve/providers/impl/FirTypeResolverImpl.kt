@@ -223,7 +223,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         result: TypeResolutionResult,
         areBareTypesAllowed: Boolean,
         topContainer: FirDeclaration?,
-        isOperandOfIsOperator: Boolean
+        isOperandOfIsOperator: Boolean,
+        owningSymbol: FirBasedSymbol<*>?,
     ): ConeKotlinType {
 
         val (symbol, substitutor) = when (result) {
@@ -250,7 +251,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     ConeUnresolvedQualifierError(typeRef.render())
                 }
             }
-            return ConeErrorType(diagnostic, attributes = typeRef.annotations.computeTypeAttributes(session))
+            return ConeErrorType(diagnostic, attributes = typeRef.annotations.computeTypeAttributes(session, owningSymbol = owningSymbol))
         }
         if (symbol is FirTypeParameterSymbol) {
             for (part in typeRef.qualifier) {
@@ -353,7 +354,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return symbol.constructType(
             allTypeArguments.toTypedArray(),
             typeRef.isMarkedNullable,
-            typeRef.annotations.computeTypeAttributes(session)
+            typeRef.annotations.computeTypeAttributes(session, owningSymbol = owningSymbol)
         ).also {
             val lookupTag = it.lookupTag
             if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
@@ -462,7 +463,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
-    private fun createFunctionalType(typeRef: FirFunctionTypeRef): ConeClassLikeType {
+    private fun createFunctionalType(typeRef: FirFunctionTypeRef, owningSymbol: FirBasedSymbol<*>?): ConeClassLikeType {
         val parameters =
             typeRef.contextReceiverTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
@@ -484,7 +485,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 if (typeRef.contextReceiverTypeRefs.isNotEmpty()) {
                     add(CompilerConeAttributes.ContextFunctionTypeParams(typeRef.contextReceiverTypeRefs.size))
                 }
-            }
+            },
+            owningSymbol = owningSymbol,
         )
         val symbol = resolveBuiltInQualified(classId, session)
         return ConeClassLikeTypeImpl(
@@ -516,10 +518,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     result,
                     areBareTypesAllowed,
                     scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
-                    isOperandOfIsOperator
+                    isOperandOfIsOperator,
+                    scopeClassDeclaration.owningSymbol,
                 ) to (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic
             }
-            is FirFunctionTypeRef -> createFunctionalType(typeRef) to null
+            is FirFunctionTypeRef -> createFunctionalType(typeRef, scopeClassDeclaration.owningSymbol) to null
             is FirDynamicTypeRef -> ConeDynamicType.create(session) to null
             is FirIntersectionTypeRef -> {
                 val leftType = typeRef.leftType.coneType
