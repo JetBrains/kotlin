@@ -164,7 +164,9 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             compilerConfiguration = configuration,
             irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
             mainArguments = null,
-            compilerInterfaceFactory = { mainModule, cfg -> JsIrCompilerWithIC(mainModule, cfg, setOf(BOX_FUN_FQN)) }
+            compilerInterfaceFactory = { mainModule, cfg ->
+                JsIrCompilerWithIC(mainModule, cfg, JsGenerationGranularity.PER_MODULE, setOf(BOX_FUN_FQN))
+            }
         )
         val icCaches = cacheUpdater.actualizeCaches()
 
@@ -204,11 +206,11 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
 
         val compiledResult = transformer.generateModule(
             modules = ir.allModules,
-            modes = setOf(TranslationMode.FULL_DCE_MINIMIZED_NAMES),
+            modes = setOf(TranslationMode.PER_MODULE),
             relativeRequirePath = false
         )
 
-        return compiledResult.outputs[TranslationMode.FULL_DCE_MINIMIZED_NAMES] ?: error("No DCE output")
+        return compiledResult.outputs[TranslationMode.PER_MODULE] ?: error("No compiler output")
     }
 
     private fun KotlinCoreEnvironment.createPsiFiles(sourceDir: File): List<KtFile> {
