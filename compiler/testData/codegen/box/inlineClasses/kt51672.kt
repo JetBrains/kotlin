@@ -12,6 +12,7 @@ interface A {
 interface B : A
 
 // MODULE: main(lib)
+// WITH_STDLIB
 // FILE: main.kt
 interface C : B
 

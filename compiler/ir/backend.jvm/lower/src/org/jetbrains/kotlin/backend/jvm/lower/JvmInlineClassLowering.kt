@@ -30,11 +30,10 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 
 /**
  * Adds new constructors, box, and unbox functions to inline classes as well as replacement
- * functions and bridges to avoid clashes between overloaded function. Changes call with
+ * functions and bridges to avoid clashes between overloaded function. Changes calls with
  * known types to call the replacement functions.
  *
  * We do not unfold inline class types here. Instead, the type mapper will lower inline class
@@ -71,6 +70,7 @@ internal class JvmInlineClassLowering(
             // a continuation class.
             copyAttributes(source)
         }
+
 
     override val specificMangle: SpecificMangle
         get() = SpecificMangle.Inline
@@ -112,16 +112,6 @@ internal class JvmInlineClassLowering(
         buildBoxFunction(declaration)
         buildUnboxFunction(declaration)
         buildSpecializedEqualsMethodIfNeeded(declaration)
-        addJvmInlineAnnotation(declaration)
-    }
-
-    private fun addJvmInlineAnnotation(valueClass: IrClass) {
-        if (valueClass.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return
-        val constructor = context.ir.symbols.jvmInlineAnnotation.constructors.first()
-        valueClass.annotations = valueClass.annotations + IrConstructorCallImpl.fromSymbolOwner(
-            constructor.owner.returnType,
-            constructor
-        )
     }
 
     override fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean) {
@@ -529,5 +519,4 @@ internal class JvmInlineClassLowering(
 
         valueClass.declarations += function
     }
-
 }

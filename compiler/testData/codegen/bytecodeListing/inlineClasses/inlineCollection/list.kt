@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineList<T>(private val list: List<T>) : List<T> {

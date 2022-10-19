@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineMap<K, V>(private val map: Map<K, V>) : Map<K, V> {

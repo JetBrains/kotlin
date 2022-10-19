@@ -1,3 +1,4 @@
+// WITH_STDLIB
 package test
 
 inline class IC(val i: Int)

@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineIterator<T>(private val it: Iterator<T>) : Iterator<T> {

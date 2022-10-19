@@ -44,6 +44,7 @@ data class TestData {
 
 }
 
+@JvmInline
 value class TestInline {
   constructor(nn: Nothing?) /* primary */ {
     super/*Any*/()

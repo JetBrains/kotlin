@@ -1,3 +1,4 @@
+// WITH_STDLIB
 inline class X(val x: Any?)
 
 interface IFoo<out T : X?> {

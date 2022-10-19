@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineMutableMapEntry<K, V>(private val e: MutableMap.MutableEntry<K, V>) : MutableMap.MutableEntry<K, V> {

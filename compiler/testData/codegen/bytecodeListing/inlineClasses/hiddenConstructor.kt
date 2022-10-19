@@ -1,3 +1,4 @@
+// WITH_STDLIB
 inline class Z(val x: Int)
 
 class Test1(val z: Z)

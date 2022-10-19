@@ -1,3 +1,4 @@
+@JvmInline
 value class Test {
   constructor(x: Int) /* primary */ {
     super/*Any*/()

@@ -1,4 +1,5 @@
 // SKIP_INLINE_CHECK_IN: inlineFun$default
+// WITH_STDLIB
 // FILE: 1.kt
 package test
 

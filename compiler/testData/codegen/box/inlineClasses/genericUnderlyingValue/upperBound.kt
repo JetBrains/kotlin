@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // CHECK_BYTECODE_LISTING
 // FIR_IDENTICAL
 // LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter

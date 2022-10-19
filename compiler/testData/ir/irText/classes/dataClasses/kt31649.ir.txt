@@ -98,6 +98,8 @@ FILE fqName:<root> fileName:/kt31649.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestData'
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
+    annotations:
+      JvmInline
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInline
     CONSTRUCTOR visibility:public <> (nn:kotlin.Nothing?) returnType:<root>.TestInline [primary]
       VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?

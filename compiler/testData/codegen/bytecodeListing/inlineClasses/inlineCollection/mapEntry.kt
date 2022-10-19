@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class InlineMapEntry<K, V>(private val e: Map.Entry<K, V>) : Map.Entry<K, V> {

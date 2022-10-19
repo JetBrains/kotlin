@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 class C<T>(val t: T) {
     override fun hashCode(): Int = t as Int
