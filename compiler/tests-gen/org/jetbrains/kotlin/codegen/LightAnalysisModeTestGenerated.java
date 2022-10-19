@@ -18489,6 +18489,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class BoxReturnValueInLambda extends AbstractLightAnalysisModeTest {
+            @TestMetadata("boxAnySealed.kt")
+            public void ignoreBoxAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("boxFunLiteralAnySealed.kt")
+            public void ignoreBoxFunLiteralAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -18654,6 +18664,141 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("boxReturnValueInDefaultMethodGenericInt.kt")
             public void ignoreBoxReturnValueInDefaultMethodGenericInt() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodGenericInt.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("boxReturnValueInDefaultMethodSealed.kt")
+            public void ignoreBoxReturnValueInDefaultMethodSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("covariantOverrideChainErasedToAnySealed.kt")
+            public void ignoreCovariantOverrideChainErasedToAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("covariantOverrideChainErasedToNullableAnySealed.kt")
+            public void ignoreCovariantOverrideChainErasedToNullableAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("covariantOverrideErasedToAnySealed.kt")
+            public void ignoreCovariantOverrideErasedToAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("covariantOverrideErasedToInterfaceSealed.kt")
+            public void ignoreCovariantOverrideErasedToInterfaceSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterfaceSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("covariantOverrideErasedToPrimitiveSealed.kt")
+            public void ignoreCovariantOverrideErasedToPrimitiveSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("covariantOverrideListVsMutableListSealed.kt")
+            public void ignoreCovariantOverrideListVsMutableListSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableListSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("covariantOverrideUnrelatedInterfacesSealed.kt")
+            public void ignoreCovariantOverrideUnrelatedInterfacesSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("genericOverrideSealed.kt")
+            public void ignoreGenericOverrideSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("genericOverrideSpecializedSealed.kt")
+            public void ignoreGenericOverrideSpecializedSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecializedSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("inlineClassInOverriddenReturnTypesSealed.kt")
+            public void ignoreInlineClassInOverriddenReturnTypesSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("kt28483Sealed.kt")
+            public void ignoreKt28483Sealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Sealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("kt31585Sealed.kt")
+            public void ignoreKt31585Sealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585Sealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("kt35234Sealed.kt")
+            public void ignoreKt35234Sealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Sealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("overrideGenericWithInlineClassSealed.kt")
+            public void ignoreOverrideGenericWithInlineClassSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClassSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed.kt")
+            public void ignoreOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed.kt")
+            public void ignoreOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed.kt")
+            public void ignoreOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("overrideNullableInlineClassWithNonNullAnySealed.kt")
+            public void ignoreOverrideNullableInlineClassWithNonNullAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyNullSealed.kt")
+            public void ignoreOverrideNullableInlineClassWithNonNullNullableAnyNullSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnySealed.kt")
+            public void ignoreOverrideNullableInlineClassWithNonNullNullableAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnySealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("relatedReturnTypes1aSealed.kt")
+            public void ignoreRelatedReturnTypes1aSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("relatedReturnTypes1bSealed.kt")
+            public void ignoreRelatedReturnTypes1bSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1bSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("relatedReturnTypes2aSealed.kt")
+            public void ignoreRelatedReturnTypes2aSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("relatedReturnTypes2bSealed.kt")
+            public void ignoreRelatedReturnTypes2bSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2bSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("uncastInlineClassToAnyAndBackSealed.kt")
+            public void ignoreUncastInlineClassToAnyAndBackSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBackSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("unrelatedGenericsSealed.kt")
+            public void ignoreUnrelatedGenericsSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsSealed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
             private void runTest(String testDataFilePath) throws Exception {

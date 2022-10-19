@@ -40,6 +40,14 @@ class MemoizedInlineClassReplacements(
     override val getReplacementFunctionImpl: (IrFunction) -> IrSimpleFunction? =
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
+                // Generate constructor-impl for sealed inline classes with a parameter
+                it is IrConstructor && it.parentAsClass.isSealedInline ->
+                    createStaticReplacementForSealedInlineClassConstructor(it)
+
+                // Do not update sealed inline class value getter
+                it.origin == IrDeclarationOrigin.GETTER_OF_SEALED_INLINE_CLASS_FIELD -> null
+                it.origin == IrDeclarationOrigin.FAKE_OVERRIDE && it.name == InlineClassAbi.sealedInlineClassFieldGetterName -> null
+
                 // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
@@ -84,6 +92,16 @@ class MemoizedInlineClassReplacements(
             }
         }
 
+    private fun createStaticReplacementForSealedInlineClassConstructor(constructor: IrConstructor): IrSimpleFunction =
+        buildReplacement(constructor, JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_FOR_SEALED_INLINE_CLASS, noFakeOverride = true) {
+            valueParameters = emptyList()
+            addValueParameter(
+                InlineClassAbi.sealedInlineClassFieldName,
+                context.irBuiltIns.anyNType,
+                JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_PARAMETER_FOR_SEALED_INLINE_CLASS
+            )
+        }
+
     override fun quickCheckIfFunctionIsNotApplicable(function: IrFunction) = !(
             function.parent.let { (it is IrClass && it.isInlineOrSealedInline ) } ||
                     function.dispatchReceiverParameter?.type?.isInlineClassType() == true ||
@@ -123,7 +141,10 @@ class MemoizedInlineClassReplacements(
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
-                returnType = irClass.inlineClassRepresentation!!.underlyingType
+                returnType = context.irBuiltIns.getInlineClassUnderlyingType(irClass)
+                if (irClass.modality == Modality.SEALED) {
+                    modality = Modality.OPEN
+                }
             }.apply {
                 parent = irClass
                 createDispatchReceiverParameter()
@@ -142,18 +163,18 @@ class MemoizedInlineClassReplacements(
             }.apply {
                 parent = irClass
                 // We ignore type arguments here, since there is no good way to go from type arguments to types in the IR anyway.
-                val typeArgument =
+                val argumentType =
                     if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
                     else IrSimpleTypeImpl(
                         irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf()
                     )
                 addValueParameter {
                     name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
-                    type = typeArgument
+                    type = argumentType
                 }
                 addValueParameter {
                     name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME
-                    type = typeArgument
+                    type = argumentType
                 }
             }
         }

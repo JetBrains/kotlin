@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.addBackingField
+import org.jetbrains.kotlin.ir.builders.declarations.addGetter
+import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
@@ -90,6 +93,10 @@ class ClassGenerator(
                 classDescriptor.thisAsReceiverParameter,
                 classDescriptor.thisAsReceiverParameter.type.toIrType()
             )
+
+            if (classDescriptor.isSealedInlineClass() && !classDescriptor.getSuperClassOrAny().isValueClass()) {
+                generatePropertyForSealedInlineClass(irClass)
+            }
 
             generateFieldsForContextReceivers(irClass, classDescriptor)
 
@@ -527,6 +534,30 @@ class ClassGenerator(
             )
             context.additionalDescriptorStorage.put(receiverDescriptor.value, irField)
             irClass.addMember(irField)
+        }
+    }
+
+    private fun generatePropertyForSealedInlineClass(irClass: IrClass) {
+        irClass.addProperty {
+            name = Name.identifier("\$value")
+            origin = IrDeclarationOrigin.FIELD_FOR_SEALED_INLINE_CLASS
+            visibility = DescriptorVisibilities.PROTECTED
+        }.also { irProperty ->
+            irProperty.addBackingField {
+                type = context.irBuiltIns.anyNType
+                origin = IrDeclarationOrigin.FIELD_FOR_SEALED_INLINE_CLASS
+                visibility = DescriptorVisibilities.PROTECTED
+                isFinal = true
+            }
+            irProperty.addGetter {
+                returnType = context.irBuiltIns.anyNType
+                origin = IrDeclarationOrigin.GETTER_OF_SEALED_INLINE_CLASS_FIELD
+                visibility = DescriptorVisibilities.PROTECTED
+            }.also {
+                it.body = IrExpressionBodyImpl(
+                    IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irProperty.backingField!!.symbol, context.irBuiltIns.anyNType)
+                )
+            }
         }
     }
 

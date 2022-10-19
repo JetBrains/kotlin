@@ -21,15 +21,11 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationState.MultiFieldValueClassUnboxInfo
-import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.InsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 
 abstract class BoxedBasicValue(type: Type) : StrictBasicValue(type) {
     abstract val descriptor: BoxedValueDescriptor
@@ -170,9 +166,14 @@ fun getUnboxedTypes(
 }
 
 fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
-    val descriptor =
-        state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isInlineClass() } ?: return null
-    return state.mapInlineClass(descriptor)
+    val descriptor = state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull() ?: return null
+
+    val inlineClassDescriptor =
+        if (descriptor.isInlineClass() || descriptor.isSealedInlineClass())
+            descriptor
+        else return null
+
+    return state.mapInlineClass(inlineClassDescriptor)
 }
 
 fun getMultiFieldValueClassUnboxInfo(boxedType: Type, state: GenerationState): MultiFieldValueClassUnboxInfo? {

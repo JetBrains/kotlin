@@ -66,6 +66,8 @@ interface IrDeclarationOrigin {
     object PROPERTY_FOR_ENUM_ENTRIES: IrDeclarationOriginImpl("PROPERTY_FOR_ENUM_ENTRIES", isSynthetic = false)
     object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
     object FIELD_FOR_CLASS_CONTEXT_RECEIVER : IrDeclarationOriginImpl("FIELD_FOR_CLASS_CONTEXT_RECEIVER", isSynthetic = true)
+    object FIELD_FOR_SEALED_INLINE_CLASS : IrDeclarationOriginImpl("FIELD_FOR_SEALED_INLINE_CLASS", isSynthetic = true)
+    object GETTER_OF_SEALED_INLINE_CLASS_FIELD : IrDeclarationOriginImpl("GETTER_OF_SEALED_INLINE_CLASS_FIELD")
 
     object ADAPTER_FOR_CALLABLE_REFERENCE : IrDeclarationOriginImpl("ADAPTER_FOR_CALLABLE_REFERENCE", isSynthetic = true)
     object ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE : IrDeclarationOriginImpl("ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE")

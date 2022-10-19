@@ -11,14 +11,18 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isChildOfSealedInlineClass
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -106,7 +110,8 @@ internal class JvmInlineClassLowering(
         val irConstructor = declaration.primaryConstructor!!
         // The field getter is used by reflection and cannot be removed here unless it is internal.
         declaration.declarations.removeIf {
-            it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
+            (it == irConstructor && declaration.modality != Modality.SEALED) ||
+                    (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
         }
         buildPrimaryInlineClassConstructor(declaration, irConstructor)
         buildBoxFunction(declaration)
@@ -378,9 +383,12 @@ internal class JvmInlineClassLowering(
             field.name == parent.inlineClassFieldName
         ) {
             val receiver = expression.receiver!!.transform(this, null)
+            val type =
+                if (field.parentAsClass.isChildOfSealedInlineClass() && field.type.isPrimitiveType()) field.type.makeNullable()
+                else field.type
             // If we get the field of nullable variable, we can be sure, that type is not null,
             // since we first generate null check.
-            return coerceInlineClasses(receiver, receiver.type.makeNotNull(), field.type)
+            return coerceInlineClasses(receiver, receiver.type.makeNotNull(), type)
         }
         return super.visitGetField(expression)
     }
@@ -411,16 +419,27 @@ internal class JvmInlineClassLowering(
         // Add the default primary constructor
         valueClass.addConstructor {
             updateFrom(irConstructor)
-            visibility = DescriptorVisibilities.PRIVATE
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
+            visibility = if (valueClass.isSealedInline) DescriptorVisibilities.PROTECTED else DescriptorVisibilities.PRIVATE
+            origin =
+                if (valueClass.isSealedInline) JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_FOR_SEALED_INLINE_CLASS
+                else JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
             returnType = irConstructor.returnType
         }.apply {
+            if (valueClass.isSealedInline) {
+                addValueParameter(
+                    InlineClassAbi.sealedInlineClassFieldName,
+                    context.irBuiltIns.anyNType,
+                    JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_PARAMETER_FOR_SEALED_INLINE_CLASS
+                )
+            }
             // Don't create a default argument stub for the primary constructor
             irConstructor.valueParameters.forEach { it.defaultValue = null }
             copyParameterDeclarationsFrom(irConstructor)
             annotations = irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
-                +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                +irDelegatingConstructorCall(valueClass.superTypes.singleOrNull {
+                    it.classOrNull?.owner?.kind == ClassKind.CLASS
+                }?.classOrNull?.constructors?.singleOrNull()?.owner ?: context.irBuiltIns.anyClass.owner.constructors.single())
                 +irSetField(
                     irGet(valueClass.thisReceiver!!),
                     getInlineClassBackingField(valueClass),
@@ -433,30 +452,44 @@ internal class JvmInlineClassLowering(
         // null-checks, default arguments, and anonymous initializers.
         val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)!!
 
-        val initBlocks = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>()
-
         function.valueParameters.forEach { it.transformChildrenVoid() }
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             val argument = function.valueParameters[0]
             val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType, skipCast = true))
             valueMap[valueClass.thisReceiver!!.symbol] = thisValue
-            for (initBlock in initBlocks) {
-                for (stmt in initBlock.body.statements) {
-                    +stmt.transformStatement(this@JvmInlineClassLowering).patchDeclarationParents(function)
-                }
-            }
+            moveInitBlocksInto(valueClass, function)
             +irReturn(irGet(thisValue))
         }
 
-        valueClass.declarations.removeAll(initBlocks)
         valueClass.declarations += function
+    }
+
+    private fun IrBlockBodyBuilder.moveInitBlocksInto(
+        irClass: IrClass,
+        function: IrSimpleFunction
+    ) {
+        val initBlocks = irClass.declarations.filterIsInstance<IrAnonymousInitializer>()
+        for (initBlock in initBlocks) {
+            for (stmt in initBlock.body.statements) {
+                +stmt.transformStatement(this@JvmInlineClassLowering).patchDeclarationParents(function)
+            }
+        }
+        irClass.declarations.removeAll(initBlocks)
     }
 
     private fun buildBoxFunction(valueClass: IrClass) {
         val function = context.inlineClassReplacements.getBoxFunction(valueClass)
+
+        val primaryConstructor =
+            if (valueClass.isSealedInline) {
+                valueClass.declarations.single {
+                    it is IrConstructor && it.origin == JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_FOR_SEALED_INLINE_CLASS
+                } as IrConstructor
+            } else valueClass.primaryConstructor!!
+
         with(context.createIrBuilder(function.symbol)) {
             function.body = irExprBody(
-                irCall(valueClass.primaryConstructor!!.symbol).apply {
+                irCall(primaryConstructor.symbol).apply {
                     passTypeArgumentsFrom(function)
                     putValueArgument(0, irGet(function.valueParameters[0]))
                 }
@@ -465,13 +498,19 @@ internal class JvmInlineClassLowering(
         valueClass.declarations += function
     }
 
+
+    private fun coerceFromSealedInlineClass(top: IrClass, expr: IrExpression): IrExpression =
+        coerceInlineClasses(expr, top.defaultType, context.irBuiltIns.anyNType)
+
+    private fun coerceToSealedInlineClass(expr: IrExpression, top: IrClass): IrExpression =
+        coerceInlineClasses(expr, context.irBuiltIns.anyNType, top.defaultType)
+
     private fun buildUnboxFunction(irClass: IrClass) {
         val function = context.inlineClassReplacements.getUnboxFunction(irClass)
         val field = getInlineClassBackingField(irClass)
 
-        function.body = context.createIrBuilder(function.symbol).irBlockBody {
-            val thisVal = irGet(function.dispatchReceiverParameter!!)
-            +irReturn(irGetField(thisVal, field))
+        function.body = with(context.createIrBuilder(function.symbol)) {
+            irExprBody(irGetField(irGet(function.dispatchReceiverParameter!!), field))
         }
 
         irClass.declarations += function

@@ -19367,8 +19367,10 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public BoxReturnValueInLambda() {
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19413,6 +19415,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("boxAnySealed.kt")
+                public void testBoxAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAnySealed.kt");
+                }
+
+                @Test
                 @TestMetadata("boxFunLiteralAny.kt")
                 public void testBoxFunLiteralAny() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19424,6 +19433,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testBoxFunLiteralAnyGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnyGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("boxFunLiteralAnySealed.kt")
+                public void testBoxFunLiteralAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnySealed.kt");
                 }
 
                 @Test
@@ -19602,65 +19618,92 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public BoxReturnValueOnOverride() {
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodGenericInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterfaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterfaceSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableList.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableListGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableListSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfaces.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecialized.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecializedGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecializedSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Generic2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Sealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585Sealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Sealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClassSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1bSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2bSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBack.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBackGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBackSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenerics.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -19683,6 +19726,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("boxReturnValueInDefaultMethodSealed.kt")
+                public void testBoxReturnValueInDefaultMethodSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("covariantOverrideChainErasedToAny.kt")
                 public void testCovariantOverrideChainErasedToAny() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19694,6 +19744,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testCovariantOverrideChainErasedToAnyGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnyGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("covariantOverrideChainErasedToAnySealed.kt")
+                public void testCovariantOverrideChainErasedToAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnySealed.kt");
                 }
 
                 @Test
@@ -19718,6 +19775,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("covariantOverrideChainErasedToNullableAnySealed.kt")
+                public void testCovariantOverrideChainErasedToNullableAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnySealed.kt");
+                }
+
+                @Test
                 @TestMetadata("covariantOverrideErasedToAny.kt")
                 public void testCovariantOverrideErasedToAny() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19729,6 +19793,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testCovariantOverrideErasedToAnyGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnyGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("covariantOverrideErasedToAnySealed.kt")
+                public void testCovariantOverrideErasedToAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnySealed.kt");
                 }
 
                 @Test
@@ -19746,6 +19817,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("covariantOverrideErasedToInterfaceSealed.kt")
+                public void testCovariantOverrideErasedToInterfaceSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterfaceSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("covariantOverrideErasedToPrimitive.kt")
                 public void testCovariantOverrideErasedToPrimitive() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19757,6 +19835,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testCovariantOverrideErasedToPrimitiveGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("covariantOverrideErasedToPrimitiveSealed.kt")
+                public void testCovariantOverrideErasedToPrimitiveSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveSealed.kt");
                 }
 
                 @Test
@@ -19774,6 +19859,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("covariantOverrideListVsMutableListSealed.kt")
+                public void testCovariantOverrideListVsMutableListSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableListSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("covariantOverrideUnrelatedInterfaces.kt")
                 public void testCovariantOverrideUnrelatedInterfaces() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19785,6 +19877,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testCovariantOverrideUnrelatedInterfacesGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("covariantOverrideUnrelatedInterfacesSealed.kt")
+                public void testCovariantOverrideUnrelatedInterfacesSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesSealed.kt");
                 }
 
                 @Test
@@ -19802,6 +19901,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("genericOverrideSealed.kt")
+                public void testGenericOverrideSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("genericOverrideSpecialized.kt")
                 public void testGenericOverrideSpecialized() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19816,6 +19922,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("genericOverrideSpecializedSealed.kt")
+                public void testGenericOverrideSpecializedSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecializedSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("inlineClassInOverriddenReturnTypes.kt")
                 public void testInlineClassInOverriddenReturnTypes() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19827,6 +19940,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testInlineClassInOverriddenReturnTypesGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineClassInOverriddenReturnTypesSealed.kt")
+                public void testInlineClassInOverriddenReturnTypesSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesSealed.kt");
                 }
 
                 @Test
@@ -19851,6 +19971,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("kt28483Sealed.kt")
+                public void testKt28483Sealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Sealed.kt");
+                }
+
+                @Test
                 @TestMetadata("kt31585.kt")
                 public void testKt31585() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19865,6 +19992,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("kt31585Sealed.kt")
+                public void testKt31585Sealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585Sealed.kt");
+                }
+
+                @Test
                 @TestMetadata("kt35234.kt")
                 public void testKt35234() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19876,6 +20010,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testKt35234Generic() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Generic.kt");
+                }
+
+                @Test
+                @TestMetadata("kt35234Sealed.kt")
+                public void testKt35234Sealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Sealed.kt");
                 }
 
                 @Test
@@ -19900,6 +20041,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("overrideGenericWithInlineClassSealed.kt")
+                public void testOverrideGenericWithInlineClassSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClassSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt")
                 public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAny() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19911,6 +20059,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed.kt")
+                public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed.kt");
                 }
 
                 @Test
@@ -19956,6 +20111,20 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed.kt")
+                public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed.kt");
+                }
+
+                @Test
+                @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed.kt")
+                public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed.kt");
+                }
+
+                @Test
                 @TestMetadata("overrideNullableInlineClassWithNonNullAny.kt")
                 public void testOverrideNullableInlineClassWithNonNullAny() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19967,6 +20136,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testOverrideNullableInlineClassWithNonNullAnyGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnyGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("overrideNullableInlineClassWithNonNullAnySealed.kt")
+                public void testOverrideNullableInlineClassWithNonNullAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnySealed.kt");
                 }
 
                 @Test
@@ -20012,6 +20188,20 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyNullSealed.kt")
+                public void testOverrideNullableInlineClassWithNonNullNullableAnyNullSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullSealed.kt");
+                }
+
+                @Test
+                @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnySealed.kt")
+                public void testOverrideNullableInlineClassWithNonNullNullableAnySealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnySealed.kt");
+                }
+
+                @Test
                 @TestMetadata("relatedReturnTypes1a.kt")
                 public void testRelatedReturnTypes1a() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -20023,6 +20213,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testRelatedReturnTypes1aGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("relatedReturnTypes1aSealed.kt")
+                public void testRelatedReturnTypes1aSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aSealed.kt");
                 }
 
                 @Test
@@ -20040,6 +20237,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("relatedReturnTypes1bSealed.kt")
+                public void testRelatedReturnTypes1bSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1bSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("relatedReturnTypes2a.kt")
                 public void testRelatedReturnTypes2a() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -20051,6 +20255,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testRelatedReturnTypes2aGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("relatedReturnTypes2aSealed.kt")
+                public void testRelatedReturnTypes2aSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aSealed.kt");
                 }
 
                 @Test
@@ -20068,6 +20279,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("relatedReturnTypes2bSealed.kt")
+                public void testRelatedReturnTypes2bSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2bSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("uncastInlineClassToAnyAndBack.kt")
                 public void testUncastInlineClassToAnyAndBack() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -20082,6 +20300,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("uncastInlineClassToAnyAndBackSealed.kt")
+                public void testUncastInlineClassToAnyAndBackSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBackSealed.kt");
+                }
+
+                @Test
                 @TestMetadata("unrelatedGenerics.kt")
                 public void testUnrelatedGenerics() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -20093,6 +20318,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testUnrelatedGenericsGeneric() throws Exception {
                     // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                     runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("unrelatedGenericsSealed.kt")
+                public void testUnrelatedGenericsSealed() throws Exception {
+                    // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                    runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsSealed.kt");
                 }
             }
 

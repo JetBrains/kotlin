@@ -67,7 +67,7 @@ object InlineClassAbi {
             assert(irFunction.constructedClass.isMultiFieldValueClass || irFunction.constructedClass.isInlineOrSealedInline) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
-            return Name.identifier("constructor-impl")
+            return constructorName
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
@@ -75,18 +75,20 @@ object InlineClassAbi {
             return irFunction.name
         }
 
-        val base = when {
-            irFunction.isGetter ->
-                JvmAbi.getterName(irFunction.propertyName.asString())
-            irFunction.isSetter ->
-                JvmAbi.setterName(irFunction.propertyName.asString())
-            irFunction.name.isSpecial ->
-                error("Unhandled special name in mangledNameFor: ${irFunction.name}")
-            else ->
-                irFunction.name.asString()
-        }
+        val base = functionNameBase(irFunction)
 
         return Name.identifier("$base-${suffix ?: "impl"}")
+    }
+
+    fun functionNameBase(irFunction: IrFunction) = when {
+        irFunction.isGetter ->
+            JvmAbi.getterName(irFunction.propertyName.asString())
+        irFunction.isSetter ->
+            JvmAbi.setterName(irFunction.propertyName.asString())
+        irFunction.name.isSpecial ->
+            error("Unhandled special name in mangledNameFor: ${irFunction.name}")
+        else ->
+            irFunction.name.asString()
     }
 
     fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String? =
@@ -126,6 +128,12 @@ object InlineClassAbi {
 
     private val IrFunction.propertyName: Name
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
+
+    val sealedInlineClassFieldName = Name.identifier("\$value")
+
+    val sealedInlineClassFieldGetterName = Name.identifier("get\$value")
+
+    val constructorName = Name.identifier("constructor-impl")
 }
 
 fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean {
