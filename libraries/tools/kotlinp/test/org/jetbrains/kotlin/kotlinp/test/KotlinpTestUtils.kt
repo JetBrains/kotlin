@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kotlinp.test
 
 import com.intellij.openapi.Disposable
 import junit.framework.TestCase.assertEquals
+import kotlinx.metadata.DeprecatedVisitor
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.KotlinModuleMetadata
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.test.fail
 
+@OptIn(DeprecatedVisitor::class)
 fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, compareWithTxt: Boolean, readWriteAndCompare: Boolean) {
     val main = StringBuilder()
     val afterVisitors = StringBuilder()
@@ -97,6 +99,8 @@ private fun StringBuilder.appendFileName(file: File) {
 // Reads the class file and writes it back with *Writer visitors.
 // The resulting class file should be the same from the point of view of any metadata reader, including kotlinp
 // (the exact bytes may differ though, because there are multiple ways to encode the same metadata)
+@Suppress("DEPRECATION_ERROR")
+@DeprecatedVisitor // TODO: not sure this test is needed at all now
 private fun transformClassFileWithReadWriteVisitors(classFile: KotlinClassMetadata): KotlinClassMetadata =
     when (classFile) {
         is KotlinClassMetadata.Class -> KotlinClassMetadata.Class.Writer().apply(classFile::accept).write()
@@ -118,18 +122,20 @@ private fun transformClassFileWithReadWriteVisitors(classFile: KotlinClassMetada
 private fun transformClassFileWithNodes(classFile: KotlinClassMetadata): KotlinClassMetadata =
     when (classFile) {
         is KotlinClassMetadata.Class ->
-            KotlinClassMetadata.Class.Writer().apply(classFile.toKmClass()::accept).write()
+            KotlinClassMetadata.writeClass(classFile.toKmClass())
         is KotlinClassMetadata.FileFacade ->
-            KotlinClassMetadata.FileFacade.Writer().apply(classFile.toKmPackage()::accept).write()
+            KotlinClassMetadata.writeFileFacade(classFile.toKmPackage())
         is KotlinClassMetadata.SyntheticClass ->
-            KotlinClassMetadata.SyntheticClass.Writer().apply { classFile.toKmLambda()?.accept(this) }.write()
+            classFile.toKmLambda()?.let { KotlinClassMetadata.writeLambda(it) } ?: KotlinClassMetadata.writeSyntheticClass()
         is KotlinClassMetadata.MultiFileClassPart ->
-            KotlinClassMetadata.MultiFileClassPart.Writer().apply(classFile.toKmPackage()::accept).write(classFile.facadeClassName)
+            KotlinClassMetadata.writeMultiFileClassPart(classFile.toKmPackage(), classFile.facadeClassName)
         else -> classFile
     }
 
+@Suppress("DEPRECATION_ERROR")
+@DeprecatedVisitor
 private fun transformModuleFileWithReadWriteVisitors(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
     KotlinModuleMetadata.Writer().apply(moduleFile::accept).write()
 
 private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
-    KotlinModuleMetadata.Writer().apply(moduleFile.toKmModule()::accept).write()
+    KotlinModuleMetadata.write(moduleFile.toKmModule())

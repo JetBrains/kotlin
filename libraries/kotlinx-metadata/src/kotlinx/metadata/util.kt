@@ -17,7 +17,7 @@ package kotlinx.metadata
  *     klass.functions.assignFrom(...)
  *
  */
-fun <T> MutableList<T>.assignFrom(collection: Collection<T>) {
+internal fun <T> MutableList<T>.assignFrom(collection: Collection<T>) {
     clear()
     addAll(collection)
 }

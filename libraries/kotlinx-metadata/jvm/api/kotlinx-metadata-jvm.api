@@ -277,6 +277,18 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class$Writer : kotli
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$Companion {
 	public final fun read (Lkotlinx/metadata/jvm/KotlinClassHeader;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+	public final fun writeClass (Lkotlinx/metadata/KmClass;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
+	public static synthetic fun writeClass$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmClass;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
+	public final fun writeFileFacade (Lkotlinx/metadata/KmPackage;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
+	public static synthetic fun writeFileFacade$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmPackage;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
+	public final fun writeLambda (Lkotlinx/metadata/KmLambda;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public static synthetic fun writeLambda$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmLambda;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public final fun writeMultiFileClassFacade (Ljava/util/List;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+	public static synthetic fun writeMultiFileClassFacade$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Ljava/util/List;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+	public final fun writeMultiFileClassPart (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+	public static synthetic fun writeMultiFileClassPart$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;Lkotlinx/metadata/KmPackage;Ljava/lang/String;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+	public final fun writeSyntheticClass ([II)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public static synthetic fun writeSyntheticClass$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade : kotlinx/metadata/jvm/KotlinClassMetadata {
@@ -346,6 +358,8 @@ public final class kotlinx/metadata/jvm/KotlinModuleMetadata {
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Companion {
 	public final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+	public final fun write (Lkotlinx/metadata/jvm/KmModule;[I)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;Lkotlinx/metadata/jvm/KmModule;[IILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
 }
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Writer : kotlinx/metadata/jvm/KmModuleVisitor {

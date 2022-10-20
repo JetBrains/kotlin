@@ -7,10 +7,7 @@
 
 package kotlinx.metadata.jvm
 
-import kotlinx.metadata.InconsistentKotlinMetadataException
-import kotlinx.metadata.KmAnnotation
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmClassVisitor
+import kotlinx.metadata.*
 import kotlinx.metadata.impl.accept
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
@@ -25,6 +22,8 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  * and call [KotlinModuleMetadata.read].
  *
  * @property bytes the byte array representing the contents of a `.kotlin_module` file
+ *
+ * TODO: since it is not completed, may be we should just delete it?
  */
 class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate") val bytes: ByteArray) {
     internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
@@ -36,12 +35,15 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
     /**
      * Visits metadata of this module with a new [KmModule] instance and returns that instance.
      */
+    @OptIn(DeprecatedVisitor::class)
     fun toKmModule(): KmModule =
         KmModule().apply(this::accept)
 
     /**
      * A [KmModuleVisitor] that generates the metadata of a Kotlin JVM module file.
      */
+    @OptIn(DeprecatedVisitor::class)
+    @Deprecated("Writer class API is deprecated. Please use KotlinModuleMetadata.write(kmModule, metadataVersion)", level = DeprecationLevel.ERROR)
     class Writer : KmModuleVisitor() {
         private val b = JvmModuleProtoBuf.Module.newBuilder()
 
@@ -84,6 +86,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
          * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
          *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
          */
+        @Deprecated("Writer class API is deprecated. Please use KotlinModuleMetadata.write(kmModule, metadataVersion)", level = DeprecationLevel.ERROR)
         fun write(metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
             KotlinModuleMetadata(b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0))
     }
@@ -93,6 +96,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
      *
      * @param v the visitor that must visit this module file
      */
+    @DeprecatedVisitor
     fun accept(v: KmModuleVisitor) {
         for ((fqName, parts) in data.packageFqName2Parts) {
             val (fileFacades, multiFileClassParts) = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
@@ -137,6 +141,10 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
                 throw InconsistentKotlinMetadataException("Exception occurred when reading Kotlin metadata", e)
             }
         }
+
+        @OptIn(DeprecatedVisitor::class)
+        @Suppress("DEPRECATION_ERROR")
+        fun write(kmModule: KmModule, metadataVersion: IntArray =  KotlinClassHeader.COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata = Writer().also { kmModule.accept(it) }.write(metadataVersion)
     }
 }
 
@@ -145,6 +153,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
  *
  * When using this class, [visitEnd] must be called exactly once and after calls to all other visit* methods.
  */
+@DeprecatedVisitor
 abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
     /**
      * Visits the table of all single- and multi-file facades declared in some package of this module.
@@ -193,6 +202,7 @@ abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
 /**
  * Represents a Kotlin JVM module file.
  */
+@OptIn(DeprecatedVisitor::class)
 class KmModule : KmModuleVisitor() {
     /**
      * Table of all single- and multi-file facades declared in some package of this module, where keys are '.'-separated package names.
@@ -214,14 +224,17 @@ class KmModule : KmModuleVisitor() {
      */
     val optionalAnnotationClasses: MutableList<KmClass> = ArrayList(0)
 
+    @DeprecatedVisitor
     override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
         packageParts[fqName] = KmPackageParts(fileFacades.toMutableList(), multiFileClassParts.toMutableMap())
     }
 
+    @DeprecatedVisitor
     override fun visitAnnotation(annotation: KmAnnotation) {
         annotations.add(annotation)
     }
 
+    @DeprecatedVisitor
     override fun visitOptionalAnnotationClass(): KmClass =
         KmClass().also(optionalAnnotationClasses::add)
 
@@ -230,6 +243,7 @@ class KmModule : KmModuleVisitor() {
      *
      * @param visitor the visitor which will visit data in this module.
      */
+    @DeprecatedVisitor
     fun accept(visitor: KmModuleVisitor) {
         for ((fqName, parts) in packageParts) {
             visitor.visitPackageParts(fqName, parts.fileFacades, parts.multiFileClassParts)

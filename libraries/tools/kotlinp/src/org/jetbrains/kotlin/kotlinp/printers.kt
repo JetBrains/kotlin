@@ -718,6 +718,7 @@ interface AbstractPrinter<in T : KotlinClassMetadata> {
     fun print(klass: T): String
 }
 
+@DeprecatedVisitor
 class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class> {
     private val sb = StringBuilder()
     internal val result = StringBuilder()
@@ -863,6 +864,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
     }
 }
 
+@DeprecatedVisitor
 abstract class PackagePrinter(private val settings: KotlinpSettings) : KmPackageVisitor() {
     internal val sb = StringBuilder().apply {
         appendLine("package {")
@@ -899,7 +901,7 @@ abstract class PackagePrinter(private val settings: KotlinpSettings) : KmPackage
         }
     }
 }
-
+@DeprecatedVisitor
 class FileFacadePrinter(settings: KotlinpSettings) : PackagePrinter(settings), AbstractPrinter<KotlinClassMetadata.FileFacade> {
     override fun print(klass: KotlinClassMetadata.FileFacade): String {
         klass.accept(this)
@@ -907,6 +909,7 @@ class FileFacadePrinter(settings: KotlinpSettings) : PackagePrinter(settings), A
     }
 }
 
+@DeprecatedVisitor
 class LambdaPrinter(private val settings: KotlinpSettings) : KmLambdaVisitor(), AbstractPrinter<KotlinClassMetadata.SyntheticClass> {
     private val sb = StringBuilder().apply {
         appendLine("lambda {")
@@ -925,6 +928,7 @@ class LambdaPrinter(private val settings: KotlinpSettings) : KmLambdaVisitor(), 
     }
 }
 
+@DeprecatedVisitor
 class MultiFileClassPartPrinter(
     settings: KotlinpSettings
 ) : PackagePrinter(settings), AbstractPrinter<KotlinClassMetadata.MultiFileClassPart> {
@@ -946,6 +950,7 @@ class MultiFileClassFacadePrinter : AbstractPrinter<KotlinClassMetadata.MultiFil
         }
 }
 
+@DeprecatedVisitor
 class ModuleFilePrinter(private val settings: KotlinpSettings) : KmModuleVisitor() {
     private val optionalAnnotations = mutableListOf<ClassPrinter>()
 

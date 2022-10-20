@@ -23,7 +23,6 @@ fun ProtoBuf.Annotation.readAnnotation(strings: NameResolver): KmAnnotation =
         }.toMap()
     )
 
-@OptIn(ExperimentalUnsignedTypes::class)
 fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument? {
     if (Flags.IS_UNSIGNED[flags]) {
         return when (type) {

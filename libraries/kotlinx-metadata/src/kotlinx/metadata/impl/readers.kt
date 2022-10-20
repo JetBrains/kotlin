@@ -10,6 +10,7 @@ import kotlinx.metadata.Flags // Don't remove this import. See KT-45553
 import kotlinx.metadata.impl.extensions.MetadataExtensions
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import kotlin.contracts.ExperimentalContracts
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
 /**
@@ -46,7 +47,7 @@ class ReadContext(
         }
 }
 
-@OptIn(ExperimentalContextReceivers::class)
+@OptIn(DeprecatedVisitor::class, ExperimentalContextReceivers::class) // TODO
 fun ProtoBuf.Class.accept(
     v: KmClassVisitor,
     strings: NameResolver,
@@ -128,6 +129,7 @@ private fun ProtoBuf.Class.loadInlineClassUnderlyingType(c: ReadContext): ProtoB
         ?.returnType(c.types)
 }
 
+@OptIn(DeprecatedVisitor::class) // TODO
 fun ProtoBuf.Package.accept(
     v: KmPackageVisitor,
     strings: NameResolver,
@@ -149,6 +151,7 @@ fun ProtoBuf.Package.accept(
     v.visitEnd()
 }
 
+@OptIn(DeprecatedVisitor::class) // TODO
 fun ProtoBuf.PackageFragment.accept(
     v: KmModuleFragmentVisitor,
     strings: NameResolver,
@@ -174,6 +177,7 @@ fun ProtoBuf.PackageFragment.accept(
     v.visitEnd()
 }
 
+@OptIn(DeprecatedVisitor::class) // TODO
 private fun KmDeclarationContainerVisitor.visitDeclarations(
     functions: List<ProtoBuf.Function>,
     properties: List<ProtoBuf.Property>,
@@ -195,6 +199,7 @@ private fun KmDeclarationContainerVisitor.visitDeclarations(
     }
 }
 
+@OptIn(DeprecatedVisitor::class)
 fun ProtoBuf.Function.accept(v: KmLambdaVisitor, strings: NameResolver) {
     val c = ReadContext(strings, TypeTable(typeTable), VersionRequirementTable.EMPTY)
 
@@ -203,6 +208,7 @@ fun ProtoBuf.Function.accept(v: KmLambdaVisitor, strings: NameResolver) {
     v.visitEnd()
 }
 
+@DeprecatedVisitor
 private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext) {
     for (parameter in valueParameterList) {
         v.visitValueParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
@@ -219,7 +225,7 @@ private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext)
     v.visitEnd()
 }
 
-@OptIn(ExperimentalContextReceivers::class)
+@OptIn(DeprecatedVisitor::class, ExperimentalContextReceivers::class)
 private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
     val c = outer.withTypeParameters(typeParameterList)
 
@@ -244,7 +250,7 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
     }
 
     if (hasContract()) {
-        v.visitContract()?.let { contract.accept(it, c) }
+        @OptIn(ExperimentalContracts::class) v.visitContract()?.let { contract.accept(it, c) }
     }
 
     for (versionRequirement in versionRequirementList) {
@@ -259,6 +265,7 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
 }
 
 @OptIn(ExperimentalContextReceivers::class)
+@DeprecatedVisitor
 fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
     val c = outer.withTypeParameters(typeParameterList)
 
@@ -294,6 +301,7 @@ fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
     v.visitEnd()
 }
 
+@DeprecatedVisitor
 private fun ProtoBuf.TypeAlias.accept(v: KmTypeAliasVisitor, outer: ReadContext) {
     val c = outer.withTypeParameters(typeParameterList)
 
@@ -324,6 +332,7 @@ private fun ProtoBuf.TypeAlias.accept(v: KmTypeAliasVisitor, outer: ReadContext)
     v.visitEnd()
 }
 
+@DeprecatedVisitor
 private fun ProtoBuf.ValueParameter.accept(v: KmValueParameterVisitor, c: ReadContext) {
     type(c.types).let { type ->
         v.visitType(type.typeFlags)?.let { type.accept(it, c) }
@@ -339,7 +348,7 @@ private fun ProtoBuf.ValueParameter.accept(v: KmValueParameterVisitor, c: ReadCo
 
     v.visitEnd()
 }
-
+@DeprecatedVisitor
 private inline fun ProtoBuf.TypeParameter.accept(
     visit: (flags: Flags, name: String, id: Int, variance: KmVariance) -> KmTypeParameterVisitor?,
     c: ReadContext
@@ -353,6 +362,7 @@ private inline fun ProtoBuf.TypeParameter.accept(
     visit(typeParameterFlags, c[name], id, variance)?.let { accept(it, c) }
 }
 
+@DeprecatedVisitor
 private fun ProtoBuf.TypeParameter.accept(v: KmTypeParameterVisitor, c: ReadContext) {
     for (upperBound in upperBounds(c.types)) {
         v.visitUpperBound(upperBound.typeFlags)?.let { upperBound.accept(it, c) }
@@ -365,6 +375,7 @@ private fun ProtoBuf.TypeParameter.accept(v: KmTypeParameterVisitor, c: ReadCont
     v.visitEnd()
 }
 
+@DeprecatedVisitor
 private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
     when {
         hasClassName() -> v.visitClass(c.className(className))
@@ -419,6 +430,7 @@ private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
     v.visitEnd()
 }
 
+@DeprecatedVisitor
 private fun acceptVersionRequirementVisitor(id: Int, v: KmVersionRequirementVisitor, c: ReadContext) {
     val message = VersionRequirement.create(id, c.strings, c.versionRequirements)
         ?: throw InconsistentKotlinMetadataException("No VersionRequirement with the given id in the table")
@@ -443,6 +455,8 @@ private fun acceptVersionRequirementVisitor(id: Int, v: KmVersionRequirementVisi
     v.visitEnd()
 }
 
+@DeprecatedVisitor
+@ExperimentalContracts
 private fun ProtoBuf.Contract.accept(v: KmContractVisitor, c: ReadContext) {
     for (effect in effectList) {
         if (!effect.hasEffectType()) continue
@@ -465,6 +479,8 @@ private fun ProtoBuf.Contract.accept(v: KmContractVisitor, c: ReadContext) {
     v.visitEnd()
 }
 
+@DeprecatedVisitor
+@ExperimentalContracts
 private fun ProtoBuf.Effect.accept(v: KmEffectVisitor, c: ReadContext) {
     for (constructorArgument in effectConstructorArgumentList) {
         v.visitConstructorArgument()?.let { constructorArgument.accept(it, c) }
@@ -477,6 +493,8 @@ private fun ProtoBuf.Effect.accept(v: KmEffectVisitor, c: ReadContext) {
     v.visitEnd()
 }
 
+@DeprecatedVisitor
+@ExperimentalContracts
 private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadContext) {
     v.visit(
         flags,
