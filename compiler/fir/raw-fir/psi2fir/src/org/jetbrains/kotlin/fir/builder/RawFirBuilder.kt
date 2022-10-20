@@ -1579,7 +1579,9 @@ open class RawFirBuilder(
                 }
                 dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
-                delegatedConstructor = buildOrLazyDelegatedConstructorCall(isThis = true, constructedTypeRef = { delegatedSelfTypeRef }) {
+                delegatedConstructor = buildOrLazyDelegatedConstructorCall(
+                    isThis = true,
+                    constructedTypeRef = { if (getDelegationCall().isCallToThis) delegatedSelfTypeRef else delegatedSuperTypeRef }) {
                     getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef)
                 }
                 this@RawFirBuilder.context.firFunctionTargets += target

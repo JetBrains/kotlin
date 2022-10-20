@@ -105,8 +105,6 @@ internal object FirLazyBodiesCalculator {
         require(primaryConstructor.isPrimary)
         if (!needCalculatingForConstructor(primaryConstructor)) return
 
-        check(designation.declaration.psi !is KtClass)
-
         val newPrimaryConstructor = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = primaryConstructor.moduleData.session,
             scopeProvider = primaryConstructor.moduleData.session.kotlinScopeProvider,
@@ -230,8 +228,15 @@ internal object FirLazyBodiesCalculator {
         return false
     }
 
-    fun needCalculatingForConstructor(constructor: FirConstructor) =
-        constructor.delegatedConstructor is FirLazyDelegatedConstructorCall || needCalculatingForFunction(constructor)
+    fun needCalculatingForConstructor(constructor: FirConstructor): Boolean {
+        if (constructor.delegatedConstructor is FirLazyDelegatedConstructorCall || needCalculatingForFunction(constructor)) {
+            return true
+        }
+        for (argument in constructor.delegatedConstructor?.arguments ?: emptyList()) {
+            if (argument is FirLazyExpression) return true
+        }
+        return false
+    }
 
     fun needCalculatingForAnnotationCall(annotationCall: FirAnnotation): Boolean {
         if (annotationCall !is FirAnnotationCall) return false

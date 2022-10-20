@@ -3,7 +3,7 @@ RAW_FIR:
 FILE: classWithTypeParameters.kt
     public? final? [RAW_FIR] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -12,7 +12,7 @@ IMPORTS:
 FILE: classWithTypeParameters.kt
     public? final? [RAW_FIR] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -21,7 +21,7 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: classWithTypeParameters.kt
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class ResolveMe<[COMPILER_REQUIRED_ANNOTATIONS] T : Int, [COMPILER_REQUIRED_ANNOTATIONS] K> : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor<[COMPILER_REQUIRED_ANNOTATIONS] T : Int, [COMPILER_REQUIRED_ANNOTATIONS] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -30,7 +30,7 @@ COMPANION_GENERATION:
 FILE: classWithTypeParameters.kt
     public? final? [COMPANION_GENERATION] class ResolveMe<[COMPANION_GENERATION] T : Int, [COMPANION_GENERATION] K> : R|kotlin/Any| {
         public? [COMPANION_GENERATION] [ContainingClassKey=ResolveMe] constructor<[COMPANION_GENERATION] T : Int, [COMPANION_GENERATION] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -39,7 +39,7 @@ SUPER_TYPES:
 FILE: classWithTypeParameters.kt
     public? final? [SUPER_TYPES] class ResolveMe<[SUPER_TYPES] T : Int, [SUPER_TYPES] K> : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=ResolveMe] constructor<[SUPER_TYPES] T : Int, [SUPER_TYPES] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -48,7 +48,7 @@ TYPES:
 FILE: classWithTypeParameters.kt
     public? final? [TYPES] class ResolveMe<[TYPES] T : R|kotlin/Int|, [TYPES] K> : R|kotlin/Any| {
         public? [TYPES] [ContainingClassKey=ResolveMe] constructor<[TYPES] T : R|kotlin/Int|, [TYPES] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -57,7 +57,7 @@ STATUS:
 FILE: classWithTypeParameters.kt
     public final [STATUS] class ResolveMe<[STATUS] T : R|kotlin/Int|, [STATUS] K> : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=ResolveMe] constructor<[STATUS] T : R|kotlin/Int|, [STATUS] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -66,7 +66,7 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: classWithTypeParameters.kt
     public final [ARGUMENTS_OF_ANNOTATIONS] class ResolveMe<[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> : R|kotlin/Any| {
         public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor<[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -75,7 +75,7 @@ CONTRACTS:
 FILE: classWithTypeParameters.kt
     public final [CONTRACTS] class ResolveMe<[CONTRACTS] T : R|kotlin/Int|, [CONTRACTS] K> : R|kotlin/Any| {
         public [CONTRACTS] [ContainingClassKey=ResolveMe] constructor<[CONTRACTS] T : R|kotlin/Int|, [CONTRACTS] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
@@ -84,7 +84,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: classWithTypeParameters.kt
     public final [IMPLICIT_TYPES_BODY_RESOLVE] class ResolveMe<[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K> : R|kotlin/Any| {
         public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=ResolveMe] constructor<[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K>(): R|ResolveMe<T, K>| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }

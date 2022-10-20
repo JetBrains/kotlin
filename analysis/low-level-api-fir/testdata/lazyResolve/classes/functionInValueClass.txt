@@ -3,7 +3,7 @@ RAW_FIR:
 FILE: functionInValueClass.kt
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -17,7 +17,7 @@ IMPORTS:
 FILE: functionInValueClass.kt
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -31,7 +31,7 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: functionInValueClass.kt
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -45,7 +45,7 @@ COMPANION_GENERATION:
 FILE: functionInValueClass.kt
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -59,7 +59,7 @@ SUPER_TYPES:
 FILE: functionInValueClass.kt
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -73,7 +73,7 @@ TYPES:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public? final? inline [SUPER_TYPES] class Value : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=Value] constructor([SUPER_TYPES] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -87,7 +87,7 @@ STATUS:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [SUPER_TYPES] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public? [TYPES] [ContainingClassKey=Value] constructor([TYPES] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -101,7 +101,7 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [SUPER_TYPES] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public? [TYPES] [ContainingClassKey=Value] constructor([TYPES] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -115,7 +115,7 @@ CONTRACTS:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [SUPER_TYPES] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public? [TYPES] [ContainingClassKey=Value] constructor([TYPES] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? [SUPER_TYPES] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
@@ -130,7 +130,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public final [STATUS] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
@@ -145,7 +145,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public final [STATUS] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
@@ -160,7 +160,7 @@ BODY_RESOLVE:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public final [STATUS] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|

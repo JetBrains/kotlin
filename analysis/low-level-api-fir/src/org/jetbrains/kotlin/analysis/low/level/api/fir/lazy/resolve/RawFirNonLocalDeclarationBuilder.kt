@@ -101,7 +101,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             )
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
             return builder.moveNext(designation.path.iterator(), containingClass = null).also {
-                replacementApplier?.ensureApplied()
+                if (rootNonLocalDeclaration !is KtClassOrObject) replacementApplier?.ensureApplied()
             }
         }
 
@@ -232,6 +232,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
         override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit): FirElement {
             val classOrObject = constructor.getContainingClassOrObject()
+            return doVisitPrimaryConstructor(constructor, classOrObject)
+        }
+
+        fun doVisitPrimaryConstructor(constructor: KtPrimaryConstructor?, classOrObject: KtClassOrObject): FirElement {
             val params = extractContructorConversionParams(classOrObject)
             return constructor.toFirConstructor(
                 params.superTypeCallEntry,
@@ -267,11 +271,15 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     override fun process(containingClass: FirRegularClass?): FirDeclaration {
         this.containingClass = containingClass
         val visitor = VisitorWithReplacement()
-        return when (declarationToBuild) {
-            is KtProperty -> {
+        return when {
+            declarationToBuild is KtProperty -> {
                 val ownerSymbol = containingClass?.symbol
                 val ownerTypeArgumentsCount = containingClass?.typeParameters?.size
                 visitor.convertProperty(declarationToBuild, ownerSymbol, ownerTypeArgumentsCount)
+            }
+
+            declarationToBuild is KtClassOrObject && declarationToBuild !is KtEnumEntry -> {
+                visitor.doVisitPrimaryConstructor(declarationToBuild.primaryConstructor, declarationToBuild)
             }
 
             else -> visitor.convertElement(declarationToBuild)

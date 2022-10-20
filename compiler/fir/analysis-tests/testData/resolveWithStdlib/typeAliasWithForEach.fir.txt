@@ -3,7 +3,7 @@ FILE: typeAliasWithForEach.kt
     }
     public final class ArgsInfoImpl : R|ArgsInfo| {
         public constructor(info: R|ArgsInfo|): R|ArgsInfoImpl| {
-            super<R|kotlin/Any|>()
+            super<R|ArgsInfoImpl|>()
         }
 
     }
