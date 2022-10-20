@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.calls.FirFakeArgumentForCallableReference
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
@@ -59,7 +59,7 @@ internal class AdapterGenerator(
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
-    private val samResolver = FirSamResolverImpl(session, scopeSession)
+    private val samResolver = FirSamResolver(session, scopeSession)
 
     private val starProjectionApproximator = object : AbstractConeSubstitutor(session.typeContext) {
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {

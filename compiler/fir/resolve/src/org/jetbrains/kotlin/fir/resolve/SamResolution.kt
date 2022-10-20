@@ -41,29 +41,23 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
-abstract class FirSamResolver {
-    abstract fun shouldRunSamConversionForFunction(firFunction: FirFunction): Boolean
-    abstract fun getSamConstructor(firClassOrTypeAlias: FirClassLikeDeclaration): FirSimpleFunction?
-    abstract fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType?
-
-    fun isSamType(type: ConeKotlinType): Boolean =
-        getFunctionTypeForPossibleSamType(type) != null
-}
-
 private val SAM_PARAMETER_NAME = Name.identifier("function")
 
 data class SAMInfo<out C : ConeKotlinType>(internal val symbol: FirNamedFunctionSymbol, val type: C)
 
-class FirSamResolverImpl(
+class FirSamResolver(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val outerClassManager: FirOuterClassManager? = null,
-) : FirSamResolver() {
+) {
     private val resolvedFunctionType: NullableMap<FirRegularClass, SAMInfo<ConeLookupTagBasedType>?> = NullableMap()
     private val samConstructorsCache = session.samConstructorStorage.samConstructors
     private val samConversionTransformers = session.extensionService.samConversionTransformers
 
-    override fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
+    fun isSamType(type: ConeKotlinType): Boolean =
+        getFunctionTypeForPossibleSamType(type) != null
+
+    fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
             is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type.fullyExpandedType(session))
             is ConeFlexibleType -> {
@@ -97,7 +91,7 @@ class FirSamResolverImpl(
         return functionType.withNullability(ConeNullability.create(type.isMarkedNullable), session.typeContext)
     }
 
-    override fun getSamConstructor(firClassOrTypeAlias: FirClassLikeDeclaration): FirSimpleFunction? {
+    fun getSamConstructor(firClassOrTypeAlias: FirClassLikeDeclaration): FirSimpleFunction? {
         if (firClassOrTypeAlias is FirTypeAlias) {
             // Precompute the constructor for the base type to avoid deadlocks in the IDE.
             firClassOrTypeAlias.expandedTypeRef.coneTypeSafe<ConeClassLikeType>()
@@ -268,7 +262,8 @@ class FirSamResolverImpl(
         }
     }
 
-    override fun shouldRunSamConversionForFunction(firFunction: FirFunction): Boolean {
+    @Suppress("UNUSED_PARAMETER")
+    fun shouldRunSamConversionForFunction(firFunction: FirFunction): Boolean {
         // TODO: properly support, see org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer.shouldRunSamConversionForFunction
         return true
     }
@@ -427,7 +422,7 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagB
 }
 
 class FirSamConstructorStorage(session: FirSession) : FirSessionComponent {
-    val samConstructors: FirCache<FirClassLikeSymbol<*>, FirNamedFunctionSymbol?, FirSamResolverImpl> =
+    val samConstructors: FirCache<FirClassLikeSymbol<*>, FirNamedFunctionSymbol?, FirSamResolver> =
         session.firCachesFactory.createCache { classSymbol, samResolver ->
             when (classSymbol) {
                 is FirRegularClassSymbol -> samResolver.buildSamConstructorForRegularClass(classSymbol)
