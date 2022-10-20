@@ -1,0 +1,12 @@
+public final class examples/classes/KotlinLib {
+	public fun <init> ()V
+	public final fun foo ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlinx/android/kotlin/library/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+

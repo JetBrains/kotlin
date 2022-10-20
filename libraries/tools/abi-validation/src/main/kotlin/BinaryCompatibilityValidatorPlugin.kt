@@ -5,10 +5,12 @@
 
 package kotlinx.validation
 
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.*
 import org.gradle.api.plugins.*
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import java.io.*
@@ -108,12 +110,40 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
     private fun configureAndroidPlugin(
         project: Project,
         extension: ApiValidationExtension
+    ) {
+        val kotlinPluginPresent = project.plugins
+            .withType(KotlinAndroidPluginWrapper::class.java)
+            .isEmpty().not()
+
+        if (kotlinPluginPresent) {
+            configureAndroidPluginForKotlinLibrary(project, extension)
+        } else {
+            configureAndroidPluginForJavaLibrary(project, extension)
+        }
+    }
+
+    private fun configureAndroidPluginForKotlinLibrary(
+        project: Project,
+        extension: ApiValidationExtension
     ) = configurePlugin("kotlin-android", project, extension) {
-        val androidExtension = project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension
+        val androidExtension = project.extensions
+            .getByName("kotlin") as KotlinAndroidProjectExtension
         androidExtension.target.compilations.matching {
             it.compilationName == "release"
         }.all {
             project.configureKotlinCompilation(it, extension, useOutput = true)
+        }
+    }
+
+    private fun configureAndroidPluginForJavaLibrary(
+        project: Project,
+        extension: ApiValidationExtension
+    ) = configurePlugin("com.android.library", project, extension) {
+        val androidExtension = project.extensions.getByType(LibraryExtension::class.java)
+        androidExtension.libraryVariants.matching {
+            it.name == "release"
+        }.all {
+            project.configureJavaCompilation(it.javaCompileProvider, extension)
         }
     }
 
@@ -212,6 +242,39 @@ internal val Project.apiValidationExtensionOrNull: ApiValidationExtension?
             .map { it.extensions.findByType(ApiValidationExtension::class.java) }
             .firstOrNull { it != null }
 
+private fun Project.configureJavaCompilation(
+    configurableFileCollection: TaskProvider<JavaCompile>,
+    extension: ApiValidationExtension,
+    targetConfig: TargetConfig = TargetConfig(this),
+) {
+    val projectName = project.name
+    val apiDirProvider = targetConfig.apiDir
+    val apiBuildDir = apiDirProvider.map { buildDir.resolve(it) }
+
+    val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build")) {
+        isEnabled = apiCheckEnabled(projectName, extension)
+        // 'group' is not specified deliberately, so it will be hidden from ./gradlew tasks
+        description = "Builds Java API for 'main' compilations of $projectName. " +
+                "Complementary task and shouldn't be called manually"
+        inputClassesDirs = files(provider<Any> {
+            if (isEnabled) configurableFileCollection.get().outputs.files
+            else emptyList<Any>()
+        })
+        inputDependencies = files(provider<Any> {
+            if (isEnabled) configurableFileCollection.get().outputs.files
+            else emptyList<Any>()
+        })
+        outputApiDir = apiBuildDir.get()
+    }
+
+    configureCheckTasks(
+        apiBuildDir,
+        apiBuild,
+        extension,
+        targetConfig
+    )
+}
+
 fun apiCheckEnabled(projectName: String, extension: ApiValidationExtension): Boolean =
     projectName !in extension.ignoredProjects && !extension.validationDisabled
 
@@ -224,7 +287,7 @@ private fun Project.configureApiTasks(
     val apiBuildDir = targetConfig.apiDir.map { buildDir.resolve(it) }
     val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build")) {
         isEnabled = apiCheckEnabled(projectName, extension)
-        // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
+        // 'group' is not specified deliberately, so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
         inputClassesDirs = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
