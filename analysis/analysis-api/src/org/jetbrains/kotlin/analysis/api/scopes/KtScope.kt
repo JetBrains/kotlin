@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.name.Name
 
 public interface KtScope : KtScopeLike {
     /**
-     * Return a sequence of all [KtSymbol] which current scope contain
+     * Return a sequence of all [KtDeclarationSymbol] which current scope contain
      */
-    public fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
+    public fun getAllSymbols(): Sequence<KtDeclarationSymbol> = withValidityAssertion {
         sequence {
             yieldAll(getCallableSymbols())
             yieldAll(getClassifierSymbols())
