@@ -144,7 +144,7 @@ internal class TestCompilationFactory {
         val staticCacheArtifactAndOptions: Pair<KLIBStaticCache, StaticCacheCompilation.Options>? = when (produceStaticCache) {
             is ProduceStaticCache.No -> null // No artifact means no static cache should be compiled.
             is ProduceStaticCache.Yes -> KLIBStaticCache(
-                cacheDir = klibArtifact.cacheDirForStaticCache(),
+                cacheDir = settings.cacheDirForStaticCache(klibArtifact),
                 klib = klibArtifact
             ) to produceStaticCache.options
         }
@@ -221,6 +221,7 @@ internal class TestCompilationFactory {
                 1 -> when (val module = modules.first()) {
                     is TestModule.Exclusive -> singleModuleArtifactFile(module, "klib")
                     is TestModule.Shared -> get<Binaries>().sharedBinariesDir.resolve("${module.name}-${prettyHash(freeCompilerArgs.hashCode())}.klib")
+                    is TestModule.Given -> module.klibFile
                 }
                 else -> {
                     assertTrue(modules.none { module -> module is TestModule.Shared }) {
@@ -230,7 +231,19 @@ internal class TestCompilationFactory {
                 }
             }
 
-        private fun KLIB.cacheDirForStaticCache(): File = klibFile.parentFile.resolve(STATIC_CACHE_DIR_NAME).apply { mkdirs() }
+        private fun Settings.cacheDirForStaticCache(klibArtifact: KLIB): File {
+            val binaries = get<Binaries>()
+
+            val artifactBaseDir = if (klibArtifact.klibFile.startsWith(binaries.testBinariesDir)) {
+                // The KLIB artifact is located inside the build dir. This means it was built just a moment ago.
+                klibArtifact.klibFile.parentFile
+            } else {
+                // Special case for the given (external) KLIB artifacts.
+                binaries.givenBinariesDir
+            }
+
+            return artifactBaseDir.resolve(STATIC_CACHE_DIR_NAME).apply { mkdirs() }
+        }
 
         private fun Settings.singleModuleArtifactFile(module: TestModule.Exclusive, extension: String): File {
             val artifactFileName = buildString {
