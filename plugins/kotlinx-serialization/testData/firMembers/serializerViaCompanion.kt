@@ -1,5 +1,7 @@
 // WITH_STDLIB
+// !DIAGNOSTICS: -COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED
 
+@file:Suppress("COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED")
 package com.example
 
 import kotlinx.serialization.*

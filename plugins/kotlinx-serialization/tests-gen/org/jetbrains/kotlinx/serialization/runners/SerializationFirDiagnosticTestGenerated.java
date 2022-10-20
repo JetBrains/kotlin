@@ -27,6 +27,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         }
 
         @Test
+        @TestMetadata("companionObjectSerializers.kt")
+        public void testCompanionObjectSerializers() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/companionObjectSerializers.kt");
+        }
+
+        @Test
         @TestMetadata("DuplicateSerialName.kt")
         public void testDuplicateSerialName() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/DuplicateSerialName.kt");
