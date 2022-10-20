@@ -6,7 +6,7 @@ description = "Kotlin JVM metadata manipulation library"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.11.0"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 /*
@@ -66,6 +66,8 @@ runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
 
 val test by tasks
 test.dependsOn("shadowJar")
+
+tasks["check"].dependsOn(":kotlinx-metadata:check")
 
 sourcesJar {
     for (dependency in shadows.dependencies) {

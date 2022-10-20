@@ -2,9 +2,6 @@ public final class kotlinx/metadata/ClassNameKt {
 	public static final fun isLocal (Ljava/lang/String;)Z
 }
 
-public abstract interface annotation class kotlinx/metadata/DeprecatedVisitor : java/lang/annotation/Annotation {
-}
-
 public abstract interface annotation class kotlinx/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
 }
 
