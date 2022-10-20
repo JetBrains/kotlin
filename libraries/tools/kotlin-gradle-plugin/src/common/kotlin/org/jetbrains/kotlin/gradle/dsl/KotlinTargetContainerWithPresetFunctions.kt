@@ -244,18 +244,18 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun watchosDeviceArm64(
         name: String = "watchosDeviceArm64",
-        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
-    ): KotlinNativeTargetWithSimulatorTests =
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
         configureOrCreate(
             name,
-            presets.getByName("watchosDeviceArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            presets.getByName("watchosDeviceArm64") as KotlinNativeTargetPreset,
             configure
         )
 
     fun watchosDeviceArm64() = watchosDeviceArm64("watchosDeviceArm64") { }
     fun watchosDeviceArm64(name: String) = watchosDeviceArm64(name) { }
-    fun watchosDeviceArm64(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosDeviceArm64(name) { configure.execute(this) }
-    fun watchosDeviceArm64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosDeviceArm64 { configure.execute(this) }
+    fun watchosDeviceArm64(name: String, configure: Action<KotlinNativeTarget>) = watchosDeviceArm64(name) { configure.execute(this) }
+    fun watchosDeviceArm64(configure: Action<KotlinNativeTarget>) = watchosDeviceArm64 { configure.execute(this) }
 
     fun tvosArm64(
         name: String = "tvosArm64",
