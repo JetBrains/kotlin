@@ -115,7 +115,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
                 error("Should not be called")
         }
 
-        val session = FirSessionFactory.createEmptySession()
+        val session = FirSessionFactoryHelper.createEmptySession()
         val firBuilder = RawFirBuilder(session, scopeProvider)
         val original = firBuilder.buildFirFile(file)
 
