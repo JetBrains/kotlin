@@ -1,0 +1,359 @@
+public class kotlinx/metadata/jvm/JvmClassExtensionVisitor : kotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor, kotlinx/metadata/KmClassExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/jvm/JvmClassExtensionVisitor$Companion;
+	public static final field TYPE Lkotlinx/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/JvmClassExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmClassExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun getDelegate ()Lkotlinx/metadata/jvm/JvmClassExtensionVisitor;
+	public synthetic fun getDelegate ()Lkotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor;
+	public final fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public fun visitAnonymousObjectOriginName (Ljava/lang/String;)V
+	public fun visitEnd ()V
+	public fun visitJvmFlags (I)V
+}
+
+public final class kotlinx/metadata/jvm/JvmClassExtensionVisitor$Companion {
+}
+
+public class kotlinx/metadata/jvm/JvmConstructorExtensionVisitor : kotlinx/metadata/KmConstructorExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/jvm/JvmConstructorExtensionVisitor$Companion;
+	public static final field TYPE Lkotlinx/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/JvmConstructorExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmConstructorExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public fun visit (Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+}
+
+public final class kotlinx/metadata/jvm/JvmConstructorExtensionVisitor$Companion {
+}
+
+public abstract class kotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor : kotlinx/metadata/KmDeclarationContainerExtensionVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun getDelegate ()Lkotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor;
+	public fun visitLocalDelegatedProperty (ILjava/lang/String;II)Lkotlinx/metadata/KmPropertyVisitor;
+	public fun visitModuleName (Ljava/lang/String;)V
+}
+
+public final class kotlinx/metadata/jvm/JvmExtensionsKt {
+	public static final fun getAnnotations (Lkotlinx/metadata/KmType;)Ljava/util/List;
+	public static final fun getAnnotations (Lkotlinx/metadata/KmTypeParameter;)Ljava/util/List;
+	public static final fun getAnonymousObjectOriginName (Lkotlinx/metadata/KmClass;)Ljava/lang/String;
+	public static final fun getFieldSignature (Lkotlinx/metadata/KmProperty;)Lkotlinx/metadata/jvm/JvmFieldSignature;
+	public static final fun getGetterSignature (Lkotlinx/metadata/KmProperty;)Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public static final fun getJvmFlags (Lkotlinx/metadata/KmClass;)I
+	public static final fun getJvmFlags (Lkotlinx/metadata/KmProperty;)I
+	public static final fun getLambdaClassOriginName (Lkotlinx/metadata/KmFunction;)Ljava/lang/String;
+	public static final fun getLocalDelegatedProperties (Lkotlinx/metadata/KmClass;)Ljava/util/List;
+	public static final fun getLocalDelegatedProperties (Lkotlinx/metadata/KmPackage;)Ljava/util/List;
+	public static final fun getModuleName (Lkotlinx/metadata/KmClass;)Ljava/lang/String;
+	public static final fun getModuleName (Lkotlinx/metadata/KmPackage;)Ljava/lang/String;
+	public static final fun getSetterSignature (Lkotlinx/metadata/KmProperty;)Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public static final fun getSignature (Lkotlinx/metadata/KmConstructor;)Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public static final fun getSignature (Lkotlinx/metadata/KmFunction;)Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public static final fun getSyntheticMethodForAnnotations (Lkotlinx/metadata/KmProperty;)Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public static final fun getSyntheticMethodForDelegate (Lkotlinx/metadata/KmProperty;)Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public static final fun isRaw (Lkotlinx/metadata/KmType;)Z
+	public static final fun setAnonymousObjectOriginName (Lkotlinx/metadata/KmClass;Ljava/lang/String;)V
+	public static final fun setFieldSignature (Lkotlinx/metadata/KmProperty;Lkotlinx/metadata/jvm/JvmFieldSignature;)V
+	public static final fun setGetterSignature (Lkotlinx/metadata/KmProperty;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setJvmFlags (Lkotlinx/metadata/KmClass;I)V
+	public static final fun setJvmFlags (Lkotlinx/metadata/KmProperty;I)V
+	public static final fun setLambdaClassOriginName (Lkotlinx/metadata/KmFunction;Ljava/lang/String;)V
+	public static final fun setModuleName (Lkotlinx/metadata/KmClass;Ljava/lang/String;)V
+	public static final fun setModuleName (Lkotlinx/metadata/KmPackage;Ljava/lang/String;)V
+	public static final fun setRaw (Lkotlinx/metadata/KmType;Z)V
+	public static final fun setSetterSignature (Lkotlinx/metadata/KmProperty;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setSignature (Lkotlinx/metadata/KmConstructor;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setSignature (Lkotlinx/metadata/KmFunction;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setSyntheticMethodForAnnotations (Lkotlinx/metadata/KmProperty;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public static final fun setSyntheticMethodForDelegate (Lkotlinx/metadata/KmProperty;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+}
+
+public final class kotlinx/metadata/jvm/JvmFieldSignature : kotlinx/metadata/jvm/JvmMemberSignature {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun asString ()Ljava/lang/String;
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lkotlinx/metadata/jvm/JvmFieldSignature;
+	public static synthetic fun copy$default (Lkotlinx/metadata/jvm/JvmFieldSignature;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/metadata/jvm/JvmFieldSignature;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDesc ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+}
+
+public final class kotlinx/metadata/jvm/JvmFlag {
+	public static final field INSTANCE Lkotlinx/metadata/jvm/JvmFlag;
+}
+
+public final class kotlinx/metadata/jvm/JvmFlag$Class {
+	public static final field HAS_METHOD_BODIES_IN_INTERFACE Lkotlinx/metadata/Flag;
+	public static final field INSTANCE Lkotlinx/metadata/jvm/JvmFlag$Class;
+	public static final field IS_COMPILED_IN_COMPATIBILITY_MODE Lkotlinx/metadata/Flag;
+}
+
+public final class kotlinx/metadata/jvm/JvmFlag$Property {
+	public static final field INSTANCE Lkotlinx/metadata/jvm/JvmFlag$Property;
+	public static final field IS_MOVED_FROM_INTERFACE_COMPANION Lkotlinx/metadata/Flag;
+}
+
+public class kotlinx/metadata/jvm/JvmFunctionExtensionVisitor : kotlinx/metadata/KmFunctionExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/jvm/JvmFunctionExtensionVisitor$Companion;
+	public static final field TYPE Lkotlinx/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/JvmFunctionExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmFunctionExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public fun visit (Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public fun visitEnd ()V
+	public fun visitLambdaClassOriginName (Ljava/lang/String;)V
+}
+
+public final class kotlinx/metadata/jvm/JvmFunctionExtensionVisitor$Companion {
+}
+
+public abstract class kotlinx/metadata/jvm/JvmMemberSignature {
+	public abstract fun asString ()Ljava/lang/String;
+	public abstract fun getDesc ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+	public final fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/metadata/jvm/JvmMetadataUtil {
+	public static final fun Metadata (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lkotlin/Metadata;
+	public static synthetic fun Metadata$default (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lkotlin/Metadata;
+	public static final fun getJvmInternalName (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class kotlinx/metadata/jvm/JvmMethodSignature : kotlinx/metadata/jvm/JvmMemberSignature {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun asString ()Ljava/lang/String;
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public static synthetic fun copy$default (Lkotlinx/metadata/jvm/JvmMethodSignature;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/metadata/jvm/JvmMethodSignature;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDesc ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+}
+
+public class kotlinx/metadata/jvm/JvmPackageExtensionVisitor : kotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor, kotlinx/metadata/KmPackageExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/jvm/JvmPackageExtensionVisitor$Companion;
+	public static final field TYPE Lkotlinx/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/JvmPackageExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmPackageExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun getDelegate ()Lkotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor;
+	protected fun getDelegate ()Lkotlinx/metadata/jvm/JvmPackageExtensionVisitor;
+	public final fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public fun visitEnd ()V
+}
+
+public final class kotlinx/metadata/jvm/JvmPackageExtensionVisitor$Companion {
+}
+
+public class kotlinx/metadata/jvm/JvmPropertyExtensionVisitor : kotlinx/metadata/KmPropertyExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/jvm/JvmPropertyExtensionVisitor$Companion;
+	public static final field TYPE Lkotlinx/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/JvmPropertyExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmPropertyExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public fun visit (ILkotlinx/metadata/jvm/JvmFieldSignature;Lkotlinx/metadata/jvm/JvmMethodSignature;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public fun visit (Lkotlinx/metadata/jvm/JvmFieldSignature;Lkotlinx/metadata/jvm/JvmMethodSignature;Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public fun visitEnd ()V
+	public fun visitSyntheticMethodForAnnotations (Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+	public fun visitSyntheticMethodForDelegate (Lkotlinx/metadata/jvm/JvmMethodSignature;)V
+}
+
+public final class kotlinx/metadata/jvm/JvmPropertyExtensionVisitor$Companion {
+}
+
+public class kotlinx/metadata/jvm/JvmTypeExtensionVisitor : kotlinx/metadata/KmTypeExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/jvm/JvmTypeExtensionVisitor$Companion;
+	public static final field PLATFORM_TYPE_ID Ljava/lang/String;
+	public static final field TYPE Lkotlinx/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/JvmTypeExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmTypeExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public fun visit (Z)V
+	public fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public fun visitEnd ()V
+}
+
+public final class kotlinx/metadata/jvm/JvmTypeExtensionVisitor$Companion {
+}
+
+public class kotlinx/metadata/jvm/JvmTypeParameterExtensionVisitor : kotlinx/metadata/KmTypeParameterExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/jvm/JvmTypeParameterExtensionVisitor$Companion;
+	public static final field TYPE Lkotlinx/metadata/KmExtensionType;
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/JvmTypeParameterExtensionVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmTypeParameterExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public fun visitEnd ()V
+}
+
+public final class kotlinx/metadata/jvm/JvmTypeParameterExtensionVisitor$Companion {
+}
+
+public final class kotlinx/metadata/jvm/KmModule : kotlinx/metadata/jvm/KmModuleVisitor {
+	public fun <init> ()V
+	public final fun accept (Lkotlinx/metadata/jvm/KmModuleVisitor;)V
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getOptionalAnnotationClasses ()Ljava/util/List;
+	public final fun getPackageParts ()Ljava/util/Map;
+	public fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public fun visitOptionalAnnotationClass ()Lkotlinx/metadata/KmClass;
+	public synthetic fun visitOptionalAnnotationClass ()Lkotlinx/metadata/KmClassVisitor;
+	public fun visitPackageParts (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)V
+}
+
+public abstract class kotlinx/metadata/jvm/KmModuleVisitor {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/metadata/jvm/KmModuleVisitor;)V
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/KmModuleVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public fun visitEnd ()V
+	public fun visitOptionalAnnotationClass ()Lkotlinx/metadata/KmClassVisitor;
+	public fun visitPackageParts (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)V
+}
+
+public final class kotlinx/metadata/jvm/KmPackageParts {
+	public fun <init> (Ljava/util/List;Ljava/util/Map;)V
+	public final fun getFileFacades ()Ljava/util/List;
+	public final fun getMultiFileClassParts ()Ljava/util/Map;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassHeader {
+	public static final field CLASS_KIND I
+	public static final field COMPATIBLE_BYTECODE_VERSION [I
+	public static final field COMPATIBLE_METADATA_VERSION [I
+	public static final field Companion Lkotlinx/metadata/jvm/KotlinClassHeader$Companion;
+	public static final field FILE_FACADE_KIND I
+	public static final field MULTI_FILE_CLASS_FACADE_KIND I
+	public static final field MULTI_FILE_CLASS_PART_KIND I
+	public static final field SYNTHETIC_CLASS_KIND I
+	public fun <init> (Ljava/lang/Integer;[I[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
+	public fun <init> (Ljava/lang/Integer;[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
+	public final fun getBytecodeVersion ()[I
+	public final fun getData1 ()[Ljava/lang/String;
+	public final fun getData2 ()[Ljava/lang/String;
+	public final fun getExtraInt ()I
+	public final fun getExtraString ()Ljava/lang/String;
+	public final fun getKind ()I
+	public final fun getMetadataVersion ()[I
+	public final fun getPackageName ()Ljava/lang/String;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassHeader$Companion {
+}
+
+public abstract class kotlinx/metadata/jvm/KotlinClassMetadata {
+	public static final field Companion Lkotlinx/metadata/jvm/KotlinClassMetadata$Companion;
+	public synthetic fun <init> (Lkotlinx/metadata/jvm/KotlinClassHeader;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getHeader ()Lkotlinx/metadata/jvm/KotlinClassHeader;
+	public static final fun read (Lkotlinx/metadata/jvm/KotlinClassHeader;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class : kotlinx/metadata/jvm/KotlinClassMetadata {
+	public final fun accept (Lkotlinx/metadata/KmClassVisitor;)V
+	public final fun toKmClass ()Lkotlinx/metadata/KmClass;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class$Writer : kotlinx/metadata/impl/ClassWriter {
+	public fun <init> ()V
+	public final fun write ()Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
+	public final fun write ([I)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
+	public final fun write ([II)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$Class$Writer;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$Companion {
+	public final fun read (Lkotlinx/metadata/jvm/KotlinClassHeader;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade : kotlinx/metadata/jvm/KotlinClassMetadata {
+	public final fun accept (Lkotlinx/metadata/KmPackageVisitor;)V
+	public final fun toKmPackage ()Lkotlinx/metadata/KmPackage;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade$Writer : kotlinx/metadata/impl/PackageWriter {
+	public fun <init> ()V
+	public final fun write ()Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
+	public final fun write ([I)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
+	public final fun write ([II)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade$Writer;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade : kotlinx/metadata/jvm/KotlinClassMetadata {
+	public final fun getPartClassNames ()Ljava/util/List;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade$Writer {
+	public fun <init> ()V
+	public final fun write (Ljava/util/List;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+	public final fun write (Ljava/util/List;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+	public final fun write (Ljava/util/List;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade$Writer;Ljava/util/List;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart : kotlinx/metadata/jvm/KotlinClassMetadata {
+	public final fun accept (Lkotlinx/metadata/KmPackageVisitor;)V
+	public final fun getFacadeClassName ()Ljava/lang/String;
+	public final fun toKmPackage ()Lkotlinx/metadata/KmPackage;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart$Writer : kotlinx/metadata/impl/PackageWriter {
+	public fun <init> ()V
+	public final fun write (Ljava/lang/String;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+	public final fun write (Ljava/lang/String;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+	public final fun write (Ljava/lang/String;[II)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart$Writer;Ljava/lang/String;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass : kotlinx/metadata/jvm/KotlinClassMetadata {
+	public final fun accept (Lkotlinx/metadata/KmLambdaVisitor;)V
+	public final fun isLambda ()Z
+	public final fun toKmLambda ()Lkotlinx/metadata/KmLambda;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass$Writer : kotlinx/metadata/impl/LambdaWriter {
+	public fun <init> ()V
+	public final fun write ()Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public final fun write ([I)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public final fun write ([II)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass$Writer;[IIILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
+}
+
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$Unknown : kotlinx/metadata/jvm/KotlinClassMetadata {
+}
+
+public final class kotlinx/metadata/jvm/KotlinModuleMetadata {
+	public static final field Companion Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;
+	public fun <init> ([B)V
+	public final fun accept (Lkotlinx/metadata/jvm/KmModuleVisitor;)V
+	public final fun getBytes ()[B
+	public static final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+	public final fun toKmModule ()Lkotlinx/metadata/jvm/KmModule;
+}
+
+public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Companion {
+	public final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+}
+
+public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Writer : kotlinx/metadata/jvm/KmModuleVisitor {
+	public fun <init> ()V
+	public fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public fun visitOptionalAnnotationClass ()Lkotlinx/metadata/KmClassVisitor;
+	public fun visitPackageParts (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)V
+	public final fun write ([I)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Writer;[IILjava/lang/Object;)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+}
+
