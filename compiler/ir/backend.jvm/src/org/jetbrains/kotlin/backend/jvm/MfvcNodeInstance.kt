@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.substitute
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
 interface MfvcNodeInstance {
@@ -167,7 +164,12 @@ class ReceiverBasedMfvcNodeInstance(
             node is IntermediateMfvcNode && canUsePrivateAccessFor(node) && fields != null ->
                 fields.map { scope.irGetField(makeReceiverCopy(), it) }
 
-            node is IntermediateMfvcNode && !node.hasPureUnboxMethod -> {
+            node !is IntermediateMfvcNode || node.hasPureUnboxMethod && (canUsePrivateAccessFor(node) || node.unboxMethod.parentAsClass.isMultiFieldValueClass) ->
+                // We cannot relay on purity of non-mfvc class getter because the incremental compiler will not recompile the code
+                // that relayed after the change of purity if it is not local for the class.
+                node.subnodes.flatMap { get(it.name)!!.makeFlattenedGetterExpressions(scope) }
+
+            else -> {
                 val value = makeGetterExpression(scope)
                 val asVariable = scope.savableStandaloneVariableWithSetter(
                     value,
@@ -180,8 +182,6 @@ class ReceiverBasedMfvcNodeInstance(
                     root.createInstanceFromBox(scope, typeArguments, scope.irGet(asVariable), accessType, saveVariable)
                 variableInstance.makeFlattenedGetterExpressions(scope)
             }
-
-            else -> node.subnodes.flatMap { get(it.name)!!.makeFlattenedGetterExpressions(scope) }
         }
     }
 

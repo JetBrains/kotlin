@@ -123,9 +123,10 @@ fun trySetSegment(segment: DSegment) {
 // 0 ^ {2}\b.*get.*\$.*(\n {3}.*)*(\n {4}.*\.box)
 // 1 tryGetSegment\(LDSegment;\)V
 // 0 try[GS]etSegment\(LDSegment;\)V.*(\n {3}.*)*(\n {4}.*\.box)
-// 1 tryGetSegment\(LDSegment;\)V.*((\n {3}.*)*(\n {4}.*LDPoint;)){7}
-// 0 tryGetSegment\(LDSegment;\)V.*((\n {3}.*)*(\n {4}.*LDPoint;)){8}
-// 0 trySetSegment\(LDSegment;\)V.*(\n {3}.*)*(\n {4}.*LDPoint;)
+// 1 tryGetSegment\(LDSegment;\)V.*\n(( {3}.*\n)*( {4}.*LDPoint;\n)){7}
+// 0 tryGetSegment\(LDSegment;\)V.*\n(( {3}.*\n)*( {4}.*LDPoint;\n)){8}
+// 1 trySetSegment\(LDSegment;\)V.*\n(( {3}.*\n)*( {4}.*LDPoint;\n)){6}
+// 0 trySetSegment\(LDSegment;\)V.*\n(( {3}.*\n)*( {4}.*LDPoint;\n)){7}
 // 1 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*(\n {4}INVOKEVIRTUAL DSegment\.setNotImplemented-sUp7gFk \(DD\)V)){1}
 // 0 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*(\n {4}INVOKEVIRTUAL DSegment\.setNotImplemented-sUp7gFk \(DD\)V)){2}
 // 1 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*(\n {4}INVOKEVIRTUAL DSegment\.setPoint1WithBackingFieldAndDefaultGetter-sUp7gFk \(DD\)V)){1}
@@ -141,5 +142,4 @@ fun trySetSegment(segment: DSegment) {
 // 0 try[GS]etSegment\(LDSegment;\)V.*(\n {3}.*)*(\n {4}INVOKEVIRTUAL DPoint\.get[XY] \(\)D)
 // 1 tryGetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[01] \(\)D)){14}
 // 0 tryGetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[01] \(\)D)){15}
-// 1 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[01] \(\)D)){12}
-// 0 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[01] \(\)D)){13}
+// 0 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[01] \(\)D)){1}
