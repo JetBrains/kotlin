@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublicationRegistrationMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
@@ -21,34 +23,21 @@ open class KotlinJsIrTargetPreset(
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project
 ) {
-    internal var legacyPreset: KotlinJsTargetPreset? = null
-        internal set
+    internal var mixedMode: Boolean? = null
 
     open val isMpp: Boolean
         get() = true
 
     override val platformType: KotlinPlatformType = KotlinPlatformType.js
 
-    override fun useDisambiguationClassifierAsSourceSetNamePrefix() = legacyPreset == null
-
-    override fun overrideDisambiguationClassifierOnIdeImport(name: String): String? =
-        legacyPreset?.let {
-            name.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
-        }
-
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType).apply {
+        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode).apply {
             this.isMpp = this@KotlinJsIrTargetPreset.isMpp
-            this.legacyTarget = legacyPreset?.createTarget(
-                lowerCamelCaseName(
-                    name.removeJsCompilerSuffix(KotlinJsCompilerType.IR),
-                    KotlinJsCompilerType.LEGACY.lowerName
-                )
-            )
-            project.runProjectConfigurationHealthCheckWhenEvaluated {
-                if (!isBrowserConfigured && !isNodejsConfigured) {
-                    project.logger.warn(
-                        """
+            if (!mixedMode) {
+                project.runProjectConfigurationHealthCheckWhenEvaluated {
+                    if (!isBrowserConfigured && !isNodejsConfigured) {
+                        project.logger.warn(
+                            """
                                 Please choose a JavaScript environment to build distributions and run tests.
                                 Not choosing any of them will be an error in the future releases.
                                 kotlin {
@@ -59,16 +48,17 @@ open class KotlinJsIrTargetPreset(
                                     }
                                 }
                             """.trimIndent()
-                    )
+                        )
+                    }
+                    val buildStatsService = KotlinBuildStatsService.getInstance()
+                    when {
+                        isBrowserConfigured && isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "both")
+                        isBrowserConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "browser")
+                        isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "nodejs")
+                        !isBrowserConfigured && !isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "none")
+                    }
+                    Unit
                 }
-                val buildStatsService = KotlinBuildStatsService.getInstance()
-                when {
-                    isBrowserConfigured && isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "both")
-                    isBrowserConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "browser")
-                    isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "nodejs")
-                    !isBrowserConfigured && !isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "none")
-                }
-                Unit
             }
         }
     }
@@ -84,19 +74,19 @@ open class KotlinJsIrTargetPreset(
         return result
     }
 
-    override fun getName(): String = lowerCamelCaseName(
-        PRESET_NAME,
-        legacyPreset?.let { KotlinJsCompilerType.BOTH.lowerName }
-    )
+    override fun getName(): String = JS_PRESET_NAME
 
-    override fun createCompilationFactory(
+    //TODO[Ilya Goncharov] remove public morozov
+    public override fun createCompilationFactory(
         forTarget: KotlinJsIrTarget
-    ): KotlinCompilationFactory<KotlinJsIrCompilation> {
-        return KotlinJsIrCompilationFactory(forTarget)
-    }
+    ): KotlinCompilationFactory<KotlinJsIrCompilation> =
+        KotlinJsIrCompilationFactory(forTarget)
 
     companion object {
-        const val PRESET_NAME = "js"
+        val JS_PRESET_NAME = lowerCamelCaseName(
+            "js",
+            KotlinJsCompilerType.IR.lowerName
+        )
     }
 }
 
@@ -108,16 +98,16 @@ class KotlinJsIrSingleTargetPreset(
     override val isMpp: Boolean
         get() = false
 
-    override fun overrideDisambiguationClassifierOnIdeImport(name: String): String? =
-        null
-
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
-    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? =
-        legacyPreset?.let {
+    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
+        return if (mixedMode!!) {
             super.provideTargetDisambiguationClassifier(target)
                 ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.IR))
                 ?.decapitalize()
+        } else {
+            null
         }
+    }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator()

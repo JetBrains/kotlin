@@ -136,11 +136,12 @@ internal class DefaultKotlinSourceSetFactory(
         if (sourceSet in notOnlyJsSourceSets) return
 
         fun chooseCompilerAttribute(target: KotlinTarget): KotlinJsCompilerAttribute {
-            if (target is KotlinJsTarget) {
-                return KotlinJsCompilerAttribute.legacy
+            if (target is KotlinJsIrTarget) {
+                return KotlinJsCompilerAttribute.ir
             }
 
-            return KotlinJsCompilerAttribute.ir
+            target as KotlinJsTarget
+            return if (target.irTarget != null) KotlinJsCompilerAttribute.ir else KotlinJsCompilerAttribute.legacy
         }
 
         project.kotlinExtension.targets

@@ -299,25 +299,25 @@ abstract class KotlinJsProjectExtension(project: Project) :
             val target: KotlinJsTargetDsl = when (compilerOrDefault) {
                 KotlinJsCompilerType.LEGACY -> legacyPreset
                     .also {
-                        it.mixedMode = false
+                        it.irPreset = null
                     }
                     .createTarget("js")
 
                 KotlinJsCompilerType.IR -> irPreset
                     .also {
-                        it.legacyPreset = null
+                        it.mixedMode = false
                     }
                     .createTarget("js")
 
-                KotlinJsCompilerType.BOTH -> irPreset
+                KotlinJsCompilerType.BOTH -> legacyPreset
                     .also {
-                        legacyPreset.mixedMode = true
-                        it.legacyPreset = legacyPreset
+                        irPreset.mixedMode = true
+                        it.irPreset = irPreset
                     }
                     .createTarget(
                         lowerCamelCaseName(
                             "js",
-                            IR.lowerName
+                            LEGACY.lowerName
                         )
                     )
             }
