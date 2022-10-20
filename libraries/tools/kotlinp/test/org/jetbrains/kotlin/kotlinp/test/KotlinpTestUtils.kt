@@ -129,7 +129,7 @@ private fun transformClassFileWithNodes(classFile: KotlinClassMetadata): KotlinC
         else -> classFile
     }
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION") // We're testing that reading/writing with KmNodes is identical to direct
 private fun transformModuleFileWithReadWriteVisitors(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
     KotlinModuleMetadata.Writer().apply(moduleFile::accept).write()
 

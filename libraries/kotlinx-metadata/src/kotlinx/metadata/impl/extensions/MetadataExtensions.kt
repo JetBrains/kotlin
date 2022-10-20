@@ -11,8 +11,7 @@ import kotlinx.metadata.impl.WriteContext
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import java.util.*
 
-// TODO: this intrerface should be marked with @InternalAPI or something
-@Suppress("DEPRECATION", "DEPRECATION_ERROR")
+@Suppress("DEPRECATION")
 interface MetadataExtensions {
     fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, c: ReadContext)
 

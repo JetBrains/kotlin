@@ -48,7 +48,6 @@ class ReadContext(
         }
 }
 
-@Deprecated(visitorApiMessage)
 @OptIn(ExperimentalContextReceivers::class)
 fun ProtoBuf.Class.accept(
     v: KmClassVisitor,
@@ -131,7 +130,6 @@ private fun ProtoBuf.Class.loadInlineClassUnderlyingType(c: ReadContext): ProtoB
         ?.returnType(c.types)
 }
 
-@Deprecated(visitorApiMessage)
 fun ProtoBuf.Package.accept(
     v: KmPackageVisitor,
     strings: NameResolver,
@@ -153,7 +151,6 @@ fun ProtoBuf.Package.accept(
     v.visitEnd()
 }
 
-@Deprecated(visitorApiMessage)
 fun ProtoBuf.PackageFragment.accept(
     v: KmModuleFragmentVisitor,
     strings: NameResolver,
@@ -200,7 +197,6 @@ private fun KmDeclarationContainerVisitor.visitDeclarations(
     }
 }
 
-@Deprecated(visitorApiMessage)
 fun ProtoBuf.Function.accept(v: KmLambdaVisitor, strings: NameResolver) {
     val c = ReadContext(strings, TypeTable(typeTable), VersionRequirementTable.EMPTY)
 
@@ -209,7 +205,6 @@ fun ProtoBuf.Function.accept(v: KmLambdaVisitor, strings: NameResolver) {
     v.visitEnd()
 }
 
-@Deprecated(visitorApiMessage)
 private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext) {
     for (parameter in valueParameterList) {
         v.visitValueParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
@@ -266,7 +261,6 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
 }
 
 @OptIn(ExperimentalContextReceivers::class)
-@Deprecated(visitorApiMessage)
 fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
     val c = outer.withTypeParameters(typeParameterList)
 

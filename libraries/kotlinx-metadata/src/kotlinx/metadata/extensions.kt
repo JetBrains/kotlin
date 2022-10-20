@@ -43,7 +43,7 @@ class KmExtensionType(private val klass: KClass<out KmExtensionVisitor>) {
 /**
  * A base interface for all extension visitors.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmExtensionVisitor {
     /**
      * Type of this extension visitor.
@@ -54,65 +54,65 @@ interface KmExtensionVisitor {
 /**
  * A visitor to visit platform-specific extensions for a declaration container, such as a class or a package fragment.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmDeclarationContainerExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a class.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmClassExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a package fragment.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmPackageExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a module fragment.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmModuleFragmentExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a function.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmFunctionExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a property.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmPropertyExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a constructor.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmConstructorExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type parameter.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmTypeParameterExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmTypeExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type alias.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmTypeAliasExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a value parameter.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 interface KmValueParameterExtensionVisitor : KmExtensionVisitor
