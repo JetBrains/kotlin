@@ -1,3 +1,4 @@
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 // WITH_STDLIB
 
 class MyColor(val x: Int, val y: Int, val z: Int)

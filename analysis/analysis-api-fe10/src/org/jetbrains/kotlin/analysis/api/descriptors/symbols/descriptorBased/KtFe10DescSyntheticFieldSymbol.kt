@@ -46,8 +46,10 @@ internal class KtFe10DescSyntheticFieldSymbol(
     override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol> = withValidityAssertion {
         val accessorPsi = descriptor.containingDeclaration.toSourceElement.getPsi()
         if (accessorPsi is KtPropertyAccessor) {
-            val accessorPointer = KtPsiBasedSymbolPointer<KtPropertyAccessorSymbol>(accessorPsi.createSmartPointer())
-            return KtFe10DescSyntheticFieldSymbolPointer(accessorPointer)
+            val accessorPointer = KtPsiBasedSymbolPointer.createForSymbolFromPsi<KtPropertyAccessorSymbol>(accessorPsi)
+            if (accessorPointer != null) {
+                return KtFe10DescSyntheticFieldSymbolPointer(accessorPointer)
+            }
         }
 
         return KtFe10NeverRestoringSymbolPointer()
