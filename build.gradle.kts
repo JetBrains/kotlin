@@ -48,6 +48,7 @@ plugins {
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
     id("org.gradle.crypto.checksum") version "1.2.0"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.11.0" apply false
     signing
 }
 

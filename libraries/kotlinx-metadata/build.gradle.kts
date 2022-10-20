@@ -3,7 +3,7 @@ description = "Kotlin metadata manipulation library"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.11.0"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 sourceSets {
