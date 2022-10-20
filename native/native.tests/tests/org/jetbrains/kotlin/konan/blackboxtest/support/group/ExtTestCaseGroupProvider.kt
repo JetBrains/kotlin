@@ -72,6 +72,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     customSourceTransformers = settings.get<ExternalSourceTransformersProvider>().getSourceTransformers(testDataFile),
                     testRoots = settings.get(),
                     generatedSources = settings.get(),
+                    customKlibs = settings.get(),
                     timeouts = settings.get()
                 )
 
@@ -95,6 +96,7 @@ private class ExtTestDataFile(
     customSourceTransformers: ExternalSourceTransformers?,
     testRoots: TestRoots,
     private val generatedSources: GeneratedSources,
+    private val customKlibs: CustomKlibs,
     private val timeouts: Timeouts
 ) {
     private val structure by lazy {
@@ -511,7 +513,10 @@ private class ExtTestDataFile(
             checks = TestRunChecks.Default(timeouts.executionTimeout),
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
         )
-        testCase.initialize(sharedModules::get)
+        testCase.initialize(
+            givenModules = customKlibs.klibs.mapToSet(TestModule::Given),
+            findSharedModule = sharedModules::get
+        )
 
         return testCase
     }

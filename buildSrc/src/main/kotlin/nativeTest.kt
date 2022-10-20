@@ -10,6 +10,7 @@ private enum class TestProperty(shortName: String) {
     // effect on other Gradle tasks (ex: :kotlin-native:dist) that might be executed along with test task.
     KOTLIN_NATIVE_HOME("nativeHome"),
     COMPILER_CLASSPATH("compilerClasspath"),
+    CUSTOM_KLIBS("customKlibs"),
     TEST_TARGET("target"),
     TEST_MODE("mode"),
     FORCE_STANDALONE("forceStandalone"),
@@ -33,7 +34,12 @@ private enum class TestProperty(shortName: String) {
     fun readGradleProperty(task: Test): String? = task.project.findProperty(propertyName)?.toString()
 }
 
-fun Project.nativeTest(taskName: String, tag: String?, vararg customDependencies: Configuration) = projectTest(
+fun Project.nativeTest(
+    taskName: String,
+    tag: String?,
+    customDependencies: List<Configuration> = emptyList(),
+    customKlibDependencies: List<Configuration> = emptyList()
+) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
     maxHeapSizeMb = 3072 // Extra heap space for Kotlin/Native compiler.
@@ -85,6 +91,13 @@ fun Project.nativeTest(taskName: String, tag: String?, vararg customDependencies
                     dependsOn(dependency)
                     this.addAll(dependency.files)
                 }
+            }.map { it.absoluteFile }.joinToString(";")
+        }
+
+        TestProperty.CUSTOM_KLIBS.setUpFromGradleProperty(this) {
+            customKlibDependencies.flatMap { dependency ->
+                dependsOn(dependency)
+                dependency.files
             }.map { it.absoluteFile }.joinToString(";")
         }
 

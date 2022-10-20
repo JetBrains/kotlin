@@ -110,6 +110,11 @@ internal sealed class TestModule {
         override val files: FailOnDuplicatesSet<TestFile<Shared>> = FailOnDuplicatesSet()
     }
 
+    data class Given(val klibFile: File) : TestModule() {
+        override val name: String get() = klibFile.name
+        override val files: Set<TestFile<*>> get() = emptySet()
+    }
+
     final override fun equals(other: Any?) =
         other === this || (other is TestModule && other.javaClass == javaClass && other.name == name && other.files == files)
 
@@ -122,13 +127,13 @@ internal sealed class TestModule {
         val TestModule.allDependencies: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> allDependencies
-                is Shared -> emptySet()
+                is Shared, is Given -> emptySet()
             }
 
         val TestModule.allFriends: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> allFriends
-                is Shared -> emptySet()
+                is Shared, is Given -> emptySet()
             }
 
         private val SM = LockBasedStorageManager(TestModule::class.java.name)
@@ -222,7 +227,10 @@ internal class TestCase(
         }
     }
 
-    fun initialize(findSharedModule: ((moduleName: String) -> TestModule.Shared?)?) {
+    fun initialize(
+        givenModules: Set<TestModule.Given>?,
+        findSharedModule: ((moduleName: String) -> TestModule.Shared?)?
+    ) {
         // Check that there are no duplicated files among different modules.
         val duplicatedFiles = modules.flatMap { it.files }.groupingBy { it }.eachCount().filterValues { it > 1 }.keys
         assertTrue(duplicatedFiles.isEmpty()) { "$id: Duplicated test files encountered: $duplicatedFiles" }
@@ -242,7 +250,12 @@ internal class TestCase(
         modules.forEach { module ->
             module.commit() // Save to the file system and release the memory.
             module.testCase = this
-            module.directDependencies = module.directDependencySymbols.mapToSet(::findModule)
+
+            module.directDependencies = buildSet {
+                module.directDependencySymbols.mapTo(this, ::findModule)
+                givenModules?.let(this@buildSet::addAll)
+            }
+
             module.directFriends = module.directFriendSymbols.mapToSet(::findModule)
         }
     }
