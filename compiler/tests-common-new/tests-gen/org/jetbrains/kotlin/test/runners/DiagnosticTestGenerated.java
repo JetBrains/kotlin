@@ -24224,6 +24224,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("rawTypeSyntheticExtensions.kt")
+                public void testRawTypeSyntheticExtensions() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/rawTypeSyntheticExtensions.kt");
+                }
+
+                @Test
                 @TestMetadata("rawWithInProjection.kt")
                 public void testRawWithInProjection() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/rawWithInProjection.kt");
