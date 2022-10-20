@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import org.jetbrains.kotlin.gradle.utils.withType
 
 internal fun Project.configureStdlibDefaultDependency(
     topLevelExtension: KotlinTopLevelExtension,
@@ -47,6 +50,41 @@ internal fun Project.configureStdlibDefaultDependency(
             .targets
             .configureEach { target ->
                 target.addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
+            }
+    }
+}
+
+/**
+ * Replacing kotlin-stdlib-jdk8 and kotlin-stdlib-jdk7 artifacts with kotlin-stdlib
+ * when project stdlib version is >= 1.8.0
+ */
+internal fun ConfigurationContainer.configureStdlibSubstitution(
+    dependencies: DependencyHandler
+) = all { configuration ->
+    configuration.withDependencies { dependencySet ->
+        dependencySet
+            .withType<ExternalDependency>()
+            .configureEach { dependency ->
+                if (dependency.group == KOTLIN_MODULE_GROUP &&
+                    dependency.name == "kotlin-stdlib" &&
+                    dependency.version != null &&
+                    SemVer.from(dependency.version!!) >= kotlin180Version
+                ) {
+                    dependencies.modules { componentModuleMetadataHandler ->
+                        componentModuleMetadataHandler.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7") {
+                            it.replacedBy(
+                                "org.jetbrains.kotlin:kotlin-stdlib",
+                                "kotlin-stdlib-jdk7 is now part of kotlin-stdlib"
+                            )
+                        }
+                        componentModuleMetadataHandler.module("org.jetbrains.kotlin:kotlin-stdlib-jdk8") {
+                            it.replacedBy(
+                                "org.jetbrains.kotlin:kotlin-stdlib",
+                                "kotlin-stdlib-jdk8 is now part of kotlin-stdlib"
+                            )
+                        }
+                    }
+                }
             }
     }
 }
@@ -169,6 +207,8 @@ private fun KotlinPlatformType.stdlibPlatformType(
 }
 
 private val androidTestVariants = setOf(AndroidVariantType.UnitTest, AndroidVariantType.InstrumentedTest)
+
+private val kotlin180Version = SemVer(1.toBigInteger(), 8.toBigInteger(), 0.toBigInteger())
 
 private fun KotlinSourceSet.isRelatedToAndroidTestSourceSet(): Boolean {
     val androidVariant = androidSourceSetInfoOrNull?.androidVariantType ?: return false
