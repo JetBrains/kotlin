@@ -76,10 +76,17 @@ internal class KtFirKotlinPropertySymbol(
                 else -> KtSymbolKind.CLASS_MEMBER
             }
         }
+
     override val modality: Modality get() = withValidityAssertion { firSymbol.modalityOrFinal }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
+    override val annotationsList by cached {
+        KtFirAnnotationListForDeclaration.create(
+            firSymbol,
+            firResolveSession.useSiteFirSession,
+            token
+        )
+    }
 
     override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
 
@@ -102,6 +109,7 @@ internal class KtFirKotlinPropertySymbol(
             firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             firSymbol.fir.hasBackingField
         }
+
     override val isLateInit: Boolean get() = withValidityAssertion { firSymbol.isLateInit }
 
 
