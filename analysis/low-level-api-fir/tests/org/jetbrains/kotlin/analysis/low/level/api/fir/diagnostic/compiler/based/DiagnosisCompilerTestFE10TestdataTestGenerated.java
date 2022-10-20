@@ -24176,6 +24176,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("noTypeArgumentsForRawScopedMembers.kt")
+                public void testNoTypeArgumentsForRawScopedMembers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/noTypeArgumentsForRawScopedMembers.kt");
+                }
+
+                @Test
                 @TestMetadata("nonGenericRawMember.kt")
                 public void testNonGenericRawMember() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonGenericRawMember.kt");
