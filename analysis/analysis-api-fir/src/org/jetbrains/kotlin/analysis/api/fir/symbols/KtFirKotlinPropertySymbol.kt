@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -120,7 +120,7 @@ internal class KtFirKotlinPropertySymbol(
     override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
 
-        return when (symbolKind) {
+        return when (val kind = symbolKind) {
             KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level properties is not supported yet")
             KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberPropertySymbolPointer(
@@ -129,9 +129,8 @@ internal class KtFirKotlinPropertySymbol(
                     firSymbol.createSignature()
                 )
 
-            KtSymbolKind.ACCESSOR -> TODO("Creating symbol for accessors is not supported yet")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
-            KtSymbolKind.SAM_CONSTRUCTOR -> throw WrongSymbolForSamConstructor(this::class.java.simpleName)
+            else -> throw UnsupportedSymbolKind(this::class, kind)
         }
     }
 
