@@ -491,19 +491,31 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val untypedEquals = valueClass.functions.single { it.isEquals(context) }
 
         function.body = context.createIrBuilder(valueClass.symbol).run {
+            val context = this@JvmInlineClassLowering.context
+            val underlyingType = getInlineClassUnderlyingType(valueClass)
             irExprBody(
                 if (untypedEquals.origin == IrDeclarationOrigin.DEFINED) {
-                    val boxFunction = this@JvmInlineClassLowering.context.inlineClassReplacements.getBoxFunction(valueClass)
+                    val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass)
 
                     fun irBox(expr: IrExpression) = irCall(boxFunction).apply { putValueArgument(0, expr) }
 
-                    val underlyingType = getInlineClassUnderlyingType(valueClass)
                     irCall(untypedEquals).apply {
                         dispatchReceiver = irBox(coerceInlineClasses(irGet(left), left.type, underlyingType))
                         putValueArgument(0, irBox(coerceInlineClasses(irGet(right), right.type, underlyingType)))
                     }
                 } else {
-                    irEquals(coerceInlineClasses(irGet(left), left.type, type), coerceInlineClasses(irGet(right), right.type, type))
+                    val underlyingClass = underlyingType.getClass()
+                    // We can't directly compare unboxed values of underlying inline class as this class can have custom equals
+                    if (underlyingClass?.isSingleFieldValueClass == true && !underlyingType.isNullable()) {
+                        val underlyingClassEq =
+                            context.inlineClassReplacements.getSpecializedEqualsMethod(underlyingClass, context.irBuiltIns)
+                        irCall(underlyingClassEq).apply {
+                            putValueArgument(0, coerceInlineClasses(irGet(left), left.type, underlyingType))
+                            putValueArgument(1, coerceInlineClasses(irGet(right), right.type, underlyingType))
+                        }
+                    } else {
+                        irEquals(coerceInlineClasses(irGet(left), left.type, type), coerceInlineClasses(irGet(right), right.type, type))
+                    }
                 }
             )
         }
