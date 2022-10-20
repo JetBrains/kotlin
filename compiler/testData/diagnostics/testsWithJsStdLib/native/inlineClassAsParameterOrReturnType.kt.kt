@@ -1,6 +1,5 @@
-// FIR_IGNORE
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, -JsAllowValueClassesInExternals
 
 // FILE: uint.kt
 
