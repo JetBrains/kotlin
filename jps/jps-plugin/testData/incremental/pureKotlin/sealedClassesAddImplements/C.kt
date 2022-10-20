@@ -1,3 +1,3 @@
 package test
 
-interface С
+interface C
