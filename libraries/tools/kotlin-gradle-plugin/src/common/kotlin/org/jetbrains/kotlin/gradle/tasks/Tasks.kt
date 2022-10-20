@@ -1040,7 +1040,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Incremental
     @get:Optional
     @get:NormalizeLineEndings
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Classpath
     internal val friendDependencies: FileCollection = objectFactory
         .fileCollection()
         .from(friendPaths)
