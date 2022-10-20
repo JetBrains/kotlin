@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiver: KtReceiverParameterSymbol:
+  receiverParameter: KtReceiverParameterSymbol:
     annotationsList: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry

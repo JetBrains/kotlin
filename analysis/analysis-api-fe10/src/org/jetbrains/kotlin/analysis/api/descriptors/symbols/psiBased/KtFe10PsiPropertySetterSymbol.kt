@@ -76,7 +76,7 @@ internal class KtFe10PsiPropertySetterSymbol(
             descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType()
         }
 
-    override val receiver: KtReceiverParameterSymbol?
+    override val receiverParameter: KtReceiverParameterSymbol?
         get() = withValidityAssertion {
             descriptor?.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext)
         }

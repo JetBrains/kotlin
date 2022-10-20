@@ -14,7 +14,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiver: null
+    receiverParameter: null
     returnType: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -38,7 +38,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
@@ -69,7 +69,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: clone
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Any
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -96,7 +96,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: SUBSTITUTION_OVERRIDE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -114,7 +114,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: SUBSTITUTION_OVERRIDE
-      receiver: null
+      receiverParameter: null
       returnType: test/E
       symbolKind: LOCAL
       typeParameters: []
@@ -143,7 +143,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: equals
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -161,7 +161,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -190,7 +190,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: hashCode
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -217,7 +217,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -246,7 +246,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: LIBRARY
-    receiver: null
+    receiverParameter: null
     returnType: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -270,7 +270,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: name
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
@@ -300,7 +300,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: LIBRARY
-    receiver: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -324,7 +324,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: ordinal
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -355,7 +355,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: getDeclaringClass
   origin: SUBSTITUTION_OVERRIDE
-  receiver: null
+  receiverParameter: null
   returnType: ft<java/lang/Class<test/E!>, java/lang/Class<test/E!>?>
   symbolKind: CLASS_MEMBER
   typeParameters: []

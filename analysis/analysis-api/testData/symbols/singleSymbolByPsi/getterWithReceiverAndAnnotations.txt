@@ -15,7 +15,7 @@ KtPropertyGetterSymbol:
   isOverride: false
   modality: FINAL
   origin: SOURCE
-  receiver: KtReceiverParameterSymbol:
+  receiverParameter: KtReceiverParameterSymbol:
     annotationsList: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry

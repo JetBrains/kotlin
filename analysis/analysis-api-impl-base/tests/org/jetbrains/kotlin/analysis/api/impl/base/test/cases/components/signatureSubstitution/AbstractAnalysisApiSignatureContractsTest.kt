@@ -102,7 +102,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiSi
         substitutor: KtSubstitutor,
         testServices: TestServices
     ) {
-        testServices.assertions.assertEquals(symbol.receiver?.type?.let(substitutor::substitute), signature.receiverType)
+        testServices.assertions.assertEquals(symbol.receiverParameter?.type?.let(substitutor::substitute), signature.receiverType)
         testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substitute), signature.returnType)
 
         testServices.assertions.assertEquals(symbol.valueParameters.size, signature.valueParameters.size)
@@ -118,7 +118,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiSi
         substitutor: KtSubstitutor,
         testServices: TestServices
     ) {
-        testServices.assertions.assertEquals(symbol.receiver?.type?.let(substitutor::substitute), signature.receiverType)
+        testServices.assertions.assertEquals(symbol.receiverParameter?.type?.let(substitutor::substitute), signature.receiverType)
         testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substitute), signature.returnType)
     }
 

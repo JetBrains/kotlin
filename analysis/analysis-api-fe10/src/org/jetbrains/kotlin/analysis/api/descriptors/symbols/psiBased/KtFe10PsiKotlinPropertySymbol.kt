@@ -101,7 +101,7 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override val returnType: KtType
         get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
 
-    override val receiver: KtReceiverParameterSymbol?
+    override val receiverParameter: KtReceiverParameterSymbol?
         get() = withValidityAssertion {
             if (!psi.isExtensionDeclaration()) {
                 return null

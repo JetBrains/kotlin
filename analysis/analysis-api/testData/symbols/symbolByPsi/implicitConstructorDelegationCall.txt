@@ -7,7 +7,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -25,7 +25,7 @@ KtConstructorSymbol:
       isVararg: false
       name: i
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []

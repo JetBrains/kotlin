@@ -84,7 +84,7 @@ internal class KtFe10PsiDefaultPropertySetterSymbol(
             return analysisContext.builtIns.unitType.toKtType(analysisContext)
         }
 
-    override val receiver: KtReceiverParameterSymbol?
+    override val receiverParameter: KtReceiverParameterSymbol?
         get() = withValidityAssertion {
             if (!propertyPsi.isExtensionDeclaration()) {
                 return null

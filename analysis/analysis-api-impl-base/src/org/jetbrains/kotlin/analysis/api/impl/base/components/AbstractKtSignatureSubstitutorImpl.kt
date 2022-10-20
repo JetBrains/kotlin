@@ -47,7 +47,7 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
         return KtFunctionLikeSignature(
             symbol,
             substitutor.substitute(symbol.returnType),
-            symbol.receiver?.type?.let { substitutor.substitute(it) },
+            symbol.receiverParameter?.type?.let { substitutor.substitute(it) },
             symbol.valueParameters.map { substitute(it, substitutor) }
         )
     }
@@ -57,7 +57,7 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
         return KtVariableLikeSignature(
             symbol,
             substitutor.substitute(symbol.returnType),
-            symbol.receiver?.type?.let { substitutor.substitute(it) },
+            symbol.receiverParameter?.type?.let { substitutor.substitute(it) },
         )
     }
 
@@ -70,10 +70,10 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
     }
 
     override fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S> {
-        return KtFunctionLikeSignature(symbol, symbol.returnType, symbol.receiver?.type, symbol.valueParameters.map { asSignature(it) })
+        return KtFunctionLikeSignature(symbol, symbol.returnType, symbol.receiverParameter?.type, symbol.valueParameters.map { asSignature(it) })
     }
 
     override fun <S : KtVariableLikeSymbol> asSignature(symbol: S): KtVariableLikeSignature<S> {
-        return KtVariableLikeSignature(symbol, symbol.returnType, symbol.receiver?.type)
+        return KtVariableLikeSignature(symbol, symbol.returnType, symbol.receiverParameter?.type)
     }
 }

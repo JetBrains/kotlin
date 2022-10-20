@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -42,7 +42,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -60,7 +60,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []

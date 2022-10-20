@@ -93,7 +93,7 @@ internal class KtFirPropertySetterSymbol(
     override val valueParameters: List<KtValueParameterSymbol> by cached { listOf(parameter) }
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val receiver: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.fir.propertySymbol.receiver(builder) }
+    override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.fir.propertySymbol.receiver(builder) }
 
 
     override val hasStableParameterNames: Boolean

@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: add
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -33,7 +33,7 @@ KtFunctionSymbol:
       isVararg: false
       name: element
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
@@ -62,7 +62,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: add
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -80,7 +80,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -99,7 +99,7 @@ KtFunctionSymbol:
       isVararg: false
       name: element
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
@@ -128,7 +128,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -146,7 +146,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -165,7 +165,7 @@ KtFunctionSymbol:
       isVararg: false
       name: elements
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
@@ -194,7 +194,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -212,7 +212,7 @@ KtFunctionSymbol:
       isVararg: false
       name: elements
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
@@ -241,7 +241,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: clear
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -268,7 +268,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/collections/MutableListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -295,7 +295,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/collections/MutableListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -313,7 +313,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -342,7 +342,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: remove
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -360,7 +360,7 @@ KtFunctionSymbol:
       isVararg: false
       name: element
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
@@ -389,7 +389,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: removeAll
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -407,7 +407,7 @@ KtFunctionSymbol:
       isVararg: false
       name: elements
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
@@ -436,7 +436,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: removeAt
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -454,7 +454,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -483,7 +483,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: retainAll
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -501,7 +501,7 @@ KtFunctionSymbol:
       isVararg: false
       name: elements
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
@@ -530,7 +530,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: set
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -548,7 +548,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -567,7 +567,7 @@ KtFunctionSymbol:
       isVararg: false
       name: element
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
@@ -596,7 +596,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: subList
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/collections/MutableList<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -614,7 +614,7 @@ KtFunctionSymbol:
       isVararg: false
       name: fromIndex
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -633,7 +633,7 @@ KtFunctionSymbol:
       isVararg: false
       name: toIndex
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -662,7 +662,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: contains
   origin: SUBSTITUTION_OVERRIDE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -680,7 +680,7 @@ KtFunctionSymbol:
       isVararg: false
       name: element
       origin: SUBSTITUTION_OVERRIDE
-      receiver: null
+      receiverParameter: null
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
@@ -709,7 +709,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: containsAll
   origin: SUBSTITUTION_OVERRIDE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -727,7 +727,7 @@ KtFunctionSymbol:
       isVararg: false
       name: elements
       origin: SUBSTITUTION_OVERRIDE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
@@ -756,7 +756,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: SUBSTITUTION_OVERRIDE
-  receiver: null
+  receiverParameter: null
   returnType: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -774,7 +774,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: SUBSTITUTION_OVERRIDE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -803,7 +803,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: indexOf
   origin: SUBSTITUTION_OVERRIDE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -821,7 +821,7 @@ KtFunctionSymbol:
       isVararg: false
       name: element
       origin: SUBSTITUTION_OVERRIDE
-      receiver: null
+      receiverParameter: null
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
@@ -850,7 +850,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: isEmpty
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -877,7 +877,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: iterator
   origin: INTERSECTION_OVERRIDE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/collections/MutableIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -904,7 +904,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: lastIndexOf
   origin: SUBSTITUTION_OVERRIDE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -922,7 +922,7 @@ KtFunctionSymbol:
       isVararg: false
       name: element
       origin: SUBSTITUTION_OVERRIDE
-      receiver: null
+      receiverParameter: null
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
@@ -950,7 +950,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: ABSTRACT
     origin: LIBRARY
-    receiver: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -974,7 +974,7 @@ KtKotlinPropertySymbol:
   modality: ABSTRACT
   name: size
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -1005,7 +1005,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1023,7 +1023,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -1052,7 +1052,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1079,7 +1079,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []

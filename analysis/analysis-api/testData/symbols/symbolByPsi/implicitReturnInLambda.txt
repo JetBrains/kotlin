@@ -6,7 +6,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: b
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -20,7 +20,7 @@ KtAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -38,7 +38,7 @@ KtAnonymousFunctionSymbol:
       isVararg: false
       name: a
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -56,7 +56,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: lam1
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   typeParameters: []
@@ -71,7 +71,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: c
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -85,7 +85,7 @@ KtAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -103,7 +103,7 @@ KtAnonymousFunctionSymbol:
       isVararg: false
       name: a
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -121,7 +121,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: lam2
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   typeParameters: []
@@ -136,7 +136,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: b
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -150,7 +150,7 @@ KtAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -168,7 +168,7 @@ KtAnonymousFunctionSymbol:
       isVararg: false
       name: it
       origin: SOURCE_MEMBER_GENERATED
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -195,7 +195,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -221,7 +221,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: bar
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -239,7 +239,7 @@ KtFunctionSymbol:
       isVararg: false
       name: lmbd
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []

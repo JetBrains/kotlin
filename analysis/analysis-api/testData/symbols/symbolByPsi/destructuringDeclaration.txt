@@ -7,7 +7,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: true
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: P
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -32,7 +32,7 @@ KtConstructorSymbol:
           isOverride: false
           modality: FINAL
           origin: SOURCE
-          receiver: null
+          receiverParameter: null
           returnType: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -56,7 +56,7 @@ KtConstructorSymbol:
         modality: FINAL
         name: x
         origin: SOURCE
-        receiver: null
+        receiverParameter: null
         returnType: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -77,7 +77,7 @@ KtConstructorSymbol:
       isVararg: false
       name: x
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -103,7 +103,7 @@ KtConstructorSymbol:
           isOverride: false
           modality: FINAL
           origin: SOURCE
-          receiver: null
+          receiverParameter: null
           returnType: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -127,7 +127,7 @@ KtConstructorSymbol:
         modality: FINAL
         name: y
         origin: SOURCE
-        receiver: null
+        receiverParameter: null
         returnType: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -148,7 +148,7 @@ KtConstructorSymbol:
       isVararg: false
       name: y
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -190,7 +190,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: l
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -205,7 +205,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: r
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -229,7 +229,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: destruct
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []

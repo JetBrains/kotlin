@@ -60,7 +60,7 @@ internal class KtFirSamConstructorSymbol(
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
 
-    override val receiver: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
+    override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
     override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
 

@@ -26,7 +26,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: [
@@ -46,7 +46,7 @@ KtFunctionSymbol:
       isVararg: false
       name: x
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: X
       symbolKind: LOCAL
       typeParameters: []

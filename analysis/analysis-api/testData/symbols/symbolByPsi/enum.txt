@@ -6,7 +6,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: Y
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: X
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -21,7 +21,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: Z
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: X
   symbolKind: CLASS_MEMBER
   typeParameters: []

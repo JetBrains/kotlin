@@ -6,7 +6,7 @@ KtBackingFieldSymbol:
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KtKotlinPropertySymbol(/x)
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []

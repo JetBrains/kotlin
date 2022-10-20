@@ -52,7 +52,7 @@ internal class KtFe10DescPropertySetterSymbol(
     override val parameter: KtValueParameterSymbol
         get() = withValidityAssertion { KtFe10DescValueParameterSymbol(descriptor.valueParameters.single(), analysisContext) }
 
-    override val receiver: KtReceiverParameterSymbol?
+    override val receiverParameter: KtReceiverParameterSymbol?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> {

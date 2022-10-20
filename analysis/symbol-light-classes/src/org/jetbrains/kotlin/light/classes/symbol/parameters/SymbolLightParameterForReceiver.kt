@@ -43,7 +43,7 @@ internal class SymbolLightParameterForReceiver private constructor(
             if (callableSymbol !is KtNamedSymbol) return null
 
             if (!callableSymbol.isExtension) return null
-            val extensionTypeAndAnnotations = callableSymbol.receiver ?: return null
+            val extensionTypeAndAnnotations = callableSymbol.receiverParameter ?: return null
 
             return SymbolLightParameterForReceiver(
                 receiver = extensionTypeAndAnnotations,

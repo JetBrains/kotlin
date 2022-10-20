@@ -73,7 +73,7 @@ public abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
     final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.CLASS_MEMBER }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
-    final override val receiver: KtReceiverParameterSymbol? get() = withValidityAssertion { null }
+    final override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KtContextReceiver> get() = withValidityAssertion { emptyList() }
 
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>

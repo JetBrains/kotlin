@@ -7,7 +7,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiver: null
+  receiverParameter: null
   returnType: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER
   typeParameters: [
@@ -27,7 +27,7 @@ KtConstructorSymbol:
       isVararg: false
       name: c
       origin: JAVA
-      receiver: null
+      receiverParameter: null
       returnType: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
       symbolKind: LOCAL
       typeParameters: []

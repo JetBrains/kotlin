@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: serializeFirstTarget
   origin: PLUGIN
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -33,7 +33,7 @@ KtFunctionSymbol:
       isVararg: false
       name: x
       origin: PLUGIN
-      receiver: null
+      receiverParameter: null
       returnType: test/FirstTarget
       symbolKind: LOCAL
       typeParameters: []
@@ -62,7 +62,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: serializeSecondTarget
   origin: PLUGIN
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -80,7 +80,7 @@ KtFunctionSymbol:
       isVararg: false
       name: x
       origin: PLUGIN
-      receiver: null
+      receiverParameter: null
       returnType: test/SecondTarget
       symbolKind: LOCAL
       typeParameters: []
@@ -109,7 +109,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -127,7 +127,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -156,7 +156,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -183,7 +183,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -202,7 +202,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED
-  receiver: null
+  receiverParameter: null
   returnType: test/Serializer
   symbolKind: CLASS_MEMBER
   typeParameters: []

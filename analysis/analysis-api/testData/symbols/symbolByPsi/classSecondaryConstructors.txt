@@ -7,7 +7,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: true
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -25,7 +25,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -43,7 +43,7 @@ KtConstructorSymbol:
       isVararg: false
       name: x
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -63,7 +63,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -81,7 +81,7 @@ KtConstructorSymbol:
       isVararg: false
       name: y
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -100,7 +100,7 @@ KtConstructorSymbol:
       isVararg: false
       name: z
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []

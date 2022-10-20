@@ -6,7 +6,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: q
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -30,7 +30,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: aaa
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: LOCAL
   typeParameters: []
@@ -79,7 +79,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: yyy
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

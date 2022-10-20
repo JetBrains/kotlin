@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: invoke
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: R
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -33,7 +33,7 @@ KtFunctionSymbol:
       isVararg: false
       name: p1
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: P1
       symbolKind: LOCAL
       typeParameters: []
@@ -52,7 +52,7 @@ KtFunctionSymbol:
       isVararg: false
       name: p2
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: P2
       symbolKind: LOCAL
       typeParameters: []
@@ -81,7 +81,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -99,7 +99,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: LIBRARY
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -128,7 +128,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -155,7 +155,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []

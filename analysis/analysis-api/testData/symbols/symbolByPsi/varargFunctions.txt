@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: primitive
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -33,7 +33,7 @@ KtFunctionSymbol:
       isVararg: true
       name: a
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -61,7 +61,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: nullablePrimitive
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -79,7 +79,7 @@ KtFunctionSymbol:
       isVararg: true
       name: b
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Float?
       symbolKind: LOCAL
       typeParameters: []
@@ -107,7 +107,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: nonPrimitive
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -125,7 +125,7 @@ KtFunctionSymbol:
       isVararg: true
       name: c
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []
@@ -153,7 +153,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: error
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -171,7 +171,7 @@ KtFunctionSymbol:
       isVararg: true
       name: d
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []

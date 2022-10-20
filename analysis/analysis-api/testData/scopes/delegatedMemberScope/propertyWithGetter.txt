@@ -18,7 +18,7 @@ KtKotlinPropertySymbol:
   modality: OPEN
   name: foo
   origin: DELEGATED
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER

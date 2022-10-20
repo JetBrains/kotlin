@@ -7,7 +7,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: true
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: Anno
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -32,7 +32,7 @@ KtConstructorSymbol:
           isOverride: false
           modality: FINAL
           origin: SOURCE
-          receiver: null
+          receiverParameter: null
           returnType: kotlin/String
           symbolKind: ACCESSOR
           typeParameters: []
@@ -56,7 +56,7 @@ KtConstructorSymbol:
         modality: FINAL
         name: param1
         origin: SOURCE
-        receiver: null
+        receiverParameter: null
         returnType: kotlin/String
         setter: null
         symbolKind: CLASS_MEMBER
@@ -77,7 +77,7 @@ KtConstructorSymbol:
       isVararg: false
       name: param1
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -103,7 +103,7 @@ KtConstructorSymbol:
           isOverride: false
           modality: FINAL
           origin: SOURCE
-          receiver: null
+          receiverParameter: null
           returnType: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -127,7 +127,7 @@ KtConstructorSymbol:
         modality: FINAL
         name: param2
         origin: SOURCE
-        receiver: null
+        receiverParameter: null
         returnType: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -148,7 +148,7 @@ KtConstructorSymbol:
       isVararg: false
       name: param2
       origin: SOURCE
-      receiver: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -202,7 +202,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiver: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
