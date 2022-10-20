@@ -191,7 +191,6 @@ class MetadataSmokeTest {
     }
 
     @Test
-    @Suppress("DEPRECATION_ERROR")
     fun metadataVersionEarlierThan1_4() {
         val dummy = (KotlinClassMetadata.read(MetadataSmokeTest::class.java.readMetadata()) as KotlinClassMetadata.Class).toKmClass()
         val mv = intArrayOf(1, 3)

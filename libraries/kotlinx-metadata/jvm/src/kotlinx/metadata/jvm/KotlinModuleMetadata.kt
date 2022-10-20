@@ -93,7 +93,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
      *
      * @param v the visitor that must visit this module file
      */
-    @Deprecated(visitorApiMessage)
+    @Deprecated(VISITOR_API_MESSAGE)
     fun accept(v: KmModuleVisitor) {
         for ((fqName, parts) in data.packageFqName2Parts) {
             val (fileFacades, multiFileClassParts) = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
@@ -150,7 +150,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
  *
  * When using this class, [visitEnd] must be called exactly once and after calls to all other visit* methods.
  */
-@Deprecated(visitorApiMessage)
+@Deprecated(VISITOR_API_MESSAGE)
 abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
     /**
      * Visits the table of all single- and multi-file facades declared in some package of this module.
@@ -220,17 +220,17 @@ class KmModule : KmModuleVisitor() {
      */
     val optionalAnnotationClasses: MutableList<KmClass> = ArrayList(0)
 
-    @Deprecated(visitorApiMessage)
+    @Deprecated(VISITOR_API_MESSAGE)
     override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
         packageParts[fqName] = KmPackageParts(fileFacades.toMutableList(), multiFileClassParts.toMutableMap())
     }
 
-    @Deprecated(visitorApiMessage)
+    @Deprecated(VISITOR_API_MESSAGE)
     override fun visitAnnotation(annotation: KmAnnotation) {
         annotations.add(annotation)
     }
 
-    @Deprecated(visitorApiMessage)
+    @Deprecated(VISITOR_API_MESSAGE)
     override fun visitOptionalAnnotationClass(): KmClass =
         KmClass().also(optionalAnnotationClasses::add)
 
@@ -239,7 +239,7 @@ class KmModule : KmModuleVisitor() {
      *
      * @param visitor the visitor which will visit data in this module.
      */
-    @Deprecated(visitorApiMessage)
+    @Deprecated(VISITOR_API_MESSAGE)
     fun accept(visitor: KmModuleVisitor) {
         for ((fqName, parts) in packageParts) {
             visitor.visitPackageParts(fqName, parts.fileFacades, parts.multiFileClassParts)

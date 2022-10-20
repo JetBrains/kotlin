@@ -189,7 +189,6 @@ private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (
         }
     }
 
-@Deprecated(visitorApiMessage)
 fun writeProperty(
     c: WriteContext, flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags, output: (ProtoBuf.Property.Builder) -> Unit
 ): KmPropertyVisitor = object : KmPropertyVisitor() {
@@ -423,7 +422,6 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
         }
     }
 
-@Deprecated(visitorApiMessage)
 open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) : KmClassVisitor() {
     protected val t = ProtoBuf.Class.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
@@ -497,7 +495,6 @@ open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteCo
     }
 }
 
-@Deprecated(visitorApiMessage)
 open class PackageWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) : KmPackageVisitor() {
     protected val t = ProtoBuf.Package.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
@@ -523,7 +520,6 @@ open class PackageWriter(stringTable: StringTable, contextExtensions: List<Write
     }
 }
 
-@Deprecated(visitorApiMessage)
 open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) :
     KmModuleFragmentVisitor() {
     protected val t = ProtoBuf.PackageFragment.newBuilder()!!
@@ -549,7 +545,6 @@ open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: Lis
         }
 }
 
-@Deprecated(visitorApiMessage)
 open class LambdaWriter(stringTable: StringTable) : KmLambdaVisitor() {
     protected var t: ProtoBuf.Function.Builder? = null
     protected val c = WriteContext(stringTable)

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.metadata.builtins.readBuiltinsPackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import java.io.ByteArrayInputStream
 
-// TODO: decide what to with this piece
+// TODO: stabilize
 class KotlinCommonMetadata private constructor(private val proto: ProtoBuf.PackageFragment) {
     fun toKmModuleFragment(): KmModuleFragment =
         KmModuleFragment().apply(this::accept)
