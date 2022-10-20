@@ -1,4 +1,5 @@
 FILE: serializerViaCompanion.kt
+    @FILE:R|kotlin/Suppress|(names = vararg(String(COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED)))
     package com.example
 
     @R|kotlinx/serialization/Serializable|() public final data class WithCompanion : R|kotlin/Any| {
