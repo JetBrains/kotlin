@@ -3862,6 +3862,92 @@ internal class CallToDefinedExternallyFromNonExternalDeclarationImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.CallToDefinedExternallyFromNonExternalDeclaration(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class ExternalClassConstructorPropertyParameterImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExternalClassConstructorPropertyParameter(), KtAbstractFirDiagnostic<KtParameter>
+
+internal class ExternalEnumEntryWithBodyImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExternalEnumEntryWithBody(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ExternalAnonymousInitializerImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExternalAnonymousInitializer(), KtAbstractFirDiagnostic<KtAnonymousInitializer>
+
+internal class ExternalDelegationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExternalDelegation(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ExternalDelegatedConstructorCallImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExternalDelegatedConstructorCall(), KtAbstractFirDiagnostic<KtElement>
+
+internal class WrongBodyOfExternalDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.WrongBodyOfExternalDeclaration(), KtAbstractFirDiagnostic<KtElement>
+
+internal class WrongInitializerOfExternalDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.WrongInitializerOfExternalDeclaration(), KtAbstractFirDiagnostic<KtElement>
+
+internal class WrongDefaultValueForExternalFunParameterImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.WrongDefaultValueForExternalFunParameter(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NestedExternalDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NestedExternalDeclaration(), KtAbstractFirDiagnostic<KtExpression>
+
+internal class WrongExternalDeclarationImpl(
+    override val class kind: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.WrongExternalDeclaration(), KtAbstractFirDiagnostic<KtExpression>
+
+internal class NestedClassInExternalInterfaceImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NestedClassInExternalInterface(), KtAbstractFirDiagnostic<KtExpression>
+
+internal class ExternalTypeExtendsNonExternalTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExternalTypeExtendsNonExternalType(), KtAbstractFirDiagnostic<KtElement>
+
+internal class InlineExternalDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InlineExternalDeclaration(), KtAbstractFirDiagnostic<KtDeclaration>
+
+internal class InlineClassInExternalDeclarationWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InlineClassInExternalDeclarationWarning(), KtAbstractFirDiagnostic<KtElement>
+
+internal class InlineClassInExternalDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InlineClassInExternalDeclaration(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ExtensionFunctionInExternalDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExtensionFunctionInExternalDeclaration(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NonAbstractMemberOfExternalInterfaceImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NonAbstractMemberOfExternalInterface(), KtAbstractFirDiagnostic<KtExpression>
+
 internal class DelegationByDynamicImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -NOTHING_TO_INLINE
 // TODO: should we disable NOTHING_TO_INLINE in JS backend?

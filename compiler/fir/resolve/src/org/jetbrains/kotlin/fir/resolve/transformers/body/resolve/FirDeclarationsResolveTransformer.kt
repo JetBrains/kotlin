@@ -1068,6 +1068,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 buildResolvedTypeRef {
                     type = this@toExpectedTypeRef.coneType
                     annotations.addAll(this@toExpectedTypeRef.annotations)
+                    source = this@toExpectedTypeRef.source
                 }
             }
         }
