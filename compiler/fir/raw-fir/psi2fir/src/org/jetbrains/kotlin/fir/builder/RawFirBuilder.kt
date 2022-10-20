@@ -933,23 +933,7 @@ open class RawFirBuilder(
                 ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
             val firDelegatedCall =
                 if (containingClassIsExpectClass) null else {
-                    if (this == null && owner !is KtEnumEntry) {
-                        // primary constructor without body
-                        buildDelegatedConstructorCall {
-                            source = constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                            constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-                            isThis = false
-                            calleeReference = buildExplicitSuperReference {
-                                source =
-                                    this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                                superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
-                            }
-                        }
-                    } else buildOrLazyDelegatedConstructorCall(
-                        isThis = false,
-                        constructedTypeRef = {
-                            delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-                        }) {
+                    val delegatedConstructorCall = {
                         buildDelegatedConstructorCall {
                             source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                             constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
@@ -963,6 +947,15 @@ open class RawFirBuilder(
                             superTypeCallEntry?.extractArgumentsTo(this)
                         }
                     }
+                    if (this == null && owner !is KtEnumEntry) {
+                        // primary constructor without body
+                        delegatedConstructorCall()
+                    } else buildOrLazyDelegatedConstructorCall(
+                        isThis = false,
+                        constructedTypeRef = {
+                            delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                        }, delegatedConstructorCall
+                    )
                 }
 
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
@@ -1879,7 +1872,10 @@ open class RawFirBuilder(
                         // TODO: probably implicit type should not be here
                         returnTypeRef = unwrappedElement.returnTypeReference.toFirOrErrorType()
                         for (valueParameter in unwrappedElement.parameters) {
-                            valueParameters += convertValueParameter(valueParameter, valueParameterDeclaration = ValueParameterDeclaration.FUNCTIONAL_TYPE)
+                            valueParameters += convertValueParameter(
+                                valueParameter,
+                                valueParameterDeclaration = ValueParameterDeclaration.FUNCTIONAL_TYPE
+                            )
                         }
 
                         contextReceiverTypeRefs.addAll(

@@ -19,6 +19,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -182,16 +186,46 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             var delegatedSuperTypeRef: FirTypeRef? = null
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             val selfType = classOrObject.toDelegatedSelfType(typeParameters, FirRegularClassSymbol(context.currentClassId))
-            classOrObject.superTypeListEntries.forEachIndexed { _, superTypeListEntry ->
+            var hasSuperTypeRef = false
+            classOrObject.superTypeListEntries.forEach { superTypeListEntry ->
                 when (superTypeListEntry) {
                     is KtSuperTypeCallEntry -> {
                         delegatedSuperTypeRef = superTypeListEntry.calleeExpression.typeReference.toFirOrErrorType()
                         superTypeCallEntry = superTypeListEntry
+                        hasSuperTypeRef = true
+                    }
+
+                    is KtSuperTypeEntry -> {
+                        hasSuperTypeRef = true
+                    }
+
+                    is KtDelegatedSuperTypeEntry -> {
+                        hasSuperTypeRef = true
                     }
                 }
             }
+            when {
+                classOrObject is KtClass && classOrObject.isEnum() -> {
+                    delegatedSuperTypeRef = buildResolvedTypeRef {
+                        type = ConeClassLikeTypeImpl(
+                            implicitEnumType.type.lookupTag,
+                            arrayOf(selfType.coneType),
+                            isNullable = false,
+                        )
+                    }
+                    hasSuperTypeRef = true
+                }
+
+                classOrObject is KtClass && classOrObject.isAnnotation() -> {
+                    delegatedSuperTypeRef = implicitAnyType
+                    hasSuperTypeRef = true
+                }
+            }
+            if (!hasSuperTypeRef) {
+                delegatedSuperTypeRef = implicitAnyType
+            }
             if (delegatedSuperTypeRef == null) {
-                delegatedSuperTypeRef = if (classOrObject is KtClass && classOrObject.isEnum()) implicitEnumType else implicitAnyType
+                delegatedSuperTypeRef = buildImplicitTypeRef()
             }
             return ConstructorConversionParams(superTypeCallEntry, delegatedSuperTypeRef!!, selfType, typeParameters)
         }

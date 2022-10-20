@@ -1,7 +1,7 @@
 FILE: callableReferences.kt
     public? final? class A : R|kotlin/Any| {
         public? constructor(): R|A| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Any|>()
         }
 
         public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

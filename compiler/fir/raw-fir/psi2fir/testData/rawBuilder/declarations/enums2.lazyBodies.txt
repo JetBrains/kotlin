@@ -3,13 +3,13 @@ FILE: enums2.kt
     }
     public? final? object O1 : Some {
         private constructor(): R|O1| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<<implicit>>()
         }
 
     }
     public? final? object O2 : Some {
         private constructor(): R|O2| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<<implicit>>()
         }
 
     }
@@ -21,24 +21,8 @@ FILE: enums2.kt
         public? final? val x: Some = R|<local>/x|
             public? get(): Some
 
-        public final static enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {
-            private constructor(): R|<anonymous>| {
-                LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
-            }
-
-            public? open? override fun check(y: Some): Boolean { LAZY_BLOCK }
-
-        }
-
-        public final static enum entry SECOND: R|SomeEnum| = object : R|SomeEnum| {
-            private constructor(): R|<anonymous>| {
-                LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
-            }
-
-            public? open? override fun check(y: Some): Boolean { LAZY_BLOCK }
-
-        }
-
+        public final static enum entry FIRST: R|SomeEnum| = LAZY_EXPRESSION
+        public final static enum entry SECOND: R|SomeEnum| = LAZY_EXPRESSION
         public? abstract fun check(y: Some): Boolean
 
         public final static fun values(): R|kotlin/Array<SomeEnum>| {
