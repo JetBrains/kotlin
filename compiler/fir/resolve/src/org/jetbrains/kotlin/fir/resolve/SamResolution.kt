@@ -111,14 +111,7 @@ class FirSamResolverImpl(
         val firRegularClass = classSymbol.fir
         val (functionSymbol, functionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
-        val classId = firRegularClass.classId
-        val syntheticFunctionSymbol = FirSyntheticFunctionSymbol(
-            CallableId(
-                classId.packageFqName,
-                classId.relativeClassName.parent().takeIf { !it.isRoot },
-                classId.shortClassName,
-            ),
-        )
+        val syntheticFunctionSymbol = classSymbol.createSyntheticConstructorSymbol()
 
         val newTypeParameters = firRegularClass.typeParameters.map { typeParameter ->
             val declaredTypeParameter = typeParameter.symbol.fir // TODO: or really declared?
@@ -160,7 +153,7 @@ class FirSamResolverImpl(
         return buildSimpleFunction {
             moduleData = session.moduleData
             source = firRegularClass.source
-            name = classId.shortClassName
+            name = syntheticFunctionSymbol.name
             origin = FirDeclarationOrigin.SamConstructor
             val visibility = firRegularClass.visibility
             status = FirResolvedDeclarationStatusImpl(
@@ -223,7 +216,10 @@ class FirSamResolverImpl(
         val expansionRegularClass = type.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return null
         val samConstructorForClass = getSamConstructor(expansionRegularClass) ?: return null
 
-        val substitutor = expansionRegularClass.buildSubstitutorForSamTypeAlias(session, type)
+        // The constructor is something like `fun <T, ...> C(...): C<T, ...>`, meaning the type parameters
+        // we need to replace are owned by it, not by the class (see the substitutor in `buildSamConstructor`
+        // for `FirRegularClass` above).
+        val substitutor = samConstructorForClass.buildSubstitutorForSamTypeAlias(session, type)
             ?: return samConstructorForClass.symbol
         val newReturnType = substitutor.substituteOrNull(samConstructorForClass.returnTypeRef.coneType)
         val newParameterTypes = samConstructorForClass.valueParameters.map {
@@ -236,18 +232,27 @@ class FirSamResolverImpl(
             return samConstructorForClass.symbol
         }
 
-        val namedSymbol = samConstructorForClass.symbol
-        val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(namedSymbol, expansionRegularClass.classId)
-
-        return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
-            session, symbolForOverride, samConstructorForClass,
+        return FirFakeOverrideGenerator.createCopyForFirFunction(
+            typeAliasSymbol.createSyntheticConstructorSymbol(), samConstructorForClass,
             derivedClassLookupTag = null,
+            session, FirDeclarationOrigin.SamConstructor,
             newDispatchReceiverType = null,
             newReceiverType = null,
-            newContextReceiverTypes,
-            newReturnType, newParameterTypes, typeAliasSymbol.fir.typeParameters,
-        )
+            newContextReceiverTypes = newContextReceiverTypes,
+            newReturnType = newReturnType,
+            newParameterTypes = newParameterTypes,
+            newTypeParameters = typeAliasSymbol.fir.typeParameters,
+        ).symbol
     }
+
+    private fun FirClassLikeSymbol<*>.createSyntheticConstructorSymbol() =
+        FirSyntheticFunctionSymbol(
+            CallableId(
+                classId.packageFqName,
+                classId.relativeClassName.parent().takeIf { !it.isRoot },
+                classId.shortClassName,
+            ),
+        )
 
     private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): SAMInfo<ConeLookupTagBasedType>? {
         return resolvedFunctionType.getOrPut(firRegularClass) {
@@ -269,7 +274,7 @@ class FirSamResolverImpl(
     }
 }
 
-private fun FirRegularClass.buildSubstitutorForSamTypeAlias(session: FirSession, type: ConeClassLikeType): ConeSubstitutor? {
+private fun FirTypeParameterRefsOwner.buildSubstitutorForSamTypeAlias(session: FirSession, type: ConeClassLikeType): ConeSubstitutor? {
     if (typeParameters.isEmpty()) return null
     val mapping = typeParameters.zip(type.typeArguments).associate { (parameter, projection) ->
         val typeArgument =

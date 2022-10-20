@@ -14710,6 +14710,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/funInterface/funInterfaceInheritance.kt");
         }
 
+        @TestMetadata("funInterfaceTypealias.kt")
+        public void testFunInterfaceTypealias() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/funInterfaceTypealias.kt");
+        }
+
         @TestMetadata("funInterfaceWithReceiver.kt")
         public void testFunInterfaceWithReceiver() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithReceiver.kt");

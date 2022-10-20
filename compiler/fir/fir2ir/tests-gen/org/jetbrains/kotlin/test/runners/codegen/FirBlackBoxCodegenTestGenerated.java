@@ -18444,6 +18444,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("funInterfaceTypealias.kt")
+        public void testFunInterfaceTypealias() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/funInterfaceTypealias.kt");
+        }
+
+        @Test
         @TestMetadata("funInterfaceWithReceiver.kt")
         public void testFunInterfaceWithReceiver() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithReceiver.kt");
