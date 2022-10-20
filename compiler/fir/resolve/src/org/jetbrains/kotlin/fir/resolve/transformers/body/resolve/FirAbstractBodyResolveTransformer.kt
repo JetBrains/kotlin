@@ -108,7 +108,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
         override val outerClassManager: FirOuterClassManager = FirOuterClassManager(session, context.outerLocalClassForNested)
-        override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession, outerClassManager)
+        override val samResolver: FirSamResolver = FirSamResolver(session, scopeSession, outerClassManager)
         override val integerLiteralAndOperatorApproximationTransformer: IntegerLiteralAndOperatorApproximationTransformer =
             IntegerLiteralAndOperatorApproximationTransformer(session, scopeSession)
     }

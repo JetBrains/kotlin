@@ -74,7 +74,7 @@ class FirCallCompletionResultsWriterTransformer(
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     private var enableArrayOfCallTransformation = false
 
-    private val samResolver: FirSamResolver = FirSamResolverImpl(session, ScopeSession())
+    private val samResolver: FirSamResolver = FirSamResolver(session, ScopeSession())
 
     enum class Mode {
         Normal, DelegatedPropertyCompletion
