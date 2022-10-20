@@ -54,8 +54,15 @@ class FirSamResolver(
     private val samConstructorsCache = session.samConstructorStorage.samConstructors
     private val samConversionTransformers = session.extensionService.samConversionTransformers
 
-    fun isSamType(type: ConeKotlinType): Boolean =
-        getFunctionTypeForPossibleSamType(type) != null
+    fun isSamType(type: ConeKotlinType): Boolean = when (type) {
+        is ConeClassLikeType -> {
+            val symbol = type.fullyExpandedType(session).lookupTag.toSymbol(session)
+            symbol is FirRegularClassSymbol && resolveFunctionTypeIfSamInterface(symbol.fir) != null
+        }
+
+        is ConeFlexibleType -> isSamType(type.lowerBound) && isSamType(type.upperBound)
+        else -> false
+    }
 
     fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
