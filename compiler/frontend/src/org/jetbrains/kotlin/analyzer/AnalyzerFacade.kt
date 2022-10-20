@@ -128,15 +128,48 @@ interface LibraryModuleInfo : ModuleInfo {
 }
 
 abstract class ResolverForModuleFactory {
-    abstract fun <M : ModuleInfo> createResolverForModule(
+    open fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
         sealedInheritorsProvider: SealedClassInheritorsProvider,
-        resolveOptimizingOptions: OptimizingOptions? = null,
-    ): ResolverForModule
+        resolveOptimizingOptions: OptimizingOptions?,
+    ): ResolverForModule {
+        @Suppress("DEPRECATION")
+        return createResolverForModule(
+            moduleDescriptor,
+            moduleContext,
+            moduleContent,
+            resolverForProject,
+            languageVersionSettings,
+            sealedInheritorsProvider
+        )
+    }
+
+    @Deprecated(
+        "Left only for compatibility, please use full version",
+        ReplaceWith("createResolverForModule(moduleDescriptor, moduleContext, moduleContent, resolverForProject, languageVersionSettings, sealedInheritorsProvider, null)")
+    )
+    open fun <M : ModuleInfo> createResolverForModule(
+        moduleDescriptor: ModuleDescriptorImpl,
+        moduleContext: ModuleContext,
+        moduleContent: ModuleContent<M>,
+        resolverForProject: ResolverForProject<M>,
+        languageVersionSettings: LanguageVersionSettings,
+        sealedInheritorsProvider: SealedClassInheritorsProvider
+    ): ResolverForModule {
+        return createResolverForModule(
+            moduleDescriptor,
+            moduleContext,
+            moduleContent,
+            resolverForProject,
+            languageVersionSettings,
+            sealedInheritorsProvider,
+            null
+        )
+    }
 }
 
 class LazyModuleDependencies<M : ModuleInfo>(
