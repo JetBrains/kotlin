@@ -22,7 +22,10 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
 
     override fun toLookupTag(): ConeTypeParameterLookupTag = lookupTag
 
-    override fun toString(): String = "${this::class.simpleName} ${name.asString()}"
+    override fun toString(): String = when {
+        isBound -> "${this::class.simpleName} ${name.asString()}"
+        else -> "${this::class.simpleName} <unbound>"
+    }
 
     val resolvedBounds: List<FirResolvedTypeRef>
         get() {
