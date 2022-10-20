@@ -13,6 +13,7 @@ plugins {
 repositories {
     mavenCentral()
     gradlePluginPortal()
+    google()
 }
 
 sourceSets {
@@ -63,6 +64,7 @@ val createClasspathManifest = tasks.register("createClasspathManifest") {
 }
 
 val kotlinVersion: String by project
+val androidGradlePluginVersion: String = "7.2.2"
 
 configurations.implementation {
     exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
@@ -77,10 +79,12 @@ dependencies {
     implementation("org.ow2.asm:asm-tree:9.2")
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     compileOnly("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:1.6.0")
+    compileOnly("com.android.tools.build:gradle:${androidGradlePluginVersion}")
 
     // The test needs the full kotlin multiplatform plugin loaded as it has no visibility of previously loaded plugins,
     // unlike the regular way gradle loads plugins.
     add(testPluginRuntimeConfiguration.name, "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:$kotlinVersion")
+    add(testPluginRuntimeConfiguration.name, "com.android.tools.build:gradle:${androidGradlePluginVersion}")
 
     testImplementation(kotlin("test-junit"))
     "functionalTestImplementation"(files(createClasspathManifest))

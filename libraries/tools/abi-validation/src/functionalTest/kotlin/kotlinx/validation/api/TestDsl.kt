@@ -48,6 +48,18 @@ internal fun FileContainer.kotlin(classFileName: String, sourceSet:String = "mai
 }
 
 /**
+ * same as [file][FileContainer.file], but prepends "src/${sourceSet}/java" before given `classFileName`
+ */
+internal fun FileContainer.java(classFileName: String, sourceSet:String = "main", fn: AppendableScope.() -> Unit) {
+    require(classFileName.endsWith(".java")) {
+        "ClassFileName must end with '.java'"
+    }
+
+    val fileName = "src/${sourceSet}/java/$classFileName"
+    file(fileName, fn)
+}
+
+/**
  * Shortcut for creating a `build.gradle.kts` by using [file][FileContainer.file]
  */
 internal fun FileContainer.buildGradleKts(fn: AppendableScope.() -> Unit) {
