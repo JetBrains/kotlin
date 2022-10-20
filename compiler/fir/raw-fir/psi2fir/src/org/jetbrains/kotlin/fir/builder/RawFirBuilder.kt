@@ -10,7 +10,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -1564,6 +1563,7 @@ open class RawFirBuilder(
             ownerTypeParameters: List<FirTypeParameterRef>
         ): FirConstructor {
             val target = FirFunctionTarget(labelName = null, isLambda = false)
+            val isThisDelegeatedCall = isDelegatedCallToThis()
             return buildConstructor {
                 source = this@toFirConstructor.toFirSourceElement()
                 moduleData = baseModuleData
@@ -1580,8 +1580,8 @@ open class RawFirBuilder(
                 dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
                 delegatedConstructor = buildOrLazyDelegatedConstructorCall(
-                    isThis = true,
-                    constructedTypeRef = { if (getDelegationCall().isCallToThis) delegatedSelfTypeRef else delegatedSuperTypeRef }) {
+                    isThis = isThisDelegeatedCall,
+                    constructedTypeRef = { if (isThisDelegeatedCall) delegatedSelfTypeRef else delegatedSuperTypeRef }) {
                     getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef)
                 }
                 this@RawFirBuilder.context.firFunctionTargets += target
