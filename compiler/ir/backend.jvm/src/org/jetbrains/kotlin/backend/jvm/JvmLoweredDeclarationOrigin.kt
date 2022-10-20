@@ -15,6 +15,8 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
     object LAMBDA_IMPL : IrDeclarationOriginImpl("LAMBDA_IMPL")
     object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL", isSynthetic = true)
+    object MFVC_PRIMARY_CONSTRUCTOR_REFERENCE_HELPER :
+        IrDeclarationOriginImpl("MFVC_PRIMARY_CONSTRUCTOR_REFERENCE_HELPER", isSynthetic = true)
     object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR", isSynthetic = true)
     object SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR :
         IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR", isSynthetic = true)

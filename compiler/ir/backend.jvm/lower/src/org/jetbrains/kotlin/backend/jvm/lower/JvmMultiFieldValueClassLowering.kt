@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -595,7 +595,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         allScopes.pop()
     }
 
-    private fun IrFunctionAccessExpression.passTypeArgumentsWithOffsets(
+    private fun IrMemberAccessExpression<*>.passTypeArgumentsWithOffsets(
         target: IrFunction, source: IrFunction, forCommonTypeParameters: (targetIndex: Int) -> IrType
     ) {
         val passedTypeParametersSize = minOf(target.typeParameters.size, source.typeParameters.size)
@@ -707,6 +707,8 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         mfvc.declarations.removeIf { it is IrAnonymousInitializer }
     }
 
+    private val mfvcConstructorRefReplacements = mutableMapOf<Pair<IrFile, MfvcNode>, IrSimpleFunction>()
+
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         val function = expression.symbol.owner
         val replacement = function.let {
@@ -715,26 +717,50 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             }
         } ?: return super.visitFunctionReference(expression)
         return if (function is IrConstructor && function.isPrimary && function.constructedClass.isMultiFieldValueClass) {
-            expression.run {
-                IrConstructorCallImpl(
-                    startOffset, endOffset, type, function.symbol, typeArgumentsCount, typeArgumentsCount, valueArgumentsCount, origin
-                )
-            }.transform(this, null)
+            val rootNode = replacements.getRootMfvcNode(function.constructedClass)
+            val newFunction: IrSimpleFunction = mfvcConstructorRefReplacements.getOrPut(currentFile to rootNode) {
+                createMfvcPrimaryConstructorReferenceHelperFunction(rootNode)
+            }
+            IrFunctionReferenceImpl(
+                expression.startOffset, expression.endOffset,
+                newFunction.returnType, newFunction.symbol, function.typeParameters.size, replacement.valueParameters.size,
+                newFunction.symbol, expression.origin
+            )
         } else {
             context.createJvmIrBuilder(getCurrentScopeSymbol()).irBlock {
-                expression.run {
-                    IrFunctionReferenceImpl(
-                        startOffset,
-                        endOffset,
-                        type,
-                        replacement.symbol,
-                        function.typeParameters.size,
-                        replacement.valueParameters.size,
-                        reflectionTarget,
-                        origin
-                    )
-                }.apply { buildReplacement(function, expression, replacement) }.copyAttributes(expression)
+                expression.apply {
+                    buildReplacement(function, expression, replacement) {
+                        IrFunctionReferenceImpl(
+                            startOffset, endOffset,
+                            type, it, function.typeParameters.size, replacement.valueParameters.size,
+                            reflectionTarget, origin
+                        )
+                    }.copyAttributes(expression)
+                }
             }.unwrapBlock()
+        }
+    }
+
+    override val fileClassNewDeclarations = mutableMapOf<IrFile, MutableList<IrSimpleFunction>>()
+
+    private fun createMfvcPrimaryConstructorReferenceHelperFunction(rootNode: RootMfvcNode) = context.irFactory.buildFun {
+        name = Name.identifier("mfvcConstructorReferenceHelper\$${fileClassNewDeclarations[currentFile]?.size ?: 0}")
+        origin = JvmLoweredDeclarationOrigin.MFVC_PRIMARY_CONSTRUCTOR_REFERENCE_HELPER
+    }.apply function@{
+        fileClassNewDeclarations.getOrPut(currentFile) { mutableListOf() }.add(this)
+        copyParameterDeclarationsFrom(rootNode.primaryConstructorImpl)
+        returnType = rootNode.type.substitute(rootNode.mfvc.typeParameters, typeParameters.map { it.defaultType })
+        body = context.createJvmIrBuilder(this.symbol).run {
+            irExprBody(irBlock {
+                for (callee in listOf(rootNode.primaryConstructorImpl, rootNode.boxMethod)) {
+                    +irCall(callee).apply {
+                        passTypeArgumentsFrom(this@function)
+                        for ((index, parameter) in this@function.valueParameters.withIndex()) {
+                            putValueArgument(index, irGet(parameter))
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -856,21 +882,24 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     private fun IrBlockBuilder.buildReplacement(
         originalFunction: IrFunction,
         original: IrMemberAccessExpression<*>,
-        replacement: IrFunction
-    ) {
+        replacement: IrFunction,
+        makeMemberAccessExpression: (IrFunctionSymbol) -> IrMemberAccessExpression<*> = ::irCall,
+    ): IrMemberAccessExpression<*> {
         val parameter2expression = typedArgumentList(originalFunction, original)
         val structure = replacements.bindingOldFunctionToParameterTemplateStructure[originalFunction]!!
         require(parameter2expression.size == structure.size)
         require(structure.sumOf { it.valueParameters.size } == replacement.explicitParametersCount)
         val newArguments: List<IrExpression?> =
             makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure.map { it.valueParameters })
-        +irCall(replacement.symbol).apply {
+        val resultExpression = makeMemberAccessExpression(replacement.symbol).apply {
             passTypeArgumentsWithOffsets(replacement, originalFunction) { original.getTypeArgument(it)!! }
             for ((parameter, argument) in replacement.explicitParameters zip newArguments) {
                 if (argument == null) continue
                 putArgument(replacement, parameter, argument.transform(this@JvmMultiFieldValueClassLowering, null))
             }
         }
+        +resultExpression
+        return resultExpression
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {

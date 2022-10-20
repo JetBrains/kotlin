@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendContext) : FileLoweringPass,
@@ -26,7 +27,16 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
     abstract val replacements: MemoizedValueClassAbstractReplacements
 
     final override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid()
+        withinScope(irFile) {
+            irFile.transformChildrenVoid()
+            fileClassNewDeclarations[irFile]?.let { newDeclarations ->
+                val oldFileClass = irFile.declarations.filterIsInstanceAnd<IrClass> { it.isFileClass }.singleOrNull()
+                val allFileDeclarations = (oldFileClass?.declarations ?: listOf()) + newDeclarations
+                val newClass = createFileClass(context, irFile, allFileDeclarations)
+                oldFileClass?.let { irFile.declarations.remove(it) }
+                irFile.addChild(newClass)
+            }
+        }
     }
 
     abstract fun IrClass.isSpecificLoweringLogicApplicable(): Boolean
@@ -246,4 +256,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
     abstract fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction
 
     protected abstract fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean)
+
+    protected open val fileClassNewDeclarations: Map<IrFile, List<IrSimpleFunction>> = emptyMap()
 }
