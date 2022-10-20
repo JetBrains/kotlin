@@ -1183,6 +1183,11 @@ internal class ValueClassCannotBeRecursiveImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ValueClassCannotBeRecursive(), KtAbstractFirDiagnostic<KtTypeReference>
 
+internal class MultiFieldValueClassPrimaryConstructorDefaultParameterImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.MultiFieldValueClassPrimaryConstructorDefaultParameter(), KtAbstractFirDiagnostic<KtExpression>
+
 internal class SecondaryConstructorWithBodyInsideValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

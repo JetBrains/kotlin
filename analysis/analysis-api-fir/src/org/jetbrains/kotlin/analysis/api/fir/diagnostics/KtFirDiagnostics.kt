@@ -987,6 +987,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassCannotBeRecursive::class
     }
 
+    abstract class MultiFieldValueClassPrimaryConstructorDefaultParameter : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = MultiFieldValueClassPrimaryConstructorDefaultParameter::class
+    }
+
     abstract class SecondaryConstructorWithBodyInsideValueClass : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = SecondaryConstructorWithBodyInsideValueClass::class
     }

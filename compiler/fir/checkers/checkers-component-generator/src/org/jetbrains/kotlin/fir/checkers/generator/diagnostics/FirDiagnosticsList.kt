@@ -426,6 +426,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION by error<PsiElement>()
         val VALUE_CLASS_CANNOT_EXTEND_CLASSES by error<KtTypeReference>()
         val VALUE_CLASS_CANNOT_BE_RECURSIVE by error<KtTypeReference>()
+        val MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER by error<KtExpression>()
         val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS by error<PsiElement>()
         val RESERVED_MEMBER_INSIDE_VALUE_CLASS by error<KtFunction>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("name")

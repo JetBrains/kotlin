@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
+object FirValueClassDeclarationChecker : FirRegularClassChecker() {
 
     private val boxAndUnboxNames = setOf("box", "unbox")
     private val equalsAndHashCodeNames = setOf("equals", "hashCode")
@@ -200,6 +200,15 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) -> {
                     reporter.reportOn(
                         primaryConstructorParameter.returnTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
+                        context
+                    )
+                }
+
+                declaration.multiFieldValueClassRepresentation != null && primaryConstructorParameter.defaultValue != null -> {
+                    // todo fix when inline arguments are supported
+                    reporter.reportOn(
+                        primaryConstructorParameter.defaultValue!!.source,
+                        FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
                         context
                     )
                 }

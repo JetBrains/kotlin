@@ -33631,6 +33631,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("defaultParameters.kt")
+            public void testDefaultParameters() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/valueClasses/defaultParameters.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+            }
+
+            @Test
             @TestMetadata("delegatedPropertyInValueClass.kt")
             public void testDelegatedPropertyInValueClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/valueClasses/delegatedPropertyInValueClass.kt");

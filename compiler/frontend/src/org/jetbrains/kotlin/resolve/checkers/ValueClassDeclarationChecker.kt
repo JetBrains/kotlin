@@ -127,6 +127,11 @@ object ValueClassDeclarationChecker : DeclarationChecker {
                     baseParametersOk = false
                     continue
                 }
+
+                if (descriptor.isMultiFieldValueClass() && baseParameter.defaultValue != null) {
+                    // todo fix when inline arguments are supported
+                    trace.report(Errors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER.on(baseParameter.defaultValue!!))
+                }
             }
         }
         if (!baseParametersOk) {
@@ -203,7 +208,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
     }
 }
 
-class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
+class PropertiesWithBackingFieldsInsideValueClass : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtProperty) return
         if (descriptor !is PropertyDescriptor) return
@@ -220,7 +225,7 @@ class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
     }
 }
 
-class InnerClassInsideInlineClass : DeclarationChecker {
+class InnerClassInsideValueClass : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtClass) return
         if (descriptor !is ClassDescriptor) return
@@ -232,7 +237,7 @@ class InnerClassInsideInlineClass : DeclarationChecker {
     }
 }
 
-class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
+class ReservedMembersAndConstructsForValueClass : DeclarationChecker {
 
     companion object {
         private val boxAndUnboxNames = setOf("box", "unbox")

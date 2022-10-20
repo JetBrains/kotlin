@@ -2,8 +2,8 @@
 @kotlin.Metadata
 public final class DPoint {
     // source: 'defaultParameters.kt'
-    private final field x: double
-    private final field y: double
+    private final field field-0: double
+    private final field field-1: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): DPoint
     public final static method constructor-impl(p0: double, p1: double): void
@@ -12,25 +12,23 @@ public final class DPoint {
     public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double): boolean
     public synthetic static method f1-lIoT8es$default(p0: double, p1: double, p2: int, p3: int, p4: double, p5: double, p6: int, p7: java.lang.Object): java.util.List
     public final static @org.jetbrains.annotations.NotNull method f1-lIoT8es(p0: double, p1: double, p2: int, p3: int, p4: double, p5: double): java.util.List
-    public final method getX(): double
-    public final method getY(): double
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl-x(): double
-    public synthetic final method unbox-impl-y(): double
+    public synthetic final method unbox-impl-0(): double
+    public synthetic final method unbox-impl-1(): double
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class DSegment {
     // source: 'defaultParameters.kt'
-    private final field n: int
-    private final field p1-x: double
-    private final field p1-y: double
-    private final field p2-x: double
-    private final field p2-y: double
+    private final field field-0-0: double
+    private final field field-0-1: double
+    private final field field-1-0: double
+    private final field field-1-1: double
+    private final field field-2: int
     private synthetic method <init>(p0: double, p1: double, p2: double, p3: double, p4: int): void
     public synthetic final static method box-impl(p0: double, p1: double, p2: double, p3: double, p4: int): DSegment
     public final static method constructor-impl(p0: double, p1: double, p2: double, p3: double, p4: int): void
@@ -39,20 +37,17 @@ public final class DSegment {
     public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double, p4: int, p5: double, p6: double, p7: double, p8: double, p9: int): boolean
     public synthetic static method f2-lIoT8es$default(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: double, p8: double, p9: int, p10: java.lang.Object): java.util.List
     public final static @org.jetbrains.annotations.NotNull method f2-lIoT8es(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: double, p8: double): java.util.List
-    public final method getN(): int
-    public final @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public final @org.jetbrains.annotations.NotNull method getP2(): DPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double, p2: double, p3: double, p4: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double, p2: double, p3: double, p4: int): java.lang.String
-    public synthetic final method unbox-impl-n(): int
-    public synthetic final method unbox-impl-p1(): DPoint
-    public synthetic final method unbox-impl-p1-x(): double
-    public synthetic final method unbox-impl-p1-y(): double
-    public synthetic final method unbox-impl-p2(): DPoint
-    public synthetic final method unbox-impl-p2-x(): double
-    public synthetic final method unbox-impl-p2-y(): double
+    public synthetic final method unbox-impl-0(): DPoint
+    public synthetic final method unbox-impl-0-0(): double
+    public synthetic final method unbox-impl-0-1(): double
+    public synthetic final method unbox-impl-1(): DPoint
+    public synthetic final method unbox-impl-1-0(): double
+    public synthetic final method unbox-impl-1-1(): double
+    public synthetic final method unbox-impl-2(): int
 }
 
 @kotlin.Metadata
@@ -70,11 +65,11 @@ public final class DefaultParametersKt {
 public final class Wrapper {
     // source: 'defaultParameters.kt'
     private final field n: int
-    private final field segment-n: int
-    private final field segment-p1-x: double
-    private final field segment-p1-y: double
-    private final field segment-p2-x: double
-    private final field segment-p2-y: double
+    private final field segment-0-0: double
+    private final field segment-0-1: double
+    private final field segment-1-0: double
+    private final field segment-1-1: double
+    private final field segment-2: int
     public method <init>(): void
     public method <init>(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int): void
     public synthetic method <init>(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: kotlin.jvm.internal.DefaultConstructorMarker): void
@@ -87,13 +82,13 @@ public final class Wrapper {
     public final @org.jetbrains.annotations.NotNull method f3-lIoT8es(p0: int, p1: int, p2: double, p3: double): java.util.List
     public final method getN(): int
     public final @org.jetbrains.annotations.NotNull method getSegment(): DSegment
-    public synthetic final method getSegment-n(): int
-    public synthetic final method getSegment-p1(): DPoint
-    public synthetic final method getSegment-p1-x(): double
-    public synthetic final method getSegment-p1-y(): double
-    public synthetic final method getSegment-p2(): DPoint
-    public synthetic final method getSegment-p2-x(): double
-    public synthetic final method getSegment-p2-y(): double
+    public synthetic final method getSegment-0(): DPoint
+    public synthetic final method getSegment-0-0(): double
+    public synthetic final method getSegment-0-1(): double
+    public synthetic final method getSegment-1(): DPoint
+    public synthetic final method getSegment-1-0(): double
+    public synthetic final method getSegment-1-1(): double
+    public synthetic final method getSegment-2(): int
     public method hashCode(): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }

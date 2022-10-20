@@ -309,6 +309,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED
@@ -1271,6 +1272,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Value class cannot implement an interface by delegation")
         map.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "Value class cannot extend classes")
         map.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive")
+        map.put(
+            MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
+            "Default parameters are not supported in the primary constructor of a multi-field value class"
+        )
         map.put(
             INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
             "Invalid default value for inline parameter: ''{0}''. Only lambdas, anonymous functions, and callable references are supported",

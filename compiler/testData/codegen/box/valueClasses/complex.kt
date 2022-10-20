@@ -19,7 +19,7 @@ value class B(val x: UInt) {
 }
 
 @JvmInline
-value class C(val x: Int, val y: B, val z: String = "3")
+value class C(val x: Int, val y: B, val z: String)
 
 @JvmInline
 value class D(val x: C) {
