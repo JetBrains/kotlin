@@ -30,6 +30,7 @@ abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor
      * @param setterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
      *   and [Flag.PropertyAccessor] flags
      */
+    @OptIn(DeprecatedVisitor::class) // TODO
     open fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
         delegate?.visitLocalDelegatedProperty(flags, name, getterFlags, setterFlags)
 

@@ -24,7 +24,6 @@ fun KmAnnotation.writeAnnotation(strings: StringTable): ProtoBuf.Annotation.Buil
         }
     }
 
-@OptIn(ExperimentalUnsignedTypes::class)
 fun KmAnnotationArgument.writeAnnotationArgument(strings: StringTable): ProtoBuf.Annotation.Argument.Value.Builder =
     ProtoBuf.Annotation.Argument.Value.newBuilder().apply {
         when (this@writeAnnotationArgument) {

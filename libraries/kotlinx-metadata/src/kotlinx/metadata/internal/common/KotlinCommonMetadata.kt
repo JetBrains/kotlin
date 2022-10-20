@@ -5,6 +5,7 @@
 
 package kotlinx.metadata.internal.common
 
+import kotlinx.metadata.DeprecatedVisitor
 import kotlinx.metadata.KmModuleFragment
 import kotlinx.metadata.KmModuleFragmentVisitor
 import kotlinx.metadata.impl.accept
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.metadata.builtins.readBuiltinsPackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import java.io.ByteArrayInputStream
 
+@DeprecatedVisitor
 class KotlinCommonMetadata private constructor(private val proto: ProtoBuf.PackageFragment) {
     fun toKmModuleFragment(): KmModuleFragment =
         KmModuleFragment().apply(this::accept)

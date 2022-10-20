@@ -1,0 +1,264 @@
+public final class kotlinx/metadata/klib/ChunkedKlibModuleFragmentWriteStrategy : kotlinx/metadata/klib/KlibModuleFragmentWriteStrategy {
+	public fun <init> ()V
+	public fun <init> (II)V
+	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun processPackageParts (Ljava/util/List;)Ljava/util/List;
+}
+
+public abstract class kotlinx/metadata/klib/KlibClassExtensionVisitor : kotlinx/metadata/KmClassExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibClassExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public abstract fun visitEnumEntry (Lkotlinx/metadata/klib/KlibEnumEntry;)V
+	public abstract fun visitFile (Lkotlinx/metadata/klib/KlibSourceFile;)V
+	public abstract fun visitUniqId (Lkotlinx/metadata/klib/UniqId;)V
+}
+
+public final class kotlinx/metadata/klib/KlibClassExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public abstract class kotlinx/metadata/klib/KlibConstructorExtensionVisitor : kotlinx/metadata/KmConstructorExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibConstructorExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public abstract fun visitUniqId (Lkotlinx/metadata/klib/UniqId;)V
+}
+
+public final class kotlinx/metadata/klib/KlibConstructorExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public final class kotlinx/metadata/klib/KlibEnumEntry {
+	public fun <init> (Ljava/lang/String;Lkotlinx/metadata/klib/UniqId;Ljava/lang/Integer;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlinx/metadata/klib/UniqId;Ljava/lang/Integer;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getOrdinal ()Ljava/lang/Integer;
+	public final fun getUniqId ()Lkotlinx/metadata/klib/UniqId;
+	public final fun setOrdinal (Ljava/lang/Integer;)V
+	public final fun setUniqId (Lkotlinx/metadata/klib/UniqId;)V
+}
+
+public final class kotlinx/metadata/klib/KlibExtensionsKt {
+	public static final fun getAnnotations (Lkotlinx/metadata/KmClass;)Ljava/util/List;
+	public static final fun getAnnotations (Lkotlinx/metadata/KmConstructor;)Ljava/util/List;
+	public static final fun getAnnotations (Lkotlinx/metadata/KmFunction;)Ljava/util/List;
+	public static final fun getAnnotations (Lkotlinx/metadata/KmProperty;)Ljava/util/List;
+	public static final fun getAnnotations (Lkotlinx/metadata/KmType;)Ljava/util/List;
+	public static final fun getAnnotations (Lkotlinx/metadata/KmTypeParameter;)Ljava/util/List;
+	public static final fun getAnnotations (Lkotlinx/metadata/KmValueParameter;)Ljava/util/List;
+	public static final fun getClassName (Lkotlinx/metadata/KmModuleFragment;)Ljava/util/List;
+	public static final fun getCompileTimeValue (Lkotlinx/metadata/KmProperty;)Lkotlinx/metadata/KmAnnotationArgument;
+	public static final fun getFile (Lkotlinx/metadata/KmClass;)Lkotlinx/metadata/klib/KlibSourceFile;
+	public static final fun getFile (Lkotlinx/metadata/KmFunction;)Lkotlinx/metadata/klib/KlibSourceFile;
+	public static final fun getFile (Lkotlinx/metadata/KmProperty;)Ljava/lang/Integer;
+	public static final fun getFqName (Lkotlinx/metadata/KmModuleFragment;)Ljava/lang/String;
+	public static final fun getFqName (Lkotlinx/metadata/KmPackage;)Ljava/lang/String;
+	public static final fun getGetterAnnotations (Lkotlinx/metadata/KmProperty;)Ljava/util/List;
+	public static final fun getKlibEnumEntries (Lkotlinx/metadata/KmClass;)Ljava/util/List;
+	public static final fun getModuleFragmentFiles (Lkotlinx/metadata/KmModuleFragment;)Ljava/util/List;
+	public static final fun getSetterAnnotations (Lkotlinx/metadata/KmProperty;)Ljava/util/List;
+	public static final fun getUniqId (Lkotlinx/metadata/KmClass;)Lkotlinx/metadata/klib/UniqId;
+	public static final fun getUniqId (Lkotlinx/metadata/KmConstructor;)Lkotlinx/metadata/klib/UniqId;
+	public static final fun getUniqId (Lkotlinx/metadata/KmFunction;)Lkotlinx/metadata/klib/UniqId;
+	public static final fun getUniqId (Lkotlinx/metadata/KmProperty;)Lkotlinx/metadata/klib/UniqId;
+	public static final fun getUniqId (Lkotlinx/metadata/KmTypeAlias;)Lkotlinx/metadata/klib/UniqId;
+	public static final fun getUniqId (Lkotlinx/metadata/KmTypeParameter;)Lkotlinx/metadata/klib/UniqId;
+	public static final fun setCompileTimeValue (Lkotlinx/metadata/KmProperty;Lkotlinx/metadata/KmAnnotationArgument;)V
+	public static final fun setFile (Lkotlinx/metadata/KmClass;Lkotlinx/metadata/klib/KlibSourceFile;)V
+	public static final fun setFile (Lkotlinx/metadata/KmFunction;Lkotlinx/metadata/klib/KlibSourceFile;)V
+	public static final fun setFile (Lkotlinx/metadata/KmProperty;Ljava/lang/Integer;)V
+	public static final fun setFqName (Lkotlinx/metadata/KmModuleFragment;Ljava/lang/String;)V
+	public static final fun setFqName (Lkotlinx/metadata/KmPackage;Ljava/lang/String;)V
+	public static final fun setUniqId (Lkotlinx/metadata/KmClass;Lkotlinx/metadata/klib/UniqId;)V
+	public static final fun setUniqId (Lkotlinx/metadata/KmConstructor;Lkotlinx/metadata/klib/UniqId;)V
+	public static final fun setUniqId (Lkotlinx/metadata/KmFunction;Lkotlinx/metadata/klib/UniqId;)V
+	public static final fun setUniqId (Lkotlinx/metadata/KmProperty;Lkotlinx/metadata/klib/UniqId;)V
+	public static final fun setUniqId (Lkotlinx/metadata/KmTypeAlias;Lkotlinx/metadata/klib/UniqId;)V
+	public static final fun setUniqId (Lkotlinx/metadata/KmTypeParameter;Lkotlinx/metadata/klib/UniqId;)V
+}
+
+public abstract class kotlinx/metadata/klib/KlibFunctionExtensionVisitor : kotlinx/metadata/KmFunctionExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibFunctionExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public abstract fun visitFile (Lkotlinx/metadata/klib/KlibSourceFile;)V
+	public abstract fun visitUniqId (Lkotlinx/metadata/klib/UniqId;)V
+}
+
+public final class kotlinx/metadata/klib/KlibFunctionExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public final class kotlinx/metadata/klib/KlibHeader {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public final fun getAnnotation ()Ljava/util/List;
+	public final fun getEmptyPackage ()Ljava/util/List;
+	public final fun getFile ()Ljava/util/List;
+	public final fun getModuleName ()Ljava/lang/String;
+	public final fun getPackageFragmentName ()Ljava/util/List;
+}
+
+public abstract class kotlinx/metadata/klib/KlibModuleFragmentExtensionVisitor : kotlinx/metadata/KmModuleFragmentExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibModuleFragmentExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitClassName (Ljava/lang/String;)V
+	public abstract fun visitFile (Lkotlinx/metadata/klib/KlibSourceFile;)V
+	public abstract fun visitFqName (Ljava/lang/String;)V
+}
+
+public final class kotlinx/metadata/klib/KlibModuleFragmentExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public abstract interface class kotlinx/metadata/klib/KlibModuleFragmentReadStrategy {
+	public static final field Companion Lkotlinx/metadata/klib/KlibModuleFragmentReadStrategy$Companion;
+	public abstract fun processModuleParts (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class kotlinx/metadata/klib/KlibModuleFragmentReadStrategy$Companion {
+	public final fun getDEFAULT ()Lkotlinx/metadata/klib/KlibModuleFragmentReadStrategy;
+}
+
+public abstract interface class kotlinx/metadata/klib/KlibModuleFragmentWriteStrategy {
+	public static final field Companion Lkotlinx/metadata/klib/KlibModuleFragmentWriteStrategy$Companion;
+	public abstract fun processPackageParts (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class kotlinx/metadata/klib/KlibModuleFragmentWriteStrategy$Companion {
+	public final fun getDEFAULT ()Lkotlinx/metadata/klib/KlibModuleFragmentWriteStrategy;
+}
+
+public final class kotlinx/metadata/klib/KlibModuleMetadata {
+	public static final field Companion Lkotlinx/metadata/klib/KlibModuleMetadata$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getFragments ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun write (Lkotlinx/metadata/klib/KlibModuleFragmentWriteStrategy;)Lkotlinx/metadata/klib/KlibModuleMetadata$SerializedKlibMetadata;
+	public static synthetic fun write$default (Lkotlinx/metadata/klib/KlibModuleMetadata;Lkotlinx/metadata/klib/KlibModuleFragmentWriteStrategy;ILjava/lang/Object;)Lkotlinx/metadata/klib/KlibModuleMetadata$SerializedKlibMetadata;
+}
+
+public final class kotlinx/metadata/klib/KlibModuleMetadata$Companion {
+	public final fun read (Lkotlinx/metadata/klib/KlibModuleMetadata$MetadataLibraryProvider;Lkotlinx/metadata/klib/KlibModuleFragmentReadStrategy;)Lkotlinx/metadata/klib/KlibModuleMetadata;
+	public static synthetic fun read$default (Lkotlinx/metadata/klib/KlibModuleMetadata$Companion;Lkotlinx/metadata/klib/KlibModuleMetadata$MetadataLibraryProvider;Lkotlinx/metadata/klib/KlibModuleFragmentReadStrategy;ILjava/lang/Object;)Lkotlinx/metadata/klib/KlibModuleMetadata;
+}
+
+public abstract interface class kotlinx/metadata/klib/KlibModuleMetadata$MetadataLibraryProvider {
+	public abstract fun getModuleHeaderData ()[B
+	public abstract fun packageMetadata (Ljava/lang/String;Ljava/lang/String;)[B
+	public abstract fun packageMetadataParts (Ljava/lang/String;)Ljava/util/Set;
+}
+
+public final class kotlinx/metadata/klib/KlibModuleMetadata$SerializedKlibMetadata {
+	public fun <init> ([BLjava/util/List;Ljava/util/List;)V
+	public final fun getFragmentNames ()Ljava/util/List;
+	public final fun getFragments ()Ljava/util/List;
+	public final fun getHeader ()[B
+}
+
+public abstract class kotlinx/metadata/klib/KlibPackageExtensionVisitor : kotlinx/metadata/KmPackageExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibPackageExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitFqName (Ljava/lang/String;)V
+}
+
+public final class kotlinx/metadata/klib/KlibPackageExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public abstract class kotlinx/metadata/klib/KlibPropertyExtensionVisitor : kotlinx/metadata/KmPropertyExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibPropertyExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public abstract fun visitCompileTimeValue (Lkotlinx/metadata/KmAnnotationArgument;)V
+	public abstract fun visitFile (I)V
+	public abstract fun visitGetterAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public abstract fun visitSetterAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public abstract fun visitUniqId (Lkotlinx/metadata/klib/UniqId;)V
+}
+
+public final class kotlinx/metadata/klib/KlibPropertyExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public final class kotlinx/metadata/klib/KlibSourceFile {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getName ()Ljava/lang/String;
+}
+
+public abstract class kotlinx/metadata/klib/KlibTypeAliasExtensionVisitor : kotlinx/metadata/KmTypeAliasExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibTypeAliasExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitUniqId (Lkotlinx/metadata/klib/UniqId;)V
+}
+
+public final class kotlinx/metadata/klib/KlibTypeAliasExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public abstract class kotlinx/metadata/klib/KlibTypeExtensionVisitor : kotlinx/metadata/KmTypeExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibTypeExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+}
+
+public final class kotlinx/metadata/klib/KlibTypeExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public abstract class kotlinx/metadata/klib/KlibTypeParameterExtensionVisitor : kotlinx/metadata/KmTypeParameterExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibTypeParameterExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+	public abstract fun visitUniqId (Lkotlinx/metadata/klib/UniqId;)V
+}
+
+public final class kotlinx/metadata/klib/KlibTypeParameterExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public abstract class kotlinx/metadata/klib/KlibValueParameterExtensionVisitor : kotlinx/metadata/KmValueParameterExtensionVisitor {
+	public static final field Companion Lkotlinx/metadata/klib/KlibValueParameterExtensionVisitor$Companion;
+	public fun <init> ()V
+	public fun getType ()Lkotlinx/metadata/KmExtensionType;
+	public abstract fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
+}
+
+public final class kotlinx/metadata/klib/KlibValueParameterExtensionVisitor$Companion {
+	public final fun getTYPE ()Lkotlinx/metadata/KmExtensionType;
+}
+
+public final class kotlinx/metadata/klib/UniqId {
+	public fun <init> (J)V
+	public final fun getIndex ()J
+}
+
+public final class kotlinx/metadata/klib/impl/KlibModuleFragmentWriter : kotlinx/metadata/impl/ModuleFragmentWriter {
+	public fun <init> (Lorg/jetbrains/kotlin/serialization/ApproximatingStringTable;Ljava/util/List;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/serialization/ApproximatingStringTable;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun visitEnd ()V
+	public final fun write ()Lorg/jetbrains/kotlin/metadata/ProtoBuf$PackageFragment;
+}
+
+public final class kotlinx/metadata/klib/impl/ReverseSourceFileIndexWriteExtension : kotlinx/metadata/impl/WriteContextExtension {
+	public fun <init> ()V
+	public final fun getFileIndex ()Ljava/util/List;
+	public final fun getIndexOf (Lkotlinx/metadata/klib/KlibSourceFile;)I
+}
+
+public final class kotlinx/metadata/klib/impl/SourceFileIndexReadExtension : kotlinx/metadata/impl/ReadContextExtension {
+	public fun <init> (Ljava/util/List;)V
+	public final fun getSourceFile (I)Lkotlinx/metadata/klib/KlibSourceFile;
+}
+

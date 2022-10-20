@@ -1018,10 +1018,6 @@ public abstract class kotlinx/metadata/KmVersionRequirementVisitor {
 	public fun visitVersion (III)V
 }
 
-public final class kotlinx/metadata/UtilKt {
-	public static final fun assignFrom (Ljava/util/List;Ljava/util/Collection;)V
-}
-
 public class kotlinx/metadata/impl/ClassWriter : kotlinx/metadata/KmClassVisitor {
 	public fun <init> (Lorg/jetbrains/kotlin/metadata/serialization/StringTable;Ljava/util/List;)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/metadata/serialization/StringTable;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

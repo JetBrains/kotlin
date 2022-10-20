@@ -11,6 +11,7 @@ import kotlinx.metadata.impl.WriteContext
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import java.util.*
 
+@OptIn(DeprecatedVisitor::class) // TODO: all this should be refactored to entities, not visitors
 interface MetadataExtensions {
     fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, c: ReadContext)
 

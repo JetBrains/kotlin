@@ -36,6 +36,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * Visits metadata of this class with a new [KmClass] instance and returns that instance.
          */
+        @OptIn(DeprecatedVisitor::class)
         fun toKmClass(): KmClass =
             KmClass().apply(this::accept)
 
@@ -44,6 +45,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          *
          * @param v the visitor that must visit this class
          */
+        @DeprecatedVisitor
         fun accept(v: KmClassVisitor) {
             val (strings, proto) = classData
             proto.accept(v, strings)
@@ -52,6 +54,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * A [KmClassVisitor] that generates the metadata of a Kotlin class.
          */
+//        @Suppress("INVISIBLE_REFERENCE") FIXME: maybe make supertype internal?
+        @OptIn(DeprecatedVisitor::class)
+        @Deprecated(
+            "Writer API is deprecated. Please use KotlinClassMetadata.writeClass(kmClass, metadataVersion, extraInt)",
+            level = DeprecationLevel.ERROR
+        )
         class Writer : ClassWriter(JvmStringTable()) {
             /**
              * Returns the metadata of the class that was written with this writer.
@@ -62,6 +70,10 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              *   0 by default
              */
             @JvmOverloads
+            @Deprecated(
+                "Writer API is deprecated. Please use KotlinClassMetadata.writeClass(kmClass, metadataVersion, extraInt)",
+                level = DeprecationLevel.ERROR
+            )
             fun write(
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
                 extraInt: Int = 0
@@ -87,6 +99,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * Visits metadata of this file facade with a new [KmPackage] instance and returns that instance.
          */
+        @OptIn(DeprecatedVisitor::class)
         fun toKmPackage(): KmPackage =
             KmPackage().apply(this::accept)
 
@@ -95,6 +108,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          *
          * @param v the visitor that must visit this file facade
          */
+        @DeprecatedVisitor
         fun accept(v: KmPackageVisitor) {
             val (strings, proto) = packageData
             proto.accept(v, strings)
@@ -103,6 +117,11 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * A [KmPackageVisitor] that generates the metadata of a Kotlin file facade.
          */
+        @OptIn(DeprecatedVisitor::class)
+        @Deprecated(
+            "Writer API is deprecated. Please use KotlinClassMetadata.writeFileFacade(kmPackage, metadataVersion, extraInt)",
+            level = DeprecationLevel.ERROR
+        )
         class Writer : PackageWriter(JvmStringTable()) {
             /**
              * Returns the metadata of the file facade that was written with this writer.
@@ -113,6 +132,10 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              *   0 by default
              */
             @JvmOverloads
+            @Deprecated(
+                "Writer API is deprecated. Please use KotlinClassMetadata.writeFileFacade(kmPackage, metadataVersion, extraInt)",
+                level = DeprecationLevel.ERROR
+            )
             fun write(
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
                 extraInt: Int = 0
@@ -141,6 +164,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          *
          * Returns `null` if this synthetic class does not represent a lambda.
          */
+        @OptIn(DeprecatedVisitor::class)
         fun toKmLambda(): KmLambda? =
             if (isLambda) KmLambda().apply(this::accept) else null
 
@@ -158,6 +182,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          *
          * @param v the visitor that must visit this lambda
          */
+        @DeprecatedVisitor
         fun accept(v: KmLambdaVisitor) {
             if (!isLambda) throw IllegalStateException(
                 "accept(KmLambdaVisitor) is only possible for synthetic classes which are lambdas (isLambda = true)"
@@ -172,6 +197,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          * call [Writer.visitFunction] and [Writer.visitEnd] on a newly created instance of this writer. If these methods are not called,
          * the resulting metadata will represent a _non-lambda_ synthetic class.
          */
+        @OptIn(DeprecatedVisitor::class)
+        @Deprecated(
+            "Writer API is deprecated. Please use KotlinClassMetadata.writeLambda(kmLambda, metadataVersion, extraInt) " +
+                    "or KotlinClassMetadata.writeSyntheticClass(metadataVersion, extraInt) for a non-lambda synthetic class",
+            level = DeprecationLevel.ERROR
+        )
         class Writer : LambdaWriter(JvmStringTable()) {
             /**
              * Returns the metadata of the synthetic class that was written with this writer.
@@ -181,6 +212,11 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
              *   0 by default
              */
+            @Deprecated(
+                "Writer API is deprecated. Please use KotlinClassMetadata.writeLambda(kmLambda, metadataVersion, extraInt) " +
+                        "or KotlinClassMetadata.writeSyntheticClass(metadataVersion, extraInt) for a non-lambda synthetic class",
+                level = DeprecationLevel.ERROR
+            )
             @JvmOverloads
             fun write(
                 metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
@@ -211,6 +247,10 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * A writer that generates the metadata of a multi-file class facade.
          */
+        @Deprecated(
+            "Writer API is deprecated. Please use KotlinClassMetadata.writeMultiFileClassFacade(partClassNames, metadataVersion, extraInt)",
+            level = DeprecationLevel.ERROR
+        )
         class Writer {
             /**
              * Returns the metadata of the multi-file class facade that was written with this writer.
@@ -221,6 +261,11 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
              *   0 by default
              */
+            @Deprecated(
+                "Writer API is deprecated. Please use KotlinClassMetadata.writeMultiFileClassFacade(partClassNames, metadataVersion, extraInt)",
+                ReplaceWith("KotlinClassMetadata.writeMultiFileClassFacade(partClassNames, metadataVersion, extraInt)"),
+                level = DeprecationLevel.ERROR
+            )
             @JvmOverloads
             fun write(
                 partClassNames: List<String>,
@@ -259,6 +304,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * Visits metadata of this multi-file class part with a new [KmPackage] instance and returns that instance.
          */
+        @OptIn(DeprecatedVisitor::class)
         fun toKmPackage(): KmPackage =
             KmPackage().apply(this::accept)
 
@@ -267,6 +313,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          *
          * @param v the visitor that must visit this multi-file class part
          */
+        @DeprecatedVisitor
         fun accept(v: KmPackageVisitor) {
             val (strings, proto) = packageData
             proto.accept(v, strings)
@@ -275,6 +322,11 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * A [KmPackageVisitor] that generates the metadata of a multi-file class part.
          */
+        @OptIn(DeprecatedVisitor::class)
+        @Deprecated(
+            "Writer API is deprecated. Please use KotlinClassMetadata.writeMultiFileClassPart(kmPackage, facadeClassName, metadataVersion, extraInt)",
+            level = DeprecationLevel.ERROR
+        )
         class Writer : PackageWriter(JvmStringTable()) {
             /**
              * Returns the metadata of the multi-file class part that was written with this writer.
@@ -285,6 +337,10 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
              * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
              *   0 by default
              */
+            @Deprecated(
+                "Writer API is deprecated. Please use KotlinClassMetadata.writeMultiFileClassPart(kmPackage, facadeClassName, metadataVersion, extraInt)",
+                level = DeprecationLevel.ERROR
+            )
             @JvmOverloads
             fun write(
                 facadeClassName: String,
@@ -308,6 +364,55 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
     class Unknown internal constructor(header: KotlinClassHeader) : KotlinClassMetadata(header)
 
     companion object {
+        // TODO: docs
+        @OptIn(DeprecatedVisitor::class)
+        @Suppress("DEPRECATION_ERROR")
+        fun writeClass(
+            kmClass: KmClass,
+            metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+            extraInt: Int = 0
+        ): Class = KotlinClassMetadata.Class.Writer().also { kmClass.accept(it) }.write(metadataVersion, extraInt)
+
+        // TODO: docs
+        @OptIn(DeprecatedVisitor::class)
+        @Suppress("DEPRECATION_ERROR")
+        fun writeFileFacade(
+            kmPackage: KmPackage,
+            metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+            extraInt: Int = 0
+        ): FileFacade = FileFacade.Writer().also { kmPackage.accept(it) }.write(metadataVersion, extraInt)
+
+        @OptIn(DeprecatedVisitor::class)
+        @Suppress("DEPRECATION_ERROR")
+        fun writeLambda(
+            kmLambda: KmLambda,
+            metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+            extraInt: Int = 0
+        ): SyntheticClass = SyntheticClass.Writer().also { kmLambda.accept(it) }.write(metadataVersion, extraInt)
+
+        @OptIn(DeprecatedVisitor::class)
+        @Suppress("DEPRECATION_ERROR")
+        fun writeSyntheticClass(
+            metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+            extraInt: Int = 0
+        ): SyntheticClass = SyntheticClass.Writer().write(metadataVersion, extraInt)
+
+        @Suppress("DEPRECATION_ERROR")
+        fun writeMultiFileClassFacade(
+            partClassNames: List<String>, metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+            extraInt: Int = 0
+        ): MultiFileClassFacade = MultiFileClassFacade.Writer().write(partClassNames, metadataVersion, extraInt)
+
+        @OptIn(DeprecatedVisitor::class)
+        @Suppress("DEPRECATION_ERROR")
+        fun writeMultiFileClassPart(
+            kmPackage: KmPackage,
+            facadeClassName: String,
+            metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+            extraInt: Int = 0
+        ): MultiFileClassPart = MultiFileClassPart.Writer().also { kmPackage.accept(it) }.write(facadeClassName, metadataVersion, extraInt)
+
+
         /**
          * Reads and parses the given header of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
          * this header, or `null` if this header encodes an unsupported kind of Kotlin classes or has an unsupported metadata version.

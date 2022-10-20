@@ -9,33 +9,43 @@ import kotlinx.metadata.*
 import kotlinx.metadata.impl.extensions.*
 import kotlinx.metadata.klib.*
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmFunction.klibExtensions: KlibFunctionExtension
     get() = visitExtensions(KlibFunctionExtensionVisitor.TYPE) as KlibFunctionExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmClass.klibExtensions: KlibClassExtension
     get() = visitExtensions(KlibClassExtensionVisitor.TYPE) as KlibClassExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmType.klibExtensions: KlibTypeExtension
     get() = visitExtensions(KlibTypeExtensionVisitor.TYPE) as KlibTypeExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmProperty.klibExtensions: KlibPropertyExtension
     get() = visitExtensions(KlibPropertyExtensionVisitor.TYPE) as KlibPropertyExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmConstructor.klibExtensions: KlibConstructorExtension
     get() = visitExtensions(KlibConstructorExtensionVisitor.TYPE) as KlibConstructorExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmTypeParameter.klibExtensions: KlibTypeParameterExtension
     get() = visitExtensions(KlibTypeParameterExtensionVisitor.TYPE) as KlibTypeParameterExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmPackage.klibExtensions: KlibPackageExtension
     get() = visitExtensions(KlibPackageExtensionVisitor.TYPE) as KlibPackageExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmModuleFragment.klibExtensions: KlibModuleFragmentExtension
     get() = visitExtensions(KlibModuleFragmentExtensionVisitor.TYPE) as KlibModuleFragmentExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmTypeAlias.klibExtensions: KlibTypeAliasExtension
     get() = visitExtensions(KlibTypeAliasExtensionVisitor.TYPE) as KlibTypeAliasExtension
 
+@OptIn(DeprecatedVisitor::class)
 internal val KmValueParameter.klibExtensions: KlibValueParameterExtension
     get() = visitExtensions(KlibValueParameterExtensionVisitor.TYPE) as KlibValueParameterExtension
 

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.kotlinp
 
+import kotlinx.metadata.DeprecatedVisitor
 import kotlinx.metadata.InconsistentKotlinMetadataException
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.KotlinModuleMetadata
 import java.io.File
 
+@OptIn(DeprecatedVisitor::class)
 class Kotlinp(private val settings: KotlinpSettings) {
     internal fun renderClassFile(classFile: KotlinClassMetadata?): String =
         when (classFile) {
