@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -134,8 +133,8 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         val project = buildProjectWithMPP {
             kotlin {
                 js(BOTH)
-                targets.withType<KotlinJsIrTarget> {
-                    legacyTarget!!.compilations.getByName("main").dependencies {
+                targets.withType<KotlinJsTarget> {
+                    irTarget!!.compilations.getByName("main").dependencies {
                         api("test:compilation-dependency")
                     }
                 }
