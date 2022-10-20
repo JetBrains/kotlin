@@ -1,3 +1,4 @@
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 class X<T> {
     inner class Y<T1>
     class Z<T2>

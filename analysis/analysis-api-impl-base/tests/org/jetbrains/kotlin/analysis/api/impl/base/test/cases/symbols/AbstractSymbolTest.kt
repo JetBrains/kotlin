@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERING_MODE
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -20,7 +24,9 @@ import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -42,19 +48,32 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val directives = module.directives
-        val directiveToIgnore = DO_NOT_CHECK_SYMBOL_RESTORE.takeIf { it in directives }
-            ?: DO_NOT_CHECK_SYMBOL_RESTORE_K1.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in directives }
-            ?: DO_NOT_CHECK_SYMBOL_RESTORE_K2.takeIf { configurator.frontendKind == FrontendKind.Fir && it in directives }
+        val directiveToIgnoreSymbolRestore = directives.doNotCheckSymbolRestoreDirective()
+        val directiveToIgnoreNonPsiSymbolRestore = directives.doNotCheckNonPsiSymbolRestoreDirective()
 
-        val renderMode = directives[PRETTY_RENDERING_MODE].singleOrNull()
-        val prettyRenderOptions = when (renderMode ?: prettyRenderMode) {
+        val prettyRenderOptions = when (directives.singleOrZeroValue(PRETTY_RENDERING_MODE) ?: prettyRenderMode) {
             PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE -> renderingOptions
             PrettyRenderingMode.RENDER_SYMBOLS_NESTED -> renderingOptions.copy(renderClassMembers = true)
         }
 
-        fun KtSymbol.safePointer(): KtSymbolPointer<KtSymbol>? {
-            val result = kotlin.runCatching { createPointer() }
-            return if (directiveToIgnore == null) result.getOrThrow() else result.getOrNull()
+        fun KtSymbol.safePointer(): PointerWrapper? {
+            val regularPointer = runCatching(::createPointer).let {
+                if (directiveToIgnoreSymbolRestore == null) it.getOrThrow() else it.getOrNull()
+            } ?: return null
+
+            val nonPsiPointer = kotlin.runCatching {
+                if (this is KtFileSymbol) return@runCatching null
+
+                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(::createPointer)
+            }
+
+            return PointerWrapper(
+                regularPointer = regularPointer,
+                pointerWithoutPsiAnchor = if (directiveToIgnoreSymbolRestore == null && directiveToIgnoreNonPsiSymbolRestore == null)
+                    nonPsiPointer.getOrThrow()
+                else
+                    nonPsiPointer.getOrNull(),
+            )
         }
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
@@ -93,8 +112,44 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
         configurator.doOutOfBlockModification(ktFile)
 
-        restoreSymbolsInOtherReadActionAndCompareResults(directiveToIgnore, ktFile, pointersWithRendered.pointers, testServices)
+        restoreSymbolsInOtherReadActionAndCompareResults(
+            directiveToIgnore = directiveToIgnoreSymbolRestore,
+            pointerAccessor = PointerWrapper::regularPointer,
+            ktFile = ktFile,
+            pointersWithRendered = pointersWithRendered.pointers,
+            testServices = testServices,
+        )
+
+        if (directiveToIgnoreSymbolRestore == null) {
+            restoreSymbolsInOtherReadActionAndCompareResults(
+                directiveToIgnore = directiveToIgnoreNonPsiSymbolRestore,
+                pointerAccessor = PointerWrapper::pointerWithoutPsiAnchor,
+                ktFile = ktFile,
+                pointersWithRendered = pointersWithRendered.pointers,
+                testServices = testServices,
+            )
+        }
     }
+
+    private fun RegisteredDirectives.doNotCheckSymbolRestoreDirective(): Directive? = findSpecificDirective(
+        commonDirective = DO_NOT_CHECK_SYMBOL_RESTORE,
+        k1Directive = DO_NOT_CHECK_SYMBOL_RESTORE_K1,
+        k2Directive = DO_NOT_CHECK_SYMBOL_RESTORE_K2,
+    )
+
+    private fun RegisteredDirectives.doNotCheckNonPsiSymbolRestoreDirective(): Directive? = findSpecificDirective(
+        commonDirective = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE,
+        k1Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1,
+        k2Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2,
+    )
+
+    private fun RegisteredDirectives.findSpecificDirective(
+        commonDirective: Directive,
+        k1Directive: Directive,
+        k2Directive: Directive,
+    ): Directive? = commonDirective.takeIf { it in this }
+        ?: k1Directive.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in this }
+        ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
 
     private fun compareResults(
         data: SymbolPointersData,
@@ -116,6 +171,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
     private fun restoreSymbolsInOtherReadActionAndCompareResults(
         directiveToIgnore: Directive?,
+        pointerAccessor: (PointerWrapper) -> KtSymbolPointer<KtSymbol>?,
         ktFile: KtFile,
         pointersWithRendered: List<PointerWithRenderedSymbol>,
         testServices: TestServices,
@@ -123,12 +179,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         var failed = false
         try {
             val restored = analyseForTest(ktFile) {
-                pointersWithRendered.map { (pointer, expectedRender) ->
-                    val restored = pointer!!.restoreSymbol() ?: error("Symbol $expectedRender was not restored")
-
+                pointersWithRendered.map { (pointerWrapper, expectedRender) ->
+                    val pointer = pointerWrapper?.let(pointerAccessor) ?: error("Symbol pointer for $expectedRender was not created")
+                    val restored = pointer.restoreSymbol() ?: error("Symbol $expectedRender was not restored")
                     renderSymbolForComparison(restored)
                 }
             }
+
             val actual = restored.renderAsDeclarations()
             testServices.assertions.assertEqualsToTestDataFileSibling(actual)
         } catch (e: Throwable) {
@@ -164,6 +221,18 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
         description = "Symbol restoring for some symbols in current test is not supported yet in K2",
     )
 
+    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE by directive(
+        description = "Symbol restoring w/o psi for some symbols in current test is not supported yet",
+    )
+
+    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1 by directive(
+        description = "Symbol restoring w/o psi for some symbols in current test is not supported yet in K1",
+    )
+
+    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2 by directive(
+        description = "Symbol restoring w/o psi for some symbols in current test is not supported yet in K2",
+    )
+
     val PRETTY_RENDERING_MODE by enumDirective(description = "Explicit rendering mode") { PrettyRenderingMode.valueOf(it) }
 }
 
@@ -183,6 +252,11 @@ private data class SymbolPointersData(
 )
 
 private data class PointerWithRenderedSymbol(
-    val pointer: KtSymbolPointer<*>?,
+    val pointer: PointerWrapper?,
     val rendered: String,
+)
+
+private data class PointerWrapper(
+    val regularPointer: KtSymbolPointer<*>,
+    val pointerWithoutPsiAnchor: KtSymbolPointer<*>?,
 )
