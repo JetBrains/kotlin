@@ -27,7 +27,7 @@ internal class KtFirTypeInfoProvider(
             firSession,
             analysisSession.getScopeSessionFor(firSession),
         )
-        return samResolver.getSamInfoForPossibleSamType(coneType) != null
+        return samResolver.isSamType(coneType)
     }
 
     override fun getFunctionClassKind(type: KtType): FunctionClassKind? {
