@@ -34,7 +34,7 @@ class KtCompositeScope(
         }
     }
 
-    override fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
+    override fun getAllSymbols(): Sequence<KtDeclarationSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getAllSymbols()) }
         }
