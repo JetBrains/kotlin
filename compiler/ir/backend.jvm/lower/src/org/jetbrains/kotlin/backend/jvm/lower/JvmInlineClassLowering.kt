@@ -489,10 +489,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val untypedEquals = valueClass.functions.single { it.overridesEqualsFromAny }
 
         function.body = context.createIrBuilder(valueClass.symbol).run {
+            val context = this@JvmInlineClassLowering.context
             irExprBody(
                 if (typedEqualsStaticReplacement == null) {
                     if (untypedEquals.origin == IrDeclarationOrigin.DEFINED) {
-                        val boxFunction = this@JvmInlineClassLowering.context.inlineClassReplacements.getBoxFunction(valueClass)
+                        val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass)
 
                         fun irBox(expr: IrExpression) = irCall(boxFunction).apply { putValueArgument(0, expr) }
 
@@ -501,7 +502,19 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                             putValueArgument(0, irBox(irGet(right)))
                         }
                     } else {
-                        irEquals(coerceInlineClasses(irGet(left), left.type, type), coerceInlineClasses(irGet(right), right.type, type))
+                        val underlyingType = getInlineClassUnderlyingType(valueClass)
+                        val underlyingClass = underlyingType.getClass()
+                        // We can't directly compare unboxed values of underlying inline class since this class can have custom equals
+                        if (underlyingClass?.isSingleFieldValueClass == true && !underlyingType.isNullable()) {
+                            val underlyingClassEq =
+                                context.inlineClassReplacements.getSpecializedEqualsMethod(underlyingClass, context.irBuiltIns)
+                            irCall(underlyingClassEq).apply {
+                                putValueArgument(0, coerceInlineClasses(irGet(left), left.type, underlyingType))
+                                putValueArgument(1, coerceInlineClasses(irGet(right), right.type, underlyingType))
+                            }
+                        } else {
+                            irEquals(coerceInlineClasses(irGet(left), left.type, type), coerceInlineClasses(irGet(right), right.type, type))
+                        }
                     }
                 } else {
                     irCall(typedEqualsStaticReplacement).apply {
