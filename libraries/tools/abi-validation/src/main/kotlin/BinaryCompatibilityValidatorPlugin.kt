@@ -203,8 +203,8 @@ private fun Project.configureKotlinCompilation(
     configureCheckTasks(apiBuildDir, apiBuild, extension, targetConfig, commonApiDump, commonApiCheck)
 }
 
-val Project.sourceSets: SourceSetContainer
-    get() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+internal val Project.sourceSets: SourceSetContainer
+    get() = extensions.getByName("sourceSets") as SourceSetContainer
 
 internal val Project.apiValidationExtensionOrNull: ApiValidationExtension?
     get() =

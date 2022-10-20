@@ -91,7 +91,7 @@ open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectF
 
         var expectedApiDeclaration = apiBuildDirFiles.keys.single()
         if (expectedApiDeclaration !in expectedApiFiles) {
-            error("File ${expectedApiDeclaration.lastName} is missing from ${projectApiDir.relativePath()}, please run " +
+            error("File ${expectedApiDeclaration.lastName} is missing from ${projectApiDir.relativeDirPath()}, please run " +
                     ":$subject:apiDump task to generate one")
         }
         // Normalize case-sensitivity
@@ -108,8 +108,8 @@ open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectF
         }
     }
 
-    private fun File.relativePath(): String {
-        return relativeTo(rootDir).toString() + "/"
+    private fun File.relativeDirPath(): String {
+        return toRelativeString(rootDir) + File.separator
     }
 
     private fun compareFiles(checkFile: File, builtFile: File): String? {
