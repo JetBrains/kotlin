@@ -957,7 +957,6 @@ open class RawFirBuilder(
                         }, delegatedConstructorCall
                     )
                 }
-            }
 
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
             fun defaultVisibility() = when {
