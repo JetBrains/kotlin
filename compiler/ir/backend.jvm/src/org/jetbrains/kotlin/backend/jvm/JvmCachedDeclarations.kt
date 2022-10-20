@@ -79,8 +79,8 @@ class JvmCachedDeclarations(
                 // It is an error to annotate only some of the fields of an interface companion with
                 // @JvmField, so checking the current field only should be enough.
                 val hasJvmField = oldField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
-                val isInterface = oldParent.parentAsClass.isJvmInterface
-                parent = if (oldParent.isCompanion && (!isInterface || hasJvmField)) oldParent.parentAsClass else oldParent
+                val parentIsClass = oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)
+                parent = if (parentIsClass) oldParent.parentAsClass else oldParent
                 annotations = oldField.annotations
                 initializer = oldField.initializer?.patchDeclarationParents(this)
                 oldField.replaceThisByStaticReference(fieldsForObjectInstances, oldParent, oldParent.thisReceiver!!)
