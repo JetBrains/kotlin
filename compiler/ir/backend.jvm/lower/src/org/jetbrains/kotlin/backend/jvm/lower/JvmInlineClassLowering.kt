@@ -497,9 +497,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
                     fun irBox(expr: IrExpression) = irCall(boxFunction).apply { putValueArgument(0, expr) }
 
+                    val underlyingType = getInlineClassUnderlyingType(valueClass)
                     irCall(untypedEquals).apply {
-                        dispatchReceiver = irBox(irGet(left))
-                        putValueArgument(0, irBox(irGet(right)))
+                        dispatchReceiver = irBox(coerceInlineClasses(irGet(left), left.type, underlyingType))
+                        putValueArgument(0, irBox(coerceInlineClasses(irGet(right), right.type, underlyingType)))
                     }
                 } else {
                     irEquals(coerceInlineClasses(irGet(left), left.type, type), coerceInlineClasses(irGet(right), right.type, type))
