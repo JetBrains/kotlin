@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -155,80 +152,10 @@ private fun processSyntheticConstructors(
     processor: (FirFunctionSymbol<*>) -> Unit,
     bodyResolveComponents: BodyResolveComponents
 ) {
-    val samConstructor = matchedSymbol.findSAMConstructor(bodyResolveComponents)
+    val samConstructor = bodyResolveComponents.samResolver.getSamConstructor(matchedSymbol.fir)
     if (samConstructor != null) {
         processor(samConstructor.symbol)
     }
-}
-
-private fun FirClassLikeSymbol<*>.findSAMConstructor(
-    bodyResolveComponents: BodyResolveComponents
-): FirSimpleFunction? {
-    return when (this) {
-        is FirRegularClassSymbol -> bodyResolveComponents.samResolver.getSamConstructor(fir)
-        is FirTypeAliasSymbol -> findSAMConstructorForTypeAlias(bodyResolveComponents)
-        is FirAnonymousObjectSymbol -> null
-    }
-}
-
-private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
-    bodyResolveComponents: BodyResolveComponents
-): FirSimpleFunction? {
-    val session = bodyResolveComponents.session
-    val type =
-        fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-
-    val expansionRegularClass = type.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return null
-    val samConstructorForClass = bodyResolveComponents.samResolver.getSamConstructor(expansionRegularClass) ?: return null
-
-    if (type.typeArguments.isEmpty()) return samConstructorForClass
-
-    val namedSymbol = samConstructorForClass.symbol
-
-    val substitutor = prepareSubstitutorForTypeAliasConstructors(
-        type,
-        session
-    ) ?: return null
-
-    val typeParameters = this@findSAMConstructorForTypeAlias.fir.typeParameters
-    val newReturnType = samConstructorForClass.returnTypeRef.coneType.let(substitutor::substituteOrNull)
-
-    val newParameterTypes = samConstructorForClass.valueParameters.map { valueParameter ->
-        valueParameter.returnTypeRef.coneType.let(substitutor::substituteOrNull)
-    }
-
-    val newContextReceiverTypes = samConstructorForClass.contextReceivers.map { contextReceiver ->
-        contextReceiver.typeRef.coneType.let(substitutor::substituteOrNull)
-    }
-
-    if (newReturnType == null && newParameterTypes.all { it == null }) return samConstructorForClass
-
-    val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(namedSymbol, expansionRegularClass.classId)
-
-    return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
-        session, symbolForOverride, samConstructorForClass,
-        derivedClassLookupTag = null,
-        newDispatchReceiverType = null,
-        newReceiverType = null,
-        newContextReceiverTypes,
-        newReturnType, newParameterTypes, typeParameters,
-    ).fir
-}
-
-private fun prepareSubstitutorForTypeAliasConstructors(
-    expandedType: ConeClassLikeType,
-    session: FirSession
-): ConeSubstitutor? {
-    val expandedClass = expandedType.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return null
-
-    val resultingTypeArguments = expandedType.typeArguments.map {
-        // We don't know how to handle cases like yet
-        // typealias A = ArrayList<*>()
-        it as? ConeKotlinType ?: return null
-    }
-    return substitutorByMap(
-        expandedClass.typeParameters.map { it.symbol }.zip(resultingTypeArguments).toMap(), session
-    )
 }
 
 private fun processConstructors(

@@ -588,7 +588,7 @@ class FirCallCompletionResultsWriterTransformer(
                         session.symbolProvider.getClassLikeSymbolByClassId(expectedArgumentType.lookupTag.classId)?.fir as? FirRegularClass
 
                     firRegularClass?.let answer@{
-                        val (_, functionType) = samResolver.getSamInfoForPossibleSamType(firRegularClass.defaultType())
+                        val functionType = samResolver.getFunctionTypeForPossibleSamType(firRegularClass.defaultType())
                             ?: return@answer null
                         createFunctionalType(
                             functionType.typeArguments.dropLast(1).map { it as ConeKotlinType },
