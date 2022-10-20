@@ -72,7 +72,7 @@ fun deserializeClassToSymbol(
     val annotationDeserializer = defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
     val jvmBinaryClass = (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass
     val constDeserializer = if (jvmBinaryClass != null) {
-        FirJvmConstDeserializer(session, jvmBinaryClass)
+        FirJvmConstDeserializer(session, jvmBinaryClass, serializerExtensionProtocol)
     } else {
         FirConstDeserializer(session, serializerExtensionProtocol)
     }
@@ -88,8 +88,9 @@ fun deserializeClassToSymbol(
             if (status.isCompanion) {
                 parentContext.constDeserializer
             } else {
-                ((containerSource as? KotlinJvmBinarySourceElement)?.binaryClass)?.let { FirJvmConstDeserializer(session, it) }
-                    ?: parentContext.constDeserializer
+                ((containerSource as? KotlinJvmBinarySourceElement)?.binaryClass)?.let {
+                    FirJvmConstDeserializer(session, it, serializerExtensionProtocol)
+                } ?: parentContext.constDeserializer
             },
             status.isInner
         ) ?: FirDeserializationContext.createForClass(
