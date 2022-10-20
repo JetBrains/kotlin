@@ -75,7 +75,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
                             is KtDeclarationSymbol -> symbol.render(prettyRenderOptions)
                             is KtFileSymbol -> prettyPrint {
                                 printCollection(symbol.getFileScope().getAllSymbols().asIterable(), separator = "\n\n") {
-                                    append((it as KtDeclarationSymbol).render(prettyRenderOptions))
+                                    append(it.render(prettyRenderOptions))
                                 }
                             }
 
