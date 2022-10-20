@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
@@ -850,3 +851,18 @@ private fun ConeKotlinType.eraseAsUpperBound(
 
         else -> error("unexpected Java type parameter upper bound kind: $this")
     }
+
+fun ConeKotlinType.isRaw(): Boolean = lowerBoundIfFlexible().attributes.contains(CompilerConeAttributes.RawType)
+
+fun ConeKotlinType.convertToNonRawVersion(): ConeKotlinType {
+    if (!isRaw()) return this
+
+    if (this is ConeFlexibleType) {
+        return ConeFlexibleType(
+            lowerBound.withAttributes(this.attributes.remove(CompilerConeAttributes.RawType)),
+            upperBound,
+        )
+    }
+
+    return withAttributes(attributes.remove(CompilerConeAttributes.RawType))
+}
