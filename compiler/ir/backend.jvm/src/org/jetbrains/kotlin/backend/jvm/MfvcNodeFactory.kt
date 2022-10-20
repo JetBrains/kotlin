@@ -234,7 +234,7 @@ fun createIntermediateMfvcNode(
     ) { receiver ->
         val valueArguments = subnodes.flatMap { it.fields!! }
             .map { field -> irGetField(if (field.isStatic) null else irGet(receiver!!), field) }
-        rootNode.makeBoxedExpression(this, typeArguments, valueArguments)
+        rootNode.makeBoxedExpression(this, typeArguments, valueArguments, registerPossibleExtraBoxCreation = {})
     }
 
     val hasPureUnboxMethod = defaultMethodsImplementationSourceNode.isPure() && subnodes.all { it.hasPureUnboxMethod }

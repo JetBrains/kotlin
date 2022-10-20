@@ -140,7 +140,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                                             irGet(sourceFullValueParameterList[flattenedIndex++])
                                         }
                                         val boxedExpression = remappedParameter.rootMfvcNode.makeBoxedExpression(
-                                            this@irBlockBody, remappedParameter.typeArguments, valueArguments
+                                            this@irBlockBody, remappedParameter.typeArguments, valueArguments, registerPossibleExtraBoxCreation = {}
                                         )
                                         putValueArgument(i, boxedExpression)
                                     }

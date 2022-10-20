@@ -142,7 +142,10 @@ sealed interface MfvcNodeWithSubnodes : MfvcNode {
 }
 
 fun MfvcNodeWithSubnodes.makeBoxedExpression(
-    scope: IrBuilderWithScope, typeArguments: TypeArguments, valueArguments: List<IrExpression>
+    scope: IrBuilderWithScope,
+    typeArguments: TypeArguments,
+    valueArguments: List<IrExpression>,
+    registerPossibleExtraBoxCreation: () -> Unit,
 ): IrExpression = scope.irCall(boxMethod).apply {
     val resultType = type.substitute(typeArguments) as IrSimpleType
     require(resultType.erasedUpperBound == type.erasedUpperBound) { "Substitution of $type led to $resultType" }
@@ -152,6 +155,7 @@ fun MfvcNodeWithSubnodes.makeBoxedExpression(
     for ((index, valueArgument) in valueArguments.withIndex()) {
         putValueArgument(index, valueArgument)
     }
+    registerPossibleExtraBoxCreation()
 }
 
 operator fun MfvcNodeWithSubnodes.get(names: List<Name>): MfvcNode? {
