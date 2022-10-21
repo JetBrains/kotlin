@@ -34,6 +34,17 @@ class StubIrContext(
                     add("new")
                 }
                 addAll(configuration.library.includes)
+                addAll(nativeIndex.includedHeadersCanonicalPaths.mapNotNull {
+                    // Some headers should not be included directly. Compilation errors are listed below, before each problematic header treatment
+                    when {
+                        // error: "do not include netinet6/in6.h directly, include netinet/in.h. "         " see RFC2553"
+                        // fatal error: '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/netinet6/in.h' file not found
+                        it.endsWith("/netinet6/in6.h") -> null
+                        // error: redefinition of 'NDR_record'
+                        it.endsWith("/mach/arm/ndr_def.h") -> null
+                        else -> it
+                    }
+                })
             },
             compilerArgs = configuration.library.compilerArgs,
             additionalPreambleLines = configuration.library.additionalPreambleLines +
