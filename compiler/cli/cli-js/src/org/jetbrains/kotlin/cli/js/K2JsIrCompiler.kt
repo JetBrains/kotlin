@@ -296,27 +296,33 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
 
             var tp = System.currentTimeMillis()
-            messageCollector.report(INFO, "IC cache updater initialization: ${tp - start}ms")
+            val icTimeMessages = mutableListOf("cache updater initialization: ${tp - start}ms")
 
             val artifacts = cacheUpdater.actualizeCaches {
                 val now = System.currentTimeMillis()
-                messageCollector.report(INFO, "IC $it: ${now - tp}ms")
+                icTimeMessages += "$it: ${now - tp}ms"
                 tp = now
             }
 
             messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+            for (icTimeMessage in icTimeMessages) {
+                messageCollector.report(INFO, "  $icTimeMessage")
+            }
 
+            var libIndex = 0
             for ((libFile, srcFiles) in cacheUpdater.getDirtyFileStats()) {
                 val (msg, showFiles) = when {
                     srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) } -> "fully rebuilt due to clean build" to false
                     srcFiles.values.all { it.contains(DirtyFileState.MODIFIED_CONFIG) } -> "fully rebuilt due to config modification" to false
                     else -> "partially rebuilt" to true
                 }
-                messageCollector.report(INFO, "module [${File(libFile.path).name}] was $msg")
+                messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
                 if (showFiles) {
+                    var fileIndex = 0
                     for ((srcFile, stat) in srcFiles) {
                         val statStr = stat.joinToString { it.str }
-                        messageCollector.report(INFO, "  file [${File(srcFile.path).name}]: ($statStr)")
+                        // Use index, because MessageCollector ignores already reported messages
+                        messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
                     }
                 }
             }
