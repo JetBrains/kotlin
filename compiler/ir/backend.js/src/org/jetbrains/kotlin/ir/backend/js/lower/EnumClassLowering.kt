@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
@@ -56,6 +58,26 @@ private fun createEntryAccessorName(enumName: String, enumEntry: IrEnumEntry) =
     "${enumName}_${enumEntry.name.identifier}_getInstance"
 
 private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irClass).defaultType
+
+class EnumClassPreventExportOfNonExportedMembersLowering(val context: JsIrBackendContext) : DeclarationTransformer {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration !is IrSimpleFunction || declaration.parentEnumClassOrNull?.isExported(context) != true) return null
+
+        val syntheticGetterBody = declaration.body as? IrSyntheticBody ?: return null
+
+        if (syntheticGetterBody.kind == IrSyntheticBodyKind.ENUM_ENTRIES) {
+            declaration.correspondingPropertySymbol?.owner?.let {
+                it.annotations += generateJsExportIgnoreCall()
+            }
+        }
+
+        return null
+    }
+
+    private fun generateJsExportIgnoreCall(): IrConstructorCall {
+        return JsIrBuilder.buildConstructorCall(context.intrinsics.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
+    }
+}
 
 // Should be applied recursively
 class EnumClassConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
@@ -470,7 +492,6 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
 ) : DeclarationTransformer {
     private val IrEnumEntry.getInstanceFun by context.mapping.enumEntryToGetInstanceFun
     private val IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
-    private val IrClass.enumArrayType get() = context.irBuiltIns.arrayClass.typeWith(defaultType)
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrConstructor && declaration.isPrimary && declaration.parentEnumClassOrNull != null &&
