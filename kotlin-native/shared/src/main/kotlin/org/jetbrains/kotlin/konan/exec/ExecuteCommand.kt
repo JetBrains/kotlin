@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.konan.exec
 
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.lang.ProcessBuilder.Redirect
 import java.nio.file.Files
 
 
-open class Command(initialCommand: List<String>) {
+open class Command(initialCommand: List<String>, val redirectInputFile: File? = null) {
 
     constructor(tool: String) : this(listOf(tool)) 
     constructor(vararg command: String) : this(command.toList<String>()) 
@@ -58,7 +59,11 @@ open class Command(initialCommand: List<String>) {
         val builder = ProcessBuilder(command)
 
         builder.redirectOutput(Redirect.INHERIT)
-        builder.redirectInput(Redirect.INHERIT)
+        if (redirectInputFile == null) {
+          builder.redirectInput(Redirect.INHERIT)
+        } else {
+          builder.redirectInput(redirectInputFile)
+        }
 
         val process = builder.start()
 
@@ -90,7 +95,11 @@ open class Command(initialCommand: List<String>) {
         try {
             val builder = ProcessBuilder(command)
 
-            builder.redirectInput(Redirect.INHERIT)
+            if (redirectInputFile == null) {
+              builder.redirectInput(Redirect.INHERIT)
+            } else {
+              builder.redirectInput(redirectInputFile)
+            }
             builder.redirectError(Redirect.INHERIT)
             builder.redirectOutput(Redirect.to(outputFile))
                     .redirectErrorStream(withErrors)
