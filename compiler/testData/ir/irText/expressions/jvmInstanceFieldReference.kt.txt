@@ -10,7 +10,7 @@ class Derived : Base {
   }
 
   fun getValue(): Int {
-    return <this>(super<Base>).#value
+    return <this>(super<Derived>).#value
   }
 
   fun setValue(value: Int) {
