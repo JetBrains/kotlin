@@ -411,6 +411,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             needTransformOtherChildren()
         }
 
+
+        functionTypeParameter.configure {
+            +field("name", nameType, nullable = true)
+            +field("returnTypeRef", typeRef)
+        }
+
         errorProperty.configure {
             +symbol("FirErrorPropertySymbol")
         }
@@ -640,7 +646,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         functionTypeRef.configure {
             +field("receiverTypeRef", typeRef, nullable = true)
-            +valueParameters
+            +fieldList("parameters", functionTypeParameter)
             +returnTypeRef
             +booleanField("isSuspend")
 

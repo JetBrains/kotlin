@@ -2170,11 +2170,11 @@ class DeclarationsConverter(
     ): FirTypeRef {
         var receiverTypeReference: FirTypeRef? = null
         lateinit var returnTypeReference: FirTypeRef
-        val valueParametersList = mutableListOf<ValueParameter>()
+        val parameters = mutableListOf<FirFunctionTypeParameter>()
         functionType.forEachChildren {
             when (it.tokenType) {
                 FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
-                VALUE_PARAMETER_LIST -> valueParametersList += convertValueParameters(it, ValueParameterDeclaration.FUNCTIONAL_TYPE)
+                VALUE_PARAMETER_LIST -> parameters += convertFunctionTypeParameters(it)
                 TYPE_REFERENCE -> returnTypeReference = convertType(it)
             }
         }
@@ -2184,13 +2184,37 @@ class DeclarationsConverter(
             isMarkedNullable = isNullable
             receiverTypeRef = receiverTypeReference
             returnTypeRef = returnTypeReference
-            valueParameters += valueParametersList.map { it.firValueParameter }
+            this.parameters += parameters
             this.isSuspend = isSuspend
             this.contextReceiverTypeRefs.addAll(
                 functionType.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER)?.mapNotNull {
                     it.getChildNodeByType(TYPE_REFERENCE)?.let(::convertType)
                 }.orEmpty()
             )
+        }
+    }
+
+    private fun convertFunctionTypeParameters(
+        parameters: LighterASTNode,
+    ): List<FirFunctionTypeParameter> {
+        return parameters.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                VALUE_PARAMETER -> {
+                    var name: Name? = null
+                    var typeRef: FirTypeRef? = null
+                    node.forEachChildren {
+                        when (it.tokenType) {
+                            IDENTIFIER -> name = it.asText.nameAsSafeName()
+                            TYPE_REFERENCE -> typeRef = convertType(it)
+                        }
+                    }
+                    container += buildFunctionTypeParameter {
+                        source = node.toFirSourceElement()
+                        this.name = name
+                        this.returnTypeRef = typeRef ?: createNoTypeForParameterTypeRef()
+                    }
+                }
+            }
         }
     }
 

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import com.intellij.lang.LighterASTNode
+import com.intellij.openapi.util.Ref
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
@@ -538,10 +540,10 @@ fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSourc
             }
         }
         is FirFunctionTypeRef -> {
-            val valueParameters = delegatedTypeRef.valueParameters
+            val paramters = delegatedTypeRef.parameters
 
             delegatedTypeRef.receiverTypeRef?.let { result.add(FirTypeRefSource(it, it.source)) }
-            for (valueParameter in valueParameters) {
+            for (valueParameter in paramters) {
                 val valueParamTypeRef = valueParameter.returnTypeRef
                 result.add(FirTypeRefSource(valueParamTypeRef, valueParamTypeRef.source))
             }
@@ -670,3 +672,36 @@ private typealias TargetLists = AnnotationTargetLists
 fun FirQualifiedAccess.explicitReceiverIsNotSuperReference(): Boolean {
     return (this.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference !is FirSuperReference
 }
+
+
+internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
+    get() = when (this) {
+        is KtPsiSourceElement -> (psi as? KtParameter)?.defaultValue?.toKtPsiSourceElement()
+        is KtLightSourceElement -> findDefaultValue(this)
+    }
+
+private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    source.treeStructure.getChildren(source.lighterASTNode, childrenRef)
+
+    var defaultValue: LighterASTNode? = null
+    var defaultValueOffset = source.startOffset
+
+    for (node in childrenRef.get()) {
+        if (node == null) continue
+        if (node.isExpression()) {
+            defaultValue = node
+            break
+        } else {
+            defaultValueOffset += node.endOffset - node.startOffset
+        }
+    }
+    if (defaultValue == null) return null
+
+    return defaultValue.toKtLightSourceElement(
+        source.treeStructure,
+        startOffset = defaultValueOffset,
+        endOffset = defaultValueOffset + defaultValue.textLength,
+    )
+}
+

@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -24,7 +24,7 @@ internal class FirFunctionTypeRefImpl(
     override val annotations: MutableList<FirAnnotation>,
     override val isMarkedNullable: Boolean,
     override var receiverTypeRef: FirTypeRef?,
-    override val valueParameters: MutableList<FirValueParameter>,
+    override val parameters: MutableList<FirFunctionTypeParameter>,
     override var returnTypeRef: FirTypeRef,
     override val isSuspend: Boolean,
     override val contextReceiverTypeRefs: MutableList<FirTypeRef>,
@@ -32,7 +32,7 @@ internal class FirFunctionTypeRefImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         receiverTypeRef?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
+        parameters.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
         contextReceiverTypeRefs.forEach { it.accept(visitor, data) }
     }
@@ -40,7 +40,7 @@ internal class FirFunctionTypeRefImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionTypeRefImpl {
         transformAnnotations(transformer, data)
         receiverTypeRef = receiverTypeRef?.transform(transformer, data)
-        valueParameters.transformInplace(transformer, data)
+        parameters.transformInplace(transformer, data)
         returnTypeRef = returnTypeRef.transform(transformer, data)
         contextReceiverTypeRefs.transformInplace(transformer, data)
         return this

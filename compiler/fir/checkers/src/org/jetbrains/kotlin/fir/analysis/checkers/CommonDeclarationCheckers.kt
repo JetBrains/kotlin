@@ -165,7 +165,5 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         )
 
     override val valueParameterCheckers: Set<FirValueParameterChecker>
-        get() = setOf(
-            FirUnsupportedDefaultValueInFunctionTypeChecker
-        )
+        get() = setOf()
 }
