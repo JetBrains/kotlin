@@ -16,13 +16,22 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companio
 import org.jetbrains.kotlin.gradle.plugin.addConvention
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory.Companion.defaultSourceFolder
 
+internal const val IS_ANDROID_SOURCE_SET = "android-source-set"
+
 internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
     val project = target.project
     val android = project.extensions.getByName("android") as BaseExtension
+    val kotlinExtension = project.kotlinExtension
 
+    val createdKotlinSourceSets = mutableSetOf<String>()
     android.sourceSets.all { androidSourceSet ->
         val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(target, androidSourceSet.name)
-        val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinSourceSetName)
+        createdKotlinSourceSets.add(kotlinSourceSetName)
+        val kotlinSourceSet = kotlinExtension.sourceSets.maybeCreate(kotlinSourceSetName)
+
+        // Marking KotlinSource set is created for Android compilation to ignore it in UnusedSourceSetChecker
+        kotlinSourceSet.extraProperties.set(IS_ANDROID_SOURCE_SET, true)
+
         androidSourceSet.addKotlinSources(kotlinSourceSet)
 
         createDefaultDependsOnEdges(target, kotlinSourceSet, androidSourceSet)

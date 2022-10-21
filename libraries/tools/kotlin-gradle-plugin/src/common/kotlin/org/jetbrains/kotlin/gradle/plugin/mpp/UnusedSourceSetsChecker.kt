@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 object UnusedSourceSetsChecker {
     const val WARNING_PREFIX_ONE =
@@ -35,11 +37,14 @@ object UnusedSourceSetsChecker {
     }
 
     fun checkSourceSets(project: Project) {
-        // TODO once Android compilations are configured eagerly, move this to afterEvaluate { ... } instead of taskGraph.whenReady { ... }
-        project.gradle.taskGraph.whenReady { _ ->
+        project.whenEvaluated {
             val compilationsBySourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project)
             val unusedSourceSets = project.kotlinExtension.sourceSets.filter {
-                compilationsBySourceSet[it]?.isEmpty() ?: true
+                // Ignoring Android source sets
+                val isAndroidSourceSet = it.extraProperties.has(IS_ANDROID_SOURCE_SET) &&
+                        (it.extraProperties[IS_ANDROID_SOURCE_SET] as Boolean)
+
+                !isAndroidSourceSet && compilationsBySourceSet[it]?.isEmpty() ?: true
             }
             if (unusedSourceSets.isNotEmpty()) {
                 reportUnusedSourceSets(project, unusedSourceSets.toSet())
