@@ -118,33 +118,13 @@ private fun searchForMetadata(obj: dynamic): Metadata? {
     return metadata
 }
 
-// TODO: Remove after 1.8 bootstrapping
-// Needed to pass all nodejs tests, because of stdlib compilation via bootstrapped compiler with old metadata format
-private fun verySlowIsInterfaceImpl(obj: dynamic, iface: dynamic): Boolean {
-    val metadata = searchForMetadata(obj) ?: return false
-    val interfaces = metadata.asDynamic().associatedObjectKey
-
-    if (
-        interfaces != null &&
-        (interfaces.indexOf(iface) != -1 || interfaces.some { x -> verySlowIsInterfaceImpl(x, iface) })
-    ) {
-       return true
-    }
-
-    return verySlowIsInterfaceImpl(getPrototypeOf(obj), iface)
-}
-
 private fun isInterfaceImpl(obj: dynamic, iface: Int): Boolean {
     val mask: BitMask = obj.`$imask$`.unsafeCast<BitMask?>() ?: return false
     return mask.isBitSet(iface)
 }
 
 internal fun isInterface(obj: dynamic, iface: dynamic): Boolean {
-    return if (obj.`$imask$` != null) {
-        isInterfaceImpl(obj, iface.`$metadata$`.iid)
-    } else {
-        verySlowIsInterfaceImpl(obj, iface)
-    }
+    return isInterfaceImpl(obj, iface.`$metadata$`.iid)
 }
 
 internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
@@ -238,8 +218,8 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     }
 
     if (klassMetadata.kind === "interface") {
-        val iid =  klassMetadata.iid.unsafeCast<Int?>()
-        return iid?.let { isInterfaceImpl(obj, it) } ?: verySlowIsInterfaceImpl(obj, constructor)
+        val iid =  klassMetadata.iid.unsafeCast<Int?>() ?: return false
+        return isInterfaceImpl(obj, iid)
     }
 
     return false
