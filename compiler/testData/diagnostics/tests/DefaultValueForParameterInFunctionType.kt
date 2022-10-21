@@ -17,5 +17,5 @@ class A : (Int)->Unit {
     }
 
     val prop: (x: Int = <!UNSUPPORTED!>0<!>)->Unit
-        get(): (x: Int = <!UNSUPPORTED!>0<!>)->Unit = {}
+    get(): (x: Int = <!UNSUPPORTED!>0<!>)->Unit = {}
 }

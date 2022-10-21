@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -252,6 +253,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry) {
         visitElement(enumEntry)
+    }
+
+    open fun visitFunctionTypeParameter(functionTypeParameter: FirFunctionTypeParameter) {
+        visitElement(functionTypeParameter)
     }
 
     open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
@@ -796,6 +801,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
         visitEnumEntry(enumEntry)
+    }
+
+    final override fun visitFunctionTypeParameter(functionTypeParameter: FirFunctionTypeParameter, data: Nothing?) {
+        visitFunctionTypeParameter(functionTypeParameter)
     }
 
     final override fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: Nothing?) {

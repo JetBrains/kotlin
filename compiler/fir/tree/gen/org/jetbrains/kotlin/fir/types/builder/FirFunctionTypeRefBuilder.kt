@@ -9,9 +9,9 @@ package org.jetbrains.kotlin.fir.types.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -29,7 +29,7 @@ class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var receiverTypeRef: FirTypeRef? = null
-    val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    val parameters: MutableList<FirFunctionTypeParameter> = mutableListOf()
     lateinit var returnTypeRef: FirTypeRef
     var isSuspend: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val contextReceiverTypeRefs: MutableList<FirTypeRef> = mutableListOf()
@@ -40,7 +40,7 @@ class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
             annotations,
             isMarkedNullable,
             receiverTypeRef,
-            valueParameters,
+            parameters,
             returnTypeRef,
             isSuspend,
             contextReceiverTypeRefs,
@@ -67,7 +67,7 @@ inline fun buildFunctionTypeRefCopy(original: FirFunctionTypeRef, init: FirFunct
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.isMarkedNullable = original.isMarkedNullable
     copyBuilder.receiverTypeRef = original.receiverTypeRef
-    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.isSuspend = original.isSuspend
     copyBuilder.contextReceiverTypeRefs.addAll(original.contextReceiverTypeRefs)

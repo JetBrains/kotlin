@@ -1815,7 +1815,14 @@ open class RawFirBuilder(
                         // TODO: probably implicit type should not be here
                         returnTypeRef = unwrappedElement.returnTypeReference.toFirOrErrorType()
                         for (valueParameter in unwrappedElement.parameters) {
-                            valueParameters += convertValueParameter(valueParameter, valueParameterDeclaration = ValueParameterDeclaration.FUNCTIONAL_TYPE)
+                            parameters += buildFunctionTypeParameter {
+                                this.source = valueParameter.toFirSourceElement()
+                                name = valueParameter.nameAsName
+                                returnTypeRef = when {
+                                    valueParameter.typeReference != null -> valueParameter.typeReference.toFirOrErrorType()
+                                    else -> createNoTypeForParameterTypeRef()
+                                }
+                            }
                         }
 
                         contextReceiverTypeRefs.addAll(
