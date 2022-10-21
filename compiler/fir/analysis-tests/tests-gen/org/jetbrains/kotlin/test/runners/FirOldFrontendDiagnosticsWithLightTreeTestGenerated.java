@@ -24260,6 +24260,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("smartCastToClassWithRawSupertype.kt")
+                public void testSmartCastToClassWithRawSupertype() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/smartCastToClassWithRawSupertype.kt");
+                }
+
+                @Test
                 @TestMetadata("starProjectionToRaw.kt")
                 public void testStarProjectionToRaw() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/starProjectionToRaw.kt");
