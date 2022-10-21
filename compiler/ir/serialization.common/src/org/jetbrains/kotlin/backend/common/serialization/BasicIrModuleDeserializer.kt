@@ -77,12 +77,12 @@ abstract class BasicIrModuleDeserializer(
             val expect = deserializeIdSignature(expectSymbol.signatureId)
             val actual = deserializeIdSignature(actualSymbol.signatureId)
 
-            assert(linker.expectUniqIdToActualUniqId[expect] == null) {
-                "Expect signature $expect is already actualized by ${linker.expectUniqIdToActualUniqId[expect]}, while we try to record $actual"
+            assert(linker.expectIdSignatureToActualIdSignature[expect] == null) {
+                "Expect signature $expect is already actualized by ${linker.expectIdSignatureToActualIdSignature[expect]}, while we try to record $actual"
             }
-            linker.expectUniqIdToActualUniqId[expect] = actual
+            linker.expectIdSignatureToActualIdSignature[expect] = actual
             // Non-null only for topLevel declarations.
-            findModuleDeserializerForTopLevelId(actual)?.let { md -> linker.topLevelActualUniqItToDeserializer[actual] = md }
+            findModuleDeserializerForTopLevelId(actual)?.let { md -> linker.topLevelActualIdSignatureToModuleDeserializer[actual] = md }
         }
     }
 

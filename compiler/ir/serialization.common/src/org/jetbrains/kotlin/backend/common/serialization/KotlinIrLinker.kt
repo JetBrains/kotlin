@@ -36,8 +36,8 @@ abstract class KotlinIrLinker(
 ) : IrDeserializer, FileLocalAwareLinker {
 
     // Kotlin-MPP related data. Consider some refactoring
-    val expectUniqIdToActualUniqId = mutableMapOf<IdSignature, IdSignature>()
-    val topLevelActualUniqItToDeserializer = mutableMapOf<IdSignature, IrModuleDeserializer>()
+    val expectIdSignatureToActualIdSignature = mutableMapOf<IdSignature, IdSignature>()
+    val topLevelActualIdSignatureToModuleDeserializer = mutableMapOf<IdSignature, IrModuleDeserializer>()
     internal val expectSymbols = mutableMapOf<IdSignature, IrSymbol>()
     internal val actualSymbols = mutableMapOf<IdSignature, IrSymbol>()
 
@@ -230,12 +230,12 @@ abstract class KotlinIrLinker(
     fun handleExpectActualMapping(idSig: IdSignature, rawSymbol: IrSymbol): IrSymbol {
 
         // Actual signature
-        if (idSig in expectUniqIdToActualUniqId.values) {
+        if (idSig in expectIdSignatureToActualIdSignature.values) {
             actualSymbols[idSig] = rawSymbol
         }
 
         // Expect signature
-        expectUniqIdToActualUniqId[idSig]?.let { actualSig ->
+        expectIdSignatureToActualIdSignature[idSig]?.let { actualSig ->
             assert(idSig.run { IdSignature.Flags.IS_EXPECT.test() })
 
             val referencingSymbol = wrapInDelegatedSymbol(rawSymbol)
@@ -243,7 +243,7 @@ abstract class KotlinIrLinker(
             expectSymbols[idSig] = referencingSymbol
 
             // Trigger actual symbol deserialization
-            topLevelActualUniqItToDeserializer[actualSig]?.let { moduleDeserializer -> // Not null if top-level
+            topLevelActualIdSignatureToModuleDeserializer[actualSig]?.let { moduleDeserializer -> // Not null if top-level
                 val actualSymbol = actualSymbols[actualSig]
                 // Check if
                 if (actualSymbol == null || !actualSymbol.isBound) {
@@ -306,7 +306,7 @@ abstract class KotlinIrLinker(
     // So we force deserialization of actuals for all deserialized expect symbols here.
     private fun finalizeExpectActualLinker() {
         // All actuals have been deserialized, retarget delegating symbols from expects to actuals.
-        expectUniqIdToActualUniqId.forEach {
+        expectIdSignatureToActualIdSignature.forEach {
             val expectSymbol = expectSymbols[it.key]
             val actualSymbol = actualSymbols[it.value]
             if (expectSymbol != null && actualSymbol != null) {
