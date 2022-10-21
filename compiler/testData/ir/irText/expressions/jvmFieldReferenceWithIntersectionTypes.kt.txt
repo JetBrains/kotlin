@@ -63,6 +63,6 @@ fun test(b: Boolean) {
     else -> md2
   }
   mk /*as Mid */(super<Mid>).#f = 44
-  mk /*as Mid */(super<JFieldOwner>).#f /*~> Unit */
+  mk /*as Mid */(super<Mid>).#f /*~> Unit */
 }
 
