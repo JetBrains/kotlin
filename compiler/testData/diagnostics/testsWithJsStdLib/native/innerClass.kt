@@ -1,3 +1,4 @@
+// !LANGUAGE: +SafeExternalEnums
 external class C {
     inner class <!WRONG_EXTERNAL_DECLARATION!>Inner<!>
 }

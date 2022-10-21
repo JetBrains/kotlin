@@ -1,3 +1,4 @@
+// !LANGUAGE: +SafeExternalEnums
 open class A
 
 interface I
