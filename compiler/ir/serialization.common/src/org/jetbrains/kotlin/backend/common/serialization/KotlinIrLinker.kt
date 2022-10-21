@@ -212,13 +212,18 @@ abstract class KotlinIrLinker(
     }
 
     override fun postProcess() {
+        // TODO: Expect/actual actualization should be fixed to cope with the situation when either expect or actual symbol is unbound.
         finalizeExpectActualLinker()
 
+        // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
+        // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
         partialLinkageSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
 
+        // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
 
+        // Finally, process the remaining unbound symbols.
         partialLinkageSupport.processUnlinkedDeclarations(messageLogger) {
             deserializersForModules.values.map { it.moduleFragment }
         }
