@@ -1,4 +1,4 @@
-// !LANGUAGE: +EnumEntries
+// !LANGUAGE: +EnumEntries +SafeExternalEnums
 external enum class Foo : Enum<Foo> {
     A,
     B

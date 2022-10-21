@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -24,6 +26,10 @@ import org.jetbrains.kotlin.name.Name
 
 class ExternalEnumStaticMethodsTransformerLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (!context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.SafeExternalEnums)) {
+            return
+        }
+
         irBody.transformChildren(object : IrElementTransformer<IrDeclaration> {
             override fun visitFunction(declaration: IrFunction, data: IrDeclaration): IrStatement {
                 return super.visitFunction(declaration, declaration)

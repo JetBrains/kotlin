@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object CallTranslator {
     @JvmOverloads
@@ -133,7 +135,10 @@ private fun translateFunctionCall(
     val rangeCheck = RangeCheckTranslator(context).translateAsRangeCheck(resolvedCall, explicitReceivers)
     if (rangeCheck != null) return rangeCheck
 
-    val externalEnumMethodCall = ExternalEnumMethodsTranslator(context).translateAsEnumMethodCall(resolvedCall, explicitReceivers)
+    val externalEnumMethodCall = runIf(context.languageVersionSettings.supportsFeature(LanguageFeature.SafeExternalEnums)) {
+        ExternalEnumMethodsTranslator(context).translateAsEnumMethodCall(resolvedCall, explicitReceivers)
+    }
+
     if (externalEnumMethodCall != null) return externalEnumMethodCall
 
     val callInfo = context.getCallInfo(resolvedCall, explicitReceivers)

@@ -59,8 +59,7 @@ import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.config.LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage;
-import static org.jetbrains.kotlin.config.LanguageFeature.TopLevelSealedInheritance;
+import static org.jetbrains.kotlin.config.LanguageFeature.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.isEffectivelyExternal;
@@ -581,6 +580,7 @@ public class BodyResolver {
             }
 
             boolean addSupertype = true;
+            boolean isSafeExternalEnumOn = languageVersionSettings.supportsFeature(SafeExternalEnums);
 
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
             if (classDescriptor != null) {
@@ -602,7 +602,7 @@ public class BodyResolver {
                 }
 
                 if (classDescriptor.getKind() != ClassKind.INTERFACE) {
-                    if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS && !KotlinBuiltIns.isEnum(classDescriptor)) {
+                    if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS && (!isSafeExternalEnumOn || !KotlinBuiltIns.isEnum(classDescriptor))) {
                         trace.report(CLASS_IN_SUPERTYPE_FOR_ENUM.on(typeReference));
                         addSupertype = false;
                     }
@@ -683,7 +683,8 @@ public class BodyResolver {
                 else if (ModalityUtilsKt.isFinalOrEnum(classDescriptor)) {
                     trace.report(FINAL_SUPERTYPE.on(typeReference));
                 }
-                else if (KotlinBuiltIns.isExternalEnum(classDescriptor) || KotlinBuiltIns.isEnum(classDescriptor) && !isExternalEnumClass(supertypeOwner)) {
+                else if (KotlinBuiltIns.isExternalEnum(classDescriptor) ||
+                         KotlinBuiltIns.isEnum(classDescriptor) && (!isSafeExternalEnumOn || !isExternalEnumClass(supertypeOwner))) {
                     trace.report(CLASS_CANNOT_BE_EXTENDED_DIRECTLY.on(typeReference, classDescriptor));
                 }
             }

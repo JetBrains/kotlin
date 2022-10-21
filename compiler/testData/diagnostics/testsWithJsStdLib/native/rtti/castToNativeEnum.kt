@@ -1,3 +1,4 @@
+// !LANGUAGE: +EnumEntries +SafeExternalEnums
 external enum class Foo { A, B }
 
 fun box(a: Any, b: Any): Pair<Foo, Foo?> {

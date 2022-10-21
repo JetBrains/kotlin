@@ -319,7 +319,7 @@ enum class LanguageFeature(
     JsAllowImplementingFunctionInterface(sinceVersion = null, kind = UNSTABLE_FEATURE),
     CustomEqualsInValueClasses(sinceVersion = null, kind = OTHER), // KT-24874
     InlineLateinit(sinceVersion = null, kind = OTHER), // KT-23814
-
+    SafeExternalEnums(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-30810
     ;
 
     init {

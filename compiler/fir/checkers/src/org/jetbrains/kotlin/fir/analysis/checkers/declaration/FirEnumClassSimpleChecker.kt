@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findNonInterfaceSupertype
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.types.isEnum
 
 object FirEnumClassSimpleChecker : FirRegularClassChecker() {
@@ -21,8 +23,10 @@ object FirEnumClassSimpleChecker : FirRegularClassChecker() {
             return
         }
 
+        val isSafeExternalEnumsOn = context.session.languageVersionSettings.supportsFeature(LanguageFeature.SafeExternalEnums)
+
         declaration.findNonInterfaceSupertype(context)?.let {
-            if (!declaration.isExternal || !it.isEnum) {
+            if (!isSafeExternalEnumsOn || !declaration.isExternal || !it.isEnum) {
                 reporter.reportOn(it.source, FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM, context)
             }
         }

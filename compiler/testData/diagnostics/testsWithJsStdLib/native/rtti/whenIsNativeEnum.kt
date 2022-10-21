@@ -1,3 +1,4 @@
+// !LANGUAGE: +SafeExternalEnums
 external enum class Foo1 { A, B }
 external enum class Foo2 { A, B }
 

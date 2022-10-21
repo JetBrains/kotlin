@@ -1,3 +1,4 @@
+// !LANGUAGE: +SafeExternalEnums
 external enum class Foo { A, B }
 
 fun box(a: Any, b: Any): Boolean {

@@ -122,10 +122,11 @@ object FirSupertypesChecker : FirClassChecker() {
         superTypeRef: FirTypeRef,
         context: CheckerContext
     ) {
-        if (
-            symbol is FirRegularClassSymbol &&
-            (symbol.classId == StandardClassIds.ExternalEnum || symbol.classId == StandardClassIds.Enum && !child.isExternalEnum())
-        ) {
+        if (symbol !is FirRegularClassSymbol) return
+
+        val isSafeExternalEnumsOn = context.session.languageVersionSettings.supportsFeature(LanguageFeature.SafeExternalEnums)
+
+        if (symbol.classId == StandardClassIds.ExternalEnum || symbol.classId == StandardClassIds.Enum && (!isSafeExternalEnumsOn || !child.isExternalEnum())) {
             reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
         }
     }

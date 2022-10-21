@@ -159,9 +159,11 @@ public class DescriptorResolver {
             addValidSupertype(supertypes, declaredSupertype);
         }
 
+        boolean isSafeExternalEnumOn = languageVersionSettings.supportsFeature(LanguageFeature.SafeExternalEnums);
+
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS && !containsClass(supertypes)) {
             SimpleType defaultType = classDescriptor.getDefaultType();
-            SimpleType baseType = classDescriptor.isExternal() ? builtIns.getExternalEnumType() : builtIns.getEnumType(defaultType);
+            SimpleType baseType = isSafeExternalEnumOn && classDescriptor.isExternal() ? builtIns.getExternalEnumType() : builtIns.getEnumType(defaultType);
             supertypes.add(0, baseType);
         }
 
