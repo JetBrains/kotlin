@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 
 interface SyntheticJavaPartsProvider {
 
@@ -42,9 +43,14 @@ interface SyntheticJavaPartsProvider {
 
     context(LazyJavaResolverContext)
     fun getNestedClassNames(thisDescriptor: ClassDescriptor): List<Name>
+    context(LazyJavaResolverContext)
+    fun isGeneratedClass(thisDescriptor: ClassDescriptor): Boolean
 
     context(LazyJavaResolverContext)
     fun generateNestedClass(thisDescriptor: ClassDescriptor, name: Name, result: MutableList<ClassDescriptor>)
+
+    context(LazyJavaResolverContext)
+    fun getNestedClass(thisDescriptor: ClassDescriptor, name: Name): ClassDescriptor?
 }
 
 @Suppress("IncorrectFormatting") // KTIJ-22227
@@ -83,7 +89,18 @@ class CompositeSyntheticJavaPartsProvider(private val inner: List<SyntheticJavaP
     }
 
     context(LazyJavaResolverContext)
+    override fun isGeneratedClass(thisDescriptor: ClassDescriptor): Boolean {
+        return true
+    }
+
+    context(LazyJavaResolverContext)
     override fun generateNestedClass(thisDescriptor: ClassDescriptor, name: Name, result: MutableList<ClassDescriptor>) {
         inner.forEach { it.generateNestedClass(thisDescriptor, name, result) }
     }
+
+    context(LazyJavaResolverContext)
+    override fun getNestedClass(thisDescriptor: ClassDescriptor, name: Name): ClassDescriptor? {
+        return inner.firstNotNullOfOrNull { it.getNestedClass(thisDescriptor, name) }
+    }
+
 }

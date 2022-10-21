@@ -826,13 +826,10 @@ class LazyJavaClassMemberScope(
             }
 
             in generatedNestedClassNames() -> {
-                val classes = with(c) {
-                    buildList { c.components.syntheticPartsProvider.generateNestedClass(ownerDescriptor, name, this) }
-                }
-                when (classes.size) {
-                    0 -> null
-                    1 -> classes.single()
-                    else -> error("Multiple classes with same name are generated: $classes")
+                with(c) {
+                    c.components.syntheticPartsProvider.getNestedClass(ownerDescriptor, name)
+//                }?.also {
+//                    c.components.javaClassesTracker.reportClass(it)
                 }
             }
 
@@ -849,6 +846,7 @@ class LazyJavaClassMemberScope(
                 } else null
             }
         }
+
     }
 
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? =

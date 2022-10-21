@@ -49,7 +49,7 @@ class SyntheticJavaClassDescriptor(
         private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")
     }
 
-    private val jClass = FakeJavaClass()
+    internal val jClass = FakeJavaClass()
 
     private val c: LazyJavaResolverContext = outerContext.childForClassOrPackage(this)
 
@@ -140,7 +140,7 @@ class SyntheticJavaClassDescriptor(
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
-    private inner class FakeJavaClass : JavaClass {
+    internal inner class FakeJavaClass : JavaClass {
         override val name: Name
             get() = this@SyntheticJavaClassDescriptor.name
         override val isFromSource: Boolean

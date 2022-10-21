@@ -20,8 +20,11 @@ import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.config.toDescriptorVisibility
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -59,7 +62,7 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
             classKind = ClassKind.CLASS,
             modality = Modality.FINAL,
             visibility = visibility,
-            isInner = false,
+            isInner = true,
             isRecord = false,
             annotations = Annotations.EMPTY,
             declaredTypeParameters = emptyList(),
@@ -67,6 +70,8 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
             supertypes = listOf(components.module.builtIns.anyType),
             attributes = mapOf(BUILDER_DATA to BuilderData(builder, classDescriptor))
         )
+        classDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(builderDescriptor.name, NoLookupLocation.FROM_SYNTHETIC_SCOPE)
+
         partsBuilder.addClass(builderDescriptor)
         val builderFunction = classDescriptor.createFunction(
             Name.identifier(builder.builderMethodName),
