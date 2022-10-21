@@ -21,7 +21,7 @@ import kotlin.reflect.full.withNullability
 @Suppress("unused")
 interface AdditionalGradleProperties {
     @GradleOption(
-        value = DefaultValues.EmptyStringListDefault::class,
+        value = DefaultValue.EMPTY_STRING_LIST_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "", description = "A list of additional compiler arguments")
@@ -551,7 +551,7 @@ private fun Printer.generateImpl(
                     val defaultValue = it.gradleValues
                     var value = defaultValue.defaultValue
                     if (value != "null" && defaultValue.toArgumentConverter != null) {
-                       value = "$value${defaultValue.toArgumentConverter!!.substringAfter("this")}"
+                       value = "$value${defaultValue.toArgumentConverter.substringAfter("this")}"
                     }
                     println("args.${it.name} = $value")
                 }
@@ -726,7 +726,22 @@ private fun generateMarkdown(properties: List<KProperty1<*, *>>) {
 }
 
 private val KProperty1<*, *>.gradleValues: DefaultValues
-    get() = findAnnotation<GradleOption>()!!.value.objectInstance!!
+    get() = findAnnotation<GradleOption>()!!.value.run {
+        when (this) {
+            DefaultValue.BOOLEAN_FALSE_DEFAULT -> DefaultValues.BooleanFalseDefault
+            DefaultValue.BOOLEAN_TRUE_DEFAULT -> DefaultValues.BooleanTrueDefault
+            DefaultValue.STRING_NULL_DEFAULT -> DefaultValues.StringNullDefault
+            DefaultValue.EMPTY_STRING_LIST_DEFAULT -> DefaultValues.EmptyStringListDefault
+            DefaultValue.JVM_TARGET_VERSIONS -> DefaultValues.JvmTargetVersions
+            DefaultValue.LANGUAGE_VERSIONS -> DefaultValues.LanguageVersions
+            DefaultValue.API_VERSIONS -> DefaultValues.ApiVersions
+            DefaultValue.JS_MAIN -> DefaultValues.JsMain
+            DefaultValue.JS_ECMA_VERSIONS -> DefaultValues.JsEcmaVersions
+            DefaultValue.JS_MODULE_KINDS -> DefaultValues.JsModuleKinds
+            DefaultValue.JS_SOURCE_MAP_CONTENT_MODES -> DefaultValues.JsSourceMapContentModes
+            else -> throw IllegalArgumentException("Unknown GradleOption value type: $this")
+        }
+    }
 
 private val KProperty1<*, *>.gradleDefaultValue: String
     get() = gradleValues.defaultValue

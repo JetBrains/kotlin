@@ -37,7 +37,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var jdkHome: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.BooleanFalseDefault::class,
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-no-jdk", description = "Don't automatically include the Java runtime into the classpath")
@@ -67,14 +67,14 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var scriptTemplates: Array<String>? by FreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.StringNullDefault::class,
+        value = DefaultValue.STRING_NULL_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file")
     var moduleName: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.JvmTargetVersions::class,
+        value = DefaultValue.JVM_TARGET_VERSIONS,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
@@ -85,7 +85,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var jvmTarget: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.BooleanFalseDefault::class,
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")

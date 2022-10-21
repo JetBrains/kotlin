@@ -14,7 +14,7 @@ class K2JSDceArguments : CommonToolArguments() {
     }
 
     @GradleOption(
-        value = DefaultValues.StringNullDefault::class,
+        value = DefaultValue.STRING_NULL_DEFAULT,
         gradleInputType = GradleInputTypes.INTERNAL // handled by 'destinationDirectory'
     )
     @GradleDeprecatedOption(
@@ -43,7 +43,7 @@ class K2JSDceArguments : CommonToolArguments() {
     var printReachabilityInfo: Boolean by FreezableVar(false)
 
     @GradleOption(
-        value = DefaultValues.BooleanFalseDefault::class,
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(

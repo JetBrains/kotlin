@@ -17,7 +17,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     }
 
     @GradleOption(
-        value = DefaultValues.StringNullDefault::class,
+        value = DefaultValue.STRING_NULL_DEFAULT,
         gradleInputType = GradleInputTypes.INTERNAL // handled by task 'outputFileProperty'
     )
     @GradleDeprecatedOption(
@@ -29,7 +29,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var outputFile: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.BooleanTrueDefault::class,
+        value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-no-stdlib", description = "Don't automatically include the default Kotlin/JS stdlib into compilation dependencies")
@@ -50,14 +50,14 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var repositries: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.BooleanFalseDefault::class,
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-source-map", description = "Generate source map")
     var sourceMap: Boolean by FreezableVar(false)
 
     @GradleOption(
-        value = DefaultValues.StringNullDefault::class,
+        value = DefaultValue.STRING_NULL_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-source-map-prefix", description = "Add the specified prefix to paths in the source map")
@@ -76,7 +76,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
      * When sourceMapEmbedSources are not null and source maps is disabled warning is reported.
      */
     @GradleOption(
-        value = DefaultValues.JsSourceMapContentModes::class,
+        value = DefaultValue.JS_SOURCE_MAP_CONTENT_MODES,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
@@ -87,21 +87,21 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var sourceMapEmbedSources: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.BooleanTrueDefault::class,
+        value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use to create a library")
     var metaInfo: Boolean by FreezableVar(false)
 
     @GradleOption(
-        value = DefaultValues.JsEcmaVersions::class,
+        value = DefaultValue.JS_ECMA_VERSIONS,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-target", valueDescription = "{ v5 }", description = "Generate JS files for specific ECMA version")
     var target: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.JsModuleKinds::class,
+        value = DefaultValue.JS_MODULE_KINDS,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
@@ -112,7 +112,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var moduleKind: String? by NullableStringFreezableVar(K2JsArgumentConstants.MODULE_PLAIN)
 
     @GradleOption(
-        value = DefaultValues.JsMain::class,
+        value = DefaultValue.JS_MAIN,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
@@ -246,14 +246,14 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var strictImplicitExportType: Boolean by FreezableVar(false)
 
     @GradleOption(
-        value = DefaultValues.BooleanTrueDefault::class,
+        value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
     var typedArrays: Boolean by FreezableVar(true)
 
     @GradleOption(
-        value = DefaultValues.BooleanFalseDefault::class,
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(value = "-Xfriend-modules-disabled", description = "Disable internal declaration export")

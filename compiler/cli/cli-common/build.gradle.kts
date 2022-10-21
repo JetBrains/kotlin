@@ -14,7 +14,6 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(commonDependency("com.google.guava:guava"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(project(":kotlin-gradle-compiler-types"))
 }
 
 sourceSets {
