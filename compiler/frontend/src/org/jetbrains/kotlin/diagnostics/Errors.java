@@ -430,6 +430,9 @@ public interface Errors {
     DiagnosticFactory0<KtContextReceiverList> VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtNamedFunction, KotlinType> INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS =
             DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
+    
+    DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET =
+            DiagnosticFactory1.create(ERROR);
 
     // Result class
 

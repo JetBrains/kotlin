@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineClassDeclarationChecker.isRecursiveInlineClassType
 import org.jetbrains.kotlin.fir.analysis.checkers.getInlineClassUnderlyingType
-import org.jetbrains.kotlin.fir.analysis.checkers.isInlineClass
+import org.jetbrains.kotlin.fir.analysis.checkers.isRecursiveValueClassType
+import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.types.*
 
@@ -65,7 +64,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
             reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)
         }
 
-        if (declaration.returnTypeRef.coneType.isInlineClass(context.session)) {
+        if (declaration.returnTypeRef.coneType.isSingleFieldValueClass(context.session)) {
             val declarationType = declaration.returnTypeRef.coneType
             val variables = if (declaration.isLocal) "local variables" else "properties"
             when {
@@ -93,14 +92,14 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
         fun isForbiddenTypeForLateinit(type: ConeKotlinType): Boolean {
             if (type.isPrimitiveOrNullablePrimitive) return true
             if (type.hasNullableUpperBound) return true
-            if (type.isInlineClass(session)) {
+            if (type.isSingleFieldValueClass(session)) {
                 return isForbiddenTypeForLateinit(type.getInlineClassUnderlyingType(session))
             }
             return false
         }
 
         // prevent infinite recursion
-        if (type.isRecursiveInlineClassType(session)) return false
+        if (type.isRecursiveValueClassType(session)) return false
         return isForbiddenTypeForLateinit(type.getInlineClassUnderlyingType(session))
     }
 

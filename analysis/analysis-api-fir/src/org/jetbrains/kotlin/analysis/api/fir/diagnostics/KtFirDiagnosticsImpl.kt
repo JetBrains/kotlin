@@ -1214,6 +1214,12 @@ internal class ValueClassCannotBeCloneableImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ValueClassCannotBeCloneable(), KtAbstractFirDiagnostic<KtDeclaration>
 
+internal class AnnotationOnIllegalMultiFieldValueClassTypedTargetImpl(
+    override val name: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.AnnotationOnIllegalMultiFieldValueClassTypedTarget(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class NoneApplicableImpl(
     override val candidates: List<KtSymbol>,
     override val firDiagnostic: KtPsiDiagnostic,

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.hasValOrVar
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -70,6 +72,44 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         }
     }
 
+    private fun checkMultiFieldValueClassAnnotationRestrictions(
+        declaration: FirDeclaration,
+        annotation: FirAnnotation,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val (hint, type) = when (annotation.useSiteTarget) {
+            FIELD, PROPERTY_DELEGATE_FIELD -> "fields" to ((declaration as? FirProperty)?.backingField?.returnTypeRef ?: return)
+            FILE, PROPERTY, PROPERTY_SETTER -> return
+            PROPERTY_GETTER -> "getters" to ((declaration as? FirPropertyAccessor)?.returnTypeRef ?: return)
+            RECEIVER -> "receivers" to ((declaration as? FirCallableDeclaration)?.receiverTypeRef ?: return)
+            CONSTRUCTOR_PARAMETER, SETTER_PARAMETER -> "parameters" to (declaration as? FirValueParameter ?: return).returnTypeRef
+            null -> when {
+                declaration is FirProperty && !declaration.isLocal -> {
+                    val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
+                    when {
+                        declaration.fromPrimaryConstructor == true && allowedAnnotationTargets.contains(KotlinTarget.VALUE_PARAMETER) -> return // handled in FirValueParameter case
+                        allowedAnnotationTargets.contains(KotlinTarget.PROPERTY) -> return
+                        allowedAnnotationTargets.contains(KotlinTarget.FIELD) -> "fields" to declaration.returnTypeRef
+                        else -> return
+                    }
+                }
+                declaration is FirField -> "fields" to declaration.returnTypeRef
+                declaration is FirValueParameter -> "parameters" to declaration.returnTypeRef
+                declaration is FirVariable -> "variables" to declaration.returnTypeRef
+                declaration is FirPropertyAccessor && declaration.isGetter &&
+                        declaration.receiverTypeRef == null &&
+                        declaration.contextReceivers.isEmpty() ->
+                    "getters" to declaration.returnTypeRef
+
+                else -> return
+            }
+        }
+        if (type.needsMfvcFlattening(context.session)) {
+            reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, hint, context)
+        }
+    }
+
     private fun checkAnnotationTarget(
         declaration: FirDeclaration,
         annotation: FirAnnotation,
@@ -96,6 +136,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         }
 
         if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
+            checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation, context, reporter)
             return
         }
 
@@ -128,28 +169,28 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
     ) {
         if (annotation.source?.kind == KtFakeSourceElementKind.FromUseSiteTarget) return
         when (target) {
-            AnnotationUseSiteTarget.PROPERTY,
-            AnnotationUseSiteTarget.PROPERTY_GETTER -> {
+            PROPERTY,
+            PROPERTY_GETTER -> {
             }
-            AnnotationUseSiteTarget.FIELD -> {
+            FIELD -> {
                 if (annotated is FirProperty && annotated.delegateFieldSymbol != null && !annotated.hasBackingField) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, context)
                 }
             }
-            AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> {
+            PROPERTY_DELEGATE_FIELD -> {
                 if (annotated is FirProperty && annotated.delegateFieldSymbol == null) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, context)
                 }
             }
-            AnnotationUseSiteTarget.PROPERTY_SETTER,
-            AnnotationUseSiteTarget.SETTER_PARAMETER -> {
+            PROPERTY_SETTER,
+            SETTER_PARAMETER -> {
                 if (annotated !is FirProperty || annotated.isLocal) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY, target.renderName, context)
                 } else if (!annotated.isVar) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, target.renderName, context)
                 }
             }
-            AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> when {
+            CONSTRUCTOR_PARAMETER -> when {
                 annotated is FirValueParameter -> {
                     val container = context.containingDeclarations.lastOrNull()
                     if (container is FirConstructor && container.isPrimary) {
@@ -164,13 +205,13 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                 }
                 else -> reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
             }
-            AnnotationUseSiteTarget.FILE -> {
+            FILE -> {
                 // NB: report once?
                 if (annotated !is FirFile) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_FILE_TARGET, context)
                 }
             }
-            AnnotationUseSiteTarget.RECEIVER -> {
+            RECEIVER -> {
                 // NB: report once?
                 // annotation with use-site target `receiver` can be only on type reference, but not on declaration
                 reporter.reportOn(
@@ -245,9 +286,9 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         }
 
         val propertyAnnotations = mapOf(
-            AnnotationUseSiteTarget.PROPERTY_GETTER to property.getter?.getAnnotationTypes(),
-            AnnotationUseSiteTarget.PROPERTY_SETTER to property.setter?.getAnnotationTypes(),
-            AnnotationUseSiteTarget.SETTER_PARAMETER to property.setter?.valueParameters?.single().getAnnotationTypes()
+            PROPERTY_GETTER to property.getter?.getAnnotationTypes(),
+            PROPERTY_SETTER to property.setter?.getAnnotationTypes(),
+            SETTER_PARAMETER to property.setter?.valueParameters?.single().getAnnotationTypes()
         )
 
         val isError = context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitRepeatedUseSiteTargetAnnotations)

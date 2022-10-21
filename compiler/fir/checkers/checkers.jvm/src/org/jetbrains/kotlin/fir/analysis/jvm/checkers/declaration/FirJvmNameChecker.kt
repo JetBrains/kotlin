@@ -48,7 +48,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
             if (
                 declaration.isOverride ||
                 declaration.isOpen ||
-                containingClass?.isInlineThatRequiresMangling() == true
+                containingClass?.isValueClassThatRequiresMangling() == true
             ) {
                 reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME, context)
             }
@@ -66,7 +66,8 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
         return containingClass != null || !function.symbol.callableId.isLocal
     }
 
-    private fun FirRegularClass.isInlineThatRequiresMangling(): Boolean {
+    private fun FirRegularClass.isValueClassThatRequiresMangling(): Boolean {
+        // value classes have inline modifiers in FIR
         return isInline && name != StandardClassIds.Result.shortClassName
     }
 }

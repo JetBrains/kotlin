@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
@@ -98,7 +97,33 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
     return isSupertypeOf(other, mutableSetOf())
 }
 
-fun ConeKotlinType.isInlineClass(session: FirSession): Boolean = toRegularClassSymbol(session)?.isInline == true
+fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
+    // Value classes have inline modifier in FIR
+    return toRegularClassSymbol(session)?.isInline == true
+}
+
+fun ConeKotlinType.isSingleFieldValueClass(session: FirSession): Boolean = with(session.typeContext) {
+    isRecursiveSingleFieldValueClassType(session) || typeConstructor().isInlineClass()
+}
+
+fun ConeKotlinType.isRecursiveSingleFieldValueClassType(session: FirSession) =
+    isRecursiveValueClassType(hashSetOf(), session, onlyInline = true)
+
+fun ConeKotlinType.isRecursiveValueClassType(session: FirSession) =
+    isRecursiveValueClassType(hashSetOf(), session, onlyInline = false)
+
+private fun ConeKotlinType.isRecursiveValueClassType(visited: HashSet<ConeKotlinType>, session: FirSession, onlyInline: Boolean): Boolean {
+
+    val asRegularClass = this.toRegularClassSymbol(session)?.takeIf { it.isInlineOrValueClass() } ?: return false
+    val primaryConstructor = asRegularClass.declarationSymbols
+        .firstOrNull { it is FirConstructorSymbol && it.isPrimary } as FirConstructorSymbol?
+        ?: return false
+
+    if (primaryConstructor.valueParameterSymbols.size > 1 && onlyInline) return false
+    return !visited.add(this) || primaryConstructor.valueParameterSymbols.any {
+        it.resolvedReturnTypeRef.coneType.isRecursiveValueClassType(visited, session, onlyInline)
+    }.also { visited.remove(this) }
+}
 
 /**
  * Returns the FirRegularClass associated with this
@@ -678,6 +703,6 @@ private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement
 }
 
 fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlinType {
-    require(this.isInlineClass(session))
+    require(this.isSingleFieldValueClass(session))
     return toRegularClassSymbol(session)!!.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
 }

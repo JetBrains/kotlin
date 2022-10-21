@@ -33709,6 +33709,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("annotations.kt")
+            public void testAnnotations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/valueClasses/annotations.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+            }
+
+            @Test
             @TestMetadata("basicValueClassDeclaration.kt")
             public void testBasicValueClassDeclaration() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/valueClasses/basicValueClassDeclaration.kt");

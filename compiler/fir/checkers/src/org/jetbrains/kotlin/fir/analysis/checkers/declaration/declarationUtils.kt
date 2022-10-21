@@ -18,11 +18,8 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.fir.types.isBoolean
-import org.jetbrains.kotlin.fir.types.isNothing
-import org.jetbrains.kotlin.fir.types.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
@@ -130,6 +127,10 @@ fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
                     && valueParameters[0].returnTypeRef.coneType.let { it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection }
         }
     } ?: false
+
+fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
+    coneType.typeConstructor().isMultiFieldValueClass() && !coneType.isNullable
+}
 
 val FirCallableSymbol<*>.hasExplicitReturnType: Boolean
     get() {
