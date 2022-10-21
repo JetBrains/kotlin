@@ -32,7 +32,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var autoAdvanceLanguageVersion: Boolean by FreezableVar(true)
 
     @GradleOption(
-        value = DefaultValues.LanguageVersions::class,
+        value = DefaultValue.LANGUAGE_VERSIONS,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
@@ -46,7 +46,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var autoAdvanceApiVersion: Boolean by FreezableVar(true)
 
     @GradleOption(
-        value = DefaultValues.ApiVersions::class,
+        value = DefaultValue.API_VERSIONS,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
@@ -303,7 +303,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var checkStickyPhaseConditions: Boolean by FreezableVar(false)
 
     @GradleOption(
-        DefaultValues.BooleanFalseDefault::class,
+        DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
