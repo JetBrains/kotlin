@@ -54,7 +54,7 @@ abstract class KotlinIrLinker(
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
     val partialLinkageSupport: PartialLinkageSupport = if (partialLinkageEnabled)
-        PartialLinkageSupportImpl(builtIns)
+        PartialLinkageSupportImpl(builtIns, messageLogger)
     else
         PartialLinkageSupport.DISABLED
 
@@ -224,7 +224,7 @@ abstract class KotlinIrLinker(
         triedToDeserializeDeclarationForSymbol.clear()
 
         // Finally, process the remaining unbound symbols.
-        partialLinkageSupport.processUnlinkedDeclarations(messageLogger) {
+        partialLinkageSupport.processUnlinkedDeclarations {
             deserializersForModules.values.map { it.moduleFragment }
         }
 

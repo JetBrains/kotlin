@@ -787,7 +787,7 @@ internal class KonanIrLinker(
 
             fakeOverrideBuilder.provideFakeOverrides()
 
-            partialLinkageSupport.processUnlinkedDeclarations(linker.messageLogger) { listOf(function) }
+            partialLinkageSupport.processUnlinkedDeclarations { listOf(function) }
 
             return InlineFunctionOriginInfo(function, fileDeserializationState.file, inlineFunctionReference.startOffset, inlineFunctionReference.endOffset)
         }
