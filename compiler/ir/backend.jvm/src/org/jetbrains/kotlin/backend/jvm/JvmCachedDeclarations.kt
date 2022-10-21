@@ -79,9 +79,20 @@ class JvmCachedDeclarations(
                 // It is an error to annotate only some of the fields of an interface companion with
                 // @JvmField, so checking the current field only should be enough.
                 val hasJvmField = oldField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
-                val parentIsClass = oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)
-                parent = if (parentIsClass) oldParent.parentAsClass else oldParent
-                annotations = oldField.annotations
+                val shouldMoveFields = oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)
+                parent = if (shouldMoveFields) oldParent.parentAsClass else oldParent
+                val isPrivate = DescriptorVisibilities.isPrivate(oldField.visibility)
+                val parentIsPrivate = DescriptorVisibilities.isPrivate(oldParent.visibility)
+                annotations = if (parentIsPrivate && !isPrivate) {
+                    context.createJvmIrBuilder(this.symbol).run {
+                        filterOutAnnotations(
+                            DeprecationResolver.JAVA_DEPRECATED,
+                            oldField.annotations
+                        ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                    }
+                } else {
+                    oldField.annotations
+                }
                 initializer = oldField.initializer?.patchDeclarationParents(this)
                 oldField.replaceThisByStaticReference(fieldsForObjectInstances, oldParent, oldParent.thisReceiver!!)
                 origin = if (irProperty.parentAsClass.isCompanion) JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD else origin
