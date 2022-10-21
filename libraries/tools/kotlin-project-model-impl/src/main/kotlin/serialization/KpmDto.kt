@@ -11,8 +11,7 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.jetbrains.kotlin.project.modelx.*
-import kotlin.reflect.KClass
-import kotlin.reflect.full.companionObjectInstance
+import org.jetbrains.kotlin.project.modelx.languageSetting.LSValueSerializer
 
 @Serializable
 data class KotlinModuleDto(
@@ -54,7 +53,7 @@ data class KpmVariantInfo(
 
 class KotlinModuleDtoTransformer(
     private val json: Json,
-    private val settingSerializers: Map<String, KSerializer<out LanguageSetting>>,
+    private val settingSerializers: Map<String, LSValueSerializer<Any?>>,
     private val attributeSerializers: Map<String, Pair<Attribute.Key, KSerializer<out Attribute>>>,
 ) {
     private val attributeSerializersByKey by lazy {
@@ -71,10 +70,9 @@ class KotlinModuleDtoTransformer(
 
     private fun Fragment.toDto(): FragmentDto {
         val settingsDto = settings
-            .mapValues { (key, languageSetting) ->
+            .mapValues { (key, languageSettingValue) ->
                 val serializer = settingSerializers[key] ?: error("Unknown settings key: $key")
-                serializer as SerializationStrategy<LanguageSetting>
-                json.encodeToJsonElement(serializer, languageSetting)
+                serializer.serialize(languageSettingValue)
             }
 
         return when(this) {
@@ -121,7 +119,7 @@ class KotlinModuleDtoTransformer(
             .settings
             .mapValues { (key, jsonValue) ->
                 val serializer = settingSerializers[key] ?: error("Unknown settings key: $key")
-                json.decodeFromJsonElement(serializer, jsonValue)
+                serializer.deserialize(jsonValue)
             }
 
         val attributes = fragmentDto

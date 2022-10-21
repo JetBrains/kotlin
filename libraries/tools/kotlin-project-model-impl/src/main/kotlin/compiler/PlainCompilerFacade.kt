@@ -3,16 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.project.modelx.plainBuildSystem
+package org.jetbrains.kotlin.project.modelx.compiler
 
+import compiler.Config
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.project.modelx.*
-import org.jetbrains.kotlin.project.modelx.compiler.KpmCompiler
-import org.jetbrains.kotlin.project.modelx.compiler.Compilers
-import org.jetbrains.kotlin.project.modelx.compiler.KPMCompilerArgumentsMapper
+import org.jetbrains.kotlin.project.modelx.plainBuildSystem.KotlinModuleDependency
+import org.jetbrains.kotlin.project.modelx.plainBuildSystem.PlainBuildSystemAdapter
+import org.jetbrains.kotlin.project.modelx.plainBuildSystem.PlainModuleDependencyProvider
+import org.jetbrains.kotlin.project.modelx.plainBuildSystem.zip
 import org.jetbrains.kotlin.project.modelx.serialization.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -23,9 +25,10 @@ class PlainCompilerFacade(
     private val serializer: KpmSerializer,
     private val kpmDtoTransformer: KotlinModuleDtoTransformer,
     private val compilers: Compilers,
-    private val kpmFileStructure: KpmFileStructure,
-    private val argumentsMapper: KPMCompilerArgumentsMapper.PreconfiguredFactory
+    private val config: Config
 ) {
+    private val kpmFileStructure = config.kpmFileStructure
+
     fun exec(request: CompilationRequest): ExitCode {
         val moduleDto = buildKotlinModule(request)
         val module = kpmDtoTransformer.fromDto(moduleDto)
@@ -36,11 +39,16 @@ class PlainCompilerFacade(
             kpmFileStructure = kpmFileStructure,
         )
 
+        val argumentsMapper = KPMCompilerArgumentsMapper(
+            adapter = buildSystemAdapter,
+            config = config
+        )
+
         val dependencyExpansion = KpmDependencyExpansion(module, buildSystemAdapter.variantMatcher)
         val kpmCompiler = KpmCompiler(
             compilers = compilers,
             compilationProcessor = KpmCompilationProcessor(module, dependencyExpansion),
-            argumentsMapper = argumentsMapper.create(buildSystemAdapter)
+            argumentsMapper = argumentsMapper
         )
 
         val exitCode = kpmCompiler.compileAll(module, request.fragmentMap)
@@ -102,7 +110,7 @@ class PlainCompilerFacade(
 
     private fun extractModule(moduleConfig: DependencyModuleConfig): KotlinModuleDependency {
         val metaArtifact = moduleConfig.metaArtifact?.let(Paths::get) ?: error("Meta artifact not found")
-        // Currently we support folders only, later we can extract it from zip directly
+        // Currently, we support folders only, later we can extract it from zip directly
         val kpmFileBytes = Files.readAllBytes(metaArtifact.resolve("META-INF/kpm.json"))
         val module = serializer.deserialize(kpmFileBytes).let(kpmDtoTransformer::fromDto)
 
@@ -117,47 +125,6 @@ class PlainCompilerFacade(
             module = module
         )
     }
-
-//    private fun buildTrivialModule(moduleConfig: DependencyModuleConfig): KotlinModuleDependency {
-//        val fragments = listOf(
-//            CommonFragment(
-//                id = "common",
-//                attributes = emptyMap(),
-//                moduleDependencies = emptySet()
-//            )
-//        ) + moduleConfig.variants.map {
-//            val attributes = it.value.attributes.toKpmAttributes()
-//            val platformAttribute = (attributes[Platforms] as? Platforms) ?: error("Attribute $Platforms not found")
-//            Variant(
-//                id = it.key,
-//                attributes = attributes,
-//                moduleDependencies = it.value.dependencies.toSet(),
-//                platform = platformAttribute.platforms.single()
-//            )
-//        }
-//
-//        val module = KotlinModule(
-//            id = moduleConfig.id,
-//            fragments = fragments.associateBy(Fragment::id),
-//            refinements = moduleConfig.variants.mapValues { setOf("common") }
-//        )
-//
-//        val fragmentArtifacts = if (moduleConfig.metaArtifact != null) {
-//            mapOf("common" to listOf(Paths.get(moduleConfig.metaArtifact)))
-//        } else {
-//            mapOf("common" to emptyList())
-//        }
-//
-//        val variantArtifacts = moduleConfig
-//            .variants
-//            .mapValues { (listOf(it.value.artifact) + it.value.dependencies).map(Paths::get) }
-//
-//        return KotlinModuleDependency(
-//            fragmentArtifacts = fragmentArtifacts,
-//            variantArtifacts = variantArtifacts,
-//            module = module
-//        )
-//    }
 
     private fun KpmCompiler.compileAll(module: KotlinModule, config: Map<FragmentId, FragmentConfig>): ExitCode {
         val metadataCompilationExitCodes = module

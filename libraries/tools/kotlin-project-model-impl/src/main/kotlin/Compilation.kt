@@ -39,7 +39,9 @@ data class FragmentCompilerSettings(
      * Expanded [FragmentDependency]'s that must be included into compilation classpath
      */
     val dependencies: Set<FragmentDependency>
-)
+) {
+    val languageSetting get() = fragment.settings
+}
 
 /**
  * Compiler settings — the set of data which completely defines the compiler behaviour
@@ -65,6 +67,8 @@ data class VariantCompilerSettings(
      */
     val dependencies: Set<FragmentDependency>
 ) {
+    val languageSetting get() = variant.settings
+
     val attributes get() = variant.attributes
 }
 

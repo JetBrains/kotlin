@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.project.modelx
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.project.modelx.languageSetting.AnyLanguageSettingValue
 
 typealias FragmentId = String
 typealias ModuleId = String
@@ -78,7 +78,7 @@ sealed class Fragment {
     /**
      * Various language settings
      */
-    abstract val settings: Map<String, LanguageSetting>
+    abstract val settings: Map<String, AnyLanguageSettingValue>
 
     /**
      * A fragment can depend on a set of [ModuleId]'s
@@ -89,13 +89,13 @@ sealed class Fragment {
 
 data class CommonFragment(
     override val id: FragmentId,
-    override val settings: Map<String, LanguageSetting>,
+    override val settings: Map<String, AnyLanguageSettingValue>,
     override val moduleDependencies: Set<ModuleId>
 ) : Fragment()
 
 data class Variant(
     override val id: FragmentId,
-    override val settings: Map<String, LanguageSetting>,
+    override val settings: Map<String, AnyLanguageSettingValue>,
     val attributes: Map<Attribute.Key, Attribute>,
     override val moduleDependencies: Set<ModuleId>,
 ) : Fragment() {

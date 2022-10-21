@@ -3,13 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.project.modelx.plainBuildSystem
+package org.jetbrains.kotlin.project.modelx.compiler
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.jetbrains.kotlin.project.modelx.FragmentId
-import org.jetbrains.kotlin.project.modelx.KotlinModule
 import org.jetbrains.kotlin.project.modelx.ModuleId
 
 @Serializable

@@ -9,9 +9,9 @@
       "id": "jvm8",
       "refines": ["common"],
       "settings": {
-        "jvm.string-concat": "inline"
+        "api-version": "1.5",
+        "jvm-target": "1.8"
       },
-      "freeArgs": [],
       "attributes": {
         "platforms": ["jvm"],
         "jvm.target": "1.8"
@@ -20,11 +20,13 @@
     {
       "id": "browser",
       "refines": ["common"],
-      "settings": { },
+      "settings": {
+        "api-version": "1.5"
+      },
       "attributes": {
         "platforms": ["js"]
       }
     }
   ],
-  "libs": ["./lib"]
+  "libs": ["./libs/stdlib"]
 }

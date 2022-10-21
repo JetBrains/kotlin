@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.project.modelx.plainBuildSystem
 
 import org.jetbrains.kotlin.project.modelx.*
-import org.jetbrains.kotlin.project.modelx.DefaultVariantMatcher
-import org.jetbrains.kotlin.project.modelx.compiler.KpmBuildSystemAdapter
+import org.jetbrains.kotlin.project.modelx.KpmBuildSystemAdapter
 import java.nio.file.Path
 
 /**

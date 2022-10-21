@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.project.modelx.cli
 
+import compiler.Config
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.project.modelx.*
-import org.jetbrains.kotlin.project.modelx.compiler.KPMCompilerArgumentsMapper
+import org.jetbrains.kotlin.project.modelx.compiler.applyKotlinAttribute
 import org.jetbrains.kotlin.project.modelx.plainBuildSystem.DefaultKpmFileStructure
-import org.jetbrains.kotlin.project.modelx.plainBuildSystem.PlainCompilerFacade
-import org.jetbrains.kotlin.project.modelx.plainBuildSystem.parseCompilationRequest
+import org.jetbrains.kotlin.project.modelx.compiler.PlainCompilerFacade
+import org.jetbrains.kotlin.project.modelx.compiler.parseCompilationRequest
+import org.jetbrains.kotlin.project.modelx.languageSetting.*
 import org.jetbrains.kotlin.project.modelx.serialization.JsonKpmSerializer
 import org.jetbrains.kotlin.project.modelx.serialization.JvmTargetSerializer
 import org.jetbrains.kotlin.project.modelx.serialization.KotlinModuleDtoTransformer
@@ -24,8 +25,6 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.readText
-import kotlin.reflect.full.companionObjectInstance
-import kotlin.reflect.full.findAnnotation
 
 fun main(args: Array<String>) {
     val kpmFile = Paths.get( args.firstOrNull() ?: "kpm.json")
@@ -50,17 +49,12 @@ private fun createPlainCompilerFacade(basePath: Path): PlainCompilerFacade {
 
     val kotlinModuleDtoTransformer = KotlinModuleDtoTransformer(
         json = Json { prettyPrint = true }, // todo  reuse from JsonKpmSerializer
-        settingSerializers = listOf( // todo: use reflection
-            JvmStringConcatSetting,
-            LanguageVersionSetting,
-            Jsr305Setting
-        ).associateBy { it.descriptor.serialName },
-
+        settingSerializers = defaultLanguageSettingsSerializers(),
         attributeSerializers = mapOf(
             "platforms" to (Platforms to PlatformsSerializer),
             "jvm.target" to (JvmTargetAttribute to JvmTargetSerializer)
         )
-        // TODO: possible alternative
+// TODO: possible alternative
 //        attributeSerializers = Attribute::class
 //            .sealedSubclasses
 //            .associate {
@@ -76,11 +70,19 @@ private fun createPlainCompilerFacade(basePath: Path): PlainCompilerFacade {
 
     val fileStructure = DefaultKpmFileStructure(basePath)
 
+    val config = Config(
+        kpmFileStructure = fileStructure,
+        attributeContributors = mapOf(
+            K2JSCompilerArguments::class.java to { (key, value) -> (this as K2JSCompilerArguments).applyKotlinAttribute(key, value) },
+            K2JVMCompilerArguments::class.java to { (key, value) -> (this as K2JVMCompilerArguments).applyKotlinAttribute(key, value) },
+        ),
+        settingsContributors = defaultLanguageSettingsContributors()
+    )
+
     return PlainCompilerFacade(
         serializer = serializer,
         kpmDtoTransformer = kotlinModuleDtoTransformer,
         compilers = createCliCompilers(System.out),
-        kpmFileStructure = fileStructure,
-        argumentsMapper = KPMCompilerArgumentsMapper.defaultPreconfiguredFactory(fileStructure)
+        config = config
     )
 }

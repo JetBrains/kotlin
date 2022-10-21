@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.project.modelx.compiler
 
+import compiler.Config
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.project.modelx.*
-import org.jetbrains.kotlin.project.modelx.plainBuildSystem.KpmFileStructure
-
-typealias CompilerArgumentsContributors<T> = Map<Class<out CommonCompilerArguments>, CommonCompilerArguments.(T) -> Unit>
+import org.jetbrains.kotlin.project.modelx.languageSetting.AnyLanguageSettingValue
 
 /**
  * Converts [FragmentCompilerSettings], [VariantCompilerSettings] to compiler-native arguments:
@@ -23,18 +22,9 @@ typealias CompilerArgumentsContributors<T> = Map<Class<out CommonCompilerArgumen
  */
 class KPMCompilerArgumentsMapper(
     private val adapter: KpmBuildSystemAdapter,
-    private val kpmFileStructure: KpmFileStructure,
-
-    // Configuration
-    private val attributeToArguments: CompilerArgumentsContributors<Pair<Attribute.Key, Attribute>>,
-    private val settingsToArguments: CompilerArgumentsContributors<Pair<String, LanguageSetting>> // TODO: Introduce CompilerSetting class
+    private val config: Config
 ) {
-    /**
-     * [KPMCompilerArgumentsMapper] constructor with pre-applied [attributeToArguments] and [settingsToArguments]
-     */
-    fun interface PreconfiguredFactory {
-        fun create(adapter: KpmBuildSystemAdapter): KPMCompilerArgumentsMapper
-    }
+    private val kpmFileStructure = config.kpmFileStructure
 
     fun metadataArguments(compilation: FragmentCompilerSettings): K2MetadataCompilerArguments {
         val args = K2MetadataCompilerArguments()
@@ -92,12 +82,12 @@ class KPMCompilerArgumentsMapper(
     }
 
     private fun CommonCompilerArguments.addAttributes(attributes: Map<Attribute.Key, Attribute>) {
-        val mapper = attributeToArguments[javaClass] ?: error("No Attribute mapper found for $javaClass")
+        val mapper = config.attributeContributors[javaClass] ?: error("No Attribute mapper found for $javaClass")
         attributes.forEach { mapper(it.key to it.value) }
     }
 
-    private fun CommonCompilerArguments.addSettings(settings: Map<String, LanguageSetting>) {
-        val mapper = settingsToArguments[javaClass] ?: error("No Settings mapper found for $javaClass")
+    private fun CommonCompilerArguments.addSettings(settings: Map<String, AnyLanguageSettingValue>) {
+        val mapper = config.settingsContributors[javaClass] ?: error("No Settings mapper found for $javaClass")
         settings.forEach { mapper(it.key to it.value) }
     }
 
@@ -128,29 +118,5 @@ class KPMCompilerArgumentsMapper(
                 .toString()
             else -> error("Unsupported arguments $this")
         }
-    }
-
-    companion object {
-        fun preconfiguredFactory(
-            kpmFileStructure: KpmFileStructure,
-            attributeToArguments: CompilerArgumentsContributors<Pair<Attribute.Key, Attribute>>,
-            settingsToArguments: CompilerArgumentsContributors<Pair<String, LanguageSetting>>
-        ) = PreconfiguredFactory { adapter -> KPMCompilerArgumentsMapper(adapter, kpmFileStructure, attributeToArguments, settingsToArguments) }
-
-        fun defaultPreconfiguredFactory(fileStructure: KpmFileStructure) = preconfiguredFactory(
-            kpmFileStructure = fileStructure,
-            attributeToArguments = mapOf(
-                K2JSCompilerArguments::class.java to { (key, value) -> (this as K2JSCompilerArguments).applyKotlinAttribute(key, value) },
-                K2JVMCompilerArguments::class.java to { (key, value) -> (this as K2JVMCompilerArguments).applyKotlinAttribute(key, value) },
-            ),
-            settingsToArguments = mapOf(
-                K2JSCompilerArguments::class.java to { (key, value) ->
-                    (this as K2JSCompilerArguments).applyLanguageSetting(key, value as JSLanguageSetting)
-                },
-                K2JVMCompilerArguments::class.java to { (key, value) ->
-                    (this as K2JVMCompilerArguments).applyLanguageSetting(key, value as JvmLanguageSetting)
-                },
-            )
-        )
     }
 }
