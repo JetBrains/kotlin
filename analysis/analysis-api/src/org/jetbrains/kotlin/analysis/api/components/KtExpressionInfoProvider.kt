@@ -22,6 +22,24 @@ public interface KtExpressionInfoProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
         withValidityAssertion { analysisSession.expressionInfoProvider.getReturnExpressionTargetSymbol(this) }
 
+    /**
+     * Returns cases missing from the branches of [KtWhenExpression].
+     *
+     * The missing cases of the when-expression in the following example are Direction.WEST and Direction.EAST:
+     *
+     * enum class Direction {
+     *   NORTH, SOUTH, WEST, EAST
+     * }
+     * foo = when(direction) {
+     *   Direction.NORTH -> 1
+     *   Direction.SOUTH -> 2
+     *   else -> 3
+     * }
+     *
+     * Note that this function returns the same missing cases regardless of the existence of the else branch.
+     * If you have to assume that it does not have the missing cases when it has an else branch,
+     * you need a separate check whether it has an else branch or not.
+     */
     public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> =
         withValidityAssertion { analysisSession.expressionInfoProvider.getWhenMissingCases(this) }
 
