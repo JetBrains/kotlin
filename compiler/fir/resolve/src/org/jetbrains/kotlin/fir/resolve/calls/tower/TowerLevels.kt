@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -153,7 +152,7 @@ class MemberScopeTowerLevel(
 
         val overridableGroups = session.overrideService.createOverridableGroups(
             candidatesFromOriginalType + candidatesFromSmartcast,
-            FirStandardOverrideChecker(session)
+            FirIntersectionScopeOverrideChecker(session)
         )
 
         val candidates = mutableListOf<MemberWithBaseScope<T>>()
