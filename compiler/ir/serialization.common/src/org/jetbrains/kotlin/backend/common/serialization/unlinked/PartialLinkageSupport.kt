@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
 interface PartialLinkageSupport {
     val partialLinkageEnabled: Boolean
@@ -20,19 +18,14 @@ interface PartialLinkageSupport {
     /** For local use only in inline lazy-IR functions. */
     fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction)
 
-    fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>)
-
-    interface UnlinkedMarkerTypeHandler {
-        val unlinkedMarkerType: IrType
-        fun IrType.isUnlinkedMarkerType(): Boolean
-    }
+    fun processUnlinkedDeclarations(lazyRoots: () -> List<IrElement>)
 
     companion object {
         val DISABLED = object : PartialLinkageSupport {
             override val partialLinkageEnabled get() = false
             override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
-            override fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>) = Unit
+            override fun processUnlinkedDeclarations(lazyRoots: () -> List<IrElement>) = Unit
         }
     }
 }
