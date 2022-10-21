@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirAbstractSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -24,9 +28,14 @@ object TestFirJsSessionFactory : FirAbstractSessionFactory() {
         testServices: TestServices,
         configuration: CompilerConfiguration,
         languageVersionSettings: LanguageVersionSettings,
-    ): FirSession = FirSessionFactory.createJsLibrarySession(
-        mainModuleName,
-        getAllJsDependenciesPaths(module, testServices),
-        configuration, sessionProvider, dependencyListForCliModule.moduleDataProvider, languageVersionSettings
-    )
+    ): FirSession {
+        val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
+        val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+        val libraries = getAllJsDependenciesPaths(module, testServices)
+        val resolvedLibraries = jsResolveLibraries(libraries, repositories, logger).getFullResolvedList()
+
+        return FirSessionFactory.createJsLibrarySession(
+            mainModuleName, resolvedLibraries, sessionProvider, dependencyListForCliModule.moduleDataProvider, languageVersionSettings
+        )
+    }
 }
