@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import java.io.File
 
 internal fun invokeCInterop(inputDef: File, outputLib: File, extraArgs: Array<String>): Array<String>? {
-    val args = arrayOf("-o", outputLib.canonicalPath, "-def", inputDef.canonicalPath)
+    val args = arrayOf("-o", outputLib.canonicalPath, "-def", inputDef.canonicalPath, "-no-default-libs")
     val buildDir = KonanFile("${outputLib.canonicalPath}-build")
     val generatedDir = KonanFile(buildDir, "kotlin")
     val nativesDir = KonanFile(buildDir, "natives")
