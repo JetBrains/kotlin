@@ -441,16 +441,24 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             type = context.wasmSymbols.wasmDataRefType
         }
         val builder = context.createIrBuilder(result.symbol)
+        val isUnitReturnType = info.originalResultType == context.irBuiltIns.unitType
         // TODO: Cache created JS closures
         val arity = info.parametersAdapters.size
         val jsCode = buildString {
             append("(f) => (")
             appendParameterList(arity)
-            append(") => wasmExports.__callFunction_")
+            append(") => ")
+            if (isUnitReturnType) {
+                append("{ ")
+            }
+            append("wasmExports.__callFunction_")
             append(info.hashString)
             append("(f, ")
             appendParameterList(arity)
             append(")")
+            if (isUnitReturnType) {
+                append("; }")
+            }
         }
 
         result.annotations += builder.irCallConstructor(context.wasmSymbols.jsFunConstructor, typeArguments = emptyList()).also {
