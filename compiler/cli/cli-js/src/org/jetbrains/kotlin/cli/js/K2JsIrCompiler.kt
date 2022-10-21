@@ -533,10 +533,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             // TODO: !!! dependencies module data?
         }
 
+        val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
+        val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+        val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, repositories, logger).getFullResolvedList()
+
         FirSessionFactory.createJsLibrarySession(
             mainModuleName,
-            libraries,
-            configuration,
+            resolvedLibraries,
             sessionProvider,
             dependencyList.moduleDataProvider,
             configuration.languageVersionSettings
@@ -578,9 +581,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             .filter { it.kind == FirSession.Kind.Source }
             .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
-        val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
-        val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
-        val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, repositories, logger).getFullResolvedList()
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
