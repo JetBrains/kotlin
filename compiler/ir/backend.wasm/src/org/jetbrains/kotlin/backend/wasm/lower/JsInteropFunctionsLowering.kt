@@ -39,14 +39,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     val symbols = context.wasmSymbols
     val adapters = symbols.jsInteropAdapters
 
-    // Used to for export lambdas
-    object KOTLIN_WASM_CLOSURE_FOR_JS_CLOSURE : IrStatementOriginImpl("KOTLIN_WASM_CLOSURE_FOR_JS_CLOSURE")
-
-    private val closureCallExports = mutableMapOf<IrSimpleType, IrSimpleFunction>()
-    private val kotlinClosureToJsConverters = mutableMapOf<IrSimpleType, IrSimpleFunction>()
-    private val jsClosureCallers = mutableMapOf<IrSimpleType, IrSimpleFunction>()
-    private val jsToKotlinClosures = mutableMapOf<IrSimpleType, IrSimpleFunction>()
-
     val additionalDeclarations = mutableListOf<IrDeclaration>()
     lateinit var currentParent: IrDeclarationParent
 
@@ -265,7 +257,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //          )
             //     }
             //
-            closureCallExports.getOrPut(this) {
+            context.closureCallExports.getOrPut(this) {
                 createKotlinClosureCaller(functionTypeInfo)
             }
 
@@ -277,7 +269,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //     }""")
             //     external fun __convertKotlinClosureToJsClosure_<signatureHash>(f: dataref): ExternalRef
             //
-            val kotlinToJsClosureConvertor = kotlinClosureToJsConverters.getOrPut(this) {
+            val kotlinToJsClosureConvertor = context.kotlinClosureToJsConverters.getOrPut(this) {
                 createKotlinToJsClosureConvertor(functionTypeInfo)
             }
             return FunctionBasedAdapter(kotlinToJsClosureConvertor)
@@ -380,7 +372,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //     @JsFun("(f, p0, p1, ...) => f(p0, p1, ...)")
             //     external fun __callJsClosure_<signatureHash>(f: ExternalRef, p0: JsType1, p1: JsType2, ...): JsResType
             //
-            val jsClosureCaller = jsClosureCallers.getOrPut(this) {
+            val jsClosureCaller = context.jsClosureCallers.getOrPut(this) {
                 createJsClosureCaller(functionTypeInfo)
             }
 
@@ -392,7 +384,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //          adapt(__callJsClosure_<signatureHash>(f, adapt(p0), adapt(p1), ..))
             //       }
             //
-            val jsToKotlinClosure = jsToKotlinClosures.getOrPut(this) {
+            val jsToKotlinClosure = context.jsToKotlinClosures.getOrPut(this) {
                 createJsToKotlinClosureConverter(functionTypeInfo, jsClosureCaller)
             }
             return FunctionBasedAdapter(jsToKotlinClosure)
