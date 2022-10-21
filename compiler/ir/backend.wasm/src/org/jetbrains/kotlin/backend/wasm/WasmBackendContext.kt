@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -56,6 +57,11 @@ class WasmBackendContext(
     }
 
     override val mapping = JsMapping()
+
+    val closureCallExports = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+    val kotlinClosureToJsConverters = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+    val jsClosureCallers = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+    val jsToKotlinClosures = mutableMapOf<IrSimpleType, IrSimpleFunction>()
 
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module,this)
