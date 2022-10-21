@@ -15,12 +15,11 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirPackageDirective
+import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -99,8 +98,12 @@ internal class KtFirExpressionTypeProvider(
         val firDeclaration = if (isAnonymousFunction(declaration))
             declaration.toFirAnonymousFunction()
         else
-            declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveSession)
-        return firDeclaration.returnTypeRef.coneType.asKtType()
+            declaration.getOrBuildFir(firResolveSession)
+        return when (firDeclaration) {
+            is FirCallableDeclaration -> firDeclaration.returnTypeRef.coneType.asKtType()
+            is FirFunctionTypeParameter -> firDeclaration.returnTypeRef.coneType.asKtType()
+            else -> unexpectedElementError<FirElement>(firDeclaration)
+        }
     }
 
     override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType {

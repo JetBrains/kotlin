@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
@@ -76,12 +76,13 @@ fun FirSymbolProvider.getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): F
     return lookupTag.toSymbol(session)
 }
 
-fun ConeKotlinType.withParameterNameAnnotation(valueParameter: FirValueParameter): ConeKotlinType {
-    if (valueParameter.name == SpecialNames.NO_NAME_PROVIDED || valueParameter.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this
+fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParameter): ConeKotlinType {
+    val name = parameter.name
+    if (name == null || name == SpecialNames.NO_NAME_PROVIDED || name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this
     // Existing @ParameterName annotation takes precedence
     if (attributes.customAnnotations.getAnnotationsByClassId(StandardNames.FqNames.parameterNameClassId).isNotEmpty()) return this
 
-    val fakeSource = valueParameter.source?.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
+    val fakeSource = parameter.source?.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
     val parameterNameAnnotationCall = buildAnnotation {
         source = fakeSource
         annotationTypeRef =
@@ -95,7 +96,7 @@ fun ConeKotlinType.withParameterNameAnnotation(valueParameter: FirValueParameter
             }
         argumentMapping = buildAnnotationArgumentMapping {
             mapping[StandardClassIds.Annotations.ParameterNames.parameterNameName] =
-                buildConstExpression(fakeSource, ConstantValueKind.String, valueParameter.name.asString(), setType = true)
+                buildConstExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
         }
     }
     val attributesWithParameterNameAnnotation =

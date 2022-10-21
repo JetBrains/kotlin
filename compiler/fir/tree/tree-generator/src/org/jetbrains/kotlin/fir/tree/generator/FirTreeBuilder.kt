@@ -45,6 +45,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val field by element(Declaration, variable, controlFlowGraphOwner)
     val enumEntry by element(Declaration, variable)
 
+    val functionTypeParameter by element(Other, baseFirElement)
+
     val classLikeDeclaration by sealedElement(Declaration, memberDeclaration, statement)
     val klass by sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
     val regularClass by element(Declaration, klass, controlFlowGraphOwner)

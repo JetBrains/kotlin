@@ -707,7 +707,20 @@ class FirRenderer(
                 it.accept(this)
                 print(".")
             }
-            valueParameterRenderer.renderParameters(functionTypeRef.valueParameters)
+
+            printer.print("(")
+            for ((index, parameter) in functionTypeRef.parameters.withIndex()) {
+                if (index > 0) {
+                    printer.print(", ")
+                }
+                parameter.name?.let { name ->
+                    printer.print(name.asString())
+                    printer.print(": ")
+                }
+                parameter.returnTypeRef.accept(visitor)
+            }
+            printer.print(")")
+
             print(" -> ")
             functionTypeRef.returnTypeRef.accept(this)
             print(" )")

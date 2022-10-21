@@ -121,7 +121,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                     append(classId.asSingleFqName().toString())
                     val parameters = buildList {
                         receiverTypeRef?.let(::add)
-                        valueParameters.mapTo(this) { it.returnTypeRef }
+                        parameters.mapTo(this) { it.returnTypeRef }
                         returnTypeRef.let(::add)
                     }
                     if (parameters.isNotEmpty()) {

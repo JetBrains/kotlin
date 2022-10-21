@@ -1290,7 +1290,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         FUNCTION(shouldExplicitParameterTypeBePresent = true),
         CATCH(shouldExplicitParameterTypeBePresent = true),
         PRIMARY_CONSTRUCTOR(shouldExplicitParameterTypeBePresent = true),
-        FUNCTIONAL_TYPE(shouldExplicitParameterTypeBePresent = true),
         SETTER(shouldExplicitParameterTypeBePresent = false),
         LAMBDA(shouldExplicitParameterTypeBePresent = false),
         FOR_LOOP(shouldExplicitParameterTypeBePresent = false),
