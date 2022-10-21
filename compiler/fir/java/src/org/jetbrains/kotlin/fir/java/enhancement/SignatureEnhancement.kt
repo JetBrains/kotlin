@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
@@ -307,8 +309,10 @@ class FirSignatureEnhancement(
                         buildReceiverParameter {
                             type = receiverType
                             annotations += firMethod.valueParameters.first().annotations
+                            source = receiverType.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
                         }
                     }
+
                     this.name = name!!
                     status = firMethod.status
                     symbol = FirNamedFunctionSymbol(methodId)
@@ -569,6 +573,7 @@ class FirSignatureEnhancement(
         return buildResolvedTypeRef {
             type = typeWithoutEnhancement.enhance(session, qualifiers) ?: typeWithoutEnhancement
             annotations += typeRef.annotations
+            source = typeRef.source
         }
     }
 

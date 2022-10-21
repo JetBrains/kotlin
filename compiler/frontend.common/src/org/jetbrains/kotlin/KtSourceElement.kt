@@ -227,6 +227,10 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // for implicit conversion from int to long with `.toLong` function
     // e.g. val x: Long = 1 + 1 becomes val x: Long = (1 + 1).toLong()
     object IntToLongConversion : KtFakeSourceElementKind()
+
+    // for extension receiver type the corresponding receiver parameter is generated
+    // with a fake sources which refers to this the type
+    object ReceiverFromType : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
