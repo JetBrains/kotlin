@@ -16,13 +16,24 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
+import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering
 import androidx.compose.compiler.plugins.kotlin.lower.includeFileNameInExceptionTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.parentAsClass
 
 abstract class AbstractDecoysLowering(
     pluginContext: IrPluginContext,
@@ -45,6 +56,38 @@ abstract class AbstractDecoysLowering(
                 file = super.visitFile(declaration)
             }
             return file
+        }
+    }
+
+    protected fun IrFunction.shouldBeRemapped(): Boolean =
+        !isLocalFunction() &&
+            !isEnumConstructor() &&
+            (hasComposableAnnotation() || hasComposableParameter())
+
+    private fun IrFunction.isLocalFunction(): Boolean =
+        origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
+            (isLocal && (this is IrSimpleFunction && !overridesComposable()))
+
+    private fun IrSimpleFunction.overridesComposable() =
+        overriddenSymbols.any {
+            it.owner.isDecoy() || it.owner.shouldBeRemapped()
+        }
+
+    private fun IrFunction.hasComposableParameter() =
+        valueParameters.any { it.type.hasComposable() } ||
+            extensionReceiverParameter?.type?.hasComposable() == true
+
+    private fun IrFunction.isEnumConstructor() =
+        this is IrConstructor && parentAsClass.isEnumClass
+
+    private fun IrType.hasComposable(): Boolean {
+        if (hasAnnotation(ComposeFqNames.Composable)) {
+            return true
+        }
+
+        return when (this) {
+            is IrSimpleType -> arguments.any { (it as? IrType)?.hasComposable() == true }
+            else -> false
         }
     }
 }

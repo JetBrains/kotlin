@@ -138,13 +138,18 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         // do it ourself here.
         if (
             ownerFn != null &&
-            ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+            ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
+            ownerFn.hasComposableArguments()
         ) {
-            symbolRemapper.visitConstructor(ownerFn)
-            val newFn = super.visitConstructor(ownerFn).also {
-                it.patchDeclarationParents(ownerFn.parent)
+            if (symbolRemapper.getReferencedConstructor(ownerFn.symbol) == ownerFn.symbol) {
+                // Not remapped yet, so remap now.
+                // Remap only once to avoid IdSignature clash (on k/js 1.7.20).
+                symbolRemapper.visitConstructor(ownerFn)
+                super.visitConstructor(ownerFn).also {
+                    it.patchDeclarationParents(ownerFn.parent)
+                }
             }
-            val newCallee = symbolRemapper.getReferencedConstructor(newFn.symbol)
+            val newCallee = symbolRemapper.getReferencedConstructor(ownerFn.symbol)
 
             return IrConstructorCallImpl(
                 expression.startOffset, expression.endOffset,
@@ -192,22 +197,29 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             expression.dispatchReceiver?.type?.isComposable() == true
         ) {
             val typeArguments = containingClass.defaultType.arguments
-            val newFnClass = context.function(typeArguments.size).owner
+            val realParams = typeArguments.size - 1
+            // with composer and changed
+            val newArgsSize = realParams + 1 + changedParamCount(realParams, 0)
+            val newFnClass = context.function(newArgsSize).owner
 
             var newFn = newFnClass
                 .functions
                 .first { it.name == ownerFn.name }
 
-            symbolRemapper.visitSimpleFunction(newFn)
-            newFn = super.visitSimpleFunction(newFn).also { fn ->
-                fn.overriddenSymbols = ownerFn.overriddenSymbols.map { it }
-                fn.dispatchReceiverParameter = ownerFn.dispatchReceiverParameter
-                fn.extensionReceiverParameter = ownerFn.extensionReceiverParameter
-                newFn.valueParameters.forEach { p ->
-                    fn.addValueParameter(p.name.identifier, p.type)
+            if (symbolRemapper.getReferencedSimpleFunction(newFn.symbol) == newFn.symbol) {
+                // Not remapped yet, so remap now.
+                // Remap only once to avoid IdSignature clash (on k/js 1.7.20).
+                symbolRemapper.visitSimpleFunction(newFn)
+                newFn = super.visitSimpleFunction(newFn).also { fn ->
+                    fn.overriddenSymbols = ownerFn.overriddenSymbols.map { it }
+                    fn.dispatchReceiverParameter = ownerFn.dispatchReceiverParameter
+                    fn.extensionReceiverParameter = ownerFn.extensionReceiverParameter
+                    newFn.valueParameters.forEach { p ->
+                        fn.addValueParameter(p.name.identifier, p.type)
+                    }
+                    fn.patchDeclarationParents(newFnClass)
+                    assert(fn.body == null) { "expected body to be null" }
                 }
-                fn.patchDeclarationParents(newFnClass)
-                assert(fn.body == null) { "expected body to be null" }
             }
 
             val newCallee = symbolRemapper.getReferencedSimpleFunction(newFn.symbol)
@@ -234,20 +246,30 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
                 val property = ownerFn.correspondingPropertySymbol!!.owner
                 // avoid java properties since they go through a different lowering and it is
                 // also impossible for them to have composable types
-                if (property.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
-                    symbolRemapper.visitProperty(property)
-                    visitProperty(property).also {
-                        it.getter?.correspondingPropertySymbol = it.symbol
-                        it.setter?.correspondingPropertySymbol = it.symbol
-                        it.patchDeclarationParents(ownerFn.parent)
-                        it.copyAttributes(property)
+                if (property.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB &&
+                    property.getter?.returnType?.isComposable() == true
+                ) {
+                    if (symbolRemapper.getReferencedProperty(property.symbol) == property.symbol) {
+                        // Not remapped yet, so remap now.
+                        // Remap only once to avoid IdSignature clash (on k/js 1.7.20).
+                        symbolRemapper.visitProperty(property)
+                        visitProperty(property).also {
+                            it.getter?.correspondingPropertySymbol = it.symbol
+                            it.setter?.correspondingPropertySymbol = it.symbol
+                            it.patchDeclarationParents(ownerFn.parent)
+                            it.copyAttributes(property)
+                        }
                     }
                 }
-            } else {
-                symbolRemapper.visitSimpleFunction(ownerFn)
-                visitSimpleFunction(ownerFn).also {
-                    it.correspondingPropertySymbol = null
-                    it.patchDeclarationParents(ownerFn.parent)
+            } else if (ownerFn.hasComposableArguments()) {
+                if (symbolRemapper.getReferencedSimpleFunction(ownerFn.symbol) == ownerFn.symbol) {
+                    // Not remapped yet, so remap now.
+                    // Remap only once to avoid IdSignature clash (on k/js 1.7.20).
+                    symbolRemapper.visitSimpleFunction(ownerFn)
+                    visitSimpleFunction(ownerFn).also {
+                        it.correspondingPropertySymbol = null
+                        it.patchDeclarationParents(ownerFn.parent)
+                    }
                 }
             }
             val newCallee = symbolRemapper.getReferencedSimpleFunction(ownerFn.symbol)
