@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 
@@ -51,7 +52,7 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
         if (psi.parameterList.parametersCount != valueParameterCount) return false
         if (symbol.isExtension) {
             val psiParameter = psi.parameterList.parameters[0]
-            if (symbol.receiverParameter?.type?.let { isTheSameTypes(psi, psiParameter.type, it, isVararg = false) } != true) return false
+            if (symbol.receiverType?.let { isTheSameTypes(psi, psiParameter.type, it, isVararg = false) } != true) return false
         }
         val offset = if (symbol.isExtension) 1 else 0
         symbol.valueParameters.forEachIndexed { index, valueParameterSymbol ->
