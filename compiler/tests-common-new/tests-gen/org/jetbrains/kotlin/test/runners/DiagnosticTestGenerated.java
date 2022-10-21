@@ -20502,6 +20502,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("stringConcatenationWithObject.kt")
+                public void testStringConcatenationWithObject() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/stringConcatenationWithObject.kt");
+                }
+
+                @Test
                 @TestMetadata("types.kt")
                 public void testTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/types.kt");
