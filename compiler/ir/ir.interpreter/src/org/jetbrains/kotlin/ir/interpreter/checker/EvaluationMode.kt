@@ -103,7 +103,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     abstract fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall? = null): Boolean
     abstract fun canEvaluateReference(reference: IrCallableReference<*>, context: IrCall? = null): Boolean
 
-    fun canEvaluateBody(function: IrFunction): Boolean {
+    fun mustCheckBodyOf(function: IrFunction): Boolean {
         if (function is IrSimpleFunction && function.correspondingPropertySymbol != null) return true
         return (mustCheckBody || function.isLocal) && !function.isContract() && !function.isMarkedAsEvaluateIntrinsic()
     }

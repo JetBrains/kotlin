@@ -16744,6 +16744,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("stringConcatenationWithObject.kt")
+        public void testStringConcatenationWithObject() throws Exception {
+            runTest("compiler/testData/codegen/box/evaluate/stringConcatenationWithObject.kt");
+        }
+
+        @Test
         @TestMetadata("thisPlusString.kt")
         public void testThisPlusString() throws Exception {
             runTest("compiler/testData/codegen/box/evaluate/thisPlusString.kt");

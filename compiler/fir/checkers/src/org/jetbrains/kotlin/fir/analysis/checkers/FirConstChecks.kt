@@ -63,8 +63,12 @@ internal fun checkConstantArguments(
             return checkConstantArguments(expression.compareToCall, session)
         }
         expression is FirStringConcatenationCall || expression is FirEqualityOperatorCall -> {
-            for (exp in (expression as FirCall).arguments)
+            for (exp in (expression as FirCall).arguments) {
+                if (exp is FirResolvedQualifier) {
+                    return ConstantArgumentKind.NOT_CONST
+                }
                 checkConstantArguments(exp, session).let { return it }
+            }
         }
         expression is FirGetClassCall -> {
             var coneType = (expression as? FirCall)?.argument?.typeRef?.coneType
