@@ -65,7 +65,6 @@ class C {
 }
 
 // MODULE: main(lib)
-// NO_COMMON_FILES
 // FILE: main.kt
 fun box(): String {
     val result = C().test()
