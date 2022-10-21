@@ -1,3 +1,4 @@
+// !LANGUAGE: +EnumEntries
 // DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 
@@ -98,6 +99,8 @@ export function box() {
 
     if (OuterClass.NestedEnum.A.ordinal !== 0) return "fail29"
     if (OuterClass.NestedEnum.B.ordinal !== 1) return "fail30"
+
+    if (Foo.entries !== undefined) return "fail31"
 
     return "OK"
 }

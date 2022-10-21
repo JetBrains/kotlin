@@ -338,6 +338,12 @@ private val enumEntryCreateGetInstancesFunsLoweringPhase = makeDeclarationTransf
     prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
+private val enumClassPreventExportOfNonExportedMembersLowering = makeDeclarationTransformerPhase(
+    ::EnumClassPreventExportOfNonExportedMembersLowering,
+    name = "EnumClassPreventExportOfNonExportedMembersLowering",
+    description = "Exclude non-exportable enum members such as `Enum.entries`",
+)
+
 private val enumSyntheticFunsLoweringPhase = makeDeclarationTransformerPhase(
     { EnumSyntheticFunctionsAndPropertiesLowering(it, supportRawFunctionReference = true) },
     name = "EnumSyntheticFunctionsAndPropertiesLowering",
@@ -345,7 +351,8 @@ private val enumSyntheticFunsLoweringPhase = makeDeclarationTransformerPhase(
     prerequisite = setOf(
         enumClassConstructorLoweringPhase,
         enumClassCreateInitializerLoweringPhase,
-        enumEntryCreateGetInstancesFunsLoweringPhase
+        enumEntryCreateGetInstancesFunsLoweringPhase,
+        enumClassPreventExportOfNonExportedMembersLowering
     )
 )
 
@@ -865,6 +872,7 @@ val loweringList = listOf<Lowering>(
     enumEntryInstancesBodyLoweringPhase,
     enumClassCreateInitializerLoweringPhase,
     enumEntryCreateGetInstancesFunsLoweringPhase,
+    enumClassPreventExportOfNonExportedMembersLowering,
     enumSyntheticFunsLoweringPhase,
     enumUsageLoweringPhase,
     externalEnumUsageLoweringPhase,

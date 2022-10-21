@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
 object JsIrBuilder {
@@ -40,6 +41,36 @@ object JsIrBuilder {
         ).apply {
             typeArguments?.let {
                 assert(typeArguments.size == typeArgumentsCount)
+                it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
+            }
+        }
+    }
+
+    fun buildConstructorCall(
+        target: IrConstructorSymbol,
+        type: IrType? = null,
+        typeArguments: List<IrType>? = null,
+        constructorTypeArguments: List<IrType>? = null,
+        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
+    ): IrConstructorCall {
+        val owner = target.owner
+        val parent = owner.parentAsClass
+        return IrConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            type ?: owner.returnType,
+            target,
+            typeArgumentsCount = parent.typeParameters.size,
+            valueArgumentsCount = owner.valueParameters.size,
+            constructorTypeArgumentsCount = owner.typeParameters.size,
+            origin = origin
+        ).apply {
+            typeArguments?.let {
+                assert(typeArguments.size == typeArgumentsCount)
+                it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
+            }
+            constructorTypeArguments?.let {
+                assert(constructorTypeArguments.size == constructorTypeArgumentsCount)
                 it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
             }
         }

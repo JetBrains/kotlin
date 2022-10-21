@@ -153,7 +153,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             isField = parentClass?.isInterface == true,
             irGetter = property.getter,
             irSetter = property.setter,
-            isOptional = isOptional
+            isOptional = isOptional,
+            isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true,
         )
     }
 
