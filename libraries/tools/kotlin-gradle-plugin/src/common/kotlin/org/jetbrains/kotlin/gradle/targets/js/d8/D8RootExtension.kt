@@ -25,7 +25,7 @@ open class D8RootExtension(@Transient val rootProject: Project) : ConfigurationP
 
     var installationPath by Property(gradleHome.resolve("d8"))
     var downloadBaseUrl by Property("https://storage.googleapis.com/chromium-v8/official/canary/")
-    var version by Property("10.8.120")
+    var version by Property("10.8.134")
     var edition by Property("rel") // rel or dbg
 
     val setupTaskProvider: TaskProvider<out Copy>

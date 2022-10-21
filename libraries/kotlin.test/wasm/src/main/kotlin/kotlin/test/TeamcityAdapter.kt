@@ -7,6 +7,7 @@ package kotlin.test
 
 import kotlin.test.FrameworkAdapter
 import kotlin.math.abs
+import kotlin.js.Promise
 
 @JsFun("() => (typeof arguments !== 'undefined' && typeof arguments.join !== 'undefined') ? arguments.join(' ') : '' ")
 private external fun d8Arguments(): String
@@ -14,6 +15,31 @@ private external fun d8Arguments(): String
 private external fun nodeArguments(): String
 
 internal class TeamcityAdapter : FrameworkAdapter {
+
+    var scheduleNextTaskAfter: Promise? = null
+    inline fun runOrScheduleNext(crossinline block: () -> Unit) {
+        if (scheduleNextTaskAfter == null) {
+            block()
+        } else {
+            scheduleNextTaskAfter = scheduleNextTaskAfter!!.finally {
+                block()
+            }
+        }
+    }
+
+    inline fun runOrScheduleNextWithResult(crossinline block: () -> Promise?) {
+        if (scheduleNextTaskAfter == null) {
+            val result = block()
+            if (result != null)
+                scheduleNextTaskAfter = result
+        } else {
+            scheduleNextTaskAfter = scheduleNextTaskAfter!!.then {
+                block()
+            }
+        }
+    }
+
+
     private enum class MessageType(val type: String) {
         Started("testStarted"),
         Finished("testFinished"),
@@ -36,7 +62,7 @@ internal class TeamcityAdapter : FrameworkAdapter {
         ?.replace("]", "|]")
         ?: ""
 
-    private val flowId: String = "flowId='wasmTcAdapter${abs(hashCode())}'"
+    private val flowId: String = "flowId='wasmTcAdapter'"
 
     private fun MessageType.report(name: String) {
         println("##teamcity[$type name='${name.tcEscape()}' $flowId]")
@@ -50,25 +76,40 @@ internal class TeamcityAdapter : FrameworkAdapter {
         }
     }
 
+    private fun MessageType.report(name: String, errorMessage: String) {
+        println("##teamcity[$type name='${name.tcEscape()}' message='${errorMessage.tcEscape()}' $flowId]")
+    }
+
+
     private val testArguments: FrameworkTestArguments by lazy {
         val arguments = d8Arguments().takeIf { it.isNotEmpty() } ?: nodeArguments()
         FrameworkTestArguments.parse(arguments.split(' '))
     }
 
     private fun runSuite(name: String, suiteFn: () -> Unit) {
-        MessageType.SuiteStarted.report(name)
+        runOrScheduleNext {
+            MessageType.SuiteStarted.report(name)
+        }
         try {
             suiteFn()
-            MessageType.SuiteFinished.report(name)
+            runOrScheduleNext {
+                MessageType.SuiteFinished.report(name)
+            }
         } catch (e: Throwable) {
-            MessageType.SuiteFinished.report(name, e)
+            runOrScheduleNext {
+                MessageType.SuiteFinished.report(name, e)
+            }
         }
     }
 
     private fun runIgnoredSuite(name: String, suiteFn: () -> Unit) {
-        MessageType.SuiteStarted.report(name)
+        runOrScheduleNext {
+            MessageType.SuiteStarted.report(name)
+        }
         suiteFn()
-        MessageType.SuiteFinished.report(name)
+        runOrScheduleNext {
+            MessageType.SuiteFinished.report(name)
+        }
     }
 
     private var isUnderIgnoredSuit: Boolean = false
@@ -117,45 +158,79 @@ internal class TeamcityAdapter : FrameworkAdapter {
                 runSuite(name, suiteFn)
             }
         } else {
-            when (testArguments.ignoredTestSuites) {
-                IgnoredTestSuitesReporting.reportAsIgnoredTest -> {
-                    MessageType.Ignored.report(name)
-                }
-                IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored -> {
-                    var oldIsUnderIgnoredSuit = isUnderIgnoredSuit
-                    isUnderIgnoredSuit = true
-                    try {
-                        runIgnoredSuite(name, suiteFn)
-                    } finally {
-                        isUnderIgnoredSuit = oldIsUnderIgnoredSuit
+            runOrScheduleNext {
+                when (testArguments.ignoredTestSuites) {
+                    IgnoredTestSuitesReporting.reportAsIgnoredTest -> {
+                        MessageType.Ignored.report(name)
                     }
+
+                    IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored -> {
+                        var oldIsUnderIgnoredSuit = isUnderIgnoredSuit
+                        isUnderIgnoredSuit = true
+                        try {
+                            runIgnoredSuite(name, suiteFn)
+                        } finally {
+                            isUnderIgnoredSuit = oldIsUnderIgnoredSuit
+                        }
+                    }
+
+                    IgnoredTestSuitesReporting.skip -> {}
                 }
-                IgnoredTestSuitesReporting.skip -> { }
             }
         }
     }
 
     override fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
         if (isUnderIgnoredSuit) {
-            MessageType.Ignored.report(name)
+            runOrScheduleNext {
+                MessageType.Ignored.report(name)
+            }
             return
         }
 
         if (ignored) {
-            MessageType.Ignored.report(name)
+            runOrScheduleNext {
+                MessageType.Ignored.report(name)
+            }
             return
         }
 
         enterIfIncluded(name, false) {
-            try {
+            runOrScheduleNextWithResult {
                 MessageType.Started.report(name)
-                if (!testArguments.dryRun) {
-                    testFn()
+
+                val result = try {
+                    if (!testArguments.dryRun) {
+                        testFn()
+                    } else {
+                        null
+                    }
+                } catch (e: Throwable) {
+                    MessageType.Failed.report(name, e)
                 }
-            } catch (e: Throwable) {
-                MessageType.Failed.report(name, e)
+                if (result is Promise) {
+                    return@runOrScheduleNextWithResult result.then(
+                        onFulfilled = { value ->
+                            println("-- Test $name fulfilled")
+                            MessageType.Finished.report(name)
+                            value
+                        },
+                        onRejected = { e ->
+                            println("-- Test $name rejected")
+                            val throwable = e.toThrowableOrNull()
+                            if (throwable != null) {
+                                MessageType.Failed.report(name, throwable)
+                            } else {
+                                MessageType.Failed.report(name, e.toString())
+                            }
+                            MessageType.Finished.report(name)
+                            null
+                        }
+                    )
+                }
+                MessageType.Finished.report(name)
+                return@runOrScheduleNextWithResult null
             }
-            MessageType.Finished.report(name)
         }
     }
 }
