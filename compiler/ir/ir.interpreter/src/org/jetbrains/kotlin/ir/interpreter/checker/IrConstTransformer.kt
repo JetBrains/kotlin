@@ -55,8 +55,10 @@ class IrConstTransformer(
         val result = try {
             interpreter.interpret(this, irFile)
         } catch (e: Throwable) {
-            if (!suppressExceptions) throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
-            return IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this.type, e.message.toString()).warningIfError(this)
+            if (suppressExceptions) {
+                return this
+            }
+            throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
         }
 
         return if (failAsError) result.reportIfError(this) else result.warningIfError(this)
