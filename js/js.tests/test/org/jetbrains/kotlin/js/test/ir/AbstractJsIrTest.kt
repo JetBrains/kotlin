@@ -217,6 +217,7 @@ open class AbstractFirJsTest(
 
             firHandlersStep {
                 useHandlers(
+                    ::FirDiagnosticsHandler,
                     ::FirDumpHandler,
                     ::FirCfgDumpHandler,
                     ::FirCfgConsistencyHandler,
