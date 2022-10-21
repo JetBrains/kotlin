@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.0.0-alpha05" type="baseline" client="gradle" dependencies="false" name="AGP (8.0.0-alpha05)" variant="all" version="8.0.0-alpha05">
+
+    <issue
+        id="ExperimentalPropertyAnnotation"
+        message="This property does not have all required annotations to correctly mark it as experimental."
+        errorLine1="    @ObsoleteDescriptorBasedAPI"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/compose/compiler/plugins/kotlin/lower/AbstractComposeLowering.kt"/>
+    </issue>
+
+</issues>
