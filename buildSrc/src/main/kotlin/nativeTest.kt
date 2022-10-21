@@ -74,6 +74,7 @@ private fun Test.ComputedTestProperties(init: ComputedTestProperties.() -> Unit)
 fun Project.nativeTest(
     taskName: String,
     tag: String?,
+    requirePlatformLibs: Boolean = false,
     customDependencies: List<Configuration> = emptyList(),
     customKlibDependencies: List<Configuration> = emptyList()
 ) = projectTest(
@@ -113,7 +114,13 @@ fun Project.nativeTest(
         val computedTestProperties = ComputedTestProperties {
             compute(KOTLIN_NATIVE_HOME) {
                 val testTarget = readFromGradle(TEST_TARGET)
-                dependsOn(if (testTarget != null) ":kotlin-native:${testTarget}CrossDist" else ":kotlin-native:dist")
+                if (testTarget != null) {
+                    dependsOn(":kotlin-native:${testTarget}CrossDist")
+                    if (requirePlatformLibs) dependsOn(":kotlin-native:${testTarget}PlatformLibs")
+                } else {
+                    dependsOn(":kotlin-native:dist")
+                    if (requirePlatformLibs) dependsOn(":kotlin-native:distPlatformLibs")
+                }
                 project(":kotlin-native").projectDir.resolve("dist").absolutePath
             }
 
