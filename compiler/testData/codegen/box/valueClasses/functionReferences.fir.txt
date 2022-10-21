@@ -1,0 +1,193 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'functionReferences.kt'
+    private final field point-0: double
+    private final field point-1: double
+    public method <init>(p0: double, p1: double): void
+    public final method f-GPBa7dw(p0: double, p1: double, p2: double): double
+    public final @org.jetbrains.annotations.NotNull method getPoint(): DPoint
+    public synthetic final method getPoint-0(): double
+    public synthetic final method getPoint-1(): double
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class DPoint {
+    // source: 'functionReferences.kt'
+    private final field field-0: double
+    private final field field-1: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): DPoint
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double): boolean
+    public final static method f-impl(p0: double, p1: double, p2: double): double
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-0(): double
+    public synthetic final method unbox-impl-1(): double
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$11 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: FunctionReferencesKt$box$11
+    inner (anonymous) class FunctionReferencesKt$box$11
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$13 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: FunctionReferencesKt$box$13
+    inner (anonymous) class FunctionReferencesKt$box$13
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$14 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: FunctionReferencesKt$box$14
+    inner (anonymous) class FunctionReferencesKt$box$14
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$15 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    inner (anonymous) class FunctionReferencesKt$box$15
+    method <init>(p0: java.lang.Object): void
+    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$16 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    inner (anonymous) class FunctionReferencesKt$box$16
+    method <init>(p0: java.lang.Object): void
+    public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$17 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: FunctionReferencesKt$box$17
+    inner (anonymous) class FunctionReferencesKt$box$17
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$18 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: FunctionReferencesKt$box$18
+    inner (anonymous) class FunctionReferencesKt$box$18
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$19 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    inner (anonymous) class FunctionReferencesKt$box$19
+    method <init>(p0: java.lang.Object): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$20 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    inner (anonymous) class FunctionReferencesKt$box$20
+    method <init>(p0: java.lang.Object): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$21 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: FunctionReferencesKt$box$21
+    inner (anonymous) class FunctionReferencesKt$box$21
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double, p3: double): DPoint
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$22 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: FunctionReferencesKt$box$22
+    inner (anonymous) class FunctionReferencesKt$box$22
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double, p3: double): DPoint
+}
+
+@kotlin.Metadata
+synthetic final class FunctionReferencesKt$box$9 {
+    // source: 'functionReferences.kt'
+    enclosing method FunctionReferencesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: FunctionReferencesKt$box$9
+    inner (anonymous) class FunctionReferencesKt$box$9
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double, p3: double): DPoint
+}
+
+@kotlin.Metadata
+public final class FunctionReferencesKt {
+    // source: 'functionReferences.kt'
+    inner (anonymous) class FunctionReferencesKt$box$11
+    inner (anonymous) class FunctionReferencesKt$box$13
+    inner (anonymous) class FunctionReferencesKt$box$14
+    inner (anonymous) class FunctionReferencesKt$box$15
+    inner (anonymous) class FunctionReferencesKt$box$16
+    inner (anonymous) class FunctionReferencesKt$box$17
+    inner (anonymous) class FunctionReferencesKt$box$18
+    inner (anonymous) class FunctionReferencesKt$box$19
+    inner (anonymous) class FunctionReferencesKt$box$20
+    inner (anonymous) class FunctionReferencesKt$box$21
+    inner (anonymous) class FunctionReferencesKt$box$22
+    inner (anonymous) class FunctionReferencesKt$box$9
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method consume-lIoT8es(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2): DPoint
+    public final static @org.jetbrains.annotations.NotNull method consumeInline-lIoT8es(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2): DPoint
+    public final static method g-GPBa7dw(p0: double, p1: double, p2: double): double
+    public final static @org.jetbrains.annotations.NotNull method makeDPoint(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2): DPoint
+    public final static @org.jetbrains.annotations.NotNull method makeDPointInline(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2): DPoint
+    public synthetic final static method mfvcConstructorReferenceHelper$0(p0: double, p1: double): DPoint
+    public final static @org.jetbrains.annotations.NotNull method plus-GPBa7dw(p0: double, p1: double, p2: double, p3: double): DPoint
+}

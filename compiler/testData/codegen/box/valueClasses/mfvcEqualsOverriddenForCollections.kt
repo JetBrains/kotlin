@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// https://youtrack.jetbrains.com/issue/KT-52236/Different-modality-in-psi-and-fir
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses

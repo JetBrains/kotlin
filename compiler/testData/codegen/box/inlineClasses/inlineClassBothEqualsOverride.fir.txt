@@ -12,14 +12,14 @@ public final class IC1 {
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): IC1
     public static method constructor-impl(p0: int): int
-    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
-    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
-    public method getVal(): int
-    public static method getVal-impl(p0: int): int
+    public final method getVal(): int
+    public final static method getVal-impl(p0: int): int
     public final method getX(): int
-    public method hashCode(): int
-    public static method hashCode-impl(p0: int): int
+    public final method hashCode(): int
+    public final static method hashCode-impl(p0: int): int
     public method toString(): java.lang.String
     public static method toString-impl(p0: int): java.lang.String
     public synthetic final method unbox-impl(): int
@@ -33,14 +33,14 @@ public final class IC2 {
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): IC2
     public static method constructor-impl(p0: int): int
-    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
-    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
-    public method getVal(): int
-    public static method getVal-impl(p0: int): int
+    public final method getVal(): int
+    public final static method getVal-impl(p0: int): int
     public final method getY(): int
-    public method hashCode(): int
-    public static method hashCode-impl(p0: int): int
+    public final method hashCode(): int
+    public final static method hashCode-impl(p0: int): int
     public method toString(): java.lang.String
     public static method toString-impl(p0: int): java.lang.String
     public synthetic final method unbox-impl(): int
