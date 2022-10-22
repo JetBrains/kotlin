@@ -42,6 +42,7 @@ dependencies {
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
     testApi(project(":compiler:fir:checkers:checkers.js"))
+    testApi(project(":compiler:fir:checkers:checkers.native"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
