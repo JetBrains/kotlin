@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -28,6 +29,7 @@ object BuilderInferenceAssignmentChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val resultingDescriptor = resolvedCall.resultingDescriptor
         if (resultingDescriptor !is PropertyDescriptor) return
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NoBuilderInferenceWithoutAnnotationRestriction)) return
         if (resolvedCall.candidateDescriptor.returnType !is StubTypeForBuilderInference) return
         if (reportOn !is KtNameReferenceExpression) return
         val binaryExpression = reportOn.getParentOfType<KtBinaryExpression>(strict = true) ?: return

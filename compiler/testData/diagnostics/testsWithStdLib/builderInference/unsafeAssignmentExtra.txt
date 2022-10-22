@@ -1,0 +1,26 @@
+package
+
+public fun bar(/*0*/ p: kotlin.reflect.KMutableProperty0<kotlin.Int>): kotlin.Unit
+public fun main(/*0*/ arg: kotlin.Any, /*1*/ condition: kotlin.Boolean): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> myBuilder(/*0*/ block: Foo<T>.() -> kotlin.Unit): Foo<T>
+public fun </*0*/ T : kotlin.Any> Foo<T>.change(/*0*/ block: Foo<T>.() -> kotlin.Unit): Foo<T>
+
+public interface Foo</*0*/ T : kotlin.Any> {
+    public abstract var a: T
+    public abstract val b: kotlin.Array<T>
+    public abstract fun accept(/*0*/ arg: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class FooImpl</*0*/ T : kotlin.Any> : Foo<T> {
+    public constructor FooImpl</*0*/ T : kotlin.Any>()
+    public abstract override /*1*/ /*fake_override*/ var a: T
+    public abstract override /*1*/ /*fake_override*/ val b: kotlin.Array<T>
+    public abstract override /*1*/ /*fake_override*/ fun accept(/*0*/ arg: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
