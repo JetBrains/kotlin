@@ -286,6 +286,10 @@ enum class LanguageFeature(
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
 
     // Disabled for indefinite time. Disables restrictions of builder inference without annotation
+    // Note: In 1.7.0, builder inference without annotation was introduced.
+    // However, later we encountered various situations when it works incorrectly, and decided to forbid them.
+    // When this feature is disabled, various errors are reported which are related to these incorrect situations.
+    // When this feature is enabled, no such errors are reported.
     NoBuilderInferenceWithoutAnnotationRestriction(sinceVersion = null, kind = OTHER, defaultState = State.DISABLED),
 
     // Experimental features
