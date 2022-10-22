@@ -25,14 +25,18 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 
-fun FirSession.convertToIr(
-    scopeSession: ScopeSession,
-    firFiles: List<FirFile>,
+data class ModuleCompilerAnalyzedOutput(
+    val session: FirSession,
+    val scopeSession: ScopeSession,
+    val fir: List<FirFile>
+)
+
+fun ModuleCompilerAnalyzedOutput.convertToIr(
     fir2IrExtensions: Fir2IrExtensions,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     linkViaSignatures: Boolean
 ): Fir2IrResult {
-    val commonFirFiles = moduleData.dependsOnDependencies
+    val commonFirFiles = session.moduleData.dependsOnDependencies
         .map { it.session }
         .filter { it.kind == FirSession.Kind.Source }
         .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
@@ -40,9 +44,9 @@ fun FirSession.convertToIr(
     if (linkViaSignatures) {
         val signaturer = JvmIdSignatureDescriptor(mangler = JvmDescriptorMangler(mainDetector = null))
         return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-            this, scopeSession, firFiles + commonFirFiles,
-            languageVersionSettings, signaturer, fir2IrExtensions,
-            FirJvmKotlinMangler(this),
+            session, scopeSession, fir + commonFirFiles,
+            session.languageVersionSettings, signaturer, fir2IrExtensions,
+            FirJvmKotlinMangler(session),
             JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,
@@ -51,9 +55,9 @@ fun FirSession.convertToIr(
         )
     } else {
         return Fir2IrConverter.createModuleFragmentWithoutSignatures(
-            this, scopeSession, firFiles + commonFirFiles,
-            languageVersionSettings, fir2IrExtensions,
-            FirJvmKotlinMangler(this),
+            session, scopeSession, fir + commonFirFiles,
+            session.languageVersionSettings, fir2IrExtensions,
+            FirJvmKotlinMangler(session),
             JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,

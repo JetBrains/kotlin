@@ -43,14 +43,6 @@ data class ModuleCompilerOutput(
     val generationState: GenerationState
 )
 
-// ---
-
-data class ModuleCompilerAnalyzedOutput(
-    val session: FirSession,
-    val scopeSession: ScopeSession,
-    val fir: List<FirFile>
-)
-
 data class ModuleCompilerIrBackendInput(
     val targetId: TargetId,
     val configuration: CompilerConfiguration,

@@ -53,10 +53,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.pipeline.buildFirViaLightTree
-import org.jetbrains.kotlin.fir.pipeline.convertToIr
-import org.jetbrains.kotlin.fir.pipeline.runCheckers
-import org.jetbrains.kotlin.fir.pipeline.runResolution
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
@@ -240,9 +237,7 @@ fun convertAnalyzedFirToIr(
         } ?: emptyList()
     val linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
     val (irModuleFragment, components, pluginContext) =
-        analysisResults.session.convertToIr(
-            analysisResults.scopeSession, analysisResults.fir, extensions, irGenerationExtensions, linkViaSignatures
-        )
+        analysisResults.convertToIr(extensions, irGenerationExtensions, linkViaSignatures)
 
     return ModuleCompilerIrBackendInput(
         input.targetId,

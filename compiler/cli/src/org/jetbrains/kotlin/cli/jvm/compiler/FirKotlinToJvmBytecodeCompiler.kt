@@ -41,11 +41,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
-import org.jetbrains.kotlin.fir.pipeline.convertToIr
-import org.jetbrains.kotlin.fir.pipeline.runCheckers
-import org.jetbrains.kotlin.fir.pipeline.runResolution
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -114,7 +110,7 @@ object FirKotlinToJvmBytecodeCompiler {
             return false
         }
 
-        val outputs = ArrayList<Pair<FirResult, GenerationState>>(chunk.size)
+        val outputs = ArrayList<Pair<ModuleCompilerAnalyzedOutput, GenerationState>>(chunk.size)
         val targetIds = projectConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
         val incrementalComponents = projectConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
         val isMultiModuleChunk = chunk.size > 1
@@ -151,7 +147,7 @@ object FirKotlinToJvmBytecodeCompiler {
             project,
             projectConfiguration,
             chunk,
-            outputs.map(Pair<FirResult, GenerationState>::second),
+            outputs.map(Pair<ModuleCompilerAnalyzedOutput, GenerationState>::second),
             mainClassFqName
         )
     }
@@ -164,7 +160,7 @@ object FirKotlinToJvmBytecodeCompiler {
             ?.mapTo(destination) { it::class.qualifiedName }
     }
 
-    private fun CompilationContext.compileModule(): Pair<FirResult, GenerationState>? {
+    private fun CompilationContext.compileModule(): Pair<ModuleCompilerAnalyzedOutput, GenerationState>? {
         performanceManager?.notifyAnalysisStarted()
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -186,9 +182,7 @@ object FirKotlinToJvmBytecodeCompiler {
 
         val fir2IrExtensions = JvmFir2IrExtensions(moduleConfiguration, JvmIrDeserializerImpl(), JvmIrMangler)
         val linkViaSignatures = moduleConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
-        val fir2IrResult = firResult.session.convertToIr(
-            firResult.scopeSession, firResult.fir, fir2IrExtensions, irGenerationExtensions, linkViaSignatures
-        )
+        val fir2IrResult = firResult.convertToIr(fir2IrExtensions, irGenerationExtensions, linkViaSignatures)
 
         performanceManager?.notifyIRTranslationFinished()
 
@@ -209,13 +203,7 @@ object FirKotlinToJvmBytecodeCompiler {
         return firResult to generationState
     }
 
-    private class FirResult(
-        val session: FirSession,
-        val scopeSession: ScopeSession,
-        val fir: List<FirFile>
-    )
-
-    private fun CompilationContext.runFrontend(ktFiles: List<KtFile>, diagnosticsReporter: BaseDiagnosticsCollector): FirResult? {
+    private fun CompilationContext.runFrontend(ktFiles: List<KtFile>, diagnosticsReporter: BaseDiagnosticsCollector): ModuleCompilerAnalyzedOutput? {
         @Suppress("NAME_SHADOWING")
         var ktFiles = ktFiles
         val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
@@ -313,7 +301,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val (scopeSession, fir) = session.runResolution(rawFir)
         session.runCheckers(scopeSession, fir, diagnosticsReporter)
 
-        return if (syntaxErrors || diagnosticsReporter.hasErrors) null else FirResult(session, scopeSession, fir)
+        return if (syntaxErrors || diagnosticsReporter.hasErrors) null else ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
     }
 
     private fun CompilationContext.createComponentsForIncrementalCompilation(
