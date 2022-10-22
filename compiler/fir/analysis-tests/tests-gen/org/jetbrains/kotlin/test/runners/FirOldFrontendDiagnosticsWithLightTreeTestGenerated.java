@@ -35731,6 +35731,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("unsafeAssignmentExtra.kt")
+            public void testUnsafeAssignmentExtra() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignmentExtra.kt");
+            }
+
+            @Test
+            @TestMetadata("unsafeAssignment_noReport.kt")
+            public void testUnsafeAssignment_noReport() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignment_noReport.kt");
+            }
+
+            @Test
             @TestMetadata("useInferenceInformationFromExtension.kt")
             public void testUseInferenceInformationFromExtension() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/useInferenceInformationFromExtension.kt");
