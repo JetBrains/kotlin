@@ -38,7 +38,7 @@ internal class TaskOutputsBackup(
 ) {
 
     fun createSnapshot() {
-        // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
+        // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile`
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             if (outputPath.isDirectory && !outputPath.isEmptyDirectory) {
@@ -46,6 +46,8 @@ internal class TaskOutputsBackup(
                     File(snapshotsDir.get().asFile, index.asSnapshotArchiveName),
                     outputPath
                 )
+            } else if (!outputPath.exists()) {
+                File(snapshotsDir.get().asFile, "$index.not-exists").createNewFile()
             } else {
                 fileSystemOperations.copy { spec ->
                     spec.from(outputPath)
@@ -67,13 +69,15 @@ internal class TaskOutputsBackup(
                     spec.from(snapshotDir)
                     spec.into(outputPath.parentFile)
                 }
+            } else if (snapshotsDir.get().file("$index.not-exists").asFile.exists()) {
+                // do nothing
             } else {
                 val snapshotArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile
                 if (!snapshotArchive.exists()) {
                     logger.warn(
                         """
-                        |Failed to restore task outputs as snapshot file ${snapshotArchive.absolutePath} does not exist!
-                        |On recompilation full rebuild will be performed.
+                        |Failed to restore a task output '$outputPath' as a snapshot file '${snapshotArchive.absolutePath}' does not exist!
+                        |On recompilation a full rebuild will be performed.
                         """.trimMargin()
                     )
                     return
