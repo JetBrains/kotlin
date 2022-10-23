@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.isFunctionInlining
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
@@ -36,6 +37,13 @@ private class TailCallOptimizationLowering(private val context: JvmBackendContex
             override fun visitSimpleFunction(declaration: IrSimpleFunction, data: TailCallOptimizationData?) =
                 super.visitSimpleFunction(declaration, if (declaration.isSuspend) TailCallOptimizationData(declaration) else null)
 
+            override fun visitContainerExpression(expression: IrContainerExpression, data: TailCallOptimizationData?): IrExpression {
+                if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
+                    return expression
+                }
+                return super.visitContainerExpression(expression, data)
+            }
+
             override fun visitCall(expression: IrCall, data: TailCallOptimizationData?): IrExpression {
                 val transformed = super.visitCall(expression, data) as IrExpression
                 return if (data == null || expression !in data.tailCalls) transformed else IrReturnImpl(
@@ -60,7 +68,8 @@ private class TailCallOptimizationData(val function: IrSimpleFunction) {
         when {
             this is IrCall && isSuspend && !immediateReturn && (returnsUnit || type == function.returnType) ->
                 tailCalls += this
-            this is IrBlock ->
+            // We want to avoid tail call optimization in inlined block because it ruins line number generation
+            this is IrBlock && !(this is IrInlinedFunctionBlock && this.isFunctionInlining()) ->
                 statements.findTailCall(returnsUnit)?.findCallsOnTailPositionWithoutImmediateReturn()
             this is IrWhen ->
                 branches.forEach { it.result.findCallsOnTailPositionWithoutImmediateReturn() }
