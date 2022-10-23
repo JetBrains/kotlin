@@ -122,8 +122,9 @@ class NameableMfvcNodeImpl(
 
         @JvmStatic
         fun makeFullFieldName(rootPropertyName: String?, nameParts: List<IndexedNamePart>): Name {
-            val joined = (listOf(rootPropertyName ?: "field") + nameParts.map { it.index.toString() }).joinToString("-")
-            return Name.identifier(joined)
+            val name = Name.guessByFirstCharacter(rootPropertyName ?: "field")
+            val joined = (listOf(name.asStringStripSpecialMarkers()) + nameParts.map { it.index.toString() }).joinToString("-")
+            return if (name.isSpecial) Name.special("<$joined>") else Name.identifier(joined)
         }
     }
 }

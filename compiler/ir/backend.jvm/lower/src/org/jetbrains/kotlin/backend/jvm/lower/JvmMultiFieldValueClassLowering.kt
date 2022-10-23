@@ -138,9 +138,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             get() = this.symbol.owner
 
         fun IrBlockBuilder.addReplacement(expression: IrGetField): IrExpression? {
-            val property = expression.field.property ?: return null
-            expression.receiver?.get(this, property.name)?.let { +it; return it }
-            val node = replacements.getMfvcPropertyNode(property) ?: return null
+            val field = expression.field
+            expression.receiver?.get(this, field.name)?.let { +it; return it }
+            val node = replacements.getMfvcFieldNode(field) ?: return null
             val typeArguments = makeTypeArgumentsFromField(expression)
             val instance: ReceiverBasedMfvcNodeInstance =
                 node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
@@ -151,9 +151,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
 
         fun IrBlockBuilder.addReplacement(expression: IrSetField, safe: Boolean): IrExpression? {
-            val property = expression.field.property ?: return null
-            expression.receiver?.get(this, property.name)?.let { +it; return it }
-            val node = replacements.getMfvcPropertyNode(property) ?: return null
+            val field = expression.field
+            expression.receiver?.get(this, field.name)?.let { +it; return it }
+            val node = replacements.getMfvcFieldNode(field) ?: return null
             val typeArguments = makeTypeArgumentsFromField(expression)
             val instance: ReceiverBasedMfvcNodeInstance =
                 node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
@@ -317,44 +317,62 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         irClass.primaryConstructor?.let {
             replacements.getReplacementForRegularClassConstructor(it)?.let { replacement -> addBindingsFor(it, replacement) }
         }
-        val properties = collectPropertiesAfterLowering(irClass)
-        val oldBackingFields = properties.mapNotNull { property -> property.backingField?.let { property to it } }.toMap()
-        val propertiesReplacement = collectRegularClassMfvcPropertiesReplacement(properties) // resets backing fields
+        val propertiesOrFields = collectPropertiesOrFieldsAfterLowering(irClass)
+        val oldBackingFields = propertiesOrFields.mapNotNull { propertyOrField ->
+            val property = (propertyOrField as? IrPropertyOrIrField.Property)?.property ?: return@mapNotNull null
+            property.backingField?.let { property to it }
+        }.toMap()
+        val propertiesOrFieldsReplacement = collectRegularClassMfvcPropertiesOrFieldsReplacement(propertiesOrFields) // resets backing fields
 
-        val fieldsToRemove = propertiesReplacement.keys.mapNotNull { oldBackingFields[it] }.toSet()
+        val fieldsToRemove = propertiesOrFieldsReplacement.keys.mapNotNull {
+            when (it) {
+                is IrPropertyOrIrField.Field -> it.field
+                is IrPropertyOrIrField.Property -> oldBackingFields[it.property]
+            }
+        }.toSet()
 
-        if (fieldsToRemove.isNotEmpty() || propertiesReplacement.isNotEmpty()) {
-            val newDeclarations = makeNewDeclarationsForRegularClass(fieldsToRemove, propertiesReplacement, irClass)
+        if (fieldsToRemove.isNotEmpty() || propertiesOrFieldsReplacement.isNotEmpty()) {
+            val newDeclarations = makeNewDeclarationsForRegularClass(fieldsToRemove, propertiesOrFieldsReplacement, irClass)
             irClass.declarations.replaceAll(newDeclarations)
         }
     }
 
-    private fun collectRegularClassMfvcPropertiesReplacement(properties: LinkedHashSet<IrProperty>) =
-        LinkedHashMap<IrProperty, IntermediateMfvcNode>().apply {
-            for (property in properties) {
-                val node = replacements.getRegularClassMfvcPropertyNode(property) ?: continue
-                put(property, node)
+    private fun collectRegularClassMfvcPropertiesOrFieldsReplacement(propertiesOrFields: LinkedHashSet<IrPropertyOrIrField>) =
+        LinkedHashMap<IrPropertyOrIrField, IntermediateMfvcNode>().apply {
+            for (propertyOrField in propertiesOrFields) {
+                val node = when (propertyOrField) {
+                    is IrPropertyOrIrField.Field -> replacements.getMfvcFieldNode(propertyOrField.field)
+                    is IrPropertyOrIrField.Property -> replacements.getMfvcPropertyNode(propertyOrField.property)
+                } ?: continue
+                put(propertyOrField, node as IntermediateMfvcNode)
             }
         }
 
     private fun makeNewDeclarationsForRegularClass(
         fieldsToRemove: Set<IrField>,
-        propertiesReplacement: Map<IrProperty, IntermediateMfvcNode>,
+        propertiesOrFieldsReplacement: Map<IrPropertyOrIrField, IntermediateMfvcNode>,
         irClass: IrClass,
     ) = buildList {
         for (element in irClass.declarations) {
             when (element) {
                 !is IrField, !in fieldsToRemove -> add(element)
                 else -> {
-                    val replacement = propertiesReplacement[element.property!!]!!
-                    addAll(replacement.fields!!)
-                    element.initializer?.let { initializer -> add(makeInitializerReplacement(irClass, element, initializer)) }
+                    val fields = element.property?.let { propertiesOrFieldsReplacement[IrPropertyOrIrField.Property(it)] }?.fields
+                        ?: propertiesOrFieldsReplacement[IrPropertyOrIrField.Field(element)]?.fields
+                    if (fields != null) {
+                        addAll(fields)
+                        element.initializer?.let { initializer -> add(makeInitializerReplacement(irClass, element, initializer)) }
+                    } else {
+                        add(element)
+                    }
                 }
             }
         }
 
-        for (node in propertiesReplacement.values) {
-            addAll(node.allInnerUnboxMethods.filter { it.parent == irClass })
+        for ((propertyOrField, node) in propertiesOrFieldsReplacement.entries) {
+            if (propertyOrField is IrPropertyOrIrField.Property) { // they are not used, only boxes are used for them
+                addAll(node.allInnerUnboxMethods.filter { it.parent == irClass })
+            }
         }
     }
 
@@ -928,9 +946,12 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 oldArgument == null -> List(parametersCount) { null }
                 parametersCount == 1 -> listOf(oldArgument.transform(this@JvmMultiFieldValueClassLowering, null))
                 else -> {
-                    val type = oldArgument.type as IrSimpleType
-                    require(type.needsMfvcFlattening()) { "Unexpected type: ${type.render()}" }
-                    flattenExpression(oldArgument).also {
+                    val castedIfNeeded = when {
+                        oldArgument.type.needsMfvcFlattening() -> oldArgument
+                        oldArgument.type.makeNotNull().needsMfvcFlattening() -> irImplicitCast(oldArgument, oldArgument.type.makeNotNull())
+                        else -> error("Unexpected type: ${oldArgument.type.render()}")
+                    }
+                    flattenExpression(castedIfNeeded).also {
                         require(it.size == parametersCount) { "Expected $parametersCount arguments but got ${it.size}" }
                     }
                 }

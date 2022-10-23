@@ -1,0 +1,84 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class A {
+    // source: 'delegating.kt'
+    private final field field-0: int
+    private final field field-1: int
+    private synthetic method <init>(p0: int, p1: int): void
+    public synthetic final static method box-impl(p0: int, p1: int): A
+    public final static method constructor-impl(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
+    public final static method equals-sUp7gFk(p0: int, p1: int, p2: int, p3: int): boolean
+    public final static method getValue-impl(p0: int, p1: int, @org.jetbrains.annotations.Nullable p2: java.lang.Object, @org.jetbrains.annotations.NotNull p3: kotlin.reflect.KProperty): int
+    public method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int): java.lang.String
+    public synthetic final method unbox-impl-0(): int
+    public synthetic final method unbox-impl-1(): int
+}
+
+@kotlin.Metadata
+public interface Abstract {
+    // source: 'delegating.kt'
+    public abstract method getX(): int
+}
+
+@kotlin.Metadata
+final class B$a$2 {
+    // source: 'delegating.kt'
+    enclosing method B.<init>(IILA;)V
+    public final static field INSTANCE: B$a$2
+    inner (anonymous) class B$a$2
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method invoke(): A
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'delegating.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field a$delegate: kotlin.Lazy
+    private final field b$delegate-0: int
+    private final field b$delegate-1: int
+    private field x-0: int
+    private field x-1: int
+    private @org.jetbrains.annotations.Nullable field y: A
+    inner (anonymous) class B$a$2
+    static method <clinit>(): void
+    private method <init>(p0: int, p1: int, p2: A): void
+    public synthetic method <init>(p0: int, p1: int, p2: A, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getA(): A
+    public synthetic final method getA-0(): int
+    public synthetic final method getA-1(): int
+    public final method getB(): int
+    private static method getC$delegate(p0: B): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method getC(): A
+    public synthetic final method getC-0(): int
+    public synthetic final method getC-1(): int
+    public final @org.jetbrains.annotations.NotNull method getX(): A
+    public synthetic final method getX-0(): int
+    public synthetic final method getX-1(): int
+    public final @org.jetbrains.annotations.Nullable method getY(): A
+    public final method setX-sUp7gFk(p0: int, p1: int): void
+    public final method setY(@org.jetbrains.annotations.Nullable p0: A): void
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'delegating.kt'
+    private synthetic final field $$delegate_0-0: int
+    private synthetic final field $$delegate_0-1: int
+    public method <init>(p0: int, p1: int): void
+    public method getX(): int
+}
+
+@kotlin.Metadata
+public final class DelegatingKt {
+    // source: 'delegating.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

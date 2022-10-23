@@ -4,6 +4,8 @@
 // WORKS_WHEN_VALUE_CLASS
 // FIR_IDENTICAL
 
+import kotlin.reflect.KProperty
+
 @Repeatable
 annotation class Ann
 
@@ -22,7 +24,11 @@ value class A @Ann constructor(
     @field:[Ann Ann]
     @get:[Ann Ann]
     val y: Int,
-)
+) {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
+        return 0
+    }
+}
 
 @[Ann Ann]
 @JvmInline
@@ -63,8 +69,18 @@ class C @Ann constructor(
     @setparam:[Ann Ann]
     var y: A?,
 ) {
-    @delegate:[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>]
+    @delegate:[Ann Ann]
+    @property:[Ann Ann]
+    @get:[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>]
     val z by lazy { A(-100, -200) }
+    @delegate:[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>]
+    @property:[Ann Ann]
+    @get:[Ann Ann]
+    val c by A(-100, -200)
+    @delegate:[Ann Ann]
+    @property:[Ann Ann]
+    @get:[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>]
+    val d by ::z
     
     <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val e = x
@@ -91,7 +107,7 @@ class C @Ann constructor(
 
 
 @[Ann Ann]
-fun @receiver:[Ann Ann] A.t(@[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] a: A, @[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] b: B, @[Ann Ann] c: C) {
+fun @receiver:[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] A.t(@[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] a: A, @[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] b: B, @[Ann Ann] c: C) {
     if (2 + 2 == 4) {
         @[Ann Ann]
         val x = 4
@@ -111,3 +127,17 @@ fun @receiver:[Ann Ann] A.t(@[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TY
 
 @[Ann Ann]
 fun @receiver:[Ann Ann] C.t(@[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] a: A, @[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] b: B, @[Ann Ann] c: C) = 4
+
+@[Ann Ann]
+var @receiver:[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] A.t
+    @[Ann Ann]
+    get() = A(1, 2)
+    @[Ann Ann]
+    set(@[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] _) = Unit
+
+@[Ann Ann]
+var @receiver:[Ann Ann] C.t
+    @[Ann Ann]
+    get() = A(1, 2)
+    @[Ann Ann]
+    set(@[<!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!> <!ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET!>Ann<!>] _) = Unit
