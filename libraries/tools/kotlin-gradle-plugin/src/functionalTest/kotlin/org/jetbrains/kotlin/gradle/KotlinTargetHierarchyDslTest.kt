@@ -229,6 +229,41 @@ class KotlinTargetHierarchyDslTest {
     }
 
     @Test
+    fun `test - hierarchy custom`() {
+        kotlin.targetHierarchy.custom {
+            common {
+                group("native") {
+                    anyNative()
+                }
+
+                group("nix") {
+                    anyLinux()
+                    anyMacos()
+                }
+            }
+        }
+
+        kotlin.linuxX64()
+        kotlin.macosX64()
+        kotlin.mingwX64()
+
+        assertEquals(
+            stringSetOf("nativeMain", "nixMain", "linuxX64Main", "macosX64Main", "mingwX64Main"),
+            kotlin.dependingSourceSetNames("commonMain")
+        )
+
+        assertEquals(
+            stringSetOf("linuxX64Main", "macosX64Main", "mingwX64Main"),
+            kotlin.dependingSourceSetNames("nativeMain")
+        )
+
+        assertEquals(
+            stringSetOf("linuxX64Main", "macosX64Main"),
+            kotlin.dependingSourceSetNames("nixMain")
+        )
+    }
+
+    @Test
     fun `test - hierarchy set - extend - with new root`() {
         val descriptor = KotlinTargetHierarchyDescriptor {
             group("common") {
