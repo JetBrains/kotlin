@@ -37,6 +37,8 @@ KtPropertySetterSymbol:
     returnType: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   receiverType: null
   returnType: kotlin/Unit
   symbolKind: ACCESSOR
@@ -64,6 +66,8 @@ KtPropertySetterSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"

@@ -37,6 +37,8 @@ KtFunctionSymbol:
       returnType: test/FirstTarget
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): test/Serializer
@@ -82,6 +84,8 @@ KtFunctionSymbol:
       returnType: test/SecondTarget
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): test/Serializer
@@ -127,6 +131,8 @@ KtFunctionSymbol:
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Any

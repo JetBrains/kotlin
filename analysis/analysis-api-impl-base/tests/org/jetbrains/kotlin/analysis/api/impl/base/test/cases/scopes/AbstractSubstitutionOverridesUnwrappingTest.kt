@@ -31,7 +31,7 @@ abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest(
     }
 
     override fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol): String {
-        return with(DebugSymbolRenderer) { renderForSubstitutionOverrideUnwrappingTest(symbol) }
+        return with(DebugSymbolRenderer()) { renderForSubstitutionOverrideUnwrappingTest(symbol) }
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {

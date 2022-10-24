@@ -20,6 +20,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): A
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun `<get-foo>`(): kotlin.Int defined in I[PropertyGetterDescriptorImpl@5db84abe]
+
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false

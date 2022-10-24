@@ -23,6 +23,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): Foo
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -72,6 +75,8 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -94,8 +99,13 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: KtSourceModule "Sources of main"
+        deprecationStatus: null
     ]
     visibility: Public
+    getDispatchReceiver(): Foo
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
@@ -132,6 +142,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -181,6 +193,8 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -203,8 +217,12 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: KtSourceModule "Sources of main"
+        deprecationStatus: null
     ]
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public

@@ -39,6 +39,9 @@ KtFunctionSymbol:
       returnType: T
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter element: T defined in kotlin.collections.listOf[ValueParameterDescriptorImpl@54766ab0]
+
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
@@ -116,6 +119,9 @@ KtFunctionSymbol:
       returnType: T
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter vararg elements: T defined in kotlin.collections.listOf[ValueParameterDescriptorImpl@fc71ecb]
+
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"

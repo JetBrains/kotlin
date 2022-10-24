@@ -65,6 +65,9 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter index: kotlin.Int defined in kotlin.collections.List.listIterator[ValueParameterDescriptorImpl@30d92096]
+
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/List<E>
