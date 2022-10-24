@@ -15,12 +15,12 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.AbstractKotlinCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.concurrent.Callable
 
 internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
@@ -36,19 +36,16 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     override val kotlinTask: TaskProvider<out T> = prepareKotlinCompileTask()
 
     protected val javaSourceSet: SourceSet?
-        get() {
-            if (compilationProjection !is KotlinCompilationProjection.TCS) return null
-            val compilation = compilationProjection.origin
-            val target = compilationProjection.origin.target
+        get() = when (val compilation = compilationProjection.safeAs<KotlinCompilationProjection.TCS>()?.origin) {
+            is KotlinWithJavaCompilation<*, *> -> compilation.javaSourceSet
+            is KotlinJvmCompilation -> if (compilation.target.withJavaEnabled) {
+                project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                    .getInstance(project)
+                    .sourceSets
+                    .maybeCreate(compilation.name)
+            } else null
 
-            return (compilation as? KotlinWithJavaCompilation<*, *>)?.javaSourceSet
-                ?: if (target is KotlinJvmTarget && target.withJavaEnabled && compilation is KotlinJvmCompilation)
-                    project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                        .getInstance(project)
-                        .sourceSets
-                        .maybeCreate(compilation.name)
-                else null
-
+            else -> null
         }
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
