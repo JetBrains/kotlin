@@ -54,7 +54,7 @@ fun equalsChecks12(left: DPoint, right: DPoint) {
     require(111, left == right.toDPointOrNull())
 }
 
-// 1 BIPUSH 100\n {4}DLOAD 0\n {4}DLOAD 2\n {4}DLOAD 4\n {4}DLOAD 6\n {4}INVOKESTATIC .*equals-sUp7gFk.*\n {4}INVOKESTATIC .*require
+// 1 BIPUSH 100\n {4}DLOAD 0\n {4}DLOAD 2\n {4}DLOAD 4\n {4}DLOAD 6\n {4}INVOKESTATIC .*equals-impl0.*\n {4}INVOKESTATIC .*require
 // 1 BIPUSH 101\n {4}DLOAD 0\n {4}DLOAD 2\n {4}.*toObject.*\n {4}DLOAD 4\n {4}DLOAD 6\n {4}.*box-impl.*\n {4}INVOKESTATIC .*Intrinsics.areEqual.*\n {4}INVOKESTATIC .*require
 // 1 BIPUSH 102\n {4}DLOAD 0\n {4}DLOAD 2\n {4}DLOAD 4\n {4}DLOAD 6\n {4}.*toObject.*\n {4}INVOKESTATIC .*equals-impl .*\n {4}INVOKESTATIC .*require
 // 1 BIPUSH 103\n {4}DLOAD 0\n {4}DLOAD 2\n {4}.*toObject.*\n {4}DLOAD 4\n {4}DLOAD 6\n {4}.*toObject.*\n {4}INVOKESTATIC .*Intrinsics.areEqual.*\n {4}INVOKESTATIC .*require

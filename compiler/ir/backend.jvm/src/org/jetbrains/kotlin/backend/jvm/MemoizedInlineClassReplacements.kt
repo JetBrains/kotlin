@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -59,7 +58,7 @@ class MemoizedInlineClassReplacements(
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
                     when {
-                        it.isTypedEquals() -> createStaticReplacement(it).also {
+                        it.isValueClassTypedEquals -> createStaticReplacement(it).also {
                             it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
                             specializedEqualsCache.computeIfAbsent(it.parentAsClass) { it }
                         }

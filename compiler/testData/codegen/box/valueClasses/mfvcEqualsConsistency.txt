@@ -9,7 +9,7 @@ public final class MFVC1 {
     public final static method constructor-impl(p0: int, p1: int): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: int, p1: int, p2: int, p3: int): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -29,7 +29,7 @@ public final class MFVC2 {
     public final static method constructor-impl(p0: int, p1: int): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, @org.jetbrains.annotations.Nullable p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: int, p1: int, p2: int, p3: int): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

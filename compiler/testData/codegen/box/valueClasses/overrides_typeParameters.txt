@@ -52,7 +52,7 @@ public final class GenericFakeOverrideMFVC {
     public final static method constructor-impl(p0: java.lang.Object, p1: java.lang.Object): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public synthetic bridge method getP(): java.lang.Object
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
@@ -85,7 +85,7 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public final static method constructor-impl(p0: java.lang.Object, p1: java.lang.Object): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
@@ -2412,7 +2412,7 @@ public final class ReifiedFakeOverrideMFVC {
     public final static method constructor-impl(p0: java.lang.Object, p1: java.lang.Object): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
@@ -2526,7 +2526,7 @@ public final class XPoint {
     public final static method constructor-impl(p0: java.lang.Object, p1: java.lang.Object): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
     public method getX(): java.lang.Object
     public method getY(): java.lang.Object
     public method hashCode(): int
@@ -2552,7 +2552,7 @@ public final class XPointWithInterface {
     public final static method constructor-impl(p0: java.lang.Object, p1: java.lang.Object): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
     public @org.jetbrains.annotations.NotNull method getSomethingGeneric(): XPoint
     public synthetic bridge method getSomethingGeneric(): java.lang.Object
     public static @org.jetbrains.annotations.NotNull method getSomethingGeneric-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
@@ -2588,7 +2588,7 @@ public final class XSegment {
     public final static method constructor-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object, p7: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object, p7: java.lang.Object): boolean
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public synthetic bridge method getP1(): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getP2(): XPoint

@@ -23,7 +23,7 @@ public final class DPoint {
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public synthetic bridge method getX(): java.lang.Object
     public final method getX-3cLST_U(): double
     public synthetic bridge method getY(): java.lang.Object
@@ -47,7 +47,7 @@ public final class DPointWithInterface {
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public final @org.jetbrains.annotations.NotNull method getSomethingGeneric(): DPoint
     public synthetic bridge method getSomethingGeneric(): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method getSomethingGeneric-impl(p0: double, p1: double): DPoint
@@ -83,7 +83,7 @@ public final class DSegment {
     public final static method constructor-impl(p0: double, p1: double, p2: double, p3: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: double, p3: double, p4: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: double, p7: double): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: double, p7: double): boolean
     public final @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic bridge method getP1(): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method getP2(): DPoint
@@ -140,7 +140,7 @@ public final class GenericFakeOverrideMFVC {
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public synthetic bridge method getP(): java.lang.Object
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
@@ -173,7 +173,7 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
@@ -2515,7 +2515,7 @@ public final class ReifiedFakeOverrideMFVC {
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint

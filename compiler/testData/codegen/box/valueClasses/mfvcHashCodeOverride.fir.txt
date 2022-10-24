@@ -9,7 +9,7 @@ public final class A {
     public final static method constructor-impl(@org.jetbrains.annotations.NotNull p0: MyClass, @org.jetbrains.annotations.NotNull p1: MyClass): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: MyClass, p1: MyClass, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: MyClass, p1: MyClass, p2: MyClass, p3: MyClass): boolean
+    public final static method equals-impl0(p0: MyClass, p1: MyClass, p2: MyClass, p3: MyClass): boolean
     public final method hashCode(): int
     public final static method hashCode-impl(@org.jetbrains.annotations.NotNull p0: MyClass, @org.jetbrains.annotations.NotNull p1: MyClass): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

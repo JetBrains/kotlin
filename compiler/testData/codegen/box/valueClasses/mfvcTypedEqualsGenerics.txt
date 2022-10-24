@@ -20,7 +20,7 @@ public final class MFVC1 {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final static method equals-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Number, p1: int, p2: int, p3: int): boolean
     public static method equals-impl(p0: java.lang.Number, p1: int, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(@org.jetbrains.annotations.NotNull p0: java.lang.Number, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.Number, p3: int): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: java.lang.Number, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.Number, p3: int): boolean
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Number, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -41,7 +41,7 @@ public final class MFVC2 {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final static method equals-GPBa7dw(@org.jetbrains.annotations.NotNull p0: Generic, p1: int, p2: double, p3: int, p4: int): boolean
     public static method equals-impl(p0: Generic, p1: int, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(@org.jetbrains.annotations.NotNull p0: Generic, p1: int, @org.jetbrains.annotations.NotNull p2: Generic, p3: int): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: Generic, p1: int, @org.jetbrains.annotations.NotNull p2: Generic, p3: int): boolean
     public method hashCode(): int
     public static method hashCode-impl(p0: Generic, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -62,7 +62,7 @@ public final class MFVC3 {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final static method equals-impl(p0: java.lang.Object, p1: int, p2: int, p3: int): boolean
     public static method equals-impl(p0: java.lang.Object, p1: int, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: java.lang.Object, p1: int, p2: java.lang.Object, p3: int): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: int, p2: java.lang.Object, p3: int): boolean
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -83,7 +83,7 @@ public final class MFVC4 {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final static method equals-impl(p0: java.lang.Object, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.Object, p3: int): boolean
     public static method equals-impl(p0: java.lang.Object, p1: int, p2: java.lang.Object): boolean
-    public final static method equals-sUp7gFk(p0: java.lang.Object, p1: int, p2: java.lang.Object, p3: int): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: int, p2: java.lang.Object, p3: int): boolean
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

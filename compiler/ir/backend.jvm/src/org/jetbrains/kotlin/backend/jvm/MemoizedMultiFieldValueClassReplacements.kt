@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.concurrent.ConcurrentHashMap
@@ -235,6 +236,10 @@ class MemoizedMultiFieldValueClassReplacements(
                 // Do not check for overridden symbols because it makes previously overriding function not overriding would break a code.
                 function.isMultiFieldValueClassFieldGetter -> makeMultiFieldValueClassFieldGetterReplacement(function)
                 function.parent.safeAs<IrClass>()?.isMultiFieldValueClass == true -> when {
+                    function.isValueClassTypedEquals -> createStaticReplacement(function).also {
+                        it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
+                    }
+
                     function.isRemoveAtSpecialBuiltinStub() ->
                         null
 

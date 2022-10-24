@@ -1311,23 +1311,24 @@ fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
 
 fun IrFunction.isToString(): Boolean =
-    name.asString() == "toString" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
+    name == OperatorNameConventions.TO_STRING && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
 
 fun IrFunction.isHashCode() =
-    name.asString() == "hashCode" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
+    name == OperatorNameConventions.HASH_CODE && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
 
 fun IrFunction.isEquals() =
-    name.asString() == "equals" &&
+    name == OperatorNameConventions.EQUALS &&
             extensionReceiverParameter == null && contextReceiverParametersCount == 0 &&
             valueParameters.singleOrNull()?.type?.isNullableAny() == true
 
-fun IrFunction.isTypedEquals(): Boolean {
-    val parentClass = parent as? IrClass ?: return false
-    val enclosingClassStartProjection = parentClass.symbol.starProjectedType
-    return name == OperatorNameConventions.EQUALS
-            && (returnType.isBoolean() || returnType.isNothing())
-            && valueParameters.size == 1
-            && (valueParameters[0].type == enclosingClassStartProjection)
-            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
-            && parentClass.isValue
-}
+val IrFunction.isValueClassTypedEquals: Boolean
+    get() {
+        val parentClass = parent as? IrClass ?: return false
+        val enclosingClassStartProjection = parentClass.symbol.starProjectedType
+        return name == OperatorNameConventions.EQUALS
+                && (returnType.isBoolean() || returnType.isNothing())
+                && valueParameters.size == 1
+                && (valueParameters[0].type == enclosingClassStartProjection)
+                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+                && (parentClass.isValue)
+    }
