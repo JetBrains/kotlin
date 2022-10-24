@@ -280,6 +280,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/suspendFunctions/");
     }
 
+    @TestMetadata("toplevelProperties")
+    public void testToplevelProperties() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/toplevelProperties/");
+    }
+
     @TestMetadata("transitiveInlineFunction")
     public void testTransitiveInlineFunction() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/transitiveInlineFunction/");
