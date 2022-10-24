@@ -1121,7 +1121,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 else -> null
             }
 
-            val resolvedCall = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType)
+            val derivedClass = containingClass.symbol.toLookupTag()
+            val resolvedCall = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType, derivedClass)
+
             if (reference is FirThisReference && reference.boundSymbol == null) {
                 resolvedCall.dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.let {
                     reference.replaceBoundSymbol(it)

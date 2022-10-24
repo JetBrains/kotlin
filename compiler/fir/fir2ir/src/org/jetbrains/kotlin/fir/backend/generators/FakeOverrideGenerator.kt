@@ -115,6 +115,7 @@ class FakeOverrideGenerator(
                     val symbol = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                         session, symbol, firFunction,
+                        derivedClass = firClass.symbol.toLookupTag(),
                         newDispatchReceiverType = firClass.defaultType(),
                         isExpect = (firClass as? FirRegularClass)?.isExpect == true
                     )
@@ -139,6 +140,7 @@ class FakeOverrideGenerator(
                     val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                         session, symbolForOverride, firProperty,
+                        derivedClass = firClass.symbol.toLookupTag(),
                         newDispatchReceiverType = firClass.defaultType(),
                         isExpect = (firClass as? FirRegularClass)?.isExpect == true
                     )
@@ -289,6 +291,7 @@ class FakeOverrideGenerator(
         createFakeOverrideSymbol = { firFunction, callableSymbol ->
             FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                 session, callableSymbol, firFunction,
+                derivedClass = klass.symbol.toLookupTag(),
                 newDispatchReceiverType = klass.defaultType(),
                 isExpect = (klass as? FirRegularClass)?.isExpect == true
             )
@@ -307,6 +310,7 @@ class FakeOverrideGenerator(
         createFakeOverrideSymbol = { firProperty, callableSymbol ->
             FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                 session, callableSymbol, firProperty,
+                derivedClass = klass.symbol.toLookupTag(),
                 newDispatchReceiverType = klass.defaultType(),
                 isExpect = (klass as? FirRegularClass)?.isExpect == true
             )

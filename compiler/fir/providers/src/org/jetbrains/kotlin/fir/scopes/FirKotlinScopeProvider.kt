@@ -107,19 +107,21 @@ fun FirClassSymbol<*>.unsubstitutedScope(
 fun FirClass.scopeForClass(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    derivedClass: ConeClassLikeLookupTag?
 ): FirTypeScope = scopeForClassImpl(
     substitutor, useSiteSession, scopeSession,
     skipPrivateMembers = false,
     classFirDispatchReceiver = this,
     // TODO: why it's always false?
-    isFromExpectClass = false
+    isFromExpectClass = false,
+    derivedClass = derivedClass
 )
 
 fun ConeKotlinType.scopeForSupertype(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    subClass: FirClass,
+    derivedClass: FirClass,
 ): FirTypeScope? {
     if (this !is ConeClassLikeType) return null
     if (this is ConeErrorType) return null
@@ -136,8 +138,9 @@ fun ConeKotlinType.scopeForSupertype(
         useSiteSession,
         scopeSession,
         skipPrivateMembers = true,
-        classFirDispatchReceiver = subClass,
-        isFromExpectClass = (subClass as? FirRegularClass)?.isExpect == true
+        classFirDispatchReceiver = derivedClass,
+        isFromExpectClass = (derivedClass as? FirRegularClass)?.isExpect == true,
+        derivedClass = derivedClass.symbol.toLookupTag()
     )
 }
 
@@ -153,7 +156,8 @@ private fun FirClass.scopeForClassImpl(
     scopeSession: ScopeSession,
     skipPrivateMembers: Boolean,
     classFirDispatchReceiver: FirClass,
-    isFromExpectClass: Boolean
+    isFromExpectClass: Boolean,
+    derivedClass: ConeClassLikeLookupTag?
 ): FirTypeScope {
     val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
@@ -168,7 +172,8 @@ private fun FirClass.scopeForClassImpl(
             key, substitutor,
             substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()).lowerBoundIfFlexible() as ConeClassLikeType,
             skipPrivateMembers,
-            makeExpect = isFromExpectClass
+            makeExpect = isFromExpectClass,
+            derivedClass ?: classFirDispatchReceiver.symbol.toLookupTag()
         )
     }
 }

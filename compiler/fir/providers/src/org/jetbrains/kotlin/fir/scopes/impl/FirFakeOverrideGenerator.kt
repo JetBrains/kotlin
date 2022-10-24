@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -36,6 +37,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         symbolForSubstitutionOverride: FirNamedFunctionSymbol,
         baseFunction: FirSimpleFunction,
+        derivedClass: ConeClassLikeLookupTag?,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType? = null,
         newContextReceiverTypes: List<ConeKotlinType?>? = null,
@@ -46,8 +48,8 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirNamedFunctionSymbol {
         createSubstitutionOverrideFunction(
-            symbolForSubstitutionOverride, session, baseFunction, newDispatchReceiverType, newReceiverType, newContextReceiverTypes,
-            newReturnType, newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution
+            symbolForSubstitutionOverride, session, baseFunction, derivedClass, newDispatchReceiverType, newReceiverType,
+            newContextReceiverTypes, newReturnType, newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution
         )
         return symbolForSubstitutionOverride
     }
@@ -64,6 +66,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSymbol: FirNamedFunctionSymbol,
         session: FirSession,
         baseFunction: FirSimpleFunction,
+        derivedClass: ConeClassLikeLookupTag?,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType?,
         newContextReceiverTypes: List<ConeKotlinType?>?,
@@ -78,6 +81,7 @@ object FirFakeOverrideGenerator {
         return createCopyForFirFunction(
             fakeOverrideSymbol,
             baseFunction,
+            derivedClass = derivedClass,
             session,
             FirDeclarationOrigin.SubstitutionOverride,
             isExpect,
@@ -99,6 +103,7 @@ object FirFakeOverrideGenerator {
     fun createCopyForFirFunction(
         newSymbol: FirNamedFunctionSymbol,
         baseFunction: FirSimpleFunction,
+        derivedClass: ConeClassLikeLookupTag?,
         session: FirSession,
         origin: FirDeclarationOrigin,
         isExpect: Boolean = baseFunction.isExpect,
@@ -128,6 +133,8 @@ object FirFakeOverrideGenerator {
                 newReceiverType, newContextReceiverTypes, newReturnType, fakeOverrideSubstitution, newSymbol
             ).filterIsInstance<FirTypeParameter>()
             deprecationsProvider = baseFunction.deprecationsProvider
+        }.apply {
+            containingClassForStaticMemberAttr = derivedClass.takeIf { shouldOverrideSetContainingClass(baseFunction) }
         }
     }
 
@@ -135,6 +142,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSymbol: FirConstructorSymbol,
         session: FirSession,
         baseConstructor: FirConstructor,
+        derivedClass: ConeClassLikeLookupTag?,
         origin: FirDeclarationOrigin,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReturnType: ConeKotlinType?,
@@ -173,6 +181,7 @@ object FirFakeOverrideGenerator {
             deprecationsProvider = baseConstructor.deprecationsProvider
         }.apply {
             originalForSubstitutionOverrideAttr = baseConstructor
+            containingClassForStaticMemberAttr = derivedClass.takeIf { shouldOverrideSetContainingClass(baseConstructor) }
         }
     }
 
@@ -288,6 +297,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         symbolForSubstitutionOverride: FirPropertySymbol,
         baseProperty: FirProperty,
+        derivedClass: ConeClassLikeLookupTag,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType? = null,
         newContextReceiverTypes: List<ConeKotlinType?>? = null,
@@ -297,7 +307,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirPropertySymbol {
         createCopyForFirProperty(
-            symbolForSubstitutionOverride, baseProperty, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
+            symbolForSubstitutionOverride, baseProperty, derivedClass, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
             newDispatchReceiverType, newTypeParameters, newReceiverType, newContextReceiverTypes, newReturnType,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
@@ -320,6 +330,7 @@ object FirFakeOverrideGenerator {
     fun createCopyForFirProperty(
         newSymbol: FirPropertySymbol,
         baseProperty: FirProperty,
+        derivedClass: ConeClassLikeLookupTag?,
         session: FirSession,
         origin: FirDeclarationOrigin,
         isExpect: Boolean = baseProperty.isExpect,
@@ -355,6 +366,8 @@ object FirFakeOverrideGenerator {
                 fakeOverrideSubstitution
             )
             deprecationsProvider = baseProperty.deprecationsProvider
+        }.apply {
+            containingClassForStaticMemberAttr = derivedClass.takeIf { shouldOverrideSetContainingClass(baseProperty) }
         }
     }
 
@@ -463,13 +476,10 @@ object FirFakeOverrideGenerator {
     fun createSubstitutionOverrideField(
         session: FirSession,
         baseField: FirField,
-        baseSymbol: FirFieldSymbol,
-        newReturnType: ConeKotlinType?,
-        derivedClassId: ClassId?
+        derivedClass: ConeClassLikeLookupTag,
+        newReturnType: ConeKotlinType?
     ): FirFieldSymbol {
-        val symbol = FirFieldSymbol(
-            CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseField.name)
-        )
+        val symbol = FirFieldSymbol(CallableId(derivedClass.classId, baseField.name))
         buildField {
             moduleData = session.moduleData
             this.symbol = symbol
@@ -487,6 +497,7 @@ object FirFakeOverrideGenerator {
             dispatchReceiverType = baseField.dispatchReceiverType
         }.apply {
             originalForSubstitutionOverrideAttr = baseField
+            containingClassForStaticMemberAttr = derivedClass.takeIf { shouldOverrideSetContainingClass(baseField) }
         }
         return symbol
     }
@@ -494,6 +505,7 @@ object FirFakeOverrideGenerator {
     fun createSubstitutionOverrideSyntheticProperty(
         session: FirSession,
         baseProperty: FirSyntheticProperty,
+        derivedClass: ConeClassLikeLookupTag,
         baseSymbol: FirSyntheticPropertySymbol,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newContextReceiverTypes: List<ConeKotlinType?>?,
@@ -507,6 +519,7 @@ object FirFakeOverrideGenerator {
             getterSymbol,
             session,
             baseProperty.getter.delegate,
+            derivedClass,
             newDispatchReceiverType,
             newReceiverType = null,
             newContextReceiverTypes,
@@ -521,6 +534,7 @@ object FirFakeOverrideGenerator {
             setterSymbol,
             session,
             baseSetter.delegate,
+            derivedClass,
             newDispatchReceiverType,
             newReceiverType = null,
             newContextReceiverTypes,
@@ -537,6 +551,8 @@ object FirFakeOverrideGenerator {
             delegateSetter = setter
             status = baseProperty.status
             deprecationsProvider = getDeprecationsProviderFromAccessors(getter, setter, session.firCachesFactory)
+        }.apply {
+            containingClassForStaticMemberAttr = derivedClass.takeIf { shouldOverrideSetContainingClass(baseProperty) }
         }.symbol
     }
 
@@ -593,6 +609,12 @@ object FirFakeOverrideGenerator {
             newTypeParameters.map(FirTypeParameterBuilder::build),
             ChainedSubstitutor(substitutor, additionalSubstitutor)
         )
+    }
+
+    private fun shouldOverrideSetContainingClass(baseDeclaration: FirCallableDeclaration): Boolean {
+        return baseDeclaration is FirConstructor
+                || baseDeclaration.isStatic
+                || baseDeclaration.containingClassForStaticMemberAttr != null
     }
 
     private sealed class Maybe<out A> {

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -469,7 +470,8 @@ class FirCallResolver(
 
     fun resolveDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        constructedType: ConeClassLikeType?
+        constructedType: ConeClassLikeType?,
+        derivedClass: ConeClassLikeLookupTag
     ): FirDelegatedConstructorCall {
         val name = SpecialNames.INIT
         val symbol = constructedType?.lookupTag?.toSymbol(components.session)
@@ -506,6 +508,7 @@ class FirCallResolver(
         val result = towerResolver.runResolverForDelegatingConstructor(
             callInfo,
             constructedType,
+            derivedClass,
             transformer.resolutionContext
         )
 
