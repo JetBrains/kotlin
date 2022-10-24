@@ -13,8 +13,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
@@ -124,7 +124,7 @@ internal sealed class KotlinCompilationProjection {
             get() = project.filesProvider { origin.friendPaths }
 
         override val isMain: Boolean
-            get() = origin.isMainCompilationData()
+            get() = origin.compilationPurpose == GradleKpmModule.MAIN_MODULE_NAME
 
         override val classesDirs: ConfigurableFileCollection
             get() = origin.output.classesDirs
