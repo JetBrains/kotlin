@@ -118,6 +118,7 @@ class FakeOverrideGenerator(
                     val symbol = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                         session, symbol, firFunction,
+                        derivedClassLookupTag = firClass.symbol.toLookupTag(),
                         newDispatchReceiverType = firClass.defaultType(),
                         isExpect = (firClass as? FirRegularClass)?.isExpect == true
                     )
@@ -145,6 +146,7 @@ class FakeOverrideGenerator(
                                 FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                             FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                                 session, symbolForOverride, firProperty,
+                                derivedClassLookupTag = firClass.symbol.toLookupTag(),
                                 newDispatchReceiverType = firClass.defaultType(),
                                 isExpect = (firClass as? FirRegularClass)?.isExpect == true
                             )
@@ -169,11 +171,11 @@ class FakeOverrideGenerator(
                         { field, irParent, _, _, _ ->
                             declarationStorage.createIrField(field, irParent)
                         },
-                        createFakeOverrideSymbol = { firField, callableSymbol ->
+                        createFakeOverrideSymbol = { firField, _ ->
                             FirFakeOverrideGenerator.createSubstitutionOverrideField(
-                                session, firField, callableSymbol,
+                                session, firField,
+                                derivedClassLookupTag = firClass.symbol.toLookupTag(),
                                 newReturnType = firField.returnTypeRef.coneType,
-                                derivedClassId = firClass.symbol.classId
                             )
                         },
                         baseStaticFieldSymbols,
@@ -324,6 +326,7 @@ class FakeOverrideGenerator(
         createFakeOverrideSymbol = { firFunction, callableSymbol ->
             FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                 session, callableSymbol, firFunction,
+                derivedClassLookupTag = klass.symbol.toLookupTag(),
                 newDispatchReceiverType = klass.defaultType(),
                 isExpect = (klass as? FirRegularClass)?.isExpect == true
             )
@@ -342,6 +345,7 @@ class FakeOverrideGenerator(
         createFakeOverrideSymbol = { firProperty, callableSymbol ->
             FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                 session, callableSymbol, firProperty,
+                derivedClassLookupTag = klass.symbol.toLookupTag(),
                 newDispatchReceiverType = klass.defaultType(),
                 isExpect = (klass as? FirRegularClass)?.isExpect == true
             )

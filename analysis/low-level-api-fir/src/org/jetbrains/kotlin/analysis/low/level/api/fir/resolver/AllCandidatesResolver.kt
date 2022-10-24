@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -71,6 +72,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     fun getAllCandidatesForDelegatedConstructor(
         firResolveSession: LLFirResolveSession,
         delegatedConstructorCall: FirDelegatedConstructorCall,
+        derivedClassLookupTag: ConeClassLikeLookupTag,
         element: KtElement
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(firResolveSession, element)
@@ -78,10 +80,10 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
         val constructedType = delegatedConstructorCall.constructedTypeRef.coneType as ConeClassLikeType
         return bodyResolveComponents.context.withFile(firFile, bodyResolveComponents) {
-            bodyResolveComponents.callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructedType)
-            bodyResolveComponents.collector.allCandidates.map {
-                OverloadCandidate(it, isInBestCandidates = it in bodyResolveComponents.collector.bestCandidates())
-            }
+            bodyResolveComponents.callResolver
+                .resolveDelegatingConstructorCall(delegatedConstructorCall, constructedType, derivedClassLookupTag)
+            bodyResolveComponents.collector.allCandidates
+                .map { OverloadCandidate(it, isInBestCandidates = it in bodyResolveComponents.collector.bestCandidates()) }
         }
     }
 

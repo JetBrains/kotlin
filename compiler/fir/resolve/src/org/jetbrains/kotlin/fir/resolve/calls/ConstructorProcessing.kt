@@ -209,6 +209,7 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
 
     return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
         session, symbolForOverride, samConstructorForClass,
+        derivedClassLookupTag = null,
         newDispatchReceiverType = null,
         newReceiverType = null,
         newContextReceiverTypes,
@@ -262,10 +263,15 @@ private fun processConstructors(
                 }
                 is FirClassSymbol -> {
                     val firClass = matchedSymbol.fir as FirClass
-                    if (firClass.classKind == ClassKind.INTERFACE) null
-                    else firClass.scopeForClass(
-                        substitutor, session, bodyResolveComponents.scopeSession
-                    )
+                    when (firClass.classKind) {
+                        ClassKind.INTERFACE -> null
+                        else -> firClass.scopeForClass(
+                            substitutor,
+                            session,
+                            bodyResolveComponents.scopeSession,
+                            derivedClassLookupTag = null
+                        )
+                    }
                 }
             }
 

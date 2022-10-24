@@ -356,11 +356,16 @@ internal tailrec fun FirCallableSymbol<*>.unwrapSubstitutionAndIntersectionOverr
 }
 
 context(Fir2IrComponents)
-internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
+internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
+    owner: ConeClassLikeLookupTag? = containingClassLookupTag()
+): FirCallableSymbol<*> {
     val fir = fir
+
     if (fir is FirConstructor) {
         val originalForTypeAlias = fir.originalConstructorIfTypeAlias
-        if (originalForTypeAlias != null) return originalForTypeAlias.symbol.unwrapCallRepresentative(this)
+        if (originalForTypeAlias != null) {
+            return originalForTypeAlias.symbol.unwrapCallRepresentative(owner)
+        }
     }
 
     if (fir.isIntersectionOverride) {
@@ -370,17 +375,18 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCall
         // interface C : A, B // for C.foo we've got an IR fake override
         // for {A & B} we don't have such an IR declaration, so we're unwrapping it
         if (fir.dispatchReceiverType is ConeIntersectionType) {
-            return fir.baseForIntersectionOverride!!.symbol.unwrapCallRepresentative(this)
+            return fir.baseForIntersectionOverride!!.symbol.unwrapCallRepresentative(owner)
         }
 
         return this
     }
 
-    val overriddenSymbol = fir.originalForSubstitutionOverride?.takeIf {
-        it.containingClassLookupTag() == root.containingClassLookupTag()
-    }?.symbol ?: return this
+    val originalForOverride = fir.originalForSubstitutionOverride
+    if (originalForOverride != null && originalForOverride.containingClassLookupTag() == owner) {
+        return originalForOverride.symbol.unwrapCallRepresentative(owner)
+    }
 
-    return overriddenSymbol.unwrapCallRepresentative(this)
+    return this
 }
 
 context(Fir2IrComponents)
