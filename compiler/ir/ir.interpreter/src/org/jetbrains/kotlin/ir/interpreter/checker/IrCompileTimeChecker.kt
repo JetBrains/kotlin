@@ -134,7 +134,7 @@ class IrCompileTimeChecker(
                 is IrGetObjectValue -> {
                     val toString = arg.symbol.owner.declarations
                         .filterIsInstance<IrSimpleFunction>()
-                        .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() }
+                        .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
 
                     mode.canEvaluateFunction(toString, null) && toString.visitBodyIfNeeded()
                 }
