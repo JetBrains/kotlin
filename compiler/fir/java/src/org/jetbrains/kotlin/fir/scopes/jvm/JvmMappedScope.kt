@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -85,7 +84,8 @@ class JvmMappedScope(
                 symbol.fir.origin,
                 newDispatchReceiverType = kotlinDispatchReceiverType,
                 newParameterTypes = oldFunction.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
-                newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType)
+                newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType),
+                derivedClass = firKotlinClass.symbol.toLookupTag()
             )
             newSymbol
         }
@@ -132,10 +132,9 @@ class JvmMappedScope(
                 newTypeParameters = null,
                 newContextReceiverTypes = emptyList(),
                 isExpect = false,
-                fakeOverrideSubstitution = null
-            ).apply {
-                containingClassForStaticMemberAttr = firKotlinClass.symbol.toLookupTag()
-            }
+                fakeOverrideSubstitution = null,
+                derivedClass = firKotlinClass.symbol.toLookupTag()
+            )
             newSymbol
         }
     }

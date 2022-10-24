@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -71,6 +72,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     fun getAllCandidatesForDelegatedConstructor(
         firResolveSession: LLFirResolveSession,
         delegatedConstructorCall: FirDelegatedConstructorCall,
+        derivedClass: FirClass,
         element: KtElement
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(firResolveSession, element)
@@ -78,7 +80,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
         val constructedType = delegatedConstructorCall.constructedTypeRef.coneType as ConeClassLikeType
         return bodyResolveComponents.context.withFile(firFile, bodyResolveComponents) {
-            bodyResolveComponents.callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructedType)
+            bodyResolveComponents.callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructedType, derivedClass)
             bodyResolveComponents.collector.allCandidates.map {
                 OverloadCandidate(it, isInBestCandidates = it in bodyResolveComponents.collector.bestCandidates())
             }
