@@ -58,9 +58,10 @@ fun test7(a: Function1<Int, Int>) {
 }
 
 fun test8(a: Function0<Unit>) {
-  J().run1(r = id<@FlexibleNullability Function0<Unit>?>(x = a) /*!! Function0<Unit> */ /*-> @FlexibleNullability Runnable? */)
+  J().run1(r = id<@FlexibleNullability Function0<Unit>?>(x = a) /*-> @FlexibleNullability Runnable? */)
 }
 
 fun test9() {
   J().run1(r = ::test9 /*-> @FlexibleNullability Runnable? */)
 }
+
