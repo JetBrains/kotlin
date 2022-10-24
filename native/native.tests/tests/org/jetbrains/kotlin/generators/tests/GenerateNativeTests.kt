@@ -64,6 +64,7 @@ fun main() {
             ) {
                 model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("Interop/Indexer/framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeInteropIndexerNoFModulesTest>(
@@ -71,6 +72,7 @@ fun main() {
             ) {
                 model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("Interop/Indexer/framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeInteropIndexerKT39120Test>(

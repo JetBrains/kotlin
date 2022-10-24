@@ -40,7 +40,7 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeInteropIndexerBa
         val defFile = testPathFull.resolve("pod1.def")
         val goldenFile = testPathFull.resolve("contents.gold.txt")
         val fmodulesArgs = if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
-        val includeFrameworkArgs = if (testDataDir.name == "framework")
+        val includeFrameworkArgs = if (testDataDir.name.startsWith("framework"))
             listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
         else
             listOf("-compiler-option", "-I${includeFolder.canonicalPath}")
