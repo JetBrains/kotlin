@@ -18,14 +18,14 @@ interface PartialLinkageSupport {
     /** For local use only in inline lazy-IR functions. */
     fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction)
 
-    fun processUnlinkedDeclarations(lazyRoots: () -> List<IrElement>)
+    fun processUnlinkedDeclarations(roots: () -> Collection<IrElement>)
 
     companion object {
         val DISABLED = object : PartialLinkageSupport {
             override val partialLinkageEnabled get() = false
             override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
-            override fun processUnlinkedDeclarations(lazyRoots: () -> List<IrElement>) = Unit
+            override fun processUnlinkedDeclarations(roots: () -> Collection<IrElement>) = Unit
         }
     }
 }

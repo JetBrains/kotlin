@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class UnlinkedDeclarationsProcessor(
@@ -55,14 +56,37 @@ internal class UnlinkedDeclarationsProcessor(
         }
     }
 
-    fun signatureTransformer(): IrElementTransformerVoid = SignatureTransformer()
+    fun patchUsageOfUnlinkedSymbols(roots: Collection<IrElement>) {
+        roots.forEach { it.transformChildrenVoid(UsageTransformer()) }
+    }
 
-    private inner class SignatureTransformer : IrElementTransformerVoid() {
+    private inner class UsageTransformer : IrElementTransformerVoid() {
+        private var currentFile: IrFile? = null
+
+        override fun visitFile(declaration: IrFile): IrFile {
+            currentFile = declaration
+            return try {
+                super.visitFile(declaration)
+            } finally {
+                currentFile = null
+            }
+        }
+
         override fun visitFunction(declaration: IrFunction): IrStatement {
-            val removedUnlinkedTypes = declaration.fixUnlinkedTypes()
             val isImplementedFakeOverride = declaration.origin == MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION
+            val removedUnlinkedTypes = declaration.fixUnlinkedTypes()
 
-            return declaration.transformBodyIfNecessary(isImplementedFakeOverride, removedUnlinkedTypes)
+            declaration.transformBodyIfNecessary(isImplementedFakeOverride, removedUnlinkedTypes)
+
+            (declaration as? IrOverridableDeclaration<*>)?.filterOverriddenSymbols()
+
+            return declaration
+        }
+
+        override fun visitProperty(declaration: IrProperty): IrStatement {
+            declaration.transformChildrenVoid()
+            declaration.filterOverriddenSymbols()
+            return declaration
         }
 
         override fun visitField(declaration: IrField): IrStatement {
@@ -86,6 +110,71 @@ internal class UnlinkedDeclarationsProcessor(
             } else {
                 declaration.transformChildrenVoid()
             }
+            return declaration
+        }
+
+        override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+            expression.transformChildrenVoid()
+
+            val classifierSymbol = expression.typeOperandClassifier
+            return if (classifierSymbol.isUnlinked())
+                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType).apply {
+                    statements += expression.argument
+                    statements += expression.throwLinkageError(classifierSymbol)
+                }
+            else
+                expression
+        }
+
+        override fun visitExpression(expression: IrExpression): IrExpression {
+            return if (expression.type.isUnlinked() || expression.type.isUnlinkedMarkerType())
+                expression.throwLinkageError() // TODO: which exactly classifiers are unlinked?
+            else
+                super.visitExpression(expression)
+        }
+
+        override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
+            expression.transformChildrenVoid()
+
+            return if (!expression.symbol.isUnlinked() && !expression.type.isUnlinked())
+                expression
+            else
+                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType, expression.origin).apply {
+                    statements.addIfNotNull(expression.dispatchReceiver)
+                    statements.addIfNotNull(expression.extensionReceiver)
+
+                    for (i in 0 until expression.valueArgumentsCount) {
+                        statements.addIfNotNull(expression.getValueArgument(i))
+                    }
+
+                    statements += expression.throwLinkageError() // TODO: which exactly classifiers are unlinked?
+                }
+        }
+
+        override fun visitFieldAccess(expression: IrFieldAccessExpression): IrExpression {
+            expression.transformChildrenVoid()
+
+            return if (!expression.symbol.isUnlinked())
+                expression
+            else
+                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType, expression.origin).apply {
+                    statements.addIfNotNull(expression.receiver)
+                    if (expression is IrSetField)
+                        statements += expression.value
+                    statements += expression.throwLinkageError(expression.symbol)
+                }
+        }
+
+        override fun visitClassReference(expression: IrClassReference): IrExpression {
+            return if (expression.symbol.isUnlinked())
+                expression.throwLinkageError(expression.symbol)
+            else
+                expression
+        }
+
+        override fun visitClass(declaration: IrClass): IrStatement {
+            declaration.transformChildrenVoid()
+            // TODO: anything to check like unlinked supertypes?
             return declaration
         }
 
@@ -127,7 +216,7 @@ internal class UnlinkedDeclarationsProcessor(
         private fun IrFunction.transformBodyIfNecessary(
             isImplementedFakeOverride: Boolean,
             removedUnlinkedTypes: Set<IrType>
-        ): IrFunction {
+        ) {
             if (!isImplementedFakeOverride && removedUnlinkedTypes.isEmpty()) {
                 transformChildrenVoid()
             } else {
@@ -150,9 +239,13 @@ internal class UnlinkedDeclarationsProcessor(
                     bb.statements += throwLinkageError(errorMessages, location())
                 }
             }
-
-            return this
         }
+
+        private fun IrExpression.throwLinkageError(unlinkedSymbol: IrSymbol? = null): IrCall =
+            throwLinkageError(
+                messages = listOf(composeUnlinkedSymbolsErrorMessage(listOfNotNull(unlinkedSymbol))),
+                location = locationIn(currentFile)
+            )
     }
 
     private fun IrSymbol.isUnlinked(): Boolean {
@@ -228,106 +321,12 @@ internal class UnlinkedDeclarationsProcessor(
         messageLogger.report(Severity.WARNING, message, location) // It's OK. We log it as a warning.
     }
 
-    fun usageTransformer(): IrElementTransformerVoid = UsageTransformer()
-
-    private inner class UsageTransformer : IrElementTransformerVoid() {
-
-        private var currentFile: IrFile? = null
-
-        override fun visitFile(declaration: IrFile): IrFile {
-            currentFile = declaration
-            return super.visitFile(declaration).also { currentFile = null }
+    private fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {
+        overriddenSymbols = overriddenSymbols.filter { symbol ->
+            symbol.isBound
+                    // Handle the case when the overridden declaration became private.
+                    && (symbol.owner as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.PRIVATE
         }
-
-        override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-            expression.transformChildrenVoid()
-
-            val classifierSymbol = expression.typeOperandClassifier
-            return if (classifierSymbol.isUnlinked())
-                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType).apply {
-                    statements += expression.argument
-                    statements += expression.throwLinkageError(classifierSymbol)
-                }
-            else
-                expression
-        }
-
-        override fun visitExpression(expression: IrExpression): IrExpression {
-            return if (expression.type.isUnlinked() || expression.type.isUnlinkedMarkerType())
-                expression.throwLinkageError() // TODO: which exactly classifiers are unlinked?
-            else
-                super.visitExpression(expression)
-        }
-
-        override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
-            expression.transformChildrenVoid()
-
-            return if (!expression.symbol.isUnlinked() && !expression.type.isUnlinked())
-                expression
-            else
-                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType, expression.origin).apply {
-                    statements.addIfNotNull(expression.dispatchReceiver)
-                    statements.addIfNotNull(expression.extensionReceiver)
-
-                    for (i in 0 until expression.valueArgumentsCount) {
-                        statements.addIfNotNull(expression.getValueArgument(i))
-                    }
-
-                    statements += expression.throwLinkageError() // TODO: which exactly classifiers are unlinked?
-                }
-        }
-
-        override fun visitFieldAccess(expression: IrFieldAccessExpression): IrExpression {
-            expression.transformChildrenVoid()
-
-            return if (!expression.symbol.isUnlinked())
-                expression
-            else
-                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType, expression.origin).apply {
-                    statements.addIfNotNull(expression.receiver)
-                    if (expression is IrSetField)
-                        statements += expression.value
-                    statements += expression.throwLinkageError(expression.symbol)
-                }
-        }
-
-        override fun visitClassReference(expression: IrClassReference): IrExpression {
-            return if (expression.symbol.isUnlinked())
-                expression.throwLinkageError(expression.symbol)
-            else
-                expression
-        }
-
-        override fun visitClass(declaration: IrClass): IrStatement {
-            declaration.transformChildrenVoid()
-
-            fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {
-                overriddenSymbols = overriddenSymbols.filter { symbol ->
-                    symbol.isBound
-                            // Handle the case when the overridden declaration became private.
-                            && (symbol.owner as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.PRIVATE
-                }
-            }
-
-            for (member in declaration.declarations) {
-                when (member) {
-                    is IrSimpleFunction -> member.filterOverriddenSymbols()
-                    is IrProperty -> {
-                        member.filterOverriddenSymbols()
-                        member.getter?.filterOverriddenSymbols()
-                        member.setter?.filterOverriddenSymbols()
-                    }
-                }
-            }
-
-            return declaration
-        }
-
-        private fun IrExpression.throwLinkageError(unlinkedSymbol: IrSymbol? = null): IrCall =
-            throwLinkageError(
-                messages = listOf(composeUnlinkedSymbolsErrorMessage(listOfNotNull(unlinkedSymbol))),
-                location = locationIn(currentFile)
-            )
     }
 
     companion object {

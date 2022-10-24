@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal class PartialLinkageSupportImpl(
     builtIns: IrBuiltIns,
@@ -48,15 +47,8 @@ internal class PartialLinkageSupportImpl(
         function.acceptChildrenVoid(classifierUsageMarker)
     }
 
-    override fun processUnlinkedDeclarations(lazyRoots: () -> List<IrElement>) {
+    override fun processUnlinkedDeclarations(roots: () -> Collection<IrElement>) {
         unlinkedDeclarationsProcessor.addLinkageErrorIntoUnlinkedClasses()
-
-        val roots = lazyRoots()
-
-        val signatureTransformer = unlinkedDeclarationsProcessor.signatureTransformer()
-        roots.forEach { it.transformChildrenVoid(signatureTransformer) }
-
-        val usageTransformer = unlinkedDeclarationsProcessor.usageTransformer()
-        roots.forEach { it.transformChildrenVoid(usageTransformer) }
+        unlinkedDeclarationsProcessor.patchUsageOfUnlinkedSymbols(roots())
     }
 }
