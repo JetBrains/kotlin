@@ -25,8 +25,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public fun `<get-lazyProperty>`(): kotlin.Int defined in root package in file propertyWithDelegateAndAnnotations.kt[PropertyGetterDescriptorImpl@4e0346f]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
   hasGetter: true

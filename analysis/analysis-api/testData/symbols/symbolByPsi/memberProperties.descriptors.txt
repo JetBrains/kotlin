@@ -1,6 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.i
+  callableIdIfNonLocal: /A.x
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
@@ -26,7 +26,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: null
+  initializer: KtConstantInitializerValue(10)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -36,7 +36,7 @@ KtKotlinPropertySymbol:
   isStatic: false
   isVal: true
   modality: FINAL
-  name: i
+  name: x
   origin: SOURCE
   receiverType: null
   returnType: kotlin/Int
@@ -48,17 +48,63 @@ KtKotlinPropertySymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getI
+  javaGetterName: getX
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtClassInitializerSymbol:
+KtKotlinPropertySymbol:
   annotationsList: []
+  callableIdIfNonLocal: /A.y
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: kotlin/Int
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getDispatchReceiver(): A
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: true
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: y
   origin: SOURCE
+  receiverType: kotlin/Int
+  returnType: kotlin/Int
+  setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getY
+  javaSetterName: null
+  setterDeprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []

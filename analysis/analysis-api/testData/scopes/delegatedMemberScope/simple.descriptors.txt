@@ -21,8 +21,7 @@ KtKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): A
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun kotlin.Int.`<get-zoo>`(): kotlin.Unit defined in I[PropertyGetterDescriptorImpl@74fa42af]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
   hasGetter: true
@@ -70,8 +69,7 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Unit
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Unit defined in I.`<set-zoo>`[ValueParameterDescriptorImpl@5e026e8c]
-
+      getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverType: kotlin/Int
     returnType: kotlin/Unit
@@ -95,14 +93,12 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Unit
         symbolKind: LOCAL
         typeParameters: []
-        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Unit defined in I.`<set-zoo>`[ValueParameterDescriptorImpl@5e026e8c]
-
+        getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
     visibility: Public
     getDispatchReceiver(): A
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun kotlin.Int.`<set-zoo>`(`<set-?>`: kotlin.Unit): kotlin.Unit defined in I[PropertySetterDescriptorImpl@14f129cc]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -192,8 +188,7 @@ KtKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): A
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun `<get-foo>`(): kotlin.Int defined in I[PropertyGetterDescriptorImpl@5c47271]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
   hasGetter: true
@@ -247,8 +242,7 @@ KtKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): A
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun `<get-bar>`(): kotlin.Long defined in I[PropertyGetterDescriptorImpl@59243d9c]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
   hasGetter: true
@@ -296,8 +290,7 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in I.`<set-bar>`[ValueParameterDescriptorImpl@4751d8dd]
-
+      getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
@@ -321,14 +314,12 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
-        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in I.`<set-bar>`[ValueParameterDescriptorImpl@4751d8dd]
-
+        getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
     visibility: Public
     getDispatchReceiver(): A
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun `<set-bar>`(`<set-?>`: kotlin.Long): kotlin.Unit defined in I[PropertySetterDescriptorImpl@421fc80]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -364,8 +355,7 @@ KtKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): A
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun kotlin.Int.`<get-doo>`(): kotlin.String defined in I[PropertyGetterDescriptorImpl@663e249d]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
   hasGetter: true

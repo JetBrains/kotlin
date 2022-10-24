@@ -28,7 +28,7 @@ KtSamConstructorSymbol:
       returnType: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter function: () -> kotlin.Unit defined in java.lang.Runnable[ValueParameterDescriptorImpl@4dcd7cfa]
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
 
       deprecationStatus: null
   ]
