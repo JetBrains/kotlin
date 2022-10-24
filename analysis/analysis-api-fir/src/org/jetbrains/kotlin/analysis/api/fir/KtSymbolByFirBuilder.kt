@@ -629,7 +629,7 @@ private class BuilderCache<From, To : KtSymbol> {
     inline fun <reified S : To> cache(key: From, calculation: () -> S): S {
         val value = cache.getOrPut(key, calculation)
         return value as? S
-            ?: error("Cannot cast ${value::class} to ${S::class}\n${DebugSymbolRenderer.render(value)}")
+            ?: error("Cannot cast ${value::class} to ${S::class}\n${value}")
     }
 }
 

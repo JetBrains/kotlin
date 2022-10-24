@@ -10,6 +10,6 @@ KtBackingFieldSymbol:
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingModule: Could not render due to org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments: Unexpected KtSymbol KtFe10DescSyntheticFieldSymbol
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: var field: kotlin.Int defined in `<get-x>`[SyntheticFieldDescriptor@660c5189]
 
   deprecationStatus: null

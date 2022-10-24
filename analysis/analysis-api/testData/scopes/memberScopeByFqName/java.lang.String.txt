@@ -104,6 +104,9 @@ KtSyntheticJavaPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): java/lang/String
+    getContainingModule: KtSdkModule "SDK jdk"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -199,6 +202,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -244,6 +249,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -289,6 +296,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -306,6 +315,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -351,6 +362,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -368,6 +381,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -413,6 +428,8 @@ KtFunctionSymbol:
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -430,6 +447,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: PackageVisibility
   getDispatchReceiver(): java/lang/String
@@ -475,6 +494,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -492,6 +513,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -509,6 +532,8 @@ KtFunctionSymbol:
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -526,6 +551,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -574,6 +601,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -591,6 +620,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -608,6 +639,8 @@ KtFunctionSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -625,6 +658,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -670,6 +705,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -715,6 +752,8 @@ KtFunctionSymbol:
       returnType: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -787,6 +826,8 @@ KtFunctionSymbol:
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -832,6 +873,8 @@ KtFunctionSymbol:
       returnType: java/lang/StringBuffer!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -877,6 +920,8 @@ KtFunctionSymbol:
       returnType: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -922,6 +967,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -967,6 +1014,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1012,6 +1061,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1057,6 +1108,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1074,6 +1127,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1091,6 +1146,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1108,6 +1165,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1153,6 +1212,8 @@ KtFunctionSymbol:
       returnType: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1170,6 +1231,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1187,6 +1250,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1204,6 +1269,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1221,6 +1288,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1266,6 +1335,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1283,6 +1354,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1328,6 +1401,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1373,6 +1448,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1445,6 +1522,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1490,6 +1569,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1507,6 +1588,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1552,6 +1635,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1597,6 +1682,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1614,6 +1701,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1659,6 +1748,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1676,6 +1767,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Private
   getDispatchReceiver(): java/lang/String
@@ -1721,6 +1814,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1766,6 +1861,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1783,6 +1880,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1828,6 +1927,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1873,6 +1974,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1890,6 +1993,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -1935,6 +2040,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -1952,6 +2059,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Private
   getDispatchReceiver(): java/lang/String
@@ -1997,6 +2106,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2042,6 +2153,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -2059,6 +2172,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2104,6 +2219,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -2121,6 +2238,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2166,6 +2285,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2211,6 +2332,8 @@ KtFunctionSymbol:
       returnType: kotlin/Char
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -2228,6 +2351,8 @@ KtFunctionSymbol:
       returnType: kotlin/Char
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2273,6 +2398,8 @@ KtFunctionSymbol:
       returnType: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -2290,6 +2417,8 @@ KtFunctionSymbol:
       returnType: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2335,6 +2464,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2380,6 +2511,8 @@ KtFunctionSymbol:
       returnType: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2425,6 +2558,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -2442,6 +2577,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2487,6 +2624,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -2504,6 +2643,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2549,6 +2690,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -2566,6 +2709,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2611,6 +2756,8 @@ KtFunctionSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2656,6 +2803,8 @@ KtFunctionSymbol:
       returnType: java/util/Locale!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2728,6 +2877,8 @@ KtFunctionSymbol:
       returnType: java/util/Locale!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2908,6 +3059,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -2988,6 +3141,8 @@ KtConstructorSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3024,6 +3179,8 @@ KtConstructorSymbol:
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3060,6 +3217,8 @@ KtConstructorSymbol:
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3077,6 +3236,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3094,6 +3255,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3130,6 +3293,8 @@ KtConstructorSymbol:
       returnType: kotlin/IntArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3147,6 +3312,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3164,6 +3331,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3203,6 +3372,8 @@ KtConstructorSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3220,6 +3391,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3237,6 +3410,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3254,6 +3429,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3293,6 +3470,8 @@ KtConstructorSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3310,6 +3489,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3346,6 +3527,8 @@ KtConstructorSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3363,6 +3546,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3380,6 +3565,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3397,6 +3584,8 @@ KtConstructorSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3433,6 +3622,8 @@ KtConstructorSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3450,6 +3641,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3467,6 +3660,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3484,6 +3679,8 @@ KtConstructorSymbol:
       returnType: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3520,6 +3717,8 @@ KtConstructorSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3537,6 +3736,8 @@ KtConstructorSymbol:
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3573,6 +3774,8 @@ KtConstructorSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3590,6 +3793,8 @@ KtConstructorSymbol:
       returnType: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3626,6 +3831,8 @@ KtConstructorSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3643,6 +3850,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3660,6 +3869,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3696,6 +3907,8 @@ KtConstructorSymbol:
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3732,6 +3945,8 @@ KtConstructorSymbol:
       returnType: java/lang/StringBuffer!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3768,6 +3983,8 @@ KtConstructorSymbol:
       returnType: java/lang/StringBuilder!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3804,6 +4021,8 @@ KtConstructorSymbol:
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3821,6 +4040,8 @@ KtConstructorSymbol:
       returnType: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: PackageVisibility
   getContainingModule: KtSdkModule "SDK jdk"
@@ -3860,6 +4081,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3877,6 +4100,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -3894,6 +4119,8 @@ KtConstructorSymbol:
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: PackageVisibility
   getContainingModule: KtSdkModule "SDK jdk"

@@ -47,6 +47,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): <no name provided>
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public final fun `<get-data>`(): kotlin.Int defined in AnonymousContainer.anonymousObject.`<no name provided>`[PropertyGetterDescriptorImpl@424280a0]
+
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -112,6 +116,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): AnonymousContainer
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public final fun `<get-anonymousObject>`(): java.lang.Runnable defined in AnonymousContainer[PropertyGetterDescriptorImpl@413bc5ad]
+
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false

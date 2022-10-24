@@ -39,6 +39,8 @@ KtFunctionSymbol:
       returnType: T
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
@@ -116,6 +118,8 @@ KtFunctionSymbol:
       returnType: T
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"

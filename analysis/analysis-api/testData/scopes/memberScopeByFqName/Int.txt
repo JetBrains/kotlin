@@ -40,6 +40,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -88,6 +90,8 @@ KtFunctionSymbol:
       returnType: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -136,6 +140,8 @@ KtFunctionSymbol:
       returnType: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -184,6 +190,8 @@ KtFunctionSymbol:
       returnType: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -232,6 +240,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -280,6 +290,8 @@ KtFunctionSymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -328,6 +340,8 @@ KtFunctionSymbol:
       returnType: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -403,6 +417,8 @@ KtFunctionSymbol:
       returnType: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -451,6 +467,8 @@ KtFunctionSymbol:
       returnType: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -499,6 +517,8 @@ KtFunctionSymbol:
       returnType: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -547,6 +567,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -595,6 +617,8 @@ KtFunctionSymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -643,6 +667,8 @@ KtFunctionSymbol:
       returnType: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -691,6 +717,8 @@ KtFunctionSymbol:
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -796,6 +824,8 @@ KtFunctionSymbol:
       returnType: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -844,6 +874,8 @@ KtFunctionSymbol:
       returnType: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -892,6 +924,8 @@ KtFunctionSymbol:
       returnType: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -940,6 +974,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -988,6 +1024,8 @@ KtFunctionSymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1036,6 +1074,8 @@ KtFunctionSymbol:
       returnType: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1084,6 +1124,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1132,6 +1174,8 @@ KtFunctionSymbol:
       returnType: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1180,6 +1224,8 @@ KtFunctionSymbol:
       returnType: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1228,6 +1274,8 @@ KtFunctionSymbol:
       returnType: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1276,6 +1324,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1324,6 +1374,8 @@ KtFunctionSymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1372,6 +1424,8 @@ KtFunctionSymbol:
       returnType: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1417,6 +1471,8 @@ KtFunctionSymbol:
       returnType: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1462,6 +1518,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1507,6 +1565,8 @@ KtFunctionSymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1552,6 +1612,8 @@ KtFunctionSymbol:
       returnType: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1602,6 +1664,8 @@ KtFunctionSymbol:
       returnType: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1652,6 +1716,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1702,6 +1768,8 @@ KtFunctionSymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1752,6 +1820,8 @@ KtFunctionSymbol:
       returnType: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1802,6 +1872,8 @@ KtFunctionSymbol:
       returnType: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1852,6 +1924,8 @@ KtFunctionSymbol:
       returnType: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1902,6 +1976,8 @@ KtFunctionSymbol:
       returnType: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -1952,6 +2028,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2002,6 +2080,8 @@ KtFunctionSymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2052,6 +2132,8 @@ KtFunctionSymbol:
       returnType: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2100,6 +2182,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2148,6 +2232,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2196,6 +2282,8 @@ KtFunctionSymbol:
       returnType: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2244,6 +2332,8 @@ KtFunctionSymbol:
       returnType: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2292,6 +2382,8 @@ KtFunctionSymbol:
       returnType: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2340,6 +2432,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2388,6 +2482,8 @@ KtFunctionSymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2436,6 +2532,8 @@ KtFunctionSymbol:
       returnType: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2784,6 +2882,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2832,6 +2932,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Int
@@ -2919,6 +3021,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
