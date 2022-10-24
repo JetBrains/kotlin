@@ -239,7 +239,11 @@ private class ReturnTypeCalculatorWithJump(
 
         val unwrappedDelegate = declaration.delegatedWrapperData?.wrapped
         if (unwrappedDelegate != null) {
-            return tryCalculateReturnType(unwrappedDelegate)
+            return tryCalculateReturnType(unwrappedDelegate).also {
+                if (declaration.returnTypeRef is FirImplicitTypeRef) {
+                    declaration.replaceReturnTypeRef(it)
+                }
+            }
         }
 
         if (declaration.isSubstitutionOrIntersectionOverride) {
