@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.Abstra
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByDelegatedMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
@@ -240,6 +241,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test(AbstractContainingDeclarationProviderByMemberScopeTest::class) {
             model("containingDeclarationFromMemberScope")
+        }
+
+        test(AbstractContainingDeclarationProviderByDelegatedMemberScopeTest::class) {
+            model("containingDeclarationByDelegatedMemberScope")
         }
     }
 
