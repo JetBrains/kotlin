@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
@@ -75,3 +78,15 @@ private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
 
 internal fun filterModuleName(moduleName: String): String =
     moduleName.replace(invalidModuleNameCharactersRegex, "_")
+
+internal inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(): InternalKotlinCompilation<T> {
+    this.kotlinOptions as T
+    @Suppress("UNCHECKED_CAST")
+    return this as InternalKotlinCompilation<T>
+}
+
+internal inline fun <reified T : KotlinCommonCompilerOptions> HasCompilerOptions<*>.castCompilerOptionsType(): HasCompilerOptions<T> {
+    this.options as T
+    @Suppress("UNCHECKED_CAST")
+    return this as HasCompilerOptions<T>
+}
