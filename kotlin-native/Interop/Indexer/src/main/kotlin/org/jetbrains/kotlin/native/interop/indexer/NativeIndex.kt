@@ -133,7 +133,6 @@ abstract class NativeIndex {
     abstract val wrappedMacros: Collection<WrappedMacroDef>
     abstract val globals: Collection<GlobalDecl>
     abstract val includedHeaders: Collection<HeaderId>
-    abstract val includedHeadersCanonicalPaths: Collection<String>
 }
 
 /**

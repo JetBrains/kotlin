@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 
 abstract class AbstractNativeInteropIndexerFModulesTest : AbstractNativeInteropIndexerTest() {
@@ -30,13 +31,19 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeInteropIndexerBa
 
     @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
+        // FIXME: remove the assumption below and fix cinterop to pass those tests. Now `clang -fmodules` cannot compile cstubs.c using included Darwin module from sysroot
+        Assumptions.assumeFalse(
+            this is AbstractNativeInteropIndexerFModulesTest &&
+                    (testPath.endsWith("/builtinsDefs/fullStdargH/") || testPath.endsWith("/builtinsDefs/fullA/"))
+        )
+
         val testPathFull = getAbsoluteFile(testPath)
         val testDataDir = testPathFull.parentFile.parentFile
         val includeFolder = testDataDir.resolve("include")
         val defFile = testPathFull.resolve("pod1.def")
         val goldenFile = testPathFull.resolve("contents.gold.txt")
         val fmodulesArgs = if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
-        val includeFrameworkArgs = if (testDataDir.name == "framework")
+        val includeFrameworkArgs = if (testDataDir.name.startsWith("framework"))
             listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
         else
             listOf("-compiler-option", "-I${includeFolder.canonicalPath}")

@@ -150,7 +150,6 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         get() = globalById.values
 
     override lateinit var includedHeaders: List<HeaderId>
-    override lateinit var includedHeadersCanonicalPaths: Set<String>
 
     internal fun log(message: String) {
         if (verbose) {
@@ -1210,9 +1209,6 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
 
                 val unitsToProcess = (ownTranslationUnits + setOf(translationUnit)).toList()
 
-                nativeIndex.includedHeadersCanonicalPaths = headersCanonicalPaths.filterNot {
-                    it.endsWith(".c") || it.endsWith(".m")
-                }.toSet()
                 nativeIndex.includedHeaders = ownHeaders.map {
                     nativeIndex.getHeaderId(it)
                 }
