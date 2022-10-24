@@ -18,7 +18,8 @@ class FirTypeIntersectionScope private constructor(
     private val scopes: List<FirTypeScope>,
     dispatchReceiverType: ConeSimpleKotlinType,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
-    private val intersectionContext = FirTypeIntersectionScopeContext(session, overrideChecker, scopes, dispatchReceiverType)
+    private val intersectionContext =
+        FirTypeIntersectionScopeContext(session, overrideChecker, scopes, dispatchReceiverType, forClassUseSiteScope = false)
 
     private val absentFunctions: MutableSet<Name> = mutableSetOf()
     private val absentProperties: MutableSet<Name> = mutableSetOf()

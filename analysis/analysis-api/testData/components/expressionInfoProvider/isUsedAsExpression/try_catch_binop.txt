@@ -1,0 +1,3 @@
+expression: TRY
+text: try { throw Exception() } finally { return }
+isUsedAsExpression: true

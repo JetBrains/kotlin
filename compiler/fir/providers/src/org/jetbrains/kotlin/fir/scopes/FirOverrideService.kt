@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -19,50 +17,11 @@ import org.jetbrains.kotlin.fir.scopes.impl.similarFunctionsOrBothProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeCheckerState
-import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
 class FirOverrideService(val session: FirSession) : FirSessionComponent {
-    fun <D : FirCallableSymbol<*>> selectMostSpecificInEachOverridableGroup(
-        members: Collection<MemberWithBaseScope<D>>,
-        overrideChecker: FirOverrideChecker,
-        returnTypeCalculator: ReturnTypeCalculator
-    ): Collection<MemberWithBaseScope<D>> {
-        if (members.size <= 1) return members
-        val queue = LinkedList(members)
-        val result = SmartSet.create<MemberWithBaseScope<D>>()
-
-        while (queue.isNotEmpty()) {
-            val nextHandle = queue.first()
-
-            val conflictedHandles = SmartSet.create<MemberWithBaseScope<D>>()
-
-            val overridableGroup = extractBothWaysOverridable(nextHandle, queue, overrideChecker)
-
-            if (overridableGroup.size == 1 && conflictedHandles.isEmpty()) {
-                result.add(overridableGroup.single())
-                continue
-            }
-
-            val mostSpecific = selectMostSpecificMember(overridableGroup, returnTypeCalculator)
-
-            overridableGroup.filterNotTo(conflictedHandles) {
-                isMoreSpecific(mostSpecific.member, it.member, returnTypeCalculator)
-            }
-
-            if (conflictedHandles.isNotEmpty()) {
-                result.addAll(conflictedHandles)
-            }
-
-            result.add(mostSpecific)
-        }
-        return result
-    }
-
     fun <D : FirCallableSymbol<*>> createOverridableGroups(
         members: Collection<MemberWithBaseScope<D>>,
         overrideChecker: FirOverrideChecker
@@ -104,92 +63,112 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         return result
     }
 
-    fun <D : FirCallableSymbol<*>> selectMostSpecificMember(
-        overridables: Collection<MemberWithBaseScope<D>>,
+    fun <D : FirCallableSymbol<*>> selectMostSpecificMembers(
+        overridables: List<MemberWithBaseScope<D>>,
         returnTypeCalculator: ReturnTypeCalculator
-    ): MemberWithBaseScope<D> {
+    ): List<MemberWithBaseScope<D>> {
         require(overridables.isNotEmpty()) { "Should have at least one overridable symbol" }
         if (overridables.size == 1) {
-            return overridables.first()
+            return overridables
         }
 
-        val candidates: MutableCollection<MemberWithBaseScope<D>> = ArrayList(2)
-        var transitivelyMostSpecific: MemberWithBaseScope<D> = overridables.first()
-
-        for (candidate in overridables) {
-            if (overridables.all { isMoreSpecific(candidate.member, it.member, returnTypeCalculator) }) {
-                candidates.add(candidate)
+        val maximums: MutableList<MemberWithBaseScopeAndReturnType<D>> = ArrayList(2)
+        skipCandidate@ for (candidate in overridables) {
+            val withReturnType = MemberWithBaseScopeAndReturnType(candidate, returnTypeCalculator)
+            // 1. Remove those members that are less specific than the current one;
+            // 2. Add this member if none of the existing ones are more or equally specific.
+            // The former, at least in theory, implies the latter, otherwise `compare` does not
+            // define a correct partial order (there are a and b such that a < candidate < b, but
+            // not a < b), so `skip = true` is equivalent to `continue`.
+            var skip = false
+            val toRemove = BooleanArray(maximums.size) { i ->
+                val c = maximums[i].compareTo(withReturnType) ?: return@BooleanArray false
+                if (c >= 0) {
+                    skip = true
+                }
+                c < 0
             }
-
-            if (isMoreSpecific(candidate.member, transitivelyMostSpecific.member, returnTypeCalculator) &&
-                !isMoreSpecific(transitivelyMostSpecific.member, candidate.member, returnTypeCalculator)
-            ) {
-                transitivelyMostSpecific = candidate
+            maximums.removeFlagged(toRemove)
+            if (!skip) {
+                maximums.add(withReturnType)
             }
         }
+        return maximums.map { it.memberWithBaseScope }
+    }
 
-        return when {
-            candidates.isEmpty() -> transitivelyMostSpecific
-            candidates.size == 1 -> candidates.first()
-            else -> {
-                candidates.firstOrNull {
-                    val type = it.member.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-                    type != null && type !is ConeFlexibleType
-                }?.let { return it }
-                candidates.first()
+    private fun <E> MutableList<E>.removeFlagged(flags: BooleanArray) {
+        var dest = 0
+        for (i in flags.indices) {
+            if (!flags[i]) {
+                this[dest++] = this[i]
             }
+        }
+        while (size > dest) {
+            removeLast()
         }
     }
 
-    private fun isMoreSpecific(
-        a: FirCallableSymbol<*>,
-        b: FirCallableSymbol<*>,
+    private class MemberWithBaseScopeAndReturnType<out D : FirCallableSymbol<*>>(
+        val memberWithBaseScope: MemberWithBaseScope<D>,
         returnTypeCalculator: ReturnTypeCalculator
-    ): Boolean {
-        val aFir = a.fir
-        val bFir = b.fir
+    ) {
+        val returnType: ConeKotlinType? = returnTypeCalculator.tryCalculateReturnTypeOrNull(memberWithBaseScope.member.fir)?.type
+    }
 
-        if (!isVisibilityMoreSpecific(aFir.visibility, bFir.visibility)) return false
+    private fun MemberWithBaseScopeAndReturnType<*>.compareTo(other: MemberWithBaseScopeAndReturnType<*>): Int? {
+        fun merge(preferA: Boolean, preferB: Boolean, previous: Int): Int? = when {
+            preferA == preferB -> previous
+            preferA && previous >= 0 -> 1
+            preferB && previous <= 0 -> -1
+            else -> null
+        }
 
-        val substitutor = buildSubstitutorForOverridesCheck(aFir, bFir, session) ?: return false
+        val aFir = memberWithBaseScope.member.fir
+        val bFir = other.memberWithBaseScope.member.fir
+        val byVisibility = Visibilities.compare(aFir.visibility, bFir.visibility) ?: 0
+
+        val substitutor = buildSubstitutorForOverridesCheck(aFir, bFir, session) ?: return null
         // NB: these lines throw CCE in modularized tests when changed to just .coneType (FirImplicitTypeRef)
-        val aReturnType = returnTypeCalculator.tryCalculateReturnTypeOrNull(a.fir)?.type?.let(substitutor::substituteOrSelf) ?: return false
-        val bReturnType = returnTypeCalculator.tryCalculateReturnTypeOrNull(b.fir)?.type ?: return false
+        //  See also KT-41917 and the corresponding test (compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/kt41917.kt)
+        val aReturnType = returnType?.let(substitutor::substituteOrSelf) ?: return null
+        val bReturnType = other.returnType ?: return null
 
         val typeCheckerState = session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
+        val aSubtypesB = AbstractTypeChecker.isSubtypeOf(typeCheckerState, aReturnType, bReturnType)
+        val bSubtypesA = AbstractTypeChecker.isSubtypeOf(typeCheckerState, bReturnType, aReturnType)
+        val byVisibilityAndType = when {
+            // Could be that one of them is flexible, in which case the types are not equal but still subtypes of one another;
+            // make the inflexible one more specific.
+            aSubtypesB && bSubtypesA -> merge(aReturnType !is ConeFlexibleType, bReturnType !is ConeFlexibleType, byVisibility)
+                ?: return null
 
-        if (aFir is FirSimpleFunction) {
-            require(bFir is FirSimpleFunction) { "b is " + b.javaClass }
-            return isTypeMoreSpecific(aReturnType, bReturnType, typeCheckerState)
+            aSubtypesB && byVisibility >= 0 -> 1
+            bSubtypesA && byVisibility <= 0 -> -1
+            else -> return null // unorderable by types, or visibility disagrees
         }
-        if (aFir is FirProperty) {
-            require(bFir is FirProperty) { "b is " + b.javaClass }
 
-            if (!isAccessorMoreSpecific(aFir.setter, bFir.setter)) return false
-
-            return if (aFir.isVar && bFir.isVar) {
-                AbstractTypeChecker.equalTypes(typeCheckerState, aReturnType, bReturnType)
-            } else { // both vals or var vs val: val can't be more specific then var
-                !(!aFir.isVar && bFir.isVar) && isTypeMoreSpecific(aReturnType, bReturnType, typeCheckerState)
+        return when (aFir) {
+            is FirSimpleFunction -> {
+                require(bFir is FirSimpleFunction) { "b is " + bFir.javaClass }
+                byVisibilityAndType
             }
+
+            is FirProperty -> {
+                require(bFir is FirProperty) { "b is " + bFir.javaClass }
+                // At least one of `subtypes` is true here, so `!xSubtypesY` implies `ySubtypesX`, meaning y's type
+                // is a *strict* subtype of x's. Vars are more specific than vals, so if one is a var and another
+                // has a strict subtype, then they are unorderable - one is a val with a more specific type than
+                // the other var, or both are vars of different types.
+                if (aFir.isVar && !aSubtypesB) return null
+                if (bFir.isVar && !bSubtypesA) return null
+                merge(aFir.isVar, bFir.isVar, byVisibilityAndType)
+            }
+
+            else -> throw IllegalArgumentException("Unexpected callable: " + aFir.javaClass)
         }
-        throw IllegalArgumentException("Unexpected callable: " + a.javaClass)
-    }
-
-    private fun isTypeMoreSpecific(a: ConeKotlinType, b: ConeKotlinType, typeCheckerState: TypeCheckerState): Boolean =
-        AbstractTypeChecker.isSubtypeOf(typeCheckerState, a, b)
-
-    private fun isAccessorMoreSpecific(a: FirPropertyAccessor?, b: FirPropertyAccessor?): Boolean {
-        if (a == null || b == null) return true
-        return isVisibilityMoreSpecific(a.visibility, b.visibility)
-    }
-
-    private fun isVisibilityMoreSpecific(a: Visibility, b: Visibility): Boolean {
-        val result = Visibilities.compare(a, b)
-        return result == null || result >= 0
     }
 }
 

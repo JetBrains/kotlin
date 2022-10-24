@@ -29,7 +29,7 @@ public actual annotation class ThreadLocal
  * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
  *
  * Since 1.7.20 usage of this annotation is deprecated.
- * See https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#freezing-deprecation for details.
+ * See https://kotlinlang.org/docs/native-migration-guide.html for details.
  */
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)

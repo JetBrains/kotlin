@@ -71,14 +71,14 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 "Divides this value by the other value, flooring the result to an integer that is closer to negative infinity."
             "rem" -> {
                 """
-                Calculates the remainder of truncating division of this value by the other value.
+                Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
                 
                 The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
                 """.trimIndent()
             }
             "mod" -> {
                 """
-                Calculates the remainder of flooring division of this value by the other value.
+                Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
 
                 The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
                 """.trimIndent() + if (operand1.isFloatingPoint)

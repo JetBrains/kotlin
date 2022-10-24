@@ -12,12 +12,10 @@ import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
@@ -99,11 +97,6 @@ class KotlinRootNpmResolver internal constructor(
         get() = compositeNodeModulesProvider.get()
 
     @Transient
-    private val plugins_: MutableList<RootResolverPlugin>? = mutableListOf<RootResolverPlugin>().also {
-        it.add(DukatRootResolverPlugin(forceFullResolve))
-    }
-
-    @Transient
     private val projectResolvers_: MutableMap<String, KotlinProjectNpmResolver>? = mutableMapOf()
 
     @Transient
@@ -129,7 +122,6 @@ class KotlinRootNpmResolver internal constructor(
             KotlinRootNpmResolverStateHolder::class.qualifiedName,
             KotlinRootNpmResolverStateHolder::class.java
         ) { service ->
-            service.parameters.plugins.set(plugins_)
             service.parameters.projectResolvers.set(projectResolvers_)
             service.parameters.packageManager.set(nodeJs_.packageManager)
             service.parameters.yarnEnvironment.set(yarnEnvironment_?.get())
@@ -156,9 +148,6 @@ class KotlinRootNpmResolver internal constructor(
             stateHolder.initialized = true
             return projResolvers
         }
-
-    internal val plugins
-        get() = plugins_ ?: resolverStateHolder.get().parameters.plugins.get()
 
     private val projectResolvers
         get() = projectResolvers_ ?: configurationCacheProjectResolvers
@@ -302,12 +291,6 @@ class KotlinRootNpmResolver internal constructor(
                 )
 
                 return KotlinRootNpmResolution(rootProject, projectResolutions)
-            }
-        }
-
-        internal fun closePlugins(resolution: KotlinRootNpmResolution) {
-            plugins.forEach {
-                it.close(resolution)
             }
         }
     }

@@ -286,38 +286,63 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         return SendKotlinObjectToJsAdapter(this)
     }
 
+    private fun createNullableAdapter(notNullType: IrType, isPrimitive: Boolean, valueAdapter: InteropTypeAdapter?): InteropTypeAdapter? {
+        return if (isPrimitive) { //nullable primitive should be checked and adapt to target type
+            val externRefToPrimitiveAdapter = when (notNullType) {
+                builtIns.floatType -> adapters.externRefToKotlinFloatAdapter.owner
+                builtIns.doubleType -> adapters.externRefToKotlinDoubleAdapter.owner
+                builtIns.longType -> adapters.externRefToKotlinLongAdapter.owner
+                builtIns.booleanType -> adapters.externRefToKotlinBooleanAdapter.owner
+                else -> adapters.externRefToKotlinIntAdapter.owner
+            }
+            val externalToPrimitiveAdapter = FunctionBasedAdapter(externRefToPrimitiveAdapter)
+            NullOrAdapter(
+                adapter = valueAdapter?.let { CombineAdapter(it, externalToPrimitiveAdapter) } ?: externalToPrimitiveAdapter
+            )
+        } else { //nullable reference should not be checked
+            val nullableValueAdapter = valueAdapter?.let(::NullOrAdapter)
+            if (isExternalType(notNullType)) {
+                val undefinedToNullAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
+                nullableValueAdapter
+                    ?.let { CombineAdapter(it, undefinedToNullAdapter) }
+                    ?: undefinedToNullAdapter
+            } else {
+                nullableValueAdapter
+            }
+        }
+    }
+
+    private fun createNotNullAdapter(notNullType: IrType, isPrimitive: Boolean, valueAdapter: InteropTypeAdapter?): InteropTypeAdapter? {
+        // !nullable primitive checked by wasm signature
+        if (isPrimitive) return valueAdapter
+
+        // !nullable reference should be null checked
+        // notNullAdapter((undefined -> null)!!)
+        val nullCheckedValueAdapter = valueAdapter?.let(::CheckNotNullAndAdapter)
+            ?: CheckNotNullNoAdapter(notNullType)
+
+        // kotlin types could not take undefined value so just take null-checked value
+        if (!isExternalType(notNullType)) return nullCheckedValueAdapter
+
+        // js value should convert undefined into null and the null-checked
+        return CombineAdapter(
+            outerAdapter = nullCheckedValueAdapter,
+            innerAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
+        )
+    }
+
     private fun IrType.jsToKotlinAdapterIfNeeded(isReturn: Boolean): InteropTypeAdapter? {
         if (isReturn && this == builtIns.unitType)
             return null
 
         val notNullType = makeNotNull()
-        val notNullAdapter = notNullType.jsToKotlinAdapterIfNeededNotNullable(isReturn)
-        val isPrimitive = notNullAdapter?.fromType?.isPrimitiveType() ?: notNullType.isPrimitiveType()
+        val valueAdapter = notNullType.jsToKotlinAdapterIfNeededNotNullable(isReturn)
+        val isPrimitive = valueAdapter?.fromType?.isPrimitiveType() ?: notNullType.isPrimitiveType()
 
-        return if (isNullable()) {
-            if (isPrimitive) { //nullable primitive should be checked and adapt to target type
-                val externRefToPrimitiveAdapter = when (notNullType) {
-                    builtIns.floatType -> adapters.externRefToKotlinFloatAdapter.owner
-                    builtIns.doubleType -> adapters.externRefToKotlinDoubleAdapter.owner
-                    builtIns.longType -> adapters.externRefToKotlinLongAdapter.owner
-                    builtIns.booleanType -> adapters.externRefToKotlinBooleanAdapter.owner
-                    else -> adapters.externRefToKotlinIntAdapter.owner
-                }
-                val externalToPrimitiveAdapter = FunctionBasedAdapter(externRefToPrimitiveAdapter)
-                NullOrAdapter(
-                    adapter = notNullAdapter?.let { CombineAdapter(it, externalToPrimitiveAdapter) } ?: externalToPrimitiveAdapter
-                )
-            } else { //nullable reference should not be checked
-                notNullAdapter?.let(::NullOrAdapter)
-            }
-        } else {
-            if (isPrimitive) { // !nullable primitive checked by wasm signature
-                notNullAdapter
-            } else { // !nullable reference should be null checked
-                notNullAdapter?.let(::CheckNotNullAndAdapter)
-                    ?: CheckNotNullNoAdapter(this)
-            }
-        }
+        return if (isNullable())
+            createNullableAdapter(notNullType, isPrimitive, valueAdapter)
+        else
+            createNotNullAdapter(notNullType, isPrimitive, valueAdapter)
     }
 
     private fun IrType.jsToKotlinAdapterIfNeededNotNullable(isReturn: Boolean): InteropTypeAdapter? {
@@ -667,13 +692,22 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     /**
      * Current V8 Wasm GC mandates dataref type instead of structs and arrays
      */
+
+    /**
+     * Effectively `value!!`
+     */
     inner class CheckNotNullNoAdapter(type: IrType) : InteropTypeAdapter {
         override val fromType: IrType = type.makeNullable()
         override val toType: IrType = type.makeNotNull()
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
-            return builder.irCall(context.irBuiltIns.checkNotNullSymbol).also {
-                it.putValueArgument(0, expression)
-                it.putTypeArgument(0, fromType)
+            return builder.irComposite {
+                val tmp = irTemporary(expression)
+                +irIfNull(
+                    type = toType,
+                    subject = irGet(tmp),
+                    thenPart = builder.irCall(symbols.throwNullPointerException),
+                    elsePart = irGet(tmp)
+                )
             }
         }
     }

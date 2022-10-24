@@ -931,6 +931,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/annotatedLocalClass.kt");
         }
 
+        @TestMetadata("anonymousObjectInUnreachableCode.kt")
+        public void testAnonymousObjectInUnreachableCode() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/anonymousObjectInUnreachableCode.kt");
+        }
+
         @TestMetadata("binaryOperations.kt")
         public void testBinaryOperations() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/binaryOperations.kt");
@@ -3028,6 +3033,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
 
         public void testAllFilesPresentInProperties() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("getterWithEarlyReturn.kt")
+        public void testGetterWithEarlyReturn() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properties/getterWithEarlyReturn.kt");
         }
 
         @TestMetadata("javaAccessorConversion.kt")

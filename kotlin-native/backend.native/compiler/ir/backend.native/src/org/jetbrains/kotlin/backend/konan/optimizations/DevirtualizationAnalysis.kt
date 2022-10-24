@@ -1446,9 +1446,7 @@ internal object DevirtualizationAnalysis {
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val function = expression.symbol.owner
-                val type = if (callee.isSuspend)
-                               context.irBuiltIns.anyNType
-                           else function.returnType
+                val type = function.returnType
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
                 irBuilder.run {
                     val dispatchReceiver = expression.dispatchReceiver!!

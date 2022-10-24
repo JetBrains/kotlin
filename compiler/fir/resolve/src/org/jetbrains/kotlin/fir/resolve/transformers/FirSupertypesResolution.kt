@@ -8,26 +8,28 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterSupertype
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.createImportingScopes
-import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
@@ -40,10 +42,11 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) :
     FirTransformerBasedResolveProcessor(session, scopeSession) {
@@ -65,7 +68,7 @@ open class FirSupertypeResolverTransformer(
     protected val supertypeComputationSession = SupertypeComputationSession()
 
     private val supertypeResolverVisitor = FirSupertypeResolverVisitor(session, supertypeComputationSession, scopeSession)
-    private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
+    private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession)
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
@@ -101,13 +104,16 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
     this.accept(supertypeResolverVisitor, null)
     supertypeComputationSession.breakLoops(session)
 
-    val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
+    val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession)
     return this.transform<F, Nothing?>(applySupertypesTransformer, null)
 }
 
 open class FirApplySupertypesTransformer(
-    private val supertypeComputationSession: SupertypeComputationSession
+    private val supertypeComputationSession: SupertypeComputationSession,
+    private val session: FirSession,
+    private val scopeSession: ScopeSession
 ) : FirDefaultTransformer<Any?>() {
+
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
@@ -133,7 +139,10 @@ open class FirApplySupertypesTransformer(
             // TODO: Replace with an immutable version or transformer
             firClass.replaceSuperTypeRefs(supertypeRefs)
         }
+
+        session.platformSupertypeUpdater?.updateSupertypesIfNeeded(firClass, scopeSession)
     }
+
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
         applyResolvedSupertypesToClass(anonymousObject)
@@ -318,7 +327,7 @@ open class FirSupertypeResolverVisitor(
                     else -> scopeForLocalClass ?: return persistentListOf()
                 }
             }
-            classLikeDeclaration.safeAs<FirRegularClass>()?.isCompanion == true -> {
+            (classLikeDeclaration as? FirRegularClass)?.isCompanion == true -> {
                 val outerClassFir = classId.outerClassId?.let { getFirClassifierByFqName(classModuleSession, it) } as? FirRegularClass
                 prepareScopeForCompanion(outerClassFir ?: return persistentListOf())
             }

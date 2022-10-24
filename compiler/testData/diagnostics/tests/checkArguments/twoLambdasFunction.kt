@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 fun test(x: () -> Unit, y: () -> Unit) {

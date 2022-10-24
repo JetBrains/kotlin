@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -115,13 +114,29 @@ internal class SymbolLightFieldForProperty(
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    private val _initializer by lazyPub {
+    private val _initializerValue by lazyPub {
         if (propertySymbol !is KtKotlinPropertySymbol) return@lazyPub null
-        val constInitializer = propertySymbol.initializer as? KtConstantInitializerValue ?: return@lazyPub null
-        (constInitializer.constant as? KtConstantValue)?.createPsiLiteral(this)
+        (propertySymbol.initializer as? KtConstantInitializerValue)?.constant
+    }
+
+    private val _initializer by lazyPub {
+        _initializerValue?.createPsiLiteral(this)
     }
 
     override fun getInitializer(): PsiExpression? = _initializer
+
+    private val _constantValue by lazyPub {
+        _initializerValue?.value?.takeIf {
+            // val => final
+            propertySymbol.isVal &&
+                    // NB: not as?, since _initializerValue already checks that
+                    (propertySymbol as KtKotlinPropertySymbol).isConst &&
+                    // javac rejects all non-primitive and non String constants
+                    (propertySymbol.returnType.isPrimitive || propertySymbol.returnType.isString)
+        }
+    }
+
+    override fun computeConstantValue(): Any? = _constantValue
 
     override fun equals(other: Any?): Boolean =
         this === other ||

@@ -6,23 +6,23 @@
 package org.jetbrains.kotlin.gradle.targets.native
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.runOnceAfterEvaluated
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
-internal class NativeCompilerOptions(
+class NativeCompilerOptions(
     project: Project,
-    nativeLanguageSettings: LanguageSettings
-) : HasCompilerOptions<CompilerCommonOptions> {
-    override val options: CompilerCommonOptions = project.objects
-        .newInstance(CompilerCommonOptionsDefault::class.java)
+    private val nativeLanguageSettings: LanguageSettings
+) : HasCompilerOptions<KotlinCommonCompilerOptions> {
+    override val options: KotlinCommonCompilerOptions = project.objects
+        .newInstance(KotlinCommonCompilerOptionsDefault::class.java)
         .apply {
             useK2.finalizeValue()
-            project.runOnceAfterEvaluated("apply Kotlin native properties from language settings") {
-                applyLanguageSettingsToCompilerOptions(nativeLanguageSettings, this)
-            }
         }
+
+    fun syncLanguageSettings() {
+        applyLanguageSettingsToCompilerOptions(nativeLanguageSettings, options)
+    }
 }

@@ -105,7 +105,11 @@ class MemberScopeTowerLevel(
         }
 
         if (givenExtensionReceiverOptions.isEmpty()) {
-            val withSynthetic = FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(session, scope)
+            val withSynthetic = FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
+                session,
+                dispatchReceiverValue.type,
+                scope
+            )
             withSynthetic?.processScopeMembers { symbol ->
                 empty = false
                 output.consumeCandidate(symbol, dispatchReceiverValue, givenExtensionReceiverOptions = emptyList(), scope)

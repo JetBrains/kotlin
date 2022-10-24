@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
 
     val compatibleAndroidGradlePluginVersionRange = AndroidGradlePluginVersionRange(
-        minSupportedVersion = AndroidGradlePluginVersionRange.Version(4, 0),
+        minSupportedVersion = AndroidGradlePluginVersionRange.Version(4, 1),
         maxSupportedVersion = AndroidGradlePluginVersionRange.Version(7, 3)
     )
 

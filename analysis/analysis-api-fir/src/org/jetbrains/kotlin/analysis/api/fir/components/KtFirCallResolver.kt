@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.calls.*
+import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
@@ -71,6 +72,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -86,29 +88,38 @@ internal class KtFirCallResolver(
         result
     }
 
-    override fun resolveCall(psi: KtElement): KtCallInfo? = wrapError(psi) {
-        val ktCallInfos = getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-            listOfNotNull(
-                toKtCallInfo(
-                    psiToResolve,
-                    resolveCalleeExpressionOfFunctionCall,
-                    resolveFragmentOfCall
-                )
+    override fun resolveCall(psi: KtElement): KtCallInfo? {
+        return wrapError(psi) {
+            val ktCallInfos = getCallInfo(
+                psi,
+                getErrorCallInfo = { psiToResolve ->
+                    listOf(KtErrorCallInfo(emptyList(), createKtDiagnostic(psiToResolve), token))
+                },
+                getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+                    listOfNotNull(
+                        toKtCallInfo(
+                            psiToResolve,
+                            resolveCalleeExpressionOfFunctionCall,
+                            resolveFragmentOfCall
+                        )
+                    )
+                }
             )
+            check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
+            ktCallInfos.singleOrNull()
         }
-        check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
-        ktCallInfos.singleOrNull()
     }
 
     private inline fun <T> getCallInfo(
         psi: KtElement,
+        getErrorCallInfo: FirDiagnosticHolder.(psiToResolve: KtElement) -> List<T>,
         getCallInfo: FirElement.(
             psiToResolve: KtElement,
             resolveCalleeExpressionOfFunctionCall: Boolean,
             resolveFragmentOfCall: Boolean
         ) -> List<T>
     ): List<T> {
-        if (psi.isNotResolvable()) return emptyList()
+        if (!canBeResolvedAsCall(psi)) return emptyList()
 
         val containingCallExpressionForCalleeExpression = psi.getContainingCallExpressionForCalleeExpression()
         val containingBinaryExpressionForLhs = psi.getContainingBinaryExpressionForIncompleteLhs()
@@ -119,6 +130,9 @@ internal class KtFirCallResolver(
             ?: containingUnaryExpressionForIncOrDec
             ?: psi
         val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
+        if (fir is FirDiagnosticHolder) {
+            return fir.getErrorCallInfo(psiToResolve)
+        }
         return fir.getCallInfo(
             psiToResolve,
             psiToResolve == containingCallExpressionForCalleeExpression,
@@ -161,8 +175,7 @@ internal class KtFirCallResolver(
                     }
                     is FirErrorNamedReference -> {
                         val diagnostic = calleeReference.diagnostic
-                        val ktDiagnostic = (source?.let { diagnostic.asKtDiagnostic(it, psi.toKtPsiSourceElement()) }
-                            ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token))
+                        val ktDiagnostic = calleeReference.createKtDiagnostic(psi)
 
                         if (diagnostic is ConeHiddenCandidateError)
                             return KtErrorCallInfo(emptyList(), ktDiagnostic, token)
@@ -791,13 +804,17 @@ internal class KtFirCallResolver(
     }
 
     override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> = wrapError(psi) {
-        getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-            collectCallCandidates(
-                psiToResolve,
-                resolveCalleeExpressionOfFunctionCall,
-                resolveFragmentOfCall
-            )
-        }
+        getCallInfo(
+            psi,
+            getErrorCallInfo = { emptyList() },
+            getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+                collectCallCandidates(
+                    psiToResolve,
+                    resolveCalleeExpressionOfFunctionCall,
+                    resolveFragmentOfCall
+                )
+            }
+        )
     }
 
     // TODO: Refactor common code with FirElement.toKtCallInfo() when other FirResolvables are handled
@@ -1182,5 +1199,10 @@ internal class KtFirCallResolver(
             }
         }
 
+    }
+
+    private fun FirDiagnosticHolder.createKtDiagnostic(psi: KtElement?): KtDiagnostic {
+        return (source?.let { diagnostic.asKtDiagnostic(it, psi?.toKtPsiSourceElement()) }
+            ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token))
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -19,6 +20,13 @@ public interface SerializationErrors {
     DiagnosticFactory0<PsiElement> ANONYMOUS_OBJECTS_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INNER_CLASSES_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
 
+
+    DiagnosticFactory1<PsiElement, ClassDescriptor> COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED = DiagnosticFactory1.create(WARNING);
+
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS = DiagnosticFactory2.create(WARNING);
+
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS = DiagnosticFactory2.create(WARNING);
+
     DiagnosticFactory0<PsiElement> EXPLICIT_SERIALIZABLE_IS_REQUIRED = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<KtAnnotationEntry> SERIALIZABLE_ANNOTATION_IGNORED = DiagnosticFactory0.create(ERROR);
@@ -31,6 +39,8 @@ public interface SerializationErrors {
     DiagnosticFactory3<PsiElement, KotlinType, KotlinType, KotlinType> SERIALIZER_TYPE_INCOMPATIBLE = DiagnosticFactory3.create(WARNING);
     DiagnosticFactory1<PsiElement, KotlinType> LOCAL_SERIALIZER_USAGE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<PsiElement> GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> TRANSIENT_IS_REDUNDANT = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> JSON_FORMAT_REDUNDANT_DEFAULT = DiagnosticFactory0.create(WARNING);

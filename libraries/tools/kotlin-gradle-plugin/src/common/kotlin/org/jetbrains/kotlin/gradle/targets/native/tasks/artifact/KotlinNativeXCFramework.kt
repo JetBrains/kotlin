@@ -9,10 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeXCFramework
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeXCFrameworkConfig
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -73,7 +70,7 @@ class KotlinNativeXCFrameworkImpl(
     @Suppress("DEPRECATION")
     @Deprecated("Replaced by toolOptionsConfigure", replaceWith = ReplaceWith("toolOptionsConfigure"))
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
-    override val toolOptionsConfigure: CompilerCommonToolOptions.() -> Unit,
+    override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
     override val embedBitcode: BitcodeEmbeddingMode?,
@@ -110,7 +107,7 @@ class KotlinNativeXCFrameworkImpl(
                     taskNameSuffix = nameSuffix
                 )
                 holder.task.dependsOn(targetTask)
-                val frameworkFileProvider = targetTask.map { it.outputFile }
+                val frameworkFileProvider = targetTask.flatMap { it.outputFile }
                 val descriptor = FrameworkDescriptor(frameworkFileProvider.get(), isStatic, target)
 
                 val group = AppleTarget.values().firstOrNull { it.targets.contains(target) }

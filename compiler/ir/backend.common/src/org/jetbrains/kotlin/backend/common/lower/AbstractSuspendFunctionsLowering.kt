@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -18,8 +16,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -33,9 +31,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected abstract val stateMachineMethodName: Name
     protected abstract fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol
     protected abstract fun nameForCoroutineClass(function: IrFunction): Name
-    protected abstract fun IrBuilderWithScope.launchSuspendFunctionWithGivenContinuation(
-        symbol: IrSimpleFunctionSymbol, superQualifierSymbol: IrClassSymbol?, dispatchReceiver: IrExpression,
-        arguments: List<IrExpression>, continuation: IrExpression) : IrExpression
 
     protected abstract fun buildStateMachine(
         stateMachineFunction: IrFunction,
@@ -57,106 +52,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         markSuspendLambdas(irFile)
         buildCoroutines(irFile)
         transformCallableReferencesToSuspendLambdas(irFile)
-        addMissingSupertypesToSuspendFunctionImplementingClasses(irFile)
-    }
-
-    private fun addMissingSupertypesToSuspendFunctionImplementingClasses(irFile: IrFile) {
-        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                // Don't need to iterate through children. All local classes are already moved to the top level by this moment.
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                addMissingSupertypes(declaration)
-                declaration.acceptChildrenVoid(this)
-            }
-
-
-            private fun addMissingSupertypes(clazz: IrClass) {
-                val suspendFunctionTypes = getAllSubstitutedSupertypes(clazz).filter {
-                    // SuspendFunction class is some hack in old Kotlin/Native compiler versions.
-                    // It's not used now, but is considered as SuspendFunction-like class in isSuspendFunction util,
-                    // if found in old klib. We need just to ignore it.
-                    it.isSuspendFunction() && it.classOrNull?.owner?.name?.toString() != "SuspendFunction"
-                }.toSet()
-
-                for (suspendFunctionType in suspendFunctionTypes) {
-                    val suspendFunctionClassSymbol = suspendFunctionType.classOrNull ?: continue
-                    val suspendFunction = suspendFunctionClassSymbol.owner.simpleFunctions().single {
-                        it.name == OperatorNameConventions.INVOKE
-                    }
-
-                    val invokeFunction = clazz.simpleFunctions().single {
-                        it.name == OperatorNameConventions.INVOKE && it.overrides(suspendFunction)
-                    }
-
-                    if (invokeFunction.modality == Modality.ABSTRACT) {
-                        continue
-                    }
-
-                    val suspendFunctionArity = suspendFunction.valueParameters.size
-                    val functionClassSymbol = symbols.functionN(suspendFunctionArity + 1)
-                    val functionSymbol = functionClassSymbol.owner.simpleFunctions().single {
-                        it.name == OperatorNameConventions.INVOKE
-                    }.symbol
-
-                    val functionClassTypeArguments = suspendFunctionType.arguments.mapIndexed { index, argument ->
-                        val type = (argument as IrTypeProjection).type
-                        if (index == suspendFunctionArity) continuationClassSymbol.typeWith(type) else type
-                    } + context.irBuiltIns.anyNType
-
-                    val functionType = functionClassSymbol.typeWith(functionClassTypeArguments)
-
-                    clazz.superTypes += functionType
-
-                    context.irFactory.buildFun {
-                        startOffset = SYNTHETIC_OFFSET
-                        endOffset = SYNTHETIC_OFFSET
-                        origin = DECLARATION_ORIGIN_COROUTINE_IMPL
-                        name = OperatorNameConventions.INVOKE
-                        visibility = DescriptorVisibilities.PROTECTED
-                        returnType = context.irBuiltIns.anyNType
-                    }.apply {
-                        parent = clazz
-                        clazz.declarations += this
-
-                        typeParameters = invokeFunction.typeParameters.map { parameter ->
-                            parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
-                                .apply { superTypes += parameter.superTypes }
-                        }
-
-                        valueParameters = invokeFunction.valueParameters
-                            .mapIndexed { index, parameter ->
-                                parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
-                            }
-                        valueParameters += buildValueParameter(this) {
-                            index = valueParameters.size
-                            type = context.irBuiltIns.anyNType
-                            name = "completion".synthesizedName
-                        }
-
-                        this.createDispatchReceiverParameter()
-
-                        overriddenSymbols += functionSymbol
-
-                        val thisReceiver = dispatchReceiverParameter!!
-
-                        val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
-                        body = irBuilder.irBlockBody(startOffset, endOffset) {
-                            +irReturn(
-                                launchSuspendFunctionWithGivenContinuation(
-                                    invokeFunction.symbol,
-                                    superQualifierSymbol = invokeFunction.parentAsClass.symbol, // Call non-virtually.
-                                    irGet(thisReceiver),
-                                    valueParameters.dropLast(1).map { irGet(it) },
-                                    irGet(valueParameters.last())
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        })
     }
 
     private fun buildCoroutines(irFile: IrFile) {
@@ -417,7 +312,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction, coroutineClass)
 
             var coroutineFactoryConstructor: IrConstructor? = null
-            val createMethod: IrSimpleFunction?
+            val ignoredParentSymbols = mutableListOf<IrSymbol>()
             if (functionReference != null) {
                 // Suspend lambda - create factory methods.
                 coroutineFactoryConstructor = buildFactoryConstructor(boundFunctionParameters!!)
@@ -426,24 +321,29 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     .atMostOne { it.name == CREATE_IDENTIFIER && it.valueParameters.size == unboundFunctionParameters!!.size + 1 }
                     ?.symbol
 
-                createMethod = buildCreateMethod(
+                val createMethod = buildCreateMethod(
                     unboundArgs = unboundFunctionParameters!!,
                     superFunctionSymbol = createFunctionSymbol,
                     coroutineConstructor = coroutineConstructor
                 )
 
-                val suspendInvokeFunction =
-                    suspendFunctionClass!!.simpleFunctions().single { it.name == OperatorNameConventions.INVOKE }
+                val transformedSuspendInvokeFunction = suspendFunctionClass!!.simpleFunctions().single { it.name == OperatorNameConventions.INVOKE }
+                val originalSuspendInvokeFunction = context.mapping.functionWithContinuationsToSuspendFunctions[transformedSuspendInvokeFunction] ?: transformedSuspendInvokeFunction
+
+                ignoredParentSymbols.add(transformedSuspendInvokeFunction.symbol)
 
                 buildInvokeMethod(
-                    functionInvokeFunction = suspendInvokeFunction,
+                    functionInvokeFunction = originalSuspendInvokeFunction,
                     createFunction = createMethod,
                     stateMachineFunction = invokeSuspendMethod,
                 )
             }
 
             coroutineClass.superTypes += superTypes
-            coroutineClass.addFakeOverrides(context.typeSystem)
+            coroutineClass.addFakeOverrides(
+                context.typeSystem,
+                ignoredParentSymbols = ignoredParentSymbols
+            )
 
             initializeStateMachine(coroutineConstructors, coroutineClassThis)
 
@@ -722,3 +622,5 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         private val CREATE_IDENTIFIER = Name.identifier("create")
     }
 }
+
+

@@ -1,3 +1,5 @@
+// !LANGUAGE: +CustomEqualsInInlineClasses
+
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class BackingFields(val x: Int) {
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val y<!> = 0
     var z: String
@@ -16,8 +18,8 @@ inline class ReversedMembers(val x: Int) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
 
-    override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(other: Any?) = true
-    override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>hashCode<!>() = 1
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS!>equals<!>(other: Any?) = true
+    override fun hashCode() = 1
 }
 
 inline class SecondaryConstructors(val x: Int) {

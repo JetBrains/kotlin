@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
 
 internal fun reportingSettings(rootProject: Project): ReportingSettings {
     val properties = PropertiesProvider(rootProject)
@@ -29,7 +31,7 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
 
     val httpReportSettings = if (buildReportOutputTypes.contains(BuildReportType.HTTP)) {
         val url = properties.buildReportHttpUrl
-            ?: throw IllegalStateException("Can't configure http report: '${properties.buildReportHttpUrlProperty}' property is mandatory")
+            ?: throw IllegalStateException("Can't configure http report: '$KOTLIN_BUILD_REPORT_HTTP_URL' property is mandatory")
         val password = properties.buildReportHttpPassword
         val user = properties.buildReportHttpUser
         HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment)
@@ -43,12 +45,13 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
         null
     }
 
+    val singleOutputFile = if (buildReportOutputTypes.contains(BuildReportType.SINGLE_FILE)) {
+        properties.buildReportSingleFile
+            ?: throw IllegalStateException("Can't configure single file report: '$KOTLIN_BUILD_REPORT_SINGLE_FILE' property is mandatory")
+    } else null
+
     //temporary solution. support old property
     val oldSingleBuildMetric = properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
-
-    val singleOutputFile = if (buildReportOutputTypes.contains(BuildReportType.SINGLE_FILE)) {
-        properties.buildReportSingleFile ?: oldSingleBuildMetric
-    } else null
 
     return ReportingSettings(
         buildReportMode = buildReportMode,
@@ -57,7 +60,7 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
         httpReportSettings = httpReportSettings,
         buildScanReportSettings = buildScanSettings,
         buildReportOutputs = buildReportOutputTypes,
-        singleOutputFile = singleOutputFile,
+        singleOutputFile = singleOutputFile ?: oldSingleBuildMetric,
     )
 }
 

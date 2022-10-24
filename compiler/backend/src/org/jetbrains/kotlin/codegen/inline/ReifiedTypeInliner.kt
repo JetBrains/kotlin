@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.extractReificationArgument
+import org.jetbrains.kotlin.codegen.extractUsedReifiedParameters
 import org.jetbrains.kotlin.codegen.generateAsCast
 import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.name.Name
@@ -147,9 +150,9 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         val result = ReifiedTypeParametersUsages()
         for (insn in instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
-                val newName: String? = processReifyMarker(insn as MethodInsnNode, instructions)
-                if (newName != null) {
-                    result.addUsedReifiedParameter(newName)
+                val newNames = processReifyMarker(insn as MethodInsnNode, instructions)
+                if (newNames != null) {
+                    result.mergeAll(newNames)
                 }
             }
         }
@@ -158,33 +161,34 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return result
     }
 
-    /**
-     * @return new type parameter identifier if this marker should be reified further
-     * or null if it shouldn't
-     */
-    private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): String? {
+    private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): ReifiedTypeParametersUsages? {
         val operationKind = insn.operationKind ?: return null
         val reificationArgument = insn.reificationArgument ?: return null
         val mapping = parametersMapping?.get(reificationArgument.parameterName) ?: return null
 
-        if (mapping.asmType != null) {
-            // process* methods return false if marker should be reified further
-            // or it's invalid (may be emitted explicitly in code)
-            // they return true if instruction is reified and marker can be deleted
-            val (asmType, type) = reify(reificationArgument, mapping.asmType, mapping.type)
-
-            val kotlinType = intrinsicsSupport.toKotlinType(type)
-
-            var processed = if (isPluginNext(insn)) processPlugin(insn, instructions, type) else false
-
-            if (!processed) processed = when (operationKind) {
+        val asmType = mapping.asmType.reify(reificationArgument)
+        val type = mapping.type.reify(reificationArgument)
+        // Runtime-available types on the JVM are:
+        //  1. Array<T?> for some runtime-available type T
+        //  2. C<*, ...> and C<*, ...>? for some classifier C
+        // `typeOf`-like intrinsics are special in that they can handle a bigger set of types, including
+        //  1. Array<T> where T is not nullable
+        //  2. C<A, B, ...> with non-star projections A, B, ...
+        // To properly support those cases, we need to partially reify them even if we don't know the entire type yet.
+        // Otherwise nullability on all but the innermost dimension of a multidimensional array will be lost,
+        // and reified type parameters used as arguments to classifier types will never be reified.
+        if (mapping.reificationArgument == null || operationKind == OperationKind.TYPE_OF) {
+            val processed = (isPluginNext(insn) && processPlugin(insn, instructions, type)) || when (operationKind) {
+                // TODO: if `process*` returns false, then the marked sequence is invalid - simply leaving the marker in place
+                //   will lead to an exception at runtime. What to do instead? Possible that the bytecode has been removed by
+                //   dead code elimination (e.g. result of `T::class.java` was unused) and now we only need to erase the marker.
                 OperationKind.NEW_ARRAY -> processNewArray(insn, asmType)
-                OperationKind.AS -> processAs(insn, instructions, kotlinType, asmType, safe = false)
-                OperationKind.SAFE_AS -> processAs(insn, instructions, kotlinType, asmType, safe = true)
-                OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
+                OperationKind.AS -> processAs(insn, instructions, type, asmType, safe = false)
+                OperationKind.SAFE_AS -> processAs(insn, instructions, type, asmType, safe = true)
+                OperationKind.IS -> processIs(insn, instructions, type, asmType)
                 OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
                 OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, asmType)
-                OperationKind.TYPE_OF -> processTypeOfOrPlugin(insn, instructions, type)
+                OperationKind.TYPE_OF -> processTypeOf(insn, instructions, type)
             }
 
             if (processed) {
@@ -192,24 +196,22 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
                 instructions.remove(insn.previous!!) // PUSH type parameter
                 instructions.remove(insn) // INVOKESTATIC marker method
             }
-
-            return null
         } else {
-            val newReificationArgument = reificationArgument.combine(mapping.reificationArgument!!)
+            val newReificationArgument = reificationArgument.combine(mapping.reificationArgument)
             instructions.set(insn.previous!!, LdcInsnNode(newReificationArgument.asString()))
-            return mapping.reificationArgument.parameterName
         }
+        return mapping.reifiedTypeParametersUsages
     }
 
-    private fun reify(argument: ReificationArgument, replacementAsmType: Type, type: KT): Pair<Type, KT> =
+    @Suppress("UNCHECKED_CAST")
+    private fun KT.reify(argument: ReificationArgument): KT =
         with(typeSystem) {
-            val arrayType = type.arrayOf(argument.arrayDepth)
-            @Suppress("UNCHECKED_CAST")
-            Pair(
-                Type.getType("[".repeat(argument.arrayDepth) + replacementAsmType),
-                (if (argument.nullable) arrayType.makeNullable() else arrayType) as KT
-            )
-        }
+            val withArrays = arrayOf(argument.arrayDepth)
+            if (argument.nullable) withArrays.makeNullable() else withArrays
+        } as KT
+
+    private fun Type.reify(argument: ReificationArgument): Type =
+        Type.getType("[".repeat(argument.arrayDepth) + this)
 
     private fun KotlinTypeMarker.arrayOf(arrayDepth: Int): KotlinTypeMarker {
         var currentType = this
@@ -228,14 +230,14 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     private fun processAs(
         insn: MethodInsnNode,
         instructions: InsnList,
-        kotlinType: KotlinType,
+        type: KT,
         asmType: Type,
         safe: Boolean
     ) = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, unifiedNullChecks)
+        generateAsCast(InstructionAdapter(newMethodNode), intrinsicsSupport.toKotlinType(type), asmType, safe, unifiedNullChecks)
 
         instructions.insert(insn, newMethodNode.instructions)
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
@@ -253,13 +255,13 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     private fun processIs(
         insn: MethodInsnNode,
         instructions: InsnList,
-        kotlinType: KotlinType,
+        type: KT,
         asmType: Type
     ) = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
+        generateIsCheck(InstructionAdapter(newMethodNode), intrinsicsSupport.toKotlinType(type), asmType)
 
         instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubInstanceOf)
@@ -269,7 +271,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return true
     }
 
-    private fun processTypeOfOrPlugin(
+    private fun processTypeOf(
         insn: MethodInsnNode,
         instructions: InsnList,
         type: KT
@@ -385,37 +387,43 @@ val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind?
             ReifiedTypeInliner.OperationKind.values().getOrNull(it)
         }
 
-class TypeParameterMappings<KT : KotlinTypeMarker> {
+class TypeParameterMappings<KT : KotlinTypeMarker>(
+    typeSystem: TypeSystemCommonBackendContext,
+    typeArguments: Map<out TypeParameterMarker, KT>,
+    allReified: Boolean,
+    mapType: (KT, BothSignatureWriter) -> Type
+) {
     private val mappingsByName = hashMapOf<String, TypeParameterMapping<KT>>()
 
-    fun addParameterMappingToType(name: String, type: KT, asmType: Type, signature: String, isReified: Boolean) {
-        mappingsByName[name] = TypeParameterMapping(
-            name, type, asmType, reificationArgument = null, signature = signature, isReified = isReified
-        )
-    }
-
-    fun addParameterMappingForFurtherReification(name: String, type: KT, reificationArgument: ReificationArgument, isReified: Boolean) {
-        mappingsByName[name] = TypeParameterMapping(
-            name, type, asmType = null, reificationArgument = reificationArgument, signature = null, isReified = isReified
-        )
+    init {
+        with(typeSystem) {
+            for ((parameter, type) in typeArguments.entries) {
+                val name = parameter.getName().identifier
+                val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
+                mappingsByName[name] = TypeParameterMapping(
+                    type, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
+                    typeSystem.extractReificationArgument(type)?.second,
+                    typeSystem.extractUsedReifiedParameters(type)
+                )
+            }
+        }
     }
 
     operator fun get(name: String): TypeParameterMapping<KT>? = mappingsByName[name]
 
     fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
 
-    internal inline fun forEach(l: (TypeParameterMapping<KT>) -> Unit) {
-        mappingsByName.values.forEach(l)
-    }
+    internal inline fun forEach(block: (String, TypeParameterMapping<KT>) -> Unit) =
+        mappingsByName.entries.forEach { (name, mapping) -> block(name, mapping) }
 }
 
 class TypeParameterMapping<KT : KotlinTypeMarker>(
-    val name: String,
     val type: KT,
-    val asmType: Type?,
+    val asmType: Type,
+    val signature: String,
+    val isReified: Boolean,
     val reificationArgument: ReificationArgument?,
-    val signature: String?,
-    val isReified: Boolean
+    val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
 )
 
 class ReifiedTypeParametersUsages {

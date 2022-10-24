@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSignatureEnhancement(
     private val owner: FirRegularClass,
@@ -189,12 +188,7 @@ class FirSignatureEnhancement(
             return original
         }
         enhanceTypeParameterBounds(firMethod.typeParameters)
-        return enhanceMethod(firMethod, original.callableId, name).also { enhancedVersion ->
-            val enhancedVersionFir = enhancedVersion.fir
-            (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
-                enhancedVersionFir.initialSignatureAttr = enhancedFunction(it.symbol, it.name).fir
-            }
-        }
+        return enhanceMethod(firMethod, original.callableId, name)
     }
 
     private fun enhanceMethod(
@@ -258,13 +252,15 @@ class FirSignatureEnhancement(
                 annotations += valueParameter.annotations
             }
         }
+        var isJavaRecordComponent = false
+
         val function = when (firMethod) {
             is FirJavaConstructor -> {
                 val symbol = FirConstructorSymbol(methodId)
                 if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
                         returnTypeRef = newReturnTypeRef
-                        val resolvedStatus = firMethod.status.safeAs<FirResolvedDeclarationStatus>()
+                        val resolvedStatus = firMethod.status as? FirResolvedDeclarationStatus
                         status = if (resolvedStatus != null) {
                             FirResolvedDeclarationStatusImpl(
                                 resolvedStatus.visibility,
@@ -301,6 +297,7 @@ class FirSignatureEnhancement(
                 }
             }
             is FirJavaMethod -> {
+                isJavaRecordComponent = firMethod.isJavaRecordComponent ?: false
                 FirSimpleFunctionBuilder().apply {
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
@@ -321,7 +318,11 @@ class FirSignatureEnhancement(
         }.apply {
             annotations += firMethod.annotations
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = true, session.firCachesFactory)
-        }.build()
+        }.build().apply {
+            if (isJavaRecordComponent) {
+                this.isJavaRecordComponent = true
+            }
+        }
 
         return function.symbol
     }
@@ -331,16 +332,11 @@ class FirSignatureEnhancement(
         // (`A : B, B : A` - invalid), the cycles can still appear when type parameters use each other in argument
         // position (`A : C<B>, B : D<A>` - valid). In this case the precise enhancement of each bound depends on
         // the others' nullability, for which we need to enhance at least its head type constructor.
-        //
-        // While this is straightforward to do within a single class/method (enhance all bounds' head type
-        // constructors, then enhance fully), it's not so simple when two classes depend on each other (we need
-        // to enhance *both* classes' type parameters' bounds' heads first). This is why we replace each bound
-        // with an unenhanced version first: this ensures that the frontend at least doesn't fail.
-        //
-        // TODO: find a way to partially enhance type parameters of all classes before fully enhancing anything.
-        // TODO: should this be done in topological order on head type constructors?
-        //   I.e. for `A : B, B : C<A>` should we process `B` first?
         typeParameters.replaceBounds { _, bound ->
+            // Resolve without enhancement so we don't crash the frontend if there is a restricted cycle (`A : B, B : A`)
+            // or if we visit type parameters in the wrong order (`A : B, B : C<A>` with `A` enhanced before `B`).
+            // TODO: the second case technically produces incorrect results - the loop below should visit type parameters
+            //   in topological order, then a resolved-but-not-enhanced type will never be observable with valid code.
             bound.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
         }
         typeParameters.replaceBounds { typeParameter, bound ->
@@ -563,9 +559,17 @@ class FirEnhancedSymbolsStorage(val session: FirSession) : FirSessionComponent {
     class EnhancementSymbolsCache(cachesFactory: FirCachesFactory) {
         @OptIn(PrivateForInline::class)
         val enhancedFunctions: FirCache<FirFunctionSymbol<*>, FirFunctionSymbol<*>, Pair<FirSignatureEnhancement, Name?>> =
-            cachesFactory.createCache { original, (enhancement, name) ->
-                enhancement.enhance(original, name)
-            }
+            cachesFactory.createCacheWithPostCompute(
+                createValue = { original, (enhancement, name) ->
+                    enhancement.enhance(original, name) to enhancement
+                },
+                postCompute = { _, enhancedVersion, enhancement ->
+                    val enhancedVersionFir = enhancedVersion.fir
+                    (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
+                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it.symbol, it.name).fir
+                    }
+                }
+            )
 
         @OptIn(PrivateForInline::class)
         val enhancedVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, Pair<FirSignatureEnhancement, Name>> =

@@ -41,20 +41,20 @@ dependencies {
     proguardDeps(kotlinStdlib())
     proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
 
-    embedded(project(":kotlin-reflect-api"))
-    embedded(project(":core:metadata"))
-    embedded(project(":core:metadata.jvm"))
-    embedded(project(":core:compiler.common"))
-    embedded(project(":core:compiler.common.jvm"))
-    embedded(project(":core:deserialization.common"))
-    embedded(project(":core:deserialization.common.jvm"))
-    embedded(project(":core:descriptors"))
-    embedded(project(":core:descriptors.jvm"))
-    embedded(project(":core:deserialization"))
-    embedded(project(":core:descriptors.runtime"))
-    embedded(project(":core:util.runtime"))
-    embedded("javax.inject:javax.inject:1")
-    embedded(protobufLite())
+    embedded(project(":kotlin-reflect-api")) { isTransitive = false }
+    embedded(project(":core:metadata")) { isTransitive = false }
+    embedded(project(":core:metadata.jvm")) { isTransitive = false }
+    embedded(project(":core:compiler.common")) { isTransitive = false }
+    embedded(project(":core:compiler.common.jvm")) { isTransitive = false }
+    embedded(project(":core:deserialization.common")) { isTransitive = false }
+    embedded(project(":core:deserialization.common.jvm")) { isTransitive = false }
+    embedded(project(":core:descriptors")) { isTransitive = false }
+    embedded(project(":core:descriptors.jvm")) { isTransitive = false }
+    embedded(project(":core:deserialization")) { isTransitive = false }
+    embedded(project(":core:descriptors.runtime")) { isTransitive = false }
+    embedded(project(":core:util.runtime")) { isTransitive = false }
+    embedded("javax.inject:javax.inject:1") { isTransitive = false }
+    embedded(protobufLite()) { isTransitive = false }
 
     compileOnly("org.jetbrains:annotations:13.0")
 }

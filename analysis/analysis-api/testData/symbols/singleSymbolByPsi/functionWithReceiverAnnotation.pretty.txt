@@ -1,0 +1,1 @@
+fun @ReceiverAnnotation @ReceiverTypeAnnotation kotlin.Int.foo()

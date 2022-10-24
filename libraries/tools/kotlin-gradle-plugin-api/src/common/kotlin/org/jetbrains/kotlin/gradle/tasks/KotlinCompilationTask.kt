@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Nested
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 
-interface KotlinCompilationTask<out CO : CompilerCommonOptions> : Task {
+interface KotlinCompilationTask<out CO : KotlinCommonCompilerOptions> : Task {
     @get:Nested
     val compilerOptions: CO
 

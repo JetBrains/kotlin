@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 // IGNORE_BACKEND: JS_IR
 
 import kotlin.reflect.KProperty

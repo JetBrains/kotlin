@@ -1,0 +1,215 @@
+KtConstructorSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: Anno
+  contextReceivers: []
+  hasStableParameterNames: true
+  isExtension: false
+  isPrimary: true
+  origin: SOURCE
+  receiverType: null
+  returnType: Anno
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /Anno.param1
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/String
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: null
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: param1
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/String
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: param1
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/String
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /Anno.param2
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/Int
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: null
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: param2
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Int
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: param2
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: Anno
+  classKind: ANNOTATION_CLASS
+  companionObject: null
+  contextReceivers: []
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: Anno
+  origin: SOURCE
+  superTypes: [
+    kotlin/Annotation
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
+    Anno(param1 = "funparam", param2 = 3)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /X.x
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: x
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): X
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: [
+    Anno(param1 = "param", param2 = 2)
+      psi: KtAnnotationEntry
+  ]
+  classIdIfNonLocal: X
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: X
+  origin: SOURCE
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

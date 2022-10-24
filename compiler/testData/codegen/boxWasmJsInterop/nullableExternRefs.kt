@@ -63,7 +63,6 @@ fun box(): String {
     assertTrue(isJsNull(jsNull))
 
     assertFalse(isJsUndefined(null))
-    assertTrue(isJsUndefined(jsUndefined))
 
     checkNPE(::getJsNullAsNonNullable)
     checkNPE(::getJsUndefinedAsNonNullable)

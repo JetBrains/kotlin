@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -82,7 +82,6 @@ class JsIrBackendContext(
     val fieldToInitializer: MutableMap<IrField, IrExpression> = mutableMapOf()
 
     val localClassNames: MutableMap<IrClass, String> = mutableMapOf()
-    val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     val minimizedNameGenerator: MinimizedNameGenerator =
         MinimizedNameGenerator()
@@ -109,7 +108,6 @@ class JsIrBackendContext(
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
-    val externalDeclarations = hashSetOf<IrDeclaration>()
 
     val additionalExportedDeclarations = mutableSetOf<IrDeclaration>()
 
@@ -201,7 +199,9 @@ class JsIrBackendContext(
         .let { symbolTable.referenceSimpleFunction(it!!) }
 
     override val ir = object : Ir<JsIrBackendContext>(this, irModuleFragment) {
-        override val symbols = object : Symbols<JsIrBackendContext>(this@JsIrBackendContext, irBuiltIns, symbolTable) {
+        override val symbols = object : Symbols(irBuiltIns, symbolTable) {
+            private val context = this@JsIrBackendContext
+
             override val throwNullPointerException =
                 symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
 
@@ -242,6 +242,8 @@ class JsIrBackendContext(
                 get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
 
             override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
+
+            override val continuationClass = context.coroutineSymbols.continuationClass
 
             override val coroutineContextGetter =
                 symbolTable.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)

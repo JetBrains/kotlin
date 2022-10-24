@@ -1,0 +1,3 @@
+expression: CLASS_LITERAL_EXPRESSION
+text: (if (b) { 45 } else { "OK" })::class
+isUsedAsExpression: true

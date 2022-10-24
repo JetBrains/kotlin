@@ -21,9 +21,9 @@ internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
     patchBuilder.addObjCPatches()
 
     val bitcodeFile = config.objCNativeLibrary
-    val parsedModule = parseBitcodeFile(bitcodeFile)
+    val parsedModule = parseBitcodeFile(context.generationState.llvmContext, bitcodeFile)
 
-    patchBuilder.buildAndApply(parsedModule)
+    patchBuilder.buildAndApply(parsedModule, context.generationState.llvm)
     return parsedModule
 }
 
@@ -128,7 +128,7 @@ private fun PatchBuilder.addObjCPatches() {
     }
 }
 
-private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef) {
+private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, llvm: Llvm) {
     val nameToGlobalPatch = globalPatches.associateNonRepeatingBy { it.globalName }
 
     val sectionToValueToLiteralPatch = literalPatches.groupBy { it.generator.section }
@@ -156,7 +156,7 @@ private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef) {
             val value = getStringValue(initializer)
             val patch = valueToLiteralPatch[value]
             if (patch != null) {
-                if (patch.newValue != value) patchLiteral(global, patch.generator, patch.newValue)
+                if (patch.newValue != value) patchLiteral(global, llvm, patch.generator, patch.newValue)
                 unusedPatches -= patch
             } else if (section == ObjCDataGenerator.classNameGenerator.section) {
                 error("Objective-C class name literal is not patched: $value")
@@ -199,16 +199,17 @@ private fun <T, K> List<T>.associateNonRepeatingBy(keySelector: (T) -> K): Map<K
 
 private fun patchLiteral(
         global: LLVMValueRef,
+        llvm: Llvm,
         generator: ObjCDataGenerator.CStringLiteralsGenerator,
         newValue: String
 ) {
     val module = LLVMGetGlobalParent(global)!!
 
-    val newFirstCharPtr = generator.generate(module, newValue).getElementPtr(0).llvm
+    val newFirstCharPtr = generator.generate(module, llvm, newValue).getElementPtr(llvm, 0).llvm
 
     generateSequence(LLVMGetFirstUse(global), { LLVMGetNextUse(it) }).forEach { use ->
         val firstCharPtr = LLVMGetUser(use)!!.also {
-            require(it.isFirstCharPtr(global)) {
+            require(it.isFirstCharPtr(llvm, global)) {
                 "Unexpected literal usage: ${llvm2string(it)}"
             }
         }
@@ -216,8 +217,8 @@ private fun patchLiteral(
     }
 }
 
-private fun LLVMValueRef.isFirstCharPtr(global: LLVMValueRef): Boolean =
-        this.type == int8TypePtr &&
+private fun LLVMValueRef.isFirstCharPtr(llvm: Llvm, global: LLVMValueRef): Boolean =
+        this.type == llvm.int8PtrType &&
                 LLVMIsConstant(this) != 0 && LLVMGetConstOpcode(this) == LLVMOpcode.LLVMGetElementPtr
                 && LLVMGetNumOperands(this) == 3
                 && LLVMGetOperand(this, 0) == global

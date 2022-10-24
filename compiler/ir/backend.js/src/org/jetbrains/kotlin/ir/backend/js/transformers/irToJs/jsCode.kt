@@ -28,14 +28,14 @@ fun translateJsCodeIntoStatementList(code: IrExpression, context: JsIrBackendCon
     translateJsCodeIntoStatementList(
         code,
         context,
-        code.getSourceInfo(container) ?: container.fileOrNull?.fileEntry?.let { JsLocation(it.name, 0, 0) }
+        code.getStartSourceLocation(container) ?: container.fileOrNull?.fileEntry?.let { JsLocation(it.name, 0, 0) }
     )
 
 /**
  * Returns null if constant expression could not be parsed.
  */
 fun translateJsCodeIntoStatementList(code: IrExpression, context: JsIrBackendContext?, fileEntry: IrFileEntry) =
-    translateJsCodeIntoStatementList(code, context, code.getSourceInfo(fileEntry) ?: JsLocation(fileEntry.name, 0, 0))
+    translateJsCodeIntoStatementList(code, context, code.getStartSourceLocation(fileEntry) ?: JsLocation(fileEntry.name, 0, 0))
 
 private fun translateJsCodeIntoStatementList(
     code: IrExpression,

@@ -47,7 +47,6 @@ class FirJavaElementFinder(
 ) : PsiElementFinder(), KotlinFinderMarker {
     private val psiManager = PsiManager.getInstance(project)
 
-    @OptIn(ExperimentalStdlibApi::class)
     private val firProviders: List<FirProvider> = buildList {
         add(session.firProvider)
         session.collectAllDependentSourceSessions().mapTo(this) { it.firProvider }

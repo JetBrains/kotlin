@@ -74,6 +74,12 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
     }
 
     @Test
+    @TestMetadata("FieldInObjectTest.kt")
+    public void testFieldInObjectTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/FieldInObjectTest.kt");
+    }
+
+    @Test
     @TestMetadata("IndexArrayElementGetterTest.kt")
     public void testIndexArrayElementGetterTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/IndexArrayElementGetterTest.kt");

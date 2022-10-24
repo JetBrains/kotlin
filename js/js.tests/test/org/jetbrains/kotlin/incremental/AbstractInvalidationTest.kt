@@ -20,12 +20,9 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -46,7 +43,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private const val BOX_FUNCTION_NAME = "box"
         private const val STDLIB_ALIAS = "stdlib"
 
-        private val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
+        private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
 
         private val KT_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.kt$")
@@ -142,7 +139,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it.name) }
             }
 
-            val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) { resolveModuleArtifact(it, buildDir) }
+            val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) {
+                resolveModuleArtifact(it.moduleName, buildDir)
+            }
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
             val configuration = createConfiguration(module, projStep.language)
             buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
@@ -226,26 +225,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        fun executorWithBoxExport(
-            currentModule: IrModuleFragment,
-            allModules: Collection<IrModuleFragment>,
-            irLinker: JsIrLinker,
-            configuration: CompilerConfiguration,
-            dirtyFiles: Collection<IrFile>,
-            exportedDeclarations: Set<FqName>,
-            mainArguments: List<String>?
-        ): List<JsIrFragmentAndBinaryAst> {
-            return buildCacheForModuleFiles(
-                mainModule = currentModule,
-                allModules = allModules,
-                irLinker = irLinker,
-                configuration = configuration,
-                dirtyFiles = dirtyFiles,
-                exportedDeclarations = exportedDeclarations + FqName(BOX_FUNCTION_NAME),
-                mainArguments = mainArguments,
-            )
-        }
-
         fun execute() {
             val stdlibCacheDir = resolveModuleCache(STDLIB_ALIAS, buildDir).canonicalPath
             for (projStep in projectInfo.steps) {
@@ -259,7 +238,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                     mainArguments = null,
-                    executor = ::executorWithBoxExport
+                    compilerInterfaceFactory = { mainModule, cfg ->
+                        JsIrCompilerWithIC(mainModule, cfg, JsGenerationGranularity.PER_MODULE, setOf(FqName(BOX_FUNCTION_NAME)))
+                    }
                 )
 
                 val icCaches = cacheUpdater.actualizeCaches()

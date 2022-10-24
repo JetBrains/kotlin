@@ -28,6 +28,7 @@ abstract class AbstractIncrementalMultiModuleJsCompilerRunnerTest :
         K2JSCompilerArguments().apply {
             sourceMap = true
             metaInfo = true
+            useDeprecatedLegacyCompiler = true
         }
 
     override fun makeForSingleModule(

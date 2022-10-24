@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstr
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class ClassicTypeSystemContextForCS(
     override val builtIns: KotlinBuiltIns,
@@ -59,7 +58,8 @@ class ClassicTypeSystemContextForCS(
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
         if (map.isEmpty()) return createEmptySubstitutor()
-        return NewTypeSubstitutorByConstructorMap(map.cast())
+        @Suppress("UNCHECKED_CAST")
+        return NewTypeSubstitutorByConstructorMap(map as Map<TypeConstructor, UnwrappedType>)
     }
 
     override fun createEmptySubstitutor(): TypeSubstitutorMarker {

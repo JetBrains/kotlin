@@ -134,12 +134,10 @@ fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? =
 }
 
 private object ConeIntegerLiteralTypeExtensions {
-    private val COMPARABLE_TAG = ConeClassLikeLookupTagImpl(StandardClassIds.Comparable)
-
     fun createSupertypeList(type: ConeIntegerLiteralType): List<ConeClassLikeType> {
         return listOf(
             createClassLikeType(StandardClassIds.Number),
-            ConeClassLikeTypeImpl(COMPARABLE_TAG, arrayOf(ConeKotlinTypeProjectionIn(type)), false)
+            ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Comparable), arrayOf(ConeKotlinTypeProjectionIn(type)), false)
         )
     }
 

@@ -1076,6 +1076,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("anonymousObjectInUnreachableCode.kt")
+            public void testAnonymousObjectInUnreachableCode() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/anonymousObjectInUnreachableCode.kt");
+            }
+
+            @Test
             @TestMetadata("binaryOperations.kt")
             public void testBinaryOperations() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/binaryOperations.kt");
@@ -3435,6 +3441,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             @Test
             public void testAllFilesPresentInProperties() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("getterWithEarlyReturn.kt")
+            public void testGetterWithEarlyReturn() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/properties/getterWithEarlyReturn.kt");
             }
 
             @Test
@@ -6003,6 +6015,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         @TestDataPath("$PROJECT_ROOT")
         public class Problems {
             @Test
+            @TestMetadata("AbstractToolConfig.kt")
+            public void testAbstractToolConfig() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/AbstractToolConfig.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInProblems() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
@@ -6035,6 +6053,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             @TestMetadata("EnumMapGet.kt")
             public void testEnumMapGet() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/EnumMapGet.kt");
+            }
+
+            @Test
+            @TestMetadata("exceptionInRepeatedAnnotation.kt")
+            public void testExceptionInRepeatedAnnotation() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/exceptionInRepeatedAnnotation.kt");
             }
 
             @Test

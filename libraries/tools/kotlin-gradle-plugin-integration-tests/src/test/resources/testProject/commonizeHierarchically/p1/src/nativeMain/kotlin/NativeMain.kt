@@ -7,6 +7,7 @@ import withPosix.getStructFromPosix
 import withPosix.getStructPointerFromPosix
 
 object NativeMain {
+    val concurrentMainInvocation = ConcurrentMain.invoke()
     val structFromPosix = getStructFromPosix()
     val structPointerFromPosix = getStructPointerFromPosix()
 

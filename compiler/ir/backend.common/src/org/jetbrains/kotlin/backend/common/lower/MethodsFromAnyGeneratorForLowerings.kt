@@ -44,14 +44,14 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
 
     companion object {
         fun IrFunction.isToString(): Boolean =
-            name.asString() == "toString" && extensionReceiverParameter == null && valueParameters.isEmpty()
+            name.asString() == "toString" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
 
         fun IrFunction.isHashCode() =
-            name.asString() == "hashCode" && extensionReceiverParameter == null && valueParameters.isEmpty()
+            name.asString() == "hashCode" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
 
         fun IrFunction.isEquals(context: BackendContext) =
             name.asString() == "equals" &&
-                    extensionReceiverParameter == null &&
+                    extensionReceiverParameter == null && contextReceiverParametersCount == 0 &&
                     valueParameters.singleOrNull()?.type == context.irBuiltIns.anyNType
 
 

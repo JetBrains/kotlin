@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
@@ -101,6 +102,8 @@ internal class KtFe10SymbolInfoProvider(
         }
 
         if (descriptor != null) {
+            if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
+
             val getter = descriptor.getter ?: return SpecialNames.NO_NAME_PROVIDED
             return Name.identifier(DescriptorUtils.getJvmName(getter) ?: JvmAbi.getterName(descriptor.name.asString()))
         }
@@ -119,6 +122,8 @@ internal class KtFe10SymbolInfoProvider(
             if (!descriptor.isVar) {
                 return null
             }
+
+            if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
 
             val setter = descriptor.setter ?: return SpecialNames.NO_NAME_PROVIDED
             return Name.identifier(DescriptorUtils.getJvmName(setter) ?: JvmAbi.setterName(descriptor.name.asString()))

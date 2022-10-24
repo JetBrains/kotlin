@@ -79,7 +79,7 @@ interface BaseKotlinCompile : KotlinCompileTool {
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 interface KotlinJvmCompile : BaseKotlinCompile,
     KotlinCompileDeprecated<KotlinJvmOptionsDeprecated>,
-    KotlinCompilationTask<CompilerJvmOptions> {
+    KotlinCompilationTask<KotlinJvmCompilerOptions> {
 
     // JVM specific
     @get:Internal("Takes part in compiler args.")

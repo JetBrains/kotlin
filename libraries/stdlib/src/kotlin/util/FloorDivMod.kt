@@ -19,8 +19,8 @@ public inline fun Byte.floorDiv(other: Byte): Int =
     this.toInt().floorDiv(other.toInt())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -37,8 +37,8 @@ public inline fun Byte.floorDiv(other: Short): Int =
     this.toInt().floorDiv(other.toInt())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -55,8 +55,8 @@ public inline fun Byte.floorDiv(other: Int): Int =
     this.toInt().floorDiv(other)
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -73,8 +73,8 @@ public inline fun Byte.floorDiv(other: Long): Long =
     this.toLong().floorDiv(other)
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -91,8 +91,8 @@ public inline fun Short.floorDiv(other: Byte): Int =
     this.toInt().floorDiv(other.toInt())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -109,8 +109,8 @@ public inline fun Short.floorDiv(other: Short): Int =
     this.toInt().floorDiv(other.toInt())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -127,8 +127,8 @@ public inline fun Short.floorDiv(other: Int): Int =
     this.toInt().floorDiv(other)
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -145,8 +145,8 @@ public inline fun Short.floorDiv(other: Long): Long =
     this.toLong().floorDiv(other)
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -163,8 +163,8 @@ public inline fun Int.floorDiv(other: Byte): Int =
     this.floorDiv(other.toInt())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -181,8 +181,8 @@ public inline fun Int.floorDiv(other: Short): Int =
     this.floorDiv(other.toInt())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -202,8 +202,8 @@ public inline fun Int.floorDiv(other: Int): Int {
 }
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -222,8 +222,8 @@ public inline fun Int.floorDiv(other: Long): Long =
     this.toLong().floorDiv(other)
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -240,8 +240,8 @@ public inline fun Long.floorDiv(other: Byte): Long =
     this.floorDiv(other.toLong())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -258,8 +258,8 @@ public inline fun Long.floorDiv(other: Short): Long =
     this.floorDiv(other.toLong())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -276,8 +276,8 @@ public inline fun Long.floorDiv(other: Int): Long =
     this.floorDiv(other.toLong())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -297,8 +297,8 @@ public inline fun Long.floorDiv(other: Long): Long {
 }
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -310,10 +310,10 @@ public inline fun Long.mod(other: Long): Long {
 }
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
- * 
+ *
  * If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -325,10 +325,10 @@ public inline fun Float.mod(other: Float): Float {
 }
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
- * 
+ *
  * If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -338,10 +338,10 @@ public inline fun Float.mod(other: Double): Double =
     this.toDouble().mod(other)
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
- * 
+ *
  * If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor.
  */
 @SinceKotlin("1.5")
@@ -351,10 +351,10 @@ public inline fun Double.mod(other: Float): Double =
     this.mod(other.toDouble())
 
 /**
- * Calculates the remainder of flooring division of this value by the other value.
- * 
+ * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
+ *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
- * 
+ *
  * If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor.
  */
 @SinceKotlin("1.5")

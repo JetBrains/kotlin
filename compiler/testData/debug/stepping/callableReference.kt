@@ -25,4 +25,7 @@ fun f(block: () -> Unit) {
 // test.kt:4 box
 // test.kt:4 box
 // test.kt:10 f
-// test.kt:5
+// test.kt:5 box$lambda$lambda
+// test.kt:6 box$lambda$lambda
+// test.kt:11 f
+// test.kt:7 box

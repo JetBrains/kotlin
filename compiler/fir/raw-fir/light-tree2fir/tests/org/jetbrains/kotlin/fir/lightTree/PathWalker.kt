@@ -13,6 +13,7 @@ fun String.walkTopDown(f: (File) -> Unit) {
         if (file.isDirectory) continue
         if (file.path.contains("kotlin-native") ||
             file.path.contains("testData") ||
+            file.path.contains("testdata") ||
             file.path.contains("resources")) continue
         if (file.extension != "kt") continue
 

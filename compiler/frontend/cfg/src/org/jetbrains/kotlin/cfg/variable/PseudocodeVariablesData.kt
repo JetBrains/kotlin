@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescriptorForDeclaration
 import org.jetbrains.kotlin.util.javaslang.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
     private val containsDoWhile = pseudocode.rootPseudocode.containsDoWhile
@@ -118,12 +117,12 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     private fun isValWithTrivialInitializer(variableDeclarationElement: KtDeclaration, descriptor: VariableDescriptor) =
         variableDeclarationElement is KtParameter || variableDeclarationElement is KtObjectDeclaration ||
-                variableDeclarationElement.safeAs<KtVariableDeclaration>()?.isVariableWithTrivialInitializer(descriptor) == true
+                (variableDeclarationElement as? KtVariableDeclaration)?.isVariableWithTrivialInitializer(descriptor) == true
 
     private fun KtVariableDeclaration.isVariableWithTrivialInitializer(descriptor: VariableDescriptor): Boolean {
         if (descriptor.isPropertyWithoutBackingField()) return true
         if (isVar) return false
-        return initializer != null || safeAs<KtProperty>()?.delegate != null || this is KtDestructuringDeclarationEntry
+        return initializer != null || (this as? KtProperty)?.delegate != null || this is KtDestructuringDeclarationEntry
     }
 
     private fun VariableDescriptor.isPropertyWithoutBackingField(): Boolean {

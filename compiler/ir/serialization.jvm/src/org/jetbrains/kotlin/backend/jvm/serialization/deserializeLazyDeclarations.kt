@@ -160,7 +160,8 @@ fun makeSimpleFakeOverrideBuilder(
         JvmIrMangler,
         typeSystemContext,
         fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols),
-        friendModules = emptyMap() // TODO: provide friend modules
+        friendModules = emptyMap(), // TODO: provide friend modules
+        partialLinkageEnabled = false
     )
 }
 

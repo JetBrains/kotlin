@@ -12,7 +12,11 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
+import org.jetbrains.kotlin.backend.jvm.fullValueParameterList
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.makeBoxedExpression
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -91,6 +95,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
         val superClassType = superMethod.parentAsClass.defaultType
         val defaultImplFun = context.cachedDeclarations.getDefaultImplsFunction(superMethod)
         val classStartOffset = classOverride.parentAsClass.startOffset
+        val backendContext = context
         context.createIrBuilder(irFunction.symbol, classStartOffset, classStartOffset).apply {
             irFunction.body = irBlockBody {
                 +irReturn(
@@ -100,15 +105,50 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                         }
                         passTypeArgumentsFrom(irFunction, offset = superMethod.parentAsClass.typeParameters.size)
 
-                        var offset = 0
                         irFunction.dispatchReceiverParameter?.let {
-                            putValueArgument(
-                                offset++,
-                                irGet(it).reinterpretAsDispatchReceiverOfType(superClassType)
-                            )
+                            putValueArgument(0, irGet(it).reinterpretAsDispatchReceiverOfType(superClassType))
                         }
-                        irFunction.extensionReceiverParameter?.let { putValueArgument(offset++, irGet(it)) }
-                        irFunction.valueParameters.mapIndexed { i, parameter -> putValueArgument(i + offset, irGet(parameter)) }
+                        val mfvcOrOriginal = backendContext.inlineClassReplacements.originalFunctionForMethodReplacement[classOverride]
+                            ?: classOverride
+                        val bindingNewFunctionToParameterTemplateStructure = backendContext.multiFieldValueClassReplacements
+                            .bindingNewFunctionToParameterTemplateStructure
+                        val structure = bindingNewFunctionToParameterTemplateStructure[mfvcOrOriginal]?.let { structure ->
+                            require(structure.sumOf { it.valueParameters.size } == classOverride.explicitParametersCount) {
+                                "Bad parameters structure: $structure"
+                            }
+                            if (defaultImplFun.explicitParametersCount == irFunction.explicitParametersCount) {
+                                null
+                            } else {
+                                require(structure.size == defaultImplFun.explicitParametersCount) { "Bad parameters structure: $structure" }
+                                structure
+                            }
+                        }
+                        require(structure == null || structure.first() is RegularMapping) {
+                            "Dispatch receiver for method replacement cannot be flattened"
+                        }
+                        val sourceFullValueParameterList = irFunction.fullValueParameterList
+                        if (structure == null) {
+                            for ((index, parameter) in sourceFullValueParameterList.withIndex()) {
+                                putValueArgument(1 + index, irGet(parameter))
+                            }
+                        } else {
+                            var flattenedIndex = 0
+                            for (i in 1 until structure.size) {
+                                when (val remappedParameter = structure[i]) {
+                                    is MultiFieldValueClassMapping -> {
+                                        val valueArguments = remappedParameter.valueParameters.indices.map {
+                                            irGet(sourceFullValueParameterList[flattenedIndex++])
+                                        }
+                                        val boxedExpression = remappedParameter.rootMfvcNode.makeBoxedExpression(
+                                            this@irBlockBody, remappedParameter.typeArguments, valueArguments
+                                        )
+                                        putValueArgument(i, boxedExpression)
+                                    }
+
+                                    is RegularMapping -> putValueArgument(i, irGet(sourceFullValueParameterList[flattenedIndex++]))
+                                }
+                            }
+                        }
                     }
                 )
             }

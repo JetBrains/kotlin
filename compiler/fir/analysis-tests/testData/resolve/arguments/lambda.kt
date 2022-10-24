@@ -20,15 +20,15 @@ fun test() {
     bar(x = 1, f = {})
 
     // Bad
-    <!NO_VALUE_FOR_PARAMETER!>bar {}<!>
-    bar({}<!NO_VALUE_FOR_PARAMETER!>)<!>
+    <!NO_VALUE_FOR_PARAMETER!>bar<!> {}
+    bar(<!NO_VALUE_FOR_PARAMETER!>{})<!>
 
     // OK
     baz(other = false, f = {})
     baz({}, false)
 
     // Bad
-    <!NO_VALUE_FOR_PARAMETER!>baz {}<!>
-    baz(<!NO_VALUE_FOR_PARAMETER!>)<!> {}
-    baz(other = false<!NO_VALUE_FOR_PARAMETER!>)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!NO_VALUE_FOR_PARAMETER!>baz<!> {}
+    <!NO_VALUE_FOR_PARAMETER!>baz()<!> {}
+    baz(<!NO_VALUE_FOR_PARAMETER!>other = false)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
 }

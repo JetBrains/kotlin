@@ -1,0 +1,1 @@
+typealias Alias<T : Serializeable<<expr>Y</expr>>> = List<T>

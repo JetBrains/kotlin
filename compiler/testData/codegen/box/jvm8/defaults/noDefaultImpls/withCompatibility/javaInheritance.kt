@@ -3,6 +3,7 @@
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 
 // FILE: KBase.kt
 public interface KBase {

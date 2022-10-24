@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -21,12 +22,20 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
+internal fun JsIrLinker.loadUnboundSymbols(checkNoUnbound: Boolean) {
+    ExternalDependenciesGenerator(symbolTable, listOf(this)).generateUnboundSymbolsAsDependencies()
+    postProcess()
+    if (checkNoUnbound) {
+        checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
+    }
+}
 
 internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
@@ -41,7 +50,8 @@ internal class JsIrLinkerLoader(
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, null)
+        val partialLinkageEnabled = compilerConfiguration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, partialLinkageEnabled, null)
     }
 
     private fun loadModules(): Map<ModuleDescriptor, KotlinLibrary> {
@@ -109,8 +119,7 @@ internal class JsIrLinkerLoader(
             }
         }
 
-        ExternalDependenciesGenerator(jsIrLinker.symbolTable, listOf(jsIrLinker)).generateUnboundSymbolsAsDependencies()
-        jsIrLinker.postProcess()
+        jsIrLinker.loadUnboundSymbols(false)
         return LoadedJsIr(jsIrLinker, irModules)
     }
 }

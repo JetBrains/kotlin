@@ -32,8 +32,8 @@ fun <Context : CommonBackendContext> performByIrFile(
     description: String = "Perform phases by IrFile",
     copyBeforeLowering: Boolean = true,
     lower: List<CompilerPhase<Context, IrFile, IrFile>>,
-): NamedCompilerPhase<Context, IrModuleFragment> =
-    NamedCompilerPhase(
+): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
+    SameTypeNamedCompilerPhase(
         name, description, emptySet(), PerformByIrFilePhase(lower, copyBeforeLowering), emptySet(), emptySet(), emptySet(),
         setOf(defaultDumper), nlevels = 1,
     )
@@ -43,7 +43,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
     private val copyBeforeLowering: Boolean,
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {
     override fun invoke(
-        phaseConfig: PhaseConfig,
+        phaseConfig: PhaseConfigurationService,
         phaserState: PhaserState<IrModuleFragment>,
         context: Context,
         input: IrModuleFragment
@@ -56,11 +56,11 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
     }
 
     private fun invokeSequential(
-        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
+        phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
     ): IrModuleFragment {
         for (irFile in input.files) {
             try {
-                val filePhaserState = phaserState.changeType<IrModuleFragment, IrFile>()
+                val filePhaserState = phaserState.changePhaserStateType<IrModuleFragment, IrFile>()
                 for (phase in lower) {
                     phase.invoke(phaseConfig, filePhaserState, context, irFile)
                 }
@@ -74,7 +74,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
     }
 
     private fun invokeParallel(
-        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment, nThreads: Int
+        phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment, nThreads: Int
     ): IrModuleFragment {
         if (input.files.isEmpty()) return input
 
@@ -97,7 +97,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         for ((irFile, state) in filesAndStates) {
             executor.execute {
                 try {
-                    val filePhaserState = state.changeType<IrModuleFragment, IrFile>()
+                    val filePhaserState = state.changePhaserStateType<IrModuleFragment, IrFile>()
                     for (phase in lower) {
                         phase.invoke(phaseConfig, filePhaserState, context, irFile)
                     }
@@ -134,7 +134,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         return input
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
         lower.flatMap { it.getNamedSubphases(startDepth) }
 }
 

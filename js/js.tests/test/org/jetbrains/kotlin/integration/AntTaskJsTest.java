@@ -49,7 +49,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
 
         List<String> filePaths = CollectionsKt.map(fileNames, s -> getOutputFileByName(s).getAbsolutePath());
 
-        (useNashorn ? NashornJsTestChecker.INSTANCE : V8JsTestChecker.INSTANCE).check(filePaths, "out", "foo", "box", "OK", withModuleSystem);
+        (useNashorn ? NashornJsTestChecker.INSTANCE : V8JsTestChecker.INSTANCE).check(filePaths, "out", "foo", "box", "OK", withModuleSystem, null);
     }
 
     private void doJsAntTestForPostfixPrefix(@Nullable String prefix, @Nullable String postfix) throws Exception {

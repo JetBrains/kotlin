@@ -56,6 +56,7 @@ testsJar {}
 
 kaptTestTask("test", JavaLanguageVersion.of(8))
 kaptTestTask("testJdk11", JavaLanguageVersion.of(11))
+kaptTestTask("testJdk17", JavaLanguageVersion.of(17))
 
 fun Project.kaptTestTask(name: String, javaLanguageVersion: JavaLanguageVersion) {
     val service = extensions.getByType<JavaToolchainService>()

@@ -43,7 +43,6 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
     ) = deprecationDiagnosticDelegateProvider<P>(featureForError, positioningStrategy, init)
 
     @PrivateForInline
-    @OptIn(ExperimentalStdlibApi::class)
     internal inline fun <reified P : PsiElement> diagnosticDelegateProvider(
         severity: Severity,
         positioningStrategy: PositioningStrategy,
@@ -61,7 +60,6 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
     }
 
     @PrivateForInline
-    @OptIn(ExperimentalStdlibApi::class)
     internal inline fun <reified P : PsiElement> deprecationDiagnosticDelegateProvider(
         featureForError: LanguageFeature,
         positioningStrategy: PositioningStrategy,

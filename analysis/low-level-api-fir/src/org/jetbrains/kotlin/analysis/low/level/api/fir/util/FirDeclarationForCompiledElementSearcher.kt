@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.fir.declarations.*
@@ -57,6 +58,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val classCandidate = symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
                 withEntry("classId", classId) { it.asString() }
+                withEntry("ktModule", declaration.getKtModule()) { it.moduleDescription }
             }
 
         return classCandidate.fir

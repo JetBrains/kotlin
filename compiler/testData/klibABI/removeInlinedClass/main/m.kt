@@ -1,61 +1,11 @@
-fun box(): String {
-    try {
-        fooVariableType()
-        return "FAIL1"
-    } catch (e: Throwable) {
-        if (!e.isUnlinkedTypeOfExpression()) return "FAIL2"
-    }
+import abitestutils.abiTest
 
-    try {
-        barVariableType()
-        return "FAIL3"
-    } catch (e: Throwable) {
-        if (!e.isUnlinkedTypeOfExpression()) return "FAIL4"
-    }
-
-    try {
-        fooInstance()
-        return "FAIL5"
-    } catch(e: Throwable) {
-        if (!e.isUnlinkedSymbolLinkageError("/Foo.<init>")) return "FAIL6"
-    }
-
-    try {
-        barInstance()
-        return "FAIL7"
-    } catch(e: Throwable) {
-        if (!e.isUnlinkedTypeInSignature("/Bar.<init>")) return "FAIL8"
-    }
-
-    try {
-        fooInstance2()
-        return "FAIL9"
-    } catch(e: Throwable) {
-        if (!e.isUnlinkedSymbolLinkageError("/Foo.<init>")) return "FAIL10"
-    }
-
-    try {
-        barInstance2()
-        return "FAIL11"
-    } catch(e: Throwable) {
-        if (!e.isUnlinkedTypeInSignature("/Bar.<init>")) return "FAIL12"
-    }
-
-    try {
-        fooAnonymousObject()
-        return "FAIL13"
-    } catch(e: Throwable) {
-        if (!e.isUnlinkedTypeOfExpression()) return "FAIL14"
-    }
-
-    return "OK"
+fun box() = abiTest {
+    expectFailure(prefixed("val foo can not be read")) { fooVariableType() }
+    expectFailure(prefixed("val bar can not be read")) { barVariableType() }
+    expectFailure(prefixed("constructor Foo.<init> can not be called")) { fooInstance() }
+    expectFailure(prefixed("constructor Bar.<init> can not be called")) { barInstance() }
+    expectFailure(prefixed("reference to constructor Foo.<init> can not be evaluated")) { fooInstance2() }
+    expectFailure(prefixed("reference to constructor Bar.<init> can not be evaluated")) { barInstance2() }
+    expectFailure(prefixed("val foo can not be read")) { fooAnonymousObject() }
 }
-
-private fun Throwable.isUnlinkedTypeOfExpression(): Boolean =
-    this::class.simpleName == "IrLinkageError" && message == "Unlinked type of IR expression"
-
-private fun Throwable.isUnlinkedSymbolLinkageError(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError" && message?.startsWith("Unlinked IR symbol $symbolName|") == true
-
-private fun Throwable.isUnlinkedTypeInSignature(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError" && message?.startsWith("Unlinked type in signature of IR symbol $symbolName|") == true

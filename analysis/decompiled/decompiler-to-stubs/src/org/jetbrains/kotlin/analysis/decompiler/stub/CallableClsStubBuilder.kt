@@ -155,7 +155,7 @@ private class FunctionClsStubBuilder(
         val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
         val modifierListStubImpl = createModifierListStubForDeclaration(
             callableStub, functionProto.flags,
-            listOf(VISIBILITY, OPERATOR, INFIX, EXTERNAL_FUN, INLINE, TAILREC, SUSPEND) + modalityModifier
+            listOf(VISIBILITY, OPERATOR, INFIX, EXTERNAL_FUN, INLINE, TAILREC, SUSPEND, EXPECT_FUNCTION) + modalityModifier
         )
 
         // If function is marked as having no annotations, we don't create stubs for it
@@ -215,7 +215,7 @@ private class PropertyClsStubBuilder(
 
         val modifierListStubImpl = createModifierListStubForDeclaration(
             callableStub, propertyProto.flags,
-            listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY) + constModifier + modalityModifier
+            listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier
         )
 
         // If field is marked as having no annotations, we don't create stubs for it

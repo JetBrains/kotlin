@@ -167,37 +167,32 @@ class KotlinToolingVersionTest {
         assertMaturity(DEV, "1.8.0-one-a1-b2-2022")
         assertMaturity(DEV, "1.8.0-temporary-999")
         assertMaturity(DEV, "1.8.0-snapshot-42", "Looks strange but snapshot is rather special to allow more usages")
-        assertMaturity(null, "1.8.0-dev-", "Forbid dash at the end")
-        assertMaturity(null, "1.8.0-t-1000", "Forbid too short first classifier")
-        assertMaturity(null, "1.8.0-no-1", "First classifier should be strictly longer than 2 letters")
-        assertMaturity(null, "1.8.0-dev----999", "Forbid many dashes in a row")
-        assertMaturity(null, "1.8.0-999-0", "Forbid fully digit classifier")
-        assertMaturity(null, "1.8.0-some-5-0", "Forbid fully digit second classifier")
+        assertMaturity(DEV, "1.8.0-dev-")
+        assertMaturity(DEV, "1.8.0-t-1000")
+        assertMaturity(DEV, "1.8.0-no-1")
+        assertMaturity(DEV, "1.8.0-dev----999")
+        assertMaturity(DEV, "1.8.0-999-0")
+        assertMaturity(DEV, "1.8.0-some-5-0")
     }
 
     @Test
     fun maturityWithAdditionalReleaseSuffix() {
         assertMaturity(MILESTONE, "1.6.20-M1-release")
-        assertMaturity(null, "1.6.20-M1-release1")
+        assertMaturity(DEV, "1.6.20-M1-release1")
         assertMaturity(MILESTONE, "1.6.20-M1-release-22")
-        assertMaturity(null, "1.6.20-M1-release-", "Forbid handling dash")
+        assertMaturity(DEV, "1.6.20-M1-release-")
         assertMaturity(ALPHA, "1.6.20-alpha-release")
         assertMaturity(ALPHA, "1.6.20-alpha-release1")
         assertMaturity(ALPHA, "1.6.20-alpha-release39")
-        assertMaturity(null, "1.6.20-alpha-release-", "Forbid handling dash")
+        assertMaturity(DEV, "1.6.20-alpha-release-")
         assertMaturity(BETA, "1.6.20-beta2-release")
         assertMaturity(BETA, "1.6.20-beta2-release1")
         assertMaturity(BETA, "1.6.20-beta2-release-1")
-        assertMaturity(null, "1.6.20-beta2-release-", "Forbid handling dash")
+        assertMaturity(DEV, "1.6.20-beta2-release-")
         assertMaturity(RC, "1.6.20-rc1-release")
         assertMaturity(RC, "1.6.20-rc1-release1")
         assertMaturity(RC, "1.6.20-rc1-release-1")
-        assertMaturity(null, "1.6.20-rc1-release-", "Forbid handling dash")
-    }
-
-    @Test
-    fun invalidMilestoneVersion() {
-        assertMaturity(null, "1.6.20-M")
+        assertMaturity(DEV, "1.6.20-rc1-release-")
     }
 
     @Test
@@ -222,7 +217,7 @@ class KotlinToolingVersionTest {
         assertBuildNumber(510, "1.6.20-pub-myWildcard1-510")
         assertBuildNumber(510, "1.6.20-some-510")
         assertBuildNumber(510, "1.6.20-aaa-a2-a3-510")
-        assertBuildNumber(null,"1.6.20-dev-myWildcard510")
+        assertBuildNumber(null, "1.6.20-dev-myWildcard510")
 
         /* dev with - in wildcards */
         assertBuildNumber(510, "1.6.20-dev-google-pr-510")
@@ -310,12 +305,69 @@ class KotlinToolingVersionTest {
         )
     }
 
+    @Suppress("deprecation")
     @Test
     fun illegalVersionString() {
         assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x") }
-        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.6.20.1") }
+        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x.") }
+        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.") }
+        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.x") }
+        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x.1") }
+        assertNull(KotlinToolingVersionOrNull(""))
         assertNull(KotlinToolingVersionOrNull("x"))
-        assertNull(KotlinToolingVersionOrNull("1.6.20.1"))
+    }
+
+    @Test
+    fun testBehaviourInEdgeCases() {
+        KotlinToolingVersion("1.6.20.1").apply {
+            assertEquals(STABLE, maturity)
+            assertEquals(1, major)
+            assertEquals(6, minor)
+            assertEquals(20, patch)
+            assertNull(classifier)
+            assertNull(classifierNumber)
+            assertNull(buildNumber)
+        }
+
+        KotlinToolingVersion("1.6-x").apply {
+            assertEquals(DEV, maturity)
+            assertEquals(1, major)
+            assertEquals(6, minor)
+            assertEquals(0, patch)
+            assertEquals("x", classifier)
+            assertNull(classifierNumber)
+            assertNull(buildNumber)
+        }
+
+        KotlinToolingVersion("1.8.0-dev----999").apply {
+            assertEquals(DEV, maturity)
+            assertEquals(1, major)
+            assertEquals(8, minor)
+            assertEquals(0, patch)
+            assertEquals("dev----999", classifier)
+            assertNull(classifierNumber)
+            assertEquals(999, buildNumber)
+        }
+
+        KotlinToolingVersion("1.6.20-dev-google-pr-510").apply {
+            assertEquals(DEV, maturity)
+            assertEquals(1, major)
+            assertEquals(6, minor)
+            assertEquals(20, patch)
+            assertEquals("dev-google-pr-510", classifier)
+            assertNull(classifierNumber)
+            assertEquals(510, buildNumber)
+        }
+
+        KotlinToolingVersion("1.6.x-dev").apply {
+            assertEquals(DEV, maturity)
+            assertEquals(1, major)
+            assertEquals(6, minor)
+            assertEquals(0, patch)
+            assertEquals("dev", classifier)
+            assertNull(classifierNumber)
+            assertNull(buildNumber)
+        }
     }
 
     private fun assertBuildNumber(buildNumber: Int?, version: String, message: String? = null) {
@@ -326,15 +378,7 @@ class KotlinToolingVersionTest {
         assertEquals(classifierNumber, KotlinToolingVersion(version).classifierNumber, message)
     }
 
-    private fun assertMaturity(maturity: KotlinToolingVersion.Maturity?, version: String, message: String? = null) {
-        if (maturity == null) {
-            val exception = assertFailsWith<IllegalArgumentException>(
-                "Parsing maturity is expected to be failed for `$version`${message?.let { ". $it" } ?: ""}") {
-                KotlinToolingVersion(version)
-            }
-            assertTrue("maturity" in exception.message.orEmpty().toLowerCase(), "Expected 'maturity' issue mentioned in error message")
-        } else {
-            assertEquals(maturity, KotlinToolingVersion(version).maturity, message)
-        }
+    private fun assertMaturity(maturity: KotlinToolingVersion.Maturity, version: String, message: String? = null) {
+        assertEquals(maturity, KotlinToolingVersion(version).maturity, message)
     }
 }

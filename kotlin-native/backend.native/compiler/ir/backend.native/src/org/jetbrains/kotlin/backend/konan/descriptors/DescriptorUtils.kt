@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -271,20 +269,20 @@ internal fun IrClass.isFrozen(context: Context): Boolean {
     }
 }
 
-fun IrConstructorCall.getAnnotationStringValue() = getValueArgument(0).safeAs<IrConst<String>>()?.value
+fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrConst<*>)?.value as String?
 
 fun IrConstructorCall.getAnnotationStringValue(name: String): String {
     val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
-    return getValueArgument(parameter.index).cast<IrConst<String>>().value
+    return (getValueArgument(parameter.index) as IrConst<*>).value as String
 }
 
 fun AnnotationDescriptor.getAnnotationStringValue(name: String): String {
-    return argumentValue(name)?.safeAs<StringValue>()?.value ?: error("Expected value $name at annotation $this")
+    return (argumentValue(name) as? StringValue)?.value ?: error("Expected value $name at annotation $this")
 }
 
-fun <T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
+inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
     val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
-    return parameter?.let { getValueArgument(it.index)?.let { (it.cast<IrConst<T>>()).value } }
+    return parameter?.let { getValueArgument(it.index)?.let { (it as IrConst<*>).value as T } }
 }
 
 fun IrFunction.externalSymbolOrThrow(): String? {

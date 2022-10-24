@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !RENDER_DIAGNOSTICS_FULL_TEXT
 // TARGET_BACKEND: JVM_IR
 suspend inline fun inlineFun1(p: () -> Unit) {

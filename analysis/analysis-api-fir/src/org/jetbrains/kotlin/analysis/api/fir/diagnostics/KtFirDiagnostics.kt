@@ -2704,6 +2704,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantInlineSuspendFunctionType::class
     }
 
+    abstract class InefficientEqualsOverridingInInlineClass : KtFirDiagnostic<KtNamedFunction>() {
+        override val diagnosticClass get() = InefficientEqualsOverridingInInlineClass::class
+        abstract val className: String
+    }
+
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         abstract val objectName: Name
@@ -2906,6 +2911,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class PositionedValueArgumentForJavaAnnotation : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = PositionedValueArgumentForJavaAnnotation::class
+    }
+
+    abstract class RedundantRepeatableAnnotation : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RedundantRepeatableAnnotation::class
+        abstract val kotlinRepeatable: FqName
+        abstract val javaRepeatable: FqName
     }
 
     abstract class LocalJvmRecord : KtFirDiagnostic<PsiElement>() {

@@ -157,6 +157,7 @@ object StandardClassIds {
         val JvmField = "JvmField".jvmId()
         val JvmDefault = "JvmDefault".jvmId()
         val JvmRepeatable = "JvmRepeatable".jvmId()
+        val JvmRecord = "JvmRecord".jvmId()
 
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
@@ -201,6 +202,10 @@ object StandardClassIds {
         val clone = "clone".callableId(Cloneable)
 
         val not = "not".callableId(Boolean)
+    }
+
+    object Java {
+        val Record = "Record".javaLangId()
     }
 }
 

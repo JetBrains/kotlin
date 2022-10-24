@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import org.jetbrains.kotlin.kotlinNativeDist
 
 plugins {
@@ -16,7 +15,7 @@ val testCompilerClasspath by configurations.creating {
     }
 }
 
-repositories{
+repositories {
     mavenCentral()
 }
 
@@ -25,7 +24,7 @@ val testPlugin by configurations.creating
 val testPluginRuntime by configurations.creating
 
 fun DependencyHandlerScope.testPluginRuntime(any: Any) {
-    val notation = any as? String ?: return add(testPluginRuntime.name, any){}
+    val notation = any as? String ?: return add(testPluginRuntime.name, any) {}
     val (group, artifact, version) = notation.split(":")
     val platformName = HostManager.host.name
     val gradlePlatformName = platformName.replace("_", "")
@@ -79,11 +78,15 @@ projectTest {
      * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
      */
     dependsOn(runtimeJar)
-    val runtimeJarPathProvider = project.provider { runtimeJar.get().outputs.files.asPath }
+    val runtimeJarPathProvider = project.provider {
+        val jar = runtimeJar.get().outputs.files.asPath
+        val trove = configurations.detachedConfiguration(
+                dependencies.module(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+        )
+        (trove.files + jar).joinToString(File.pathSeparatorChar.toString())
+    }
     doFirst {
         systemProperty("compilerClasspath", runtimeJarPathProvider.get())
         systemProperty("kotlin.native.home", kotlinNativeDist)
     }
 }
-
-

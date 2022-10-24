@@ -1,0 +1,3 @@
+KtErrorCallInfo:
+  candidateCalls = []
+  diagnostic = ERROR<VARIABLE_EXPECTED: Variable expected>

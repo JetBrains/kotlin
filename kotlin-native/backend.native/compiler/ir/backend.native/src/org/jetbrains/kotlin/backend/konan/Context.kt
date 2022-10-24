@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
-import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
@@ -20,16 +19,13 @@ import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
-import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
@@ -37,7 +33,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -48,8 +43,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 
@@ -68,7 +61,7 @@ internal class NativeMapping : DefaultMapping() {
     val enumValuesCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
-internal class Context(config: KonanConfig) : KonanBackendContext(config) {
+internal class Context(config: KonanConfig) : KonanBackendContext(config), ConfigChecks {
     lateinit var frontendServices: FrontendServices
     lateinit var environment: KotlinCoreEnvironment
     lateinit var bindingContext: BindingContext
@@ -98,15 +91,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     val phaseConfig = config.phaseConfig
-
-    private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.internalPackageName).memberScope }
-
-    val nativePtr by lazy { packageScope.getContributedClassifier(NATIVE_PTR_NAME) as ClassDescriptor }
-    val nonNullNativePtr by lazy { packageScope.getContributedClassifier(NON_NULL_NATIVE_PTR_NAME) as ClassDescriptor }
-    val getNativeNullPtr  by lazy { packageScope.getContributedFunctions("getNativeNullPtr").single() }
-    val immutableBlobOf by lazy {
-        builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBlobOf").single()
-    }
 
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
@@ -221,24 +205,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         println("\n\n--- ${title} ----------------------\n")
     }
 
-    fun verifyDescriptors() {
-        // TODO: Nothing here for now.
-    }
-
-    fun printDescriptors() {
-        if (!::moduleDescriptor.isInitialized)
-            return
-
-        separator("Descriptors:")
-        moduleDescriptor.deepPrint()
-    }
-
-    fun printIr() {
-        if (irModule == null) return
-        separator("IR:")
-        irModule!!.accept(DumpIrTreeVisitor(out), "")
-    }
-
     fun verifyBitCode() {
         if (::generationState.isInitialized)
             generationState.verifyBitCode()
@@ -249,38 +215,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             generationState.printBitCode()
     }
 
-    fun verify() {
-        verifyDescriptors()
-        verifyBitCode()
-    }
-
-    fun print() {
-        printDescriptors()
-        printIr()
-        printBitCode()
-    }
-
-    fun shouldExportKDoc() = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
-
-    fun shouldVerifyBitCode() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)
-
-    fun shouldPrintBitCode() = config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE)
-
-    fun shouldPrintLocations() = config.configuration.getBoolean(KonanConfigKeys.PRINT_LOCATIONS)
-
-    fun shouldPrintFiles() = config.configuration.getBoolean(KonanConfigKeys.PRINT_FILES)
-
-    fun shouldProfilePhases() = config.phaseConfig.needProfiling
-
-    fun shouldContainDebugInfo() = config.debug
-    fun shouldContainLocationDebugInfo() = shouldContainDebugInfo() || config.lightDebug
-    fun shouldContainAnyDebugInfo() = shouldContainDebugInfo() || shouldContainLocationDebugInfo()
-    fun shouldUseDebugInfoFromNativeLibs() = shouldContainAnyDebugInfo() && config.useDebugInfoInNativeLibs
-
-    fun shouldOptimize() = config.optimizationsEnabled
-    fun shouldInlineSafepoints() = !config.target.needSmallBinary()
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
-    fun useLazyFileInitializers() = config.propertyLazyInitialization
 
     val memoryModel = config.memoryModel
 
@@ -292,7 +227,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     var moduleDFG: ModuleDFG? = null
-    var externalModulesDFG: ExternalModulesDFG? = null
     val lifetimes = mutableMapOf<IrElement, Lifetime>()
     var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
@@ -329,12 +263,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         }
     }
 }
-
-private fun MemberScope.getContributedClassifier(name: String) =
-        this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
-
-private fun MemberScope.getContributedFunctions(name: String) =
-        this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
 
 internal class ContextLogger(val context: LoggingContext) {
     operator fun String.unaryPlus() = context.log { this }

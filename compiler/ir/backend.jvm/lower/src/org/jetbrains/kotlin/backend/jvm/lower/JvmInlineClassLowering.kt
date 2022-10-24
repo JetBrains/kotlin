@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isEquals
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -24,15 +23,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -43,7 +40,9 @@ val jvmInlineClassPhase = makeIrFilePhase(
     // Standard library replacements are done on the unmangled names for UInt and ULong classes.
     // Collection stubs may require mangling by inline class rules.
     // SAM wrappers may require mangling for fun interfaces with inline class parameters
-    prerequisite = setOf(forLoopsPhase, jvmBuiltInsPhase, collectionStubMethodLowering, singleAbstractMethodPhase),
+    prerequisite = setOf(
+        forLoopsPhase, jvmBuiltInsPhase, collectionStubMethodLowering, singleAbstractMethodPhase, jvmMultiFieldValueClassPhase
+    ),
 )
 
 /**
@@ -58,73 +57,15 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     override val replacements: MemoizedValueClassAbstractReplacements
         get() = context.inlineClassReplacements
 
-    override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isSingleFieldValueClass
+    private val valueMap = mutableMapOf<IrValueSymbol, IrValueDeclaration>()
 
-    override fun IrFunction.isSpecificFieldGetter(): Boolean = isInlineClassFieldGetter
-
-    override fun addJvmInlineAnnotation(valueClass: IrClass) {
-        if (valueClass.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return
-        val constructor = context.ir.symbols.jvmInlineAnnotation.constructors.first()
-        valueClass.annotations = valueClass.annotations + IrConstructorCallImpl.fromSymbolOwner(
-            constructor.owner.returnType,
-            constructor
-        )
+    override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
+        for ((param, newParam) in original.explicitParameters.zip(replacement.explicitParameters)) {
+            valueMap[param.symbol] = newParam
+        }
     }
 
-    override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
-        replacement.valueParameters.forEach {
-            it.transformChildrenVoid()
-            it.defaultValue?.patchDeclarationParents(replacement)
-        }
-        allScopes.push(createScope(function))
-        replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
-        allScopes.pop()
-        replacement.copyAttributes(function)
-
-        // Don't create a wrapper for functions which are only used in an unboxed context
-        if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
-            return listOf(replacement)
-
-        val bridgeFunction = createBridgeDeclaration(
-            function,
-            when {
-                // If the original function has signature which need mangling we still need to replace it with a mangled version.
-                (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) &&
-                        function.signatureRequiresMangling() ->
-                    replacement.name
-                // Since we remove the corresponding property symbol from the bridge we need to resolve getter/setter
-                // names at this point.
-                replacement.isGetter ->
-                    Name.identifier(JvmAbi.getterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
-                replacement.isSetter ->
-                    Name.identifier(JvmAbi.setterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
-                else ->
-                    function.name
-            }
-        )
-
-        // Update the overridden symbols to point to their inline class replacements
-        bridgeFunction.overriddenSymbols = replacement.overriddenSymbols
-
-        // Replace the function body with a wrapper
-        if (bridgeFunction.isFakeOverride && bridgeFunction.parentAsClass.isSingleFieldValueClass) {
-            // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
-            createBridgeBody(replacement, bridgeFunction)
-        } else {
-            createBridgeBody(bridgeFunction, replacement)
-        }
-
-        return listOf(replacement, bridgeFunction)
-    }
-
-    private fun IrSimpleFunction.signatureRequiresMangling() =
-        fullValueParameterList.any { it.type.requiresMangling } ||
-                context.state.functionsWithInlineClassReturnTypesMangled && returnType.requiresMangling
-
-    // We may need to add a bridge method for inline class methods with static replacements. Ideally, we'd do this in BridgeLowering,
-    // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
-    // visibility rules for bridge methods.
-    private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name) =
+    override fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction =
         context.irFactory.buildFun {
             updateFrom(source)
             name = mangledName
@@ -139,7 +80,59 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             copyAttributes(source)
         }
 
-    private fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction) {
+    override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isSingleFieldValueClass
+
+    override val specificMangle: SpecificMangle
+        get() = SpecificMangle.Inline
+
+    override fun visitClassNew(declaration: IrClass): IrStatement {
+        // The arguments to the primary constructor are in scope in the initializers of IrFields.
+
+        declaration.primaryConstructor?.let {
+            replacements.getReplacementFunction(it)?.let { replacement -> addBindingsFor(it, replacement) }
+        }
+
+        declaration.transformDeclarationsFlat { memberDeclaration ->
+            if (memberDeclaration is IrFunction) {
+                withinScope(memberDeclaration) {
+                    transformFunctionFlat(memberDeclaration)
+                }
+            } else {
+                memberDeclaration.accept(this, null)
+                null
+            }
+        }
+
+        if (declaration.isSpecificLoweringLogicApplicable()) {
+            handleSpecificNewClass(declaration)
+        }
+
+        return declaration
+    }
+
+    override fun handleSpecificNewClass(declaration: IrClass) {
+        val irConstructor = declaration.primaryConstructor!!
+        // The field getter is used by reflection and cannot be removed here unless it is internal.
+        declaration.declarations.removeIf {
+            it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
+        }
+        buildPrimaryInlineClassConstructor(declaration, irConstructor)
+        buildBoxFunction(declaration)
+        buildUnboxFunction(declaration)
+        buildSpecializedEqualsMethodIfNeeded(declaration)
+        addJvmInlineAnnotation(declaration)
+    }
+
+    fun addJvmInlineAnnotation(valueClass: IrClass) {
+        if (valueClass.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return
+        val constructor = context.ir.symbols.jvmInlineAnnotation.constructors.first()
+        valueClass.annotations = valueClass.annotations + IrConstructorCallImpl.fromSymbolOwner(
+            constructor.owner.returnType,
+            constructor
+        )
+    }
+
+    override fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean) {
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
             irExprBody(irCall(target).apply {
                 passTypeArgumentsFrom(source)
@@ -153,7 +146,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     // Secondary constructors for boxed types get translated to static functions returning
     // unboxed arguments. We remove the original constructor.
     // Primary constructors' case is handled at the start of transformFunctionFlat
-    override fun transformConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration> {
+    override fun transformSecondaryConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach { it.transformChildrenVoid() }
         replacement.body = context.createIrBuilder(replacement.symbol, replacement.startOffset, replacement.endOffset).irBlockBody(
             replacement
@@ -210,12 +203,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
         return listOf(replacement)
     }
-
-    private fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) =
-        listOfNotNull(
-            function.dispatchReceiverParameter?.let { it to expression.dispatchReceiver },
-            function.extensionReceiverParameter?.let { it to expression.extensionReceiver }
-        ) + function.valueParameters.map { it to expression.getValueArgument(it.index) }
 
     private fun IrMemberAccessExpression<*>.buildReplacement(
         originalFunction: IrFunction,
@@ -286,6 +273,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     private fun IrExpression.coerceToUnboxed() =
         coerceInlineClasses(this, this.type, this.type.unboxInlineClass())
+
+    override fun keepOldFunctionInsteadOfNew(function: IrFunction): Boolean = false
 
     // Precondition: left has an inline class type, but may not be unboxed
     private fun IrBuilderWithScope.specializeEqualsCall(left: IrExpression, right: IrExpression): IrExpression? {
@@ -363,6 +352,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     .specializeEqualsCall(expression.getValueArgument(0)!!, expression.getValueArgument(1)!!)
                     ?: expression
             }
+
             else ->
                 super.visitCall(expression)
         }
@@ -420,7 +410,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         return super.visitSetValue(expression)
     }
 
-    override fun buildPrimaryValueClassConstructor(valueClass: IrClass, irConstructor: IrConstructor) {
+    fun buildPrimaryInlineClassConstructor(valueClass: IrClass, irConstructor: IrConstructor) {
         // Add the default primary constructor
         valueClass.addConstructor {
             updateFrom(irConstructor)
@@ -465,7 +455,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         valueClass.declarations += function
     }
 
-    override fun buildBoxFunction(valueClass: IrClass) {
+    fun buildBoxFunction(valueClass: IrClass) {
         val function = context.inlineClassReplacements.getBoxFunction(valueClass)
         with(context.createIrBuilder(function.symbol)) {
             function.body = irExprBody(
@@ -476,10 +466,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             )
         }
         valueClass.declarations += function
-    }
-
-    override fun buildUnboxFunctions(valueClass: IrClass) {
-        buildUnboxFunction(valueClass)
     }
 
     private fun buildUnboxFunction(irClass: IrClass) {
@@ -494,21 +480,47 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         irClass.declarations += function
     }
 
-    override fun buildSpecializedEqualsMethod(valueClass: IrClass) {
+    fun buildSpecializedEqualsMethodIfNeeded(valueClass: IrClass) {
         val function = context.inlineClassReplacements.getSpecializedEqualsMethod(valueClass, context.irBuiltIns)
+        // Return if we have already built specialized equals as static replacement of typed equals
+        if (function.body != null) return
         val left = function.valueParameters[0]
         val right = function.valueParameters[1]
         val type = left.type.unboxInlineClass()
 
+        val untypedEquals = valueClass.functions.single { it.isEquals(context) }
+
         function.body = context.createIrBuilder(valueClass.symbol).run {
+            val context = this@JvmInlineClassLowering.context
+            val underlyingType = getInlineClassUnderlyingType(valueClass)
             irExprBody(
-                irEquals(
-                    coerceInlineClasses(irGet(left), left.type, type),
-                    coerceInlineClasses(irGet(right), right.type, type)
-                )
+                if (untypedEquals.origin == IrDeclarationOrigin.DEFINED) {
+                    val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass)
+
+                    fun irBox(expr: IrExpression) = irCall(boxFunction).apply { putValueArgument(0, expr) }
+
+                    irCall(untypedEquals).apply {
+                        dispatchReceiver = irBox(coerceInlineClasses(irGet(left), left.type, underlyingType))
+                        putValueArgument(0, irBox(coerceInlineClasses(irGet(right), right.type, underlyingType)))
+                    }
+                } else {
+                    val underlyingClass = underlyingType.getClass()
+                    // We can't directly compare unboxed values of underlying inline class as this class can have custom equals
+                    if (underlyingClass?.isSingleFieldValueClass == true && !underlyingType.isNullable()) {
+                        val underlyingClassEq =
+                            context.inlineClassReplacements.getSpecializedEqualsMethod(underlyingClass, context.irBuiltIns)
+                        irCall(underlyingClassEq).apply {
+                            putValueArgument(0, coerceInlineClasses(irGet(left), left.type, underlyingType))
+                            putValueArgument(1, coerceInlineClasses(irGet(right), right.type, underlyingType))
+                        }
+                    } else {
+                        irEquals(coerceInlineClasses(irGet(left), left.type, type), coerceInlineClasses(irGet(right), right.type, type))
+                    }
+                }
             )
         }
 
         valueClass.declarations += function
     }
+
 }

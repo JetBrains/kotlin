@@ -22,7 +22,23 @@ KtFunctionSymbol:
     KtTypeParameterSymbol(T)
   ]
   valueParameters: [
-    KtValueParameterSymbol(element)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: LIBRARY
+      receiverType: null
+      returnType: T
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
@@ -83,7 +99,23 @@ KtFunctionSymbol:
     KtTypeParameterSymbol(T)
   ]
   valueParameters: [
-    KtValueParameterSymbol(elements)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: true
+      name: elements
+      origin: LIBRARY
+      receiverType: null
+      returnType: T
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"

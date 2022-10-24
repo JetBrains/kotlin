@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePro
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSingleSymbolByPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
@@ -110,6 +112,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             model("symbolByPsi")
         }
 
+        test(AbstractSingleSymbolByPsi::class) {
+            model("singleSymbolByPsi")
+        }
+
         test(
             AbstractSymbolByFqNameTest::class
         ) {
@@ -121,7 +127,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             }
         }
 
-        test(AbstractSymbolByReferenceTest::class, filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractSymbolByReferenceTest::class) {
             when (it.analysisApiMode) {
                 AnalysisApiMode.Ide ->
                     model("symbolByReference")
@@ -164,14 +170,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("callResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        group(filter = { it.analysisApiMode == AnalysisApiMode.Standalone }) {
-            test(AbstractResolveCallTest::class) {
-                when (it.analysisApiMode) {
-                    AnalysisApiMode.Ide ->
-                        model("resolveCall")
-                    AnalysisApiMode.Standalone ->
-                        model("resolveCall", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-                }
+        test(AbstractResolveCallTest::class) {
+            when (it.analysisApiMode) {
+                AnalysisApiMode.Ide ->
+                    model("resolveCall")
+                AnalysisApiMode.Standalone ->
+                    model("resolveCall", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
             }
         }
 
@@ -195,6 +199,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test(AbstractReturnTargetSymbolTest::class) {
             model("returnExpressionTargetSymbol")
+        }
+
+        test(AbstractIsUsedAsExpressionTest::class) {
+            model("isUsedAsExpression")
         }
     }
 

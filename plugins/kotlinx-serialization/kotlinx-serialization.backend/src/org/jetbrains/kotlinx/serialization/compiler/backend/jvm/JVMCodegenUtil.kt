@@ -538,7 +538,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
 
     property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
     findAddOnSerializer(property.type, property.module)?.let { return SerializableInfo(it) }
-    property.type.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
+    property.type.overriddenSerializer(property.module)?.toClassDescriptor?.let { return SerializableInfo(it) }
 
     if (property.type.isTypeParameter()) return JVMSerialTypeInfo(
         property,

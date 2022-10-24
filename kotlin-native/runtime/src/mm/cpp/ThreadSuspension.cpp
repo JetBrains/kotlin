@@ -81,7 +81,7 @@ NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::RequestThreadsSuspension() noexcept {
 }
 
 void kotlin::mm::WaitForThreadsSuspension() noexcept {
-    // Spin wating for threads to suspend. Ignore Native threads.
+    // Spin waiting for threads to suspend. Ignore Native threads.
     while(!allThreads(isSuspendedOrNative)) {
         yield();
     }

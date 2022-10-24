@@ -333,7 +333,6 @@ public class DefaultErrorMessages {
         MAP.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'");
 
         MAP.put(OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, "'@OptionalExpectation' can only be used on an expected annotation class");
-        MAP.put(NESTED_OPTIONAL_EXPECTATION, "'@OptionalExpectation' cannot be used on a nested class");
         MAP.put(OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry");
         MAP.put(OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, "Declaration annotated with '@OptionalExpectation' can only be used in common module sources");
 
@@ -463,6 +462,16 @@ public class DefaultErrorMessages {
 
 
         MAP.put(RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS, "The private constructor of a sealed class will become inaccessible here in future. See https://youtrack.jetbrains.com/issue/KT-44866 for details");
+        MAP.put(
+                TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION,
+                "Type mismatch: inferred type is {1} but {0} was expected. This warning will be an error soon. See https://youtrack.jetbrains.com/issue/KT-49404 for details",
+                RENDER_TYPE, RENDER_TYPE
+        );
+        MAP.put(
+                RECEIVER_TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION,
+                "Extension receiver type mismatch: inferred type is {1} but {0} was expected. This warning will be an error soon. See https://youtrack.jetbrains.com/issue/KT-49404 for details",
+                RENDER_TYPE, RENDER_TYPE
+        );
         MAP.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are not allowed");
         MAP.put(LOCAL_VARIABLE_WITH_GETTER, "Local variables are not allowed to have getters");
         MAP.put(LOCAL_VARIABLE_WITH_SETTER, "Local variables are not allowed to have setters");
@@ -788,6 +797,9 @@ public class DefaultErrorMessages {
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
         MAP.put(INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Inline classes cannot have context receivers");
+        MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+                "Overriding ''equals'' from ''Any'' in inline class alongside with lack of ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
+                STRING);
 
         MAP.put(RESULT_CLASS_IN_RETURN_TYPE, "'kotlin.Result' cannot be used as a return type");
         MAP.put(RESULT_CLASS_WITH_NULLABLE_OPERATOR, "Expression of type ''kotlin.Result'' cannot be used as a left operand of ''{0}''", STRING);
@@ -1086,8 +1098,6 @@ public class DefaultErrorMessages {
         MAP.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal must not be nullable");
         MAP.put(EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Expression in a class literal has a nullable type ''{0}'', use !! to make the type non-nullable", RENDER_TYPE);
 
-        MAP.put(CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY, "References to the synthetic extension properties for a Java get/set methods aren't supported fully, please use reference to a method");
-
         MAP.put(ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE, "Adapted callable reference cannot be resolved against reflective types");
 
         //Inline
@@ -1123,7 +1133,7 @@ public class DefaultErrorMessages {
         MAP.put(IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION, "Returning type parameter has been inferred to Nothing implicitly. Please specify type arguments explicitly to hide this warning. Nothing can produce an exception at runtime.");
         MAP.put(IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE, "Returning type parameter has been inferred to Nothing implicitly because Nothing is more specific than specified expected type. Please specify type arguments explicitly in accordance with expected type to hide this warning. Nothing can produce an exception at runtime. See KT-36776 for more details.");
         MAP.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited");
-        MAP.put(MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''");
+        MAP.put(MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Surround the lambda with parentheses: ''suspend({ ... })''");
         MAP.put(MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN,
                 "Calls having a form of ''suspend fun'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Surround the argument of the call with parens: ''suspend(fun() { ... })''." +
                 " See https://youtrack.jetbrains.com/issue/KT-49264"

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -76,7 +76,7 @@ internal abstract class FirIdeRendererBase(
     }
 
     private fun PrettyPrinter.renderVisibility(declaration: FirMemberDeclaration) {
-        if (declaration is FirConstructor && declaration.containingClass()?.toFirRegularClassSymbol(useSiteSession)?.isEnumClass == true) {
+        if (declaration is FirConstructor && declaration.containingClassLookupTag()?.toFirRegularClassSymbol(useSiteSession)?.isEnumClass == true) {
             return
         }
         val visibility = declaration.visibility

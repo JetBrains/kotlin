@@ -5,6 +5,7 @@ public final class DelegatedProperties$A {
     public method <init>(@org.jetbrains.annotations.NotNull p0: DelegatedProperties$B): void
     public final @org.jetbrains.annotations.NotNull method getB(): DelegatedProperties$B
     public final inner class DelegatedProperties$A
+    public final inner class DelegatedProperties$B
 }
 
 @kotlin.Metadata

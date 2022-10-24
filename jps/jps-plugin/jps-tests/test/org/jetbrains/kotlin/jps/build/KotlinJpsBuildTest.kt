@@ -78,8 +78,6 @@ import java.util.zip.ZipOutputStream
 
 open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     companion object {
-        private const val ADDITIONAL_MODULE_NAME = "module2"
-
         private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
         private val NOTHING = arrayOf<String>()
         private const val KOTLIN_JS_LIBRARY = "jslib-example"
@@ -119,13 +117,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
-    protected fun doTestWithKotlinJavaScriptLibrary() {
-        initProject(JS_STDLIB)
-        createKotlinJavaScriptLibraryArchive()
-        addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
-        buildAllModules().assertSuccessful()
-    }
-
     fun testKotlinProject() {
         doTest()
 
@@ -150,14 +141,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
-    fun testKotlinJavaScriptProject() {
-        initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
-
-        checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, pathsToDelete = k2jsOutput(PROJECT_NAME))
-    }
-
     private fun k2jsOutput(vararg moduleNames: String): Array<String> {
         val moduleNamesSet = moduleNames.toSet()
         val list = mutableListOf<String>()
@@ -177,138 +160,12 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         return list.toTypedArray()
     }
 
-    fun testKotlinJavaScriptProjectNewSourceRootTypes() {
-        initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
-
-        checkOutputFilesList()
-    }
-
-    fun testKotlinJavaScriptProjectWithCustomOutputPaths() {
-        initProject(JS_STDLIB_WITHOUT_FACET)
-        buildAllModules().assertSuccessful()
-
-        checkOutputFilesList(File(workDir, "target"))
-    }
-
-    fun testKotlinJavaScriptProjectWithSourceMap() {
-        initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
-
-        val sourceMapContent = File(getOutputDir(PROJECT_NAME), "$PROJECT_NAME.js.map").readText()
-        val expectedPath = "prefix-dir/src/pkg/test1.kt"
-        assertTrue("Source map file should contain relative path ($expectedPath)", sourceMapContent.contains("\"$expectedPath\""))
-
-        val librarySourceMapFile = File(getOutputDir(PROJECT_NAME), "lib/kotlin.js.map")
-        assertTrue("Source map for stdlib should be copied to $librarySourceMapFile", librarySourceMapFile.exists())
-    }
-
-    fun testKotlinJavaScriptProjectWithSourceMapRelativePaths() {
-        initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
-
-        val sourceMapContent = File(getOutputDir(PROJECT_NAME), "$PROJECT_NAME.js.map").readText()
-        val expectedPath = "../../../src/pkg/test1.kt"
-        assertTrue("Source map file should contain relative path ($expectedPath)", sourceMapContent.contains("\"$expectedPath\""))
-
-        val librarySourceMapFile = File(getOutputDir(PROJECT_NAME), "lib/kotlin.js.map")
-        assertTrue("Source map for stdlib should be copied to $librarySourceMapFile", librarySourceMapFile.exists())
-    }
-
-    fun testKotlinJavaScriptProjectWithTwoModules() {
-        initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
-
-        checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
-        checkWhen(touch("module2/src/module2.kt"), null, k2jsOutput(ADDITIONAL_MODULE_NAME))
-        checkWhen(arrayOf(touch("src/test1.kt"), touch("module2/src/module2.kt")), null, k2jsOutput(PROJECT_NAME, ADDITIONAL_MODULE_NAME))
-    }
-
     @WorkingDir("KotlinJavaScriptProjectWithTwoModules")
     fun testKotlinJavaScriptProjectWithTwoModulesAndWithLibrary() {
         initProject()
         createKotlinJavaScriptLibraryArchive()
         addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         addKotlinJavaScriptStdlibDependency()
-        buildAllModules().assertSuccessful()
-    }
-
-    fun testKotlinJavaScriptProjectWithDirectoryAsStdlib() {
-        initProject()
-        setupKotlinJSFacet()
-        val jslibJar = PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibJarPath
-        val jslibDir = File(workDir, "KotlinJavaScript")
-        try {
-            Decompressor.Zip(jslibJar).extract(jslibDir)
-        }
-        catch (ex: IOException) {
-            throw IllegalStateException(ex.message)
-        }
-
-        addDependency("KotlinJavaScript", jslibDir)
-        buildAllModules().assertSuccessful()
-
-        checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
-    }
-
-    fun testKotlinJavaScriptProjectWithDirectoryAsLibrary() {
-        initProject(JS_STDLIB)
-        addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY))
-        buildAllModules().assertSuccessful()
-
-        checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
-    }
-
-    fun testKotlinJavaScriptProjectWithLibrary() {
-        doTestWithKotlinJavaScriptLibrary()
-
-        checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
-    }
-
-    fun testKotlinJavaScriptProjectWithLibraryCustomOutputDir() {
-        doTestWithKotlinJavaScriptLibrary()
-
-        checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
-    }
-
-    fun testKotlinJavaScriptProjectWithLibraryNoCopy() {
-        doTestWithKotlinJavaScriptLibrary()
-
-        checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
-    }
-
-    fun testKotlinJavaScriptProjectWithLibraryAndErrors() {
-        initProject(JS_STDLIB)
-        createKotlinJavaScriptLibraryArchive()
-        addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
-        buildAllModules().assertFailed()
-
-        checkOutputFilesList()
-    }
-
-    fun testKotlinJavaScriptProjectWithEmptyDependencies() {
-        initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
-    }
-
-    fun testKotlinJavaScriptInternalFromSpecialRelatedModule() {
-        initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
-    }
-
-    fun testKotlinJavaScriptProjectWithTests() {
-        initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
-    }
-
-    fun testKotlinJavaScriptProjectWithTestsAndSeparateTestAndSrcModuleDependencies() {
-        initProject(JS_STDLIB)
         buildAllModules().assertSuccessful()
     }
 

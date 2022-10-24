@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
@@ -15,6 +16,7 @@ import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.codegen.FunctionCodegen
@@ -24,10 +26,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -57,6 +56,28 @@ private class KtUltraLightMethodModifierList(
     private fun isImplementationInInterface() = owner.containingClass.isInterface && owner.kotlinOrigin?.hasBody() == true
 
     override fun copy() = KtUltraLightMethodModifierList(support, owner, delegate)
+
+    private inline fun <R> getTextVariantFromModifierListOfPropertyAccessorIfNeeded(
+        retriever: (KtModifierList) -> R
+    ): R? {
+        val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
+        return (auxiliaryOrigin as? KtPropertyAccessor)?.modifierList?.let(retriever)
+    }
+
+    override fun getText(): String {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getText)
+            ?: super.getText()
+    }
+
+    override fun getTextOffset(): Int {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextOffset)
+            ?: super.getTextOffset()
+    }
+
+    override fun getTextRange(): TextRange {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextRange)
+            ?: super.getTextRange()
+    }
 }
 
 internal abstract class KtUltraLightMethod(

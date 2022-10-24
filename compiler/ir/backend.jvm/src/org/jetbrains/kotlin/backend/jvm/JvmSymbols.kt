@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,9 +42,9 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.Variance
 
 class JvmSymbols(
-    context: JvmBackendContext,
+    private val context: JvmBackendContext,
     symbolTable: SymbolTable
-) : Symbols<JvmBackendContext>(context, context.irBuiltIns, symbolTable) {
+) : Symbols(context.irBuiltIns, symbolTable) {
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
     private val irFactory = context.irFactory
 
@@ -284,7 +284,7 @@ class JvmSymbols(
 
     val noSuchFieldErrorType = javaLangNoSuchFieldError.defaultType
 
-    val continuationClass: IrClassSymbol =
+    override val continuationClass: IrClassSymbol =
         createClass(StandardNames.CONTINUATION_INTERFACE_FQ_NAME, ClassKind.INTERFACE) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.IN_VARIANCE)
         }

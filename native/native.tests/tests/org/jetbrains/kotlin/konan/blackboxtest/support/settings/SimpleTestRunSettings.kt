@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 /**
@@ -17,7 +16,7 @@ import java.io.File
  */
 internal class SimpleTestInstances(val allInstances: List<Any>) {
     val enclosingTestInstance: AbstractNativeSimpleTest
-        get() = allInstances.firstOrNull().cast()
+        get() = allInstances.firstOrNull() as AbstractNativeSimpleTest
 }
 
 /**

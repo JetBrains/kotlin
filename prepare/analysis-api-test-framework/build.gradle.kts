@@ -8,12 +8,21 @@ val testModules = listOf(
     ":analysis:analysis-test-framework",
     ":analysis:analysis-api-impl-barebone",
     ":analysis:analysis-api-impl-base",
-    ":analysis:analysis-api-standalone"
+    ":analysis:analysis-api-standalone",
+    ":analysis:decompiled:decompiler-to-file-stubs",
+)
+
+val mainModules = listOf(
+    ":kotlin-preloader",
 )
 
 dependencies {
     testModules.forEach {
         embedded(projectTests(it)) { isTransitive = false }
+    }
+
+    mainModules.forEach {
+        embedded(project(it)) { isTransitive = false }
     }
 }
 
@@ -21,7 +30,7 @@ publish()
 runtimeJar()
 sourcesJar {
     from {
-        testModules.map { project(it).testSourceSet.allSource }
+        mainModules.map { project(it).mainSourceSet.allSource } + testModules.map { project(it).testSourceSet.allSource }
     }
 }
 javadocJar()

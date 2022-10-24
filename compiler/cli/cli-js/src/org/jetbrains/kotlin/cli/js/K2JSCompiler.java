@@ -100,7 +100,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         doMain(new K2JSCompiler(), args);
     }
 
-    final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
+    private final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
 
     @NotNull
     @Override
@@ -186,8 +186,22 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return exitCode;
         }
 
+        String deprecatedMessage = "==========\n" +
+                                   "This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.\n" +
+                                   "\n" +
+                                   "Please migrate your project to the new IR-based compiler (https://kotl.in/jsir).\n" +
+                                   "Because your build tool will not support the new Kotlin/JS compiler, you will also need to migrate to Gradle.\n" +
+                                   "\n" +
+                                   "You can continue to use the deprecated legacy compiler in the current version of the toolchain by providing the compiler option -Xuse-deprecated-legacy-compiler.\n" +
+                                   "==========";
+
+        if (!arguments.getUseDeprecatedLegacyCompiler()) {
+            messageCollector.report(ERROR, deprecatedMessage, null);
+            return COMPILATION_ERROR;
+        }
+
         if (!arguments.getLegacyDeprecatedNoWarn()) {
-            messageCollector.report(STRONG_WARNING, "Legacy compiler is deprecated. Please migrate onto IR.", null);
+            messageCollector.report(STRONG_WARNING, deprecatedMessage, null);
         }
 
         if (arguments.getFreeArgs().isEmpty() && (!incrementalCompilationIsEnabledForJs(arguments))) {
@@ -324,7 +338,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         TranslationResult translationResult;
 
         try {
-            //noinspection unchecked
             translationResult = translate(reporter, sourcesFiles, jsAnalysisResult, mainCallParameters, config);
         }
         catch (Exception e) {

@@ -11,26 +11,6 @@ KtTypeParameterSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
-  isCrossinline: false
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: false
-  isVararg: false
-  name: x
-  origin: SOURCE
-  receiverType: null
-  returnType: X
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /foo
@@ -55,7 +35,23 @@ KtFunctionSymbol:
     KtTypeParameterSymbol(X)
   ]
   valueParameters: [
-    KtValueParameterSymbol(x)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: x
+      origin: SOURCE
+      receiverType: null
+      returnType: X
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"

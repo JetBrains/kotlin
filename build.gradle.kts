@@ -121,7 +121,7 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.8.20-dev-247"
+    extra["versions.kotlin-native"] = "1.8.20-dev-980"
 }
 
 val irCompilerModules = arrayOf(
@@ -373,6 +373,41 @@ val projectsWithEnabledContextReceivers by extra {
     )
 }
 
+val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
+    listOf(
+        ":analysis:analysis-api-fe10",
+        ":analysis:analysis-api-fir",
+        ":analysis:decompiled:light-classes-for-decompiled",
+        ":analysis:symbol-light-classes",
+        ":compiler",
+        ":compiler:backend",
+        ":compiler:backend.js",
+        ":compiler:backend.jvm",
+        ":compiler:backend.jvm.codegen",
+        ":compiler:backend.jvm.entrypoint",
+        ":compiler:backend.jvm.lower",
+        ":compiler:ir.backend.common",
+        ":compiler:ir.psi2ir",
+        ":compiler:ir.serialization.jvm",
+        ":compiler:ir.tree",
+        ":compiler:light-classes",
+        ":core:reflection.jvm",
+        ":jps:jps-common",
+        ":jps:jps-common",
+        ":js:js.tests",
+        ":kotlin-build-common",
+        ":kotlin-gradle-plugin",
+        ":kotlin-reflect-api",
+        ":kotlin-scripting-jvm-host-test",
+        ":native:kotlin-klib-commonizer",
+        ":plugins:android-extensions-compiler",
+        ":plugins:jvm-abi-gen",
+        ":plugins:parcelize:parcelize-compiler:parcelize.k1",
+        ":plugins:parcelize:parcelize-compiler:parcelize.backend",
+        ":kotlinx-serialization-compiler-plugin.backend",
+    )
+}
+
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
     ":kotlin-gradle-plugin-api",
@@ -491,10 +526,13 @@ allprojects {
 
 apply {
     from("libraries/commonConfiguration.gradle")
-    if (extra.has("isDeployStagingRepoGenerationRequired") && project.extra["isDeployStagingRepoGenerationRequired"] as Boolean) {
-        logger.info("Applying configuration for sonatype release")
-        from("libraries/prepareSonatypeStaging.gradle")
-    }
+}
+
+if (extra.has("isDeployStagingRepoGenerationRequired") &&
+    project.extra["isDeployStagingRepoGenerationRequired"] as Boolean == true
+) {
+    logger.info("Applying configuration for sonatype release")
+    project.apply { from("libraries/prepareSonatypeStaging.gradle") }
 }
 
 gradle.taskGraph.whenReady {
@@ -870,7 +908,8 @@ configure<IdeaModel> {
             ".gradle",
             "dependencies",
             "dist",
-            "tmp"
+            "tmp",
+            "intellij"
         ).toSet()
     }
 }

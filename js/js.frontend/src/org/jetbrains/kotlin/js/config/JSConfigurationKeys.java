@@ -38,6 +38,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<SourceMapSourceEmbedding> SOURCE_MAP_EMBED_SOURCES =
             CompilerConfigurationKey.create("embed source files into source map");
 
+    public static final CompilerConfigurationKey<SourceMapNamesPolicy> SOURCEMAP_NAMES_POLICY = CompilerConfigurationKey.create(
+            "a policy to generate a mapping from generated identifiers to their corresponding original names");
+
     public static final CompilerConfigurationKey<Boolean> META_INFO =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files");
 
@@ -73,6 +76,9 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_COMMENTS_WITH_FILE_PATH =
             CompilerConfigurationKey.create("generate comments with file path at the start of each file block");
+
+    public static final CompilerConfigurationKey<Boolean> GENERATE_POLYFILLS =
+            CompilerConfigurationKey.create("generate polyfills for newest properties, methods and classes from ES6+");
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_REGION_COMMENTS =
             CompilerConfigurationKey.create("generate special comments at the start and the end of each file block, " +

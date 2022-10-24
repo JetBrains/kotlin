@@ -45,6 +45,7 @@ internal fun convertToNewFormat(data: JsonObject): List<Any> {
 }
 
 // Convert data results to expected format.
+@Suppress("UNCHECKED_CAST")
 internal fun convert(json: String, buildNumber: String, target: String): List<BenchmarksReport> {
     val data = JsonTreeParser.parse(json)
     val reports = if (data is JsonArray) {
@@ -143,12 +144,12 @@ data class BuildRegister(val buildId: String, val teamCityUser: String, val team
             val data = JsonTreeParser.parse(response).jsonObject
             data.getArray("build").forEach {
                 (it as JsonObject).getObject("revisions").getArray("revision").forEach {
-                    val currentBranch = (it as JsonObject).getPrimitive("vcsBranchName").content.removePrefix("refs/heads/")
-                    val currentProject = (it as JsonObject).getObject("vcs-root-instance").getPrimitive("name").content
+                    it as JsonObject
+                    val currentBranch = it.getPrimitive("vcsBranchName").content.removePrefix("refs/heads/")
+                    val currentProject = it.getObject("vcs-root-instance").getPrimitive("name").content
                     if (projects.anyMatches(currentProject)) {
                         branch = currentBranch
                     }
-                    return@forEach
                 }
             }
             branch ?: error("No project from list $projects can be found in build $buildId")
@@ -476,7 +477,7 @@ fun router(networkConnector: NetworkConnector) {
             distinctValues("branch", buildInfoIndex).then { results ->
                 success(results)
             }.catch { errorMessage ->
-                error(errorMessage.message ?: "Failed getting branches list.")
+                println(errorMessage.message ?: "Failed getting branches list.")
                 reject()
             }
         }

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.calls.util.isOrOverridesSynthesized
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
-import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import java.util.*
 
 class OverrideResolver(
@@ -863,9 +862,8 @@ class OverrideResolver(
 
             if (overriddenDescriptors.isEmpty()) {
                 val containingDeclaration = declared.containingDeclaration
-                val declaringClass = containingDeclaration.assertedCast<ClassDescriptor> {
-                    "Overrides may only be resolved in a class, but $declared comes from $containingDeclaration"
-                }
+                val declaringClass = containingDeclaration as? ClassDescriptor
+                    ?: error("Overrides may only be resolved in a class, but $declared comes from $containingDeclaration")
 
                 val invisibleOverriddenDescriptor =
                     findInvisibleOverriddenDescriptor(

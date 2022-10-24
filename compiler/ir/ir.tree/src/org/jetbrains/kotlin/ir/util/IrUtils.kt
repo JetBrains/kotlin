@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
+import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -1101,13 +1102,15 @@ val IrFunction.allParametersCount: Int
 // This is essentially the same as FakeOverrideBuilder,
 // but it bypasses SymbolTable.
 // TODO: merge it with FakeOverrideBuilder.
-private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(emptyMap()) {
-
-    override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction, compatibilityMode: Boolean) {
+private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(
+    friendModules = emptyMap(),
+    unimplementedOverridesStrategy = ProcessAsFakeOverrides
+) {
+    override fun linkFunctionFakeOverride(declaration: IrFunctionWithLateBinding, compatibilityMode: Boolean) {
         declaration.acquireSymbol(IrSimpleFunctionSymbolImpl())
     }
 
-    override fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty, compatibilityMode: Boolean) {
+    override fun linkPropertyFakeOverride(declaration: IrPropertyWithLateBinding, compatibilityMode: Boolean) {
         val propertySymbol = IrPropertySymbolImpl()
         declaration.getter?.let { it.correspondingPropertySymbol = propertySymbol }
         declaration.setter?.let { it.correspondingPropertySymbol = propertySymbol }
@@ -1116,18 +1119,25 @@ private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(empt
 
         declaration.getter?.let {
             it.correspondingPropertySymbol = declaration.symbol
-            linkFunctionFakeOverride(it as? IrFakeOverrideFunction ?: error("Unexpected fake override getter: $it"), compatibilityMode)
+            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), compatibilityMode)
         }
         declaration.setter?.let {
             it.correspondingPropertySymbol = declaration.symbol
-            linkFunctionFakeOverride(it as? IrFakeOverrideFunction ?: error("Unexpected fake override setter: $it"), compatibilityMode)
+            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), compatibilityMode)
         }
     }
 }
 
-fun IrClass.addFakeOverrides(typeSystem: IrTypeSystemContext, implementedMembers: List<IrOverridableMember> = emptyList()) {
+fun IrClass.addFakeOverrides(
+    typeSystem: IrTypeSystemContext,
+    implementedMembers: List<IrOverridableMember> = emptyList(),
+    ignoredParentSymbols: List<IrSymbol> = emptyList()
+) {
     IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings())
-        .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false)
+        .buildFakeOverridesForClassUsingOverriddenSymbols(this,
+                                                          implementedMembers = implementedMembers,
+                                                          compatibilityMode = false,
+                                                          ignoredParentSymbols = ignoredParentSymbols)
         .forEach { addChild(it) }
 }
 
@@ -1297,3 +1307,11 @@ fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>
 
 fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
+
+val IrFunction.isTypedEquals: Boolean
+    get() {
+        val parentClass = parent as? IrClass ?: return false
+        return name == OperatorNameConventions.EQUALS && returnType.isBoolean() && valueParameters.size == 1
+                && (valueParameters[0].type.classFqName?.run { parentClass.hasEqualFqName(this) } ?: false)
+                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && parentClass.isValue
+    }

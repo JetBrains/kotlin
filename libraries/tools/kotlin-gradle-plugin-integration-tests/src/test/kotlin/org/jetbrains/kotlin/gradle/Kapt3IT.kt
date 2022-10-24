@@ -124,7 +124,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("Kapt is working with newer JDKs")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_10, JavaVersion.VERSION_11, JavaVersion.VERSION_16])
+    @JdkVersions(versions = [JavaVersion.VERSION_1_10, JavaVersion.VERSION_11, JavaVersion.VERSION_16, JavaVersion.VERSION_17])
     @GradleWithJdkTest
     fun doTestSimpleWithCustomJdk(
         gradleVersion: GradleVersion,

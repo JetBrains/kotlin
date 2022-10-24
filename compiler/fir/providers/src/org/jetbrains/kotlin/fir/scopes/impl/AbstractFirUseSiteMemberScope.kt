@@ -22,7 +22,8 @@ abstract class AbstractFirUseSiteMemberScope(
     dispatchReceiverType: ConeSimpleKotlinType,
     protected val declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirOverrideScope(session, overrideChecker) {
-    protected val supertypeScopeContext = FirTypeIntersectionScopeContext(session, overrideChecker, superTypeScopes, dispatchReceiverType)
+    protected val supertypeScopeContext =
+        FirTypeIntersectionScopeContext(session, overrideChecker, superTypeScopes, dispatchReceiverType, forClassUseSiteScope = true)
 
     private val functions: MutableMap<Name, Collection<FirNamedFunctionSymbol>> = hashMapOf()
 
@@ -130,7 +131,7 @@ abstract class AbstractFirUseSiteMemberScope(
              *
              * TODO: is it enough to check only one function?
              */
-            mostSpecific
+            keySymbol
         } else {
             chosenSymbol
         }

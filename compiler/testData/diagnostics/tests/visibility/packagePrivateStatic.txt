@@ -1,0 +1,39 @@
+package
+
+package bar {
+
+    public final class Impl : foo.Derived {
+        public constructor Impl()
+        protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package foo {
+
+    public/*package*/ open class Base {
+        public/*package*/ constructor Base()
+        protected/*protected and package*/ open fun bar(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        protected/*protected static*/ open fun foo(): kotlin.Unit
+    }
+
+    public open class Derived : foo.Base {
+        public constructor Derived()
+        protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        protected/*protected static*/ open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+    }
+}
+

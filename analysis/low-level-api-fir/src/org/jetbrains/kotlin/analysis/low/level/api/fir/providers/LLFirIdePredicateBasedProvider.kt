@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
@@ -40,7 +41,7 @@ import org.jetbrains.kotlin.psi.*
  * PSI index based implementation of [FirPredicateBasedProvider].
  */
 internal class LLFirIdePredicateBasedProvider(
-    private val session: FirSession,
+    private val session: LLFirSourcesSession,
     private val annotationsResolver: KotlinAnnotationsResolver,
     private val declarationProvider: KotlinDeclarationProvider,
 ) : FirPredicateBasedProvider() {

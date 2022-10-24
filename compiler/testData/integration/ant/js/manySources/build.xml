@@ -9,6 +9,7 @@
            <include name="**/*.kt"/>
          </fileset>
        </src>
+      <compilerarg value="-Xuse-deprecated-legacy-compiler"/>
     </kotlin2js>
   </target>
 </project>

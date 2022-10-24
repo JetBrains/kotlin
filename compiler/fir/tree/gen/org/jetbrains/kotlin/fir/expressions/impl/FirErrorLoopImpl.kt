@@ -30,7 +30,7 @@ internal class FirErrorLoopImpl(
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorLoop() {
     override var block: FirBlock = FirEmptyExpressionBlock()
-    override var condition: FirExpression = FirErrorExpressionImpl(source, mutableListOf(), ConeStubDiagnostic(diagnostic), null)
+    override var condition: FirExpression = FirErrorExpressionImpl(source, mutableListOf(), ConeStubDiagnostic(diagnostic), null, null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

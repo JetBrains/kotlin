@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -171,8 +170,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
         private val irBuiltIns = context.irBuiltIns
         private val symbols = context.ir.symbols
-        private val getContinuationSymbol = symbols.getContinuation
-        private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
         private val referencedFunction = functionReference.symbol.owner
@@ -195,8 +192,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         private val isLambda = functionReference.origin.isLambda
         private val isKFunction = functionReference.type.isKFunction()
         private val isKSuspendFunction = functionReference.type.isKSuspendFunction()
-
-        private val samSuperClass = samSuperType?.let { it.classOrNull ?: error("Expected a class but was: ${it.render()}") }
 
         private val adaptedReferenceOriginalTarget: IrFunction? = functionReference.reflectionTarget?.owner
 
@@ -253,41 +248,25 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 else -> kFunctionImplSymbol.typeWith(functionReturnType)
             }
             val superTypes = mutableListOf(superClass)
+            val transformedSuperMethod: IrSimpleFunction
             if (samSuperType != null) {
                 superTypes += samSuperType
-
-                val sam = samSuperClass!!.functions.single { it.owner.modality == Modality.ABSTRACT }
-                buildInvokeMethod(sam.owner)
+                val samSuperClass = samSuperType.classOrNull ?: error("Expected a class but was: ${samSuperType.render()}")
+                transformedSuperMethod = samSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
             } else {
                 val numberOfParameters = unboundFunctionParameters.size
-                val functionClass: IrClass?
-                val suspendFunctionClass: IrClass?
                 if (isKSuspendFunction) {
-                    functionClass = null
-                    suspendFunctionClass = symbols.kSuspendFunctionN(numberOfParameters).owner
+                    val suspendFunctionClass = symbols.kSuspendFunctionN(numberOfParameters).owner
                     superTypes += suspendFunctionClass.typeWith(functionParameterAndReturnTypes)
+                    transformedSuperMethod = suspendFunctionClass.getInvokeFunction()
                 } else {
-                    functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
+                    val functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
                     superTypes += functionClass.typeWith(functionParameterAndReturnTypes)
-                    val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
-                    if (lastParameterType?.classifierOrNull != continuationClassSymbol)
-                        suspendFunctionClass = null
-                    else {
-                        lastParameterType as IrSimpleType
-                        // If the last parameter is Continuation<> inherit from SuspendFunction.
-                        suspendFunctionClass = symbols.suspendFunctionN(numberOfParameters - 1).owner
-                        val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
-                                (lastParameterType.arguments.single().typeOrNull ?: irBuiltIns.anyNType)
-                        superTypes += suspendFunctionClass.symbol.typeWith(suspendFunctionClassTypeParameters)
-                    }
-                }
-
-                if (functionClass != null)
-                    buildInvokeMethod(functionClass.getInvokeFunction())
-                if (suspendFunctionClass != null) {
-                    buildInvokeMethod(suspendFunctionClass.getInvokeFunction())
+                    transformedSuperMethod = functionClass.getInvokeFunction()
                 }
             }
+            val originalSuperMethod = context.mapping.functionWithContinuationsToSuspendFunctions[transformedSuperMethod] ?: transformedSuperMethod
+            buildInvokeMethod(originalSuperMethod)
 
             functionReferenceClass.superTypes += superTypes
             if (!isLambda) {
@@ -341,7 +320,13 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                         }
             }
 
-            functionReferenceClass.addFakeOverrides(context.typeSystem)
+            functionReferenceClass.addFakeOverrides(
+                    context.typeSystem,
+                    // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
+                    // transformedSuperMethod in its declaration list. We need not fake override in that case.
+                    // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
+                    ignoredParentSymbols = listOf(transformedSuperMethod.symbol)
+            )
 
             return functionReferenceClass
         }
@@ -490,9 +475,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                                                 if (parameter == referencedFunction.extensionReceiverParameter
                                                         && extensionReceiverParameter != null)
                                                     irGet(extensionReceiverParameter!!)
-                                                else if (function.isSuspend && unboundIndex == valueParameters.size)
-                                                // For suspend functions the last argument is continuation and it is implicit.
-                                                    irCall(getContinuationSymbol.owner, listOf(returnType))
                                                 else
                                                     irGet(valueParameters[unboundIndex++])
                                             }

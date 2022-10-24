@@ -27,7 +27,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
     // Becnhmarks indexes to work with in case of existing feature values.
     private val benchmarksIndexes =
             if (featureValues.isNotEmpty())
-                featureValues.map { it to BenchmarksIndex("benchmarks_${it.replace(" ", "_").toLowerCase()}", connector) }
+                featureValues.map { it to BenchmarksIndex("benchmarks_${it.replace(" ", "_").lowercase()}", connector) }
                         .toMap()
             else emptyMap()
 
@@ -122,7 +122,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                                     "bool": {
                                         "must": [
                                             { "match": { "benchmarks.metric": "$metricName" } },
-                                            { "terms": { "benchmarks.name": [${samples.map { "\"${it.toLowerCase()}\"" }.joinToString()}] }}
+                                            { "terms": { "benchmarks.name": [${samples.map { "\"${it.lowercase()}\"" }.joinToString()}] }}
                                         ]
                                     }  
                                 }, "inner_hits": {

@@ -134,6 +134,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANCE_HIERARCHY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DANGEROUS_CHARACTERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_CONFLICT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG_PARAMETER
@@ -2003,6 +2004,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Redundant 'suspend' modifier: lambda parameters of suspend function type uses existing continuation."
         )
 
+        map.put(
+            INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+            "Overriding ''equals'' from ''Any'' in inline class alongside with lack of ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
+            STRING
+        )
+
         //imports
         map.put(
             CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON,
@@ -2044,7 +2051,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND,
-            "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''"
+            "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Surround the lambda with parentheses: ''suspend({ ... })''"
         )
         map.put(
             MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN,

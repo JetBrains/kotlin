@@ -54,11 +54,16 @@ fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:22 box
-// test.kt:11 E
-// test.kt:11 E
+// test.kt:11 <init>
+// test.kt:3 <init>
+// test.kt:11 <init>
+// test.kt:3 <init>
 // test.kt:22 box
-// test.kt:9 protoOf.foo_26di_k$
+// test.kt:9 foo
 // test.kt:15 E2_initEntries
-// test.kt:14 E2
+// test.kt:14 <init>
+// test.kt:14 <init>
 // test.kt:17 E2_initEntries
-// test.kt:14 E2
+// test.kt:14 <init>
+// test.kt:14 <init>
+// test.kt:24 box

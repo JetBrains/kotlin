@@ -47,3 +47,4 @@ fun fail() : String {
 // test.kt:16 box
 // test.kt:8 box
 // test.kt:16 box
+// test.kt:9 box

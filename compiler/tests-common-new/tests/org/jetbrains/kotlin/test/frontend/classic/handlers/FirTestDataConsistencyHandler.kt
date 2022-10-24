@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticsTestWithJvmIrBackend
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.firTestDataFile
@@ -57,6 +58,8 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         test.runTest(firTestData.absolutePath)
     }
 
-    protected open fun correspondingFirTest(): AbstractKotlinCompilerTest =
-        object : AbstractFirDiagnosticTest() {}
+    protected open fun correspondingFirTest(): AbstractKotlinCompilerTest {
+        return if ("Backend" in testServices.testInfo.className) object : AbstractFirDiagnosticsTestWithJvmIrBackend() {}
+        else object : AbstractFirDiagnosticTest() {}
+    }
 }

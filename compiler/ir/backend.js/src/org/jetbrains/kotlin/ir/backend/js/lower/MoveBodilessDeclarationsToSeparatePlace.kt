@@ -87,15 +87,12 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
 
             context.packageLevelJsModules += externalPackageFragment
 
-            declaration.collectAllExternalDeclarations()
-
             return emptyList()
         } else {
             val d = declaration as? IrDeclarationWithName ?: return null
 
             if (isBuiltInClass(d) || isIntrinsic(d)) {
                 context.bodilessBuiltInsPackageFragment.addChild(d)
-                d.collectAllExternalDeclarations()
 
                 return emptyList()
             } else if (d.isEffectivelyExternal()) {
@@ -105,26 +102,11 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
                 externalPackageFragment.declarations += d
                 d.parent = externalPackageFragment
 
-                d.collectAllExternalDeclarations()
-
                 return emptyList()
             }
 
             return null
         }
-    }
-
-    private fun IrDeclaration.collectAllExternalDeclarations() {
-        this.accept(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitDeclaration(declaration: IrDeclarationBase) {
-                context.externalDeclarations.add(declaration)
-                super.visitDeclaration(declaration)
-            }
-        }, null)
     }
 }
 

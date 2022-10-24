@@ -1,5 +1,4 @@
 // ENABLE_JVM_PREVIEW
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: MyRec.java
 public record MyRec(String name) implements KI {
     public String getName() {

@@ -9,14 +9,14 @@ private typealias TA = <!INVISIBLE_REFERENCE!>C<!>
 private val test1: <!INVISIBLE_REFERENCE!>C<!> = <!INVISIBLE_REFERENCE!>C<!>()
 private val test1co: <!INVISIBLE_REFERENCE!>C.Companion<!> = <!INITIALIZER_TYPE_MISMATCH, INVISIBLE_REFERENCE, NO_COMPANION_OBJECT!>C<!>
 
-private val test2: <!INVISIBLE_REFERENCE!>TA<!> = <!INITIALIZER_TYPE_MISMATCH!>TA(<!NO_VALUE_FOR_PARAMETER!>)<!><!>
+private val test2: <!INVISIBLE_REFERENCE!>TA<!> = <!INITIALIZER_TYPE_MISMATCH, NO_VALUE_FOR_PARAMETER!>TA()<!>
 private val test2co = <!INVISIBLE_REFERENCE!>TA<!>
 
 // FILE: file2.kt
 private val test1: C = C()
 private val test1co: C.Companion = <!INITIALIZER_TYPE_MISMATCH, NO_COMPANION_OBJECT!>C<!>
 
-private val test2: TA = <!INITIALIZER_TYPE_MISMATCH!>TA(<!NO_VALUE_FOR_PARAMETER!>)<!><!>
+private val test2: TA = <!INITIALIZER_TYPE_MISMATCH, NO_VALUE_FOR_PARAMETER!>TA()<!>
 private val test2co = TA
 
 private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!>

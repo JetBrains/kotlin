@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorBasedKotlinManglerImpl
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorExportCheckerVisitor
@@ -76,6 +77,11 @@ abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrB
             return null
         }
 
+        override fun IrFunction.platformSpecificFunctionMarks(): List<String> = when (origin) {
+            IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION -> listOfSuspendFunctionMark
+            else -> emptyList()
+        }
+
         override fun IrFunction.specialValueParamPrefix(param: IrValueParameter): String {
             // TODO: there are clashes originating from ObjectiveC interop.
             // kotlinx.cinterop.ObjCClassOf<T>.create(format: kotlin.String): T defined in platform.Foundation in file Foundation.kt
@@ -83,6 +89,10 @@ abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrB
             // kotlinx.cinterop.ObjCClassOf<T>.create(string: kotlin.String): T defined in platform.Foundation in file Foundation.kt
 
             return if (this.hasObjCMethodAnnotation || this.hasObjCFactoryAnnotation || this.isObjCClassMethod()) "${param.name}:" else ""
+        }
+
+        companion object {
+            val listOfSuspendFunctionMark = listOf(MangleConstant.SUSPEND_FUNCTION_MARK)
         }
     }
 }

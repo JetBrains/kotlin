@@ -7,17 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
@@ -27,13 +20,10 @@ import org.jetbrains.kotlin.library.containsErrorCode
 
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
+    partialLinkageEnabled: Boolean,
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     friendModules: Map<String, Collection<String>> = emptyMap(),
-    override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(
-        builtIns,
-        allowUnboundSymbols = false
-    ),
     private val stubGenerator: DeclarationStubGenerator? = null
 ) : KotlinIrLinker(
     currentModule = currentModule,
@@ -41,6 +31,7 @@ class JsIrLinker(
     builtIns = builtIns,
     symbolTable = symbolTable,
     exportedDependencies = emptyList(),
+    partialLinkageEnabled = partialLinkageEnabled,
     symbolProcessor = { symbol, idSig ->
         if (idSig.isLocal) {
             symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), idSig)
@@ -48,7 +39,14 @@ class JsIrLinker(
         symbol
     }) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns), friendModules)
+    override val fakeOverrideBuilder = FakeOverrideBuilder(
+        linker = this,
+        symbolTable = symbolTable,
+        mangler = JsManglerIr,
+        typeSystem = IrTypeSystemContextImpl(builtIns),
+        friendModules = friendModules,
+        partialLinkageEnabled = partialLinkageSupport.partialLinkageEnabled
+    )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule

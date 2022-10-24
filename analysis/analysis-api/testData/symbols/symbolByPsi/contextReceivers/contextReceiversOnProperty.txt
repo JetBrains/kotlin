@@ -1,24 +1,3 @@
-KtPropertyGetterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  hasBody: true
-  hasStableParameterNames: true
-  isDefault: false
-  isExtension: false
-  isInline: false
-  isOverride: false
-  modality: FINAL
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Int
-  symbolKind: ACCESSOR
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /y
@@ -26,7 +5,24 @@ KtKotlinPropertySymbol:
     ContextReceiver(kotlin/Int)
     ContextReceiver(s@kotlin/String)
   ]
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
   hasGetter: true
   hasSetter: false

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -123,11 +122,10 @@ constructor(
 
                         it.finalizedBy(syncTask)
 
-                        if (tsValidationTask != null) {
+                        if (binary.generateTs) {
                             it.finalizedBy(tsValidationTask)
                         }
                     }
-
                 }
         }
     }
@@ -163,21 +161,17 @@ constructor(
         }
     }
 
-    private fun registerTypeScriptCheckTask(binary: JsIrBinary): TaskProvider<TypeScriptValidationTask>? {
+    private fun registerTypeScriptCheckTask(binary: JsIrBinary): TaskProvider<TypeScriptValidationTask> {
         val linkTask = binary.linkTask
         val compilation = binary.compilation
-        return if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
-            null
-        } else {
-            project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
-                it.inputDir.set(linkTask.flatMap { it.destinationDirectory })
-                it.validationStrategy.set(
-                    when (binary.mode) {
-                        KotlinJsBinaryMode.DEVELOPMENT -> propertiesProvider.jsIrGeneratedTypeScriptValidationDevStrategy
-                        KotlinJsBinaryMode.PRODUCTION -> propertiesProvider.jsIrGeneratedTypeScriptValidationProdStrategy
-                    }
-                )
-            }
+        return project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
+            it.inputDir.set(linkTask.flatMap { it.destinationDirectory })
+            it.validationStrategy.set(
+                when (binary.mode) {
+                    KotlinJsBinaryMode.DEVELOPMENT -> propertiesProvider.jsIrGeneratedTypeScriptValidationDevStrategy
+                    KotlinJsBinaryMode.PRODUCTION -> propertiesProvider.jsIrGeneratedTypeScriptValidationProdStrategy
+                }
+            )
         }
     }
 
@@ -317,9 +311,44 @@ constructor(
         }
     }
 
+    override fun useEsModules() {
+        compilations.all {
+            it.kotlinOptions.configureEsModulesOptions()
+
+            binaries
+                .withType(JsIrBinary::class.java)
+                .all {
+                    it.linkTask.configure { linkTask ->
+                        linkTask.kotlinOptions.configureEsModulesOptions()
+                    }
+                }
+        }
+
+    }
+
     private fun KotlinJsOptions.configureCommonJsOptions() {
         moduleKind = "commonjs"
         sourceMap = true
         sourceMapEmbedSources = "never"
+    }
+
+    private fun KotlinJsOptions.configureEsModulesOptions() {
+        moduleKind = "es"
+        sourceMap = true
+        sourceMapEmbedSources = "never"
+    }
+
+    override fun generateTypeScriptDefinitions() {
+        compilations
+            .all {
+                it.binaries
+                    .withType(JsIrBinary::class.java)
+                    .all {
+                        it.generateTs = true
+                        it.linkTask.configure { linkTask ->
+                            linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
+                        }
+                    }
+            }
     }
 }

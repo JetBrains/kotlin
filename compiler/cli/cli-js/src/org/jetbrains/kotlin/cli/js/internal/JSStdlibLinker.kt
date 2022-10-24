@@ -4,6 +4,7 @@
  */
 
 @file:JvmName("JSStdlibLinker")
+
 package org.jetbrains.kotlin.cli.js.internal
 
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
@@ -36,27 +37,29 @@ fun main(args: Array<String>) {
 private fun mergeStdlibParts(outputFile: File, wrapperFile: File, baseDir: File, inputPaths: List<File>) {
     val program = JsProgram()
 
-    fun File.relativizeIfNecessary(): String = canonicalFile.toRelativeString(baseDir)
+    fun File.makeRelativeIfNecessary(): String = canonicalFile.toRelativeString(baseDir)
 
-    val wrapper = parse(wrapperFile.readText(), ThrowExceptionOnErrorReporter, program.scope, wrapperFile.relativizeIfNecessary())!!
+    val wrapper = parse(wrapperFile.readText(), ThrowExceptionOnErrorReporter, program.scope, wrapperFile.makeRelativeIfNecessary())
+        ?: error("Should not be null because of error reporter")
     val insertionPlace = wrapper.createInsertionPlace()
 
     val allFiles = mutableListOf<File>()
     inputPaths.forEach { collectFiles(it, allFiles) }
 
     for (file in allFiles) {
-        val statements = parse(file.readText(), ThrowExceptionOnErrorReporter, program.scope, file.relativizeIfNecessary())!!
+        val statements = parse(file.readText(), ThrowExceptionOnErrorReporter, program.scope, file.makeRelativeIfNecessary())
+            ?: error("Should not be null because of error reporter")
         val block = JsBlock(statements)
         block.fixForwardNameReferences()
 
         val sourceMapFile = File(file.parent, file.name + ".map")
         if (sourceMapFile.exists()) {
-            val sourceMapParse = SourceMapParser.parse(sourceMapFile)
-            when (sourceMapParse) {
+            when (val sourceMapParse = SourceMapParser.parse(sourceMapFile)) {
                 is SourceMapError -> {
                     System.err.println("Error parsing source map file $sourceMapFile: ${sourceMapParse.message}")
                     exitProcess(1)
                 }
+
                 is SourceMapSuccess -> {
                     val sourceMap = sourceMapParse.value
                     val remapper = SourceMapLocationRemapper(sourceMap)
@@ -73,7 +76,13 @@ private fun mergeStdlibParts(outputFile: File, wrapperFile: File, baseDir: File,
     val sourceMapFile = File(outputFile.parentFile, outputFile.name + ".map")
     val textOutput = TextOutputImpl()
     val sourceMapBuilder = SourceMap3Builder(outputFile, textOutput, "")
-    val consumer = SourceMapBuilderConsumer(File("."), sourceMapBuilder, SourceFilePathResolver(mutableListOf()), true, true)
+    val consumer = SourceMapBuilderConsumer(
+        File("."),
+        sourceMapBuilder,
+        SourceFilePathResolver(mutableListOf()),
+        provideCurrentModuleContent = true,
+        provideExternalModuleContent = true
+    )
     program.globalBlock.accept(JsToStringGenerationVisitor(textOutput, consumer))
     val sourceMapContent = sourceMapBuilder.build()
 
@@ -101,16 +110,16 @@ private fun List<JsStatement>.createInsertionPlace(): JsBlock {
 
     val visitor = object : JsVisitorWithContextImpl() {
         override fun visit(x: JsExpressionStatement, ctx: JsContext<in JsStatement>): Boolean {
-            if (isInsertionPlace(x.expression)) {
+            return if (isInsertionPlace(x.expression)) {
                 ctx.replaceMe(block)
-                return false
+                false
             } else {
-                return super.visit(x, ctx)
+                super.visit(x, ctx)
             }
         }
 
         private fun isInsertionPlace(expression: JsExpression): Boolean {
-            if (expression !is JsInvocation || !expression.arguments.isEmpty()) return false
+            if (expression !is JsInvocation || expression.arguments.isNotEmpty()) return false
 
             val qualifier = expression.qualifier
             if (qualifier !is JsNameRef || qualifier.qualifier != null) return false
@@ -126,7 +135,7 @@ private fun List<JsStatement>.createInsertionPlace(): JsBlock {
 
 private fun collectFiles(rootFile: File, target: MutableList<File>) {
     if (rootFile.isDirectory) {
-        for (child in rootFile.listFiles().sorted()) {
+        for (child in (rootFile.listFiles() ?: error("Problem with listing files in $rootFile")).sorted()) {
             collectFiles(child, target)
         }
     } else if (rootFile.extension == "js") {

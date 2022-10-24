@@ -445,8 +445,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             symbols.baseContinuationImpl.owner.declarations
                     .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "invokeSuspend" }.symbol
 
-    private val getContinuationSymbol = symbols.getContinuation
-
     private val arrayGetSymbols = symbols.arrayGet.values
     private val arraySetSymbols = symbols.arraySet.values
     private val createUninitializedInstanceSymbol = symbols.createUninitializedInstance
@@ -485,27 +483,12 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 { Scoped(DataFlowIR.Node.Parameter(it.index), rootScope) }
         )
 
-        private val continuationParameter = when {
-            declaration !is IrSimpleFunction -> null
-
-            declaration.isSuspend -> Scoped(DataFlowIR.Node.Parameter(allParameters.size), rootScope)
-
-            declaration.overrides(invokeSuspendFunctionSymbol.owner) ->           // <this> is a ContinuationImpl inheritor.
-                templateParameters[declaration.dispatchReceiverParameter!!]       // It is its own continuation.
-
-            else -> null
-        }
-
-        private fun getContinuation() = continuationParameter
-                ?: error("Function ${declaration.descriptor} has no continuation parameter")
 
         private val nodes = mutableMapOf<IrExpression, Scoped<DataFlowIR.Node>>()
         private val variables = mutableMapOf<IrValueDeclaration, Scoped<DataFlowIR.Node.Variable>>()
         private val expressionsScopes = mutableMapOf<IrExpression, DataFlowIR.Node.Scope>()
 
         fun build(): DataFlowIR.Function {
-            val isSuspend = declaration is IrSimpleFunction && declaration.isSuspend
-
             val scopes = mutableMapOf<IrLoop, DataFlowIR.Node.Scope>()
             fun transformLoop(loop: IrLoop, parentLoop: IrLoop?): DataFlowIR.Node.Scope {
                 scopes[loop]?.let { return it }
@@ -566,8 +549,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             rootScope.nodes += templateParameters.values.map { it.value }
             rootScope.nodes += returnsNode
             rootScope.nodes += throwsNode
-            if (isSuspend)
-                rootScope.nodes += continuationParameter!!.value
 
             return DataFlowIR.Function(
                     symbol = symbolTable.mapFunction(declaration),
@@ -610,7 +591,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         private fun mapReturnType(actualType: IrType, returnType: IrType) = mapWrappedType(actualType, returnType)
 
 
-        private fun getNode(expression: IrExpression, continuationOverride: DataFlowIR.Node? = null): Scoped<DataFlowIR.Node> {
+        private fun getNode(expression: IrExpression): Scoped<DataFlowIR.Node> {
             if (expression is IrGetValue) {
                 val valueDeclaration = expression.symbol.owner
                 if (valueDeclaration is IrValueParameter)
@@ -712,13 +693,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                             }
 
                             is IrCall -> when (value.symbol) {
-                                getContinuationSymbol -> continuationOverride ?: getContinuation().value
-
-                                symbols.coroutineLaunchpad -> getNode(
-                                        value.getValueArgument(0)!!,
-                                        continuationOverride = expressionToEdge(value.getValueArgument(1)!!).node
-                                ).value
-
                                 in arrayGetSymbols -> {
                                     val actualCallee = value.actualCallee
 
@@ -765,12 +739,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     val callee = value.symbol.owner
                                     val arguments = value.getArguments()
                                             .map { expressionToEdge(it.second) }
-                                            .let {
-                                                if (callee.isSuspend)
-                                                    it + DataFlowIR.Edge(continuationOverride ?: getContinuation().value, null)
-                                                else
-                                                    it
-                                            }
 
                                     if (value.isVirtualCall) {
                                         val owner = callee.parentAsClass

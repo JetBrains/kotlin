@@ -855,6 +855,50 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvalidCode {
+        @Test
+        public void testAllFilesPresentInInvalidCode() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("getterAssignment.kt")
+        public void testGetterAssignment() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/getterAssignment.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NonCalls {
+        @Test
+        public void testAllFilesPresentInNonCalls() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("ifExpression.kt")
+        public void testIfExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls/ifExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("literalExpression.kt")
+        public void testLiteralExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls/literalExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("whenExpression.kt")
+        public void testWhenExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls/whenExpression.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled")
     @TestDataPath("$PROJECT_ROOT")
     public class WithTestCompilerPluginEnabled {

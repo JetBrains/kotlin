@@ -111,7 +111,11 @@ class NewConstraintError(
     override val upperType: KotlinTypeMarker,
     override val position: IncorporationConstraintPosition,
 ) : ConstraintSystemError(if (position.from is ReceiverConstraintPosition<*>) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE),
-    NewConstraintMismatch
+    NewConstraintMismatch {
+    override fun toString(): String {
+        return "$lowerType <: $upperType"
+    }
+}
 
 class NewConstraintWarning(
     override val lowerType: KotlinTypeMarker,

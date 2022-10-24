@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -110,6 +111,7 @@ fun compileIr(
 ): LoweredIr {
     val moduleDescriptor = moduleFragment.descriptor
     val irFactory = symbolTable.irFactory
+    val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
@@ -141,7 +143,10 @@ fun compileIr(
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     allModules.forEach { module ->
-        collectNativeImplementations(context, module)
+        if (shouldGeneratePolyfills) {
+            collectNativeImplementations(context, module)
+        }
+
         moveBodilessDeclarationsToSeparatePlace(context, module)
     }
 
@@ -160,7 +165,9 @@ fun generateJsCode(
     moduleFragment: IrModuleFragment,
     nameTables: NameTables
 ): String {
-    collectNativeImplementations(context, moduleFragment)
+    if (context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)) {
+        collectNativeImplementations(context, moduleFragment)
+    }
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 

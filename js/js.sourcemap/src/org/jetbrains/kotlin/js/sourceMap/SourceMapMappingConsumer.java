@@ -16,7 +16,7 @@ public interface SourceMapMappingConsumer {
 
     void addMapping(
             @NotNull String source, @Nullable Object fileIdentity, @NotNull Supplier<Reader> sourceSupplier,
-            int sourceLine, int sourceColumn
+            int sourceLine, int sourceColumn, @Nullable String name
     );
 
     void addEmptyMapping();

@@ -239,6 +239,18 @@ public class Fe10IdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerate
     }
 
     @Test
+    @TestMetadata("samWithReturnToExplicitLabel.kt")
+    public void testSamWithReturnToExplicitLabel() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithReturnToExplicitLabel.kt");
+    }
+
+    @Test
+    @TestMetadata("samWithReturnToImplicitLabel.kt")
+    public void testSamWithReturnToImplicitLabel() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithReturnToImplicitLabel.kt");
+    }
+
+    @Test
     @TestMetadata("samWithTypeCast.kt")
     public void testSamWithTypeCast() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithTypeCast.kt");

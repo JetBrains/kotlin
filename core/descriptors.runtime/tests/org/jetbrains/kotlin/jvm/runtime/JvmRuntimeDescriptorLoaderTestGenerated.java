@@ -58,6 +58,11 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInArray.kt");
             }
 
+            @TestMetadata("AnnotationOnTypeParameter.kt")
+            public void testAnnotationOnTypeParameter() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationOnTypeParameter.kt");
+            }
+
             @TestMetadata("ClassLiteralArguments.kt")
             public void testClassLiteralArguments() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/ClassLiteralArguments.kt");
@@ -3065,6 +3070,11 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
         @TestMetadata("RecursiveWildcardUpperBound.java")
         public void testRecursiveWildcardUpperBound() throws Exception {
             runTest("compiler/testData/loadJava/compiledJava/RecursiveWildcardUpperBound.java");
+        }
+
+        @TestMetadata("ReferenceCycleThroughAnnotation.java")
+        public void testReferenceCycleThroughAnnotation() throws Exception {
+            runTest("compiler/testData/loadJava/compiledJava/ReferenceCycleThroughAnnotation.java");
         }
 
         @TestMetadata("RemoveRedundantProjectionKind.java")

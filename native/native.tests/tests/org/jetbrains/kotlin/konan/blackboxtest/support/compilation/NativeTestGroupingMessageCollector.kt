@@ -111,7 +111,7 @@ internal class NativeTestGroupingMessageCollector(
     }
 
     private fun isPartialLinkageWarning(message: String): Boolean =
-        partialLinkageEnabled && PARTIAL_LINKAGE_WARNING_REGEXES.any { regex -> message.matches(regex) }
+        partialLinkageEnabled && message.matches(PARTIAL_LINKAGE_WARNING_REGEX)
 
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
 
@@ -119,12 +119,7 @@ internal class NativeTestGroupingMessageCollector(
         private const val PRE_RELEASE_WARNING_PREFIX = "Following manually enabled features will force generation of pre-release binaries: "
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
-
-        private val PARTIAL_LINKAGE_WARNING_REGEXES = listOf(
-            Regex("Accessing declaration with unlinked symbol .+"),
-            Regex("Expression type contains unlinked symbol"),
-            Regex("\\S+ declaration .+ contains unlinked symbols")
-        )
+        private val PARTIAL_LINKAGE_WARNING_REGEX = Regex(".+ uses unlinked symbols(:.*)?")
 
         private fun parseLanguageFeatureArg(arg: String): String? =
             substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-@Deprecated("Use CompilerJvmOptions instead", level = DeprecationLevel.WARNING)
+@Deprecated("Use KotlinJvmCompilerOptions instead", level = DeprecationLevel.WARNING)
 interface KotlinJvmOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
-    override val options: org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
+    override val options: org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 
     /**
      * Generate metadata for Java 1.8 reflection on method parameters

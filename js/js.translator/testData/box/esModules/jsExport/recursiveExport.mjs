@@ -1,4 +1,4 @@
-import { ping, Something } from "./main/index.js"
+import { ping, Something } from "./recursiveExport_v5.mjs"
 
 export default function() {
     return {

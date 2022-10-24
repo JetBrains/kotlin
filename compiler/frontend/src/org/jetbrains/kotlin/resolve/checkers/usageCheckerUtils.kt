@@ -12,9 +12,11 @@ internal fun PsiElement.isUsageAsAnnotationOrImport(): Boolean {
     val parent = parent
 
     if (parent is KtUserType) {
-        return parent.parent is KtTypeReference &&
-                parent.parent.parent is KtConstructorCalleeExpression &&
-                parent.parent.parent.parent is KtAnnotationEntry
+        return (parent.parent is KtUserType && parent.isUsageAsAnnotationOrImport()) || (
+                parent.parent is KtTypeReference &&
+                        parent.parent.parent is KtConstructorCalleeExpression &&
+                        parent.parent.parent.parent is KtAnnotationEntry
+                )
     }
 
     return parent is KtDotQualifiedExpression && parent.parent is KtImportDirective

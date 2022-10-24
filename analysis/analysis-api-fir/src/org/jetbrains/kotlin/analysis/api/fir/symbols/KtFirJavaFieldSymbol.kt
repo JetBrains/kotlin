@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modalityOrFinal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -53,7 +53,7 @@ internal class KtFirJavaFieldSymbol(
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> = withValidityAssertion {
-        val containingClassId = firSymbol.containingClass()?.classId
+        val containingClassId = firSymbol.containingClassLookupTag()?.classId
             ?: error("Cannot find parent class for java field $callableIdIfNonLocal")
 
         return KtFirJavaFieldSymbolPointer(containingClassId, name)

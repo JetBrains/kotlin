@@ -35,7 +35,7 @@ internal inline fun <reified T : IrAnnotationContainer> checkErrorNodesAllowed(e
 
 // N.B. Checks for absence of unbound symbols only when unbound symbols are not allowed.
 fun KotlinIrLinker.checkNoUnboundSymbols(symbolTable: SymbolTable, whenDetected: String) {
-    if (!unlinkedDeclarationsSupport.allowUnboundSymbols)
+    if (!partialLinkageSupport.partialLinkageEnabled)
         messageLogger.checkNoUnboundSymbols(symbolTable, whenDetected)
 }
 

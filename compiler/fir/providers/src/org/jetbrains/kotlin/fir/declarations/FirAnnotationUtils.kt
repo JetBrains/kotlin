@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -26,8 +27,14 @@ private fun FirAnnotation.toAnnotationLookupTag(): ConeClassLikeLookupTag? =
     // this cast fails when we have generic-typed annotations @T
     (annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag
 
+private fun FirAnnotation.toAnnotationLookupTagSafe(): ConeClassLikeLookupTag? =
+    annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
+
 fun FirAnnotation.toAnnotationClassId(): ClassId? =
     toAnnotationLookupTag()?.classId
+
+fun FirAnnotation.toAnnotationClassIdSafe(): ClassId? =
+    toAnnotationLookupTagSafe()?.classId
 
 private fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClass? =
     toAnnotationLookupTag()?.toSymbol(session)?.fir as? FirRegularClass
@@ -99,12 +106,20 @@ fun FirDeclaration.hasAnnotation(classId: ClassId): Boolean {
     return annotations.hasAnnotation(classId)
 }
 
+fun FirDeclaration.hasAnnotationSafe(classId: ClassId): Boolean {
+    return annotations.hasAnnotationSafe(classId)
+}
+
 fun FirBasedSymbol<*>.hasAnnotation(classId: ClassId): Boolean {
     return resolvedAnnotationsWithClassIds.hasAnnotation(classId)
 }
 
 fun List<FirAnnotation>.hasAnnotation(classId: ClassId): Boolean {
     return this.any { it.toAnnotationClassId() == classId }
+}
+
+fun List<FirAnnotation>.hasAnnotationSafe(classId: ClassId): Boolean {
+    return this.any { it.toAnnotationClassIdSafe() == classId }
 }
 
 fun <D> FirBasedSymbol<out D>.getAnnotationByClassId(classId: ClassId): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
@@ -209,3 +224,6 @@ fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any
     val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
 }
+
+fun FirAnnotation.fullyExpandedClassId(useSiteSession: FirSession): ClassId? =
+    coneClassLikeType?.fullyExpandedType(useSiteSession)?.classId

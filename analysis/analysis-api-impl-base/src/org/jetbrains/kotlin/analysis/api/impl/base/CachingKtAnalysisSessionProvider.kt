@@ -7,28 +7,23 @@ package org.jetbrains.kotlin.analysis.api.impl.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.psi.KtElement
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
 @KtAnalysisApiInternals
 abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) : KtAnalysisSessionProvider(project) {
-    private val cache = KtAnalysisSessionCache<Pair<State, KClass<out KtLifetimeToken>>>(project)
-
-    protected abstract fun getFirResolveSession(contextElement: KtElement): State
-    protected abstract fun getFirResolveSession(contextSymbol: KtSymbol): State
+    private val cache = KtAnalysisSessionCache(project)
 
     protected abstract fun getFirResolveSession(contextModule: KtModule): State
 
@@ -38,23 +33,15 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) :
     ): KtAnalysisSession
 
     final override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        val firResolveSession = getFirResolveSession(useSiteKtElement)
-        return cache.getAnalysisSession(firResolveSession to factory.identifier) {
-            val token = factory.create(project)
-            createAnalysisSession(firResolveSession, token)
-        }
+        return getAnalysisSessionByUseSiteKtModule(useSiteKtElement.getKtModule(project), factory)
     }
 
     final override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        val firResolveSession = getFirResolveSession(useSiteKtModule)
-        return cache.getAnalysisSession(firResolveSession to factory.identifier) {
+        return cache.getAnalysisSession(useSiteKtModule to factory.identifier) {
+            val firResolveSession = getFirResolveSession(useSiteKtModule)
             val validityToken = factory.create(project)
             createAnalysisSession(firResolveSession, validityToken)
         }
-    }
-
-    private fun getCachedAnalysisSession(firResolveSession: State, token: KtLifetimeToken): KtAnalysisSession? {
-        return cache.getCachedAnalysisSession(firResolveSession to token::class)
     }
 
     @TestOnly
@@ -63,24 +50,25 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) :
     }
 }
 
-private class KtAnalysisSessionCache<KEY : Any>(project: Project) {
-    private val cache = CachedValuesManager.getManager(project).createCachedValue {
-        CachedValueProvider.Result(
-            ConcurrentHashMap<KEY, KtAnalysisSession>(),
+private class KtAnalysisSessionCache(project: Project) {
+    private val cache = SoftCachedMap.create<Pair<KtModule, KClass<out KtLifetimeToken>>, KtAnalysisSession>(
+        project,
+        SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
+        listOf(
             PsiModificationTracker.MODIFICATION_COUNT,
             ProjectRootModificationTracker.getInstance(project),
             project.createProjectWideOutOfBlockModificationTracker()
         )
-    }
+    )
 
     @TestOnly
     fun clear() {
-        cache.value.clear()
+        cache.clear()
     }
 
-    inline fun getAnalysisSession(key: KEY, create: () -> KtAnalysisSession): KtAnalysisSession =
-        cache.value.getOrPut(key) { create() }
-
-    fun getCachedAnalysisSession(key: KEY): KtAnalysisSession? =
-        cache.value[key]
+    fun getAnalysisSession(
+        key: Pair<KtModule, KClass<out KtLifetimeToken>>,
+        create: () -> KtAnalysisSession
+    ): KtAnalysisSession =
+        cache.getOrPut(key) { create() }
 }

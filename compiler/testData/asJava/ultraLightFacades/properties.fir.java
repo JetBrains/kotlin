@@ -24,7 +24,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static java.lang.String x$1 = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
-  public static final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */;
+  public static final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */ /* constant value This subsystem is deprecated */;
 
   @org.jetbrains.annotations.Nullable()
   private static java.lang.Boolean isEmptyMutable;

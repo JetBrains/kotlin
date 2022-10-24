@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
@@ -145,7 +144,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 // TODO: When moving into proper deprecation cycle replace with WARNING.
                 configuration.report(
                         CompilerMessageSeverity.INFO,
-                        "`freezing` should not be enabled with the new MM. Freezing API is deprecated since 1.7.20. See https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#freezing-deprecation for details"
+                        "`freezing` should not be enabled with the new MM. Freezing API is deprecated since 1.7.20. See https://kotlinlang.org/docs/native-migration-guide.html for details"
                 )
                 freezingMode
             }
@@ -180,7 +179,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.appStateTracking) ?: AppStateTracking.DISABLED
     }
 
-    val mimallocUseDefaultOptions by lazy {
+
+    val mimallocUseDefaultOptions: Boolean by lazy {
         configuration.get(BinaryOptions.mimallocUseDefaultOptions) ?: false
     }
 
@@ -240,7 +240,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).cast()
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
     }
 
     val shouldCoverSources = configuration.getBoolean(KonanConfigKeys.COVERAGE)

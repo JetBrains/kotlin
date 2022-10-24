@@ -234,7 +234,6 @@ internal object FileInitializersOptimization {
         }
 
         private val executeImplSymbol = context.ir.symbols.executeImpl
-        private val coroutineLaunchpadSymbol = context.ir.symbols.coroutineLaunchpad
         private val getContinuationSymbol = context.ir.symbols.getContinuation
 
         private var dummySet = mutableSetOf<IrFunctionAccessExpression>()
@@ -506,8 +505,6 @@ internal object FileInitializersOptimization {
                         return processExecuteImpl(expression, data)
                     if (expression.symbol == getContinuationSymbol)
                         return data
-                    if (expression.symbol == coroutineLaunchpadSymbol)
-                        return processCoroutineLaunchpad(expression, data)
                     if (!expression.isVirtualCall)
                         return processCall(expression, expression.actualCallee, data)
                     val devirtualizedCallSite = virtualCallSites[expression] ?: return data

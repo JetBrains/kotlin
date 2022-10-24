@@ -53,11 +53,13 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
     nameHint: String? = null,
     irType: IrType = value?.type!!, // either value or irType should be supplied at callsite
     isMutable: Boolean = false,
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
 ): IrVariable {
     val temporary = scope.createTemporaryVariableDeclaration(
         irType, nameHint, isMutable,
         startOffset = startOffset,
-        endOffset = endOffset
+        endOffset = endOffset,
+        origin = origin,
     )
     value?.let { temporary.initializer = it }
     +temporary

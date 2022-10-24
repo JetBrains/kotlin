@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: JS
+// DONT_TARGET_EXACT_BACKEND: JS
 // EXPECTED_REACHABLE_NODES: 1270
 // SKIP_MINIFICATION
-// INFER_MAIN_MODULE
 // ES_MODULES
 
 // MODULE: if
@@ -12,6 +11,8 @@ public fun foo(k: String): String = "O$k"
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { foo } from "./if/index.js";
+import { foo } from "./reservedModuleName-if_v5.mjs";
 
-console.assert(foo("K") == "OK");
+export function box() {
+    return foo("K")
+}

@@ -94,8 +94,11 @@ internal class FirIdeRenderer private constructor(
         renderAnnotationsAndModifiers(propertyAccessor)
         append(if (propertyAccessor.isGetter) "get" else "set")
         if (propertyAccessor.isSetter) {
-            append("(value: ")
-            renderType(propertyAccessor.valueParameters.first().returnTypeRef)
+            append("(")
+            val valueParameter = propertyAccessor.valueParameters.first()
+            renderAnnotations(valueParameter)
+            append("value: ")
+            renderType(valueParameter.returnTypeRef)
             append(")")
         } else {
             append("()")

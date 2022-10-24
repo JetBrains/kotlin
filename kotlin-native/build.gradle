@@ -26,6 +26,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
 import java.util.concurrent.ConcurrentHashMap
+import plugins.KotlinBuildPublishingPluginKt
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
@@ -77,7 +78,7 @@ ext {
             KonanTarget.LINUX_MIPSEL32.INSTANCE
     ]
 
-    kotlinCompilerModule= [path: ":kotlin-compiler", configuration: "runtimeElements"]
+    kotlinCompilerModule = project(":kotlin-compiler")
     kotlinStdLibModule= project(":kotlin-stdlib")
     kotlinScriptRuntimeModule= project(":kotlin-script-runtime")
     kotlinUtilKliMetadatabModule= project(":kotlin-util-klib-metadata")
@@ -164,6 +165,8 @@ dependencies {
 }
 
 apply plugin: CompilationDatabasePlugin
+apply plugin: 'maven-publish'
+apply plugin: BasePlugin
 
 //task sharedJar {
 //    dependsOn gradle.includedBuild('shared').task(':jar')
@@ -181,7 +184,8 @@ task dist_compiler(dependsOn: "distCompiler")
 task dist_runtime(dependsOn: "distRuntime")
 task cross_dist(dependsOn: "crossDist")
 task list_dist(dependsOn: "listDist")
-task build {
+
+tasks.named("build") {
     dependsOn 'dist', 'distPlatformLibs'
 }
 
@@ -221,13 +225,14 @@ task shadowJar(type: ShadowJar) {
     mergeServiceFiles()
     destinationDirectory.set(file("$distDir/konan/lib"))
     archiveBaseName.set("kotlin-native")
+    archiveVersion.set("")
+    archiveClassifier.set("")
     // Exclude trove4j because of license agreement.
     exclude "*trove4j*"
     exclude("META-INF/versions/9/module-info.class")
     configurations = [project.configurations.distPack]
-    archiveClassifier.set(null)
     outputs.upToDateWhen {
-        archiveFile.getOrNull()?.asFile.exists() ?: false
+        archiveFile.getOrNull()?.asFile?.exists() ?: false
     }
 }
 
@@ -541,7 +546,8 @@ task bundle {
 
 task bundleRegular(type: (isWindows()) ? Zip : Tar) {
     def simpleOsName = HostManager.platformName()
-    archiveBaseName.set("kotlin-native-$simpleOsName-$konanVersionFull")
+    archiveBaseName.set("kotlin-native-$simpleOsName")
+    archiveVersion.set(konanVersionFull.toString())
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
@@ -550,19 +556,20 @@ task bundleRegular(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/platform'
         // Exclude platform libraries caches too. Keep caches for stdlib and endorsed libs.
         exclude 'klib/cache/*/org.jetbrains.kotlin.native.platform.*/**'
-        into archiveBaseName
+        into "${archiveBaseName.get()}-${archiveVersion.get()}"
     }
 }
 
 task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
     dependsOn("crossDistPlatformLibs")
     def simpleOsName = HostManager.platformName()
-    archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName-$konanVersionFull")
+    archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
+    archiveVersion.set(konanVersionFull.toString())
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
         exclude 'klib/testLibrary'
-        into archiveBaseName
+        into "${archiveBaseName.get()}-${archiveVersion.get()}"
     }
 }
 
@@ -572,11 +579,11 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
         if (!containsPlatformLibraries || !isMac()) {
             exclude '**/xcode_license.pdf'
         }
-        into task.archiveBaseName
+        into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}"
     }
 
     task.from(project.rootProject.file("license")) {
-        into "${task.archiveBaseName.get()}/licenses"
+        into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}/licenses"
     }
 }
 
@@ -591,7 +598,7 @@ configure([bundleRegular, bundlePrebuilt]) {
     dependsOn("distDef")
     from(project.projectDir) {
         include 'RELEASE_NOTES.md'
-        into baseName
+        into "${archiveBaseName.get()}-${archiveVersion.get()}"
     }
 
     destinationDirectory.set(file('.'))
@@ -608,11 +615,12 @@ task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
     dependsOn('dist')
     dependsOn('distSources')
     def simpleOsName = HostManager.platformName()
-    archiveBaseName.set("kotlin-native-dist-$simpleOsName-$konanVersionFull")
+    archiveBaseName.set("kotlin-native-dist-$simpleOsName")
+    archiveVersion.set(konanVersionFull.toString())
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
-        into archiveBaseName
+        into "${archiveBaseName.get()}-${archiveVersion.get()}"
     }
 
     destinationDirectory.set(file('.'))
@@ -710,16 +718,6 @@ task teamcityCompilerVersion {
     }
 }
 
-task clean(type: Delete) {
-    dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
-    doFirst {
-        delete distDir
-        delete buildDir
-        delete bundle.outputs.files
-        delete "${projectDir}/compile_commands.json"
-    }
-}
-
 task pusher(type: KotlinBuildPusher){
     kotlinVersion = project.kotlinVersion
     konanVersion = project.ext.kotlinNativeVersion
@@ -769,4 +767,127 @@ task "checkStdlibAbiCompatibility"(type: CompareDistributionSignatures) {
         oldDistribution = project.findProperty("anotherDistro")
     }
     onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
+}
+// FIXME: should be a part of Host/TargetManager
+String platformName(KonanTarget target) {
+    def result
+    switch (target) {
+        case KonanTarget.LINUX_X64:
+            result ="linux-x86_64"
+            break
+        case KonanTarget.MACOS_X64:
+            result = "macos-x86_64"
+            break
+        case KonanTarget.MACOS_ARM64:
+            result = "macos-aarch64"
+            break
+        case KonanTarget.MINGW_X64:
+            result = "windows-x86_64"
+            break
+        default:
+            throw TargetSupportException("Unknown host target")
+    }
+    return result
+}
+
+Map<KonanTarget, File> createConfigurations(List<File> bundles) {
+    def hostTargets = platformManager.enabledByHost.keySet()
+    def result = hostTargets.collectEntries { target ->
+        [ (target): bundles.find { it.name.contains(platformName(target)) }]
+    }
+    result.retainAll { it.value != null }
+    def missingBundles = hostTargets - result.keySet()
+    if (!missingBundles.isEmpty()) {
+        println("Some of the archive bundles are missing for targets $missingBundles:")
+        println(result)
+        throw new IllegalArgumentException("Bundle archives are missing for $missingBundles")
+    }
+    result.each { target, file ->
+        if (!file.name.contains(konanVersionFull.toString())) {
+            throw new IllegalArgumentException("Incorrect version specified for the publish: ${file.name}")
+        }
+    }
+    return result
+}
+
+def bundlesLocationFiles = UtilsKt.getNativeBundlesLocation(project)
+        .listFiles()
+        .toList()
+
+KotlinBuildPublishingPluginKt.configureDefaultPublishing(
+        /* receiver = */        project,
+        /* signingRequired = */ KotlinBuildPublishingPluginKt.getSignLibraryPublication(project)
+)
+
+tasks.named("clean", Delete) {
+    dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
+    doFirst {
+        delete distDir
+        delete buildDir
+        delete bundle.outputs.files
+        delete "${projectDir}/compile_commands.json"
+    }
+}
+
+publishing {
+    publications {
+        def publishBundlesFromLocation = UtilsKt.getNativeBundlesLocation(project) != project.projectDir
+        register("Bundle", MavenPublication) { mvn ->
+            mvn.groupId = project.group.toString()
+            mvn.artifactId = project.name
+            mvn.version = konanVersionFull
+
+            if (publishBundlesFromLocation) {
+                def bundleArchives = bundlesLocationFiles
+                        .findAll { it.name.startsWith("kotlin-native") && !it.name.contains("prebuilt") }
+                def bundleConfigs = createConfigurations(bundleArchives)
+                bundleConfigs.forEach { target, file ->
+                    mvn.artifact(file) {
+                        classifier = platformName(target)
+                        extension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
+                    }
+                }
+            } else {
+                mvn.artifact(bundleRegular) {
+                    classifier = HostManager.platformName()
+                    extension = (isWindows()) ? 'zip' : 'tar.gz'
+                }
+            }
+
+            KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(
+                    /* receiver = */  mvn,
+                    /* project = */   project,
+                    /* explicitDescription = */ "Kotlin/Native bundle",
+                    /* packaging = */ "pom"
+            )
+        }
+        register("BundlePrebuilt", MavenPublication) { mvn ->
+            mvn.groupId = project.group.toString()
+            mvn.artifactId = project.name + "-prebuilt"
+            mvn.version = konanVersionFull
+
+            if (publishBundlesFromLocation) {
+                def prebuiltBundleArchives = bundlesLocationFiles
+                        .findAll { it.name.startsWith("kotlin-native-prebuilt") }
+                def bundlePrebuiltConfigs = createConfigurations(prebuiltBundleArchives)
+                bundlePrebuiltConfigs.forEach { target, file ->
+                    mvn.artifact(file) {
+                        classifier = platformName(target)
+                        extension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
+                    }
+                }
+            } else {
+                mvn.artifact(bundlePrebuilt) {
+                    classifier = HostManager.platformName()
+                    extension = (isWindows()) ? 'zip' : 'tar.gz'
+                }
+            }
+            KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(
+                    /* receiver = */  mvn,
+                    /* project = */   project,
+                    /* explicitDescription = */ "Kotlin/Native bundle (prebuilt platform libs)",
+                    /* packaging = */ "pom"
+            )
+        }
+    }
 }

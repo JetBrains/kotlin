@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.incremental.util.ExceptionLocation
+import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.slf4j.LoggerFactory
 import java.io.*
@@ -39,10 +41,10 @@ internal class ProjectFilesForCompilation(
     val buildDir: File
 ) : Serializable {
     //TODO
-    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectRootDir: File, sessionDir: File) : this(
+    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectCacheDirProvider: File, sessionDir: File) : this(
         projectRootFile = projectDir,
         clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(logger, prjectName),
-        sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectRootDir),
+        sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectCacheDirProvider),
         buildDir = buildDir
     )
 
@@ -153,6 +155,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             try {
                 return compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
             } catch (e: Throwable) {
+                messageCollector.reportException(e, ExceptionLocation.DAEMON)
                 if (!compilerExecutionSettings.useDaemonFallbackStrategy) {
                     throw RuntimeException(
                         "Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off. " +

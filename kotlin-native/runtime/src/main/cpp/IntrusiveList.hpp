@@ -11,29 +11,41 @@
 
 #include "KAssert.h"
 #include "Utils.hpp"
+#include "std_support/Optional.hpp"
 
 namespace kotlin {
 
 template <typename T>
 struct DefaultIntrusiveForwardListTraits {
-    static T* next(const T& value) noexcept { return value.next_; }
+    static T* next(const T& value) noexcept { return value.next(); }
 
-    static void setNext(T& value, T* next) noexcept { value.next_ = next; }
+    static void setNext(T& value, T* next) noexcept { value.setNext(next); }
+
+    static bool trySetNext(T& value, T* next) noexcept { return value.trySetNext(next); }
 };
 
-// Intrusive variant of `std::forward_list`. Notable differences:
-// * The container does not own nodes. Care must be taken not to allow a node
-//   to be in two containers at once, or twice into the same container.
-// * The container is move-only, and moving invalidates `before_begin` iterator.
-// * insert_after, erase_after take `iterator` instead of `const_iterator`, because
-//   they do in fact require mutability via `Traits::setNext`.
-// * When the node leaves the container, nothing clears `next` pointer inside it.
+// Intrusive variant of `std::forward_list`.
 //
-// `Traits` must have 2 methods:
-// static T* next(const T& value);
-// static void setNext(T& value, T* next);
-// NOTE: `setNext` and `next` must be callable even on uninitialized `T` (i.e. they
-//       should only access storage inside `T`).
+// The container does not own nodes. The list structure is maintained by `T` itself via
+// `Traits`. `Traits` must provide 3 operations:
+//
+// static T* next(const T& value); // obtain the next pointer
+// static void setNext(T& value, T* next); // set the next pointer
+// static bool trySetNext(T& value, T* next); // try to set the next pointer or return `false` if it's not possible. Used by `try_push_front`.
+// The default `Traits` implementation expects `T` to provide all operations as member functions.
+//
+// Notable differences from regular containers:
+// * To put `T` into different intrusive lists simultaneously it should
+//   provide custom `Traits` implementation to regulate which next pointer is used
+//   by which list.
+// * It's not possible to keep the same `T` twice in the same list.
+// * The container is move-only and moving invalidates `before_begin` iterator.
+// * `insert_after`, `erase_after` take `iterator` instead of `const_iterator`,
+//   because they require mutability.
+// * When the node is inserted into the container its next pointer is set
+//   to something non-null, but when its removed from the container nothing
+//   nulls the next pointer.
+// * `Traits::trySetNext`, `Traits::setNext` and `Traits::next` must be callable even on uninitialized `T` (i.e. they should only access storage inside `T`).
 template <typename T, typename Traits = DefaultIntrusiveForwardListTraits<T>>
 class intrusive_forward_list : private MoveOnly {
 public:
@@ -123,159 +135,237 @@ public:
         pointer node_ = nullptr;
     };
 
-    intrusive_forward_list() noexcept {
-        setNext(head(), nullptr);
-    }
+    // Complexity: O(1)
+    intrusive_forward_list() noexcept { clear(); }
 
-    intrusive_forward_list(intrusive_forward_list&& rhs) noexcept : size_(rhs.size_) {
+    // Complexity: O(1)
+    intrusive_forward_list(intrusive_forward_list&& rhs) noexcept {
+        // Since tail() is shared, there's no need to update the last node's next_.
         setNext(head(), next(rhs.head()));
-        setNext(rhs.head(), nullptr);
-        rhs.size_ = 0;
+        rhs.clear();
     }
 
+
+    // `InputIt` should dereference into `T&`.
+    // Complexity: O(last - first)
     template <typename InputIt>
-    intrusive_forward_list(InputIt first, InputIt last) noexcept {
-        setNext(head(), nullptr);
+    intrusive_forward_list(InputIt first, InputIt last) noexcept : intrusive_forward_list() {
         assign(std::move(first), std::move(last));
     }
 
+    // Complexity: O(1)
     ~intrusive_forward_list() = default;
 
+    // Complexity: O(1)
     intrusive_forward_list& operator=(intrusive_forward_list&& rhs) noexcept {
         intrusive_forward_list tmp(std::move(rhs));
         swap(tmp);
         return *this;
     }
 
+    // Complexity: O(1)
     void swap(intrusive_forward_list& rhs) noexcept {
+        // Since tail() is shared, there's no need to swap the last nodes' next_.
         using std::swap;
         auto thisNext = next(head());
         auto rhsNext = next(rhs.head());
         swap(thisNext, rhsNext);
         setNext(head(), thisNext);
         setNext(rhs.head(), rhsNext);
-        swap(size_, rhs.size_);
     }
 
+    // Rewrite the contents of `this` with nodes from range `[first, last)`.
+    // `InputIt` should dereference into `T&`.
+    // Complexity: O(last - first)
     template <typename InputIt>
     void assign(InputIt first, InputIt last) noexcept {
         clear();
         insert_after(before_begin(), std::move(first), std::move(last));
     }
 
+    // Complexity: O(1)
     reference front() noexcept { return *next(head()); }
+    // Complexity: O(1)
     const_reference front() const noexcept { return *next(head()); }
 
+    // Iterator before the first node. Cannot be dereferenced.
+    // Complexity: O(1)
     iterator before_begin() noexcept { return iterator(head()); }
+    // Iterator before the first node. Cannot be dereferenced.
+    // Complexity: O(1)
     const_iterator before_begin() const noexcept { return const_iterator(head()); }
+    // Iterator before the first node. Cannot be dereferenced.
+    // Complexity: O(1)
     const_iterator cbefore_begin() const noexcept { return const_iterator(head()); }
 
+    // Complexity: O(1)
     iterator begin() noexcept { return iterator(next(head())); }
+    // Complexity: O(1)
     const_iterator begin() const noexcept { return const_iterator(next(head())); }
+    // Complexity: O(1)
     const_iterator cbegin() const noexcept { return const_iterator(next(head())); }
 
-    iterator end() noexcept { return iterator(); }
-    const_iterator end() const noexcept { return const_iterator(); }
-    const_iterator cend() const noexcept { return const_iterator(); }
+    // Complexity: O(1)
+    iterator end() noexcept { return iterator(tail()); }
+    // Complexity: O(1)
+    const_iterator end() const noexcept { return const_iterator(tail()); }
+    // Complexity: O(1)
+    const_iterator cend() const noexcept { return const_iterator(tail()); }
 
-    bool empty() const noexcept { return size_ == 0; }
+    // Complexity: O(1)
+    bool empty() const noexcept { return next(head()) == tail(); }
 
+    // Complexity: O(1)
     size_type max_size() const noexcept { return std::numeric_limits<size_type>::max(); }
 
-    void clear() noexcept { setNext(head(), nullptr); size_ = 0; }
+    // Complexity: O(1)
+    void clear() noexcept { setNext(head(), tail()); }
 
+    // Insert `value` after `pos`. `pos` can be in range `[before_begin(), end())`.
+    // Returns iterator to the newly inserted element
+    // Complexity: O(1)
     iterator insert_after(iterator pos, reference value) noexcept {
-        pointer nextNode = next(pos.node_);
+        RuntimeAssert(pos != end(), "Attempted to insert_after end()");
+        RuntimeAssert(pos != iterator(), "Attempted to insert_after empty iterator");
+        setNext(&value, next(pos.node_));
         setNext(pos.node_, &value);
-        setNext(&value, nextNode);
-        ++size_;
         return iterator(&value);
     }
 
+    // Insert `[first, last)` after `pos`. `pos` can be in range `[before_begin(), end())`.
+    // `InputIt` should dereference into `T&`.
+    // Returns iterator to the last inserted element.
+    // Complexity: O(last - first)
     template <typename InputIt>
     iterator insert_after(iterator pos, InputIt first, InputIt last) noexcept {
+        RuntimeAssert(pos != end(), "Attempted to insert_after end()");
+        RuntimeAssert(pos != iterator(), "Attempted to insert_after empty iterator");
         pointer nextNode = next(pos.node_);
         pointer prevNode = pos.node_;
-        size_t newSize = size_;
         for (auto it = first; it != last; ++it) {
-            setNext(prevNode, &*it);
-            prevNode = &*it;
-            ++newSize;
+            pointer newNode = &*it;
+            setNext(prevNode, newNode);
+            prevNode = newNode;
         }
         setNext(prevNode, nextNode);
-        size_ = newSize;
         return iterator(prevNode);
     }
 
+    // Erase a node after `pos`. `pos` can be in range `[begin(), end() - 1)`.
+    // This does not destroy the erased element, and it does not change its next pointer.
+    // Returns iterator to the next node of the erased one.
+    // Complexity: O(1)
     iterator erase_after(iterator pos) noexcept {
-        pointer prevNode = pos.node_;
-        pointer nodeToErase = next(pos.node_);
-        if (!nodeToErase) {
-            return end();
-        }
-        pointer nextNode = next(nodeToErase);
-        setNext(prevNode, nextNode);
-        setNext(nodeToErase, nullptr);
-        --size_;
+        RuntimeAssert(pos != end(), "Attempted to erase_after end()");
+        RuntimeAssert(pos != iterator(), "Attempted to erase_after empty iterator");
+        RuntimeAssert(next(pos.node_) != tail(), "Attempted to erase_after the last node");
+        pointer nextNode = next(next(pos.node_));
+        setNext(pos.node_, nextNode);
         return iterator(nextNode);
     }
 
+    // Erase all nodes in range `(first, last)`.
+    // `first` can be in range `[before_begin(), last)`.
+    // `last` can be in range `(first, end()]`.
+    // This does not destroy erased elements, and it does not change their next pointers.
+    // Returns iterator to the next node of the last erased (i.e. returns `last`).
+    // Complexity: O(1)
     iterator erase_after(iterator first, iterator last) noexcept {
-        size_ -= std::distance(first, last) - 1;
+        RuntimeAssert(first != end(), "Attempted to erase_after starting at end()");
+        RuntimeAssert(first != iterator(), "Attempted to erase_after starting at empty iterator");
+        RuntimeAssert(next(first.node_) != tail(), "Attempted to erase_after starting at the last node");
+        RuntimeAssert(last != iterator(), "Attempted to erase_after ending at empty iterator");
         setNext(first.node_, last.node_);
         return last;
     }
 
+    // Insert a new node to the front.
+    // Equivalent to `insert_after(before_begin(), value)`.
+    // Complexity: O(1)
     void push_front(reference value) noexcept { insert_after(before_begin(), value); }
 
+    // Try to insert a new node to the front.
+    // When setting the next node of `value` uses `Traits::trySetNext`.
+    // If `Traits::trySetNext` returns `true`, this operates like `push_front` and returns `true`.
+    // If `Traits::trySetNext` returns `false`, this doesn't change anything else and returns `false`.
+    // Complexity: O(1)
+    bool try_push_front(reference value) noexcept { return try_insert_after(before_begin(), value) != std::nullopt; }
+
+    // Erase a node at the front.
+    // This does not destroy the erased node and does not change its next pointer.
+    // Complexity: O(1)
     void pop_front() noexcept { erase_after(before_begin()); }
 
-    void remove(reference value) noexcept {
-        // TODO: no need to move on after finding the first match.
-        return remove_if([&value](const_reference x) { return &x == &value; });
+    // Try to erase node at the front.
+    // If this list is empty, returns `nullptr`.
+    // Otherwise returns pointer to the node at the front and erases it.
+    // This does not destroy the erased node and does not change its next pointer.
+    // Complexity: O(1)
+    pointer try_pop_front() noexcept {
+        pointer top = next(head());
+        if (top == tail()) {
+            return nullptr;
+        }
+        setNext(head(), next(top));
+        return top;
     }
 
+    // Erase node `value`.
+    // If the `value` is not in the list, does nothing.
+    // This does not destroy the erased node and does not change its next pointer.
+    // Complexity: O(n)
+    void remove(reference value) noexcept {
+        // TODO: no need to move on after finding the first match.
+        return remove_if([&value](const_reference x) noexcept { return &x == &value; });
+    }
+
+    // Erase all nodes satisfying predicate `P`.
+    // This does not destroy erased nodes and does not change their next pointer.
+    // Complexity: O(n)
     template <typename P>
-    void remove_if(P p) noexcept {
-        size_t newSize = size_;
+    void remove_if(P p) noexcept(noexcept(p(std::declval<const_reference>()))) {
         pointer prev = head();
         pointer node = next(prev);
-        while (node) {
+        while (node != tail()) {
             if (p(*node)) {
                 // The node is being removed.
                 node = next(node);
                 setNext(prev, node);
-                --newSize;
             } else {
                 // The node is staying.
                 prev = node;
                 node = next(node);
             }
         }
-        size_ = newSize;
     }
 
     // TODO: Implement splice_after.
-
-    size_type size() const noexcept {
-        return size_;
-    }
 
 private:
     static pointer next(const_pointer node) noexcept { return Traits::next(*node); }
 
     static void setNext(pointer node, pointer next) noexcept { return Traits::setNext(*node, next); }
 
-    pointer head() noexcept {
-        return reinterpret_cast<pointer>(headStorage_);
+    static bool trySetNext(pointer node, pointer next) noexcept { return Traits::trySetNext(*node, next); }
+
+    pointer head() noexcept { return reinterpret_cast<pointer>(headStorage_); }
+    const_pointer head() const noexcept { return reinterpret_cast<const_pointer>(headStorage_); }
+
+    static pointer tail() noexcept { return reinterpret_cast<pointer>(tailStorage_); }
+
+    // TODO: Consider making public.
+    std::optional<iterator> try_insert_after(iterator pos, reference value) noexcept {
+        RuntimeAssert(pos != end(), "Attempted to try_insert_after end()");
+        RuntimeAssert(pos != iterator(), "Attempted to try_insert_after empty iterator");
+        if (!trySetNext(&value, next(pos.node_))) {
+            return std::nullopt;
+        }
+        setNext(pos.node_, &value);
+        return iterator(&value);
     }
 
-    const_pointer head() const noexcept {
-        return reinterpret_cast<const_pointer>(headStorage_);
-    }
-
-    alignas(value_type) char headStorage_[sizeof(value_type)] = { 0 };
-    size_t size_ = 0;
+    alignas(value_type) char headStorage_[sizeof(value_type)] = {0};
+    alignas(value_type) static inline char tailStorage_[sizeof(value_type)] = {0};
 };
 
 template <typename InputIt>

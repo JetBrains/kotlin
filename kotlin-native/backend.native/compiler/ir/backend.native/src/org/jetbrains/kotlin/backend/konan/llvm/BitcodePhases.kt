@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.PhaserState
-import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
@@ -38,12 +35,6 @@ internal val RTTIPhase = makeKonanModuleOpPhase(
             irModule.acceptVoid(visitor)
             visitor.dispose()
         }
-)
-
-internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(
-        name = "GenerateDebugInfoHeader",
-        description = "Generate debug info header",
-        op = { context, _ -> generateDebugInfoHeader(context) }
 )
 
 internal val buildDFGPhase = makeKonanModuleOpPhase(
@@ -250,25 +241,15 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val localEscapeAnalysisPhase = makeKonanModuleOpPhase(
-        name = "LocalEscapeAnalysis",
-        description = "Local escape analysis",
-        prerequisite = setOf(buildDFGPhase, devirtualizationAnalysisPhase),
-        op = { context, _ ->
-            LocalEscapeAnalysis.computeLifetimes(context, context.moduleDFG!!, context.lifetimes)
-        }
-)
-
 internal val codegenPhase = makeKonanModuleOpPhase(
         name = "Codegen",
         description = "Code generation",
-        op = { context, irModule -> irModule.acceptVoid(CodeGeneratorVisitor(context, context.lifetimes)) }
-)
+        op = { context, irModule ->
+            irModule.acceptVoid(CodeGeneratorVisitor(context, context.lifetimes))
 
-internal val finalizeDebugInfoPhase = makeKonanModuleOpPhase(
-        name = "FinalizeDebugInfo",
-        description = "Finalize debug info",
-        op = { context, _ -> DIFinalize(context.generationState.debugInfo.builder) }
+            if (context.generationState.hasDebugInfo())
+                DIFinalize(context.generationState.debugInfo.builder)
+        }
 )
 
 internal val cStubsPhase = makeKonanModuleOpPhase(
@@ -324,7 +305,7 @@ internal val produceOutputPhase = namedUnitPhase(
         name = "ProduceOutput",
         description = "Produce output",
         lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
                 produceOutput(context)
             }
         }

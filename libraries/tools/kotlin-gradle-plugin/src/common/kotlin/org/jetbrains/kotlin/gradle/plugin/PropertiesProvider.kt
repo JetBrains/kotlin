@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_SUBSTITUTION
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
@@ -59,7 +57,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.property("kotlin.internal.single.build.metrics.file")?.let { File(it) }
 
     val buildReportSingleFile: File?
-        get() = this.property("kotlin.build.report.single_file")?.let { File(it) }
+        get() = this.property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE)?.let { File(it) }
 
     @Deprecated(message = "Please use kotlin.build.report.output instead ")
     val buildReportEnabled: Boolean
@@ -86,10 +84,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportFileOutputDir: File?
         get() = this.property("kotlin.build.report.file.output_dir")?.let { File(it) }
 
-    val buildReportHttpUrlProperty = "kotlin.build.report.http.url"
-
     val buildReportHttpUrl: String?
-        get() = this.property(buildReportHttpUrlProperty)
+        get() = this.property(PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL)
 
     val buildReportHttpUser: String?
         get() = this.property("kotlin.build.report.http.user")
@@ -200,9 +196,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val enableKotlinToolingMetadataArtifact: Boolean
         get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
-
-    val mppStabilityNoWarn: Boolean?
-        get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
 
     val mppEnableOptimisticNumberCommonization: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: true
@@ -380,17 +373,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreTcsmOverflow: Boolean
         get() = booleanProperty(IGNORE_TCSM_OVERFLOW) ?: false
 
-    /**
-     * Generate kotlin/js external declarations from all .d.ts files found in npm modules
-     */
-    val jsGenerateExternals: Boolean
-        get() = booleanProperty("kotlin.js.generate.externals") ?: DEFAULT_GENERATE_EXTERNALS
-
-    /**
-     * Automaticaly discover external .d.ts declarations
-     */
-    val jsDiscoverTypes: Boolean?
-        get() = booleanProperty("kotlin.js.experimental.discoverTypes")
+    val errorJsGenerateExternals: Boolean?
+        get() = booleanProperty("kotlin.js.generate.externals")
 
     /**
      * Use Kotlin/JS backend compiler type
@@ -411,13 +395,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             }
             ?: WebpackMajorVersion.DEFAULT
 
-
-    /**
-     * Default mode of generating of Dukat
-     */
-    val externalsOutputFormat: ExternalsOutputFormat?
-        get() = this.property(externalsOutputFormatProperty)?.let { ExternalsOutputFormat.byArgumentOrNull(it) }
-
     /**
      * Use Kotlin/JS backend compiler type
      */
@@ -429,6 +406,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty(KOTLIN_STDLIB_DEFAULT_DEPENDENCY) ?: true
+
+    val stdlibJdkVariantsSubstitution: Boolean
+        get() = booleanProperty(KOTLIN_STDLIB_JDK_VARIANTS_SUBSTITUTION) ?: true
 
     val kotlinTestInferJvmVariant: Boolean
         get() = booleanProperty("kotlin.test.infer.jvm.variant") ?: true
@@ -502,6 +482,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     object PropertyNames {
         const val KOTLIN_STDLIB_DEFAULT_DEPENDENCY = "kotlin.stdlib.default.dependency"
+        const val KOTLIN_STDLIB_JDK_VARIANTS_SUBSTITUTION = "kotlin.stdlib.jdk.variants.substitution"
         const val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = "kotlin.mpp.enableGranularSourceSetsMetadata"
         const val KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION = "kotlin.mpp.enableCInteropCommonization"
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = "kotlin.internal.mpp.hierarchicalStructureByDefault"
@@ -515,6 +496,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"
         const val KOTLIN_ABI_SNAPSHOT = "kotlin.incremental.classpath.snapshot.enabled"
         const val KOTLIN_JS_KARMA_BROWSERS = "kotlin.js.browser.karma.browsers"
+        const val KOTLIN_BUILD_REPORT_SINGLE_FILE = "kotlin.build.report.single_file"
+        const val KOTLIN_BUILD_REPORT_HTTP_URL = "kotlin.build.report.http.url"
     }
 
     companion object {

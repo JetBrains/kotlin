@@ -1,63 +1,3 @@
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
-  isCrossinline: false
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: false
-  isVararg: false
-  name: inlineParameter
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Function0<kotlin/Int>
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
-  isCrossinline: true
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: false
-  isVararg: false
-  name: crossinlineParameter
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Function0<kotlin/Int>
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
-  isCrossinline: false
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: true
-  isVararg: false
-  name: noinlineParameter
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Function0<kotlin/Int>
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /foo
@@ -80,9 +20,57 @@ KtFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(inlineParameter)
-    KtValueParameterSymbol(crossinlineParameter)
-    KtValueParameterSymbol(noinlineParameter)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: inlineParameter
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Function0<kotlin/Int>
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: true
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: crossinlineParameter
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Function0<kotlin/Int>
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: true
+      isVararg: false
+      name: noinlineParameter
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Function0<kotlin/Int>
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"

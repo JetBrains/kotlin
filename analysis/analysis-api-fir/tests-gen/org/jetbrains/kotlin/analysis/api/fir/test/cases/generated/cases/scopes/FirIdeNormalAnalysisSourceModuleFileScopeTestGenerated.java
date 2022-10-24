@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleFileScopeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("fileScope.kt")
+    public void testFileScope() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/fileScopeTest/fileScope.kt");
+    }
+
+    @Test
     @TestMetadata("simpleFileScope.kt")
     public void testSimpleFileScope() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/fileScopeTest/simpleFileScope.kt");

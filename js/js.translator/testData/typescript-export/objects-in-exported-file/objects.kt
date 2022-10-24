@@ -26,6 +26,14 @@ fun takesO(o: O): Int =
     O.x + O.foo()
 
 
+object WithSimpleObjectInside {
+   val value: String = "WithSimpleObjectInside"
+    object SimpleObject {
+        val value: String = "SimpleObject"
+    }
+}
+
+
 object Parent {
     object Nested1 {
         val value: String = "Nested1"

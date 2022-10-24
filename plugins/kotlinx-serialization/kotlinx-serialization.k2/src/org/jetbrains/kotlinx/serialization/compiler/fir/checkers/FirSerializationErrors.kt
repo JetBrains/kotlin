@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 
@@ -20,6 +21,10 @@ object FirSerializationErrors {
 
     val EXPLICIT_SERIALIZABLE_IS_REQUIRED by warning0<PsiElement>()
 
+    val COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED by error1<PsiElement, FirRegularClassSymbol>()
+    val COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
+
     val SERIALIZABLE_ANNOTATION_IGNORED by error0<KtAnnotationEntry>()
     val NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR by error0<KtAnnotationEntry>()
     val PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY by error0<KtAnnotationEntry>()
@@ -29,10 +34,10 @@ object FirSerializationErrors {
     val SERIALIZER_NULLABILITY_INCOMPATIBLE by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val SERIALIZER_TYPE_INCOMPATIBLE by warning3<PsiElement, ConeKotlinType, ConeKotlinType, ConeKotlinType>()
     val LOCAL_SERIALIZER_USAGE by error1<PsiElement, ConeKotlinType>()
+    val GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED by error0<PsiElement>()
     val TRANSIENT_MISSING_INITIALIZER by error0<PsiElement>()
 
     val TRANSIENT_IS_REDUNDANT by warning0<PsiElement>()
-
     val INCORRECT_TRANSIENT by warning0<PsiElement>()
 
     val REQUIRED_KOTLIN_TOO_HIGH by error3<KtAnnotationEntry, String, String, String>()

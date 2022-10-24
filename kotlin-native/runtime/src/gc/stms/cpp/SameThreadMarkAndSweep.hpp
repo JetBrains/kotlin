@@ -33,37 +33,40 @@ public:
     };
 
     class ObjectData {
-        static inline constexpr unsigned colorMask = (1 << 1) - 1;
-
     public:
-        enum class Color : unsigned {
-            kWhite = 0, // Initial color at the start of collection cycles. Objects with this color at the end of GC cycle are collected.
-                        // All new objects are allocated with this color.
-            kBlack, // Objects encountered during mark phase.
-        };
+        bool tryMark() noexcept {
+            return trySetNext(reinterpret_cast<ObjectData*>(1));
+        }
 
-        Color color() const noexcept { return static_cast<Color>(getPointerBits(next_, colorMask)); }
-        void setColor(Color color) noexcept { next_ = setPointerBits(clearPointerBits(next_, colorMask), static_cast<unsigned>(color)); }
+        bool marked() const noexcept { return next_ != nullptr; }
 
-        ObjectData* next() const noexcept { return clearPointerBits(next_, colorMask); }
-        void setNext(ObjectData* next) noexcept {
-            RuntimeAssert(!hasPointerBits(next, colorMask), "next must be untagged: %p", next);
-            auto bits = getPointerBits(next_, colorMask);
-            next_ = setPointerBits(next, bits);
+        bool tryResetMark() noexcept {
+            if (next_ == nullptr) return false;
+            next_ = nullptr;
+            return true;
         }
 
     private:
-        // Color is encoded in low bits.
+        friend struct DefaultIntrusiveForwardListTraits<ObjectData>;
+
+        ObjectData* next() const noexcept { return next_; }
+        void setNext(ObjectData* next) noexcept {
+            RuntimeAssert(next, "next cannot be nullptr");
+            next_ = next;
+        }
+        bool trySetNext(ObjectData* next) noexcept {
+            RuntimeAssert(next, "next cannot be nullptr");
+            if (next_ != nullptr) {
+                return false;
+            }
+            next_ = next;
+            return true;
+        }
+
         ObjectData* next_ = nullptr;
     };
 
-    struct MarkQueueTraits {
-        static ObjectData* next(const ObjectData& value) noexcept { return value.next(); }
-
-        static void setNext(ObjectData& value, ObjectData* next) noexcept { value.setNext(next); }
-    };
-
-    using MarkQueue = intrusive_forward_list<ObjectData, MarkQueueTraits>;
+    using MarkQueue = intrusive_forward_list<ObjectData>;
 
     class ThreadData : private Pinned {
     public:
@@ -99,8 +102,7 @@ private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
     bool PerformFullGC() noexcept;
 
-    size_t epoch_ = 0;
-    uint64_t lastGCTimestampUs_ = 0;
+    uint64_t epoch_ = 0;
 
     mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory_;
     GCScheduler& gcScheduler_;
@@ -109,6 +111,36 @@ private:
 };
 
 namespace internal {
+
+struct MarkTraits {
+    using MarkQueue = gc::SameThreadMarkAndSweep::MarkQueue;
+
+    static void clear(MarkQueue& queue) noexcept { queue.clear(); }
+
+    static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
+        if (auto* top = queue.try_pop_front()) {
+            auto node = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(*top);
+            return node->GetObjHeader();
+        }
+        return nullptr;
+    }
+
+    static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).ObjectData();
+        return queue.try_push_front(objectData);
+    }
+
+    static bool tryMark(ObjHeader* object) noexcept {
+        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).ObjectData();
+        return objectData.tryMark();
+    }
+
+    static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+        auto process = object->type_info()->processObjectInMark;
+        RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
+        process(static_cast<void*>(&markQueue), object);
+    }
+};
 
 SameThreadMarkAndSweep::SafepointFlag loadSafepointFlag() noexcept;
 

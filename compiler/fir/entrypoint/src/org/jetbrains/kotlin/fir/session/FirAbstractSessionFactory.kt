@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 abstract class FirAbstractSessionFactory {
@@ -51,11 +49,12 @@ abstract class FirAbstractSessionFactory {
             val kotlinScopeProvider = createKotlinScopeProvider.invoke()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-            val builtinsModuleData = createModuleDataForBuiltins(
-                mainModuleName,
+            val builtinsModuleData = DependencyListForCliModule.createDependencyModuleData(
+                Name.special("<builtins of ${mainModuleName.identifier}"),
                 moduleDataProvider.platform,
-                moduleDataProvider.analyzerServices
-            ).also { it.bindSession(this@session) }
+                moduleDataProvider.analyzerServices,
+            )
+            builtinsModuleData.bindSession(this@session)
 
             val providers = createProviders(this, builtinsModuleData, kotlinScopeProvider)
 
@@ -63,18 +62,6 @@ abstract class FirAbstractSessionFactory {
             register(FirSymbolProvider::class, symbolProvider)
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
-    }
-
-    private fun createModuleDataForBuiltins(
-        parentModuleName: Name,
-        platform: TargetPlatform,
-        analyzerServices: PlatformDependentAnalyzerServices
-    ): FirModuleData {
-        return DependencyListForCliModule.createDependencyModuleData(
-            Name.special("<builtins of ${parentModuleName.identifier}"),
-            platform,
-            analyzerServices,
-        )
     }
 
     protected fun createModuleBasedSession(
@@ -91,7 +78,7 @@ abstract class FirAbstractSessionFactory {
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
-            FirDependenciesSymbolProviderImpl
+            FirDependenciesSymbolProvider
         ) -> List<FirSymbolProvider>
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Source).apply session@{
@@ -129,11 +116,7 @@ abstract class FirAbstractSessionFactory {
             register(FirSymbolProvider::class, FirCompositeSymbolProvider(this, providers))
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
-
-            register(
-                FirDependenciesSymbolProvider::class,
-                dependenciesSymbolProvider
-            )
+            register(FirDependenciesSymbolProvider::class, dependenciesSymbolProvider)
         }
     }
 }

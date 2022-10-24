@@ -133,6 +133,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("annotationsUnsignedTypes.kt")
+                public void testAnnotationsUnsignedTypes() throws Exception {
+                    runTest("compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
+                }
+
+                @Test
                 @TestMetadata("inInlineFunction.kt")
                 public void testInInlineFunction() throws Exception {
                     runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");
@@ -10267,6 +10273,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("inheritFromAnotherModule.kt")
+                public void testInheritFromAnotherModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/multiModule/inheritFromAnotherModule.kt");
+                }
+
+                @Test
                 @TestMetadata("inlineCrossModule.kt")
                 public void testInlineCrossModule() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineCrossModule.kt");
@@ -16694,6 +16706,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvoke.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplate.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -16786,6 +16799,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 register("compiler/testData/codegen/box/inlineClasses/kt47762Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/kt51254.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/kt52913.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/kt54455.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17924,6 +17938,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("inlineClassHashCodeOverride.kt")
+            public void testInlineClassHashCodeOverride() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt");
+            }
+
+            @Test
             @TestMetadata("inlineClassInInitBlock.kt")
             public void testInlineClassInInitBlock() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -18625,6 +18646,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             public void testKt52913() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/kt52913.kt");
+            }
+
+            @Test
+            @TestMetadata("kt54455.kt")
+            public void testKt54455() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/kt54455.kt");
             }
 
             @Test
@@ -35732,6 +35760,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("arrayOfNullableReified.kt")
+                public void testArrayOfNullableReified() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/arrayOfNullableReified.kt");
+                }
+
+                @Test
                 @TestMetadata("classes.kt")
                 public void testClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/classes.kt");
@@ -35759,6 +35793,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @TestMetadata("multipleLayers.kt")
                 public void testMultipleLayers() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/multipleLayers.kt");
+                }
+
+                @Test
+                @TestMetadata("reifiedAsNestedArgument.kt")
+                public void testReifiedAsNestedArgument() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/reifiedAsNestedArgument.kt");
                 }
 
                 @Test

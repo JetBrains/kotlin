@@ -50,15 +50,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.0"))
 
-        if (PropertiesProvider(project).mppStabilityNoWarn != true) {
-            SingleWarningPerBuild.show(
-                project,
-                "Kotlin Multiplatform Projects are an Alpha feature. " +
-                        "See: https://kotlinlang.org/docs/reference/evolution/components-stability.html. " +
-                        "To hide this message, add '$STABILITY_NOWARN_FLAG=true' to the Gradle properties.\n"
-            )
-        }
-
         handleHierarchicalStructureFlagsMigration(project)
 
         project.plugins.apply(JavaBasePlugin::class.java)
@@ -214,8 +205,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         internal fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
             "kotlin.mpp.freeCompilerArgsForSourceSet.$sourceSetName"
-
-        internal const val STABILITY_NOWARN_FLAG = "kotlin.mpp.stability.nowarn"
     }
 }
 

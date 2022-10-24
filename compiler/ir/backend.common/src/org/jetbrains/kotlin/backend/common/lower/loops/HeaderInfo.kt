@@ -189,7 +189,7 @@ class ProgressionHeaderInfo(
  * The internal induction variable used is an Int.
  */
 class IndexedGetHeaderInfo(
-    symbols: Symbols<CommonBackendContext>,
+    symbols: Symbols,
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,

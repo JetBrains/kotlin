@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,22 +14,23 @@ import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -45,7 +46,7 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val classIdIfNonLocal: ClassId?
-        get() = withValidityAssertion { firSymbol.classId.takeUnless { it.isLocal } }
+        get() = withValidityAssertion { firSymbol.getClassIdIfNonLocal() }
 
     /* FirRegularClass modality is not modified by STATUS, so it can be taken from RAW */
     override val modality: Modality
@@ -103,8 +104,13 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion {
             when {
-                firSymbol.isLocal -> KtSymbolKind.LOCAL
+                // TODO: hack should be dropped after KT-54390
+                firSymbol.isLocal && (firSymbol.fir.getContainingDeclaration(firResolveSession.useSiteFirSession) as? FirClass)?.let { clazz ->
+                    clazz.declarations.none { it === firSymbol.fir }
+                } == true -> KtSymbolKind.LOCAL
+
                 firSymbol.classId.isNestedClass -> KtSymbolKind.CLASS_MEMBER
+                firSymbol.isLocal -> KtSymbolKind.LOCAL
                 else -> KtSymbolKind.TOP_LEVEL
             }
         }

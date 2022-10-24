@@ -16,26 +16,6 @@ KtConstructorSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
-  isCrossinline: false
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: false
-  isVararg: false
-  name: x
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Int
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
 KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
@@ -50,52 +30,28 @@ KtConstructorSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(x)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: x
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
-  isCrossinline: false
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: false
-  isVararg: false
-  name: y
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Int
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
-  isCrossinline: false
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: false
-  isVararg: false
-  name: z
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/String
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
 KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
@@ -110,8 +66,40 @@ KtConstructorSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(y)
-    KtValueParameterSymbol(z)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: y
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: z
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/String
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"

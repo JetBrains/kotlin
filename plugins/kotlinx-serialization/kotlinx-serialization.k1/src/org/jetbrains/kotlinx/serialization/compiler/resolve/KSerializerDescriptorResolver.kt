@@ -47,12 +47,6 @@ object KSerializerDescriptorResolver {
                 && (thisDescriptor.containingDeclaration as ClassDescriptor).isSerialInfoAnnotation
     }
 
-    fun addSerialInfoSuperType(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
-        if (isSerialInfoImpl(thisDescriptor)) {
-            supertypes.add((thisDescriptor.containingDeclaration as LazyClassDescriptor).toSimpleType(false))
-        }
-    }
-
     fun addSerializerFactorySuperType(classDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
         if (!classDescriptor.needSerializerFactory()) return
         val serializerFactoryClass =
@@ -70,36 +64,6 @@ object KSerializerDescriptorResolver {
         else
             SerialEntityNames.KSERIALIZER_NAME_FQ
         supertypes.add(classDescriptor.createSerializerTypeFor(serializableClassDescriptor.defaultType, fqName))
-    }
-
-    fun addSerialInfoImplClass(
-        interfaceDesc: ClassDescriptor,
-        declarationProvider: ClassMemberDeclarationProvider,
-        ctx: LazyClassContext
-    ): ClassDescriptor {
-        val interfaceDecl = declarationProvider.correspondingClassOrObject!!
-        val scope = ctx.declarationScopeProvider.getResolutionScopeForDeclaration(declarationProvider.ownerInfo!!.scopeAnchor)
-
-        val props = interfaceDecl.primaryConstructorParameters
-        // if there is some properties, there will be a public synthetic constructor at the codegen phase
-        val primaryCtorVisibility = if (props.isEmpty()) DescriptorVisibilities.PUBLIC else DescriptorVisibilities.PRIVATE
-
-        val descriptor = SyntheticClassOrObjectDescriptor(
-            ctx,
-            interfaceDecl,
-            interfaceDesc,
-            IMPL_NAME,
-            interfaceDesc.source,
-            scope,
-            Modality.FINAL,
-            DescriptorVisibilities.PUBLIC,
-            Annotations.create(listOf(createDeprecatedHiddenAnnotation(interfaceDesc.module))),
-            primaryCtorVisibility,
-            ClassKind.CLASS,
-            false
-        )
-        descriptor.initialize()
-        return descriptor
     }
 
     fun addSerializerImplClass(
@@ -626,23 +590,6 @@ object KSerializerDescriptorResolver {
         )
 
         return f
-    }
-
-    fun generateDescriptorsForAnnotationImpl(
-        thisDescriptor: ClassDescriptor,
-        fromSupertypes: List<PropertyDescriptor>,
-        result: MutableCollection<PropertyDescriptor>
-    ) {
-        if (isSerialInfoImpl(thisDescriptor)) {
-            result.add(
-                fromSupertypes.first().newCopyBuilder().apply {
-                    setOwner(thisDescriptor)
-                    setModality(Modality.FINAL)
-                    setKind(CallableMemberDescriptor.Kind.SYNTHESIZED)
-                    setDispatchReceiverParameter(thisDescriptor.thisAsReceiverParameter)
-                }.build()!!
-            )
-        }
     }
 
     // create properties typeSerial0, typeSerial1, etc... for storing generic arguments' serializers

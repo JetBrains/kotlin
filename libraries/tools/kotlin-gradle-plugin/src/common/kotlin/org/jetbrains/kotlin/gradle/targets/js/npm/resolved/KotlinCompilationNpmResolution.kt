@@ -32,7 +32,6 @@ class KotlinCompilationNpmResolution(
                     name = it.name,
                     version = it.version,
                     scope = it.scope,
-                    generateExternals = it.generateExternals
                 )
             }
 }

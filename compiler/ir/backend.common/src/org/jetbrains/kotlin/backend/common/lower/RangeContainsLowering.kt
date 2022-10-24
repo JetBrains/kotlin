@@ -355,7 +355,7 @@ private class Transformer(
     }
 
     private fun computeComparisonClass(
-        symbols: Symbols<CommonBackendContext>,
+        symbols: Symbols,
         lowerType: IrType,
         upperType: IrType,
         argumentType: IrType
@@ -364,7 +364,7 @@ private class Transformer(
         return leastCommonPrimitiveNumericType(symbols, argumentType, commonBoundType)?.getClass()
     }
 
-    private fun leastCommonPrimitiveNumericType(symbols: Symbols<CommonBackendContext>, t1: IrType, t2: IrType): IrType? {
+    private fun leastCommonPrimitiveNumericType(symbols: Symbols, t1: IrType, t2: IrType): IrType? {
         val primitive1 = t1.getPrimitiveType()
         val primitive2 = t2.getPrimitiveType()
         val unsigned1 = t1.getUnsignedType()

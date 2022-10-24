@@ -31,15 +31,15 @@ private val IrElement.elementName: String
     }
 
 private fun ActionState.isDumpNeeded() =
-    phase in when (beforeOrAfter) {
-        BeforeOrAfter.BEFORE -> config.toDumpStateBefore
-        BeforeOrAfter.AFTER -> config.toDumpStateAfter
+    when (beforeOrAfter) {
+        BeforeOrAfter.BEFORE -> config.shouldDumpStateBefore(phase)
+        BeforeOrAfter.AFTER -> config.shouldDumpStateAfter(phase)
     }
 
 private fun ActionState.isValidationNeeded() =
-    phase in when (beforeOrAfter) {
-        BeforeOrAfter.BEFORE -> config.toValidateStateBefore
-        BeforeOrAfter.AFTER -> config.toValidateStateAfter
+    when (beforeOrAfter) {
+        BeforeOrAfter.BEFORE -> config.shouldValidateStateBefore(phase)
+        BeforeOrAfter.AFTER -> config.shouldValidateStateAfter(phase)
     }
 
 fun <Data, Context> makeDumpAction(dumper: Action<Data, Context>): Action<Data, Context> =
@@ -131,7 +131,7 @@ fun <Data, Context> dumpToStdout(
 
 val defaultDumper = makeDumpAction(dumpToStdout(::dumpIrElement) + dumpToFile("ir", ::dumpIrElement))
 
-fun <Fragment : IrElement> validationCallback(context: CommonBackendContext, fragment: Fragment, checkProperties: Boolean = false) {
+fun validationCallback(context: CommonBackendContext, fragment: IrElement, checkProperties: Boolean = false) {
     val validatorConfig = IrValidatorConfig(
         abortOnError = true,
         ensureAllNodesAreDifferent = true,

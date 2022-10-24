@@ -1,6 +1,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // FIR status: [IR VALIDATION] Duplicate IR node: FUN GENERATED_DATA_CLASS_MEMBER name:toString
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 // WITH_STDLIB
 
 import kotlin.test.*

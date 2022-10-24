@@ -17,3 +17,5 @@ infix fun Int.foo(i: Int) {
 
 // EXPECTATIONS JS_IR
 // test.kt:4 box
+// test.kt:9 foo
+// test.kt:6 box

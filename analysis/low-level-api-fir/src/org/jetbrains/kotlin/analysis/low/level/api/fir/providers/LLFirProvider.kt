@@ -29,6 +29,7 @@ internal class LLFirProvider(
     private val moduleComponents: LLFirModuleResolveComponents,
     private val declarationProvider: KotlinDeclarationProvider,
     packageProvider: KotlinPackageProvider,
+    canContainKotlinPackage: Boolean,
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
@@ -37,6 +38,7 @@ internal class LLFirProvider(
         moduleComponents.firFileBuilder,
         declarationProvider,
         packageProvider,
+        canContainKotlinPackage,
     )
 
     override val isPhasedFirAllowed: Boolean get() = true

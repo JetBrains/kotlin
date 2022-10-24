@@ -1,23 +1,3 @@
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Style.value)
-  hasDefaultValue: false
-  isCrossinline: false
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: false
-  isVararg: false
-  name: value
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/String
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
 KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
@@ -32,31 +12,67 @@ KtConstructorSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(value)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /Style.value
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/String
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: null
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/String
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/String
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Private
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtPropertyGetterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  hasBody: true
-  hasStableParameterNames: true
-  isDefault: false
-  isExtension: false
-  isInline: false
-  isOverride: true
-  modality: FINAL
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/String
-  symbolKind: ACCESSOR
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): Style.SHEET
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -64,7 +80,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: true
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/String
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -113,7 +146,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /Style.exitAnimation
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: ABSTRACT
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/String
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
   hasGetter: true
   hasSetter: false

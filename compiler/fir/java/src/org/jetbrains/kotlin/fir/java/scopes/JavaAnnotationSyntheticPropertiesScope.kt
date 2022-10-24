@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,7 +46,7 @@ class JavaAnnotationSyntheticPropertiesScope(
             val symbol = syntheticPropertiesCache.getOrPut(functionSymbol) {
                 val callableId = CallableId(classId, name)
                 FirJavaOverriddenSyntheticPropertySymbol(callableId, callableId).also {
-                    val accessor = FirSyntheticPropertyAccessor(function, isGetter = true)
+                    val accessor = FirSyntheticPropertyAccessor(function, isGetter = true, it)
                     FirSyntheticProperty(
                         session.nullableModuleData ?: function.moduleData,
                         name,

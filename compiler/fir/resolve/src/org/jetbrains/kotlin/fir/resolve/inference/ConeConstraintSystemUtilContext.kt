@@ -58,7 +58,6 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return ConeFixVariableConstraintPosition(variable) as FixVariableConstraintPosition<T>
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<ConeKotlinType?>? {
         require(declaration is PostponedResolvedAtom)
         return when (declaration) {

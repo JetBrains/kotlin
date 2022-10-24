@@ -18,8 +18,8 @@ fun FileToPathConverter.toPaths(files: Collection<File>): List<String> =
 fun FileToPathConverter.toFiles(paths: Collection<String>): List<File> =
     paths.map { toFile(it) }
 
-object FileToCanonicalPathConverter : FileToPathConverter {
-    override fun toPath(file: File): String = file.canonicalPath
+object FileToAbsolutePathConverter : FileToPathConverter {
+    override fun toPath(file: File): String = file.normalize().absolutePath
 
     override fun toFile(path: String): File = File(path)
 }

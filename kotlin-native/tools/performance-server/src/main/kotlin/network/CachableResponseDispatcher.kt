@@ -24,7 +24,7 @@ object CachableResponseDispatcher {
                     action: (success: (result: Any) -> Unit, reject: () -> Unit) -> Unit) {
         cachedResponses[request.url]?.let {
             // Update cache value if needed. Update only if last result was get later than 2 minutes.
-            if (it.time.elapsedNow().inMinutes > 2.0) {
+            if (it.time.elapsedNow().inWholeMinutes >= 2.0) {
                 println("Cache update for ${request.url}...")
                 action({ result: Any ->
                     cachedResponses[request.url] = CachedResponse(result, TimeSource.Monotonic.markNow())

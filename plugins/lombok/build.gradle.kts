@@ -6,10 +6,10 @@ plugins {
 }
 
 dependencies {
-    embedded(project(":kotlin-lombok-compiler-plugin.common"))
-    embedded(project(":kotlin-lombok-compiler-plugin.k1"))
-    embedded(project(":kotlin-lombok-compiler-plugin.k2"))
-    embedded(project(":kotlin-lombok-compiler-plugin.cli"))
+    embedded(project(":kotlin-lombok-compiler-plugin.common")) { isTransitive = false }
+    embedded(project(":kotlin-lombok-compiler-plugin.k1")) { isTransitive = false }
+    embedded(project(":kotlin-lombok-compiler-plugin.k2")) { isTransitive = false }
+    embedded(project(":kotlin-lombok-compiler-plugin.cli")) { isTransitive = false }
 
     testImplementation(intellijCore())
     testImplementation(project(":kotlin-lombok-compiler-plugin.common"))

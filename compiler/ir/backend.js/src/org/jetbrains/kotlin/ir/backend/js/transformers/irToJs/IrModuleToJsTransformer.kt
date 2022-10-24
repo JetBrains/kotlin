@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.util.*
 
@@ -45,6 +46,7 @@ class IrModuleToJsTransformer(
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
     private val removeUnusedAssociatedObjects: Boolean = true
 ) {
+    private val shouldGeneratePolyfills = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
     fun generateModule(modules: Iterable<IrModuleFragment>): CompilerResult {
@@ -148,7 +150,8 @@ class IrModuleToJsTransformer(
             globalNameScope = namer.globalNames
         )
 
-        val polyfillStatements = generatePolyfillStatements(modules)
+        val polyfillStatements = runIf(shouldGeneratePolyfills) { generatePolyfillStatements(modules) }
+
         val (importStatements, importedJsModules) =
             generateImportStatements(
                 getNameForExternalDeclaration = { staticContext.getNameForStaticDeclaration(it) },
@@ -159,7 +162,7 @@ class IrModuleToJsTransformer(
         val internalModuleName = ReservedJsNames.makeInternalModuleName()
         val globalNames = NameTable<String>(namer.globalNames)
         val exportStatements = ExportModelToJsStatements(staticContext) { globalNames.declareFreshName(it, it) }
-            .generateModuleExport(exportedModule, internalModuleName)
+            .generateModuleExport(exportedModule, internalModuleName, false)
 
         val (crossModuleImports, importedKotlinModules) = generateCrossModuleImports(nameGenerator, modules, dependencies, { JsName(sanitizeName(it), false) })
         val crossModuleExports = generateCrossModuleExports(modules, refInfo, internalModuleName)
@@ -168,7 +171,7 @@ class IrModuleToJsTransformer(
 
         if (generateScriptModule) {
             with(program.globalBlock) {
-                statements.addWithComment("block: polyfills", polyfillStatements)
+                polyfillStatements?.let { statements.addWithComment("block: polyfills", it) }
                 statements.addWithComment("block: imports", importStatements + crossModuleImports)
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements + crossModuleExports)
@@ -189,7 +192,8 @@ class IrModuleToJsTransformer(
                 }
             }
 
-            program.globalBlock.statements.addWithComment("block: polyfills", polyfillStatements)
+            polyfillStatements?.let { program.globalBlock.statements.addWithComment("block: polyfills", it) }
+
             program.globalBlock.statements += ModuleWrapperTranslation.wrap(
                 exportedModule.name,
                 rootFunction,

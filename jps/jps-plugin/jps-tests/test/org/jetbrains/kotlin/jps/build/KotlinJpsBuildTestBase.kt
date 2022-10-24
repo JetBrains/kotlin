@@ -89,7 +89,9 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
     protected fun setupKotlinJSFacet() {
         myProject.modules.forEach {
             val facet = KotlinFacetSettings()
-            facet.compilerArguments = K2JSCompilerArguments()
+            facet.compilerArguments = K2JSCompilerArguments().apply {
+                useDeprecatedLegacyCompiler = true
+            }
             facet.targetPlatform = JsPlatforms.defaultJsPlatform
 
             it.container.setChild(

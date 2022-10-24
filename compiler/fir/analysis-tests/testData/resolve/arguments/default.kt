@@ -8,14 +8,14 @@ fun test() {
     foo(1, 2.0, true)
     foo(1, third = true)
 
-    foo(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    <!NO_VALUE_FOR_PARAMETER!>foo()<!>
     foo(0, 0.0, false, <!TOO_MANY_ARGUMENTS!>""<!>)
 
     bar(1, third = true)
     bar(1, 2.0, true)
     bar(1, 2.0, true, "my")
 
-    bar(1, true<!NO_VALUE_FOR_PARAMETER!>)<!>
+    bar(1, <!NO_VALUE_FOR_PARAMETER!>true)<!>
 
     baz(1)
     baz(1, "my", "yours")

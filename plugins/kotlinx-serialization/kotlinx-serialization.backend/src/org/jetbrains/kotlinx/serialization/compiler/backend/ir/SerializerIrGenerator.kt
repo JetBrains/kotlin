@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
@@ -63,7 +62,7 @@ open class SerializerIrGenerator(
     protected val generatedSerialDescPropertyDescriptor = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
         { true }
-    )?.takeIf { it.isFromPlugin() }
+    )?.takeIf { it.isFromPlugin(compilerContext.afterK2) }
 
     protected val anySerialDescProperty = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
@@ -592,15 +591,17 @@ open class SerializerIrGenerator(
         val prop = generatedSerialDescPropertyDescriptor?.let { generateSerializableClassProperty(it); true } ?: false
         if (prop)
             generateSerialDesc()
-        val save = irClass.findPluginGeneratedMethod(SAVE)?.let { generateSave(it); true } ?: false
-        val load = irClass.findPluginGeneratedMethod(LOAD)?.let { generateLoad(it); true } ?: false
-        irClass.findPluginGeneratedMethod(SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier)?.let { generateChildSerializersGetter(it) }
-        irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier)
+        val withFir = compilerContext.afterK2
+        val save = irClass.findPluginGeneratedMethod(SAVE, withFir)?.let { generateSave(it); true } ?: false
+        val load = irClass.findPluginGeneratedMethod(LOAD, withFir)?.let { generateLoad(it); true } ?: false
+        irClass.findPluginGeneratedMethod(SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier, withFir)
+            ?.let { generateChildSerializersGetter(it) }
+        irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier, withFir)
             ?.let { generateTypeParamsSerializersGetter(it) }
         if (!prop && (save || load))
             generateSerialDesc()
         if (serializableIrClass.typeParameters.isNotEmpty()) {
-            findSerializerConstructorForTypeArgumentsSerializers(irClass)?.takeIf { it.owner.isFromPlugin() }?.let {
+            findSerializerConstructorForTypeArgumentsSerializers(irClass)?.takeIf { it.owner.isFromPlugin(withFir) }?.let {
                 generateGenericFieldsAndConstructor(it.owner)
             }
         }
@@ -623,6 +624,7 @@ open class SerializerIrGenerator(
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()
+            irClass.origin = SERIALIZATION_PLUGIN_ORIGIN
             irClass.addDefaultConstructorIfAbsent(context)
             irClass.patchDeclarationParents(irClass.parent)
         }

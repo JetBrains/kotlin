@@ -217,7 +217,10 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
     }
 }
 
-private fun FirPropertyAccessor.copyToFreeAccessor(approximator: AbstractTypeApproximator): FirPropertyAccessor {
+private fun FirPropertyAccessor.copyToFreeAccessor(
+    approximator: AbstractTypeApproximator,
+    newPropertySymbol: FirPropertySymbol,
+): FirPropertyAccessor {
     val accessor = this
     return buildPropertyAccessor {
         val typeParameterSet = accessor.typeParameters.toMutableSet()
@@ -225,6 +228,7 @@ private fun FirPropertyAccessor.copyToFreeAccessor(approximator: AbstractTypeApp
         origin = FirDeclarationOrigin.Source
         returnTypeRef = accessor.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         symbol = FirPropertyAccessorSymbol()
+        propertySymbol = newPropertySymbol
         isGetter = accessor.isGetter
         status = accessor.status
         accessor.valueParameters.mapTo(valueParameters) {
@@ -243,7 +247,9 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         val typeParameterSet = property.typeParameters.toMutableSet()
         moduleData = property.moduleData
         origin = FirDeclarationOrigin.Source
-        symbol = FirPropertySymbol(property.symbol.callableId)
+
+        val newPropertySymbol = FirPropertySymbol(property.symbol.callableId)
+        symbol = newPropertySymbol
         returnTypeRef = property.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         receiverTypeRef = property.receiverTypeRef?.approximated(approximator, typeParameterSet, toSuper = false)
         name = property.name
@@ -252,8 +258,8 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         delegateFieldSymbol = property.delegateFieldSymbol?.let {
             FirDelegateFieldSymbol(it.callableId)
         }
-        getter = property.getter?.copyToFreeAccessor(approximator)
-        setter = property.setter?.copyToFreeAccessor(approximator)
+        getter = property.getter?.copyToFreeAccessor(approximator, newPropertySymbol)
+        setter = property.setter?.copyToFreeAccessor(approximator, newPropertySymbol)
         isVar = property.isVar
         isLocal = property.isLocal
         status = property.status

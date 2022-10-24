@@ -157,16 +157,13 @@ fun Project.configureKotlinCompilationOptions() {
             ":kotlin-native:klib",
             // Requires serialization plugin
             ":js:js.tests",
-            // ISE "Cannot serialize error type: ERROR CLASS: Cannot calculate return type (local class/object?)"
+            // ISE "Expected FirResolvedTypeRef with ConeKotlinType but was FirImplicitTypeRefImpl <implicit>"
+            // from Platform.kt serialization (looks as related to KT-54212)
+            // Workaround: set all types explicitly in Configurables interface
             ":kotlin-native-shared",
-            // Warnings about deprecated usages of companion objects in `::class`
-            ":kotlin-native:Interop:Runtime",
-            // Some warnings which are not printed out for some reason
-            ":kotlin-native:Interop:Indexer",
-            ":kotlin-native:Interop:Skia",
-            // ISE "Fake override should have at least one overridden descriptor",
+            // Same as kotlin-native-shared ^
             ":kotlin-native:Interop:StubGenerator",
-            // Overload resolution ambiguity between candidates
+            // Exception in Task :kotlin-native:backend.native:genEnvInteropStubs (see comments in KT-54209)
             ":kotlin-native:backend.native",
         )
 
@@ -176,6 +173,7 @@ fun Project.configureKotlinCompilationOptions() {
         )
 
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
+        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
 
         @Suppress("SuspiciousCollectionReassignment", "DEPRECATION")
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
@@ -200,6 +198,9 @@ fun Project.configureKotlinCompilationOptions() {
                 }
                 if (project.path in projectsWithEnabledContextReceivers) {
                     freeCompilerArgs += "-Xcontext-receivers"
+                }
+                if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
+                    freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction"
                 }
 
                 if (project.path == ":kotlin-util-klib") {

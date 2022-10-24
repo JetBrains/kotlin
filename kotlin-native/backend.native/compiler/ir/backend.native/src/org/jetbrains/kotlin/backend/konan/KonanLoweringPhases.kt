@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 private val validateAll = false
 
@@ -40,25 +40,25 @@ private fun makeKonanFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
 ) = makeIrFilePhase(lowering, name, description, prerequisite, actions = filePhaseActions)
 
 private fun makeKonanModuleLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
 ) = makeIrModulePhase(lowering, name, description, prerequisite, actions = modulePhaseActions)
 
 internal fun makeKonanFileOpPhase(
         op: (Context, IrFile) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
-) = NamedCompilerPhase(
+        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
+) = SameTypeNamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrFile> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
+            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
                 op(context, input)
                 return input
             }
@@ -70,11 +70,11 @@ internal fun makeKonanModuleOpPhase(
         op: (Context, IrModuleFragment) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
-) = NamedCompilerPhase(
+        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
+) = SameTypeNamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
+            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
                 op(context, input)
                 return input
             }
@@ -383,8 +383,13 @@ internal val varargPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(functionReferencePhase, defaultParameterExtentPhase, interopPhase, functionsWithoutBoundCheck)
 )
 
-internal val coroutinesPhase = makeKonanFileLoweringPhase(
-        ::NativeSuspendFunctionsLowering,
+internal val coroutinesPhase = makeKonanFileOpPhase(
+        { context, irFile ->
+            NativeSuspendFunctionsLowering(context).lower(irFile)
+            AddContinuationToNonLocalSuspendFunctionsLowering(context).lower(irFile)
+            NativeAddContinuationToFunctionCallsLowering(context).lower(irFile)
+            AddFunctionSupertypeToSuspendFunctionLowering(context).lower(irFile)
+        },
         name = "Coroutines",
         description = "Coroutines lowering",
         prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)

@@ -1,0 +1,122 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/listOf
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/collections/List<T>
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: SOURCE
+      receiverType: null
+      returnType: T
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/internal/InlineOnly()
+      psi: null
+  ]
+  callableIdIfNonLocal: kotlin/collections/listOf
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: true
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/collections/List<T>
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/listOf
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/collections/List<T>
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: true
+      name: elements
+      origin: SOURCE
+      receiverType: null
+      returnType: T
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  deprecationStatus: null

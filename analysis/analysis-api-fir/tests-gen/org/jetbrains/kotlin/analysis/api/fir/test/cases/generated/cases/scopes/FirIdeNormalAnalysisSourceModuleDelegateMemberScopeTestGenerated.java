@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleDelegateMemberScopeTestGenerated ex
     }
 
     @Test
+    @TestMetadata("propertyWithGetter.kt")
+    public void testPropertyWithGetter() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/delegatedMemberScope/propertyWithGetter.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/delegatedMemberScope/simple.kt");

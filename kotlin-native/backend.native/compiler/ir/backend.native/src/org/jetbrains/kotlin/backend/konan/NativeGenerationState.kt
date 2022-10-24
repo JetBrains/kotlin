@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.DWARF
 import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
-import org.jetbrains.kotlin.backend.konan.llvm.llvmContext
-import org.jetbrains.kotlin.backend.konan.llvm.tryDisposeLLVMContext
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
@@ -23,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -58,38 +54,19 @@ internal class NativeGenerationState(private val context: Context) {
         getLocalClassName(source)?.let { name -> putLocalClassName(destination, name) }
     }
 
-    init {
-        llvmContext = LLVMContextCreate()!!
-    }
-
-    private val runtimeDelegate = lazy { Runtime(config.distribution.compilerInterface(config.target)) }
+    private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
     private val llvmDelegate = lazy { Llvm(context, LLVMModuleCreateWithNameInContext("out", llvmContext)!!) }
-    private val debugInfoDelegate = lazy {
-        DebugInfo(context).also {
-            it.builder = LLVMCreateDIBuilder(llvm.module)
-            // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
-            // clashing, which happens on linking with libraries produced from intercepting sources.
-            val filePath = outputFile.toFileAndFolder(context).path()
-            it.compilationUnit = if (context.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
-                builder = it.builder,
-                lang = DWARF.language(config),
-                File = filePath,
-                dir = "",
-                producer = DWARF.producer,
-                isOptimized = 0,
-                flags = "",
-                rv = DWARF.runtimeVersion(config)
-            ).cast()
-            else null
-        }
-    }
+    private val debugInfoDelegate = lazy { DebugInfo(context) }
 
+    val llvmContext = LLVMContextCreate()!!
     val llvmImports = Llvm.ImportsImpl(context)
     val runtime by runtimeDelegate
     val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
     val cStubsManager = CStubsManager(config.target)
     lateinit var llvmDeclarations: LlvmDeclarations
+
+    fun hasDebugInfo() = debugInfoDelegate.isInitialized()
 
     fun verifyBitCode() {
         if (!llvmDelegate.isInitialized()) return
@@ -106,7 +83,7 @@ internal class NativeGenerationState(private val context: Context) {
     fun dispose() {
         if (isDisposed) return
 
-        if (debugInfoDelegate.isInitialized()) {
+        if (hasDebugInfo()) {
             LLVMDisposeDIBuilder(debugInfo.builder)
         }
         if (llvmDelegate.isInitialized()) {
@@ -116,7 +93,7 @@ internal class NativeGenerationState(private val context: Context) {
             LLVMDisposeTargetData(runtime.targetData)
             LLVMDisposeModule(runtime.llvmModule)
         }
-        tryDisposeLLVMContext()
+        LLVMContextDispose(llvmContext)
         tempFiles.dispose()
 
         isDisposed = true

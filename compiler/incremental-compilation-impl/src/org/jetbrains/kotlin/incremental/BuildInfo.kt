@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.incremental.AbiSnapshotImpl.Companion.readAbiSnapshot
 import org.jetbrains.kotlin.incremental.AbiSnapshotImpl.Companion.writeAbiSnapshot
+import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import java.io.*
 
@@ -51,7 +52,7 @@ data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String,
                     it.readBuildInfo()
                 }
             } catch (e: Exception) {
-                messageCollector.reportException(e)
+                messageCollector.reportException(e, ExceptionLocation.INCREMENTAL_COMPILATION)
                 null
             }
         }

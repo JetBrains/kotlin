@@ -157,20 +157,20 @@ class ReturnPath(
 ) : EdgeLabel(label = "\"return@${returnTargetSymbol.callableId}\"")
 
 enum class EdgeKind(
-    val usedInDfa: Boolean,
+    val usedInDfa: Boolean, // propagate flow to alive nodes
+    val usedInDeadDfa: Boolean, // propagate flow to dead nodes
     val usedInCfa: Boolean,
     val isBack: Boolean,
     val isDead: Boolean
 ) {
-    Forward(usedInDfa = true, usedInCfa = true, isBack = false, isDead = false),
-    DeadForward(usedInDfa = false, usedInCfa = true, isBack = false, isDead = true),
-    DfgForward(usedInDfa = true, usedInCfa = false, isBack = false, isDead = false),
-    CfgForward(usedInDfa = false, usedInCfa = true, isBack = false, isDead = false),
-    CfgBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = false),
-    DeadBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true)
+    Forward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = false),
+    DeadForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = true),
+    DfgForward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = false),
+    CfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = false),
+    CfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = false),
+    DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true)
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
     val visitedNodes = linkedSetOf<CFGNode<*>>()
     /*
@@ -202,7 +202,6 @@ private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
     return visitedNodes
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun ControlFlowGraph.walkThrowSubGraphs(
     otherGraph: ControlFlowGraph,
     visitedNodes: Set<CFGNode<*>>,

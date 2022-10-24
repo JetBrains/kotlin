@@ -97,6 +97,11 @@ public class KotlinStaticDeclarationProvider internal constructor(
             }
             ?: emptyList()
 
+    override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> = buildSet {
+        getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
+        getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
+    }
+
 }
 
 public class KotlinStaticDeclarationProviderFactory(

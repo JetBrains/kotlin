@@ -496,7 +496,7 @@ internal object DataFlowIR {
             val placeToClassTable = true
             val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
             val type = if (irClass.isExported())
-                           Type.Public(name.localHash.value, privateTypeIndex++, isFinal, isAbstract, null,
+                           Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract, null,
                                    module, symbolTableIndex, irClass, takeName { name })
                        else
                            Type.Private(privateTypeIndex++, isFinal, isAbstract, null,
@@ -595,8 +595,8 @@ internal object DataFlowIR {
             }
             val name = "kfun:$containingDeclarationPart${it.computeFunctionName()}"
 
-            val returnsUnit = it is IrConstructor || (!it.isSuspend && it.returnType.isUnit())
-            val returnsNothing = !it.isSuspend && it.returnType.isNothing()
+            val returnsUnit = it is IrConstructor || it.returnType.isUnit()
+            val returnsNothing = it.returnType.isNothing()
             var attributes = 0
             if (returnsUnit)
                 attributes = attributes or FunctionAttributes.RETURNS_UNIT
@@ -618,7 +618,7 @@ internal object DataFlowIR {
                     val escapesBitMask = (escapesAnnotation?.getValueArgument(0) as? IrConst<Int>)?.value
                     @Suppress("UNCHECKED_CAST")
                     val pointsToBitMask = (pointsToAnnotation?.getValueArgument(0) as? IrVararg)?.elements?.map { (it as IrConst<Int>).value }
-                    FunctionSymbol.External(name.localHash.value, attributes, it, takeName { name }, it.isExported()).apply {
+                    FunctionSymbol.External(localHash(name.toByteArray()), attributes, it, takeName { name }, it.isExported()).apply {
                         escapes  = escapesBitMask
                         pointsTo = pointsToBitMask?.toIntArray()
                     }
@@ -637,7 +637,7 @@ internal object DataFlowIR {
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                     val frozen = it is IrConstructor && irClass!!.isFrozen(context)
                     val functionSymbol = if (it.isExported())
-                        FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Public(localHash(name.toByteArray()), module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
                     else
                         FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
                     if (frozen) {
@@ -648,14 +648,10 @@ internal object DataFlowIR {
             }
             functionMap[it] = symbol
 
-            symbol.parameters =
-                    (function.allParameters.map { it.type } + (if (function.isSuspend) listOf(continuationType) else emptyList()))
+            symbol.parameters = function.allParameters.map { it.type }
                             .map { mapTypeToFunctionParameter(it) }
                             .toTypedArray()
-            symbol.returnParameter = mapTypeToFunctionParameter(if (function.isSuspend)
-                                                               context.irBuiltIns.anyType
-                                                           else
-                                                               function.returnType)
+            symbol.returnParameter = mapTypeToFunctionParameter(function.returnType)
 
             return symbol
         }

@@ -25,6 +25,48 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("changeFunctionVisibility")
+    public void testChangeFunctionVisibility() throws Exception {
+        runTest("compiler/testData/klibABI/changeFunctionVisibility/");
+    }
+
+    @Test
+    @TestMetadata("changePropertyVisibility")
+    public void testChangePropertyVisibility() throws Exception {
+        runTest("compiler/testData/klibABI/changePropertyVisibility/");
+    }
+
+    @Test
+    @TestMetadata("noNonImplementedCallableFalsePositives")
+    public void testNoNonImplementedCallableFalsePositives() throws Exception {
+        runTest("compiler/testData/klibABI/noNonImplementedCallableFalsePositives/");
+    }
+
+    @Test
+    @TestMetadata("nonAbstractFunctionInAbstractClassBecomesAbstract")
+    public void testNonAbstractFunctionInAbstractClassBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractFunctionInAbstractClassBecomesAbstract/");
+    }
+
+    @Test
+    @TestMetadata("nonAbstractFunctionInInterfaceBecomesAbstract")
+    public void testNonAbstractFunctionInInterfaceBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractFunctionInInterfaceBecomesAbstract/");
+    }
+
+    @Test
+    @TestMetadata("nonAbstractPropertyInAbstractClassBecomesAbstract")
+    public void testNonAbstractPropertyInAbstractClassBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractPropertyInAbstractClassBecomesAbstract/");
+    }
+
+    @Test
+    @TestMetadata("nonAbstractPropertyInInterfaceBecomesAbstract")
+    public void testNonAbstractPropertyInInterfaceBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractPropertyInInterfaceBecomesAbstract/");
+    }
+
+    @Test
     @TestMetadata("removeAbstractFunctionFromAbstractClass")
     public void testRemoveAbstractFunctionFromAbstractClass() throws Exception {
         runTest("compiler/testData/klibABI/removeAbstractFunctionFromAbstractClass/");
@@ -124,6 +166,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     @TestMetadata("removeProperty")
     public void testRemoveProperty() throws Exception {
         runTest("compiler/testData/klibABI/removeProperty/");
+    }
+
+    @Test
+    @TestMetadata("replaceCallableReturnType")
+    public void testReplaceCallableReturnType() throws Exception {
+        runTest("compiler/testData/klibABI/replaceCallableReturnType/");
     }
 
     @Test

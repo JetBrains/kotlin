@@ -10,10 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeLibrary
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeLibraryConfig
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
@@ -62,7 +59,7 @@ class KotlinNativeLibraryImpl(
     @Suppress("DEPRECATION")
     @Deprecated("Replaced by compilerOptionsConfigure", replaceWith = ReplaceWith("compilerOptionsConfigure"))
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
-    override val toolOptionsConfigure: CompilerCommonToolOptions.() -> Unit,
+    override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val target: KonanTarget,
     extensions: ExtensionAware
@@ -88,13 +85,13 @@ class KotlinNativeLibraryImpl(
             ) { task ->
                 task.description = "Assemble ${kind.description} '$artifactName' for a target '${target.name}'."
                 task.enabled = target.enabledOnCurrentHost
-                task.baseName = artifactName
-                task.optimized = buildType.optimized
-                task.debuggable = buildType.debuggable
-                task.linkerOptions = linkerOptions
-                task.binaryOptions = binaryOptions
-                task.librariesConfiguration = librariesConfigurationName
-                task.exportLibrariesConfiguration = exportConfigurationName
+                task.baseName.set(artifactName)
+                task.optimized.set(buildType.optimized)
+                task.debuggable.set(buildType.debuggable)
+                task.linkerOptions.set(linkerOptions)
+                task.binaryOptions.set(binaryOptions)
+                task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
+                task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
                 @Suppress("DEPRECATION")
                 task.kotlinOptions(kotlinOptionsFn)
                 task.toolOptions(toolOptionsConfigure)

@@ -240,7 +240,7 @@ TEST(ObjectFactoryStorageTest, EraseFirst) {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 1) {
-                iter.EraseAndAdvance(it);
+                iter.EraseAndAdvance(it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
             } else {
                 ++it;
             }
@@ -268,7 +268,7 @@ TEST(ObjectFactoryStorageTest, EraseMiddle) {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 2) {
-                iter.EraseAndAdvance(it);
+                iter.EraseAndAdvance(it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
             } else {
                 ++it;
             }
@@ -296,7 +296,7 @@ TEST(ObjectFactoryStorageTest, EraseLast) {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 3) {
-                iter.EraseAndAdvance(it);
+                iter.EraseAndAdvance(it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
             } else {
                 ++it;
             }
@@ -323,7 +323,7 @@ TEST(ObjectFactoryStorageTest, EraseAll) {
     {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
-            iter.EraseAndAdvance(it);
+            iter.EraseAndAdvance(it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
         }
     }
 
@@ -345,7 +345,7 @@ TEST(ObjectFactoryStorageTest, EraseTheOnlyElement) {
     {
         auto iter = storage.LockForIter();
         auto it = iter.begin();
-        iter.EraseAndAdvance(it);
+        iter.EraseAndAdvance(it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
         EXPECT_THAT(it, iter.end());
     }
 
@@ -371,7 +371,7 @@ TEST(ObjectFactoryStorageTest, MoveFirst) {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 1) {
-                iter.MoveAndAdvance(consumer, it);
+                iter.MoveAndAdvance(consumer, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
             } else {
                 ++it;
             }
@@ -403,7 +403,7 @@ TEST(ObjectFactoryStorageTest, MoveMiddle) {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 2) {
-                iter.MoveAndAdvance(consumer, it);
+                iter.MoveAndAdvance(consumer, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
             } else {
                 ++it;
             }
@@ -435,7 +435,7 @@ TEST(ObjectFactoryStorageTest, MoveLast) {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() == 3) {
-                iter.MoveAndAdvance(consumer, it);
+                iter.MoveAndAdvance(consumer, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
             } else {
                 ++it;
             }
@@ -466,7 +466,7 @@ TEST(ObjectFactoryStorageTest, MoveAll) {
     {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
-            iter.MoveAndAdvance(consumer, it);
+            iter.MoveAndAdvance(consumer, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
         }
     }
 
@@ -499,7 +499,7 @@ TEST(ObjectFactoryStorageTest, MergeWith) {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() % 2 == 0) {
-                iter.MoveAndAdvance(consumer1, it);
+                iter.MoveAndAdvance(consumer1, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
             } else {
                 ++it;
             }
@@ -508,7 +508,7 @@ TEST(ObjectFactoryStorageTest, MergeWith) {
     {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
-            iter.MoveAndAdvance(consumer2, it);
+            iter.MoveAndAdvance(consumer2, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
         }
     }
 
@@ -577,7 +577,7 @@ TEST(ObjectFactoryStorageTest, MoveTheOnlyElement) {
     {
         auto iter = storage.LockForIter();
         auto it = iter.begin();
-        iter.MoveAndAdvance(consumer, it);
+        iter.MoveAndAdvance(consumer, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
         EXPECT_THAT(it, iter.end());
     }
 
@@ -612,8 +612,8 @@ TEST(ObjectFactoryStorageTest, MoveAndErase) {
         auto iter = storage.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             ++it;
-            iter.EraseAndAdvance(it);
-            iter.MoveAndAdvance(consumer, it);
+            iter.EraseAndAdvance(it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
+            iter.MoveAndAdvance(consumer, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
         }
     }
 
@@ -759,7 +759,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
 
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->Data<int>() % 2 != 0) {
-                iter.EraseAndAdvance(it);
+                iter.EraseAndAdvance(it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
             } else {
                 ++it;
             }

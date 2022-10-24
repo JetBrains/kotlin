@@ -129,7 +129,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = createSessionForTests(
+        val session = FirTestSessionFactoryHelper.createSessionForTests(
             environment.toAbstractProjectEnvironment(),
             scope.toAbstractProjectFileSearchScope(),
             librariesScope.toAbstractProjectFileSearchScope(),

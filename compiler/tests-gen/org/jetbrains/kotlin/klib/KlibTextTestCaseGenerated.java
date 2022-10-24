@@ -687,6 +687,19 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             }
         }
 
+        @TestMetadata("compiler/testData/ir/irText/declarations/jvmRecord")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JvmRecord extends AbstractKlibTextTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJvmRecord() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+        }
+
         @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -970,6 +983,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         @TestMetadata("breakContinueInWhen.kt")
         public void testBreakContinueInWhen() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/breakContinueInWhen.kt");
+        }
+
+        @TestMetadata("builtinOperators.kt")
+        public void testBuiltinOperators() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/builtinOperators.kt");
         }
 
         @TestMetadata("callWithReorderedArguments.kt")

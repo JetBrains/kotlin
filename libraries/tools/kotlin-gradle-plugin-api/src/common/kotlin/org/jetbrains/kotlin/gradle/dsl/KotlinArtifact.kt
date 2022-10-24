@@ -28,7 +28,7 @@ interface KotlinNativeArtifact : KotlinArtifact {
         replaceWith = ReplaceWith("toolOptionsConfigure")
     )
     val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit
-    val toolOptionsConfigure: CompilerCommonToolOptions.() -> Unit
+    val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit
     val binaryOptions: Map<String, String>
 }
 
@@ -70,7 +70,7 @@ interface KotlinNativeArtifactConfig : KotlinArtifactConfig {
         replaceWith = ReplaceWith("toolOptions(fn)")
     )
     fun kotlinOptions(fn: Action<KotlinCommonToolOptions>)
-    fun toolOptions(configure: Action<CompilerCommonToolOptions>)
+    fun toolOptions(configure: Action<KotlinCommonCompilerToolOptions>)
     fun binaryOption(name: String, value: String)
 }
 

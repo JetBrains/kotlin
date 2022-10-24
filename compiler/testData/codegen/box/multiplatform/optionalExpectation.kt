@@ -13,7 +13,10 @@ package a
 expect annotation class A(val x: Int)
 
 @OptionalExpectation
-expect annotation class B(val s: String)
+expect annotation class B(val s: String) {
+    @OptionalExpectation
+    annotation class C(val a: Boolean)
+}
 
 // FILE: actual.kt
 
@@ -33,6 +36,7 @@ import a.B
 
 @A(42)
 @B("OK")
+@B.C(true)
 fun box(): String {
     return "OK"
 }

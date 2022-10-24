@@ -8,13 +8,21 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import kotlin.reflect.KClass
 
 internal abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
     private val map: Map<KClass<*>, Any> = THashMap<KClass<*>, Any>().apply {
         settings.forEach {
-            val (settingClass: KClass<*>, setting: Any) = if (it is Pair<*, *>) it.cast() else it::class to it
+            val settingClass: KClass<*>
+            val setting: Any
+            if (it is Pair<*, *>) {
+                settingClass = it.first as KClass<*>
+                setting = it.second ?: error("Setting $settingClass is null")
+            } else {
+                settingClass = it::class
+                setting = it
+            }
+
             val previous = put(settingClass, setting)
             assertTrue(previous == null) { "Duplicated settings: $settingClass, $previous, $setting" }
         }

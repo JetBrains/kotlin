@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -144,7 +145,13 @@ private fun compileImpl(
             // TODO: make this logic obsolete by injecting classpath earlier in the pipeline
             val depsFromConfiguration = get(dependencies)?.flatMapTo(HashSet()) { (it as? JvmDependency)?.classpath ?: emptyList() }
             val depsFromCompiler = context.environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
-                .mapNotNull { if (it is JvmClasspathRoot && !it.isSdkRoot) it.file else null }
+                .mapNotNull {
+                    when {
+                        it is JvmClasspathRoot && !it.isSdkRoot -> it.file
+                        it is JvmModulePathRoot -> it.file
+                        else -> null
+                    }
+                }
             if (!depsFromConfiguration.isNullOrEmpty()) {
                 val missingDeps = depsFromCompiler.filter { !depsFromConfiguration.contains(it) }
                 if (missingDeps.isNotEmpty()) {

@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.Returns
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.ValueParametersCount
@@ -23,8 +24,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -143,20 +145,20 @@ private object Checks {
         }
     }
 
-    private val kPropertyType = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(StandardClassIds.KProperty),
-        arrayOf(ConeStarProjection),
-        isNullable = false
-    )
-
     val isKProperty = full("second parameter must be of type KProperty<*> or its supertype") { ctx, function ->
         val paramType = function.valueParameters[1].returnTypeRef.coneType
-        paramType.isSupertypeOf(ctx.session.typeContext, kPropertyType)
+        paramType.isSupertypeOf(
+            ctx.session.typeContext,
+            ConeClassLikeTypeImpl(
+                ConeClassLikeLookupTagImpl(StandardClassIds.KProperty),
+                arrayOf(ConeStarProjection),
+                isNullable = false
+            )
+        )
     }
 
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 private object OperatorFunctionChecks {
 
     //reimplementation of org.jetbrains.kotlin.util.OperatorChecks for FIR
@@ -184,10 +186,23 @@ private object OperatorFunctionChecks {
         checkFor(
             EQUALS,
             member,
-            Checks.full("must override ''equals()'' in Any") { ctx, function ->
-                val containingClassSymbol = function.containingClass()?.toFirRegularClassSymbol(ctx.session) ?: return@full true
-                function.overriddenFunctions(containingClassSymbol, ctx).any {
-                    it.containingClass()?.classId == StandardClassIds.Any
+            object : Check {
+                override fun check(context: CheckerContext, function: FirSimpleFunction): String? {
+                    val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) ?: return null
+                    val customEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)
+
+                    if (function.overriddenFunctions(containingClassSymbol, context)
+                            .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
+                        || (customEqualsSupported && function.isTypedEqualsInInlineClass(context.session))
+                    ) {
+                        return null
+                    }
+                    return buildString {
+                        append("must override ''equals()'' in Any")
+                        if (customEqualsSupported && containingClassSymbol.isInline) {
+                            append(" or define ''equals(other: ${containingClassSymbol.name}): Boolean''")
+                        }
+                    }
                 }
             }
         )

@@ -186,7 +186,6 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, symbol, overriddenVar, context)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun checkConflictingMembers(
         containingClass: FirClass,
         context: CheckerContext,

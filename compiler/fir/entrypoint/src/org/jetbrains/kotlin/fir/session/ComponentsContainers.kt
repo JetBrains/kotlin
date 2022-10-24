@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
 import org.jetbrains.kotlin.fir.java.FirJvmDefaultModeComponent
+import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater
 import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.resolve.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCompilerLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.PlatformSupertypeUpdater
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
@@ -85,6 +87,7 @@ fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolv
         FirJvmDefaultModeComponent::class,
         FirJvmDefaultModeComponent(languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode))
     )
+    register(PlatformSupertypeUpdater::class, JvmSupertypeUpdater(this))
 }
 
 // -------------------------- Resolve components --------------------------

@@ -14,14 +14,17 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertyS
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
 import org.jetbrains.kotlin.fir.declarations.getJvmNameFromAnnotation
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 internal class KtFirSymbolInfoProvider(
@@ -70,11 +73,11 @@ internal class KtFirSymbolInfoProvider(
         if (symbol is KtFirSyntheticJavaPropertySymbol) {
             return symbol.javaGetterSymbol.name
         }
-        val jvmName = run {
-            val firProperty = symbol.firSymbol.fir as? FirProperty ?: return@run null
-            firProperty.getJvmNameFromAnnotation(AnnotationUseSiteTarget.PROPERTY_GETTER) ?: firProperty.getter?.getJvmNameFromAnnotation()
-        }
-        return Name.identifier(jvmName ?: JvmAbi.getterName(symbol.name.identifier))
+
+        val firProperty = symbol.firSymbol.fir
+        requireIsInstance<FirProperty>(firProperty)
+
+        return getJvmName(firProperty, isSetter = false)
     }
 
     override fun getJavaSetterName(symbol: KtPropertySymbol): Name? {
@@ -82,14 +85,34 @@ internal class KtFirSymbolInfoProvider(
         if (symbol is KtFirSyntheticJavaPropertySymbol) {
             return symbol.javaSetterSymbol?.name
         }
-        return if (symbol.isVal) null
-        else {
-            val jvmName = run {
-                val firProperty = symbol.firSymbol.fir as? FirProperty ?: return@run null
-                firProperty.getJvmNameFromAnnotation(AnnotationUseSiteTarget.PROPERTY_GETTER)
-                    ?: firProperty.setter?.getJvmNameFromAnnotation()
-            }
-            Name.identifier(jvmName ?: JvmAbi.setterName(symbol.name.identifier))
+
+        val firProperty = symbol.firSymbol.fir
+        requireIsInstance<FirProperty>(firProperty)
+
+        if (firProperty.isVal) return null
+
+        return getJvmName(firProperty, isSetter = true)
+    }
+
+    private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
+        if (property.hasAnnotation(StandardClassIds.Annotations.JvmField)) return property.name
+        return Name.identifier(getJvmNameAsString(property, isSetter))
+    }
+
+    private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String {
+        val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
+        val jvmNameFromProperty = property.getJvmNameFromAnnotation(useSiteTarget)
+        if (jvmNameFromProperty != null) {
+            return jvmNameFromProperty
         }
+
+        val accessor = if (isSetter) property.setter else property.getter
+        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation()
+        if (jvmNameFromAccessor != null) {
+            return jvmNameFromAccessor
+        }
+
+        val identifier = property.name.identifier
+        return if (isSetter) JvmAbi.setterName(identifier) else JvmAbi.getterName(identifier)
     }
 }

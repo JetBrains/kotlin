@@ -41,8 +41,10 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
@@ -93,7 +95,8 @@ class ImportResolutionComponents(
     val moduleDescriptor: ModuleDescriptor,
     val platformToKotlinClassMapper: PlatformToKotlinClassMapper,
     val languageVersionSettings: LanguageVersionSettings,
-    val deprecationResolver: DeprecationResolver
+    val deprecationResolver: DeprecationResolver,
+    val optimizingOptions: OptimizingOptions,
 )
 
 open class LazyImportResolver<I : KtImportInfo>(
@@ -126,11 +129,21 @@ open class LazyImportResolver<I : KtImportInfo>(
         return importedScopesProvider(directive) ?: ImportingScope.Empty
     }
 
-    val allNames: Set<Name>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    val allNames: Set<Name>? by components.storageManager.createNullableLazyValue {
         indexedImports.imports.asIterable().flatMapToNullable(THashSet()) { getImportScope(it).computeImportedNames() }
     }
 
-    fun definitelyDoesNotContainName(name: Name) = allNames?.let { name !in it } == true
+    fun definitelyDoesNotContainName(name: Name): Boolean {
+        // Calculation of all names is undesirable for cases when the scope doesn't live long and is big enough.
+        // In such cases we often do the same work twice - first time for computing definitelyDoesNotContainName
+        // and second time for resolution itself. Results seem to be not reused.
+        // This optimization is used in Kotlin Notebooks
+        return if (components.optimizingOptions.shouldCalculateAllNamesForLazyImportScopeOptimizing(packageFragment?.containingDeclaration)) {
+            allNames?.let { name !in it } == true
+        } else {
+            false
+        }
+    }
 
     fun recordLookup(name: Name, location: LookupLocation) {
         if (allNames == null) return
@@ -223,7 +236,7 @@ class LazyImportScope(
     override val parent: ImportingScope?,
     private val importResolver: LazyImportResolver<*>,
     private val secondaryImportResolver: LazyImportResolver<*>?,
-    private val filteringKind: LazyImportScope.FilteringKind,
+    private val filteringKind: FilteringKind,
     private val debugName: String
 ) : ImportingScope {
 

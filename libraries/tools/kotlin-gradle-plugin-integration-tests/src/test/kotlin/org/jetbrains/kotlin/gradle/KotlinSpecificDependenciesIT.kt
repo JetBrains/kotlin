@@ -110,7 +110,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -132,7 +131,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -144,6 +142,103 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 "compileDebugKotlin",
                 emptyList(),
                 checkModulesNotInClasspath = listOf("kotlin-stdlib" /*any of them*/),
+            )
+        }
+    }
+
+    @AndroidGradlePluginTests
+    @DisplayName("stdlib-jdk7, stdlib-jdk8 are substituted with stdlib:1.8+")
+    @GradleAndroidTest
+    fun testStdlibSubstitutionAndroid(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "AndroidSimpleApp",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion
+            ),
+            buildJdk = jdkVersion.location,
+        ) {
+            // Adding dependency that pulls transitively older versions
+            // of stdlib-jdk8
+            buildGradle.appendText(
+                """
+                |
+                |dependencies {
+                |    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+                |}
+                """.trimMargin()
+            )
+
+            build("checkDebugDuplicateClasses")
+        }
+    }
+
+    @AndroidGradlePluginTests
+    @DisplayName("stdlib-jdk7, stdlib-jdk8 substitution with stdlib:1.8+ is possible to disable")
+    @GradleAndroidTest
+    fun testDisableStdlibSubstitutionAndroid(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "AndroidSimpleApp",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion
+            ),
+            buildJdk = jdkVersion.location,
+        ) {
+            // Adding dependency that pulls transitively older versions
+            // of stdlib-jdk8
+            buildGradle.appendText(
+                """
+                |
+                |dependencies {
+                |    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+                |}
+                """.trimMargin()
+            )
+
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.stdlib.jdk.variants.substitution=false
+                """.trimMargin()
+            )
+
+            buildAndFail("checkDebugDuplicateClasses", forceOutput = true) {
+                assertOutputContains("Duplicate class kotlin.internal.jdk8.JDK8PlatformImplementations")
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("stdlib-jdk7, stdlib-jdk8 substitution with stdlib:1.8+ in Kotlin DSL")
+    @GradleTest
+    fun stdlibJdkVariantsSubstitutionKotlinDsl(gradleVersion: GradleVersion) {
+        project("sourceSetsKotlinDsl", gradleVersion) {
+            removeDependencies(buildGradleKts)
+
+            buildGradleKts.appendText(
+                """
+                |
+                |dependencies {
+                |   implementation(kotlin("stdlib"))
+                |   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+                |}
+                """.trimMargin()
+            )
+
+            checkTaskCompileClasspath(
+                "compileKotlin",
+                listOf("kotlin-stdlib"),
+                checkModulesNotInClasspath = listOf("kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"),
+                isBuildGradleKts = true
             )
         }
     }
@@ -299,7 +394,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -326,7 +420,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {

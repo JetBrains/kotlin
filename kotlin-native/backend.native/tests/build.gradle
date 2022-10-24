@@ -42,8 +42,8 @@ configurations {
 }
 
 dependencies {
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
-    cli_bc project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
+    // TODO: upgrade coroutines to common version
+    api DependenciesKt.commonDependency(project, "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
 }
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 
@@ -4285,6 +4285,10 @@ createInterop("kt51925") {
     it.defFile 'interop/kt51925/kt51925.def'
 }
 
+createInterop("kt54284") {
+    it.defFile 'interop/kt54284/kt54284.def'
+}
+
 createInterop("kt43502") {
     it.defFile 'interop/kt43502/kt43502.def'
     it.headers "$projectDir/interop/kt43502/kt43502.h"
@@ -4757,6 +4761,12 @@ interopTest("interop_kt44283") {
     flags = ['-g']
     interop = 'kt44283'
     source = "interop/kt44283/main.kt"
+}
+
+interopTest("interop_kt54284") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = 'kt54284'
+    source = "interop/kt54284/main.kt"
 }
 
 // TODO: This test should be run with caches on.
@@ -6470,7 +6480,7 @@ fileCheckTest("filecheck_constants_merge") {
 }
 
 dependencies {
-    nopPluginApi project(kotlinCompilerModule)
+    nopPluginApi kotlinCompilerModule
     nopPluginApi project(":native:kotlin-native-utils")
     nopPluginApi project(":core:descriptors")
     nopPluginApi project(":compiler:ir.tree")
@@ -6483,7 +6493,7 @@ dependencies {
     nopPluginApi project(":kotlin-util-klib-metadata")
     nopPluginApi project(":compiler:ir.serialization.common")
 
-    api project(kotlinCompilerModule)
+    implementation kotlinCompilerModule
     api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     api DependenciesKt.commonDependency(project, "junit")
 }

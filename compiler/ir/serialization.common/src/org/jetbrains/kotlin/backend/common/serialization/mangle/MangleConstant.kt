@@ -21,6 +21,7 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val ERROR_MARK = "<ERROR CLASS>"
         const val ERROR_DECLARATION = "<ERROR DECLARATION>"
         const val STATIC_MEMBER_MARK = "#static"
+        const val SUSPEND_FUNCTION_MARK = "#suspend"
         const val TYPE_PARAMETER_MARKER_NAME = "<TP>"
         const val TYPE_PARAMETER_MARKER_NAME_SETTER = "<STP>"
         const val BACKING_FIELD_NAME = "<BF>"

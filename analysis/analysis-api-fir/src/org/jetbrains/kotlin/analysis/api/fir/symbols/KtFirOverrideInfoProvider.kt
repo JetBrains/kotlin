@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -66,7 +66,7 @@ internal class KtFirOverrideInfoProvider(
         symbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val firDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
         val containingClass =
-            getOriginalOverriddenSymbol(firDeclaration)?.containingClass()?.toSymbol(rootModuleSession) ?: return null
+            getOriginalOverriddenSymbol(firDeclaration)?.containingClassLookupTag()?.toSymbol(rootModuleSession) ?: return null
         return analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containingClass.fir.symbol) as? KtClassOrObjectSymbol
 
     }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
 class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>Fun<!> :
         (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,

@@ -25,6 +25,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("companionObjectSerializers.kt")
+    public void testCompanionObjectSerializers() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/companionObjectSerializers.kt");
+    }
+
+    @Test
     @TestMetadata("DuplicateSerialName.kt")
     public void testDuplicateSerialName() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/DuplicateSerialName.kt");
@@ -40,6 +46,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     @TestMetadata("ExternalSerializers.kt")
     public void testExternalSerializers() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/ExternalSerializers.kt");
+    }
+
+    @Test
+    @TestMetadata("GenericArrays.kt")
+    public void testGenericArrays() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/GenericArrays.kt");
     }
 
     @Test

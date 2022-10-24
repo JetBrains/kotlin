@@ -105,10 +105,11 @@ internal fun MethodBridge.parametersAssociated(
 
     return this.paramBridges.map {
         when (it) {
-            is MethodBridgeValueParameter.Mapped, MethodBridgeReceiver.Instance ->
+            is MethodBridgeValueParameter.Mapped,
+            MethodBridgeReceiver.Instance,
+            is MethodBridgeValueParameter.SuspendCompletion ->
                 it to kotlinParameters.next()
 
-            is MethodBridgeValueParameter.SuspendCompletion,
             MethodBridgeReceiver.Static, MethodBridgeSelector, MethodBridgeValueParameter.ErrorOutParameter ->
                 it to null
 

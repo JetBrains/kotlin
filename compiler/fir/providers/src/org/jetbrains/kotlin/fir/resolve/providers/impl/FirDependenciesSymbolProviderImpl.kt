@@ -31,62 +31,31 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
 
 
     protected open val dependencyProviders by lazy {
-        val moduleData = session.nullableModuleData ?: return@lazy emptyList()
-        (moduleData.dependencies + moduleData.friendDependencies + moduleData.dependsOnDependencies)
+        val moduleData =
+            session.nullableModuleData ?: error("FirDependenciesSymbolProvider should not be created if there are no dependencies")
+        val result = (moduleData.dependencies + moduleData.friendDependencies + moduleData.dependsOnDependencies)
             .mapNotNull { session.sessionProvider?.getSession(it) }
             .sortedBy { it.kind }
-            .map {
-                if (it.kind == FirSession.Kind.Source) {
-                    it.symbolProvider.loadTransitiveSourceProvides()
-                } else {
-                    listOf(it.symbolProvider)
-                }
-            }
-            .flatten()
-    }
-
-    private fun FirSymbolProvider.loadTransitiveSourceProvides(): List<FirSymbolProvider> {
-        val result = mutableListOf<FirSymbolProvider>()
-        val visited = hashSetOf<FirSymbolProvider>()
-
-        fun loadTransitiveSourceProvides(provider: FirSymbolProvider) {
-            if (!visited.add(provider)) {
-                return
-            }
-
-            when {
-                provider is FirDependenciesSymbolProviderImpl -> {
-                    for (p in provider.dependencyProviders) {
-                        loadTransitiveSourceProvides(p)
-                    }
-                }
-                provider is FirCompositeSymbolProvider -> {
-                    for (p in provider.providers) {
-                        loadTransitiveSourceProvides(p)
-                    }
-                }
-                provider.session.kind == FirSession.Kind.Source -> {
-                    result.add(provider)
-                }
+            .map { it.symbolProvider }
+        result.flatMap {
+            when (it) {
+                is FirCompositeSymbolProvider -> it.providers
+                else -> listOf(it)
             }
         }
-
-        loadTransitiveSourceProvides(this)
-
-        return result
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelCallables(callableId: CallableId): List<FirCallableSymbol<*>> = buildList {
         dependencyProviders.forEach { it.getTopLevelCallableSymbolsTo(this, callableId.packageName, callableId.callableName) }
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> = buildList {
         dependencyProviders.forEach { it.getTopLevelFunctionSymbolsTo(this, callableId.packageName, callableId.callableName) }
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelProperties(callableId: CallableId): List<FirPropertySymbol> = buildList {
         dependencyProviders.forEach { it.getTopLevelPropertySymbolsTo(this, callableId.packageName, callableId.callableName) }
     }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
@@ -63,10 +63,12 @@ object FirOverrideChecker : FirClassChecker() {
                 processFunctionsByName(memberSymbol.name) {}
                 getDirectOverriddenFunctions(memberSymbol)
             }
+
             is FirPropertySymbol -> {
                 processPropertiesByName(memberSymbol.name) {}
                 getDirectOverriddenProperties(memberSymbol)
             }
+
             else -> throw IllegalArgumentException("unexpected member kind $memberSymbol")
         }
     }
@@ -267,8 +269,23 @@ object FirOverrideChecker : FirClassChecker() {
 
             if (kind !is KtRealSourceElementKind && kind !is KtFakeSourceElementKind.PropertyFromParameter) return
 
-            val overridden = overriddenMemberSymbols.first().originalOrSelf()
-            val originalContainingClassSymbol = overridden.containingClass()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
+            val visibilityChecker = context.session.visibilityChecker
+            val file = context.findClosest<FirFile>() ?: return
+            val containingDeclarations = context.containingDeclarations + containingClass
+
+            @OptIn(SymbolInternals::class)
+            val overridden = overriddenMemberSymbols.firstOrNull {
+                it.lazyResolveToPhase(FirResolvePhase.STATUS)
+                visibilityChecker.isVisible(
+                    it.originalOrSelf().fir,
+                    context.session,
+                    file,
+                    containingDeclarations,
+                    null,
+                    skipCheckForContainingClassVisibility = true
+                )
+            }?.originalOrSelf() ?: return
+            val originalContainingClassSymbol = overridden.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
             reporter.reportOn(
                 member.source,
                 FirErrors.VIRTUAL_MEMBER_HIDDEN,
@@ -352,7 +369,7 @@ object FirOverrideChecker : FirClassChecker() {
         overridden: FirCallableSymbol<*>,
         context: CheckerContext
     ) {
-        overridden.containingClass()?.let { containingClass ->
+        overridden.containingClassLookupTag()?.let { containingClass ->
             reportOn(overriding.source, FirErrors.OVERRIDING_FINAL_MEMBER, overridden, containingClass.name, context)
         }
     }
@@ -370,7 +387,7 @@ object FirOverrideChecker : FirClassChecker() {
         overridden: FirCallableSymbol<*>,
         context: CheckerContext
     ) {
-        val containingClass = overridden.containingClass() ?: return
+        val containingClass = overridden.containingClassLookupTag() ?: return
         reportOn(
             overriding.source,
             FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE,
@@ -386,7 +403,7 @@ object FirOverrideChecker : FirClassChecker() {
         overridden: FirCallableSymbol<*>,
         context: CheckerContext
     ) {
-        val containingClass = overridden.containingClass() ?: return
+        val containingClass = overridden.containingClassLookupTag() ?: return
         reportOn(
             overriding.source,
             FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE,

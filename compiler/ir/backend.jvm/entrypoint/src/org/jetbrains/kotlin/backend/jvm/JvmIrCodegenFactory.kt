@@ -120,7 +120,7 @@ open class JvmIrCodegenFactory(
             input.languageVersionSettings,
             Psi2IrConfiguration(
                 input.ignoreErrors,
-                allowUnboundSymbols = false,
+                partialLinkageEnabled = false,
                 input.skipBodies
             ),
             messageLogger::checkNoUnboundSymbols
@@ -161,31 +161,31 @@ open class JvmIrCodegenFactory(
             enableIdSignatures,
         )
 
-        val pluginContext by lazy {
-            psi2irContext.run {
-                IrPluginContextImpl(
-                    moduleDescriptor,
-                    bindingContext,
-                    languageVersionSettings,
-                    symbolTable,
-                    typeTranslator,
-                    irBuiltIns,
-                    irLinker,
-                    messageLogger
-                )
-            }
-        }
-
         SourceDeclarationsPreprocessor(psi2irContext).run(input.files)
 
-        for (extension in pluginExtensions) {
-            psi2ir.addPostprocessingStep { module ->
-                val old = stubGenerator.unboundSymbolGeneration
-                try {
-                    stubGenerator.unboundSymbolGeneration = true
-                    extension.generate(module, pluginContext)
-                } finally {
-                    stubGenerator.unboundSymbolGeneration = old
+        if (pluginExtensions.isNotEmpty()) {
+            // The plugin context contains unbound symbols right after construction and has to be
+            // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
+            val pluginContext = IrPluginContextImpl(
+                psi2irContext.moduleDescriptor,
+                psi2irContext.bindingContext,
+                psi2irContext.languageVersionSettings,
+                symbolTable,
+                psi2irContext.typeTranslator,
+                psi2irContext.irBuiltIns,
+                irLinker,
+                messageLogger
+            )
+
+            for (extension in pluginExtensions) {
+                psi2ir.addPostprocessingStep { module ->
+                    val old = stubGenerator.unboundSymbolGeneration
+                    try {
+                        stubGenerator.unboundSymbolGeneration = true
+                        extension.generate(module, pluginContext)
+                    } finally {
+                        stubGenerator.unboundSymbolGeneration = old
+                    }
                 }
             }
         }

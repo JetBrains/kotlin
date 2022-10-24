@@ -127,7 +127,8 @@ internal class JsUsefulDeclarationProcessor(
 
     override fun processSuperTypes(irClass: IrClass) {
         irClass.superTypes.forEach {
-            if (!it.isInterface()) {
+            val shouldClassBeKept = it.classOrNull?.let { context.keeper.shouldKeep(it.owner) } ?: false
+            if (!it.isInterface() || shouldClassBeKept) {
                 (it.classifierOrNull as? IrClassSymbol)?.owner?.enqueue(irClass, "superTypes")
             }
         }

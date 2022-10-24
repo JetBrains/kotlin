@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil
 
 private val LINE_SEPARATOR = System.getProperty("line.separator")!!
 private val END_MARKER = "<END>$LINE_SEPARATOR"
+private val ESM_EXTENSION = ".mjs"
 
 abstract class ProcessBasedScriptEngine(
     private val executablePath: String
@@ -58,6 +59,7 @@ abstract class ProcessBasedScriptEngine(
     }
 
     override fun loadFile(path: String) {
+        if (path.endsWith(ESM_EXTENSION)) return
         eval("load('${path.replace('\\', '/')}');")
     }
 

@@ -51,8 +51,6 @@ import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -184,7 +182,7 @@ class DiagnosticReporterByTrackingStrategy(
     override fun onCallReceiver(callReceiver: SimpleKotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
         when (diagnostic.javaClass) {
             UnsafeCallError::class.java -> {
-                val unsafeCallErrorDiagnostic = diagnostic.cast<UnsafeCallError>()
+                val unsafeCallErrorDiagnostic = diagnostic as UnsafeCallError
                 val isForImplicitInvoke = when (callReceiver) {
                     is ReceiverExpressionKotlinCallArgument -> callReceiver.isForImplicitInvoke
                     else -> unsafeCallErrorDiagnostic.isForImplicitInvoke
@@ -248,8 +246,8 @@ class DiagnosticReporterByTrackingStrategy(
                 trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
 
             NoneCallableReferenceCallCandidates::class.java -> {
-                val expression = diagnostic.cast<NoneCallableReferenceCallCandidates>()
-                    .argument.safeAs<CallableReferenceKotlinCallArgumentImpl>()?.ktCallableReferenceExpression
+                val argument = (diagnostic as? NoneCallableReferenceCallCandidates)?.argument
+                val expression = (argument as? CallableReferenceKotlinCallArgumentImpl)?.ktCallableReferenceExpression
                 if (expression != null) {
                     trace.report(UNRESOLVED_REFERENCE.on(expression.callableReference, expression.callableReference))
                 }
@@ -260,7 +258,7 @@ class DiagnosticReporterByTrackingStrategy(
                 val expression = when (val psiExpression = ambiguityDiagnostic.argument.psiExpression) {
                     is KtPsiUtil.KtExpressionWrapper -> psiExpression.baseExpression
                     else -> psiExpression
-                }.safeAs<KtCallableReferenceExpression>()
+                } as? KtCallableReferenceExpression
 
                 val candidates = ambiguityDiagnostic.candidates.map { it.candidate }
                 if (expression != null) {
@@ -380,8 +378,8 @@ class DiagnosticReporterByTrackingStrategy(
     override fun onCallArgumentSpread(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
         when (diagnostic.javaClass) {
             NonVarargSpread::class.java -> {
-                val castedPsiCallArgument = callArgument.safeAs<PSIKotlinCallArgument>()
-                val castedCallArgument = callArgument.safeAs<ExpressionKotlinCallArgumentImpl>()
+                val castedPsiCallArgument = callArgument as? PSIKotlinCallArgument
+                val castedCallArgument = callArgument as? ExpressionKotlinCallArgumentImpl
 
                 if (castedCallArgument != null) {
                     val spreadElement = castedCallArgument.valueArgument.getSpreadElement()
@@ -488,7 +486,7 @@ class DiagnosticReporterByTrackingStrategy(
         val typeMismatchDiagnostic = if (isWarning) TYPE_MISMATCH_WARNING else TYPE_MISMATCH
         val report = if (isWarning) trace::reportDiagnosticOnce else trace::report
         argument?.let {
-            it.safeAs<LambdaKotlinCallArgument>()?.let lambda@{ lambda ->
+            (it as? LambdaKotlinCallArgument)?.let lambda@{ lambda ->
                 val parameterTypes = lambda.parametersTypes?.toList() ?: return@lambda
                 val index = parameterTypes.indexOf(error.upperKotlinType.unwrap())
                 val lambdaExpression = lambda.psiExpression as? KtLambdaExpression ?: return@lambda
@@ -516,7 +514,7 @@ class DiagnosticReporterByTrackingStrategy(
         }
 
         (position as? ExpectedTypeConstraintPositionImpl)?.let {
-            val call = it.topLevelCall.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>()
+            val call = it.topLevelCall.psiKotlinCall.psiCall.callElement as? KtExpression
             val inferredType =
                 if (!error.lowerKotlinType.isNullableNothing()) error.lowerKotlinType
                 else error.upperKotlinType.makeNullable()
@@ -549,7 +547,7 @@ class DiagnosticReporterByTrackingStrategy(
             }
             if (morePreciseDiagnosticExists) return
 
-            val call = it.resolvedAtom?.atom?.safeAs<PSIKotlinCall>()?.psiCall ?: call
+            val call = (it.resolvedAtom?.atom as? PSIKotlinCall)?.psiCall ?: call
             val expression = call.calleeExpression ?: return
 
             trace.reportDiagnosticOnce(typeMismatchDiagnostic.on(expression, error.upperKotlinType, error.lowerKotlinType))
@@ -566,9 +564,8 @@ class DiagnosticReporterByTrackingStrategy(
                 error as CapturedTypeFromSubtyping
                 val position = error.position
                 val argumentPosition: ArgumentConstraintPositionImpl? =
-                    position.safeAs<ArgumentConstraintPositionImpl>()
-                        ?: position.safeAs<IncorporationConstraintPosition>()
-                            ?.from.safeAs<ArgumentConstraintPositionImpl>()
+                    position as? ArgumentConstraintPositionImpl
+                        ?: (position as? IncorporationConstraintPosition)?.from as? ArgumentConstraintPositionImpl
 
                 argumentPosition?.let {
                     val expression = it.argument.psiExpression ?: return
@@ -689,7 +686,7 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     private fun reportNullabilityMismatchDiagnostic(callArgument: KotlinCallArgument, diagnostic: ArgumentNullabilityMismatchDiagnostic) {
-        val expression = callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()?.let {
+        val expression = (callArgument as? PSIKotlinCallArgument)?.valueArgument?.getArgumentExpression()?.let {
             KtPsiUtil.deparenthesize(it) ?: it
         }
         if (expression != null) {

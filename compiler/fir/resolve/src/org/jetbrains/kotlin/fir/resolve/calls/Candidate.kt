@@ -123,6 +123,12 @@ class Candidate(
     override fun hashCode(): Int {
         return symbol.hashCode()
     }
+
+    override fun toString(): String {
+        val okOrFail = if (applicability.isSuccess) "OK" else "FAIL"
+        val step = "$passedStages/${callInfo.callKind.resolutionSequence.size}"
+        return "$okOrFail($step): $symbol"
+    }
 }
 
 val Candidate.fullyAnalyzed: Boolean

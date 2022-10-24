@@ -14,8 +14,8 @@ interface RuntimeAware {
     val runtime: Runtime
 }
 
-class Runtime(bitcodeFile: String) {
-    val llvmModule: LLVMModuleRef = parseBitcodeFile(bitcodeFile)
+class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
+    val llvmModule: LLVMModuleRef = parseBitcodeFile(llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 

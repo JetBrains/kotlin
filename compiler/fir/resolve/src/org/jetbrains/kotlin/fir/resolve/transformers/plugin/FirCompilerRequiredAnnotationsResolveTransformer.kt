@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 
 class FirCompilerRequiredAnnotationsResolveProcessor(
@@ -154,7 +156,7 @@ private class FirAnnotationResolveTransformer(
 ) {
     companion object {
         private val REQUIRED_ANNOTATIONS: Set<ClassId> = setOf(
-            Deprecated, DeprecatedSinceKotlin, WasExperimental
+            Deprecated, DeprecatedSinceKotlin, WasExperimental, JvmRecord
         )
 
         private val REQUIRED_ANNOTATION_NAMES: Set<Name> = REQUIRED_ANNOTATIONS.mapTo(mutableSetOf()) { it.shortClassName }

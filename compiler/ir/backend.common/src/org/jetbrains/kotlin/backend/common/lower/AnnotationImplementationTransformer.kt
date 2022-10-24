@@ -42,7 +42,8 @@ class AnnotationImplementationLowering(
     }
 }
 
-abstract class AnnotationImplementationTransformer(val context: BackendContext, val irFile: IrFile?) : IrElementTransformerVoidWithContext() {
+abstract class AnnotationImplementationTransformer(val context: BackendContext, val irFile: IrFile?) :
+    IrElementTransformerVoidWithContext() {
     internal val implementations: MutableMap<IrClass, IrClass> = mutableMapOf()
 
 
@@ -72,7 +73,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
             }
     }
 
-    abstract fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall) : IrConstructor
+    abstract fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall): IrConstructor
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
@@ -104,8 +105,10 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         destination.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
             val valueArg = argumentsByName[parameter.name]
             if (parameter.defaultValue == null && valueArg == null)
-                error("Usage of default value argument for this annotation is not yet possible.\n" +
-                       "Please specify value for '${source.type.classOrNull?.owner?.name}.${parameter.name}' explicitly")
+                error(
+                    "Usage of default value argument for this annotation is not yet possible.\n" +
+                            "Please specify value for '${source.type.classOrNull?.owner?.name}.${parameter.name}' explicitly"
+                )
             destination.putValueArgument(index, valueArg)
         }
     }
@@ -159,18 +162,22 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 
     abstract fun getArrayContentEqualsSymbol(type: IrType): IrFunctionSymbol
 
+    open fun IrExpression.transformArrayEqualsArgument(type: IrType, irBuilder: IrBlockBodyBuilder): IrExpression = this
+
     fun generatedEquals(irBuilder: IrBlockBodyBuilder, type: IrType, arg1: IrExpression, arg2: IrExpression): IrExpression =
-        if (type.isArray() || type.isPrimitiveArray()) {
+        if (type.isArray() || type.isPrimitiveArray() || type.isUnsignedArray()) {
             val requiredSymbol = getArrayContentEqualsSymbol(type)
+            val lhs = arg1.transformArrayEqualsArgument(type, irBuilder)
+            val rhs = arg2.transformArrayEqualsArgument(type, irBuilder)
             irBuilder.irCall(
                 requiredSymbol
             ).apply {
                 if (requiredSymbol.owner.extensionReceiverParameter != null) {
-                    extensionReceiver = arg1
-                    putValueArgument(0, arg2)
+                    extensionReceiver = lhs
+                    putValueArgument(0, rhs)
                 } else {
-                    putValueArgument(0, arg1)
-                    putValueArgument(1, arg2)
+                    putValueArgument(0, lhs)
+                    putValueArgument(1, rhs)
                 }
             }
         } else
@@ -220,7 +227,7 @@ class AnnotationImplementationMemberGenerator(
     irClass: IrClass,
     val nameForToString: String,
     forbidDirectFieldAccess: Boolean,
-    val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression,
+    val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression
 ) : LoweringDataClassMemberGenerator(backendContext, irClass, ANNOTATION_IMPLEMENTATION, forbidDirectFieldAccess) {
 
     override fun IrClass.classNameForToString(): String = nameForToString
@@ -263,3 +270,4 @@ class AnnotationImplementationMemberGenerator(
         }
     }
 }
+

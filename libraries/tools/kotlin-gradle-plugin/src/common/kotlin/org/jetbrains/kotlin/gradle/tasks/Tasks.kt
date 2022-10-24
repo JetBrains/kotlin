@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
+import java.nio.file.Files.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -203,12 +204,12 @@ abstract class GradleCompileTaskProvider @Inject constructor(
         .property(project.rootProject.projectDir)
 
     @get:Internal
-    val rootDir: Provider<File> = objectFactory
-        .property(project.rootProject.rootDir)
+    val projectCacheDir: Provider<File> = objectFactory
+        .property(gradle.projectCacheDir)
 
     @get:Internal
     val sessionsDir: Provider<File> = objectFactory
-        .property(GradleCompilerRunner.sessionsDir(project.rootProject.buildDir))
+        .property(GradleCompilerRunner.sessionsDir(gradle.projectCacheDir))
 
     @get:Internal
     val projectName: Provider<String> = objectFactory
@@ -524,7 +525,7 @@ class KotlinJvmCompilerArgumentsProvider
     val friendPaths: FileCollection = taskProvider.friendPaths
     val compileClasspath: Iterable<File> = taskProvider.libraries
     val destinationDir: File = taskProvider.destinationDirectory.get().asFile
-    internal val compilerOptions: CompilerJvmOptions = taskProvider.compilerOptions
+    internal val compilerOptions: KotlinJvmCompilerOptions = taskProvider.compilerOptions
 }
 
 internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
@@ -532,12 +533,12 @@ internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
-    override val compilerOptions: CompilerJvmOptions,
+    override val compilerOptions: KotlinJvmCompilerOptions,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
-    KotlinCompilationTask<CompilerJvmOptions>,
+    KotlinCompilationTask<KotlinJvmCompilerOptions>,
     UsesKotlinJavaToolchain {
 
     init {
@@ -918,11 +919,11 @@ abstract class KotlinCompile @Inject constructor(
 
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
-    override val compilerOptions: CompilerJsOptions,
+    override val compilerOptions: KotlinJsCompilerOptions,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
-    KotlinCompilationTask<CompilerJsOptions>,
+    KotlinCompilationTask<KotlinJsCompilerOptions>,
     KotlinJsCompile {
 
     init {
@@ -1007,12 +1008,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
         K2JSCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        (compilerOptions as CompilerJsOptionsDefault).fillDefaultValues(args)
+        (compilerOptions as KotlinJsCompilerOptionsDefault).fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         if (defaultsOnly) return
 
-        (compilerOptions as CompilerJsOptionsDefault).fillCompilerArguments(args)
+        (compilerOptions as KotlinJsCompilerOptionsDefault).fillCompilerArguments(args)
         if (!args.sourceMapPrefix.isNullOrEmpty()) {
             args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
         }
@@ -1151,7 +1152,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
 
         args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
-        args.legacyDeprecatedNoWarn = jsLegacyNoWarn.get()
+        args.legacyDeprecatedNoWarn = true
+        args.useDeprecatedLegacyCompiler = true
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 

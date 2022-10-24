@@ -69,8 +69,8 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         val args = listOf(
             "-Xplugin=$plugin",
             "-libraries", libs,
-            "-Xir-output-dir", outputFile.parentFile.path,
-            "-Xir-module-name", outputFile.nameWithoutExtension,
+            "-ir-output-dir", outputFile.parentFile.path,
+            "-ir-output-name", outputFile.nameWithoutExtension,
             mainKt.absolutePath
         )
         CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras)

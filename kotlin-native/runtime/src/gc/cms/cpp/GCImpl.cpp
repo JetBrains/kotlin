@@ -6,6 +6,8 @@
 #include "GCImpl.hpp"
 
 #include "GC.hpp"
+#include "GCStatistics.hpp"
+#include "MarkAndSweepUtils.hpp"
 #include "ThreadSuspension.hpp"
 #include "std_support/Memory.hpp"
 
@@ -73,6 +75,20 @@ size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
     return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
 }
 
+
+size_t gc::GC::GetHeapObjectsCountUnsafe() const noexcept {
+    return impl_->objectFactory().GetObjectsCountUnsafe();
+}
+size_t gc::GC::GetTotalHeapObjectsSizeUnsafe() const noexcept {
+    return impl_->objectFactory().GetTotalObjectsSizeUnsafe();
+}
+size_t gc::GC::GetExtraObjectsCountUnsafe() const noexcept {
+    return mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
+}
+size_t gc::GC::GetTotalExtraObjectsSizeUnsafe() const noexcept {
+    return mm::GlobalData::Instance().extraObjectDataFactory().GetTotalObjectsSizeUnsafe();
+}
+
 gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {
     return impl_->gcScheduler().config();
 }
@@ -80,6 +96,7 @@ gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {
 void gc::GC::ClearForTests() noexcept {
     impl_->gc().StopFinalizerThreadIfRunning();
     impl_->objectFactory().ClearForTests();
+    GCHandle::ClearForTests();
 }
 
 void gc::GC::StartFinalizerThreadIfNeeded() noexcept {
@@ -92,4 +109,19 @@ void gc::GC::StopFinalizerThreadIfRunning() noexcept {
 
 bool gc::GC::FinalizersThreadIsRunning() noexcept {
     return impl_->gc().FinalizersThreadIsRunning();
+}
+
+// static
+ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
+    gc::internal::processObjectInMark<gc::internal::MarkTraits>(state, object);
+}
+
+// static
+ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
+    gc::internal::processArrayInMark<gc::internal::MarkTraits>(state, array);
+}
+
+// static
+ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
+    gc::internal::processFieldInMark<gc::internal::MarkTraits>(state, field);
 }

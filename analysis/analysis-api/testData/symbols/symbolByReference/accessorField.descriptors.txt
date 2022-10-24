@@ -1,13 +1,132 @@
 KtBackingFieldSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   isExtension: false
   name: field
   origin: PROPERTY_BACKING_FIELD
-  owningProperty: KtKotlinPropertySymbol(/x)
+  owningProperty: KtKotlinPropertySymbol:
+    annotationsList: [
+      PropertyAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: /x
+    contextReceivers: []
+    getter: KtPropertyGetterSymbol:
+      annotationsList: [
+        GetAnnotation()
+          psi: KtAnnotationEntry
+        ExplicitGetAnnotation()
+          psi: KtAnnotationEntry
+      ]
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      hasBody: true
+      hasStableParameterNames: true
+      isDefault: false
+      isExtension: false
+      isInline: false
+      isOverride: false
+      modality: FINAL
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: ACCESSOR
+      typeParameters: []
+      valueParameters: []
+      visibility: Public
+    hasBackingField: true
+    hasGetter: true
+    hasSetter: true
+    initializer: null
+    isConst: false
+    isDelegatedProperty: false
+    isExtension: false
+    isFromPrimaryConstructor: false
+    isLateInit: false
+    isOverride: false
+    isStatic: false
+    isVal: false
+    modality: FINAL
+    name: x
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    setter: KtPropertySetterSymbol:
+      annotationsList: [
+        SetAnnotation()
+          psi: KtAnnotationEntry
+        ExplicitSetAnnotation()
+          psi: KtAnnotationEntry
+      ]
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      hasBody: true
+      hasStableParameterNames: true
+      isDefault: false
+      isExtension: false
+      isInline: false
+      isOverride: false
+      modality: FINAL
+      origin: SOURCE
+      parameter: KtValueParameterSymbol:
+        annotationsList: [
+          ExplicitSetparamAnnotation()
+            psi: KtAnnotationEntry
+          SetparamAnnotation()
+            psi: KtAnnotationEntry
+        ]
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Int
+        symbolKind: LOCAL
+        typeParameters: []
+      receiverType: null
+      returnType: kotlin/Unit
+      symbolKind: ACCESSOR
+      typeParameters: []
+      valueParameters: [
+        KtValueParameterSymbol:
+          annotationsList: [
+            ExplicitSetparamAnnotation()
+              psi: KtAnnotationEntry
+            SetparamAnnotation()
+              psi: KtAnnotationEntry
+          ]
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          generatedPrimaryConstructorProperty: null
+          hasDefaultValue: false
+          isCrossinline: false
+          isExtension: false
+          isImplicitLambdaParameter: false
+          isNoinline: false
+          isVararg: false
+          name: value
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/Int
+          symbolKind: LOCAL
+          typeParameters: []
+      ]
+      visibility: Public
+    symbolKind: TOP_LEVEL
+    typeParameters: []
+    visibility: Public
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
-  getContainingModule: Could not render due to java.lang.IllegalStateException: Unexpected KtSymbol KtFe10DescSyntheticFieldSymbol
+  typeParameters: []
+  getContainingModule: Could not render due to org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments: Unexpected KtSymbol KtFe10DescSyntheticFieldSymbol
 
   deprecationStatus: null

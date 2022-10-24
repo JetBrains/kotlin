@@ -143,7 +143,6 @@ class Generator(
         println()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun SmartPrinter.printImports() {
         val imports = buildList {
             addAll(configuration.additionalCheckers.values)

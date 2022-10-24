@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrIntrinsicExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 import java.util.concurrent.ConcurrentHashMap
@@ -52,7 +51,6 @@ fun ClassLoweringPass.runOnFileInOrder(irFile: IrFile) {
 
 class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugin: SerializationDescriptorSerializerPlugin?) :
     IrPluginContext by baseContext, SerializationBaseContext {
-    lateinit var serialInfoImplJvmIrGenerator: SerialInfoImplJvmIrGenerator
 
     internal val copiedStaticWriteSelf: MutableMap<IrSimpleFunction, IrSimpleFunction> = ConcurrentHashMap()
 
@@ -94,8 +92,9 @@ private class SerializerClassLowering(
     moduleFragment: IrModuleFragment
 ) : IrElementTransformerVoid(), ClassLoweringPass {
     val context: SerializationPluginContext = SerializationPluginContext(baseContext, metadataPlugin)
-    private val serialInfoJvmGenerator =
-        SerialInfoImplJvmIrGenerator(context, moduleFragment).also { context.serialInfoImplJvmIrGenerator = it }
+
+    // Lazy to avoid creating generator in non-JVM backends
+    private val serialInfoJvmGenerator by lazy(LazyThreadSafetyMode.NONE) { SerialInfoImplJvmIrGenerator(context, moduleFragment) }
 
     override fun lower(irClass: IrClass) {
         irClass.runPluginSafe {
@@ -103,9 +102,8 @@ private class SerializerClassLowering(
             SerializerIrGenerator.generate(irClass, context, context.metadataPlugin)
             SerializableCompanionIrGenerator.generate(irClass, context)
 
-            @OptIn(ObsoleteDescriptorBasedAPI::class)
-            if (context.platform.isJvm() && KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor)) {
-                serialInfoJvmGenerator.generate(irClass)
+            if (context.platform.isJvm() && irClass.isSerialInfoAnnotation) {
+                serialInfoJvmGenerator.generateImplementationFor(irClass)
             }
         }
     }

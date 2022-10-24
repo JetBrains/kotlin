@@ -3,6 +3,7 @@
 // !API_VERSION: 1.4
 // !LANGUAGE: -InlineClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// ALLOW_KOTLIN_PACKAGE
 
 package kotlin.jvm
 

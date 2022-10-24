@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.psi.KtBackingField
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -21,6 +17,7 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
         val allDeclarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration> { it.isValidForSymbolCreation }.map { declaration ->
             declaration.getSymbol()
         }
+
         return SymbolsData(
             allDeclarationSymbols,
             listOf(ktFile.getFileSymbol()),
@@ -28,11 +25,11 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
     }
 
     private val KtDeclaration.isValidForSymbolCreation
-        get() =
-            when (this) {
-                is KtBackingField -> false
-                is KtDestructuringDeclaration -> false
-                is KtParameter -> !this.isFunctionTypeParameter
-                else -> true
-            }
+        get() = when (this) {
+            is KtBackingField -> false
+            is KtDestructuringDeclaration -> false
+            is KtPropertyAccessor -> false
+            is KtParameter -> !this.isFunctionTypeParameter && this.parent !is KtParameterList
+            else -> true
+        }
 }

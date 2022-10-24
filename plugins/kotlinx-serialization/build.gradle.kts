@@ -6,11 +6,11 @@ plugins {
 }
 
 dependencies {
-    embedded(project(":kotlinx-serialization-compiler-plugin.common"))
-    embedded(project(":kotlinx-serialization-compiler-plugin.k1"))
-    embedded(project(":kotlinx-serialization-compiler-plugin.k2"))
-    embedded(project(":kotlinx-serialization-compiler-plugin.backend"))
-    embedded(project(":kotlinx-serialization-compiler-plugin.cli"))
+    embedded(project(":kotlinx-serialization-compiler-plugin.common")) { isTransitive = false }
+    embedded(project(":kotlinx-serialization-compiler-plugin.k1")) { isTransitive = false }
+    embedded(project(":kotlinx-serialization-compiler-plugin.k2")) { isTransitive = false }
+    embedded(project(":kotlinx-serialization-compiler-plugin.backend")) { isTransitive = false }
+    embedded(project(":kotlinx-serialization-compiler-plugin.cli")) { isTransitive = false }
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))

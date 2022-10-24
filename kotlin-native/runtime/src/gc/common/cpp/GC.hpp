@@ -58,6 +58,11 @@ public:
 
     static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
 
+    size_t GetHeapObjectsCountUnsafe() const noexcept;
+    size_t GetTotalHeapObjectsSizeUnsafe() const noexcept;
+    size_t GetExtraObjectsCountUnsafe() const noexcept;
+    size_t GetTotalExtraObjectsSizeUnsafe() const noexcept;
+
     gc::GCSchedulerConfig& gcSchedulerConfig() noexcept;
 
     void ClearForTests() noexcept;
@@ -65,6 +70,10 @@ public:
     void StartFinalizerThreadIfNeeded() noexcept;
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
+
+    static void processObjectInMark(void* state, ObjHeader* object) noexcept;
+    static void processArrayInMark(void* state, ArrayHeader* array) noexcept;
+    static void processFieldInMark(void* state, ObjHeader* field) noexcept;
 
 private:
     std_support::unique_ptr<Impl> impl_;

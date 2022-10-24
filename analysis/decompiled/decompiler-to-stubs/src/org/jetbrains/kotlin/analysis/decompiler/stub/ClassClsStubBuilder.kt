@@ -94,6 +94,7 @@ private class ClassClsStubBuilder(
     private fun createModifierListForClass(parent: StubElement<out PsiElement>): KotlinModifierListStubImpl {
         val relevantFlags = arrayListOf(VISIBILITY)
         relevantFlags.add(EXTERNAL_CLASS)
+        relevantFlags.add(EXPECT_CLASS)
         if (isClass()) {
             relevantFlags.add(INNER)
             relevantFlags.add(DATA)

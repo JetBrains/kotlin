@@ -137,7 +137,7 @@ private fun collectLlvmModules(context: Context, generatedBitcodeFiles: List<Str
 
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
-        val parsedModule = parseBitcodeFile(bitcodeFile)
+        val parsedModule = parseBitcodeFile(context.generationState.llvmContext, bitcodeFile)
         if (!context.shouldUseDebugInfoFromNativeLibs()) {
             LLVMStripModuleDebugInfo(parsedModule)
         }
@@ -280,7 +280,7 @@ internal fun produceOutput(context: Context) {
 }
 
 internal fun parseAndLinkBitcodeFile(context: Context, llvmModule: LLVMModuleRef, path: String) {
-    val parsedModule = parseBitcodeFile(path)
+    val parsedModule = parseBitcodeFile(context.generationState.llvmContext, path)
     if (!context.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)
     }
@@ -308,5 +308,5 @@ private fun embedAppleLinkerOptionsToBitcode(llvm: Llvm, config: KonanConfig) {
     val optionsToEmbed = findEmbeddableOptions(config.platform.configurables.linkerKonanFlags) +
             llvm.allNativeDependencies.flatMap { findEmbeddableOptions(it.linkerOpts) }
 
-    embedLlvmLinkOptions(llvm.module, optionsToEmbed)
+    embedLlvmLinkOptions(llvm.llvmContext, llvm.module, optionsToEmbed)
 }

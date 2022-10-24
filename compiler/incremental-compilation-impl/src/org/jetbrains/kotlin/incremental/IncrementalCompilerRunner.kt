@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
+import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -98,7 +99,7 @@ abstract class IncrementalCompilerRunner<
                 )
             }
             is ICResult.Failed -> {
-                messageCollector.reportException(result.cause)
+                messageCollector.reportException(result.cause, ExceptionLocation.INCREMENTAL_COMPILATION)
                 reporter.warn {
                     // The indentation after the first line is intentional (so that this message is distinct from next message)
                     """

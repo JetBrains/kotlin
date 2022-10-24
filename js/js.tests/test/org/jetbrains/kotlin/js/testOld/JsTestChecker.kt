@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.js.engine.loadFiles
 import org.junit.Assert
 
 private const val DIST_DIR_JS_PATH = "dist/js/"
+private const val ESM_EXTENSION = ".mjs"
 
 fun createScriptEngine(): ScriptEngine {
     return if (java.lang.Boolean.getBoolean("kotlin.js.useNashorn")) ScriptEngineNashorn() else ScriptEngineV8()
@@ -22,14 +23,26 @@ fun ScriptEngine.overrideAsserter() {
     eval("this['kotlin-test'].kotlin.test.overrideAsserter_wbnzx$(this['kotlin-test'].kotlin.test.DefaultAsserter);")
 }
 
+private fun String.escapePath(): String {
+    return replace("\\", "/")
+}
+
+@Suppress("UNUSED_PARAMETER")
 fun ScriptEngine.runTestFunction(
     testModuleName: String?,
     testPackageName: String?,
     testFunctionName: String,
     withModuleSystem: Boolean,
     testFunctionArgs: String = "",
+    entryModulePath: String? = null,
 ): String {
+    if (withModuleSystem && testModuleName == null && entryModulePath == null) {
+        error("Entry point was not found. Please specify ENTRY_ES_MODULE directive near js file, if this is ES Modules test.")
+    }
     var script = when {
+        entryModulePath != null && entryModulePath.endsWith(ESM_EXTENSION) -> "globalThis".also {
+            eval("import('${entryModulePath.escapePath()}').then(module => Object.assign(globalThis, module)).catch(console.error)")
+        }
         withModuleSystem -> "\$kotlin_test_internal\$.require('" + testModuleName!! + "')"
         testModuleName === null -> "this"
         else -> testModuleName
@@ -51,9 +64,10 @@ abstract class AbstractJsTestChecker {
         testPackageName: String?,
         testFunctionName: String,
         expectedResult: String,
-        withModuleSystem: Boolean
+        withModuleSystem: Boolean,
+        entryModulePath: String? = null,
     ) {
-        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, "", withModuleSystem)
+        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, "", withModuleSystem, entryModulePath)
         Assert.assertEquals(expectedResult, actualResult.normalize())
     }
 
@@ -76,9 +90,10 @@ abstract class AbstractJsTestChecker {
         testPackageName: String?,
         testFunctionName: String,
         testFunctionArgs: String,
-        withModuleSystem: Boolean
+        withModuleSystem: Boolean,
+        entryModulePath: String? = null,
     ) = run(files) {
-        runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem, testFunctionArgs)
+        runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem, testFunctionArgs, entryModulePath)
     }
 
 

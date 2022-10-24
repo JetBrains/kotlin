@@ -1,0 +1,11 @@
+open var kotlin.Int.zoo: kotlin.Unit
+
+open fun foo()
+
+open fun kotlin.Int.smth(): kotlin.Short
+
+open val foo: kotlin.Int
+
+open var bar: kotlin.Long
+
+open val kotlin.Int.doo: kotlin.String

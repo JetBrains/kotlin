@@ -54,7 +54,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
     val T = property.type
     property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
     findAddOnSerializer(T, property.module)?.let { return SerializableInfo(it) }
-    T.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
+    T.overriddenSerializer(property.module)?.toClassDescriptor?.let { return SerializableInfo(it) }
     return when {
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
@@ -147,7 +147,7 @@ fun AbstractSerialGenerator?.findTypeSerializerOrContext(
 }
 
 fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
-    val userOverride = kType.overridenSerializer
+    val userOverride = kType.overriddenSerializer(module)
     if (userOverride != null) return userOverride.toClassDescriptor
     if (kType.isTypeParameter()) return null
     if (KotlinBuiltIns.isArray(kType)) return module.getClassFromInternalSerializationPackage(SpecialBuiltins.referenceArraySerializer)

@@ -3261,6 +3261,12 @@ internal class RedundantInlineSuspendFunctionTypeImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.RedundantInlineSuspendFunctionType(), KtAbstractFirDiagnostic<KtElement>
 
+internal class InefficientEqualsOverridingInInlineClassImpl(
+    override val className: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InefficientEqualsOverridingInInlineClass(), KtAbstractFirDiagnostic<KtNamedFunction>
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     override val firDiagnostic: KtPsiDiagnostic,
@@ -3513,6 +3519,13 @@ internal class PositionedValueArgumentForJavaAnnotationImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.PositionedValueArgumentForJavaAnnotation(), KtAbstractFirDiagnostic<KtExpression>
+
+internal class RedundantRepeatableAnnotationImpl(
+    override val kotlinRepeatable: FqName,
+    override val javaRepeatable: FqName,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.RedundantRepeatableAnnotation(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
 internal class LocalJvmRecordImpl(
     override val firDiagnostic: KtPsiDiagnostic,

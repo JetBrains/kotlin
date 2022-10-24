@@ -38,7 +38,7 @@ internal abstract class SymbolLightField protected constructor(
     override fun getContainingFile(): PsiFile? = containingClass.containingFile
     override fun hasInitializer(): Boolean = initializer !== null
 
-    override fun computeConstantValue(): Any? = null //TODO _constantInitializer?.value
+    override fun computeConstantValue(): Any? = null
 
     override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? = computeConstantValue()
 

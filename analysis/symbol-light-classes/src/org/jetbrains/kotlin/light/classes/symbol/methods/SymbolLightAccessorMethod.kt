@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSetterPar
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -77,9 +77,6 @@ internal class SymbolLightAccessorMethod(
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     override fun isVarArgs(): Boolean = false
-
-    override val kotlinOrigin: KtDeclaration?
-        get() = lightMemberOrigin?.originalElement
 
     private val accessorSite
         get() =
@@ -187,7 +184,6 @@ internal class SymbolLightAccessorMethod(
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 
-
     private val _parametersList by lazyPub {
         SymbolLightParameterList(this, containingPropertySymbol) { builder ->
             val propertyParameter = (propertyAccessorSymbol as? KtPropertySetterSymbol)?.parameter
@@ -219,5 +215,17 @@ internal class SymbolLightAccessorMethod(
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? {
         return _defaultValue
+    }
+
+    override fun getText(): String {
+        return lightMemberOrigin?.auxiliaryOriginalElement?.text ?: super.getText()
+    }
+
+    override fun getTextOffset(): Int {
+        return lightMemberOrigin?.auxiliaryOriginalElement?.textOffset ?: super.getTextOffset()
+    }
+
+    override fun getTextRange(): TextRange {
+        return lightMemberOrigin?.auxiliaryOriginalElement?.textRange ?: super.getTextRange()
     }
 }

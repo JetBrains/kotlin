@@ -28,6 +28,7 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
     private var isRealExpect = false
 
     open fun IrFunction.platformSpecificFunctionName(): String? = null
+    open fun IrFunction.platformSpecificFunctionMarks(): List<String> = emptyList()
 
     open fun IrFunction.specialValueParamPrefix(param: IrValueParameter): String = ""
 
@@ -110,6 +111,10 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
         if (isStatic) {
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
+        }
+
+        platformSpecificFunctionMarks().forEach {
+            builder.appendSignature(it)
         }
 
         extensionReceiverParameter?.let {

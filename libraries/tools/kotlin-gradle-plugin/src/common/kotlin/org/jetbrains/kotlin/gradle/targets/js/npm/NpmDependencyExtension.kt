@@ -10,15 +10,11 @@ import groovy.lang.GString
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.reflect.TypeOf
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 interface BaseNpmDependencyExtension {
-    @Deprecated("Declaring NPM dependency without version is forbidden")
-    operator fun invoke(name: String): NpmDependency
-
     operator fun invoke(name: String, version: String): NpmDependency
 }
 
@@ -28,32 +24,9 @@ interface NpmDirectoryDependencyExtension : BaseNpmDependencyExtension {
     operator fun invoke(directory: File): NpmDependency
 }
 
-interface NpmDependencyWithExternalsExtension : BaseNpmDependencyExtension {
-    operator fun invoke(
-        name: String,
-        version: String,
-        generateExternals: Boolean
-    ): NpmDependency
-}
-
-interface NpmDirectoryDependencyWithExternalsExtension : NpmDirectoryDependencyExtension {
-    operator fun invoke(
-        name: String,
-        directory: File,
-        generateExternals: Boolean
-    ): NpmDependency
-
-    operator fun invoke(
-        directory: File,
-        generateExternals: Boolean
-    ): NpmDependency
-}
-
 interface NpmDependencyExtension :
     BaseNpmDependencyExtension,
-    NpmDependencyWithExternalsExtension,
-    NpmDirectoryDependencyExtension,
-    NpmDirectoryDependencyWithExternalsExtension
+    NpmDirectoryDependencyExtension
 
 interface DevNpmDependencyExtension :
     BaseNpmDependencyExtension,
@@ -77,11 +50,12 @@ internal fun Project.addNpmDependencyExtension() {
                 NORMAL, OPTIONAL -> DefaultNpmDependencyExtension(
                     this,
                     scope,
-                    PropertiesProvider(this).jsGenerateExternals
                 )
+
                 DEV -> DefaultDevNpmDependencyExtension(
                     this
                 )
+
                 PEER -> DefaultPeerNpmDependencyExtension(
                     this
                 )
@@ -107,72 +81,41 @@ private fun scopePrefix(scope: NpmDependency.Scope): String {
 private abstract class NpmDependencyExtensionDelegate(
     protected val project: Project,
     protected val scope: NpmDependency.Scope,
-    protected val _defaultGenerateExternals: Boolean?
 ) : NpmDependencyExtension,
     DevNpmDependencyExtension,
     PeerNpmDependencyExtension,
     Closure<NpmDependency>(project.dependencies) {
-    protected val defaultGenerateExternals: Boolean
-        get() = _defaultGenerateExternals ?: false
-
-    override fun invoke(name: String): NpmDependency =
-        onlyNameNpmDependency(name)
-
     override operator fun invoke(
         name: String,
         version: String,
-        generateExternals: Boolean
     ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
             version = version,
             scope = scope,
-            generateExternals = generateExternals
-        )
-
-    override fun invoke(name: String, version: String): NpmDependency =
-        invoke(
-            name = name,
-            version = version,
-            generateExternals = defaultGenerateExternals
-        )
-
-    override fun invoke(name: String, directory: File): NpmDependency =
-        invoke(
-            name = name,
-            directory = directory,
-            generateExternals = defaultGenerateExternals
         )
 
     override fun invoke(directory: File): NpmDependency =
         invoke(
-            directory = directory,
-            generateExternals = defaultGenerateExternals
-        )
-
-    override operator fun invoke(
-        directory: File,
-        generateExternals: Boolean
-    ): NpmDependency =
-        invoke(
             name = moduleName(directory),
             directory = directory,
-            generateExternals = generateExternals
         )
 
     override fun call(vararg args: Any?): NpmDependency {
-        if (args.size > 3) npmDeclarationException(args)
+        if (args.size > 2) npmDeclarationException(args)
 
         return when (val arg = args[0]) {
             is String -> withName(
                 name = arg,
                 args = args
             )
+
             is GString -> withName(
                 name = arg.toString(),
                 args = args
             )
+
             else -> processNonStringFirstArgument(arg, *args)
         }
     }
@@ -180,26 +123,24 @@ private abstract class NpmDependencyExtensionDelegate(
     protected abstract fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency
 
     private fun withName(name: String, vararg args: Any?): NpmDependency {
-        val generateExternals = generateExternalsIfPossible(*args)
-
         return when (val arg1 = if (args.size > 1) args[1] else null) {
-            null -> @Suppress("DEPRECATION") invoke(
-                name = name
+            null -> throw IllegalArgumentException(
+                "NPM dependency '$name' doesn't have version. Please, set version explicitly."
             )
+
             is String -> invoke(
                 name = name,
                 version = arg1,
-                generateExternals = generateExternals
             )
+
             is GString -> invoke(
                 name = name,
                 version = arg1.toString(),
-                generateExternals = generateExternals
             )
+
             else -> processNamedNonStringSecondArgument(
                 name,
                 arg1,
-                generateExternals,
                 *args
             )
         }
@@ -208,7 +149,6 @@ private abstract class NpmDependencyExtensionDelegate(
     protected abstract fun processNamedNonStringSecondArgument(
         name: String,
         arg: Any?,
-        generateExternals: Boolean,
         vararg args: Any?
     ): NpmDependency
 
@@ -225,33 +165,17 @@ private abstract class NpmDependencyExtensionDelegate(
     protected open fun possibleVariants(): List<Pair<String, String>> {
         return listOf("${scopePrefix(scope)}('name', 'version')" to "name:version")
     }
-
-    protected fun generateExternalsIfPossible(vararg args: Any?): Boolean {
-        val arg2 = (if (args.size > 2) args[2] else null) as? Boolean
-
-        if (arg2 != null && _defaultGenerateExternals == null) {
-            npmDeclarationException(args)
-        }
-
-        return arg2 ?: defaultGenerateExternals
-    }
 }
 
 private class DefaultNpmDependencyExtension(
     project: Project,
     scope: NpmDependency.Scope,
-    defaultGenerateExternals: Boolean?
 ) : Closure<NpmDependency>(project.dependencies),
     NpmDependencyExtension {
     private val delegate = defaultNpmDependencyDelegate(
         project,
         scope,
-        defaultGenerateExternals
     )
-
-    @Suppress("DEPRECATION")
-    override fun invoke(name: String): NpmDependency =
-        delegate.invoke(name)
 
     override fun invoke(name: String, version: String): NpmDependency =
         delegate.invoke(name, version)
@@ -261,15 +185,6 @@ private class DefaultNpmDependencyExtension(
 
     override fun invoke(directory: File): NpmDependency =
         delegate.invoke(directory)
-
-    override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency =
-        delegate.invoke(name, version, generateExternals)
-
-    override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency =
-        delegate.invoke(name, directory, generateExternals)
-
-    override fun invoke(directory: File, generateExternals: Boolean): NpmDependency =
-        delegate.invoke(directory, generateExternals)
 
     override fun call(vararg args: Any?): NpmDependency =
         delegate.call(*args)
@@ -282,12 +197,7 @@ private class DefaultDevNpmDependencyExtension(
     private val delegate = defaultNpmDependencyDelegate(
         project,
         DEV,
-        null
     )
-
-    @Suppress("DEPRECATION")
-    override fun invoke(name: String): NpmDependency =
-        delegate.invoke(name)
 
     override fun invoke(name: String, version: String): NpmDependency =
         delegate.invoke(name, version)
@@ -305,34 +215,28 @@ private class DefaultDevNpmDependencyExtension(
 private fun defaultNpmDependencyDelegate(
     project: Project,
     scope: NpmDependency.Scope,
-    defaultGenerateExternals: Boolean?
 ): NpmDependencyExtensionDelegate {
     return object : NpmDependencyExtensionDelegate(
         project,
         scope,
-        defaultGenerateExternals
     ) {
         override operator fun invoke(
             name: String,
             directory: File,
-            generateExternals: Boolean
         ): NpmDependency =
             directoryNpmDependency(
                 project = project,
                 name = name,
                 directory = directory,
                 scope = scope,
-                generateExternals = generateExternals
             )
 
         override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency {
-            val generateExternals = generateExternalsIfPossible(args)
-
             return when (arg) {
                 is File -> invoke(
                     directory = arg,
-                    generateExternals = generateExternals
                 )
+
                 else -> npmDeclarationException(args)
             }
         }
@@ -340,34 +244,23 @@ private fun defaultNpmDependencyDelegate(
         override fun processNamedNonStringSecondArgument(
             name: String,
             arg: Any?,
-            generateExternals: Boolean,
             vararg args: Any?
         ): NpmDependency {
             return when (arg) {
                 is File -> invoke(
                     name = name,
                     directory = arg,
-                    generateExternals = generateExternals
                 )
+
                 else -> npmDeclarationException(args)
             }
         }
 
         override fun possibleVariants(): List<Pair<String, String>> {
-            val result = super.possibleVariants() + listOf(
+            return super.possibleVariants() + listOf(
                 "${scopePrefix(scope)}(File)" to "File.name:File",
                 "${scopePrefix(scope)}('name', File)" to "name:File"
             )
-
-            if (_defaultGenerateExternals == null) {
-                return result
-            }
-
-            return result
-                .map { (first, second) ->
-                    val value = first.replace(")", ", generateExternals = $defaultGenerateExternals)")
-                    value to second
-                }
         }
     }
 }
@@ -379,12 +272,10 @@ private class DefaultPeerNpmDependencyExtension(
     private val delegate: NpmDependencyExtensionDelegate = object : NpmDependencyExtensionDelegate(
         project,
         PEER,
-        null
     ) {
         override fun invoke(
             name: String,
             directory: File,
-            generateExternals: Boolean
         ): NpmDependency =
             npmDeclarationException(arrayOf(name, directory))
 
@@ -394,15 +285,10 @@ private class DefaultPeerNpmDependencyExtension(
         override fun processNamedNonStringSecondArgument(
             name: String,
             arg: Any?,
-            generateExternals: Boolean,
             vararg args: Any?
         ): NpmDependency =
             npmDeclarationException(args)
     }
-
-    @Suppress("DEPRECATION")
-    override fun invoke(name: String): NpmDependency =
-        delegate.invoke(name)
 
     override fun invoke(name: String, version: String): NpmDependency =
         delegate.invoke(name, version)

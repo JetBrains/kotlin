@@ -40,6 +40,12 @@ public class KotlinKaptContextTestGenerated extends AbstractKotlinKaptContextTes
     }
 
     @Test
+    @TestMetadata("Log.kt")
+    public void testLog() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Log.kt");
+    }
+
+    @Test
     @TestMetadata("NestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/NestedClasses.kt");

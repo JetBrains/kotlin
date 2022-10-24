@@ -185,6 +185,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("jvmField.kt")
+    public void testJvmField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/jvmField.kt");
+    }
+
+    @Test
     @TestMetadata("jvmName.kt")
     public void testJvmName() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/jvmName.kt");

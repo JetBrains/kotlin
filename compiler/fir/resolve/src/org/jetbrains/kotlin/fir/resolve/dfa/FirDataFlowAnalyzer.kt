@@ -355,7 +355,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitAnonymousObject(anonymousObject: FirAnonymousObject): ControlFlowGraph {
-        // TODO: support capturing of mutable properties, KT-44877
         val (node, controlFlowGraph) = graphBuilder.exitAnonymousObject(anonymousObject)
         node.mergeIncomingFlow()
         return controlFlowGraph
@@ -1216,9 +1215,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         val node = graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
         val property = assignment.lValue.resolvedSymbol?.fir as? FirProperty ?: return
-        // TODO: add unstable smartcast
-        if (property.isLocal || !property.isVar) {
+        if (property.isLocal || property.isVal) {
             exitVariableInitialization(node, assignment.rValue, property, assignment, hasExplicitType = false)
+        } else {
+            // TODO: add unstable smartcast for non-local var
+            val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(node.flow, property.symbol, assignment)
+            if (variable != null) {
+                logicSystem.removeAllAboutVariable(node.flow, variable)
+            }
         }
         processConditionalContract(assignment)
     }
@@ -1550,13 +1554,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         var deadForwardCount = 0
         for (previousNode in previousNodes) {
             val incomingEdgeKind = incomingEdges.getValue(previousNode).kind
-            if (isDead) {
-                if (!incomingEdgeKind.isBack) {
-                    previousFlows += previousNode.flow
-                }
+
+            if (isDead && incomingEdgeKind.usedInDeadDfa) {
+                previousFlows += previousNode.flow
             } else if (incomingEdgeKind.usedInDfa) {
                 previousFlows += previousNode.flow
             }
+
             if (incomingEdgeKind == EdgeKind.DeadForward) {
                 deadForwardCount++
             }

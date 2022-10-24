@@ -17,15 +17,25 @@ class SourceMap3Builder(
     private val textOutput: TextOutput,
     private val pathPrefix: String
 ) : SourceMapBuilder {
-    private val out = StringBuilder(8192)
-    private val sources: TObjectIntHashMap<SourceKey> = object : TObjectIntHashMap<SourceKey>() {
-        override fun get(key: SourceKey): Int {
+
+    private class ObjectIntHashMap<T> : TObjectIntHashMap<T>() {
+        override fun get(key: T): Int {
             val index = index(key)
             return if (index < 0) -1 else _values[index]
         }
     }
+
+    private val out = StringBuilder(8192)
+
+    private val sources = ObjectIntHashMap<SourceKey>()
     private val orderedSources = mutableListOf<String>()
     private val orderedSourceContentSuppliers = mutableListOf<Supplier<Reader?>>()
+
+    private val names = ObjectIntHashMap<String>()
+    private val orderedNames = mutableListOf<String>()
+    private var previousNameIndex = 0
+    private var previousPreviousNameIndex = 0
+
     private var previousGeneratedColumn = -1
     private var previousSourceIndex = 0
     private var previousSourceLine = 0
@@ -45,7 +55,9 @@ class SourceMap3Builder(
             json.properties["file"] = JsonString(generatedFile.name)
         appendSources(json)
         appendSourcesContent(json)
-        json.properties["names"] = JsonArray()
+        json.properties["names"] = JsonArray(
+            orderedNames.mapTo(mutableListOf()) { JsonString(it) }
+        )
         json.properties["mappings"] = JsonString(out.toString())
         return json.toString()
     }
@@ -97,16 +109,33 @@ class SourceMap3Builder(
         return sourceIndex
     }
 
+    private fun getNameIndex(name: String): Int {
+        var nameIndex = names[name]
+        if (nameIndex == -1) {
+            nameIndex = orderedNames.size
+            names.put(name, nameIndex)
+            orderedNames.add(name)
+        }
+        return nameIndex
+    }
+
     override fun addMapping(
         source: String,
         fileIdentity: Any?,
         sourceContent: Supplier<Reader?>,
         sourceLine: Int,
-        sourceColumn: Int
+        sourceColumn: Int,
+        name: String?,
     ) {
         val sourceIndex = getSourceIndex(source.replace(File.separatorChar, '/'), fileIdentity, sourceContent)
 
-        if (!currentMappingIsEmpty && previousSourceIndex == sourceIndex && previousSourceLine == sourceLine && previousSourceColumn == sourceColumn) {
+        val nameIndex = name?.let(this::getNameIndex) ?: -1
+
+        if (!currentMappingIsEmpty &&
+            previousSourceIndex == sourceIndex &&
+            previousSourceLine == sourceLine &&
+            previousSourceColumn == sourceColumn
+        ) {
             return
         }
 
@@ -120,6 +149,11 @@ class SourceMap3Builder(
 
         Base64VLQ.encode(out, sourceColumn - previousSourceColumn)
         previousSourceColumn = sourceColumn
+
+        if (nameIndex >= 0) {
+            Base64VLQ.encode(out, nameIndex - previousNameIndex)
+            previousNameIndex = nameIndex
+        }
 
         currentMappingIsEmpty = false
     }
@@ -148,11 +182,13 @@ class SourceMap3Builder(
             previousPreviousSourceIndex = previousSourceIndex
             previousPreviousSourceLine = previousSourceLine
             previousPreviousSourceColumn = previousSourceColumn
+            previousPreviousNameIndex = previousNameIndex
         } else {
             out.setLength(previousMappingOffset)
             previousSourceIndex = previousPreviousSourceIndex
             previousSourceLine = previousPreviousSourceLine
             previousSourceColumn = previousPreviousSourceColumn
+            previousNameIndex = previousPreviousNameIndex
         }
     }
 

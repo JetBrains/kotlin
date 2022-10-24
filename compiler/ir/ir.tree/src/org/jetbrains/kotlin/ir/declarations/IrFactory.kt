@@ -108,7 +108,7 @@ interface IrFactory {
         containerSource: DeserializedContainerSource? = null,
     ): IrSimpleFunction
 
-    fun createFakeOverrideFunction(
+    fun createFunctionWithLateBinding(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
@@ -153,7 +153,7 @@ interface IrFactory {
         containerSource: DeserializedContainerSource? = null
     ): IrProperty
 
-    fun createFakeOverrideProperty(
+    fun createPropertyWithLateBinding(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,

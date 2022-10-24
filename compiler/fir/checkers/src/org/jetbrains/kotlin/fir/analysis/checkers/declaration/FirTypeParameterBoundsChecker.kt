@@ -7,18 +7,17 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
@@ -35,7 +34,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         checkFinalUpperBounds(declaration, containingDeclaration, context, reporter)
         checkExtensionFunctionTypeBound(declaration, context, reporter)
 
-        if (containingDeclaration.safeAs<FirMemberDeclaration>()?.isInlineOnly() != true) {
+        if ((containingDeclaration as? FirMemberDeclaration)?.isInlineOnly() != true) {
             checkOnlyOneTypeParameterBound(declaration, context, reporter)
         }
 

@@ -116,6 +116,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                     this,
                     LanguageVersionSettingsImpl.DEFAULT,
                     CliSealedClassInheritorsProvider,
+                    null,
                 )
         }
 

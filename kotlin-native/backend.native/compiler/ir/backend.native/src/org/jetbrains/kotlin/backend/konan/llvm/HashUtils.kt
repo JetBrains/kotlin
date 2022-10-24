@@ -11,5 +11,3 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 internal fun localHash(data: ByteArray): Long {
     return cityHash64(data).toLong()
 }
-
-internal class LocalHash(val value: Long) : ConstValue by Int64(value)

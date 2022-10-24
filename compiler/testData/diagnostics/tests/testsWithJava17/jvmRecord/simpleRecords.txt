@@ -1,12 +1,17 @@
 package
 
 public fun foo(/*0*/ mr: MyRecord): kotlin.Unit
+public fun takeCharSequence(/*0*/ s: kotlin.CharSequence): kotlin.Unit
+public fun takeInt(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun takeStringArray(/*0*/ a: kotlin.Array<out kotlin.String>): kotlin.Unit
 
 /*record*/ public final class MyRecord : java.lang.Record {
-    public constructor MyRecord(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.CharSequence!)
+    public constructor MyRecord(/*0*/ x: kotlin.CharSequence!, /*1*/ y: kotlin.Int, /*2*/ vararg z: kotlin.String! /*kotlin.Array<(out) kotlin.String!>!*/)
     public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    /*record component*/ public open fun x(): kotlin.Int
-    /*record component*/ public open fun y(): kotlin.CharSequence!
+    /*record component*/ public open fun x(): kotlin.CharSequence!
+    /*record component*/ public open fun y(): kotlin.Int
+    /*record component*/ public open fun z(): kotlin.Array<(out) kotlin.String!>!
 }
+

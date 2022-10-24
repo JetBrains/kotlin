@@ -22,6 +22,7 @@ fun generateGradleCompilerTypes(withPrinterToFile: (targetFile: File, Printer.()
     generateJsMainFunctionExecutionMode(destDir, withPrinterToFile)
     generateJsModuleKind(destDir, withPrinterToFile)
     generateJsSourceMapEmbedMode(destDir, withPrinterToFile)
+    generateJsSourceMapNamesPolicy(destDir, withPrinterToFile)
     generateJsDiagnosticMode(destDir, withPrinterToFile)
 }
 

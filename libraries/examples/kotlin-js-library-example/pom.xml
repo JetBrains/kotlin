@@ -57,6 +57,9 @@
                         </goals>
                         <configuration>
                             <outputFile>${project.build.outputDirectory}/${project.artifactId}.js</outputFile>
+                            <args>
+                                <arg>-Xuse-deprecated-legacy-compiler</arg>
+                            </args>
                         </configuration>
                     </execution>
                 </executions>

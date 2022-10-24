@@ -70,10 +70,10 @@ class SourceMapLocationRemapper(private val sourceMap: SourceMap, private val so
             val segment = findCorrespondingSegment(node)
             val sourceFileName = segment?.sourceFileName
             node.source = if (sourceFileName != null) {
-                val location = JsLocation(sourceMapPathMapper(sourceFileName), segment.sourceLineNumber, segment.sourceColumnNumber)
+                val location =
+                    JsLocation(sourceMapPathMapper(sourceFileName), segment.sourceLineNumber, segment.sourceColumnNumber, segment.name)
                 JsLocationWithEmbeddedSource(location, null) { sourceMap.sourceContentResolver(segment.sourceFileName) }
-            }
-            else {
+            } else {
                 null
             }
         }

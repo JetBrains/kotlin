@@ -27,8 +27,6 @@ open class CompareDistributionSignatures : DefaultTask() {
         NOTIFY
     }
 
-    private val messageBuilder = StringBuilder()
-
     @Input
     var onMismatchMode: OnMismatchMode = OnMismatchMode.NOTIFY
 
@@ -47,6 +45,7 @@ open class CompareDistributionSignatures : DefaultTask() {
                 emptyList(),
                 listOf(RemainingLibrary(newDistribution.stdlib(), oldDistribution.stdlib()))
         )
+
         is Libraries.Platform -> {
             val oldPlatformLibs = oldDistribution.platformLibs(libraries.target)
             val oldPlatformLibsNames = oldPlatformLibs.list().toSet()
@@ -71,56 +70,62 @@ open class CompareDistributionSignatures : DefaultTask() {
             """.trimIndent()
         }
         val platformLibsDiff = computeDiff()
-        if (platformLibsDiff.missingLibs.isNotEmpty()) {
-            messageBuilder.apply {
-                appendln("Following platform libraries are missing in the new distro:")
-                platformLibsDiff.missingLibs.forEach { appendln(it) }
-            }
-        }
-        if (platformLibsDiff.newLibs.isNotEmpty()) {
-            messageBuilder.apply {
-                appendln("Following platform libraries were added:")
-                platformLibsDiff.newLibs.forEach { appendln(it) }
-            }
-        }
-        for ((new, old) in platformLibsDiff.remainingLibs) {
-            val result = compareSignatures(new, old)
-            if (result.run { newKlibOnly.isNotEmpty() || oldKlibOnly.isNotEmpty() }) {
-                reportMismatch(result, new.name)
-            }
-        }
-        if (messageBuilder.isNotEmpty()) {
-            report(messageBuilder.toString())
+        report("libraries diff")
+        val librariesMismatch = platformLibsDiff.missingLibs.isNotEmpty() || platformLibsDiff.newLibs.isNotEmpty()
+        platformLibsDiff.missingLibs.forEach { report("-: $it") }
+        platformLibsDiff.newLibs.forEach { report("+: $it") }
+        val signaturesMismatch = cumulativeSignaturesComparison(platformLibsDiff)
+        if ((librariesMismatch || signaturesMismatch) && onMismatchMode == OnMismatchMode.FAIL) {
+            error("Mismatch found, see stdout for details.")
         }
     }
 
-    private fun reportMismatch(compareDiff: CompareDiff, klibName: String) {
-        messageBuilder.apply {
-            appendln("Mismatch for $klibName:")
-            if (compareDiff.oldKlibOnly.isNotEmpty()) {
-                appendln("Following signatures are missing in the new version:")
-                compareDiff.oldKlibOnly.forEach { appendln(it) }
-            }
-            if (compareDiff.newKlibOnly.isNotEmpty()) {
-                appendln("Following signatures were added:")
-                compareDiff.newKlibOnly.forEach { appendln(it) }
+    private data class Mark(var presentInOld: Boolean = false, var presentInNew: Boolean = false) {
+        val newOnly: Boolean
+            get() = presentInNew && !presentInOld
+
+        val oldOnly: Boolean
+            get() = presentInOld && !presentInNew
+    }
+
+    private fun cumulativeSignaturesComparison(klibDiff: KlibDiff): Boolean {
+        report("signatures diff")
+        // Boolean value signifies if value is present in new platform libraries.
+        val signaturesMap = mutableMapOf<String, Mark>()
+        val oldLibs = klibDiff.missingLibs + klibDiff.remainingLibs.map { it.old }
+        oldLibs.flatMap { getKlibSignatures(it) }.forEach { sig ->
+            signaturesMap.getOrPut(sig, ::Mark).presentInOld = true
+        }
+        val duplicates = mutableListOf<String>()
+        val newLibs = klibDiff.newLibs + klibDiff.remainingLibs.map { it.new }
+        newLibs.flatMap { getKlibSignatures(it) }.forEach { sig ->
+            val mark = signaturesMap.getOrPut(sig, ::Mark)
+            if (mark.presentInNew) {
+                duplicates += sig
+            } else {
+                mark.presentInNew = true
             }
         }
+        duplicates.forEach { report("dup: $it") }
+        val oldSigs = signaturesMap.filterValues { it.oldOnly }.keys
+                .sorted()
+                .onEach { report("-: $it") }
+        val newSigs = signaturesMap.filterValues { it.newOnly }.keys
+                .sorted()
+                .onEach { report("+: $it") }
+        return oldSigs.isNotEmpty() || newSigs.isNotEmpty()
     }
 
     private fun report(message: String) {
-        when (onMismatchMode) {
-            OnMismatchMode.FAIL -> error(message)
-            OnMismatchMode.NOTIFY -> println(message)
-        }
+        println(message)
     }
 
     private data class RemainingLibrary(val new: File, val old: File)
 
     private class KlibDiff(
-        val newLibs: Collection<File>,
-        val missingLibs: Collection<File>,
-        val remainingLibs: Collection<RemainingLibrary>
+            val newLibs: Collection<File>,
+            val missingLibs: Collection<File>,
+            val remainingLibs: Collection<RemainingLibrary>
     )
 
     private fun String.stdlib(): File =
@@ -148,18 +153,7 @@ open class CompareDistributionSignatures : DefaultTask() {
         val tool = if (HostManager.hostIsMingw) "klib.bat" else "klib"
         val klibTool = File("$newDistribution/bin/$tool").absolutePath
         val args = listOf("signatures", klib.absolutePath)
-        return runProcess(localExecutor(project), klibTool, args).stdOut.lines()
-    }
-
-    private class CompareDiff(val newKlibOnly: Set<String>, val oldKlibOnly: Set<String>)
-
-    private fun compareSignatures(new: File, old: File): CompareDiff {
-        val newKlibSignatures = getKlibSignatures(new).toSet()
-        val oldKlibSignatures = getKlibSignatures(old).toSet()
-        return CompareDiff(
-                newKlibSignatures - oldKlibSignatures,
-                oldKlibSignatures - newKlibSignatures
-        )
+        return runProcess(localExecutor(project), klibTool, args).stdOut.lines().filter { it.isNotBlank() }
     }
 
     private fun looksLikeKotlinNativeDistribution(directory: Path): Boolean {

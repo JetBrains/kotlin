@@ -128,7 +128,7 @@ object RuntimeAssertionsOnExtensionReceiverCallChecker : CallChecker {
 
     private fun checkReceiver(receiverParameter: ReceiverParameterDescriptor?, receiverValue: ReceiverValue?, context: CallCheckerContext) {
         if (receiverParameter == null || receiverValue == null) return
-        val expressionReceiverValue = receiverValue.safeAs<ExpressionReceiver>() ?: return
+        val expressionReceiverValue = receiverValue as? ExpressionReceiver ?: return
         val receiverExpression = expressionReceiverValue.expression
         val c = context.resolutionContext
 

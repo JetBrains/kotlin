@@ -29,7 +29,6 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @Input
     var binaryenArgs: MutableList<String> = mutableListOf(
         "--enable-nontrapping-float-to-int",
-        "--enable-typed-function-references",
         "--enable-gc",
         "--enable-reference-types",
         "--enable-exception-handling",

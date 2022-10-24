@@ -265,7 +265,7 @@ class Fir2IrDeclarationStorage(
         val firBasedSymbol = callableDeclaration.symbol
         val callableId = firBasedSymbol.callableId
         val callableOrigin = callableDeclaration.origin
-        return findIrParent(callableId.packageName, callableDeclaration.containingClass(), firBasedSymbol, callableOrigin)
+        return findIrParent(callableId.packageName, callableDeclaration.containingClassLookupTag(), firBasedSymbol, callableOrigin)
     }
 
     private fun IrDeclaration.setAndModifyParent(irParent: IrDeclarationParent?) {
@@ -470,7 +470,7 @@ class Fir2IrDeclarationStorage(
         return createIrFunction(
             function,
             irParent,
-            containingClass = function.containingClass(),
+            containingClass = function.containingClassLookupTag(),
             isLocal = isLocal,
             forceTopLevelPrivate = forceTopLevelPrivate
         )
@@ -973,7 +973,7 @@ class Fir2IrDeclarationStorage(
         signatureCalculator: () -> IdSignature?,
         referenceIfAny: (IdSignature) -> IC?
     ): IC? {
-        val isFakeOverride = dispatchReceiverLookupTag != null && dispatchReceiverLookupTag != declaration.containingClass()
+        val isFakeOverride = dispatchReceiverLookupTag != null && dispatchReceiverLookupTag != declaration.containingClassLookupTag()
         if (!isFakeOverride) {
             cache[declaration]?.let { return it }
         }
@@ -1277,7 +1277,7 @@ class Fir2IrDeclarationStorage(
                 createIrFunction(fir, irParent, predefinedOrigin = declarationOrigin).symbol
             }
             is FirSimpleFunction -> {
-                val unmatchedReceiver = dispatchReceiverLookupTag != firFunctionSymbol.containingClass()
+                val unmatchedReceiver = dispatchReceiverLookupTag != firFunctionSymbol.containingClassLookupTag()
                 if (unmatchedReceiver) {
                     generateLazyFakeOverrides(fir.name, dispatchReceiverLookupTag)
                 }
@@ -1345,7 +1345,7 @@ class Fir2IrDeclarationStorage(
         if (fir.isLocal) {
             return localStorage.getDelegatedProperty(fir)?.symbol ?: getIrVariableSymbol(fir)
         }
-        val containingClassLookupTag = firPropertySymbol.containingClass()
+        val containingClassLookupTag = firPropertySymbol.containingClassLookupTag()
         val unmatchedReceiver = dispatchReceiverLookupTag != containingClassLookupTag
         if (unmatchedReceiver) {
             generateLazyFakeOverrides(fir.name, dispatchReceiverLookupTag)
@@ -1561,7 +1561,7 @@ class Fir2IrDeclarationStorage(
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
-                val irParentClass = firDeclaration.containingClass()?.let { classifierStorage.findIrClass(it) }
+                val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.findIrClass(it) }
                 classifierStorage.createIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,

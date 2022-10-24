@@ -61,15 +61,13 @@ internal open class KotlinJsIrLinkConfig(
                             configureOptions(
                                 compilation,
                                 ENABLE_DCE,
-                                GENERATE_D_TS,
                                 MINIMIZED_MEMBER_NAMES
                             )
                         }
 
                         KotlinJsBinaryMode.DEVELOPMENT -> {
                             configureOptions(
-                                compilation,
-                                GENERATE_D_TS
+                                compilation
                             )
                         }
                         else -> throw InvalidUserDataException(

@@ -62,5 +62,6 @@ class ResolverForSingleModuleProject<M : ModuleInfo>(
             this,
             languageVersionSettings,
             CliSealedClassInheritorsProvider,
+            null,
         )
 }

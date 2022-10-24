@@ -1,3 +1,5 @@
+// ALLOW_KOTLIN_PACKAGE
+
 package kotlin
 
 @Deprecated("foo test")

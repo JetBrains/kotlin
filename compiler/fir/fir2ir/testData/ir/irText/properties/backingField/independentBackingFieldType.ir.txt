@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/independentBackingFieldType.kt
       VAR name:a type:<root>.A [val]
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
       VAR name:it type:kotlin.Int [val]
-        CALL 'public final fun and (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-it> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
             $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
           other: CONST Int type=kotlin.Int value=10

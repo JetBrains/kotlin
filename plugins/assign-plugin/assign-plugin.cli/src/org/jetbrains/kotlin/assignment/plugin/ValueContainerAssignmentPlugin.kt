@@ -51,8 +51,7 @@ class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
         configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             ?.report(
                 CompilerMessageSeverity.WARNING,
-                "Lombok Kotlin compiler plugin is an experimental feature." +
-                        " See: https://kotlinlang.org/docs/components-stability.html."
+                "Assign Kotlin compiler plugin is an experimental feature. See: https://kotlinlang.org/docs/components-stability.html"
             )
 
         val annotations = configuration.getList(ANNOTATION)

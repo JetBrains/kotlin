@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.isEquals
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
-    private val reservedFunctionNames = setOf("box", "unbox", "equals", "hashCode")
+    private val boxAndUnboxNames = setOf("box", "unbox")
+    private val equalsAndHashCodeNames = setOf("equals", "hashCode")
     private val javaLangFqName = FqName("java.lang")
     private val cloneableFqName = FqName("Cloneable")
 
@@ -84,20 +86,26 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         }
                     }
                 }
+
                 is FirRegularClass -> {
                     if (innerDeclaration.isInner) {
                         reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
                     }
                 }
+
                 is FirSimpleFunction -> {
                     val functionName = innerDeclaration.name.asString()
 
-                    if (functionName in reservedFunctionNames) {
+                    if (functionName in boxAndUnboxNames
+                        || (functionName in equalsAndHashCodeNames
+                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
+                    ) {
                         reporter.reportOn(
                             innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
                         )
                     }
                 }
+
                 is FirField -> {
                     if (innerDeclaration.isSynthetic) {
                         val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol()
@@ -114,6 +122,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         )
                     }
                 }
+
                 is FirProperty -> {
                     if (innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name])) {
                         primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
@@ -136,6 +145,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         }
                     }
                 }
+
                 else -> {}
             }
         }
@@ -191,6 +201,26 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         context
                     )
                 }
+            }
+        }
+
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
+            var equalsFromAnyOverriding: FirSimpleFunction? = null
+            var typedEqualsIsDefined = false
+            declaration.declarations.forEach {
+                if (it !is FirSimpleFunction) {
+                    return@forEach
+                }
+                if (it.isEquals()) equalsFromAnyOverriding = it
+                if (it.isTypedEqualsInInlineClass(context.session)) typedEqualsIsDefined = true
+            }
+            if (equalsFromAnyOverriding != null && !typedEqualsIsDefined) {
+                reporter.reportOn(
+                    equalsFromAnyOverriding!!.source,
+                    FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+                    declaration.name.asString(),
+                    context
+                )
             }
         }
     }

@@ -1,0 +1,3 @@
+expression: CONTINUE
+text: continue
+isUsedAsExpression: false

@@ -163,6 +163,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
                 args.add(classpath.joinToString(File.pathSeparator))
             }
             args.add("-Xlegacy-deprecated-no-warn")
+            args.add("-Xuse-deprecated-legacy-compiler")
             args.add("-output")
             args.add(output.path)
             args.add("-meta-info")

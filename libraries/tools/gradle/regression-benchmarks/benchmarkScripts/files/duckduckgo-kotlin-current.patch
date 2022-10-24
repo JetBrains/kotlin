@@ -1,177 +1,17 @@
-diff --git a/app/src/main/java/com/duckduckgo/app/browser/BrowserActivity.kt b/app/src/main/java/com/duckduckgo/app/browser/BrowserActivity.kt
-index 823dce74..53cad010 100644
---- a/app/src/main/java/com/duckduckgo/app/browser/BrowserActivity.kt
-+++ b/app/src/main/java/com/duckduckgo/app/browser/BrowserActivity.kt
-@@ -352,6 +352,7 @@ open class BrowserActivity : DuckDuckGoActivity(), CoroutineScope by MainScope()
-             is Command.ShowAppRatingPrompt -> showAppEnjoymentPrompt(RateAppDialogFragment.create(command.promptCount, viewModel))
-             is Command.ShowAppFeedbackPrompt -> showAppEnjoymentPrompt(GiveFeedbackDialogFragment.create(command.promptCount, viewModel))
-             is Command.LaunchFeedbackView -> startActivity(FeedbackActivity.intent(this))
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/main/java/com/duckduckgo/app/browser/BrowserTabFragment.kt b/app/src/main/java/com/duckduckgo/app/browser/BrowserTabFragment.kt
-index 14a90255..e1c73904 100644
---- a/app/src/main/java/com/duckduckgo/app/browser/BrowserTabFragment.kt
-+++ b/app/src/main/java/com/duckduckgo/app/browser/BrowserTabFragment.kt
-@@ -881,6 +881,7 @@ class BrowserTabFragment :
-                 notifyEmailSignEvent()
-             }
-             is Command.PrintLink -> launchPrint(it.url)
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/main/java/com/duckduckgo/app/browser/BrowserTabViewModel.kt b/app/src/main/java/com/duckduckgo/app/browser/BrowserTabViewModel.kt
-index 32fe43b1..ba72664f 100644
---- a/app/src/main/java/com/duckduckgo/app/browser/BrowserTabViewModel.kt
-+++ b/app/src/main/java/com/duckduckgo/app/browser/BrowserTabViewModel.kt
-@@ -1094,6 +1094,7 @@ class BrowserTabViewModel @Inject constructor(
-             is WebNavigationStateChange.PageCleared -> pageCleared()
-             is WebNavigationStateChange.UrlUpdated -> urlUpdated(stateChange.url)
-             is WebNavigationStateChange.PageNavigationCleared -> disableUserNavigation()
-+            else -> Unit
-         }
-
-         if (newWebNavigationState.progress ?: 0 >= SHOW_CONTENT_MIN_PROGRESS) {
-diff --git a/app/src/main/java/com/duckduckgo/app/browser/BrowserViewModel.kt b/app/src/main/java/com/duckduckgo/app/browser/BrowserViewModel.kt
-index 399a2f56..0e4449e1 100644
---- a/app/src/main/java/com/duckduckgo/app/browser/BrowserViewModel.kt
-+++ b/app/src/main/java/com/duckduckgo/app/browser/BrowserViewModel.kt
-@@ -117,6 +117,7 @@ class BrowserViewModel @Inject constructor(
-                 is AppEnjoymentPromptOptions.ShowFeedbackPrompt -> {
-                     command.value = Command.ShowAppFeedbackPrompt(promptType.promptCount)
-                 }
-+                else -> Unit
-             }
-         }
-     }
-diff --git a/app/src/main/java/com/duckduckgo/app/fire/AutomaticDataClearer.kt b/app/src/main/java/com/duckduckgo/app/fire/AutomaticDataClearer.kt
-index a0d65823..8ce02b0b 100644
---- a/app/src/main/java/com/duckduckgo/app/fire/AutomaticDataClearer.kt
-+++ b/app/src/main/java/com/duckduckgo/app/fire/AutomaticDataClearer.kt
-@@ -195,6 +195,8 @@ class AutomaticDataClearer @Inject constructor(
-                     dataClearerState.value = FINISHED
-                 }
-             }
-+
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/main/java/com/duckduckgo/app/fire/fireproofwebsite/ui/FireproofWebsiteAdapter.kt b/app/src/main/java/com/duckduckgo/app/fire/fireproofwebsite/ui/FireproofWebsiteAdapter.kt
-index 6b3b1f4c..a54ab9e3 100644
---- a/app/src/main/java/com/duckduckgo/app/fire/fireproofwebsite/ui/FireproofWebsiteAdapter.kt
-+++ b/app/src/main/java/com/duckduckgo/app/fire/fireproofwebsite/ui/FireproofWebsiteAdapter.kt
-@@ -137,6 +137,7 @@ class FireproofWebsiteAdapter(
-                     )
-                 ]
-             )
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/main/java/com/duckduckgo/app/icon/ui/ChangeIconActivity.kt b/app/src/main/java/com/duckduckgo/app/icon/ui/ChangeIconActivity.kt
-index 5904e811..3e6eea27 100644
---- a/app/src/main/java/com/duckduckgo/app/icon/ui/ChangeIconActivity.kt
-+++ b/app/src/main/java/com/duckduckgo/app/icon/ui/ChangeIconActivity.kt
-@@ -92,6 +92,7 @@ class ChangeIconActivity : DuckDuckGoActivity() {
-                     }
-                     .show()
-             }
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/main/java/com/duckduckgo/app/launch/LaunchBridgeActivity.kt b/app/src/main/java/com/duckduckgo/app/launch/LaunchBridgeActivity.kt
-index ef708ab5..09fef2f8 100644
---- a/app/src/main/java/com/duckduckgo/app/launch/LaunchBridgeActivity.kt
-+++ b/app/src/main/java/com/duckduckgo/app/launch/LaunchBridgeActivity.kt
-@@ -59,6 +59,7 @@ class LaunchBridgeActivity : DuckDuckGoActivity() {
-             is LaunchViewModel.Command.Home -> {
-                 showHome()
-             }
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/main/java/com/duckduckgo/app/location/ui/LocationPermissionsAdapter.kt b/app/src/main/java/com/duckduckgo/app/location/ui/LocationPermissionsAdapter.kt
-index 31750b34..a10a4e1b 100644
---- a/app/src/main/java/com/duckduckgo/app/location/ui/LocationPermissionsAdapter.kt
-+++ b/app/src/main/java/com/duckduckgo/app/location/ui/LocationPermissionsAdapter.kt
-@@ -167,6 +167,7 @@ class LocationPermissionsAdapter(
-             is LocationPermissionsViewHolder.LocationPermissionsItemViewHolder -> {
-                 holder.bind(getLocationPermission(position))
-             }
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/main/java/com/duckduckgo/app/privacy/ui/WebsitesAdapter.kt b/app/src/main/java/com/duckduckgo/app/privacy/ui/WebsitesAdapter.kt
-index 4cf9ded9..50beedbe 100644
---- a/app/src/main/java/com/duckduckgo/app/privacy/ui/WebsitesAdapter.kt
-+++ b/app/src/main/java/com/duckduckgo/app/privacy/ui/WebsitesAdapter.kt
-@@ -143,6 +143,7 @@ class WebsitesAdapter(
-             is WebsiteViewHolder.WebsiteItemViewHolder -> {
-                 holder.bind(entries[getWebsiteItemPosition(position)])
-             }
-+            else -> Unit
-         }
-     }
- }
-diff --git a/app/src/main/java/com/duckduckgo/app/privacy/ui/WhitelistActivity.kt b/app/src/main/java/com/duckduckgo/app/privacy/ui/WhitelistActivity.kt
-index 91837057..4aef7829 100644
---- a/app/src/main/java/com/duckduckgo/app/privacy/ui/WhitelistActivity.kt
-+++ b/app/src/main/java/com/duckduckgo/app/privacy/ui/WhitelistActivity.kt
-@@ -103,6 +103,7 @@ class WhitelistActivity : DuckDuckGoActivity() {
-             is ShowEdit -> showEditDialog(command.entry)
-             is ConfirmDelete -> showDeleteDialog(command.entry)
-             is ShowWhitelistFormatError -> showWhitelistFormatError()
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/main/java/com/duckduckgo/app/tabs/ui/TabSwitcherActivity.kt b/app/src/main/java/com/duckduckgo/app/tabs/ui/TabSwitcherActivity.kt
-index 2f547c10..303796b0 100644
---- a/app/src/main/java/com/duckduckgo/app/tabs/ui/TabSwitcherActivity.kt
-+++ b/app/src/main/java/com/duckduckgo/app/tabs/ui/TabSwitcherActivity.kt
-@@ -174,6 +174,7 @@ class TabSwitcherActivity : DuckDuckGoActivity(), TabSwitcherListener, Coroutine
-     private fun processCommand(command: Command?) {
-         when (command) {
-             is Close -> finishAfterTransition()
-+            else -> Unit
-         }
-     }
-
-diff --git a/app/src/play/java/com/duckduckgo/referral/PlayStoreAppReferrerStateListener.kt b/app/src/play/java/com/duckduckgo/referral/PlayStoreAppReferrerStateListener.kt
-index 0dc88554..7a8c4290 100644
---- a/app/src/play/java/com/duckduckgo/referral/PlayStoreAppReferrerStateListener.kt
-+++ b/app/src/play/java/com/duckduckgo/referral/PlayStoreAppReferrerStateListener.kt
-@@ -170,6 +170,7 @@ class PlayStoreAppReferrerStateListener @Inject constructor(
-                 variantManager.updateAppReferrerVariant(VariantManager.RESERVED_EU_AUCTION_VARIANT)
-                 appReferrerDataStore.installedFromEuAuction = true
-             }
-+            else -> Unit
-         }
-
-         appReferrerDataStore.referrerCheckedPreviously = true
 diff --git a/build.gradle b/build.gradle
-index 77b11869..9a6d9ea2 100644
+index be987782b..417b6c88d 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -2,9 +2,9 @@
+@@ -2,7 +2,7 @@
  buildscript {
 
      ext {
--        kotlin_version = '1.6.21'
+-        kotlin_version = '1.7.10'
 +        kotlin_version = '<kotlin_version>'
          spotless = "6.1.2"
--        anvil_version = "2.4.0"
-+        anvil_version = "2.4.1"
-         gradle_plugin = "7.0.4"
-         min_sdk = 23
-         target_sdk = 30
-@@ -13,6 +13,7 @@ buildscript {
+         anvil_version = "2.4.1"
+         gradle_plugin = "7.2.2" // When updating, also update lint_version
+@@ -14,6 +14,7 @@ buildscript {
      }
 
      repositories {
@@ -179,7 +19,7 @@ index 77b11869..9a6d9ea2 100644
          google()
          mavenCentral()
          maven { url "https://plugins.gradle.org/m2/" }
-@@ -34,11 +35,13 @@ plugins {
+@@ -35,6 +36,7 @@ plugins {
 
  allprojects {
      repositories {
@@ -187,13 +27,7 @@ index 77b11869..9a6d9ea2 100644
          google()
          mavenCentral()
      }
-     configurations.all {
-         resolutionStrategy.force 'org.objenesis:objenesis:2.6'
-+        resolutionStrategy.force 'org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0'
-     }
- }
-
-@@ -68,4 +71,4 @@ fladle {
+@@ -120,4 +122,4 @@ fladle {
      }
  }
 
@@ -201,27 +35,15 @@ index 77b11869..9a6d9ea2 100644
 \ No newline at end of file
 +apply plugin: 'android-reporting'
 diff --git a/versions.properties b/versions.properties
-index 059622f0..89e01988 100644
+index 0bdde3fdb..dff5e798f 100644
 --- a/versions.properties
 +++ b/versions.properties
-@@ -71,7 +71,7 @@ version.jakewharton.rxrelay2=2.0.0
+@@ -75,7 +75,7 @@ version.jakewharton.rxrelay2=2.0.0
 
  version.jakewharton.timber=5.0.1
 
--version.kotlin=1.6.21
+-version.kotlin=1.7.10
 +version.kotlin=<kotlin_version>
 
- version.kotlinx.coroutines=1.6.3
-
-diff --git a/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/ui/tracker_activity/DeviceShieldTrackerActivity.kt b/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/ui/tracker_activity/DeviceShieldTrackerActivity.kt
-index e170423b..057181fb 100644
---- a/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/ui/tracker_activity/DeviceShieldTrackerActivity.kt
-+++ b/vpn/src/main/java/com/duckduckgo/mobile/android/vpn/ui/tracker_activity/DeviceShieldTrackerActivity.kt
-@@ -229,6 +229,7 @@ class DeviceShieldTrackerActivity :
-             is DeviceShieldTrackerActivityViewModel.Command.ShowRemoveFeatureConfirmationDialog -> launchRemoveFeatureConfirmationDialog()
-             is DeviceShieldTrackerActivityViewModel.Command.CloseScreen -> finish()
-             is DeviceShieldTrackerActivityViewModel.Command.OpenVpnSettings -> openVPNSettings()
-+            else -> Unit
-         }
-     }
+ version.kotlinx.coroutines=1.6.4
 

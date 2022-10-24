@@ -27,6 +27,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         }
 
         @Test
+        @TestMetadata("companionObjectSerializers.kt")
+        public void testCompanionObjectSerializers() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/companionObjectSerializers.kt");
+        }
+
+        @Test
         @TestMetadata("DuplicateSerialName.kt")
         public void testDuplicateSerialName() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/DuplicateSerialName.kt");
@@ -42,6 +48,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         @TestMetadata("ExternalSerializers.kt")
         public void testExternalSerializers() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/ExternalSerializers.kt");
+        }
+
+        @Test
+        @TestMetadata("GenericArrays.kt")
+        public void testGenericArrays() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/GenericArrays.kt");
         }
 
         @Test
@@ -169,9 +181,21 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         }
 
         @Test
+        @TestMetadata("externalSerializers.kt")
+        public void testExternalSerializers() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/firMembers/externalSerializers.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClasses.kt")
         public void testInlineClasses() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/firMembers/inlineClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("metaSerializable.kt")
+        public void testMetaSerializable() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/firMembers/metaSerializable.kt");
         }
 
         @Test
@@ -196,6 +220,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         @TestMetadata("serializableWith.kt")
         public void testSerializableWith() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/firMembers/serializableWith.kt");
+        }
+
+        @Test
+        @TestMetadata("serializerViaCompanion.kt")
+        public void testSerializerViaCompanion() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/firMembers/serializerViaCompanion.kt");
         }
     }
 }

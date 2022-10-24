@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -81,11 +80,13 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         }
     }
 
-    private fun quoteIfNeeded(args: Array<out String>): Array<String> =
-        if (SystemInfo.isWindows) args.map {
+    private fun quoteIfNeeded(args: Array<out String>): Array<String> {
+        @Suppress("UNCHECKED_CAST")
+        return if (SystemInfo.isWindows) args.map {
             if (it.contains('=') || it.contains(" ") || it.contains(";") || it.contains(",")) "\"$it\"" else it
         }.toTypedArray()
-        else args.cast()
+        else args as Array<String>
+    }
 
     private val testDataDirectory: String
         get() = KtTestUtil.getTestDataPathBase() + "/launcher"
@@ -141,7 +142,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinc-js",
             "$testDataDirectory/emptyMain.kt",
-            "-Xlegacy-deprecated-no-warn", "-output", File(tmpdir, "out.js").path
+            "-Xlegacy-deprecated-no-warn", "-Xuse-deprecated-legacy-compiler", "-output", File(tmpdir, "out.js").path
         )
     }
 
@@ -469,6 +470,36 @@ println(42)
             "kotlin", output.path,
             expectedStdout = "interface java.sql.Driver\n",
             environment = jdk11,
+        )
+    }
+
+    fun testInterpreterClassLoader() {
+        runProcess(
+            "kotlinc", "$testDataDirectory/interpreterClassLoader.kt", "-d", tmpdir.path
+        )
+    }
+
+    fun testImplicitModularJdk() {
+        // see KT-54337
+        val moduleInfo = tmpdir.resolve("module-info.java").apply {
+            writeText(
+                """
+                    module test {
+                        requires kotlin.stdlib;
+                    }
+                """.trimIndent()
+            )
+        }
+        val testKt = tmpdir.resolve("test.kt").apply {
+            writeText("fun main() {}")
+        }
+        val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
+        runProcess(
+            "kotlinc", moduleInfo.absolutePath, testKt.absolutePath, "-d", tmpdir.path,
+            environment = jdk11,
+            expectedExitCode = 0,
+            expectedStdout = "",
+            expectedStderr = ""
         )
     }
 }

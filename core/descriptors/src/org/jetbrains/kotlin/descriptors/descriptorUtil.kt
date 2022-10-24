@@ -10,10 +10,15 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isBoolean
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.sure
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -88,3 +93,13 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
 }
 
 object DeserializedDeclarationsFromSupertypeConflictDataKey : CallableDescriptor.UserDataKey<CallableMemberDescriptor>
+
+fun FunctionDescriptor.isTypedEqualsInInlineClass() = name == OperatorNameConventions.EQUALS
+        && (returnType?.isBoolean() ?: false) && containingDeclaration.isInlineClass()
+        && valueParameters.size == 1 && valueParameters[0].type.constructor.declarationDescriptor.classId == (containingDeclaration as? ClassDescriptor)?.classId
+        && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
+
+
+fun FunctionDescriptor.overridesEqualsFromAny(): Boolean = name == OperatorNameConventions.EQUALS
+        && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
+        && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null

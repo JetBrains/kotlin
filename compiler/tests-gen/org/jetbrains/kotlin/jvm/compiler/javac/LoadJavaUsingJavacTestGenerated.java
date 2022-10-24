@@ -226,6 +226,11 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
             runTest("compiler/testData/loadJava/compiledJava/RecursiveWildcardUpperBound.java");
         }
 
+        @TestMetadata("ReferenceCycleThroughAnnotation.java")
+        public void testReferenceCycleThroughAnnotation() throws Exception {
+            runTest("compiler/testData/loadJava/compiledJava/ReferenceCycleThroughAnnotation.java");
+        }
+
         @TestMetadata("RemoveRedundantProjectionKind.java")
         public void testRemoveRedundantProjectionKind() throws Exception {
             runTest("compiler/testData/loadJava/compiledJava/RemoveRedundantProjectionKind.java");
@@ -1732,6 +1737,11 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
             @TestMetadata("AnnotationInArray.kt")
             public void testAnnotationInArray() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInArray.kt");
+            }
+
+            @TestMetadata("AnnotationOnTypeParameter.kt")
+            public void testAnnotationOnTypeParameter() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationOnTypeParameter.kt");
             }
 
             @TestMetadata("ClassLiteralArguments.kt")

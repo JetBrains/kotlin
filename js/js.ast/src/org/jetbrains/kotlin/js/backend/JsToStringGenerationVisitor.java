@@ -4,7 +4,6 @@
 
 package org.jetbrains.kotlin.js.backend;
 
-import com.intellij.openapi.util.text.StringUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
@@ -377,8 +376,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitCatch(@NotNull JsCatch x) {
-        pushSourceInfo(x.getSource());
         printCommentsBeforeNode(x);
+        pushSourceInfo(x.getSource());
 
         spaceOpt();
         p.print(CHARS_CATCH);
@@ -399,8 +398,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         rightParen();
         spaceOpt();
 
-        printCommentsAfterNode(x);
         popSourceInfo();
+        printCommentsAfterNode(x);
 
         sourceLocationConsumer.pushSourceInfo(null);
         accept(x.getBody());
@@ -655,7 +654,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitFunction(@NotNull JsFunction x) {
-        pushSourceInfo(x.getSource());
         printCommentsBeforeNode(x);
 
         p.print(CHARS_FUNCTION);
@@ -664,7 +662,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printFunction(x);
 
         printCommentsAfterNode(x);
-        popSourceInfo();
     }
 
     // name(<params>) { <body> }
@@ -673,10 +670,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             nameOf(x);
         }
 
+        pushSourceInfo(x.getSource());
         leftParen();
         boolean notFirst = false;
-        for (Object element : x.getParameters()) {
-            JsParameter param = (JsParameter) element;
+        for (JsParameter param : x.getParameters()) {
             notFirst = sepCommaOptSpace(notFirst);
             accept(param);
         }
@@ -688,6 +685,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.pushSourceInfo(null);
         printJsBlock(x.getBody(), true, x.getBody().getSource());
         sourceLocationConsumer.popSourceInfo();
+
+        popSourceInfo();
 
         needSemi = true;
     }
@@ -742,8 +741,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitIf(@NotNull JsIf x) {
-        pushSourceInfo(x.getSource());
         printCommentsBeforeNode(x);
+        pushSourceInfo(x.getSource());
 
         _if();
         spaceOpt();
@@ -751,8 +750,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getIfExpression());
         rightParen();
 
-        printCommentsAfterNode(x);
         popSourceInfo();
+        printCommentsAfterNode(x);
 
         JsStatement thenStmt = x.getThenStatement();
         JsStatement elseStatement = x.getElseStatement();
@@ -1140,9 +1139,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitTry(@NotNull JsTry x) {
         printCommentsBeforeNode(x);
+        pushSourceInfo(x.getSource());
         p.print(CHARS_TRY);
         spaceOpt();
         lineBreakAfterBlock = false;
+        popSourceInfo();
         accept(x.getTryBlock());
 
         acceptList(x.getCatches());
@@ -1329,31 +1330,47 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitImport(@NotNull JsImport jsImport) {
-        p.print("import {");
-        boolean isMultiline = jsImport.getElements().size() > 1;
-        p.indentIn();
-        if (isMultiline)
-            newlineOpt();
-        else
-            space();
+        JsImport.Target target = jsImport.getTarget();
 
-        for (JsImport.Element element : jsImport.getElements()) {
-            nameDef(element.getName());
-            JsName alias = element.getAlias();
-            if (alias != null) {
-                p.print(" as ");
-                nameDef(alias);
-            }
+        p.print("import ");
 
-            if (isMultiline) {
-                p.print(',');
+        if (target instanceof JsImport.Target.Default) {
+            nameDef(((JsImport.Target.Default) target).getName());
+        } else if (target instanceof JsImport.Target.All) {
+            p.print("* as ");
+            nameDef(((JsImport.Target.All) target).getAlias());
+        } else if (target instanceof JsImport.Target.Elements) {
+            List<JsImport.Element> elements = ((JsImport.Target.Elements) target).getElements();
+
+            p.print("{");
+            boolean isMultiline = elements.size() > 1;
+            p.indentIn();
+            if (isMultiline)
                 newlineOpt();
-            } else {
+            else
                 space();
+
+            for (JsImport.Element element : elements) {
+                nameDef(element.getName());
+                JsName alias = element.getAlias();
+                if (alias != null) {
+                    p.print(" as ");
+                    nameDef(alias);
+                }
+
+                if (isMultiline) {
+                    p.print(',');
+                    newlineOpt();
+                }
+                else {
+                    space();
+                }
             }
+            p.indentOut();
+            p.print("}");
         }
-        p.indentOut();
-        p.print("} from ");
+
+        p.print(" from ");
         p.print(javaScriptString(jsImport.getModule()));
     }
 
@@ -1402,20 +1419,23 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
-    private void printJsBlock(JsBlock x, boolean finalNewline, Object closingBracketLocation) {
+    private void printJsBlock(JsBlock x, boolean finalNewline, @Nullable Object defaultClosingBraceLocation) {
         if (!lineBreakAfterBlock) {
             finalNewline = false;
             lineBreakAfterBlock = true;
         }
 
-        sourceLocationConsumer.pushSourceInfo(null);
         printCommentsBeforeNode(x);
 
         boolean needBraces = !x.isTransparent();
 
         if (needBraces) {
+            sourceLocationConsumer.pushSourceInfo(x.getSource());
             blockOpen();
+            sourceLocationConsumer.popSourceInfo();
         }
+
+        sourceLocationConsumer.pushSourceInfo(null);
 
         Iterator<JsStatement> iterator = x.getStatements().iterator();
         while (iterator.hasNext()) {
@@ -1438,7 +1458,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
             accept(statement);
             if (stmtIsGlobalBlock) {
-                //noinspection SuspiciousMethodCalls
                 globalBlocks.remove(statement);
             }
             if (needSemi) {
@@ -1478,23 +1497,28 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             // _blockClose() modified
             p.indentOut();
 
-            if (closingBracketLocation != null) {
-                pushSourceInfo(closingBracketLocation);
+            sourceLocationConsumer.popSourceInfo();
+
+            Object closingBraceLocation = x.getClosingBraceSource();
+            if (closingBraceLocation == null)
+                closingBraceLocation = defaultClosingBraceLocation;
+
+            if (closingBraceLocation != null) {
+                pushSourceInfo(closingBraceLocation);
             }
             p.print('}');
-            if (closingBracketLocation != null) {
+            if (closingBraceLocation != null) {
                 popSourceInfo();
             }
 
             if (finalNewline) {
                 newlineOpt();
             }
+        } else {
+            sourceLocationConsumer.popSourceInfo();
         }
         needSemi = false;
-
-
         printCommentsAfterNode(x);
-        sourceLocationConsumer.popSourceInfo();
     }
 
     private void assignment() {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
+import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -107,13 +108,13 @@ internal fun runToolInSeparateProcess(
         compilerClassName,
         "@${compilerOptions.absolutePath}"
     )
-    val messageCollector = createLoggingMessageCollector(logger)
+    val messageCollector = GradleErrorMessageCollector(createLoggingMessageCollector(logger))
     val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
 
     // important to read inputStream, otherwise the process may hang on some systems
     val readErrThread = thread {
         process.errorStream!!.bufferedReader().forEachLine {
-            logger.error(it)
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, it)
         }
     }
 

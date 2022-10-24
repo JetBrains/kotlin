@@ -32,7 +32,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
-        return JsBlock(body.statements.map { it.accept(this, context) })
+        return JsBlock(body.statements.map { it.accept(this, context) }).withSource(body, context, container = context.currentFunction)
     }
 
     override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
@@ -53,7 +53,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             }
         } else {
             JsBlock(statements)
-        }
+        }.withSource(expression, context)
     }
 
     private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(expression: IrReturnableBlock): List<JsStatement> {
@@ -65,7 +65,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {
-        return JsBlock(expression.statements.map { it.accept(this, context) })
+        return JsBlock(expression.statements.map { it.accept(this, context) }).withSource(expression, context)
     }
 
     override fun visitExpression(expression: IrExpression, context: JsGenerationContext): JsStatement {
@@ -186,12 +186,12 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val jsCatch = aTry.catches.singleOrNull()?.let {
             val name = context.getNameForValueDeclaration(it.catchParameter)
             val jsCatchBlock = it.result.accept(this, context)
-            JsCatch(emptyScope, name.ident, jsCatchBlock)
+            JsCatch(emptyScope, name.ident, jsCatchBlock).withSource(it, context)
         }
 
         val jsFinallyBlock = aTry.finallyExpression?.accept(this, context)?.asBlock()
 
-        return JsTry(jsTryBlock, jsCatch, jsFinallyBlock)
+        return JsTry(jsTryBlock, jsCatch, jsFinallyBlock).withSource(aTry, context)
     }
 
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsStatement {

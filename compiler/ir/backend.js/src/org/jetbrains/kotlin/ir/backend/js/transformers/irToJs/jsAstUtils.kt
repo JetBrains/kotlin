@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -24,6 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -47,16 +45,16 @@ fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext
 
 fun <T : JsNode> IrWhen.toJsNode(
     tr: BaseIrElementToJsNodeTransformer<T, JsGenerationContext>,
-    data: JsGenerationContext,
+    context: JsGenerationContext,
     node: (JsExpression, T, T?) -> T,
     implicitElse: T? = null
 ): T? =
     branches.foldRight(implicitElse) { br, n ->
-        val body = br.result.accept(tr, data)
+        val body = br.result.accept(tr, context)
         if (isElseBranch(br)) body
         else {
-            val condition = br.condition.accept(IrElementToJsExpressionTransformer(), data)
-            node(condition, body, n)
+            val condition = br.condition.accept(IrElementToJsExpressionTransformer(), context)
+            node(condition, body, n).withSource(br, context)
         }
     }
 
@@ -119,6 +117,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
+        .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name
 
@@ -522,22 +521,45 @@ object JsAstUtils {
     }
 }
 
-internal fun <T : JsNode> T.withSource(node: IrElement, context: JsGenerationContext): T {
-    addSourceInfoIfNeed(node, context)
+internal fun <T : JsNode> T.withSource(
+    node: IrElement,
+    context: JsGenerationContext,
+    useNameOf: IrDeclarationWithName? = null,
+    container: IrDeclaration? = null
+): T {
+    addSourceInfoIfNeed(node, context, useNameOf, container)
     return this
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: JsGenerationContext) {
-
+private inline fun <T : JsNode> T.addSourceInfoIfNeed(
+    node: IrElement,
+    context: JsGenerationContext,
+    useNameOf: IrDeclarationWithName?,
+    container: IrDeclaration?
+) {
     val sourceMapsInfo = context.staticContext.backendContext.sourceMapsInfo ?: return
-
-    val location = context.getLocationForIrElement(node) ?: return
-
+    val originalName = useNameOf?.originalNameForUseInSourceMap(sourceMapsInfo.namesPolicy)
+    val location = context.getStartLocationForIrElement(node, originalName) ?: return
     val isNodeFromCurrentModule = context.currentFile.module.descriptor == context.staticContext.backendContext.module
 
     // TODO maybe it's better to fix in JsExpressionStatement
     val locationTarget = if (this is JsExpressionStatement) this.expression else this
+
+    if (locationTarget is JsBlock && (node is IrBlockBody || node is IrBlock)) {
+        locationTarget.closingBraceSource = if (container is IrConstructor) {
+            // This is a hack. Without this special case, the closing brace in the generated code for constructors would always be mapped
+            // to the closing brace of the Kotlin class declaration.
+            context.getStartLocationForIrElement(node)
+        } else {
+            context.getEndLocationForIrElement(node)?.run {
+                // Assuming that endOffset for IrBlock and IrBlockBody points to the character after the closing brace.
+                // TODO: This doesn't produce good results if the node originates from an expression body
+                // (meaning, in the source code; not to be confused with IrExpressionBody)
+                if (startChar > 0) copy(startChar = startChar - 1) else null
+            }
+        }
+    }
 
     locationTarget.source = when (sourceMapsInfo.sourceMapContentEmbedding) {
         SourceMapSourceEmbedding.NEVER -> location
@@ -567,15 +589,38 @@ private fun JsLocation.withEmbeddedSource(
     }
 }
 
-fun IrElement.getSourceInfo(container: IrDeclaration): JsLocation? {
+fun IrElement.getStartSourceLocation(container: IrDeclaration): JsLocation? {
     val fileEntry = container.fileOrNull?.fileEntry ?: return null
-    return getSourceInfo(fileEntry)
+    return getStartSourceLocation(fileEntry)
 }
 
-fun IrElement.getSourceInfo(fileEntry: IrFileEntry): JsLocation? {
+fun IrElement.getStartSourceLocation(fileEntry: IrFileEntry) =
+    getSourceLocation(fileEntry) { startOffset }
+
+inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: IrElement.() -> Int): JsLocation? {
     if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET) return null
     val path = fileEntry.name
-    val startLine = fileEntry.getLineNumber(startOffset)
-    val startColumn = fileEntry.getColumnNumber(startOffset)
+    val offset = offsetSelector()
+    val startLine = fileEntry.getLineNumber(offset)
+    val startColumn = fileEntry.getColumnNumber(offset)
     return JsLocation(path, startLine, startColumn)
+}
+
+/**
+ * Returns a name of the original Kotlin declaration, or null, if it is a compiler generated declaration.
+ */
+private fun IrDeclarationWithName.originalNameForUseInSourceMap(policy: SourceMapNamesPolicy): String? {
+    if (policy == SourceMapNamesPolicy.NO) return null
+    when (this) {
+        is IrField -> correspondingPropertySymbol?.let {
+            return it.owner.originalNameForUseInSourceMap(policy)
+        }
+
+        is IrFunction -> if (policy == SourceMapNamesPolicy.FULLY_QUALIFIED_NAMES) {
+            fqNameWhenAvailable?.let {
+                return it.asString()
+            }
+        }
+    }
+    return name.asString()
 }

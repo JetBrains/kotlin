@@ -71,7 +71,7 @@ public actual fun Char.uppercaseChar(): Char {
  *
  * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
  * For example, `'\uFB00'.uppercase()` returns `"\u0046\u0046"`,
- * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character.
+ * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
  * If this character has no upper case mapping, the result of `toString()` of this char is returned.
  *
  * @sample samples.text.Chars.uppercase

@@ -81,6 +81,7 @@ fun nop() {}
 // test.kt:22 box
 // test.kt:7 box
 // test.kt:7 box
+// test.kt:28 nop
 // test.kt:20 box
 // test.kt:12 box
 // test.kt:21 box
@@ -94,3 +95,5 @@ fun nop() {}
 // test.kt:25 box
 // test.kt:14 box
 // test.kt:14 box
+// test.kt:28 nop
+// test.kt:17 box

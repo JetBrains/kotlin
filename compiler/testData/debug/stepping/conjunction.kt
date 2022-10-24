@@ -34,3 +34,4 @@ fun getD() = true
 
 // EXPECTATIONS JS_IR
 // test.kt:3 box
+// test.kt:11 box

@@ -215,7 +215,7 @@ abstract class BenchmarkTemplate(
             }
             .concat()
             .groupBy("scenario").aggregate { // Merging scenarios from different benchmarks into one row
-                forEachRow { row ->
+                forEach { row ->
                     row["tasks start median time"] into "Configuration: ${row["benchmark"]}"
                     row["execution median time"] into "Execution: ${row["benchmark"]}"
                 }
@@ -376,7 +376,7 @@ abstract class BenchmarkTemplate(
                 )
                 columnName.startsWith("measured build") -> DataColumn.createValueColumn(
                     columnName,
-                    rowToColumn(columnName) { it.toString().toInt() }
+                    rowToColumn(columnName) { it.toString().toIntOrNull() }
                 )
                 else -> throw IllegalArgumentException("Unknown column name: $columnName")
             }
@@ -402,7 +402,7 @@ abstract class BenchmarkTemplate(
 
     companion object {
         private const val STEP_SEPARATOR = "###############"
-        private const val GRADLE_PROFILER_VERSION = "0.18.0"
+        private const val GRADLE_PROFILER_VERSION = "0.19.0"
         private const val GRADLE_PROFILER_URL: String =
             "https://repo1.maven.org/maven2/org/gradle/profiler/gradle-profiler/$GRADLE_PROFILER_VERSION/gradle-profiler-$GRADLE_PROFILER_VERSION.zip"
 

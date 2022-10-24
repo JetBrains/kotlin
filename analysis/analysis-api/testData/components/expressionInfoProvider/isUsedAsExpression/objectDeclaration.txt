@@ -1,0 +1,5 @@
+expression: OBJECT_DECLARATION
+text: object Foo {
+        val x = 4
+    }
+isUsedAsExpression: false

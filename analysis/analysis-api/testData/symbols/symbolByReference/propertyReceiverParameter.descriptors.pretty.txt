@@ -1,0 +1,1 @@
+val (@ReceiverTypeAnnotation kotlin.Long).prop: kotlin.Boolean

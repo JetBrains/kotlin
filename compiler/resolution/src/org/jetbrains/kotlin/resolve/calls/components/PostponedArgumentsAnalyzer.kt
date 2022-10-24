@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPositionImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class PostponedArgumentsAnalyzer(
     private val callableReferenceArgumentResolver: CallableReferenceArgumentResolver,
@@ -128,6 +129,7 @@ class PostponedArgumentsAnalyzer(
             else FilteredAnnotations(annotations, true) { it != StandardNames.FqNames.extensionFunctionType }
         }
 
+        @Suppress("UNCHECKED_CAST")
         val returnArgumentsAnalysisResult = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
             lambda.atom,
             lambda.isSuspend,
@@ -136,7 +138,7 @@ class PostponedArgumentsAnalyzer(
             parameters,
             expectedTypeForReturnArguments,
             convertedAnnotations ?: Annotations.EMPTY,
-            substitutorAndStubsForLambdaAnalysis.stubsForPostponedVariables.cast(),
+            substitutorAndStubsForLambdaAnalysis.stubsForPostponedVariables as Map<NewTypeVariable, StubTypeForBuilderInference>,
         )
         applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, returnArgumentsAnalysisResult, completionMode, diagnosticHolder, substitute)
         return returnArgumentsAnalysisResult

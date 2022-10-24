@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasspath
 import org.jetbrains.kotlin.incremental.classpathDiff.ImpactedSymbolsComputer.computeImpactedSymbols
-import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
+import org.jetbrains.kotlin.incremental.storage.FileToAbsolutePathConverter
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.loadFromFile
 import org.jetbrains.kotlin.name.ClassId
@@ -203,7 +203,7 @@ object ClasspathChangesComputer {
     ): ProgramSymbolSet {
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
-        val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToCanonicalPathConverter)
+        val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToAbsolutePathConverter)
 
         // Step 1:
         //   - Add previous class snapshots to incrementalJvmCache.

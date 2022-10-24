@@ -28,7 +28,7 @@ fun <T> fooT2() : (t : T) -> T {
 
 fun main(args : Array<String>) {
     args.foo()()
-    args.foo1()(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    args.foo1()<!NO_VALUE_FOR_PARAMETER!>()<!>
     <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo1<!>()()
     <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo1<!>()(<!UNRESOLVED_REFERENCE!>a<!>)
 
@@ -76,8 +76,8 @@ fun main1() {
 }
 
 fun test() {
-    {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
-    (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    {x : Int -> 1}<!NO_VALUE_FOR_PARAMETER!>()<!>;
+    (fun Int.() = 1)<!NO_VALUE_FOR_PARAMETER!>()<!>
     "sd".<!FUNCTION_EXPECTED!>(fun Int.() = 1)<!>()
     val i : Int? = null
     i<!UNSAFE_CALL!>.<!>(fun Int.() = 1)();

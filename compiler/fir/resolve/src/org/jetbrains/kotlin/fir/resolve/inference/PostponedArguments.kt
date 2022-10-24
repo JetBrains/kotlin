@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun Candidate.preprocessLambdaArgument(
     csBuilder: ConstraintSystemBuilder,
@@ -117,7 +116,7 @@ private fun extractLambdaInfo(
     val receiverType = argument.receiverType
     val returnType =
         argument.returnType
-            ?: expectedType?.typeArguments?.singleOrNull()?.safeAs<ConeKotlinTypeProjection>()?.type?.takeIf { isFunctionSupertype }
+            ?: (expectedType?.typeArguments?.singleOrNull() as? ConeKotlinTypeProjection)?.type?.takeIf { isFunctionSupertype }
             ?: typeVariable.defaultType
 
     val nothingType = session.builtinTypes.nothingType.type

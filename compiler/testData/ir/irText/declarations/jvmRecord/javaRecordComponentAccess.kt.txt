@@ -1,0 +1,7 @@
+fun test_1(rec: MyRec) {
+  rec.name() /*~> Unit */
+}
+
+fun test_2(rec: MyRec) {
+  rec.name() /*~> Unit */
+}

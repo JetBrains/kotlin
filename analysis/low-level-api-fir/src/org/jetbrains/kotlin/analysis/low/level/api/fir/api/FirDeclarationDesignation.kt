@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -64,7 +64,7 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
             if ((declaration as? FirCallableDeclaration)?.status?.visibility == Visibilities.Local) return null
             when (declaration) {
                 is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor, is FirEnumEntry -> {
-                    val klass = declaration.containingClass() ?: return emptyList()
+                    val klass = declaration.containingClassLookupTag() ?: return emptyList()
                     if (klass.classId.isLocal) return null
                     klass.toFirRegularClassFromSameSession(declaration.moduleData.session)
                 }

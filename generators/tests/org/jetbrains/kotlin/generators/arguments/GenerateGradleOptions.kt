@@ -136,7 +136,7 @@ private fun generateKotlinCommonToolOptions(
     apiSrcDir: File,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ): GeneratedOptions {
-    val commonInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.CompilerCommonToolOptions")
+    val commonInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinCommonCompilerToolOptions")
     val commonOptions = gradleOptions<CommonToolArguments>()
     val additionalOptions = gradleOptions<AdditionalGradleProperties>()
     withPrinterToFile(fileFromFqName(apiSrcDir, commonInterfaceFqName)) {
@@ -188,7 +188,7 @@ private fun generateKotlinCommonOptions(
     commonToolGeneratedOptions: GeneratedOptions,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ): GeneratedOptions {
-    val commonCompilerInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.CompilerCommonOptions")
+    val commonCompilerInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinCommonCompilerOptions")
     val commonCompilerOptions = gradleOptions<CommonCompilerArguments>()
     withPrinterToFile(fileFromFqName(apiSrcDir, commonCompilerInterfaceFqName)) {
         generateInterface(
@@ -241,7 +241,7 @@ private fun generateKotlinJvmOptions(
     commonCompilerGeneratedOptions: GeneratedOptions,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ): GeneratedOptions {
-    val jvmInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.CompilerJvmOptions")
+    val jvmInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinJvmCompilerOptions")
     val jvmOptions = gradleOptions<K2JVMCompilerArguments>()
     withPrinterToFile(fileFromFqName(apiSrcDir, jvmInterfaceFqName)) {
         generateInterface(
@@ -292,7 +292,7 @@ private fun generateKotlinJsOptions(
     commonCompilerOptions: GeneratedOptions,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ): GeneratedOptions {
-    val jsInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.CompilerJsOptions")
+    val jsInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinJsCompilerOptions")
     val jsOptions = gradleOptions<K2JSCompilerArguments>()
     withPrinterToFile(fileFromFqName(apiSrcDir, jsInterfaceFqName)) {
         generateInterface(
@@ -343,7 +343,7 @@ private fun generateJsDceOptions(
     commonToolOptions: GeneratedOptions,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ): GeneratedOptions {
-    val jsDceInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.CompilerJsDceOptions")
+    val jsDceInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinJsDceCompilerToolOptions")
     val jsDceOptions = gradleOptions<K2JSDceArguments>()
     withPrinterToFile(fileFromFqName(apiSrcDir, jsDceInterfaceFqName)) {
         generateInterface(
@@ -394,7 +394,7 @@ private fun generateMultiplatformCommonOptions(
     commonCompilerOptions: GeneratedOptions,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ): GeneratedOptions {
-    val multiplatformCommonInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.CompilerMultiplatformCommonOptions")
+    val multiplatformCommonInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinMultiplatformCommonCompilerOptions")
     val multiplatformCommonOptions = gradleOptions<K2MetadataCompilerArguments>()
     withPrinterToFile(fileFromFqName(apiSrcDir, multiplatformCommonInterfaceFqName)) {
         generateInterface(
@@ -565,7 +565,7 @@ private fun Printer.generateImpl(
 private fun Printer.addAdditionalJvmArgs(implType: FqName) {
     // Adding required 'noStdlib' and 'noReflect' compiler arguments for JVM compilation
     // Otherwise compilation via build tools will fail
-    if (implType.shortName().toString() == "CompilerJvmOptions$IMPLEMENTATION_SUFFIX") {
+    if (implType.shortName().toString() == "KotlinJvmCompilerOptions$IMPLEMENTATION_SUFFIX") {
         println()
         println("// Arguments with always default values when used from build tools")
         println("args.noStdlib = true")

@@ -180,7 +180,7 @@ internal class KtFirScopeProvider(
         return KtCompositeTypeScope(
             listOfNotNull(
                 convertToKtTypeScope(firTypeScope),
-                FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(firSession, firTypeScope)?.let { convertToKtTypeScope(it) }
+                FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(firSession, type.coneType, firTypeScope)?.let { convertToKtTypeScope(it) }
             ),
             token
         )

@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
+import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -18,22 +20,16 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktMod
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -42,9 +38,9 @@ class KtFe10PsiDefaultPropertyGetterSymbol(
     private val propertyPsi: KtProperty,
     override val analysisContext: Fe10AnalysisContext
 ) : KtPropertyGetterSymbol(), KtFe10Symbol {
-    private val descriptor: PropertyDescriptor? by cached {
+    private val descriptor: PropertyGetterDescriptor? by cached {
         val bindingContext = analysisContext.analyze(propertyPsi, Fe10AnalysisFacade.AnalysisMode.PARTIAL)
-        bindingContext[BindingContext.VARIABLE, psi] as? PropertyDescriptor
+        (bindingContext[BindingContext.VARIABLE, propertyPsi] as? PropertyDescriptor)?.getter
     }
 
     override val origin: KtSymbolOrigin
@@ -75,7 +71,7 @@ class KtFe10PsiDefaultPropertyGetterSymbol(
         get() = withValidityAssertion { null }
 
     override val returnType: KtType
-        get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
+        get() = withValidityAssertion { descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType() }
 
     override val receiverType: KtType?
         get() = withValidityAssertion {
@@ -93,7 +89,9 @@ class KtFe10PsiDefaultPropertyGetterSymbol(
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
     override val annotationsList: KtAnnotationsList
-        get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
+        get() = withValidityAssertion {
+            descriptor?.let { KtFe10AnnotationsList.create(it.annotations, token) } ?: KtEmptyAnnotationsList(token)
+        }
 
     override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol> = withValidityAssertion {
         return KtFe10NeverRestoringSymbolPointer()

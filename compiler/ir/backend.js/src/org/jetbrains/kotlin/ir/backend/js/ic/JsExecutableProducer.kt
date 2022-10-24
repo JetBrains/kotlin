@@ -42,7 +42,7 @@ class JsExecutableProducer(
         val jsMultiModuleCache = JsMultiModuleCache(caches)
         val cachedProgram = jsMultiModuleCache.loadProgramHeadersFromCache()
 
-        val resolver = CrossModuleDependenciesResolver(cachedProgram.map { it.jsIrHeader })
+        val resolver = CrossModuleDependenciesResolver(moduleKind, cachedProgram.map { it.jsIrHeader })
         val crossModuleReferences = resolver.resolveCrossModuleDependencies(relativeRequirePath)
 
         jsMultiModuleCache.loadRequiredJsIrModules(crossModuleReferences)

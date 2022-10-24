@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
@@ -16,12 +15,11 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
-val KtSymbol.firSymbol: FirBasedSymbol<*>
+internal val KtSymbol.firSymbol: FirBasedSymbol<*>
     get() {
         require(this is KtFirSymbol<*>)
         return this.firSymbol
     }
-
 
 fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule {
     val target = when (this) {

@@ -1,0 +1,54 @@
+KtKotlinPropertySymbol:
+  annotationsList: [
+    PropertyAnnotation()
+      psi: KtAnnotationEntry
+    ExplicitPropertyAnnotation()
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /lazyProperty
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: true
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: lazyProperty
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  setter: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getLazyProperty
+  javaSetterName: null
+  setterDeprecationStatus: null

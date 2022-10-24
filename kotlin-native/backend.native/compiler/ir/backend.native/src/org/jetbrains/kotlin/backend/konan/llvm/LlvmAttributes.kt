@@ -7,11 +7,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.isThrowable
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -66,7 +61,6 @@ private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: Context) {
 
     // Matches Clang behaviour.
     val omitLeafFp = when {
-        target == KonanTarget.WATCHOS_ARM64 -> false
         target.architecture == Architecture.ARM64 -> true
         else -> false
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
@@ -12,6 +13,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 
 internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
@@ -50,7 +53,30 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
         get() = invalidAccess()
 
     override fun getAnnotations(): Array<out PsiAnnotation> = annotations.toTypedArray()
+
     override fun findAnnotation(qualifiedName: String) = annotations.firstOrNull { it.qualifiedName == qualifiedName }
+
+    private inline fun <R> getTextVariantFromModifierListOfPropertyAccessorIfNeeded(
+        retriever: (KtModifierList) -> R
+    ): R? {
+        val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
+        return (auxiliaryOrigin as? KtPropertyAccessor)?.modifierList?.let(retriever)
+    }
+
+    override fun getText(): String {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getText)
+            ?: super.getText()
+    }
+
+    override fun getTextOffset(): Int {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextOffset)
+            ?: super.getTextOffset()
+    }
+
+    override fun getTextRange(): TextRange {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextRange)
+            ?: super.getTextRange()
+    }
 
     override fun equals(other: Any?): Boolean = this === other
 

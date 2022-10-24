@@ -12,15 +12,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_OBJC_NAME_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameChecker.getObjCNames
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object FirNativeObjCNameOverridesChecker : FirClassChecker() {
 
@@ -44,11 +42,11 @@ object FirNativeObjCNameOverridesChecker : FirClassChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val overriddenSymbols = firTypeScope.getDirectOverriddenSymbols(memberSymbol)
+        val overriddenSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol)
         if (overriddenSymbols.isEmpty()) return
         val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(firTypeScope).getObjCNames() }
         if (!objCNames.allNamesEquals()) {
-            val containingDeclarations = overriddenSymbols.mapNotNull { it.containingClass()?.toFirRegularClassSymbol(context.session) }
+            val containingDeclarations = overriddenSymbols.mapNotNull { it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) }
             reporter.reportOn(
                 declarationToReport.source,
                 INCOMPATIBLE_OBJC_NAME_OVERRIDE,
@@ -59,24 +57,8 @@ object FirNativeObjCNameOverridesChecker : FirClassChecker() {
         }
     }
 
-    private fun FirTypeScope.getDirectOverriddenSymbols(memberSymbol: FirCallableSymbol<*>): List<FirCallableSymbol<*>> {
-        return when (memberSymbol) {
-            is FirNamedFunctionSymbol -> {
-                processFunctionsByName(memberSymbol.name) {}
-                getDirectOverriddenFunctions(memberSymbol)
-            }
-
-            is FirPropertySymbol -> {
-                processPropertiesByName(memberSymbol.name) {}
-                getDirectOverriddenProperties(memberSymbol)
-            }
-
-            else -> error("unexpected member kind $memberSymbol")
-        }
-    }
-
     private fun FirCallableSymbol<*>.getFirstBaseSymbol(firTypeScope: FirTypeScope): FirCallableSymbol<*> {
-        val overriddenMemberSymbols = firTypeScope.getDirectOverriddenSymbols(this)
+        val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(this)
         return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol(firTypeScope)
     }
 

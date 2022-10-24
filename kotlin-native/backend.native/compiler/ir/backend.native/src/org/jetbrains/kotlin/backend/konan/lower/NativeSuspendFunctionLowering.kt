@@ -59,19 +59,6 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
     }
 
 
-    override fun IrBuilderWithScope.launchSuspendFunctionWithGivenContinuation(
-            symbol: IrSimpleFunctionSymbol, superQualifierSymbol: IrClassSymbol?, dispatchReceiver: IrExpression,
-            arguments: List<IrExpression>, continuation: IrExpression
-    ) = irCall(this@NativeSuspendFunctionsLowering.context.ir.symbols.coroutineLaunchpad).apply {
-        putValueArgument(0, irCall(symbol.owner, superQualifierSymbol = superQualifierSymbol).apply {
-            this.dispatchReceiver = dispatchReceiver
-            arguments.forEachIndexed { index, irExpression ->
-                putValueArgument(index, irExpression)
-            }
-        })
-        putValueArgument(1, continuation)
-    }
-
     override fun buildStateMachine(stateMachineFunction: IrFunction,
                                    transformingFunction: IrFunction,
                                    argumentToPropertiesMap: Map<IrValueParameter, IrField>) {

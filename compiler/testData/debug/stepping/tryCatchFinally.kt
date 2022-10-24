@@ -1,4 +1,4 @@
-
+// DONT_TARGET_EXACT_BACKEND: JS_IR (KT-54283)
 // FILE: test.kt
 
 fun foo() {

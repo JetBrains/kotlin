@@ -45,3 +45,4 @@ fun fail() : String {
 // test.kt:14 box
 // test.kt:9 box
 // test.kt:3 execute
+// test.kt:11 box

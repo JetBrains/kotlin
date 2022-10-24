@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
-import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.copyWithNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescriptor
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
     fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {
@@ -92,7 +90,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         val receiverTypeEnhancement =
             if (extensionReceiverParameter != null)
                 enhanceValueParameter(
-                    parameterDescriptor = annotationOwnerForMember.safeAs<FunctionDescriptor>()
+                    parameterDescriptor = (annotationOwnerForMember as? FunctionDescriptor)
                         ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
                     methodContext = memberContext,
                     predefined = null,
@@ -128,7 +126,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
                 typeContainer = annotationOwnerForMember, isCovariant = true,
                 containerContext = memberContext,
                 containerApplicabilityType =
-                if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
+                if ((this as? PropertyDescriptor)?.isJavaField == true)
                     AnnotationQualifierApplicabilityType.FIELD
                 else
                     AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,

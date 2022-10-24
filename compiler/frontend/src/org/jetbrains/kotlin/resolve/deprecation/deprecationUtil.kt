@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun DescriptorBasedDeprecationInfo.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
 
@@ -25,7 +24,7 @@ fun DescriptorBasedDeprecationInfo.deprecatedByAnnotationReplaceWithExpression()
 
 // The function extracts value of warningSince/errorSince/hiddenSince from DeprecatedSinceKotlin annotation
 fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
-    argumentValue(name)?.safeAs<StringValue>()?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
+    (argumentValue(name) as? StringValue)?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
 
 fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
     val hiddenSince = annotation.getSinceVersion("hiddenSince")

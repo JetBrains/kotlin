@@ -74,7 +74,6 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         println()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun SmartPrinter.printPositioningStrategyAndLanguageFeature(diagnostic: DiagnosticData) {
         val argumentsList = buildList {
             if (diagnostic is DeprecationDiagnosticData) {
@@ -88,7 +87,6 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     }
 
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun DiagnosticData.getAllTypeArguments(): List<KType> = buildList {
         add(psiType)
         parameters.mapTo(this) { it.type }
@@ -131,7 +129,6 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         println()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun collectImports(
         diagnosticList: DiagnosticList,
         packageName: String,

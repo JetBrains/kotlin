@@ -21,5 +21,7 @@ fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:11 box
+// test.kt:3 <init>
 // test.kt:11 box
-// test.kt:6 protoOf.get_prop_wosl9o_k$
+// test.kt:6 <get-prop>
+// test.kt:12 box

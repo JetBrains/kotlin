@@ -661,10 +661,12 @@ static const TypeInfo* createTypeInfo(
     if ((superType->flags_ & TF_IMMUTABLE) != 0) {
       result->flags_ |= TF_IMMUTABLE;
     }
+    result->processObjectInMark = superType->processObjectInMark;
   } else {
     result->instanceSize_ = fieldsInfo->instanceSize_;
     result->objOffsets_ = fieldsInfo->objOffsets_;
     result->objOffsetsCount_ = fieldsInfo->objOffsetsCount_;
+    result->processObjectInMark = fieldsInfo->processObjectInMark;
   }
 
   result->classId_ = superType->classId_;

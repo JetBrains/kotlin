@@ -1,5 +1,5 @@
 // FILE: test.kt
-
+// DONT_TARGET_EXACT_BACKEND: JS_IR (KT-54283)
 fun foo() {
     try {
         mightThrow()

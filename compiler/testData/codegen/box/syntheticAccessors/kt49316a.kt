@@ -11,6 +11,7 @@ fun test(foo: Foo): String {
 }
 
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 // - there should be no synthetic accessor generated in 'Foo'
 class Foo(val s: String)
 

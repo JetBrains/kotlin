@@ -161,6 +161,22 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/errors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Errors {
+        @Test
+        public void testAllFilesPresentInErrors() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/errors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("anonympuseObjectInInvalidPosition.kt")
+        public void testAnonympuseObjectInInvalidPosition() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/errors/anonympuseObjectInInvalidPosition.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/functions")
     @TestDataPath("$PROJECT_ROOT")
     public class Functions {

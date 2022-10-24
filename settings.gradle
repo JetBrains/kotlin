@@ -26,9 +26,8 @@ buildscript {
 }
 
 plugins {
-    id "com.gradle.enterprise" version "3.9"
-    id "com.gradle.enterprise.test-distribution" version "2.2.3"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.6.5" apply false
+    id "com.gradle.enterprise" version "3.11.2"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.8.1" apply false
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
@@ -202,7 +201,8 @@ include ":kotlin-assignment-compiler-plugin",
         ":kotlin-assignment-compiler-plugin.common",
         ":kotlin-assignment-compiler-plugin.k1",
         ":kotlin-assignment-compiler-plugin.k2",
-        ":kotlin-assignment-compiler-plugin.cli"
+        ":kotlin-assignment-compiler-plugin.cli",
+        ":kotlin-assignment-compiler-plugin.embeddable"
 
 include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-script-runtime",
@@ -740,6 +740,7 @@ project(':kotlin-assignment-compiler-plugin.common').projectDir = "$rootDir/plug
 project(':kotlin-assignment-compiler-plugin.k1').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.k1" as File
 project(':kotlin-assignment-compiler-plugin.k2').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.k2" as File
 project(':kotlin-assignment-compiler-plugin.cli').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.cli" as File
+project(':kotlin-assignment-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.embeddable" as File
 
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File
