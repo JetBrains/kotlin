@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 abstract class KotlinMetadataTarget @Inject constructor(
     project: Project
-) : KotlinOnlyTarget</* TODO SEB AbstractKotlinCompilation<*> */ KotlinCompilation<*>>(project, KotlinPlatformType.common) {
+) : KotlinOnlyTarget<KotlinCompilation<*>>(project, KotlinPlatformType.common) {
 
     override val artifactsTaskName: String
         // The IDE import looks at this task name to determine the artifact and register the path to the artifact;
