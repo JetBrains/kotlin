@@ -1,4 +1,22 @@
 # Check-out https://www.jetbrains.com/help/space/code-owners.html#codeowners-file-syntax
+# This file is checked by org.jetbrains.kotlin.code.SpaceCodeOwnersTest
+# Directive OWNER_LIST specifies possible values for owner field
+# Directive UNKNOWN specifies that path is unclaimed
+# Ownership must be exhaustive modulo UNKNOWN
+
+# OWNER_LIST: Kotlin
+# OWNER_LIST: "Kotlin Libraries"
+# OWNER_LIST: "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
+# OWNER_LIST: "Kotlin Compiler Core"
+# OWNER_LIST: "Kotlin Build Infrastructure" "Kotlin Build Tools"
+# OWNER_LIST: "Kotlin IDE"
+# OWNER_LIST: "Kotlin Release"
+# OWNER_LIST: "Kotlin Multiplatform"
+# OWNER_LIST: Mikhail.Glukhikh
+# OWNER_LIST: Yan.Zhulanow
+# OWNER_LIST: Alexander.Udalov
+# Kotlin Libraries
+# OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev
 
 # Fallback rule, must always be top
 * Kotlin
