@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinNativeCompileTask
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.getOrPut
+import java.util.concurrent.Callable
 
 internal interface KotlinCompilationSourceSetInclusion {
     fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet)
@@ -102,13 +103,17 @@ internal class DefaultKotlinCompilationSourceSetInclusion(
     }
 
     object NativeAddSourcesToCompileTask : AddSourcesToCompileTask {
-        override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) =
-            addSourcesToKotlinNativeCompileTask(
-                project = compilation.project,
-                taskName = compilation.compileKotlinTaskName,
-                sourceFiles = { sourceSet.kotlin },
-                addAsCommonSources = addAsCommonSources
-            )
+        override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
+            val sourceFiles = { sourceSet.kotlin }
+            compilation.project.tasks.withType(KotlinNativeCompile::class.java)
+                .matching { it.name == compilation.compileKotlinTaskName }
+                .configureEach { task ->
+                    task.setSource(sourceFiles)
+                    task.commonSources.from(
+                        compilation.project.files(Callable { if (addAsCommonSources.value) sourceFiles() else emptyList() })
+                    )
+                }
+        }
     }
 
     object DefaultAddSourcesToCompileTask : AddSourcesToCompileTask {
@@ -122,6 +127,4 @@ internal class DefaultKotlinCompilationSourceSetInclusion(
             sources = { sourceSet.kotlin }
         )
     }
-
-
 }

@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
-import java.util.concurrent.Callable
 import javax.inject.Inject
 
 abstract class AbstractKotlinNativeCompilation internal constructor(
@@ -79,19 +77,5 @@ open class KotlinSharedNativeCompilation @Inject internal constructor(
     override val target: KotlinMetadataTarget = compilation.target as KotlinMetadataTarget
 }
 
-// TODO SEB: Find home
 internal val Project.nativeUseEmbeddableCompilerJar: Boolean
     get() = PropertiesProvider(this).nativeUseEmbeddableCompilerJar
-
-//TODO SEB: Find home for fuctnion
-internal fun addSourcesToKotlinNativeCompileTask(
-    project: Project,
-    taskName: String,
-    sourceFiles: () -> Iterable<File>,
-    addAsCommonSources: Lazy<Boolean>
-) {
-    project.tasks.withType(KotlinNativeCompile::class.java).matching { it.name == taskName }.configureEach { task ->
-        task.setSource(sourceFiles)
-        task.commonSources.from(project.files(Callable { if (addAsCommonSources.value) sourceFiles() else emptyList() }))
-    }
-}
