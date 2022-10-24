@@ -25,6 +25,10 @@ val bar = 4
 class Baz
 
 @JsExport
+@JsName("default")
+class DefDef
+
+@JsExport
 class Test {
     fun instanceof() {}
 
