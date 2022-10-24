@@ -2,8 +2,8 @@
 @kotlin.Metadata
 public final class MFVC1 {
     // source: 'mfvcEqualsConsistency.kt'
-    private final field field-0: int
-    private final field field-1: int
+    private final field x: int
+    private final field y: int
     private synthetic method <init>(p0: int, p1: int): void
     public synthetic final static method box-impl(p0: int, p1: int): MFVC1
     public final static method constructor-impl(p0: int, p1: int): void
@@ -16,16 +16,16 @@ public final class MFVC1 {
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): int
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-x(): int
+    public synthetic final method unbox-impl-y(): int
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class MFVC2 {
     // source: 'mfvcEqualsConsistency.kt'
-    private final field field-0: int
-    private final field field-1: int
+    private final field x: int
+    private final field y: int
     private synthetic method <init>(p0: int, p1: int): void
     public synthetic final static method box-impl(p0: int, p1: int): MFVC2
     public final static method constructor-impl(p0: int, p1: int): void
@@ -38,8 +38,8 @@ public final class MFVC2 {
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): int
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-x(): int
+    public synthetic final method unbox-impl-y(): int
 }
 
 @kotlin.Metadata

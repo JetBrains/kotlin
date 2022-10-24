@@ -72,13 +72,13 @@ public final class Extensions {
 @kotlin.Metadata
 public final class GreaterMfvc {
     // source: 'classFlattening.kt'
-    private final field field-0-0: int
-    private final field field-0-1: int
-    private final @org.jetbrains.annotations.NotNull field field-0-2: java.lang.String
-    private final field field-1: int
-    private final field field-2-0: int
-    private final field field-2-1: int
-    private final @org.jetbrains.annotations.NotNull field field-2-2: java.lang.String
+    private final field x-x: int
+    private final field x-y: int
+    private final @org.jetbrains.annotations.NotNull field x-z: java.lang.String
+    private final field y: int
+    private final field z-x: int
+    private final field z-y: int
+    private final @org.jetbrains.annotations.NotNull field z-z: java.lang.String
     private synthetic method <init>(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: int, p6: java.lang.String): void
     public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: int, p6: java.lang.String): GreaterMfvc
     public final static method constructor-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String): void
@@ -92,15 +92,15 @@ public final class GreaterMfvc {
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: int, p6: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: int, p6: java.lang.String): java.lang.String
-    public synthetic final method unbox-impl-0(): SimpleMfvc
-    public synthetic final method unbox-impl-0-0(): int
-    public synthetic final method unbox-impl-0-1(): int
-    public synthetic final method unbox-impl-0-2(): java.lang.String
-    public synthetic final method unbox-impl-1(): int
-    public synthetic final method unbox-impl-2(): SimpleMfvc
-    public synthetic final method unbox-impl-2-0(): int
-    public synthetic final method unbox-impl-2-1(): int
-    public synthetic final method unbox-impl-2-2(): java.lang.String
+    public synthetic final method unbox-impl-x(): SimpleMfvc
+    public synthetic final method unbox-impl-x-x(): int
+    public synthetic final method unbox-impl-x-y(): int
+    public synthetic final method unbox-impl-x-z(): java.lang.String
+    public synthetic final method unbox-impl-y(): int
+    public synthetic final method unbox-impl-z(): SimpleMfvc
+    public synthetic final method unbox-impl-z-x(): int
+    public synthetic final method unbox-impl-z-y(): int
+    public synthetic final method unbox-impl-z-z(): java.lang.String
 }
 
 @kotlin.jvm.JvmInline
@@ -149,9 +149,9 @@ public final class SimpleMfvc$Companion {
 public final class SimpleMfvc {
     // source: 'classFlattening.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: SimpleMfvc$Companion
-    private final field field-0: int
-    private final field field-1: int
-    private final @org.jetbrains.annotations.NotNull field field-2: java.lang.String
+    private final field x: int
+    private final field y: int
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     static method <clinit>(): void
     private synthetic method <init>(p0: int, p1: int, p2: java.lang.String): void
     public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
@@ -174,8 +174,8 @@ public final class SimpleMfvc {
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
-    public synthetic final method unbox-impl-0(): int
-    public synthetic final method unbox-impl-1(): int
-    public synthetic final method unbox-impl-2(): java.lang.String
+    public synthetic final method unbox-impl-x(): int
+    public synthetic final method unbox-impl-y(): int
+    public synthetic final method unbox-impl-z(): java.lang.String
     public final inner class SimpleMfvc$Companion
 }

@@ -62,7 +62,7 @@ fun equalsChecks12(left: DPoint, right: DPoint) {
 // 1 BIPUSH 105\n {4}DLOAD 0\n {4}DLOAD 2\n {4}ACONST_NULL\n {4}INVOKESTATIC .*equals-impl .*\n {4}INVOKESTATIC .*require
 // 1 BIPUSH 106\n {4}ACONST_NULL\n {4}DLOAD 4\n {4}DLOAD 6\n {4}.*box.*\n {4}INVOKESTATIC .*Intrinsics.areEqual.*\n {4}INVOKESTATIC .*require
 // 1 BIPUSH 107\n {4}DLOAD 0\n {4}DLOAD 2\n {4}ACONST_NULL\n {4}INVOKESTATIC .*equals-impl .*\n {4}INVOKESTATIC .*require
-// 1 BIPUSH 108\n {4}ACONST_NULL\n {4}.*toDPointOrNull.*\n {4}ASTORE.*\n {4}ALOAD.*\n {4}DUP\n {4}IFNONNULL.*(\n {3}([^b\n]|b[^o\n]|bo[^x\n]|box-impl-\d)+)*\n {4}INVOKESTATIC .*require
+// 1 BIPUSH 108\n {4}ACONST_NULL\n {4}.*toDPointOrNull.*\n {4}ASTORE.*\n {4}ALOAD.*\n {4}DUP\n {4}IFNONNULL.*(\n {3}([^b\n]|b[^o\n]|bo[^x\n]|box-impl-\w+)+)*\n {4}INVOKESTATIC .*require
 // 1 BIPUSH 109\n {4}DLOAD 0\n {4}DLOAD 2\n {4}ACONST_NULL\n {4}.*toDPointOrNull.*\n {4}INVOKESTATIC .*equals-impl .*\n {4}INVOKESTATIC .*require
-// 1 BIPUSH 110\n {4}DLOAD 0\n {4}DLOAD 2\n {4}.*toDPointOrNull.*\n {4}ASTORE.*\n {4}ALOAD.*\n {4}DUP\n {4}IFNONNULL.*(\n {3}([^b\n]|b[^o\n]|bo[^x\n]|box-impl-\d)+)*\n {4}INVOKESTATIC .*require
+// 1 BIPUSH 110\n {4}DLOAD 0\n {4}DLOAD 2\n {4}.*toDPointOrNull.*\n {4}ASTORE.*\n {4}ALOAD.*\n {4}DUP\n {4}IFNONNULL.*(\n {3}([^b\n]|b[^o\n]|bo[^x\n]|box-impl-\w+)+)*\n {4}INVOKESTATIC .*require
 // 1 BIPUSH 111\n {4}DLOAD 0\n {4}DLOAD 2\n {4}DLOAD 4\n {4}DLOAD 6\n {4}.*toDPointOrNull.*\n {4}INVOKESTATIC .*equals-impl .*\n {4}INVOKESTATIC .*require

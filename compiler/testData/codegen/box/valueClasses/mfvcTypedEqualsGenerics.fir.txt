@@ -12,8 +12,8 @@ public final class Generic {
 @kotlin.Metadata
 public final class MFVC1 {
     // source: 'mfvcTypedEqualsGenerics.kt'
-    private final @org.jetbrains.annotations.NotNull field field-0: java.lang.Number
-    private final field field-1: int
+    private final field other: int
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.Number
     private synthetic method <init>(p0: java.lang.Number, p1: int): void
     public synthetic final static method box-impl(p0: java.lang.Number, p1: int): MFVC1
     public final static method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Number, p1: int): void
@@ -27,16 +27,16 @@ public final class MFVC1 {
     public static method hashCode-impl(p0: java.lang.Number, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Number, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): java.lang.Number
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-other(): int
+    public synthetic final method unbox-impl-x(): java.lang.Number
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class MFVC2 {
     // source: 'mfvcTypedEqualsGenerics.kt'
-    private final @org.jetbrains.annotations.NotNull field field-0: Generic
-    private final field field-1: int
+    private final field other: int
+    private final @org.jetbrains.annotations.NotNull field value: Generic
     private synthetic method <init>(p0: Generic, p1: int): void
     public synthetic final static method box-impl(p0: Generic, p1: int): MFVC2
     public final static method constructor-impl(@org.jetbrains.annotations.NotNull p0: Generic, p1: int): void
@@ -50,16 +50,16 @@ public final class MFVC2 {
     public static method hashCode-impl(p0: Generic, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: Generic, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): Generic
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-other(): int
+    public synthetic final method unbox-impl-value(): Generic
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class MFVC3 {
     // source: 'mfvcTypedEqualsGenerics.kt'
-    private final field field-0: java.lang.Object
-    private final field field-1: int
+    private final field other: int
+    private final field value: java.lang.Object
     private synthetic method <init>(p0: java.lang.Object, p1: int): void
     public synthetic final static method box-impl(p0: java.lang.Object, p1: int): MFVC3
     public final static method constructor-impl(p0: java.lang.Object, p1: int): void
@@ -73,16 +73,16 @@ public final class MFVC3 {
     public static method hashCode-impl(p0: java.lang.Object, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): java.lang.Object
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-other(): int
+    public synthetic final method unbox-impl-value(): java.lang.Object
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class MFVC4 {
     // source: 'mfvcTypedEqualsGenerics.kt'
-    private final field field-0: java.lang.Object
-    private final field field-1: int
+    private final field other: int
+    private final field value: java.lang.Object
     private synthetic method <init>(p0: java.lang.Object, p1: int): void
     public synthetic final static method box-impl(p0: java.lang.Object, p1: int): MFVC4
     public final static method constructor-impl(p0: java.lang.Object, p1: int): void
@@ -96,8 +96,8 @@ public final class MFVC4 {
     public static method hashCode-impl(p0: java.lang.Object, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): java.lang.Object
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-other(): int
+    public synthetic final method unbox-impl-value(): java.lang.Object
 }
 
 @kotlin.Metadata

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.IrPropertyOrIrField.Field
 import org.jetbrains.kotlin.backend.jvm.IrPropertyOrIrField.Property
+import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
@@ -39,8 +40,8 @@ fun createLeafMfvcNode(
     parent: IrDeclarationContainer,
     context: JvmBackendContext,
     type: IrType,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     fieldAnnotations: List<IrConstructorCall>,
     static: Boolean,
     overriddenNode: LeafMfvcNode?,
@@ -51,8 +52,8 @@ fun createLeafMfvcNode(
 ): LeafMfvcNode {
     require(!type.needsMfvcFlattening()) { "${type.render()} requires flattening" }
 
-    val fullMethodName = NameableMfvcNodeImpl.makeFullMethodName(rootPropertyName, nameParts)
-    val fullFieldName = NameableMfvcNodeImpl.makeFullFieldName(rootPropertyName, nameParts)
+    val fullMethodName = NameableMfvcNodeImpl.makeFullMethodName(methodFullNameMode, nameParts)
+    val fullFieldName = NameableMfvcNodeImpl.makeFullFieldName(nameParts)
 
     val field = oldPropertyBackingField?.let { oldBackingField ->
         context.irFactory.buildField {
@@ -79,7 +80,7 @@ fun createLeafMfvcNode(
         modality,
     ) { receiver -> irGetField(if (field!!.isStatic) null else irGet(receiver!!), field) }
 
-    return LeafMfvcNode(type, rootPropertyName, nameParts, field, unboxMethod, defaultMethodsImplementationSourceNode.isPure())
+    return LeafMfvcNode(type, methodFullNameMode, nameParts, field, unboxMethod, defaultMethodsImplementationSourceNode.isPure())
 }
 
 private fun Pair<IrSimpleFunction?, NameableMfvcNode>?.isPure(): Boolean {
@@ -133,8 +134,8 @@ fun createNameableMfvcNodes(
     context: JvmBackendContext,
     type: IrSimpleType,
     typeArguments: TypeArguments,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     fieldAnnotations: List<IrConstructorCall>,
     static: Boolean,
     overriddenNode: NameableMfvcNode?,
@@ -147,7 +148,7 @@ fun createNameableMfvcNodes(
     context,
     type,
     typeArguments,
-    rootPropertyName,
+    methodFullNameMode,
     nameParts,
     fieldAnnotations,
     static,
@@ -160,7 +161,7 @@ fun createNameableMfvcNodes(
     parent,
     context,
     type,
-    rootPropertyName,
+    methodFullNameMode,
     nameParts,
     fieldAnnotations,
     static,
@@ -176,8 +177,8 @@ fun createIntermediateMfvcNode(
     context: JvmBackendContext,
     type: IrSimpleType,
     typeArguments: TypeArguments,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     fieldAnnotations: List<IrConstructorCall>,
     static: Boolean,
     overriddenNode: IntermediateMfvcNode?,
@@ -198,7 +199,7 @@ fun createIntermediateMfvcNode(
     val shadowBackingFieldProperty = if (oldField == null) oldGetter?.getGetterField()?.correspondingPropertySymbol?.owner else null
     val useOldGetter = oldGetter != null && (oldField == null || !oldGetter.isDefaultGetter(oldField))
 
-    val subnodes = representation.underlyingPropertyNamesToTypes.mapIndexed { index, (name, type) ->
+    val subnodes = representation.underlyingPropertyNamesToTypes.map { (name, type) ->
         val newType = type.substitute(typeArguments) as IrSimpleType
         val newTypeArguments = typeArguments.toMutableMap().apply { putAll(makeTypeArgumentsFromType(newType)) }
         val newDefaultMethodsImplementationSourceNode = when {
@@ -217,8 +218,8 @@ fun createIntermediateMfvcNode(
             context,
             newType,
             newTypeArguments,
-            rootPropertyName,
-            nameParts + IndexedNamePart(index, name),
+            methodFullNameMode,
+            nameParts + name,
             fieldAnnotations,
             static,
             overriddenNode?.let { it[name]!! },
@@ -229,7 +230,7 @@ fun createIntermediateMfvcNode(
         )
     }
 
-    val fullMethodName = NameableMfvcNodeImpl.makeFullMethodName(rootPropertyName, nameParts)
+    val fullMethodName = NameableMfvcNodeImpl.makeFullMethodName(methodFullNameMode, nameParts)
 
     val unboxMethod = if (useOldGetter) oldGetter!! else makeUnboxMethod(
         context, fullMethodName, type, parent, overriddenNode, static, defaultMethodsImplementationSourceNode, oldGetter, modality
@@ -241,7 +242,7 @@ fun createIntermediateMfvcNode(
 
     val hasPureUnboxMethod = defaultMethodsImplementationSourceNode.isPure() && subnodes.all { it.hasPureUnboxMethod }
     return IntermediateMfvcNode(
-        type, rootPropertyName, nameParts, subnodes, unboxMethod, hasPureUnboxMethod, rootNode
+        type, methodFullNameMode, nameParts, subnodes, unboxMethod, hasPureUnboxMethod, rootNode
     )
 }
 
@@ -425,7 +426,7 @@ private fun makeRootMfvcNodeSubnodes(
     properties: Map<Pair<Boolean, Name>, IrProperty>,
     context: JvmBackendContext,
     mfvc: IrClass
-) = representation.underlyingPropertyNamesToTypes.mapIndexed { index, (name, type) ->
+) = representation.underlyingPropertyNamesToTypes.map { (name, type) ->
     val typeArguments = makeTypeArgumentsFromType(type)
     val oldProperty = properties[false to name]!!
     val oldBackingField = oldProperty.backingFieldIfNotDelegate
@@ -437,8 +438,8 @@ private fun makeRootMfvcNodeSubnodes(
         context,
         type,
         typeArguments,
-        null,
-        listOf(IndexedNamePart(index, name)),
+        MethodFullNameMode.UnboxFunction,
+        listOf(name),
         oldBackingField?.annotations ?: listOf(),
         static,
         overriddenNode,
@@ -478,7 +479,7 @@ fun createIntermediateNodeForMfvcPropertyOfRegularClass(
     val overriddenNode = oldGetter?.let { getOverriddenNode(context.multiFieldValueClassReplacements, it) as IntermediateMfvcNode? }
     val modality = if (oldGetter == null || oldGetter.modality == Modality.FINAL) Modality.FINAL else oldGetter.modality
     return createIntermediateMfvcNode(
-        parent, context, type, makeTypeArgumentsFromType(type), oldProperty.name.asString(), listOf(),
+        parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, listOf(oldProperty.name),
         fieldAnnotations, static, overriddenNode, null, oldGetter, modality, oldField
     ).also {
         updateAnnotationsAndPropertyFromOldProperty(oldProperty)
@@ -493,7 +494,7 @@ fun createIntermediateNodeForStandaloneMfvcField(
     val type = oldField.type
     require(type is IrSimpleType && type.needsMfvcFlattening()) { "Expected MFVC but got ${type.render()}" }
     return createIntermediateMfvcNode(
-        parent, context, type, makeTypeArgumentsFromType(type), oldField.name.asString(), listOf(),
+        parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, listOf(oldField.name),
         oldField.annotations, oldField.isStatic, null, null, null, Modality.FINAL, oldField
     )
 }

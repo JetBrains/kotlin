@@ -2,16 +2,16 @@
 @kotlin.Metadata
 public final class A {
     // source: 'equality.kt'
-    private final field field-0: int
-    private final field field-1: int
-    private final field field-2-0: int
-    private final field field-2-1: int
-    private final field field-3: int
-    private final field field-4: int
-    private final @org.jetbrains.annotations.NotNull field field-5: java.lang.String
-    private final field field-6: int
-    private final field field-7: int
-    private final @org.jetbrains.annotations.NotNull field field-8: java.lang.String
+    private final field f1: int
+    private final field f2: int
+    private final field f3-x: int
+    private final field f3-y: int
+    private final field f4: int
+    private final field f5: int
+    private final @org.jetbrains.annotations.NotNull field f6: java.lang.String
+    private final field f7: int
+    private final field f8: int
+    private final @org.jetbrains.annotations.NotNull field f9: java.lang.String
     private synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): void
     public synthetic final static method box-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): A
     public final static method constructor-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): void
@@ -31,43 +31,43 @@ public final class A {
     public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): java.lang.String
-    public synthetic final method unbox-impl-0(): int
-    public synthetic final method unbox-impl-1(): int
-    public synthetic final method unbox-impl-2(): F3
-    public synthetic final method unbox-impl-2-0(): int
-    public synthetic final method unbox-impl-2-1(): int
-    public synthetic final method unbox-impl-3(): int
-    public synthetic final method unbox-impl-4(): int
-    public synthetic final method unbox-impl-5(): java.lang.String
-    public synthetic final method unbox-impl-6(): int
-    public synthetic final method unbox-impl-7(): int
-    public synthetic final method unbox-impl-8(): java.lang.String
+    public synthetic final method unbox-impl-f1(): int
+    public synthetic final method unbox-impl-f2(): int
+    public synthetic final method unbox-impl-f3(): F3
+    public synthetic final method unbox-impl-f3-x(): int
+    public synthetic final method unbox-impl-f3-y(): int
+    public synthetic final method unbox-impl-f4(): int
+    public synthetic final method unbox-impl-f5(): int
+    public synthetic final method unbox-impl-f6(): java.lang.String
+    public synthetic final method unbox-impl-f7(): int
+    public synthetic final method unbox-impl-f8(): int
+    public synthetic final method unbox-impl-f9(): java.lang.String
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class B {
     // source: 'equality.kt'
-    private final field field-0-0: int
-    private final field field-0-1: int
-    private final field field-0-2-0: int
-    private final field field-0-2-1: int
-    private final field field-0-3: int
-    private final field field-0-4: int
-    private final @org.jetbrains.annotations.NotNull field field-0-5: java.lang.String
-    private final field field-0-6: int
-    private final field field-0-7: int
-    private final @org.jetbrains.annotations.NotNull field field-0-8: java.lang.String
-    private final field field-1-0: int
-    private final field field-1-1: int
-    private final field field-1-2-0: int
-    private final field field-1-2-1: int
-    private final field field-1-3: int
-    private final field field-1-4: int
-    private final @org.jetbrains.annotations.NotNull field field-1-5: java.lang.String
-    private final field field-1-6: int
-    private final field field-1-7: int
-    private final @org.jetbrains.annotations.NotNull field field-1-8: java.lang.String
+    private final field a1-f1: int
+    private final field a1-f2: int
+    private final field a1-f3-x: int
+    private final field a1-f3-y: int
+    private final field a1-f4: int
+    private final field a1-f5: int
+    private final @org.jetbrains.annotations.NotNull field a1-f6: java.lang.String
+    private final field a1-f7: int
+    private final field a1-f8: int
+    private final @org.jetbrains.annotations.NotNull field a1-f9: java.lang.String
+    private final field a2-f1: int
+    private final field a2-f2: int
+    private final field a2-f3-x: int
+    private final field a2-f3-y: int
+    private final field a2-f4: int
+    private final field a2-f5: int
+    private final @org.jetbrains.annotations.NotNull field a2-f6: java.lang.String
+    private final field a2-f7: int
+    private final field a2-f8: int
+    private final @org.jetbrains.annotations.NotNull field a2-f9: java.lang.String
     private synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): void
     public synthetic final static method box-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): B
     public final static method constructor-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, @org.jetbrains.annotations.NotNull p16: java.lang.String, p17: int, p18: int, @org.jetbrains.annotations.NotNull p19: java.lang.String): void
@@ -80,30 +80,30 @@ public final class B {
     public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): int
     public final @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method toString-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, @org.jetbrains.annotations.NotNull p16: java.lang.String, p17: int, p18: int, @org.jetbrains.annotations.NotNull p19: java.lang.String): java.lang.String
-    public synthetic final method unbox-impl-0(): A
-    public synthetic final method unbox-impl-0-0(): int
-    public synthetic final method unbox-impl-0-1(): int
-    public synthetic final method unbox-impl-0-2(): F3
-    public synthetic final method unbox-impl-0-2-0(): int
-    public synthetic final method unbox-impl-0-2-1(): int
-    public synthetic final method unbox-impl-0-3(): int
-    public synthetic final method unbox-impl-0-4(): int
-    public synthetic final method unbox-impl-0-5(): java.lang.String
-    public synthetic final method unbox-impl-0-6(): int
-    public synthetic final method unbox-impl-0-7(): int
-    public synthetic final method unbox-impl-0-8(): java.lang.String
-    public synthetic final method unbox-impl-1(): A
-    public synthetic final method unbox-impl-1-0(): int
-    public synthetic final method unbox-impl-1-1(): int
-    public synthetic final method unbox-impl-1-2(): F3
-    public synthetic final method unbox-impl-1-2-0(): int
-    public synthetic final method unbox-impl-1-2-1(): int
-    public synthetic final method unbox-impl-1-3(): int
-    public synthetic final method unbox-impl-1-4(): int
-    public synthetic final method unbox-impl-1-5(): java.lang.String
-    public synthetic final method unbox-impl-1-6(): int
-    public synthetic final method unbox-impl-1-7(): int
-    public synthetic final method unbox-impl-1-8(): java.lang.String
+    public synthetic final method unbox-impl-a1(): A
+    public synthetic final method unbox-impl-a1-f1(): int
+    public synthetic final method unbox-impl-a1-f2(): int
+    public synthetic final method unbox-impl-a1-f3(): F3
+    public synthetic final method unbox-impl-a1-f3-x(): int
+    public synthetic final method unbox-impl-a1-f3-y(): int
+    public synthetic final method unbox-impl-a1-f4(): int
+    public synthetic final method unbox-impl-a1-f5(): int
+    public synthetic final method unbox-impl-a1-f6(): java.lang.String
+    public synthetic final method unbox-impl-a1-f7(): int
+    public synthetic final method unbox-impl-a1-f8(): int
+    public synthetic final method unbox-impl-a1-f9(): java.lang.String
+    public synthetic final method unbox-impl-a2(): A
+    public synthetic final method unbox-impl-a2-f1(): int
+    public synthetic final method unbox-impl-a2-f2(): int
+    public synthetic final method unbox-impl-a2-f3(): F3
+    public synthetic final method unbox-impl-a2-f3-x(): int
+    public synthetic final method unbox-impl-a2-f3-y(): int
+    public synthetic final method unbox-impl-a2-f4(): int
+    public synthetic final method unbox-impl-a2-f5(): int
+    public synthetic final method unbox-impl-a2-f6(): java.lang.String
+    public synthetic final method unbox-impl-a2-f7(): int
+    public synthetic final method unbox-impl-a2-f8(): int
+    public synthetic final method unbox-impl-a2-f9(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -154,8 +154,8 @@ public final class F2 {
 @kotlin.Metadata
 public final class F3 {
     // source: 'equality.kt'
-    private final field field-0: int
-    private final field field-1: int
+    private final field x: int
+    private final field y: int
     private synthetic method <init>(p0: int, p1: int): void
     public synthetic final static method box-impl(p0: int, p1: int): F3
     public final static method constructor-impl(p0: int, p1: int): void
@@ -168,8 +168,8 @@ public final class F3 {
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): int
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-x(): int
+    public synthetic final method unbox-impl-y(): int
 }
 
 @kotlin.jvm.JvmInline

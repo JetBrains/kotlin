@@ -16,8 +16,8 @@ public interface AbstractSegment {
 @kotlin.Metadata
 public final class DPoint {
     // source: 'overrides.kt'
-    private final field field-0: double
-    private final field field-1: double
+    private final field x: double
+    private final field y: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): DPoint
     public final static method constructor-impl(p0: double, p1: double): void
@@ -32,16 +32,16 @@ public final class DPoint {
     public static method hashCode-impl(p0: double, p1: double): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl-0(): double
-    public synthetic final method unbox-impl-1(): double
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): double
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class DPointWithInterface {
     // source: 'overrides.kt'
-    private final field field-0: double
-    private final field field-1: double
+    private final field x: double
+    private final field y: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): DPointWithInterface
     public final static method constructor-impl(p0: double, p1: double): void
@@ -68,18 +68,18 @@ public final class DPointWithInterface {
     public static method setSomethingRegular-impl(p0: double, p1: double, p2: int): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl-0(): double
-    public synthetic final method unbox-impl-1(): double
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): double
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class DSegment {
     // source: 'overrides.kt'
-    private final field field-0-0: double
-    private final field field-0-1: double
-    private final field field-1-0: double
-    private final field field-1-1: double
+    private final field p1-x: double
+    private final field p1-y: double
+    private final field p2-x: double
+    private final field p2-y: double
     private synthetic method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic final static method box-impl(p0: double, p1: double, p2: double, p3: double): DSegment
     public final static method constructor-impl(p0: double, p1: double, p2: double, p3: double): void
@@ -94,12 +94,12 @@ public final class DSegment {
     public static method hashCode-impl(p0: double, p1: double, p2: double, p3: double): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double, p2: double, p3: double): java.lang.String
-    public synthetic final method unbox-impl-0(): DPoint
-    public synthetic final method unbox-impl-0-0(): double
-    public synthetic final method unbox-impl-0-1(): double
-    public synthetic final method unbox-impl-1(): DPoint
-    public synthetic final method unbox-impl-1-0(): double
-    public synthetic final method unbox-impl-1-1(): double
+    public synthetic final method unbox-impl-p1(): DPoint
+    public synthetic final method unbox-impl-p1-x(): double
+    public synthetic final method unbox-impl-p1-y(): double
+    public synthetic final method unbox-impl-p2(): DPoint
+    public synthetic final method unbox-impl-p2-x(): double
+    public synthetic final method unbox-impl-p2-y(): double
 }
 
 @kotlin.Metadata
@@ -135,8 +135,8 @@ public final class GenericFakeOverride {
 @kotlin.Metadata
 public final class GenericFakeOverrideMFVC {
     // source: 'overrides.kt'
-    private final field field-0: double
-    private final field field-1: double
+    private final field field1: double
+    private final field field2: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): GenericFakeOverrideMFVC
     public final static method constructor-impl(p0: double, p1: double): void
@@ -161,8 +161,8 @@ public final class GenericFakeOverrideMFVC {
     public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl-0(): double
-    public synthetic final method unbox-impl-1(): double
+    public synthetic final method unbox-impl-field1(): double
+    public synthetic final method unbox-impl-field2(): double
     public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -170,8 +170,8 @@ public final class GenericFakeOverrideMFVC {
 @kotlin.Metadata
 public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     // source: 'overrides.kt'
-    private final field field-0: double
-    private final field field-1: double
+    private final field field1: double
+    private final field field2: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): GenericFakeOverrideMFVCWithMFVCUpperBound
     public final static method constructor-impl(p0: double, p1: double): void
@@ -192,8 +192,8 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl-0(): double
-    public synthetic final method unbox-impl-1(): double
+    public synthetic final method unbox-impl-field1(): double
+    public synthetic final method unbox-impl-field2(): double
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -241,11 +241,11 @@ public interface GenericMFVCHolderWithImpls {
 public interface GenericMFVCHolderWithMFVCUpperBound {
     // source: 'overrides.kt'
     public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
-    public synthetic abstract method getP-0(): double
-    public synthetic abstract method getP-1(): double
+    public synthetic abstract method getP-x(): double
+    public synthetic abstract method getP-y(): double
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public synthetic abstract method getP1-0(): double
-    public synthetic abstract method getP1-1(): double
+    public synthetic abstract method getP1-x(): double
+    public synthetic abstract method getP1-y(): double
     public abstract method setP-sUp7gFk(p0: double, p1: double): void
     public abstract method setP1-sUp7gFk(p0: double, p1: double): void
 }
@@ -254,11 +254,11 @@ public interface GenericMFVCHolderWithMFVCUpperBound {
 public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
     // source: 'overrides.kt'
     public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): DPoint
-    public synthetic static method getP-0(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
-    public synthetic static method getP-1(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public synthetic static method getP-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public synthetic static method getP-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
     public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): DPoint
-    public synthetic static method getP1-0(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
-    public synthetic static method getP1-1(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public synthetic static method getP1-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public synthetic static method getP1-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
     public static method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
     public static method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
@@ -268,11 +268,11 @@ public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
 public interface GenericMFVCHolderWithMFVCUpperBoundWithImpls {
     // source: 'overrides.kt'
     public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
-    public synthetic abstract method getP-0(): double
-    public synthetic abstract method getP-1(): double
+    public synthetic abstract method getP-x(): double
+    public synthetic abstract method getP-y(): double
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public synthetic abstract method getP1-0(): double
-    public synthetic abstract method getP1-1(): double
+    public synthetic abstract method getP1-x(): double
+    public synthetic abstract method getP1-y(): double
     public abstract method setP-sUp7gFk(p0: double, p1: double): void
     public abstract method setP1-sUp7gFk(p0: double, p1: double): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
@@ -294,8 +294,8 @@ final class OverridesKt$box$1 {
 final class OverridesKt$box$10 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$10
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -306,8 +306,8 @@ final class OverridesKt$box$10 {
 final class OverridesKt$box$100 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$100
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -318,8 +318,8 @@ final class OverridesKt$box$100 {
 final class OverridesKt$box$101 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$101
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -330,8 +330,8 @@ final class OverridesKt$box$101 {
 final class OverridesKt$box$102 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$102
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -342,8 +342,8 @@ final class OverridesKt$box$102 {
 final class OverridesKt$box$103 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$103
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -354,8 +354,8 @@ final class OverridesKt$box$103 {
 final class OverridesKt$box$104 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$104
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -366,10 +366,10 @@ final class OverridesKt$box$104 {
 final class OverridesKt$box$105 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$105
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -380,10 +380,10 @@ final class OverridesKt$box$105 {
 final class OverridesKt$box$106 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$106
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -394,8 +394,8 @@ final class OverridesKt$box$106 {
 final class OverridesKt$box$107 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$107
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -406,8 +406,8 @@ final class OverridesKt$box$107 {
 final class OverridesKt$box$108 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$108
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -418,10 +418,10 @@ final class OverridesKt$box$108 {
 final class OverridesKt$box$109 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$109
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -444,10 +444,10 @@ final class OverridesKt$box$11 {
 final class OverridesKt$box$110 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$110
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -458,10 +458,10 @@ final class OverridesKt$box$110 {
 final class OverridesKt$box$111 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$111
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -472,8 +472,8 @@ final class OverridesKt$box$111 {
 final class OverridesKt$box$112 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$112
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -484,10 +484,10 @@ final class OverridesKt$box$112 {
 final class OverridesKt$box$113 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$113
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -498,8 +498,8 @@ final class OverridesKt$box$113 {
 final class OverridesKt$box$114 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-0: double
-    synthetic final field $dSegment-field-0-1: double
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
     inner (anonymous) class OverridesKt$box$114
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -510,8 +510,8 @@ final class OverridesKt$box$114 {
 final class OverridesKt$box$115 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-1-0: double
-    synthetic final field $dSegment-field-1-1: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
     inner (anonymous) class OverridesKt$box$115
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -534,7 +534,7 @@ final class OverridesKt$box$116 {
 final class OverridesKt$box$117 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-x: double
     inner (anonymous) class OverridesKt$box$117
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -557,7 +557,7 @@ final class OverridesKt$box$118 {
 final class OverridesKt$box$119 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-0: double
+    synthetic final field $dSegment-p1-x: double
     inner (anonymous) class OverridesKt$box$119
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -568,8 +568,8 @@ final class OverridesKt$box$119 {
 final class OverridesKt$box$12 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$12
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -592,7 +592,7 @@ final class OverridesKt$box$120 {
 final class OverridesKt$box$121 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $otherDPoint-field-0: double
+    synthetic final field $otherDPoint-x: double
     inner (anonymous) class OverridesKt$box$121
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -615,7 +615,7 @@ final class OverridesKt$box$122 {
 final class OverridesKt$box$123 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-1-0: double
+    synthetic final field $dSegment-p2-x: double
     inner (anonymous) class OverridesKt$box$123
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -638,7 +638,7 @@ final class OverridesKt$box$124 {
 final class OverridesKt$box$125 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$125
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -661,7 +661,7 @@ final class OverridesKt$box$126 {
 final class OverridesKt$box$127 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-1: double
+    synthetic final field $dSegment-p1-y: double
     inner (anonymous) class OverridesKt$box$127
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -684,7 +684,7 @@ final class OverridesKt$box$128 {
 final class OverridesKt$box$129 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $otherDPoint-field-1: double
+    synthetic final field $otherDPoint-y: double
     inner (anonymous) class OverridesKt$box$129
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -719,7 +719,7 @@ final class OverridesKt$box$130 {
 final class OverridesKt$box$131 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-1-1: double
+    synthetic final field $dSegment-p2-y: double
     inner (anonymous) class OverridesKt$box$131
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -730,10 +730,10 @@ final class OverridesKt$box$131 {
 final class OverridesKt$box$132 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-0: double
-    synthetic final field $dSegment-field-0-1: double
-    synthetic final field $dSegment-field-1-0: double
-    synthetic final field $dSegment-field-1-1: double
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
     inner (anonymous) class OverridesKt$box$132
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -744,10 +744,10 @@ final class OverridesKt$box$132 {
 final class OverridesKt$box$133 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-0: double
-    synthetic final field $dSegment-field-0-1: double
-    synthetic final field $dSegment-field-1-0: double
-    synthetic final field $dSegment-field-1-1: double
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
     inner (anonymous) class OverridesKt$box$133
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -770,10 +770,10 @@ final class OverridesKt$box$134 {
 final class OverridesKt$box$135 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-0: double
-    synthetic final field $dSegment-field-0-1: double
-    synthetic final field $dSegment-field-1-0: double
-    synthetic final field $dSegment-field-1-1: double
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
     inner (anonymous) class OverridesKt$box$135
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -796,10 +796,10 @@ final class OverridesKt$box$136 {
 final class OverridesKt$box$137 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-0: double
-    synthetic final field $dSegment-field-0-1: double
-    synthetic final field $dSegment-field-1-0: double
-    synthetic final field $dSegment-field-1-1: double
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
     inner (anonymous) class OverridesKt$box$137
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -822,10 +822,10 @@ final class OverridesKt$box$138 {
 final class OverridesKt$box$139 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-0: double
-    synthetic final field $dSegment-field-0-1: double
-    synthetic final field $dSegment-field-1-0: double
-    synthetic final field $dSegment-field-1-1: double
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
     inner (anonymous) class OverridesKt$box$139
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -836,10 +836,10 @@ final class OverridesKt$box$139 {
 final class OverridesKt$box$14 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $otherDPoint-field-0: double
-    synthetic final field $otherDPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $otherDPoint-x: double
+    synthetic final field $otherDPoint-y: double
     inner (anonymous) class OverridesKt$box$14
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -862,10 +862,10 @@ final class OverridesKt$box$140 {
 final class OverridesKt$box$141 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dSegment-field-0-0: double
-    synthetic final field $dSegment-field-0-1: double
-    synthetic final field $dSegment-field-1-0: double
-    synthetic final field $dSegment-field-1-1: double
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
     inner (anonymous) class OverridesKt$box$141
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -888,10 +888,10 @@ final class OverridesKt$box$15 {
 final class OverridesKt$box$16 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $otherDPoint-field-0: double
-    synthetic final field $otherDPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $otherDPoint-x: double
+    synthetic final field $otherDPoint-y: double
     inner (anonymous) class OverridesKt$box$16
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -914,10 +914,10 @@ final class OverridesKt$box$17 {
 final class OverridesKt$box$18 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $otherDPoint-field-0: double
-    synthetic final field $otherDPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $otherDPoint-x: double
+    synthetic final field $otherDPoint-y: double
     inner (anonymous) class OverridesKt$box$18
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -940,8 +940,8 @@ final class OverridesKt$box$19 {
 final class OverridesKt$box$2 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$2
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -952,10 +952,10 @@ final class OverridesKt$box$2 {
 final class OverridesKt$box$20 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $otherDPoint-field-0: double
-    synthetic final field $otherDPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $otherDPoint-x: double
+    synthetic final field $otherDPoint-y: double
     inner (anonymous) class OverridesKt$box$20
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -966,8 +966,8 @@ final class OverridesKt$box$20 {
 final class OverridesKt$box$21 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$21
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -978,8 +978,8 @@ final class OverridesKt$box$21 {
 final class OverridesKt$box$22 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$22
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -1002,7 +1002,7 @@ final class OverridesKt$box$23 {
 final class OverridesKt$box$24 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-x: double
     inner (anonymous) class OverridesKt$box$24
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -1025,8 +1025,8 @@ final class OverridesKt$box$25 {
 final class OverridesKt$box$26 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$26
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -1049,7 +1049,7 @@ final class OverridesKt$box$27 {
 final class OverridesKt$box$28 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$28
     method <init>(p0: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -1084,8 +1084,8 @@ final class OverridesKt$box$3 {
 final class OverridesKt$box$30 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$30
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Double
@@ -1195,8 +1195,8 @@ final class OverridesKt$box$39 {
 final class OverridesKt$box$4 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$4
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1207,8 +1207,8 @@ final class OverridesKt$box$4 {
 final class OverridesKt$box$40 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class OverridesKt$box$40
     method <init>(p0: RealOverride, p1: double, p2: double): void
@@ -1220,8 +1220,8 @@ final class OverridesKt$box$40 {
 final class OverridesKt$box$41 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class OverridesKt$box$41
     method <init>(p0: RealOverride, p1: double, p2: double): void
@@ -1233,8 +1233,8 @@ final class OverridesKt$box$41 {
 final class OverridesKt$box$42 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class OverridesKt$box$42
     method <init>(p0: RealOverride, p1: double, p2: double): void
@@ -1246,8 +1246,8 @@ final class OverridesKt$box$42 {
 final class OverridesKt$box$43 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class OverridesKt$box$43
     method <init>(p0: RealOverride, p1: double, p2: double): void
@@ -1259,8 +1259,8 @@ final class OverridesKt$box$43 {
 final class OverridesKt$box$44 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class OverridesKt$box$44
     method <init>(p0: RealOverride, p1: double, p2: double): void
@@ -1272,8 +1272,8 @@ final class OverridesKt$box$44 {
 final class OverridesKt$box$45 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class OverridesKt$box$45
     method <init>(p0: RealOverride, p1: double, p2: double): void
@@ -1285,8 +1285,8 @@ final class OverridesKt$box$45 {
 final class OverridesKt$box$46 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class OverridesKt$box$46
     method <init>(p0: RealOverride, p1: double, p2: double): void
@@ -1298,8 +1298,8 @@ final class OverridesKt$box$46 {
 final class OverridesKt$box$47 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $realOverride: RealOverride
     inner (anonymous) class OverridesKt$box$47
     method <init>(p0: RealOverride, p1: double, p2: double): void
@@ -1455,8 +1455,8 @@ final class OverridesKt$box$59 {
 final class OverridesKt$box$6 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$6
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -1467,8 +1467,8 @@ final class OverridesKt$box$6 {
 final class OverridesKt$box$60 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class OverridesKt$box$60
     method <init>(p0: GenericFakeOverride, p1: double, p2: double): void
@@ -1480,8 +1480,8 @@ final class OverridesKt$box$60 {
 final class OverridesKt$box$61 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class OverridesKt$box$61
     method <init>(p0: GenericFakeOverride, p1: double, p2: double): void
@@ -1493,8 +1493,8 @@ final class OverridesKt$box$61 {
 final class OverridesKt$box$62 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class OverridesKt$box$62
     method <init>(p0: GenericFakeOverride, p1: double, p2: double): void
@@ -1506,8 +1506,8 @@ final class OverridesKt$box$62 {
 final class OverridesKt$box$63 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $genericFakeOverride: GenericFakeOverride
     inner (anonymous) class OverridesKt$box$63
     method <init>(p0: GenericFakeOverride, p1: double, p2: double): void
@@ -1519,8 +1519,8 @@ final class OverridesKt$box$63 {
 final class OverridesKt$box$64 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class OverridesKt$box$64
     method <init>(p0: ReifiedFakeOverride, p1: double, p2: double): void
@@ -1532,8 +1532,8 @@ final class OverridesKt$box$64 {
 final class OverridesKt$box$65 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class OverridesKt$box$65
     method <init>(p0: ReifiedFakeOverride, p1: double, p2: double): void
@@ -1545,8 +1545,8 @@ final class OverridesKt$box$65 {
 final class OverridesKt$box$66 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class OverridesKt$box$66
     method <init>(p0: ReifiedFakeOverride, p1: double, p2: double): void
@@ -1558,8 +1558,8 @@ final class OverridesKt$box$66 {
 final class OverridesKt$box$67 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
     inner (anonymous) class OverridesKt$box$67
     method <init>(p0: ReifiedFakeOverride, p1: double, p2: double): void
@@ -1571,8 +1571,8 @@ final class OverridesKt$box$67 {
 final class OverridesKt$box$68 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class OverridesKt$box$68
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): void
@@ -1584,8 +1584,8 @@ final class OverridesKt$box$68 {
 final class OverridesKt$box$69 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class OverridesKt$box$69
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): void
@@ -1609,8 +1609,8 @@ final class OverridesKt$box$7 {
 final class OverridesKt$box$70 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class OverridesKt$box$70
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): void
@@ -1622,8 +1622,8 @@ final class OverridesKt$box$70 {
 final class OverridesKt$box$71 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
     inner (anonymous) class OverridesKt$box$71
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): void
@@ -1635,8 +1635,8 @@ final class OverridesKt$box$71 {
 final class OverridesKt$box$72 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVC-field-0: double
-    synthetic final field $genericFakeOverrideMFVC-field-1: double
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$72
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1647,8 +1647,8 @@ final class OverridesKt$box$72 {
 final class OverridesKt$box$73 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVC-field-0: double
-    synthetic final field $genericFakeOverrideMFVC-field-1: double
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$73
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1659,8 +1659,8 @@ final class OverridesKt$box$73 {
 final class OverridesKt$box$74 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVC-field-0: double
-    synthetic final field $genericFakeOverrideMFVC-field-1: double
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$74
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1671,8 +1671,8 @@ final class OverridesKt$box$74 {
 final class OverridesKt$box$75 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVC-field-0: double
-    synthetic final field $genericFakeOverrideMFVC-field-1: double
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$75
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1683,8 +1683,8 @@ final class OverridesKt$box$75 {
 final class OverridesKt$box$76 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$76
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1695,8 +1695,8 @@ final class OverridesKt$box$76 {
 final class OverridesKt$box$77 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$77
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1707,8 +1707,8 @@ final class OverridesKt$box$77 {
 final class OverridesKt$box$78 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$78
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1719,8 +1719,8 @@ final class OverridesKt$box$78 {
 final class OverridesKt$box$79 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$79
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1731,8 +1731,8 @@ final class OverridesKt$box$79 {
 final class OverridesKt$box$8 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$8
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -1743,8 +1743,8 @@ final class OverridesKt$box$8 {
 final class OverridesKt$box$80 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class OverridesKt$box$80
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1755,8 +1755,8 @@ final class OverridesKt$box$80 {
 final class OverridesKt$box$81 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class OverridesKt$box$81
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1767,8 +1767,8 @@ final class OverridesKt$box$81 {
 final class OverridesKt$box$82 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class OverridesKt$box$82
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1779,8 +1779,8 @@ final class OverridesKt$box$82 {
 final class OverridesKt$box$83 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class OverridesKt$box$83
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1791,10 +1791,10 @@ final class OverridesKt$box$83 {
 final class OverridesKt$box$84 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $genericFakeOverrideMFVC-field-0: double
-    synthetic final field $genericFakeOverrideMFVC-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$84
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1805,10 +1805,10 @@ final class OverridesKt$box$84 {
 final class OverridesKt$box$85 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $genericFakeOverrideMFVC-field-0: double
-    synthetic final field $genericFakeOverrideMFVC-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$85
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1819,10 +1819,10 @@ final class OverridesKt$box$85 {
 final class OverridesKt$box$86 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $genericFakeOverrideMFVC-field-0: double
-    synthetic final field $genericFakeOverrideMFVC-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$86
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1833,10 +1833,10 @@ final class OverridesKt$box$86 {
 final class OverridesKt$box$87 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $genericFakeOverrideMFVC-field-0: double
-    synthetic final field $genericFakeOverrideMFVC-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$87
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1847,10 +1847,10 @@ final class OverridesKt$box$87 {
 final class OverridesKt$box$88 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$88
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1861,10 +1861,10 @@ final class OverridesKt$box$88 {
 final class OverridesKt$box$89 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$89
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1887,10 +1887,10 @@ final class OverridesKt$box$9 {
 final class OverridesKt$box$90 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$90
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1901,10 +1901,10 @@ final class OverridesKt$box$90 {
 final class OverridesKt$box$91 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
-    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
     inner (anonymous) class OverridesKt$box$91
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1915,10 +1915,10 @@ final class OverridesKt$box$91 {
 final class OverridesKt$box$92 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class OverridesKt$box$92
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1929,10 +1929,10 @@ final class OverridesKt$box$92 {
 final class OverridesKt$box$93 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class OverridesKt$box$93
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1943,10 +1943,10 @@ final class OverridesKt$box$93 {
 final class OverridesKt$box$94 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class OverridesKt$box$94
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1957,10 +1957,10 @@ final class OverridesKt$box$94 {
 final class OverridesKt$box$95 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
     inner (anonymous) class OverridesKt$box$95
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1971,8 +1971,8 @@ final class OverridesKt$box$95 {
 final class OverridesKt$box$96 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$96
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1983,8 +1983,8 @@ final class OverridesKt$box$96 {
 final class OverridesKt$box$97 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$97
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1995,8 +1995,8 @@ final class OverridesKt$box$97 {
 final class OverridesKt$box$98 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$98
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -2007,8 +2007,8 @@ final class OverridesKt$box$98 {
 final class OverridesKt$box$99 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPointWithInterface-field-0: double
-    synthetic final field $dPointWithInterface-field-1: double
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
     inner (anonymous) class OverridesKt$box$99
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -2019,8 +2019,8 @@ final class OverridesKt$box$99 {
 final class OverridesKt$box$dPointLam$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$dPointLam$1
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -2055,8 +2055,8 @@ final class OverridesKt$box$lam1$1 {
 final class OverridesKt$box$lam10$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam10$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2079,8 +2079,8 @@ final class OverridesKt$box$lam11$1 {
 final class OverridesKt$box$lam12$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam12$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2103,8 +2103,8 @@ final class OverridesKt$box$lam13$1 {
 final class OverridesKt$box$lam14$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam14$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2127,8 +2127,8 @@ final class OverridesKt$box$lam15$1 {
 final class OverridesKt$box$lam16$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam16$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2151,8 +2151,8 @@ final class OverridesKt$box$lam17$1 {
 final class OverridesKt$box$lam18$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam18$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2175,8 +2175,8 @@ final class OverridesKt$box$lam19$1 {
 final class OverridesKt$box$lam2$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam2$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2211,8 +2211,8 @@ final class OverridesKt$box$lam3$1 {
 final class OverridesKt$box$lam4$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam4$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2235,8 +2235,8 @@ final class OverridesKt$box$lam5$1 {
 final class OverridesKt$box$lam6$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam6$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2259,8 +2259,8 @@ final class OverridesKt$box$lam7$1 {
 final class OverridesKt$box$lam8$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $dPoint-field-0: double
-    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
     inner (anonymous) class OverridesKt$box$lam8$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2283,8 +2283,8 @@ final class OverridesKt$box$lam9$1 {
 final class OverridesKt$box$otherDPointLam$1 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    synthetic final field $otherDPoint-field-0: double
-    synthetic final field $otherDPoint-field-1: double
+    synthetic final field $otherDPoint-x: double
+    synthetic final field $otherDPoint-y: double
     inner (anonymous) class OverridesKt$box$otherDPointLam$1
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -2465,17 +2465,17 @@ public final class OverridesKt {
 @kotlin.Metadata
 public final class RealOverride {
     // source: 'overrides.kt'
-    private field p-0: double
-    private field p-1: double
+    private field p-x: double
+    private field p-y: double
     public method <init>(p0: double, p1: double): void
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public synthetic bridge method getP(): java.lang.Object
-    public synthetic method getP-0(): double
-    public synthetic method getP-1(): double
+    public synthetic method getP-x(): double
+    public synthetic method getP-y(): double
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic bridge method getP1(): java.lang.Object
-    public synthetic method getP1-0(): double
-    public synthetic method getP1-1(): double
+    public synthetic method getP1-x(): double
+    public synthetic method getP1-y(): double
     public synthetic bridge method setP(p0: java.lang.Object): void
     public method setP-sUp7gFk(p0: double, p1: double): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
@@ -2497,8 +2497,8 @@ public final class ReifiedFakeOverride {
 @kotlin.Metadata
 public final class ReifiedFakeOverrideMFVC {
     // source: 'overrides.kt'
-    private final field field-0: double
-    private final field field-1: double
+    private final field field1: double
+    private final field field2: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): ReifiedFakeOverrideMFVC
     public final static method constructor-impl(p0: double, p1: double): void
@@ -2519,8 +2519,8 @@ public final class ReifiedFakeOverrideMFVC {
     public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl-0(): double
-    public synthetic final method unbox-impl-1(): double
+    public synthetic final method unbox-impl-field1(): double
+    public synthetic final method unbox-impl-field2(): double
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -2528,11 +2528,11 @@ public final class ReifiedFakeOverrideMFVC {
 public interface ReifiedMFVCHolder {
     // source: 'overrides.kt'
     public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
-    public synthetic abstract method getP-0(): double
-    public synthetic abstract method getP-1(): double
+    public synthetic abstract method getP-x(): double
+    public synthetic abstract method getP-y(): double
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public synthetic abstract method getP1-0(): double
-    public synthetic abstract method getP1-1(): double
+    public synthetic abstract method getP1-x(): double
+    public synthetic abstract method getP1-y(): double
     public abstract method setP-sUp7gFk(p0: double, p1: double): void
     public abstract method setP1-sUp7gFk(p0: double, p1: double): void
 }
@@ -2541,11 +2541,11 @@ public interface ReifiedMFVCHolder {
 public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
     // source: 'overrides.kt'
     public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): DPoint
-    public synthetic static method getP-0(p0: ReifiedMFVCHolderWithImpls): double
-    public synthetic static method getP-1(p0: ReifiedMFVCHolderWithImpls): double
+    public synthetic static method getP-x(p0: ReifiedMFVCHolderWithImpls): double
+    public synthetic static method getP-y(p0: ReifiedMFVCHolderWithImpls): double
     public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): DPoint
-    public synthetic static method getP1-0(p0: ReifiedMFVCHolderWithImpls): double
-    public synthetic static method getP1-1(p0: ReifiedMFVCHolderWithImpls): double
+    public synthetic static method getP1-x(p0: ReifiedMFVCHolderWithImpls): double
+    public synthetic static method getP1-y(p0: ReifiedMFVCHolderWithImpls): double
     public static method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
     public static method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
@@ -2555,11 +2555,11 @@ public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
 public interface ReifiedMFVCHolderWithImpls {
     // source: 'overrides.kt'
     public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
-    public synthetic abstract method getP-0(): double
-    public synthetic abstract method getP-1(): double
+    public synthetic abstract method getP-x(): double
+    public synthetic abstract method getP-y(): double
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public synthetic abstract method getP1-0(): double
-    public synthetic abstract method getP1-1(): double
+    public synthetic abstract method getP1-x(): double
+    public synthetic abstract method getP1-y(): double
     public abstract method setP-sUp7gFk(p0: double, p1: double): void
     public abstract method setP1-sUp7gFk(p0: double, p1: double): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
@@ -2570,8 +2570,8 @@ public interface SomePointInterface {
     // source: 'overrides.kt'
     public abstract method getSomethingGeneric(): java.lang.Object
     public abstract @org.jetbrains.annotations.NotNull method getSomethingMFVC(): DPoint
-    public synthetic abstract method getSomethingMFVC-0(): double
-    public synthetic abstract method getSomethingMFVC-1(): double
+    public synthetic abstract method getSomethingMFVC-x(): double
+    public synthetic abstract method getSomethingMFVC-y(): double
     public abstract method getSomethingRegular(): int
     public abstract method setSomethingGeneric(p0: java.lang.Object): void
     public abstract method setSomethingMFVC-sUp7gFk(p0: double, p1: double): void
@@ -2582,11 +2582,11 @@ public interface SomePointInterface {
 public interface SomePointInterfaceWithMFVCBound {
     // source: 'overrides.kt'
     public abstract @org.jetbrains.annotations.NotNull method getSomethingGeneric(): DPoint
-    public synthetic abstract method getSomethingGeneric-0(): double
-    public synthetic abstract method getSomethingGeneric-1(): double
+    public synthetic abstract method getSomethingGeneric-x(): double
+    public synthetic abstract method getSomethingGeneric-y(): double
     public abstract @org.jetbrains.annotations.NotNull method getSomethingMFVC(): DPoint
-    public synthetic abstract method getSomethingMFVC-0(): double
-    public synthetic abstract method getSomethingMFVC-1(): double
+    public synthetic abstract method getSomethingMFVC-x(): double
+    public synthetic abstract method getSomethingMFVC-y(): double
     public abstract method getSomethingRegular(): int
     public abstract method setSomethingGeneric-sUp7gFk(p0: double, p1: double): void
     public abstract method setSomethingMFVC-sUp7gFk(p0: double, p1: double): void

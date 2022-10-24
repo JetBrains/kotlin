@@ -3,8 +3,8 @@
 @kotlin.Metadata
 public final class A {
     // source: 'annotations.kt'
-    private final @Ann$Container(value=[Ann, Ann]) field field-0: int
-    private final @Ann$Container(value=[Ann, Ann]) field field-1: int
+    private final @Ann$Container(value=[Ann, Ann]) field x: int
+    private final @Ann$Container(value=[Ann, Ann]) field y: int
     private synthetic method <init>(p0: int, p1: int): void
     public synthetic final static method box-impl(p0: int, p1: int): A
     public final static @Ann method constructor-impl(@Ann$Container(value=[Ann, Ann, Ann, Ann]) p0: int, @Ann$Container(value=[Ann, Ann, Ann, Ann]) p1: int): void
@@ -20,8 +20,8 @@ public final class A {
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): int
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-x(): int
+    public synthetic final method unbox-impl-y(): int
     public inner class Ann$Container
 }
 
@@ -63,9 +63,9 @@ public final class AnnotationsKt {
 @kotlin.Metadata
 public final class B {
     // source: 'annotations.kt'
-    private final field field-0-0: int
-    private final field field-0-1: int
-    private final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable field field-1: A
+    private final field x-x: int
+    private final field x-y: int
+    private final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable field y: A
     private synthetic method <init>(p0: int, p1: int, p2: A): void
     public synthetic final static method box-impl(p0: int, p1: int, p2: A): B
     public final static @Ann method constructor-impl(p0: int, p1: int, @Ann$Container(value=[Ann, Ann, Ann, Ann]) @org.jetbrains.annotations.Nullable p2: A): void
@@ -80,10 +80,10 @@ public final class B {
     public static method hashCode-impl(p0: int, p1: int, p2: A): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int, p2: A): java.lang.String
-    public synthetic final method unbox-impl-0(): A
-    public synthetic final method unbox-impl-0-0(): int
-    public synthetic final method unbox-impl-0-1(): int
-    public synthetic final method unbox-impl-1(): A
+    public synthetic final method unbox-impl-x(): A
+    public synthetic final method unbox-impl-x-x(): int
+    public synthetic final method unbox-impl-x-y(): int
+    public synthetic final method unbox-impl-y(): A
     public inner class Ann$Container
 }
 
@@ -104,10 +104,10 @@ final class C$z$2 {
 public final class C {
     // source: 'annotations.kt'
     synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
-    private final field t$delegate-0: int
-    private final field t$delegate-1: int
-    private field x-0: int
-    private field x-1: int
+    private final field t$delegate-x: int
+    private final field t$delegate-y: int
+    private field x-x: int
+    private field x-y: int
     private @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable field y: A
     private final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull field z$delegate: kotlin.Lazy
     inner (anonymous) class C$z$2
@@ -118,20 +118,20 @@ public final class C {
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getD$annotations(): void
     private static method getD$delegate(p0: C): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method getD(): A
-    public synthetic final method getD-0(): int
-    public synthetic final method getD-1(): int
+    public synthetic final method getD-x(): int
+    public synthetic final method getD-y(): int
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getT$annotations(): void
     public final @Ann$Container(value=[Ann, Ann]) method getT(): int
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getX$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getX(): A
-    public synthetic final method getX-0(): int
-    public synthetic final method getX-1(): int
+    public synthetic final method getX-x(): int
+    public synthetic final method getX-y(): int
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getY$annotations(): void
     public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable method getY(): A
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getZ$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getZ(): A
-    public synthetic final method getZ-0(): int
-    public synthetic final method getZ-1(): int
+    public synthetic final method getZ-x(): int
+    public synthetic final method getZ-y(): int
     public final @Ann$Container(value=[Ann, Ann]) method setX-sUp7gFk(p0: int, p1: int): void
     public final @Ann$Container(value=[Ann, Ann]) method setY(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable p0: A): void
     public inner class Ann$Container

@@ -1,34 +1,34 @@
 @kotlin.Metadata
 public final class A {
     // source: 'mfvcFieldInitializationOrder.kt'
-    private field x-0: double
-    private field x-1: double
+    private field x-x: double
+    private field x-y: double
     public method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method getX(): DPoint
-    public synthetic final method getX-0(): double
-    public synthetic final method getX-1(): double
+    public synthetic final method getX-x(): double
+    public synthetic final method getX-y(): double
     public final method setX-sUp7gFk(p0: double, p1: double): void
 }
 
 @kotlin.Metadata
 public final class B {
     // source: 'mfvcFieldInitializationOrder.kt'
-    private field a-0: double
-    private field a-1: double
-    private final field b-0: double
-    private final field b-1: double
-    private final field c-0: double
-    private final field c-1: double
+    private field a-x: double
+    private field a-y: double
+    private final field b-x: double
+    private final field b-y: double
+    private final field c-x: double
+    private final field c-y: double
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getA(): DPoint
-    public synthetic final method getA-0(): double
-    public synthetic final method getA-1(): double
+    public synthetic final method getA-x(): double
+    public synthetic final method getA-y(): double
     public final @org.jetbrains.annotations.NotNull method getB(): DPoint
-    public synthetic final method getB-0(): double
-    public synthetic final method getB-1(): double
+    public synthetic final method getB-x(): double
+    public synthetic final method getB-y(): double
     public final @org.jetbrains.annotations.NotNull method getC(): DPoint
-    public synthetic final method getC-0(): double
-    public synthetic final method getC-1(): double
+    public synthetic final method getC-x(): double
+    public synthetic final method getC-y(): double
     public final method setA-sUp7gFk(p0: double, p1: double): void
 }
 
@@ -36,8 +36,8 @@ public final class B {
 @kotlin.Metadata
 public final class DPoint {
     // source: 'mfvcFieldInitializationOrder.kt'
-    private final field field-0: double
-    private final field field-1: double
+    private final field x: double
+    private final field y: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): DPoint
     public final static method constructor-impl(p0: double, p1: double): void
@@ -50,8 +50,8 @@ public final class DPoint {
     public static method hashCode-impl(p0: double, p1: double): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl-0(): double
-    public synthetic final method unbox-impl-1(): double
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): double
 }
 
 @kotlin.Metadata

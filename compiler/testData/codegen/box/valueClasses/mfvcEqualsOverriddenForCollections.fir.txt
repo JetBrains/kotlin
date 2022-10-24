@@ -2,8 +2,8 @@
 @kotlin.Metadata
 public final class MFVC {
     // source: 'mfvcEqualsOverriddenForCollections.kt'
-    private final field field-0: double
-    private final field field-1: int
+    private final field x: double
+    private final field y: int
     private synthetic method <init>(p0: double, p1: int): void
     public synthetic final static method box-impl(p0: double, p1: int): MFVC
     public final static method constructor-impl(p0: double, p1: int): void
@@ -16,8 +16,8 @@ public final class MFVC {
     public final static method hashCode-impl(p0: double, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: int): java.lang.String
-    public synthetic final method unbox-impl-0(): double
-    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): int
 }
 
 @kotlin.Metadata

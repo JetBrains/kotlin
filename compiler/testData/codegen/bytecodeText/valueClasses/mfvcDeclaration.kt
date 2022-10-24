@@ -51,27 +51,27 @@ fun functionWithoutBoxes(x: D, y: D) {
 // 2 INVOKESTATIC D.constructor-impl \(IILjava/lang/String;\)V
 // 2 INVOKESTATIC C.constructor-impl \(IILjava/lang/String;\)V
 // 1 public final getX\(\)LC;
-// 1 public final synthetic unbox-impl-0-0\(\)I
-// 1 public final synthetic unbox-impl-0-1\(\)I
-// 1 public final synthetic unbox-impl-0-2\(\)Ljava/lang/String;
+// 1 public final synthetic unbox-impl-x\(\)I
+// 1 public final synthetic unbox-impl-y\(\)I
+// 1 public final synthetic unbox-impl-z\(\)Ljava/lang/String;
 // 2 private synthetic <init>\(IILjava/lang/String;\)V
 // 1 public final static synthetic box-impl\(IILjava/lang/String;\)LD;
 // 1 public final static synthetic box-impl\(IILjava/lang/String;\)LC;
-// 1 public final synthetic unbox-impl-0\(\)I
-// 1 public final synthetic unbox-impl-1\(\)I
-// 1 public final synthetic unbox-impl-2\(\)Ljava/lang/String;
-// 1 private final I field-0-0\n
-// 1 private final I field-0-1\n
-// 1 private final Ljava/lang/String; field-0-2\n
-// 0 private final LC; (field.*)x\n
-// 1 private final I x\n
-// 1 private final I field-0\n
-// 1 private final I field-1\n
-// 1 private final Ljava/lang/String; field-2\n
+// 1 public final synthetic unbox-impl-x\(\)LC;
+// 1 public final synthetic unbox-impl-x-x\(\)I
+// 1 public final synthetic unbox-impl-x-y\(\)I
+// 1 public final synthetic unbox-impl-x-z\(\)Ljava/lang/String;
+// 2 private final I x\n
+// 1 private final I y\n
+// 1 private final Ljava/lang/String; z\n
+// 0 private final LC; (.*)x\n
+// 1 private final I x-x\n
+// 1 private final I x-y\n
+// 1 private final Ljava/lang/String; x-z\n
 // 1 INVOKESPECIAL C.<init> \(IILjava/lang/String;\)V
 // 1 INVOKESPECIAL D.<init> \(IILjava/lang/String;\)V
 // 2 INVOKESTATIC D.box-impl \(IILjava/lang/String;\)LD;
 // 3 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;
 // 1 public final static functionWithoutBoxes-GPBa7dw\(IILjava/lang/String;IILjava/lang/String;\)V
 // 0 functionWithoutBoxes.*(\n {3}.*)*(\n {4}(NEW [ABCD]|.*(box|[ABCD]\.<init>|LA;|LB;|LC;|LD;)))
-// 1 privateAccess.*(\n   .+)*(\n    GETFIELD Regular\.x-0-0 : I)(\n   .+)*(\n    INVOKEVIRTUAL Regular\.getX-0 \(\)LC;)(\n   .+)*(\n    INVOKESPECIAL Regular\.getX \(\)LD;)
+// 1 privateAccess.*(\n   .+)*(\n    GETFIELD Regular\.x-x-x : I)(\n   .+)*(\n    INVOKEVIRTUAL Regular\.getX-x \(\)LC;)(\n   .+)*(\n    INVOKESPECIAL Regular\.getX \(\)LD;)

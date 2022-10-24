@@ -75,20 +75,20 @@ fun trySetSegment(segment: DSegment) {
 
 // 0 public final getOpposite\(\)LDPoint;
 // 1 public final static getOpposite-impl\(DD\)LDPoint;
-// 1 private D p1-0
-// 1 private D p1-1
+// 1 private D p1-x
+// 1 private D p1-y
 // 0 private DPoint; p1
-// 1 private D p2-0
-// 1 private D p2-1
+// 1 private D p2-x
+// 1 private D p2-y
 // 0 private DPoint; p2
-// 1 private D point1WithBackingFieldAndDefaultGetter-0
-// 1 private D point1WithBackingFieldAndDefaultGetter-1
+// 1 private D point1WithBackingFieldAndDefaultGetter-x
+// 1 private D point1WithBackingFieldAndDefaultGetter-y
 // 0 private DPoint; point1WithBackingFieldAndDefaultGetter
-// 1 private D point2WithBackingFieldAndDefaultGetter-0
-// 1 private D point2WithBackingFieldAndDefaultGetter-1
+// 1 private D point2WithBackingFieldAndDefaultGetter-x
+// 1 private D point2WithBackingFieldAndDefaultGetter-y
 // 0 private DPoint; point2WithBackingFieldAndDefaultGetter
-// 1 private D pointWithBackingFieldAndCustomGetter-0
-// 1 private D pointWithBackingFieldAndCustomGetter-1
+// 1 private D pointWithBackingFieldAndCustomGetter-x
+// 1 private D pointWithBackingFieldAndCustomGetter-y
 // 0 private DPoint; pointWithBackingFieldAndCustomGetter
 // 0 private DPoint; notImplemented
 // 0 private D notImplemented
@@ -101,25 +101,32 @@ fun trySetSegment(segment: DSegment) {
 // 1 public final getP2\(\)LDPoint;
 // 1 public final setP2-sUp7gFk\(DD\)V
 // 1 public final getCenter\(\)LDPoint;
+// 1 public final synthetic getCenter-x\(\)D
+// 1 public final synthetic getCenter-y\(\)D
 // 1 public final getNotImplemented\(\)LDPoint;
+// 1 public final synthetic getNotImplemented-x\(\)D
+// 1 public final synthetic getNotImplemented-y\(\)D
 // 1 public final setNotImplemented-sUp7gFk\(DD\)V
 // 1 public final getPoint1WithBackingFieldAndDefaultGetter\(\)LDPoint;
+// 1 public final synthetic getPoint1WithBackingFieldAndDefaultGetter-x\(\)D
+// 1 public final synthetic getPoint1WithBackingFieldAndDefaultGetter-y\(\)D
 // 1 public final setPoint1WithBackingFieldAndDefaultGetter-sUp7gFk\(DD\)V
 // 1 public final getPoint2WithBackingFieldAndDefaultGetter\(\)LDPoint;
+// 1 public final synthetic getPoint2WithBackingFieldAndDefaultGetter-x\(\)D
+// 1 public final synthetic getPoint2WithBackingFieldAndDefaultGetter-y\(\)D
 // 1 public final setPoint2WithBackingFieldAndDefaultGetter-sUp7gFk\(DD\)V
 // 1 public final getPointWithBackingFieldAndCustomGetter\(\)LDPoint;
+// 1 public final synthetic getPointWithBackingFieldAndCustomGetter-x\(\)D
+// 1 public final synthetic getPointWithBackingFieldAndCustomGetter-y\(\)D
 // 1 public final setPointWithBackingFieldAndCustomGetter-sUp7gFk\(DD\)V
-// 1 public final synthetic getP1-0\(\)D
-// 1 public final synthetic getP1-1\(\)D
-// 1 public final synthetic getP2-0\(\)D
-// 1 public final synthetic getP2-1\(\)D
-// 1 public final synthetic getPoint1WithBackingFieldAndDefaultGetter-0\(\)D
-// 1 public final synthetic getPoint1WithBackingFieldAndDefaultGetter-1\(\)D
-// 1 public final synthetic getPoint2WithBackingFieldAndDefaultGetter-0\(\)D
-// 1 public final synthetic getPoint2WithBackingFieldAndDefaultGetter-1\(\)D
-// 0 public final getCenter\$
-// 0 public final getNotImplemented\$
-// 0 public final getPointWithBackingFieldAndCustomGetter\$
+// 1 public final synthetic getP1-x\(\)D
+// 1 public final synthetic getP1-y\(\)D
+// 1 public final synthetic getP2-x\(\)D
+// 1 public final synthetic getP2-y\(\)D
+// 1 public final synthetic getPoint1WithBackingFieldAndDefaultGetter-x\(\)D
+// 1 public final synthetic getPoint1WithBackingFieldAndDefaultGetter-y\(\)D
+// 1 public final synthetic getPoint2WithBackingFieldAndDefaultGetter-x\(\)D
+// 1 public final synthetic getPoint2WithBackingFieldAndDefaultGetter-y\(\)D
 // 0 ^ {2}\b.*get.*\$.*(\n {3}.*)*(\n {4}.*\.box)
 // 1 tryGetSegment\(LDSegment;\)V
 // 0 try[GS]etSegment\(LDSegment;\)V.*(\n {3}.*)*(\n {4}.*\.box)
@@ -140,6 +147,6 @@ fun trySetSegment(segment: DSegment) {
 // 1 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*(\n {4}INVOKEVIRTUAL DSegment\.setP2-sUp7gFk \(DD\)V)){1}
 // 0 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*(\n {4}INVOKEVIRTUAL DSegment\.setP2-sUp7gFk \(DD\)V)){2}
 // 0 try[GS]etSegment\(LDSegment;\)V.*(\n {3}.*)*(\n {4}INVOKEVIRTUAL DPoint\.get[XY] \(\)D)
-// 1 tryGetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[01] \(\)D)){14}
-// 0 tryGetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[01] \(\)D)){15}
-// 0 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[01] \(\)D)){1}
+// 1 tryGetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[xy] \(\)D)){14}
+// 0 tryGetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[xy] \(\)D)){15}
+// 0 trySetSegment\(LDSegment;\)V.*((\n {3}.*)*?(\n {4}INVOKEVIRTUAL DSegment\.get.*-[xy] \(\)D)){1}

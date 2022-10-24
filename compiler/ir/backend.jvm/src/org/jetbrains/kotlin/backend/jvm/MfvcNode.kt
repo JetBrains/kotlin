@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
+import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isMultiFieldValueClassType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -83,12 +85,10 @@ sealed interface NameableMfvcNode : MfvcNode {
     val namedNodeImpl: NameableMfvcNodeImpl
 }
 
-val NameableMfvcNode.nameParts: List<IndexedNamePart>
+val NameableMfvcNode.nameParts: List<Name>
     get() = namedNodeImpl.nameParts
 val NameableMfvcNode.name: Name
-    get() = nameParts.last().name
-val NameableMfvcNode.index: Int
-    get() = nameParts.last().index
+    get() = nameParts.last()
 val NameableMfvcNode.unboxMethod: IrSimpleFunction
     get() = namedNodeImpl.unboxMethod
 val NameableMfvcNode.fullMethodName: Name
@@ -99,32 +99,36 @@ val NameableMfvcNode.hasPureUnboxMethod: Boolean
     get() = namedNodeImpl.hasPureUnboxMethod
 
 
-data class IndexedNamePart(val index: Int, val name: Name)
-
 class NameableMfvcNodeImpl(
-    rootPropertyName: String?,
-    val nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    val nameParts: List<Name>,
     val unboxMethod: IrSimpleFunction,
     val hasPureUnboxMethod: Boolean,
 ) {
-    val fullMethodName = makeFullMethodName(rootPropertyName, nameParts)
-    val fullFieldName = makeFullFieldName(rootPropertyName, nameParts)
+    val fullMethodName = makeFullMethodName(methodFullNameMode, nameParts)
+    val fullFieldName = makeFullFieldName(nameParts)
 
     companion object {
-        @JvmStatic
-        fun makeFullMethodName(rootPropertyName: String?, nameParts: List<IndexedNamePart>): Name = if (rootPropertyName == null) {
-            val restJoined = nameParts.joinToString("-") { it.index.toString() }
-            Name.identifier("${KotlinTypeMapper.UNBOX_JVM_METHOD_NAME}-$restJoined")
-        } else {
-            val wholeName = (listOf(JvmAbi.getterName(rootPropertyName)) + nameParts.map { it.index.toString() }).joinToString("-")
-            Name.identifier(wholeName)
-        }
+        enum class MethodFullNameMode { UnboxFunction, Getter }
 
         @JvmStatic
-        fun makeFullFieldName(rootPropertyName: String?, nameParts: List<IndexedNamePart>): Name {
-            val name = Name.guessByFirstCharacter(rootPropertyName ?: "field")
-            val joined = (listOf(name.asStringStripSpecialMarkers()) + nameParts.map { it.index.toString() }).joinToString("-")
-            return if (name.isSpecial) Name.special("<$joined>") else Name.identifier(joined)
+        fun makeFullMethodName(methodFullNameMode: MethodFullNameMode, nameParts: List<Name>): Name = nameParts
+            .map { it.asStringStripSpecialMarkers() }
+            .let {
+                when (methodFullNameMode) {
+                    UnboxFunction -> listOf(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME) + it
+                    Getter -> listOf(JvmAbi.getterName(it.first())) + it.subList(1, nameParts.size)
+                }
+            }
+            .joinToString("-")
+            .let(Name::identifier)
+
+        @JvmStatic
+        fun makeFullFieldName(nameParts: List<Name>): Name {
+            require(nameParts.isNotEmpty()) { "Name must contain at least one part" }
+            val isSpecial = nameParts.any { it.isSpecial }
+            val joined = nameParts.joinToString("-") { it.asStringStripSpecialMarkers() }
+            return if (isSpecial) Name.special("<$joined>") else Name.identifier(joined)
         }
     }
 }
@@ -173,7 +177,6 @@ class MfvcNodeWithSubnodesImpl(val subnodes: List<NameableMfvcNode>, unboxMethod
     init {
         require(subnodes.isNotEmpty())
         require(subnodes.map { it.nameParts.dropLast(1) }.allEqual())
-        require(subnodes.map { it.index } == subnodes.indices.toList())
     }
 
     private val mapping = subnodes.associateBy { it.name }.also { mapping ->
@@ -278,13 +281,13 @@ private fun validateGettingAccessorParameters(function: IrSimpleFunction) {
 
 class LeafMfvcNode(
     override val type: IrType,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     val field: IrField?,
     unboxMethod: IrSimpleFunction,
     hasPureUnboxMethod: Boolean,
 ) : NameableMfvcNode {
-    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(rootPropertyName, nameParts, unboxMethod, hasPureUnboxMethod)
+    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(methodFullNameMode, nameParts, unboxMethod, hasPureUnboxMethod)
 
     override val leavesCount: Int
         get() = 1
@@ -319,14 +322,14 @@ val MfvcNode.fields
 
 class IntermediateMfvcNode(
     override val type: IrSimpleType,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     subnodes: List<NameableMfvcNode>,
     unboxMethod: IrSimpleFunction,
     hasPureUnboxMethod: Boolean,
     val rootNode: RootMfvcNode, // root node corresponding type of the node
 ) : NameableMfvcNode, MfvcNodeWithSubnodes {
-    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(rootPropertyName, nameParts, unboxMethod, hasPureUnboxMethod)
+    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(methodFullNameMode, nameParts, unboxMethod, hasPureUnboxMethod)
     override val subnodesImpl: MfvcNodeWithSubnodesImpl = MfvcNodeWithSubnodesImpl(subnodes, unboxMethod)
     override val leavesCount
         get() = leaves.size
