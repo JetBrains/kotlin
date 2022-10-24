@@ -200,7 +200,7 @@ private fun createOtherScopesForNestedClassesOrCompanion(
             klass,
             lookupInterfaces = false, deep = true, substituteTypes = true, useSiteSession = session,
             supertypeSupplier = supertypeComputationSession.supertypesSupplier
-        ).asReversed().mapNotNullTo(this) {
+        ).mapNotNullTo(this) {
             it.lookupTag.getNestedClassifierScope(session, scopeSession)
                 ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(it, session)
         }
