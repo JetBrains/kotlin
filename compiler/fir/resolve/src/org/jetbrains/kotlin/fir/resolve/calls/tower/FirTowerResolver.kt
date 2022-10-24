@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.delegatingConstructorScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -91,10 +91,12 @@ class FirTowerResolver(
     fun runResolverForDelegatingConstructor(
         info: CallInfo,
         constructedType: ConeClassLikeType,
+        derivedClass: ConeClassLikeLookupTag,
         context: ResolutionContext
     ): CandidateCollector {
         val outerType = components.outerClassManager.outerType(constructedType)
-        val scope = constructedType.scope(components.session, components.scopeSession, FakeOverrideTypeCalculator.DoNothing) ?: return collector
+        val scope = constructedType.delegatingConstructorScope(components.session, components.scopeSession, derivedClass)
+            ?: return collector
 
         val dispatchReceiver =
             if (outerType != null)
