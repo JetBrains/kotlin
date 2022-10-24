@@ -1849,8 +1849,11 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    fun irCurrentMarker() =
-        irMethodCall(irCurrentComposer(), currentMarkerProperty!!.getter!!)
+    fun irCurrentMarker(composerParameter: IrValueParameter) =
+        irMethodCall(
+            irCurrentComposer(composerParameter = composerParameter),
+            currentMarkerProperty!!.getter!!
+        )
 
     private fun irIsSkipping() =
         irMethodCall(irCurrentComposer(), isSkippingFunction.getter!!)
@@ -1971,18 +1974,17 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    private fun nearestComposer(): IrValueParameter =
-        currentScope.nearestComposer
-            ?: error("Not in a composable function \n${printScopeStack()}")
+    private fun nearestComposer(): IrValueParameter = currentScope.myComposer
 
     private fun irCurrentComposer(
         startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
+        endOffset: Int = UNDEFINED_OFFSET,
+        composerParameter: IrValueParameter = nearestComposer()
     ): IrExpression {
         return IrGetValueImpl(
             startOffset,
             endOffset,
-            nearestComposer().symbol
+            composerParameter.symbol
         )
     }
 
@@ -2620,9 +2622,9 @@ class ComposableFunctionBodyTransformer(
                                 val marker = irGet(functionScope.allocateMarker())
                                 extraEndLocation(irEndToMarker(marker))
                             } else {
+                                val marker = functionScope.allocateMarker()
                                 functionScope.markReturn {
-                                    val marker = irGet(functionScope.allocateMarker())
-                                    extraEndLocation(irEndToMarker(marker))
+                                    extraEndLocation(irEndToMarker(irGet(marker)))
                                     extraEndLocation(it)
                                 }
                             }
@@ -3713,6 +3715,9 @@ class ComposableFunctionBodyTransformer(
         open val fileScope: FileScope? get() = parent?.fileScope
         open val nearestComposer: IrValueParameter? get() = parent?.nearestComposer
 
+        val myComposer: IrValueParameter get() = nearestComposer
+            ?: error("Not in a composable function")
+
         open class SourceLocation(val element: IrElement) {
             open val repeatable: Boolean
                 get() = false
@@ -3777,7 +3782,7 @@ class ComposableFunctionBodyTransformer(
                 return (if (isInlinedLambda && parent is Scope.CallScope) {
                     parent.allocateMarker()
                 } else transformer.irTemporary(
-                    transformer.irCurrentMarker(),
+                    transformer.irCurrentMarker(myComposer),
                     getNameForTemporary("marker")
                 ).also { markerPreamble.statements.add(it) }).also {
                     marker = it
@@ -4230,7 +4235,7 @@ class ComposableFunctionBodyTransformer(
 
             fun allocateMarker(): IrVariable = marker
                 ?: transformer.irTemporary(
-                    transformer.irCurrentMarker(),
+                    transformer.irCurrentMarker(myComposer),
                     getNameForTemporary("marker")
                 ).also { marker = it }
 
