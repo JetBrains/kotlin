@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class KtFe10PsiDefaultPropertyGetterSymbol(
+internal class KtFe10PsiDefaultPropertyGetterSymbol(
     private val propertyPsi: KtProperty,
     override val analysisContext: Fe10AnalysisContext
 ) : KtPropertyGetterSymbol(), KtFe10Symbol {
-    private val descriptor: PropertyGetterDescriptor? by cached {
+    val descriptor: PropertyGetterDescriptor? by cached {
         val bindingContext = analysisContext.analyze(propertyPsi, Fe10AnalysisFacade.AnalysisMode.PARTIAL)
         (bindingContext[BindingContext.VARIABLE, propertyPsi] as? PropertyDescriptor)?.getter
     }

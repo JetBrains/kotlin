@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescSyntheticFieldSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.isInterfaceLike
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KtFe10PsiDefaultPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
@@ -124,15 +126,8 @@ internal class KtFe10TypeProvider(
 
     override fun getDispatchReceiverType(symbol: KtCallableSymbol): KtType? {
         require(symbol is KtFe10Symbol)
-
-        val descriptor = when (symbol) {
-            is KtFe10DescSymbol<*> -> symbol.descriptor as? CallableDescriptor
-            is KtFe10PsiSymbol<*, *> -> symbol.descriptor as? CallableDescriptor
-            is KtFe10DescSyntheticFieldSymbol -> symbol.descriptor
-            else -> error("No callable descriptor on $symbol")
-        }
-
-        return descriptor?.dispatchReceiverParameter?.type?.toKtType(analysisContext)
+        val descriptor = symbol.getDescriptor() as? CallableDescriptor ?: return null
+        return descriptor.dispatchReceiverParameter?.type?.toKtType(analysisContext)
     }
 
     private fun areTypesCompatible(a: KotlinType, b: KotlinType): Boolean {
