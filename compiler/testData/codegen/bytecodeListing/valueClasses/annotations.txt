@@ -13,7 +13,9 @@ public final class A {
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
     public final static method getValue-impl(p0: int, p1: int, @org.jetbrains.annotations.Nullable p2: java.lang.Object, @org.jetbrains.annotations.NotNull p3: kotlin.reflect.KProperty): int
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getX$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) method getX(): int
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getY$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) method getY(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -71,7 +73,9 @@ public final class B {
     public static method equals-impl(p0: int, p1: int, p2: A, p3: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: A, p3: int, p4: int, p5: A): boolean
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getX$annotations(): void
+    public final @org.jetbrains.annotations.NotNull method getX(): A
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getY$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable method getY(): A
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: A): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

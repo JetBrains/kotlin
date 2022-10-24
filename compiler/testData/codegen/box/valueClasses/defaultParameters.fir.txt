@@ -12,6 +12,8 @@ public final class DPoint {
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public synthetic static method f1-lIoT8es$default(p0: double, p1: double, p2: int, p3: int, p4: double, p5: double, p6: int, p7: java.lang.Object): java.util.List
     public final static @org.jetbrains.annotations.NotNull method f1-lIoT8es(p0: double, p1: double, p2: int, p3: int, p4: double, p5: double): java.util.List
+    public final method getX(): double
+    public final method getY(): double
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -37,6 +39,9 @@ public final class DSegment {
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double, p4: int, p5: double, p6: double, p7: double, p8: double, p9: int): boolean
     public synthetic static method f2-lIoT8es$default(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: double, p8: double, p9: int, p10: java.lang.Object): java.util.List
     public final static @org.jetbrains.annotations.NotNull method f2-lIoT8es(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: double, p8: double): java.util.List
+    public final method getN(): int
+    public final @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public final @org.jetbrains.annotations.NotNull method getP2(): DPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double, p2: double, p3: double, p4: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

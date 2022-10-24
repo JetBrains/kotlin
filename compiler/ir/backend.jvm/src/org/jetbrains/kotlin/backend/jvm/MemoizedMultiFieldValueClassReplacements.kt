@@ -231,10 +231,9 @@ class MemoizedMultiFieldValueClassReplacements(
                         function.isStaticValueClassReplacement ||
                         function.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER && function.isAccessor ||
                         function.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
-                        function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION -> null
+                        function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ||
+                        function.isMultiFieldValueClassFieldGetter -> null
 
-                // Do not check for overridden symbols because it makes previously overriding function not overriding would break a code.
-                function.isMultiFieldValueClassFieldGetter -> makeMultiFieldValueClassFieldGetterReplacement(function)
                 function.parent.safeAs<IrClass>()?.isMultiFieldValueClass == true -> when {
                     function.isValueClassTypedEquals -> createStaticReplacement(function).also {
                         it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
@@ -268,16 +267,6 @@ class MemoizedMultiFieldValueClassReplacements(
                     function.extensionReceiverParameter?.type?.needsMfvcFlattening() == true ||
                     function.valueParameters.any { it.type.needsMfvcFlattening() }
             )
-
-    private fun makeMultiFieldValueClassFieldGetterReplacement(function: IrFunction): IrSimpleFunction {
-        require(function is IrSimpleFunction && function.isMultiFieldValueClassFieldGetter) { "Illegal function:\n${function.dump()}" }
-        val replacement = getMfvcPropertyNode(function.correspondingPropertySymbol!!.owner)!!.unboxMethod
-        originalFunctionForMethodReplacement[replacement] = function
-        val templateParameters = listOf(RemappedParameter.RegularMapping(replacement.dispatchReceiverParameter!!))
-        bindingNewFunctionToParameterTemplateStructure[replacement] = templateParameters
-        bindingOldFunctionToParameterTemplateStructure[function] = templateParameters
-        return replacement
-    }
 
     private val getReplacementForRegularClassConstructorImpl: (IrConstructor) -> IrConstructor? =
         storageManager.createMemoizedFunctionWithNullableValues { constructor ->

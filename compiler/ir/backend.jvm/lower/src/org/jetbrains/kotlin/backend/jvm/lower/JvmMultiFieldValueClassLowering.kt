@@ -262,9 +262,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     override val specificMangle: SpecificMangle
         get() = SpecificMangle.MultiField
 
-    override fun keepOldFunctionInsteadOfNew(function: IrFunction): Boolean =
-        function.isMultiFieldValueClassFieldGetter
-
     private val variablesToAdd = mutableMapOf<IrDeclarationParent, MutableSet<IrVariable>>()
 
     private fun variablesSaver(variable: IrVariable) {
@@ -395,7 +392,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     override fun handleSpecificNewClass(declaration: IrClass) {
         val rootNode = replacements.getRootMfvcNode(declaration)
         rootNode.replaceFields()
-        declaration.declarations.removeIf { it is IrSimpleFunction && it.isMultiFieldValueClassFieldGetter && it.overriddenSymbols.isEmpty() }
         declaration.declarations += rootNode.allUnboxMethods + listOfNotNull(
             // `takeIf` is a workaround for double addition problem: user-defined typed equals is already defined in the class
             rootNode.boxMethod, rootNode.specializedEqualsMethod.takeIf { rootNode.createdNewSpecializedEqualsMethod }

@@ -10,6 +10,8 @@ public final class MFVC {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: int, p2: double, p3: int): boolean
+    public final method getX(): double
+    public final method getY(): int
     public final method hashCode(): int
     public final static method hashCode-impl(p0: double, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

@@ -273,8 +273,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     private fun IrExpression.coerceToUnboxed() =
         coerceInlineClasses(this, this.type, this.type.unboxInlineClass())
 
-    override fun keepOldFunctionInsteadOfNew(function: IrFunction): Boolean = false
-
     // Precondition: left has an inline class type, but may not be unboxed
     private fun IrBuilderWithScope.specializeEqualsCall(left: IrExpression, right: IrExpression): IrExpression? {
         // There's already special handling for null-comparisons in the Equals intrinsic.

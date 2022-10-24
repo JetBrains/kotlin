@@ -52,12 +52,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
         val replacement = replacements.getReplacementFunction(function)
 
-        if (keepOldFunctionInsteadOfNew(function)) {
-            function.transformChildrenVoid()
-            addBindingsFor(function, replacement!!)
-            return null
-        }
-
         if (replacement == null) {
             if (function is IrConstructor) {
                 val constructorReplacement = replacements.getReplacementForRegularClassConstructor(function)
@@ -144,16 +138,13 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         return listOf(replacement, bridgeFunction)
     }
 
-    abstract fun keepOldFunctionInsteadOfNew(function: IrFunction): Boolean
-
     final override fun visitReturn(expression: IrReturn): IrExpression {
-        expression.returnTargetSymbol.owner.safeAs<IrFunction>()?.let { target ->
+        (expression.returnTargetSymbol.owner as? IrFunction)?.let { target ->
             val suffix = target.hashSuffix()
             if (suffix != null && target.name.asString().endsWith(suffix))
                 return super.visitReturn(expression)
 
             replacements.run {
-                if (keepOldFunctionInsteadOfNew(target)) return@run null
                 getReplacementFunction(target) ?: if (target is IrConstructor) getReplacementForRegularClassConstructor(target) else null
             }?.let {
                 return context.createIrBuilder(it.symbol, expression.startOffset, expression.endOffset).irReturn(

@@ -12,6 +12,7 @@ public final class A {
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
     public final static method getValue-impl(p0: int, p1: int, @org.jetbrains.annotations.Nullable p2: java.lang.Object, @org.jetbrains.annotations.NotNull p3: kotlin.reflect.KProperty): int
     public final method getX(): int
+    public final method getY(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

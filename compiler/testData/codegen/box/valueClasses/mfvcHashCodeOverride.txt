@@ -10,6 +10,8 @@ public final class A {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: MyClass, p1: MyClass, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: MyClass, p1: MyClass, p2: MyClass, p3: MyClass): boolean
+    public final @org.jetbrains.annotations.NotNull method getValue1(): MyClass
+    public final @org.jetbrains.annotations.NotNull method getValue2(): MyClass
     public method hashCode(): int
     public static method hashCode-impl(@org.jetbrains.annotations.NotNull p0: MyClass, @org.jetbrains.annotations.NotNull p1: MyClass): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
