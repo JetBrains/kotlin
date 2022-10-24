@@ -16,49 +16,7 @@ KtConstructorSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
-        annotationsList: []
-        callableIdIfNonLocal: /A.a
-        contextReceivers: []
-        getter: KtPropertyGetterSymbol:
-          annotationsList: []
-          callableIdIfNonLocal: null
-          contextReceivers: []
-          hasBody: false
-          hasStableParameterNames: true
-          isDefault: true
-          isExtension: false
-          isInline: false
-          isOverride: false
-          modality: FINAL
-          origin: SOURCE
-          receiverType: null
-          returnType: kotlin/Int
-          symbolKind: ACCESSOR
-          typeParameters: []
-          valueParameters: []
-          visibility: Public
-        hasBackingField: true
-        hasGetter: true
-        hasSetter: false
-        initializer: KtNonConstantInitializerValue(val a: Int)
-        isConst: false
-        isDelegatedProperty: false
-        isExtension: false
-        isFromPrimaryConstructor: true
-        isLateInit: false
-        isOverride: false
-        isStatic: false
-        isVal: true
-        modality: FINAL
-        name: a
-        origin: SOURCE
-        receiverType: null
-        returnType: kotlin/Int
-        setter: null
-        symbolKind: CLASS_MEMBER
-        typeParameters: []
-        visibility: Public
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/A.a)
       hasDefaultValue: false
       isCrossinline: false
       isExtension: false
