@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
@@ -72,6 +73,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 
 internal class KtFirCallResolver(
@@ -935,11 +937,20 @@ internal class KtFirCallResolver(
         psi: KtElement,
         resolveFragmentOfCall: Boolean
     ): List<KtCallCandidateInfo> {
-        val candidates = AllCandidatesResolver(analysisSession.useSiteSession).getAllCandidatesForDelegatedConstructor(
-            analysisSession.firResolveSession,
-            this,
-            psi
-        )
+        fun findDerivedClass(psi: KtElement): KtClassOrObject? = when (psi) {
+            is KtConstructorDelegationCall -> (psi.parent as? KtSecondaryConstructor)?.parent as? KtClassOrObject
+            is KtSuperTypeCallEntry -> (psi.parent as? KtSuperTypeList)?.parent as? KtClassOrObject
+            is KtConstructorCalleeExpression -> (psi.parent as? KtElement)?.let(::findDerivedClass)
+            else -> null
+        }
+
+        val derivedClass = findDerivedClass(psi)
+            ?.getOrBuildFirSafe<FirClass>(firResolveSession)
+            ?: return emptyList()
+
+        val candidates = AllCandidatesResolver(analysisSession.useSiteSession)
+            .getAllCandidatesForDelegatedConstructor(analysisSession.firResolveSession, this, derivedClass, psi)
+
         return candidates.mapNotNull {
             convertToKtCallCandidateInfo(
                 this,
