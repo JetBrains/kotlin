@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCallableMemberCall
+import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
+import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
@@ -143,4 +147,36 @@ internal fun KtAnalysisSession.compareCalls(call1: KtCall, call2: KtCall): Int {
     // The order of candidate calls is non-deterministic. Sort by symbol string value.
     if (call1 !is KtCallableMemberCall<*, *> || call2 !is KtCallableMemberCall<*, *>) return 0
     return stringRepresentation(call1.partiallyAppliedSymbol).compareTo(stringRepresentation(call2.partiallyAppliedSymbol))
+}
+
+context(KtAnalysisSession)
+internal fun renderScopeWithParentDeclarations(scope: KtScope): String = prettyPrint {
+    fun KtSymbol.qualifiedNameString() = when (this) {
+        is KtClassLikeSymbol -> classIdIfNonLocal!!.asString()
+        is KtCallableSymbol -> callableIdIfNonLocal!!.toString()
+        else -> error("unknown symbol $this")
+    }
+
+    val renderingOptions = KtDeclarationRendererOptions.DEFAULT.copy(
+        typeRendererOptions = KtTypeRendererOptions.SHORT_NAMES,
+        modifiers = emptySet()
+    )
+
+    printCollection(scope.getAllSymbols().toList(), separator = "\n\n") { symbol ->
+        val containingDeclaration = symbol.getContainingSymbol() as KtClassLikeSymbol
+        append(symbol.render(renderingOptions))
+        append(" fromClass ")
+        append(containingDeclaration.classIdIfNonLocal?.asString())
+        if (symbol.typeParameters.isNotEmpty()) {
+            appendLine()
+            withIndent {
+                printCollection(symbol.typeParameters, separator = "\n") { typeParameter ->
+                    val containingDeclarationForTypeParameter = typeParameter.getContainingSymbol()
+                    append(typeParameter.render(renderingOptions))
+                    append(" from ")
+                    append(containingDeclarationForTypeParameter?.qualifiedNameString())
+                }
+            }
+        }
+    }
 }
