@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
 // ISSUE: KT-54645
 
 abstract class Base {
