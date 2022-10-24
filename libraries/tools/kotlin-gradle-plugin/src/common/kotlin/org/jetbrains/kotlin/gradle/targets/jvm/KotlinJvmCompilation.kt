@@ -55,17 +55,3 @@ open class KotlinJvmCompilation @Inject internal constructor(
     override val processResourcesTaskName: String
         get() = compilation.processResourcesTaskName ?: error("Missing 'processResourcesTaskName'")
 }
-
-//TODO SEB: Find a good spot for this function
-internal inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(): InternalKotlinCompilation<T> {
-    this.kotlinOptions as T
-    @Suppress("UNCHECKED_CAST")
-    return this as InternalKotlinCompilation<T>
-}
-
-//TODO SEB: Find home for function
-internal inline fun <reified T : KotlinCommonCompilerOptions> HasCompilerOptions<*>.castCompilerOptionsType(): HasCompilerOptions<T> {
-    this.options as T
-    @Suppress("UNCHECKED_CAST")
-    return this as HasCompilerOptions<T>
-}
