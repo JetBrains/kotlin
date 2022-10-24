@@ -104,9 +104,9 @@ internal class KtFe10PsiDefaultPropertySetterSymbol(
         return KtFe10NeverRestoringSymbolPointer()
     }
 
-    private class DefaultKtValueParameterSymbol(
+    class DefaultKtValueParameterSymbol(
         private val propertyPsi: KtProperty,
-        private val descriptor: ValueParameterDescriptor?,
+        val descriptor: ValueParameterDescriptor?,
         override val analysisContext: Fe10AnalysisContext
     ) : KtValueParameterSymbol(), KtFe10Symbol {
         override val hasDefaultValue: Boolean

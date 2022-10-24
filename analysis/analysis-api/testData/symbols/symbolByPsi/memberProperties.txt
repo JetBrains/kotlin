@@ -21,8 +21,7 @@ KtKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): A
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public final fun `<get-x>`(): kotlin.Int defined in A[PropertyGetterDescriptorImpl@6819c9f0]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -75,7 +74,6 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): A
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false

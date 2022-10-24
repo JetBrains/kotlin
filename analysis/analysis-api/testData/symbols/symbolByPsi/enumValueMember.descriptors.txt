@@ -128,8 +128,7 @@ KtKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): Style
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public abstract fun `<get-exitAnimation>`(): kotlin.String defined in Style[PropertyGetterDescriptorImpl@47e785cf]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
   hasGetter: true
