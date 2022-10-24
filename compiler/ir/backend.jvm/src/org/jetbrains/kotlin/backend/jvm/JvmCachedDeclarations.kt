@@ -80,18 +80,23 @@ class JvmCachedDeclarations(
                 // @JvmField, so checking the current field only should be enough.
                 val hasJvmField = oldField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
                 val shouldMoveFields = oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)
-                parent = if (shouldMoveFields) oldParent.parentAsClass else oldParent
-                val isPrivate = DescriptorVisibilities.isPrivate(oldField.visibility)
-                val parentIsPrivate = DescriptorVisibilities.isPrivate(oldParent.visibility)
-                annotations = if (parentIsPrivate && !isPrivate) {
-                    context.createJvmIrBuilder(this.symbol).run {
-                        filterOutAnnotations(
-                            DeprecationResolver.JAVA_DEPRECATED,
-                            oldField.annotations
-                        ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
-                    }
+                if (shouldMoveFields) {
+                   parent = oldParent.parentAsClass
+                   val isPrivate = DescriptorVisibilities.isPrivate(oldField.visibility)
+                   val parentIsPrivate = DescriptorVisibilities.isPrivate(oldParent.visibility)
+                   annotations = if (parentIsPrivate && !isPrivate) {
+                       context.createJvmIrBuilder(this.symbol).run {
+                           filterOutAnnotations(
+                               DeprecationResolver.JAVA_DEPRECATED,
+                               oldField.annotations
+                           ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                       }
+                   } else {
+                       oldField.annotations
+                   }
                 } else {
-                    oldField.annotations
+                    parent = oldParent
+                    annotations = oldField.annotations
                 }
                 initializer = oldField.initializer?.patchDeclarationParents(this)
                 oldField.replaceThisByStaticReference(fieldsForObjectInstances, oldParent, oldParent.thisReceiver!!)
