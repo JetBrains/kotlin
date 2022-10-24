@@ -29,7 +29,7 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
     private val accessorPsi: KtPropertyAccessor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtValueParameterSymbol(), KtFe10Symbol {
-    private val descriptor: VariableDescriptor? by cached {
+    val descriptor: VariableDescriptor? by cached {
         val bindingContext = analysisContext.analyze(accessorPsi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.PROPERTY_ACCESSOR, accessorPsi]?.valueParameters?.single()
     }
