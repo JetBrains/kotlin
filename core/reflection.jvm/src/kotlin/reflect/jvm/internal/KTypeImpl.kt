@@ -39,7 +39,6 @@ internal class KTypeImpl(
     val type: KotlinType,
     computeJavaType: (() -> Type)? = null
 ) : KTypeBase {
-    @Suppress("UNCHECKED_CAST")
     private val computeJavaType =
         computeJavaType as? ReflectProperties.LazySoftVal<Type> ?: computeJavaType?.let(ReflectProperties::lazySoft)
 
@@ -126,10 +125,10 @@ internal class KTypeImpl(
     }
 
     override fun equals(other: Any?) =
-        other is KTypeImpl && type == other.type
+        other is KTypeImpl && type == other.type && classifier == other.classifier && arguments == other.arguments
 
     override fun hashCode() =
-        type.hashCode()
+        (31 * ((31 * type.hashCode()) + classifier.hashCode())) + arguments.hashCode()
 
     override fun toString() =
         ReflectionObjectRenderer.renderType(type)

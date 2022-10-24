@@ -77,4 +77,17 @@ class ReflectionClassLoaderTest : CodegenTestCase() {
             ChildClassLoader(parent)
         )
     }
+
+    fun testKTypeEquality() {
+        /*
+         * Check that typeOf<List<Clz>>() when clz is loaded by different classloaders
+         * differs in both its `equals` and its `classifier`.
+         * It is important in the face of KType caching
+         */
+        loadFile("$prefix/kTypeEquality.kt")
+        doTest(
+            createClassLoader(),
+            createClassLoader()
+        )
+    }
 }
