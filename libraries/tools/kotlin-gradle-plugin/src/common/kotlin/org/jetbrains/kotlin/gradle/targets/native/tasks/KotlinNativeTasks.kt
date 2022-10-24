@@ -55,42 +55,14 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.collections.Collection
-import kotlin.collections.Iterable
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableList
-import kotlin.collections.MutableMap
-import kotlin.collections.MutableSet
-import kotlin.collections.Set
-import kotlin.collections.any
-import kotlin.collections.asSequence
 import kotlin.collections.associateBy
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.emptyList
-import kotlin.collections.filter
-import kotlin.collections.filterIsInstance
-import kotlin.collections.flatMap
-import kotlin.collections.forEach
-import kotlin.collections.getOrPut
-import kotlin.collections.getValue
 import kotlin.collections.isNotEmpty
-import kotlin.collections.joinToString
-import kotlin.collections.listOf
-import kotlin.collections.listOfNotNull
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
-import kotlin.collections.minus
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
 import kotlin.collections.orEmpty
 import kotlin.collections.plus
 import kotlin.collections.plusAssign
 import kotlin.collections.set
-import kotlin.collections.sortedBy
-import kotlin.collections.toMutableSet
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.utils.ResolvedDependencies as KResolvedDependencies
 import org.jetbrains.kotlin.utils.ResolvedDependenciesSupport as KResolvedDependenciesSupport
@@ -482,11 +454,13 @@ internal constructor(
         )
     }
 
+    private val isMetadataCompilation: Boolean = when (compilation) {
+        is KotlinCompilationProjection.KPM -> compilation.compilationData is KotlinMetadataCompilationData<*>
+        is KotlinCompilationProjection.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
+    }
+
     private fun createSharedCompilationDataOrNull(): SharedCompilationData? {
-        when (compilation) {
-            is KotlinCompilationProjection.KPM -> if (compilation.compilationData !is KotlinMetadataCompilationData<*>) return null
-            is KotlinCompilationProjection.TCS -> if (compilation.compilation !is KotlinMetadataCompilation<*>) return null
-        }
+        if (!isMetadataCompilation) return null
 
         val manifestFile: File = manifestFile.get().asFile
         manifestFile.ensureParentDirsCreated()
@@ -501,7 +475,6 @@ internal constructor(
     fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
-
 
         val plugins = listOfNotNull(
             compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
