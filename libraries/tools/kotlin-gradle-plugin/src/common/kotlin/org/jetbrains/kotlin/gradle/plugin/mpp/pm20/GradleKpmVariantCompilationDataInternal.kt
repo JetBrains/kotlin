@@ -82,8 +82,3 @@ interface GradleKpmVariantCompilationDataInternal<T : KotlinCommonOptions> : Gra
             .mapNotNull { variantMatch -> variantMatch.chosenVariant as? GradleKpmVariant }
     }
 }
-
-fun KotlinCompilationData<*>.isMainCompilationData(): Boolean = when (this) {
-    is KotlinCompilation<*> -> isMain()
-    else -> compilationPurpose == GradleKpmModule.MAIN_MODULE_NAME
-}
