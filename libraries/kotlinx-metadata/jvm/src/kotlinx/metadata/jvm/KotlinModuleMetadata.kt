@@ -9,6 +9,7 @@ package kotlinx.metadata.jvm
 
 import kotlinx.metadata.*
 import kotlinx.metadata.impl.accept
+import kotlinx.metadata.jvm.internal.IgnoreInApiDump
 import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  * @property bytes the byte array representing the contents of a `.kotlin_module` file
  */
 class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate") val bytes: ByteArray) {
-    internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
+    @get:IgnoreInApiDump internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
         bytes, javaClass.name, skipMetadataVersionCheck = false, isJvmPackageNameSupported = true
     ) {
         // TODO: report incorrect versions of modules

@@ -9,6 +9,7 @@ package kotlinx.metadata.impl
 import kotlinx.metadata.*
 import kotlinx.metadata.Flags // Don't remove this import. See KT-45553
 import kotlinx.metadata.impl.extensions.MetadataExtensions
+import kotlinx.metadata.internal.IgnoreInApiDump
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import kotlin.contracts.ExperimentalContracts
@@ -23,7 +24,7 @@ interface ReadContextExtension
 class ReadContext(
     val strings: NameResolver,
     val types: TypeTable,
-    internal val versionRequirements: VersionRequirementTable,
+    @get:IgnoreInApiDump internal val versionRequirements: VersionRequirementTable,
     private val parent: ReadContext? = null,
     val contextExtensions: List<ReadContextExtension> = emptyList()
 ) {
