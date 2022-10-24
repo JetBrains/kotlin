@@ -24188,6 +24188,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("lostRawTypeAfterElvis.kt")
+                public void testLostRawTypeAfterElvis() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/lostRawTypeAfterElvis.kt");
+                }
+
+                @Test
                 @TestMetadata("noTypeArgumentsForRawScopedMembers.kt")
                 public void testNoTypeArgumentsForRawScopedMembers() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/noTypeArgumentsForRawScopedMembers.kt");
