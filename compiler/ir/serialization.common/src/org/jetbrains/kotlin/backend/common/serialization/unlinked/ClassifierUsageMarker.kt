@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -54,8 +55,11 @@ internal class ClassifierUsageMarker(private val usedClassifierSymbols: UsedClas
 
         when (val classifier = owner) {
             is IrClass -> {
-                if (classifier.parentClassOrNull?.symbol?.isUnlinkedClassifier(visited) == true)
-                    return usedClassifierSymbols.register(this, UsedClassifierSymbolStatus.UNLINKED)
+                if (classifier.isInner || classifier.isEnumEntry) {
+                    val parentClass = classifier.parentClassOrNull
+                    if (parentClass == null || parentClass.symbol.isUnlinkedClassifier(visited))
+                        return usedClassifierSymbols.register(this, UsedClassifierSymbolStatus.UNLINKED)
+                }
 
                 for (typeParameter in classifier.typeParameters) {
                     if (typeParameter.superTypes.any { it.isUnlinkedType(visited) })
@@ -78,7 +82,7 @@ internal class ClassifierUsageMarker(private val usedClassifierSymbols: UsedClas
         element.acceptChildrenVoid(this)
     }
 
-    fun visitType(type: IrType?) {
+    private fun visitType(type: IrType?) {
         type?.isUnlinkedType(visited = hashSetOf())
     }
 
