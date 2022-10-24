@@ -44,11 +44,11 @@ object JsInheritanceChecker : DeclarationChecker {
             }
         }
 
-        if (descriptor is ClassDescriptor &&
-            descriptor.defaultType.immediateSupertypes().any { it.isBuiltinFunctionalTypeOrSubtype && !it.isSuspendFunctionTypeOrSubtype }
-        ) {
-            context.trace.report(ErrorsJs.IMPLEMENTING_FUNCTION_INTERFACE.on(declaration as KtClassOrObject))
-        }
+//        if (descriptor is ClassDescriptor &&
+//            descriptor.defaultType.immediateSupertypes().any { it.isBuiltinFunctionalTypeOrSubtype && !it.isSuspendFunctionTypeOrSubtype }
+//        ) {
+//            context.trace.report(ErrorsJs.IMPLEMENTING_FUNCTION_INTERFACE.on(declaration as KtClassOrObject))
+//        }
     }
 
     private fun isOverridingExternalWithOptionalParams(function: FunctionDescriptor): Boolean {
