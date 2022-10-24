@@ -184,7 +184,7 @@ kotlin {
         }
     }
 
-    js(IR) {
+    js {
         browser {
             distribution {
                 directory = new File("$projectDir/web/")
