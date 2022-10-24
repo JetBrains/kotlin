@@ -7142,6 +7142,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         public void testInlineFunctionCompanionPropertyAccess() throws Exception {
             runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
         }
+
+        @Test
+        @TestMetadata("kt54645.kt")
+        public void testKt54645() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/kt54645.kt");
+        }
     }
 
     @Nested
