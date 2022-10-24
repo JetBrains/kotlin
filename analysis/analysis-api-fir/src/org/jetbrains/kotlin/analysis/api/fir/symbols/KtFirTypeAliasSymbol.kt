@@ -54,14 +54,7 @@ internal class KtFirTypeAliasSymbol(
         KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token)
     }
 
-    override val symbolKind: KtSymbolKind
-        get() = withValidityAssertion {
-            when {
-                firSymbol.classId.isNestedClass -> KtSymbolKind.CLASS_MEMBER
-                firSymbol.isLocal -> KtSymbolKind.LOCAL
-                else -> KtSymbolKind.TOP_LEVEL
-            }
-        }
+    override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind(firResolveSession) }
 
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
