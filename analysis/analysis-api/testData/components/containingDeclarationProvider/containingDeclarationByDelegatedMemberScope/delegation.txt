@@ -1,0 +1,7 @@
+fun x(): Int fromClass BB
+
+fun y() fromClass BB
+
+val c: Int fromClass BB
+
+constructor(a: A<Int>) fromClass BB
