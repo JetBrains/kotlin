@@ -156,7 +156,7 @@ kotlin {
                 }
             }
         }
-        fromPreset(presets.jsIr, 'js') {
+        fromPreset(presets.js, 'js') {
             compilations.main.kotlinOptions {
                 main = "noCall"
             }
