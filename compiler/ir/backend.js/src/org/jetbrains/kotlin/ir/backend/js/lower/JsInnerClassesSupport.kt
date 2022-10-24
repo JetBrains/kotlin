@@ -41,7 +41,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
 
                 irFactory.buildField {
                     origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
-                    name = Name.identifier("\$this")
+                    name = Name.identifier(Namer.SYNTHETIC_RECEIVER_NAME)
                     type = outerClass.defaultType
                     visibility = DescriptorVisibilities.PROTECTED
                     isFinal = true

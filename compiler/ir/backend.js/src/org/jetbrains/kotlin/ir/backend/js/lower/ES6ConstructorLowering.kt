@@ -151,7 +151,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }
 
         if (secondaryInit != null) {
-            body.statements.add(generateSecondaryHandlerCall(secondaryInit!!, secondaryParams!!))
+            body.statements.add(generateSecondaryHandlerCall(secondaryInit!!, secondaryParams!!, isSyntheticPrimary))
         }
 
         return null
@@ -449,16 +449,26 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     }
 
 
-    private fun IrConstructor.generateSecondaryHandlerCall(initFn: IrValueParameter, initParams: IrValueParameter): IrStatement {
+    private fun IrConstructor.generateSecondaryHandlerCall(
+        initFn: IrValueParameter,
+        initParams: IrValueParameter,
+        isSynthetic: Boolean
+    ): IrStatement {
         return with(context.createIrBuilder(symbol, startOffset, endOffset)) {
-            irIfThen(
-                irNot(irEqeqeqWithoutBox(irGet(initFn), this@ES6ConstructorLowering.context.getVoid())),
-                JsIrBuilder.buildCall(secondaryHandlerDecl.invokeFun!!.symbol).apply {
+            JsIrBuilder.buildCall(secondaryHandlerDecl.invokeFun!!.symbol)
+                .apply {
                     dispatchReceiver = irGet(initFn)
                     putValueArgument(0, irGet(parentAsClass.thisReceiver!!))
                     putValueArgument(1, irGet(initParams))
                 }
-            )
+                .run {
+                    if (!isSynthetic) {
+                        this
+                    } else {
+                        irIfThen(irNot(irEqeqeqWithoutBox(irGet(initFn), this@ES6ConstructorLowering.context.getVoid())), this)
+                    }
+                }
+
         }
     }
 

@@ -42,4 +42,7 @@ object Namer {
     val SECONDARY_INIT = "\$secondary"
     val SECONDARY_PARAMS = "\$secondaryParams"
     val SUPER_PARAMS = "\$superParams"
+
+    val PREINIT = "\$preinit"
+    val PREINIT_PARAM = "\$preinitParam"
 }

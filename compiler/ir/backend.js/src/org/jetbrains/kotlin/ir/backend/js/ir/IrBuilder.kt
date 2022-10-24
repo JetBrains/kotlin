@@ -78,6 +78,9 @@ object JsIrBuilder {
         }
     }
 
+    fun buildRawReference(targetSymbol: IrFunctionSymbol, type: IrType): IrRawFunctionReference =
+        IrRawFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol)
+
     fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression, type: IrType) =
         IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol, value)
 

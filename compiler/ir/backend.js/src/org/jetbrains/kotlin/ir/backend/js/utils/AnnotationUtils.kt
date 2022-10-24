@@ -25,6 +25,7 @@ object JsAnnotations {
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
     val jsExportFqn = FqName("kotlin.js.JsExport")
     val jsImplicitExportFqn = FqName("kotlin.js.JsImplicitExport")
+    val innerClassSuperTypeFqn = FqName("kotlin.js.InnerClassSuperType")
     val jsExportIgnoreFqn = FqName("kotlin.js.JsExport.Ignore")
     val jsNativeGetter = FqName("kotlin.js.nativeGetter")
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
@@ -62,6 +63,9 @@ fun IrAnnotationContainer.isJsExport(): Boolean =
 
 fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
     hasAnnotation(JsAnnotations.jsImplicitExportFqn)
+
+fun IrAnnotationContainer.isInnerClassSuperType(): Boolean =
+    hasAnnotation(JsAnnotations.innerClassSuperTypeFqn)
 
 fun IrAnnotationContainer.isJsExportIgnore(): Boolean =
     hasAnnotation(JsAnnotations.jsExportIgnoreFqn)

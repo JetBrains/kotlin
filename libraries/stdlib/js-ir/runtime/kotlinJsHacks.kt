@@ -52,10 +52,14 @@ internal annotation class JsFun(val code: String)
  * This information is used for generating special tagged types inside d.ts files, for more strict usage of implicitly exported entities
  */
 @Target(AnnotationTarget.CLASS)
-internal annotation class JsImplicitExport()
+internal annotation class JsImplicitExport
 
+/**
+ * The annotation is needed for annotating class declarations that is in the set of inner classes supertypes
+ * to generate specific handlers for them
+ */
 @Target(AnnotationTarget.CLASS)
-internal annotation class JsSubtypeCheckable(vararg val implements: KClass<*>)
+internal annotation class InnerClassSuperType
 
 @Target(AnnotationTarget.CLASS)
 internal annotation class MetaClass

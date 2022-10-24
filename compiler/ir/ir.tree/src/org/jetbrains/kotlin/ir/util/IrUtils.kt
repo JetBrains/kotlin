@@ -205,6 +205,12 @@ val IrProperty.isSimpleProperty: Boolean
 val IrClass.functions: Sequence<IrSimpleFunction>
     get() = declarations.asSequence().filterIsInstance<IrSimpleFunction>()
 
+val IrClass.superClass: IrClass?
+    get() = superTypes
+        .firstOrNull { !it.isInterface() && !it.isAny() }
+        ?.classOrNull
+        ?.owner
+
 val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
     get() = owner.functions.map { it.symbol }
 

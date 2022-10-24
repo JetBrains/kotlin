@@ -498,6 +498,13 @@ private val innerClassConstructorCallsLoweringPhase = makeBodyLoweringPhase(
     description = "Replace inner class constructor invocation"
 )
 
+private val es6AnnotateInnerClassParentLowering = makeDeclarationTransformerPhase(
+    ::ES6AnnotateInnerClassParentLowering,
+    name = "ES6AnnotateInnerClassParentLowering",
+    description = "Annotate all classes which should have extra parameters for inner class usages",
+    prerequisite = setOf(innerClassConstructorCallsLoweringPhase)
+)
+
 private val suspendFunctionsLoweringPhase = makeBodyLoweringPhase(
     ::JsSuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
@@ -615,6 +622,13 @@ private val delegateToPrimaryConstructorLoweringPhase = makeBodyLoweringPhase(
     name = "DelegateToSyntheticPrimaryConstructor",
     description = "Delegates to synthetic primary constructor",
     prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
+private val es6InnerClassLowering = makeDeclarationTransformerPhase(
+    ::ES6InnerClassesLowering,
+    name = "ES6InnerClassesLowering",
+    description = "Add extra params to inner class and its parent classes",
+    prerequisite = setOf(delegateToPrimaryConstructorLoweringPhase)
 )
 
 private val annotationConstructorLowering = makeDeclarationTransformerPhase(
@@ -860,12 +874,14 @@ val loweringList = listOf<Lowering>(
     innerClassesLoweringPhase,
     innerClassesMemberBodyLoweringPhase,
     innerClassConstructorCallsLoweringPhase,
+    es6AnnotateInnerClassParentLowering,
     jsClassUsageInReflectionPhase,
     propertiesLoweringPhase,
     primaryConstructorLoweringPhase,
     es6AddSuperCallToSyntheticPrimaryConstructorLoweringPhase,
-    delegateToPrimaryConstructorLoweringPhase,
     annotationConstructorLowering,
+    delegateToPrimaryConstructorLoweringPhase,
+    es6InnerClassLowering,
     initializersLoweringPhase,
     initializersCleanupLoweringPhase,
     kotlinNothingValueExceptionPhase,
