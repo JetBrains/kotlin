@@ -3,17 +3,6 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 
 buildscript {
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
-    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
-
-    repositories {
-        bootstrapKotlinRepo?.let(::maven)
-
-        mavenCentral()
-        gradlePluginPortal()
-    }
-
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
     // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
     // see also configureCompilerClasspath@
@@ -23,8 +12,6 @@ buildscript {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-        classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
-        classpath(kotlin("serialization", bootstrapKotlinVersion))
     }
 
     val versionPropertiesFile = project.rootProject.projectDir.resolve("gradle/versions.properties")
@@ -50,6 +37,8 @@ plugins {
     id("org.gradle.crypto.checksum") version "1.2.0"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.0" apply false
     signing
+    id("org.jetbrains.kotlin.jvm") apply false
+    id("org.jetbrains.kotlin.plugin.serialization") apply false
 }
 
 pill {
@@ -501,18 +490,6 @@ allprojects {
         }
 
         mirrorRepo?.let(::maven)
-
-        internalBootstrapRepo?.let(::maven)?.apply {
-            content {
-                includeGroup("org.jetbrains.kotlin")
-            }
-        }
-
-        bootstrapKotlinRepo?.let(::maven)?.apply {
-            content {
-                includeGroup("org.jetbrains.kotlin")
-            }
-        }
 
         maven(intellijRepo)
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")

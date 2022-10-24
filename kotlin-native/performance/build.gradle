@@ -23,14 +23,14 @@ buildscript {
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
-    repositories {
-        maven{ url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
-        mavenCentral()
-    }
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     }
+}
+
+plugins {
+    id("org.jetbrains.kotlin.multiplatform") apply false
 }
 
 def globalProperties = new java.util.Properties()
@@ -81,16 +81,8 @@ subprojects { proj ->
                 if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
             } ?: proj.ext["buildNumber"]
 
-    proj.buildscript.repositories {
-        maven {
-            url proj.ext["bootstrapKotlinRepo"]
-        }
-    }
     proj.repositories {
         mavenCentral()
-        maven {
-            url proj.ext["bootstrapKotlinRepo"]
-        }
     }
 }
 

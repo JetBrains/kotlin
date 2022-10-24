@@ -11,48 +11,30 @@ buildscript {
         extra[key] = value
     }
 
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
-
     extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
     extra["bootstrapKotlinRepo"] = project.bootstrapKotlinRepo
     extra["bootstrapKotlinVersion"] = project.bootstrapKotlinVersion
 
-    repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        project.bootstrapKotlinRepo?.let {
-            maven(url = it)
-        }
-    }
-
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     }
 }
 
-apply{
-    plugin("kotlin")
-    plugin("kotlin-sam-with-receiver")
-}
 plugins {
     `kotlin-dsl`
-    //kotlin("multiplatform") version "${project.bootstrapKotlinVersion}"
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
+    //kotlin("multiplatform")
 }
 
-val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 repositories {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     gradlePluginPortal()
-    extra["bootstrapKotlinRepo"]?.let {
-        maven(url = it)
-    }
 }
 
 tasks.validatePlugins.configure {
     enabled = false
 }
-
 
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
     kotlin.filter.exclude("**/FileCheckTest.kt")

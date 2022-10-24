@@ -22,27 +22,16 @@ buildscript {
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+}
 
-    repositories {
-        mavenCentral()
-        maven {
-            url project.bootstrapKotlinRepo
-        }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
     mavenCentral()
-    maven {
-        url project.bootstrapKotlinRepo
-    }
 }
 
-apply plugin: 'kotlin-multiplatform'
 
 kotlin {
     js(IR) {

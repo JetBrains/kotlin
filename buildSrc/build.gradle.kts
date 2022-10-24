@@ -1,27 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
-    extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
-
-    repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-
-        project.bootstrapKotlinRepo?.let {
-            maven(url = it)
-        }
-    }
-
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
     project.extensions.extraProperties["kotlin.build.report.output"] = null
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
-    }
 
     val versionPropertiesFile = project.rootProject.projectDir.parentFile.resolve("gradle/versions.properties")
     val versionProperties = java.util.Properties()
@@ -43,16 +24,15 @@ logger.info("buildSrc kotlin compiler version: " + org.jetbrains.kotlin.config.K
 logger.info("buildSrc stdlib version: " + KotlinVersion.CURRENT)
 
 apply {
-    plugin("kotlin")
-    plugin("kotlin-sam-with-receiver")
-    plugin("groovy")
-
     from("../gradle/checkCacheability.gradle.kts")
 }
 
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
+    `groovy`
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
 }
 
 gradlePlugin {
@@ -159,16 +139,17 @@ java {
 
 dependencies {
     implementation(kotlin("stdlib", embeddedKotlinVersion))
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     implementation("com.gradle.publish:plugin-publish-plugin:1.0.0")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.0")
 
     implementation("com.jakewharton.dex:dex-member-list:4.1.1")
 
-    implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}") {
+        // https://github.com/johnrengelman/shadow/issues/807
+        exclude("org.ow2.asm")
+    }
     implementation("net.sf.proguard:proguard-gradle:6.2.2")
-    implementation("org.jetbrains.intellij.deps:asm-all:8.0.1")
 
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.0.1")
 

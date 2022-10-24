@@ -1,8 +1,5 @@
 buildscript {
     apply from: "$rootProject.projectDir/../gradle/kotlinGradlePlugin.gradle"
-    repositories {
-        mavenCentral()
-    }
 }
 
 def rootBuildDirectory = rootProject.projectDir
