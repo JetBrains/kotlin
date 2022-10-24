@@ -29,6 +29,8 @@ KtConstructorSymbol:
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Private
   getContainingModule: KtSourceModule "Sources of main"
@@ -56,6 +58,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): Style.SHEET
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -122,6 +127,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): Style
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public abstract fun `<get-exitAnimation>`(): kotlin.String defined in Style[PropertyGetterDescriptorImpl@47e785cf]
+
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false

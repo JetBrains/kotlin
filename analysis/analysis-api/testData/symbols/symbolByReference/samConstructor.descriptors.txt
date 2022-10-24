@@ -28,6 +28,9 @@ KtSamConstructorSymbol:
       returnType: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter function: () -> kotlin.Unit defined in java.lang.Runnable[ValueParameterDescriptorImpl@4dcd7cfa]
+
+      deprecationStatus: null
   ]
   getContainingModule: Could not render due to java.util.NoSuchElementException: Collection contains no element matching the predicate.
 
