@@ -37,7 +37,7 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter index: kotlin.Int defined in kotlin.collections.List.get[ValueParameterDescriptorImpl@7609158f]
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
 
       deprecationStatus: null
   ]

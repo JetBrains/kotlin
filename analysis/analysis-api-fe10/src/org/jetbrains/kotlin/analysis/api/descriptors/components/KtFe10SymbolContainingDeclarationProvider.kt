@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
@@ -53,19 +54,15 @@ internal class KtFe10SymbolContainingDeclarationProvider(
 
     // TODO this is a dummy and incorrect implementation just to satisfy some tests
     override fun getContainingModule(symbol: KtSymbol): KtModule {
-        // Implicit lambda parameter doesn't have a source PSI.
-        if ((symbol as? KtValueParameterSymbol)?.isImplicitLambdaParameter == true) {
-            // Retrieve the module from its containing lambda instead.
-            getContainingDeclaration(symbol)?.let { parentLambdaSymbol ->
-                return getContainingModule(parentLambdaSymbol)
-            }
-        }
-        return symbol.psi?.getKtModule(analysisSession.analysisContext.resolveSession.project)
+        val psiForModule = symbol.getDescriptor()?.let { DescriptorToSourceUtils.getContainingFile(it) }
+            ?: symbol.psi
+
+        return psiForModule?.getKtModule(analysisSession.analysisContext.resolveSession.project)
             ?: symbol.getDescriptor()?.getFakeContainingKtModule()
-            ?: TODO(symbol.toString())
+            ?: TODO(symbol::class.java.name)
     }
 
-    private fun DeclarationDescriptor.getFakeContainingKtModule(): KtModule {
+    private fun DeclarationDescriptor.getFakeContainingKtModule(): KtModule? {
         return when (this) {
             is DescriptorWithContainerSource -> {
                 val libraryPath = Paths.get((containerSource as JvmPackagePartSource).knownJvmBinaryClass?.containingLibrary!!)
@@ -87,7 +84,7 @@ internal class KtFe10SymbolContainingDeclarationProvider(
                 }
             }
 
-            else -> TODO(this.toString())
+            else -> null
         }
     }
 }
