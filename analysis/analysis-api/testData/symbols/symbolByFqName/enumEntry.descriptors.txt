@@ -10,6 +10,6 @@ KtEnumEntrySymbol:
   returnType: kotlin/LazyThreadSafetyMode
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: enum entry SYNCHRONIZED
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescEnumEntrySymbol
 
   deprecationStatus: null

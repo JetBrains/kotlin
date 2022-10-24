@@ -21,11 +21,12 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-class KtFe10DescDefaultPropertySetterSymbol(
+internal class KtFe10DescDefaultPropertySetterSymbol(
     private val propertyDescriptor: PropertyDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtPropertySetterSymbol(), KtFe10Symbol {
@@ -81,10 +82,13 @@ class KtFe10DescDefaultPropertySetterSymbol(
         }
     }
 
-    private class DefaultKtValueParameterSymbol(
+    class DefaultKtValueParameterSymbol(
         private val propertyDescriptor: PropertyDescriptor,
         override val analysisContext: Fe10AnalysisContext
     ) : KtValueParameterSymbol(), KtFe10Symbol {
+        val descriptor: ValueParameterDescriptor?
+            get() = propertyDescriptor.setter?.valueParameters?.singleOrNull()
+
         override val hasDefaultValue: Boolean
             get() = withValidityAssertion { false }
 

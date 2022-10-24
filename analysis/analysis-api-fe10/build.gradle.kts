@@ -40,8 +40,10 @@ sourceSets {
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
         freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs += "-Xcontext-receivers"
     }
 }
+
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")

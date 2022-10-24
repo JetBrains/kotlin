@@ -20,8 +20,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public fun `<get-x>`(): kotlin.Int defined in root package in file topLevelProperties.kt[PropertyGetterDescriptorImpl@338f4432]
-
+    getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
