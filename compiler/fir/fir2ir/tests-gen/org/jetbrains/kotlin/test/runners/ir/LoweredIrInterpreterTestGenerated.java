@@ -135,5 +135,11 @@ public class LoweredIrInterpreterTestGenerated extends AbstractLoweredIrInterpre
         public void testUnsignedConst() throws Exception {
             runTest("compiler/testData/ir/loweredIr/interpreter/unsignedConst.kt");
         }
+
+        @Test
+        @TestMetadata("useCorrectToString.kt")
+        public void testUseCorrectToString() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/useCorrectToString.kt");
+        }
     }
 }
