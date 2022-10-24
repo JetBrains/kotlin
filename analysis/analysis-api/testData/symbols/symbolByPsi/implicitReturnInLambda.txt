@@ -42,6 +42,8 @@ KtAnonymousFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -105,6 +107,8 @@ KtAnonymousFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -168,6 +172,8 @@ KtAnonymousFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -237,6 +243,8 @@ KtFunctionSymbol:
       returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Private
   getContainingModule: KtSourceModule "Sources of main"

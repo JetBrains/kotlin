@@ -20,6 +20,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): Foo
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public final fun `<get-p>`(): dynamic defined in Foo[PropertyGetterDescriptorImpl@6ee51d31]
+
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -103,6 +107,8 @@ KtFunctionSymbol:
       returnType: dynamic
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): Foo

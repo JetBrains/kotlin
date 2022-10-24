@@ -37,6 +37,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/List<E>

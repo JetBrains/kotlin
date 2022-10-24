@@ -20,6 +20,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): A
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun kotlin.Int.`<get-zoo>`(): kotlin.Unit defined in I[PropertyGetterDescriptorImpl@74fa42af]
+
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -66,6 +70,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Unit
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Unit defined in I.`<set-zoo>`[ValueParameterDescriptorImpl@5e026e8c]
+
+      deprecationStatus: null
     receiverType: kotlin/Int
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -88,8 +95,15 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Unit
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Unit defined in I.`<set-zoo>`[ValueParameterDescriptorImpl@5e026e8c]
+
+        deprecationStatus: null
     ]
     visibility: Public
+    getDispatchReceiver(): A
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun kotlin.Int.`<set-zoo>`(`<set-?>`: kotlin.Unit): kotlin.Unit defined in I[PropertySetterDescriptorImpl@14f129cc]
+
+    deprecationStatus: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
@@ -177,6 +191,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): A
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun `<get-foo>`(): kotlin.Int defined in I[PropertyGetterDescriptorImpl@5c47271]
+
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -228,6 +246,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): A
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun `<get-bar>`(): kotlin.Long defined in I[PropertyGetterDescriptorImpl@59243d9c]
+
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -274,6 +296,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in I.`<set-bar>`[ValueParameterDescriptorImpl@4751d8dd]
+
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -296,8 +321,15 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in I.`<set-bar>`[ValueParameterDescriptorImpl@4751d8dd]
+
+        deprecationStatus: null
     ]
     visibility: Public
+    getDispatchReceiver(): A
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun `<set-bar>`(`<set-?>`: kotlin.Long): kotlin.Unit defined in I[PropertySetterDescriptorImpl@421fc80]
+
+    deprecationStatus: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
@@ -331,6 +363,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): A
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public open fun kotlin.Int.`<get-doo>`(): kotlin.String defined in I[PropertyGetterDescriptorImpl@663e249d]
+
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false

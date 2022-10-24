@@ -47,6 +47,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): <anonymous>
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -112,6 +115,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): AnonymousContainer
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false

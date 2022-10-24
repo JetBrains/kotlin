@@ -86,7 +86,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiSingleFileTest() {
         val callables = scope.getCallableSymbols().toList()
         return prettyPrint {
             callables.forEach {
-                appendLine(DebugSymbolRenderer.render(it))
+                appendLine(DebugSymbolRenderer().render(it))
             }
         }
     }

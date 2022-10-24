@@ -20,6 +20,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): <anonymous>
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -115,6 +118,8 @@ KtFunctionSymbol:
       returnType: test/E
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): test/E
@@ -160,6 +165,8 @@ KtFunctionSymbol:
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Enum<E>
@@ -245,6 +252,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): kotlin/Enum<E>
+    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -296,6 +306,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): kotlin/Enum<E>
+    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false

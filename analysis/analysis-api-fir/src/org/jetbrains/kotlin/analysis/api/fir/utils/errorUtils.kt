@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 
-fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, symbol: KtSymbol) {
-    withEntry(name, symbol, DebugSymbolRenderer::render)
+fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, symbol: KtSymbol, analysisSession: KtAnalysisSession) {
+    with(analysisSession) {
+        withEntry(name, symbol) { DebugSymbolRenderer(renderExtra = true).render(it) }
+    }
     withPsiEntry("${name}Psi", symbol.psi)
 
     if (symbol is KtFirSymbol<*>) {

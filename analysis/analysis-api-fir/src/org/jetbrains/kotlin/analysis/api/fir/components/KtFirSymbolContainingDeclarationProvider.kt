@@ -80,7 +80,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         val source = symbol.firSymbol.source
         val thisSource = when (source?.kind) {
             null -> buildErrorWithAttachment("PSI should present for declaration built by Kotlin code") {
-                withSymbolAttachment("symbolForContainingPsi", symbol)
+                withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }
 
             KtFakeSourceElementKind.ImplicitConstructor ->
@@ -92,19 +92,19 @@ internal class KtFirSymbolContainingDeclarationProvider(
             KtRealSourceElementKind -> source.psi!!
             else ->
                 buildErrorWithAttachment("errorWithAttachment FirSourceElement: kind=${source.kind} element=${source.psi!!::class.simpleName}") {
-                    withSymbolAttachment("symbolForContainingPsi", symbol)
+                    withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
                 }
         }
 
         return when (symbol.origin) {
             KtSymbolOrigin.SOURCE -> thisSource.getContainingKtDeclaration()
                 ?: buildErrorWithAttachment("Containing declaration should present for non-toplevel declaration ${thisSource::class}") {
-                    withSymbolAttachment("symbolForContainingPsi", symbol)
+                    withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
                 }
 
             KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> thisSource as KtDeclaration
             else -> buildErrorWithAttachment("Unsupported declaration origin ${symbol.origin} ${thisSource::class}") {
-                withSymbolAttachment("symbolForContainingPsi", symbol)
+                withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }
         }
     }

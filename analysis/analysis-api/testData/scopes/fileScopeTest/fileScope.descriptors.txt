@@ -77,6 +77,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -104,6 +106,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -154,6 +158,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -200,6 +206,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Int defined in `<set-initializedVariable>`[ValueParameterDescriptorImpl@d6c9b60]
+
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -222,8 +231,13 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Int defined in `<set-initializedVariable>`[ValueParameterDescriptorImpl@d6c9b60]
+
+        deprecationStatus: null
     ]
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -256,6 +270,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -302,6 +318,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in `<set-unitializedVariable>`[ValueParameterDescriptorImpl@7b97af2c]
+
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -324,8 +343,13 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in `<set-unitializedVariable>`[ValueParameterDescriptorImpl@7b97af2c]
+
+        deprecationStatus: null
     ]
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -358,6 +382,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -404,6 +430,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.String defined in `<set-lateinitVariable>`[ValueParameterDescriptorImpl@fff5304]
+
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -426,8 +455,13 @@ KtKotlinPropertySymbol:
         returnType: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.String defined in `<set-lateinitVariable>`[ValueParameterDescriptorImpl@fff5304]
+
+        deprecationStatus: null
     ]
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -460,6 +494,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -506,6 +542,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in `<set-variableWithBackingField>`[ValueParameterDescriptorImpl@1a6bf275]
+
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -528,8 +567,13 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in `<set-variableWithBackingField>`[ValueParameterDescriptorImpl@1a6bf275]
+
+        deprecationStatus: null
     ]
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -562,6 +606,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -611,6 +657,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.String defined in `<set-privateSetter>`[ValueParameterDescriptorImpl@79cce906]
+
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -633,8 +682,13 @@ KtKotlinPropertySymbol:
         returnType: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.String defined in `<set-privateSetter>`[ValueParameterDescriptorImpl@79cce906]
+
+        deprecationStatus: null
     ]
     visibility: Private
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -667,6 +721,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -716,6 +772,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.String defined in `<set-jvmNameOnSetter>`[ValueParameterDescriptorImpl@11a17524]
+
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -738,8 +797,13 @@ KtKotlinPropertySymbol:
         returnType: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.String defined in `<set-jvmNameOnSetter>`[ValueParameterDescriptorImpl@11a17524]
+
+        deprecationStatus: null
     ]
     visibility: Private
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -775,6 +839,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -828,6 +894,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -878,6 +946,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -928,6 +998,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -980,6 +1052,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -1030,6 +1104,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -1076,6 +1152,9 @@ KtKotlinPropertySymbol:
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in `<set-jvmField>`[ValueParameterDescriptorImpl@35483a2e]
+
+      deprecationStatus: null
     receiverType: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
@@ -1098,8 +1177,13 @@ KtKotlinPropertySymbol:
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
+        getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: value-parameter `<set-?>`: kotlin.Long defined in `<set-jvmField>`[ValueParameterDescriptorImpl@35483a2e]
+
+        deprecationStatus: null
     ]
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public

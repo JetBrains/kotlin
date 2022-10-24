@@ -29,6 +29,8 @@ KtConstructorSymbol:
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Private
   getContainingModule: KtSourceModule "Sources of main"
@@ -56,6 +58,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -122,6 +126,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): Style
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false

@@ -37,6 +37,8 @@ KtFunctionSymbol:
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -82,6 +84,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -99,6 +103,8 @@ KtFunctionSymbol:
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -144,6 +150,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -161,6 +169,8 @@ KtFunctionSymbol:
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -206,6 +216,8 @@ KtFunctionSymbol:
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -305,6 +317,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -350,6 +364,8 @@ KtFunctionSymbol:
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -395,6 +411,8 @@ KtFunctionSymbol:
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -440,6 +458,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -485,6 +505,8 @@ KtFunctionSymbol:
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -530,6 +552,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -547,6 +571,8 @@ KtFunctionSymbol:
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -592,6 +618,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -609,6 +637,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -654,6 +684,8 @@ KtFunctionSymbol:
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -699,6 +731,8 @@ KtFunctionSymbol:
       returnType: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -744,6 +778,8 @@ KtFunctionSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -789,6 +825,8 @@ KtFunctionSymbol:
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -888,6 +926,8 @@ KtFunctionSymbol:
       returnType: E
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -916,6 +956,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): kotlin/collections/List<E>
+    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -984,6 +1027,8 @@ KtFunctionSymbol:
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Any

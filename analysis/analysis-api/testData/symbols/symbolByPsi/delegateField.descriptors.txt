@@ -29,6 +29,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -46,6 +48,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
@@ -63,6 +67,8 @@ KtConstructorSymbol:
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -128,6 +134,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): Some
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public final fun `<get-delegate>`(): MyColor defined in Some[PropertyGetterDescriptorImpl@71709753]
+
+    deprecationStatus: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -194,6 +204,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): Some
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public final fun `<get-lambda>`(): kotlin.Lazy<MyColor> defined in Some[PropertyGetterDescriptorImpl@713cdbf7]
+
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -245,6 +259,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getDispatchReceiver(): Some
+    getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: public final fun `<get-nonLazy>`(): MyColor defined in Some[PropertyGetterDescriptorImpl@270a35d9]
+
+    deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
