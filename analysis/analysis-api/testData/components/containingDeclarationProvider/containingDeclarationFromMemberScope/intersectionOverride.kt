@@ -6,4 +6,4 @@ interface B {
     fun <T>foo() {}
 }
 
-<expr>class Y : A, B</expr>
+>class Y<caret> : A, B

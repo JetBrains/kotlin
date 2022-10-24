@@ -29,7 +29,7 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
                     val expectedParentDeclarationSymbol = parentDeclaration?.getSymbol()
                     val actualParentDeclarationSymbol = currentDeclarationSymbol.getContainingSymbol()
                     testServices.assertions.assertEquals(expectedParentDeclarationSymbol, actualParentDeclarationSymbol) {
-                        "Invalid parent declaration for $currentDeclarationSymbol, expected ${expectedParentDeclarationSymbol} but ${actualParentDeclarationSymbol} found"
+                        "Invalid parent declaration for $currentDeclarationSymbol, expected $expectedParentDeclarationSymbol but $actualParentDeclarationSymbol found"
                     }
 
                     currentPath.add(dcl)

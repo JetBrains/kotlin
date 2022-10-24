@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractContainingDeclarationProviderByMemberScopeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val declaration = testServices.expressionMarkerProvider.getSelectedElementOfType<KtClassOrObject>(ktFile)
+        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(ktFile)
 
         val memberToContainingClass = analyseForTest(declaration) {
             val symbol = declaration.getClassOrObjectSymbol()
             prettyPrint {
-                printCollection(symbol.getMemberScope().getAllSymbols().toList(), separator = "\n") { symbol ->
-                    val containingDeclaration = symbol.getContainingSymbol() as KtNamedClassOrObjectSymbol
+                printCollection(symbol.getMemberScope().getAllSymbols().toList(), separator = "\n\n") { symbol ->
+                    val containingDeclaration = symbol.getContainingSymbol() as KtClassLikeSymbol
                     append(symbol.render(renderingOptions))
                     append(" fromClass ")
                     append(containingDeclaration.classIdIfNonLocal?.asString())

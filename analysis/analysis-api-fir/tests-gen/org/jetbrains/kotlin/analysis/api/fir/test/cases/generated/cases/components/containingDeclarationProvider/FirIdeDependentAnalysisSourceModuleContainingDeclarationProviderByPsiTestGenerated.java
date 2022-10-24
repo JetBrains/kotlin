@@ -53,6 +53,12 @@ public class FirIdeDependentAnalysisSourceModuleContainingDeclarationProviderByP
     }
 
     @Test
+    @TestMetadata("deeplyNestedCode.kt")
+    public void testDeeplyNestedCode() throws Exception {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/deeplyNestedCode.kt");
+    }
+
+    @Test
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/enums.kt");

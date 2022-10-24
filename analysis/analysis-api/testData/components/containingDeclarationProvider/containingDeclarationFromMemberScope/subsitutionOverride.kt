@@ -4,4 +4,4 @@ abstract class X<T> {
     fun <U> foo3() {}
 }
 
-<expr>class Y : X<Int> {}</expr>
+class Y<caret> : X<Int> {}
