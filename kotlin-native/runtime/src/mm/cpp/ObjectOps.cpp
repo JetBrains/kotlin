@@ -62,7 +62,7 @@ OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo)
     RETURN_OBJ(object);
 }
 
-OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept {
+OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
     auto* array = threadData->gc().CreateArray(typeInfo, static_cast<uint32_t>(elements));
