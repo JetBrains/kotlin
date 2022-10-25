@@ -9,16 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
-import org.jetbrains.kotlin.resolve.calls.smartcasts.IdentifierInfo
 import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -34,6 +29,7 @@ object BuilderInferenceAssignmentChecker : CallChecker {
         val callElement = resolvedCall.call.callElement
         if (callElement !is KtNameReferenceExpression) return
         val binaryExpression = callElement.getParentOfType<KtBinaryExpression>(strict = true) ?: return
+        if (binaryExpression.operationToken != KtTokens.EQ) return
         if (!BasicExpressionTypingVisitor.isLValue(callElement, binaryExpression)) return
 
         val leftType = resultingDescriptor.returnType?.takeIf { !it.isError } ?: return
