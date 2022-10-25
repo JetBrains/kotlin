@@ -48,7 +48,7 @@ import org.gradle.kotlin.dsl.getByType
  */
 // TODO: Consider splitting out interface and the default implementation. Plugins will inherit from the interface via delegation to the implementation.
 // TODO: Consider implementing everything from `NamedDomainObjectContainer` but keyed on a target instead of a name.
-open class TargetDomainObjectContainer<T> constructor(
+open class TargetDomainObjectContainer<T : Any> constructor(
         private val providerFactory: ProviderFactory,
         private val platformManager: PlatformManager,
 ) {
