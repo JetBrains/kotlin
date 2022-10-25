@@ -96,7 +96,18 @@ class StateMachineBuilder(
     fun finalizeStateMachine() {
         globalCatch = buildGlobalCatch()
         if (currentBlock.statements.lastOrNull() !is IrReturn) {
-            addStatement(JsIrBuilder.buildReturn(function, unitValue, nothing))
+            // Set both offsets to rootLoop.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
+            // could be hit.
+            // NOTE: rootLoop's offsets are the same as in the original function.
+            addStatement(
+                IrReturnImpl(
+                    startOffset = rootLoop.endOffset - 1,
+                    endOffset = rootLoop.endOffset - 1,
+                    nothing,
+                    function,
+                    unitValue
+                )
+            )
         }
         if (!hasExceptions) entryState.successors += rootExceptionTrap
     }

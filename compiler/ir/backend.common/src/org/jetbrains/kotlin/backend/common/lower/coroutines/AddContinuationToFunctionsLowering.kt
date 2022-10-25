@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Replaces suspend functions with regular non-suspend functions with additional
@@ -78,7 +79,13 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
         newBody.statements.lastOrNull() !is IrReturn
     ) {
         // Adding explicit return of Unit.
-        newBody.statements += context.createIrBuilder(newFunctionWithContinuation.symbol).irReturnUnit()
+        // Set both offsets of the IrReturn to body.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
+        // could be hit.
+        newBody.statements += context.createIrBuilder(
+            newFunctionWithContinuation.symbol,
+            startOffset = newBody.endOffset - 1,
+            endOffset = newBody.endOffset - 1
+        ).irReturnUnit()
     }
 
     newFunctionWithContinuation.body = newBody
@@ -123,11 +130,13 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
         val remapper = ValueRemapper(mapping)
         function.valueParameters.forEach { it.defaultValue = it.defaultValue?.transform(remapper, null) }
 
-        function.addValueParameter(
-            "\$cont",
-            continuationType(context).substitute(substitutionMap),
-            IrDeclarationOrigin.CONTINUATION
-        )
+        function.addValueParameter {
+            startOffset = function.startOffset
+            endOffset = function.endOffset
+            origin = IrDeclarationOrigin.CONTINUATION
+            name = Name.identifier("\$completion")
+            type = continuationType(context).substitute(substitutionMap)
+        }
     }
 }
 
