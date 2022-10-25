@@ -44,11 +44,11 @@ KtConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val param1: String)
+        initializer: null
         isConst: false
         isDelegatedProperty: false
         isExtension: false
-        isFromPrimaryConstructor: true
+        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
@@ -115,11 +115,11 @@ KtConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val param2: Int)
+        initializer: null
         isConst: false
         isDelegatedProperty: false
         isExtension: false
-        isFromPrimaryConstructor: true
+        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
