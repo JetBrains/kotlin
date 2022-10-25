@@ -3468,6 +3468,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("lazyValWithElvisToNothingInside.kt")
+            public void testLazyValWithElvisToNothingInside() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/properties/lazyValWithElvisToNothingInside.kt");
+            }
+
+            @Test
             @TestMetadata("noBackingFieldForExtension.kt")
             public void testNoBackingFieldForExtension() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/properties/noBackingFieldForExtension.kt");
