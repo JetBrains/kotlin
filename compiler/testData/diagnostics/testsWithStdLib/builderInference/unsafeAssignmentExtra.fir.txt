@@ -1,0 +1,103 @@
+FILE: unsafeAssignmentExtra.fir.kt
+    public abstract interface Foo<T : R|kotlin/Any|> : R|kotlin/Any| {
+        public abstract var a: R|T|
+            public get(): R|T|
+            public set(value: R|T|): R|kotlin/Unit|
+
+        public abstract val b: R|kotlin/Array<T>|
+            public get(): R|kotlin/Array<T>|
+
+        public abstract fun accept(arg: R|T|): R|kotlin/Unit|
+
+    }
+    public final class FooImpl<T : R|kotlin/Any|> : R|Foo<T>| {
+        public constructor<T : R|kotlin/Any|>(): R|FooImpl<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun bar(p: R|kotlin/reflect/KMutableProperty0<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/p|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty0.set: R|kotlin/Unit|>|(Int(100))
+    }
+    public final fun <T : R|kotlin/Any|> myBuilder(block: R|Foo<T>.() -> kotlin/Unit|): R|Foo<T>| {
+        ^myBuilder R|/FooImpl.FooImpl|<R|T|>().R|kotlin/apply|<R|FooImpl<T>|>(R|<local>/block|)
+    }
+    public final fun <T : R|kotlin/Any|> R|Foo<T>|.change(block: R|Foo<T>.() -> kotlin/Unit|): R|Foo<T>| {
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/change|)
+        ^change this@R|/change|
+    }
+    public final fun main(arg: R|kotlin/Any|, condition: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval value: R|Foo<kotlin/Int>| = R|/myBuilder|<R|kotlin/Int|>(<L> = myBuilder@fun R|Foo<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.b: R|kotlin/Array<Stub (chain inference): TypeVariable(T)>|>|.R|SubstitutionOverride<kotlin/Array.set: R|kotlin/Unit|>|(Int(0), Int(123))
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
+            lval <unary>: R|kotlin/Int| = this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = R|<local>/<unary>|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+            R|<local>/<unary>|
+            R|/bar|(::R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|)
+            when () {
+                (this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| is R|kotlin/Int|) ->  {
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(67)
+                    lval <unary>: R|kotlin/Int| = this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = R|<local>/<unary>|.<Ambiguity: dec, [kotlin/dec, kotlin/dec]>#()
+                    R|<local>/<unary>|
+                    R|/bar|(::R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|)
+                }
+            }
+
+            when (R|<local>/condition|) {
+                ==($subj$, Boolean(true)) ->  {
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(87)
+                }
+                ==($subj$, Boolean(false)) ->  {
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(65)
+                }
+            }
+
+            lval x: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|
+            this@R|special/anonymous|.R|/change|<R|kotlin/Int|>(<L> = change@fun R|Foo<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(99)
+            }
+            )
+        }
+        )
+        lval value2: R|Foo<kotlin/String>| = R|/myBuilder|<R|kotlin/String|>(<L> = myBuilder@fun R|Foo<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.accept: R|kotlin/Unit|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
+            when (R|<local>/condition|) {
+                ==($subj$, Boolean(true)) ->  {
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(87)
+                }
+                ==($subj$, Boolean(false)) ->  {
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(65)
+                }
+            }
+
+            this@R|special/anonymous|.R|/change|<R|kotlin/String|>(<L> = change@fun R|Foo<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(99)
+            }
+            )
+            when () {
+                (this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| is R|kotlin/Int|) ->  {
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(67)
+                }
+            }
+
+        }
+        )
+        lval value3: R|Foo<kotlin/Int>| = R|/myBuilder|<R|kotlin/Int|>(<L> = myBuilder@fun R|Foo<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.accept: R|kotlin/Unit|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
+            R|/bar|(::R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|)
+        }
+        )
+        local final fun baz(t: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        lval value4: R|Foo<it(kotlin/Comparable<*> & java/io/Serializable)>| = R|/myBuilder|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = myBuilder@fun R|Foo<it(kotlin/Comparable<*> & java/io/Serializable)>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.accept: R|kotlin/Unit|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
+            this@R|special/anonymous|.R|SubstitutionOverride</Foo.b: R|kotlin/Array<Stub (chain inference): TypeVariable(T)>|>|.R|SubstitutionOverride<kotlin/Array.set: R|kotlin/Unit|>|(Int(0), Int(123))
+            R|<local>/baz|(this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|)
+        }
+        )
+    }
