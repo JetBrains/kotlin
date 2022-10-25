@@ -75,7 +75,7 @@ enum class TestProperty(shortName: String) {
 fun nativeTest(taskName: String, vararg tags: String) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
-    maxHeapSizeMb = 4096 // Extra heap space for Kotlin/Native compiler.
+    maxHeapSizeMb = 3072 // Extra heap space for Kotlin/Native compiler.
 ) {
     group = "verification"
 
