@@ -53,7 +53,7 @@ abstract class KotlinIrLinker(
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    val partialLinkageSupport: PartialLinkageSupport = if (partialLinkageEnabled)
+    protected val partialLinkageSupport: PartialLinkageSupport = if (partialLinkageEnabled)
         PartialLinkageSupportImpl(builtIns, messageLogger)
     else
         PartialLinkageSupport.DISABLED
@@ -217,14 +217,14 @@ abstract class KotlinIrLinker(
 
         // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
         // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
-        partialLinkageSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
+        partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
 
         // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
 
-        // Finally, process the remaining unbound symbols.
-        partialLinkageSupport.processUnlinkedDeclarations {
+        // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
+        partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
             deserializersForModules.values.map { it.moduleFragment }
         }
 
