@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 import org.jetbrains.kotlin.backend.common.extensions.*
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.*
@@ -433,6 +434,7 @@ class AtomicfuJvmIrTransformer(
             return context.irFactory.buildFun {
                 name = Name.identifier(mangledName)
                 isInline = true
+                visibility = DescriptorVisibilities.PRIVATE
             }.apply {
                 val newDeclaration = this
                 extensionReceiverParameter = null
@@ -747,6 +749,7 @@ class AtomicfuJvmIrTransformer(
                 it.name.asString() == mangledName && it.valueParameters[0].type == updaterType
             }?.let { return it }
             return context.irFactory.buildFun {
+                visibility = DescriptorVisibilities.PRIVATE
                 name = Name.identifier(mangledName)
                 isInline = true
             }.apply {
