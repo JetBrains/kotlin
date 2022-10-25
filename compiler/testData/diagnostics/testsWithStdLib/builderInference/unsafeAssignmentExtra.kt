@@ -1,4 +1,5 @@
 // WITH_REFLECT
+// FIR_DUMP
 import kotlin.reflect.*
 
 interface Foo<T : Any> {
@@ -56,5 +57,21 @@ fun main(arg: Any, condition: Boolean) {
         if (<!USELESS_IS_CHECK, USELESS_IS_CHECK!>a is Int<!>) {
             a = <!TYPE_MISMATCH!>67<!>
         }
+    }
+
+    // See KT-54664
+    val value3 = myBuilder {
+        accept(<!TYPE_MISMATCH!>""<!>)
+        a = 45
+        bar(<!TYPE_MISMATCH!>::a<!>)
+    }
+
+    fun baz(t: Int) {}
+
+    val value4 = myBuilder {
+        accept("")
+        a = 45
+        b[0] = 123
+        baz(<!TYPE_MISMATCH, TYPE_MISMATCH!>a<!>)
     }
 }
