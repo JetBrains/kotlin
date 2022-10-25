@@ -70,7 +70,7 @@ private fun expandMacros(
         // Ensure libclang reports all errors:
         compilerArgs += "-ferror-limit=0"
 
-        val translationUnit = parseTranslationUnit(index, sourceFile, compilerArgs, options = 0)
+        val translationUnit = parseTranslationUnit(index, sourceFile, compilerArgs, options = CXTranslationUnit_DetailedPreprocessingRecord)
         try {
             val nameToMacroDef = mutableMapOf<String, MacroDef>()
             val unprocessedMacros = names.toMutableList()

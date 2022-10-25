@@ -390,7 +390,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
             // The source file is passed in via stdin to ensure the output library is deterministic.
             val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath)
+                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
             runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
             outLib.absolutePath
         }
