@@ -128,11 +128,8 @@ data class BuildInfo(val buildNumber: String, val startTime: String, val endTime
     }
 }
 
-enum class ElasticSearchType {
-    TEXT, KEYWORD, DATE, LONG, DOUBLE, BOOLEAN, OBJECT, NESTED
-}
-
-abstract class ElasticSearchIndex(val indexName: String, val connector: ElasticSearchConnector) {
+abstract class ElasticSearchIndex(indexNameSuffix: String, val connector: ElasticSearchConnector) {
+    val indexName = "kotlin_native_" + indexNameSuffix
     // Insert data.
     fun insert(data: JsonSerializable): Promise<String> {
         val description = data.toJson()
@@ -153,47 +150,96 @@ abstract class ElasticSearchIndex(val indexName: String, val connector: ElasticS
         return connector.request(RequestMethod.POST, path, body = requestJson)
     }
 
-    abstract val mapping: Map<String, ElasticSearchType>
-
-    val mappingDescription: String
-        get() = """
-            {
-                "mappings": {
-                "properties": {
-                    ${mapping.map { (property, type) ->
-                        "\"${property}\": { \"type\": \"${type.name.lowercase()}\"${if (type == ElasticSearchType.DATE) "," +
-                    "\"format\": \"basic_date_time_no_millis\"" else ""} }"
-                    }.joinToString()}}
-                }
-            }
-        """.trimIndent()
-
-    fun createMapping() =
-            connector.request(RequestMethod.PUT, indexName, body = mappingDescription)
+    abstract val createMappingQuery: String
 }
 
 class BenchmarksIndex(name: String, connector: ElasticSearchConnector) : ElasticSearchIndex(name, connector) {
-    override val mapping: Map<String, ElasticSearchType>
-        get() = mapOf("buildNumber" to ElasticSearchType.KEYWORD,
-                "benchmarks" to ElasticSearchType.NESTED,
-                "env" to ElasticSearchType.NESTED,
-                "kotlin" to ElasticSearchType.NESTED)
+    override val createMappingQuery = """
+        PUT /${indexName}
+        {
+            "mappings" : {
+              "properties" : {
+                "benchmarks" : {
+                  "type" : "nested",
+                  "properties": {
+                        "metric": { "type": "keyword" },
+                        "name": { "type": "keyword" },
+                        "normalizedScore": { "type": "float" }
+                        "repeat": { "type": "long" },
+                        "runtimeInUs": { "type": "float" },
+                        "score": { "type": "float" },
+                        "status": { "type": "keyword" },
+                        "variance": { "type": "float" },
+                        "warmup": { "type": "long" },
+                  }
+                },
+                "buildNumber" : { "type" : "keyword" },
+                "env" : { "type" : "nested" },
+                "kotlin" : { "type" : "nested" }
+              }
+            }
+          }
+        }
+    """.trimIndent()
 }
 
 class GoldenResultsIndex(connector: ElasticSearchConnector) : ElasticSearchIndex("golden", connector) {
-    override val mapping: Map<String, ElasticSearchType>
-        get() = mapOf("buildNumber" to ElasticSearchType.KEYWORD,
-                "benchmarks" to ElasticSearchType.NESTED,
-                "env" to ElasticSearchType.NESTED,
-                "kotlin" to ElasticSearchType.NESTED)
+    override val createMappingQuery = """
+       PUT /${indexName}
+       {
+        "mappings" : {
+          "properties" : {
+            "benchmarks" : {
+              "type" : "nested",
+              "properties" : {
+                "metric" : { "type" : "keyword" },
+                "name" : { "type" : "keyword" },
+                "repeat" : { "type" : "long" },
+                "runtimeInUs" : { "type" : "double" },
+                "score" : { "type" : "double" },
+                "status" : { "type" : "keyword" },
+                "unstable" : { "type" : "boolean" },
+                "warmup" : { "type" : "long" }
+              }
+            },
+            "buildNumber" : { "type" : "keyword" },
+            "env" : { "type" : "nested"},
+            "kotlin" : { "type" : "nested" }
+          }
+        }
+       }
+    """.trimIndent()
 }
 
 class BuildInfoIndex(connector: ElasticSearchConnector) : ElasticSearchIndex("builds", connector) {
-    override val mapping: Map<String, ElasticSearchType>
-        get() = mapOf("buildNumber" to ElasticSearchType.KEYWORD,
-                "startTime" to ElasticSearchType.DATE,
-                "endTime" to ElasticSearchType.DATE,
-                "commits" to ElasticSearchType.NESTED)
+    override val createMappingQuery = """
+      PUT /${indexName}
+      {
+        "mappings" : {
+          "properties" : {
+            "agentInfo" : { "type" : "keyword" },
+            "branch" : { "type" : "keyword" },
+            "buildNumber" : { "type" : "keyword" },
+            "buildType" : { "type" : "keyword" },
+            "commits" : {
+              "type" : "nested",
+              "properties" : {
+                "developer" : { "type" : "text" },
+                "revision" : { "type" : "text" }
+              }
+            },
+            "endTime" : {
+              "type" : "date",
+              "format" : "basic_date_time_no_millis"
+            },
+            "startTime" : {
+              "type" : "date",
+              "format" : "basic_date_time_no_millis"
+            }
+          }
+        }
+      }
+    """.trimIndent()
 }
 
 // Processed benchmark result with calculated mean, variance and normalized reult.

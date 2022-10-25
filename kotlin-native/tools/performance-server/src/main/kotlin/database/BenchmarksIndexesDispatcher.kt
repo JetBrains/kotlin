@@ -380,4 +380,6 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
             )
         }
     }
+
+    val createMappingQueries get() = benchmarksIndexes.values.map { it.createMappingQuery }
 }

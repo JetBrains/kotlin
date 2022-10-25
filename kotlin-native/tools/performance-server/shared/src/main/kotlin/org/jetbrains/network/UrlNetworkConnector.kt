@@ -31,7 +31,8 @@ class UrlNetworkConnector(private val host: String, private val port: Int? = nul
                 json(
                         "method" to method.toString(),
                         "headers" to json(*(headers.toTypedArray())),
-                        "body" to body
+                        "body" to body,
+                        "redirect" to "follow",
                 )
         ).then { response ->
             if (!response.ok) {

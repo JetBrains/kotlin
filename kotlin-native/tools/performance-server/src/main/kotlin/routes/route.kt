@@ -85,19 +85,25 @@ internal fun convert(json: String, buildNumber: String, target: String): List<Be
 }
 
 // Golden result value used to get normalized results.
-data class GoldenResult(val benchmarkName: String, val metric: String, val value: Double)
-data class GoldenResultsInfo(val goldenResults: Array<GoldenResult>)
+external interface GoldenResult {
+    val benchmarkName: String
+    val metric: String
+    val value: Double
+    val unstable: Boolean
+}
+external interface GoldenResultsInfo {
+    val goldenResults: Array<GoldenResult>
+}
 
 // Convert information about golden results to benchmarks report format.
 fun GoldenResultsInfo.toBenchmarksReport(): BenchmarksReport {
     val benchmarksSamples = goldenResults.map {
-        BenchmarkResult(it.benchmarkName, BenchmarkResult.Status.PASSED,
-                it.value, BenchmarkResult.metricFromString(it.metric)!!, it.value, 1, 0)
+        BenchmarkWithStabilityState(it.benchmarkName, BenchmarkResult.Status.PASSED,
+                it.value, BenchmarkResult.metricFromString(it.metric)!!, it.value, 1, 0, it.unstable)
     }
     val compiler = Compiler(Compiler.Backend(Compiler.BackendType.NATIVE, "golden", emptyList()), "golden")
     val environment = Environment(Environment.Machine("golden", "golden"), Environment.JDKInstance("golden", "golden"))
-    return BenchmarksReport(environment,
-            benchmarksSamples, compiler)
+    return BenchmarksReport(environment, benchmarksSamples, compiler)
 }
 
 // Build information provided from request.
@@ -108,10 +114,15 @@ data class BuildRegister(val buildId: String, val teamCityUser: String, val team
                          val bundleSize: String?, val fileWithResult: String, val buildNumberSuffix: String?) {
     companion object {
         fun create(json: String): BuildRegister {
-            val requestDetails = JSON.parse<BuildRegister>(json)
+            val requestDetails = JSON.parse<dynamic>(json)
             // Parse method doesn't create real instance with all methods. So create it by hands.
-            return BuildRegister(requestDetails.buildId, requestDetails.teamCityUser, requestDetails.teamCityPassword,
-                    requestDetails.bundleSize, requestDetails.fileWithResult, requestDetails.buildNumberSuffix)
+            return BuildRegister(
+                    requestDetails.buildId,
+                    requestDetails.teamCityUser,
+                    requestDetails.teamCityPassword,
+                    requestDetails.bundleSize,
+                    requestDetails.fileWithResult,
+                    requestDetails.buildNumberSuffix)
         }
     }
 
@@ -230,12 +241,12 @@ fun router(connector: ElasticSearchConnector) {
     val goldenIndex = GoldenResultsIndex(connector)
     val buildInfoIndex = BuildInfoIndex(connector)
 
-    router.get("/createMapping") { _, response ->
-        buildInfoIndex.createMapping().then { _ ->
-            response.sendStatus(200)
-        }.catch { _ ->
-            response.sendStatus(400)
-        }
+    router.get("/showMappingsQueries") { _, response ->
+        val queries = listOf(
+                buildInfoIndex.createMappingQuery,
+                goldenIndex.createMappingQuery,
+        ) + benchmarksDispatcher.createMappingQueries
+        response.send(queries.joinToString("\n\n\n"))
     }
 
     // Get consistent build information in cases of rerunning the same build.
@@ -383,7 +394,9 @@ fun router(connector: ElasticSearchConnector) {
                     println(errorResponse)
                     reject()
                 }
-            }.catch {
+            }.catch { errorResponse ->
+                println("Error during getting builds")
+                println(errorResponse)
                 reject()
             }
         }
@@ -632,8 +645,9 @@ fun router(connector: ElasticSearchConnector) {
         CachableResponseDispatcher.getResponse(request, response) { success, reject ->
             getUnstableResults(goldenIndex).then { unstableBenchmarks ->
                 success(unstableBenchmarks)
-            }.catch {
+            }.catch { errorResponse ->
                 println("Error during getting unstable benchmarks")
+                println(errorResponse)
                 reject()
             }
         }
