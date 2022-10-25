@@ -11,15 +11,17 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 /**
- * trove4j jars should not be included (embedded) into our JARs.
- * This test checks that JARs don't contain any entry of trove library.
+ * Some IntelliJ dependencies should be included (embedded) into our JARs, but some don't.
+ *
+ * trove4j jars should not be included while openapi and fastutil should.
+ * This test checks JARs for entries of libraries.
  */
 class EmbeddableContentsTest {
     @Test
     fun `test current embeddable jars for trove classes`() {
         CompilerSmokeTest.compilerClasspath.filterNot {
             it.name.startsWith("trove")
-        }.forEach(::checkJarFile)
+        }.forEach(::checkJarForTrove)
     }
 
     private val konanHomeJars: List<File> by lazy {
@@ -33,7 +35,7 @@ class EmbeddableContentsTest {
     fun `test distribution jars for trove`() {
         konanHomeJars.filterNot {
             it.name.startsWith("trove")
-        }.forEach(::checkJarFile)
+        }.forEach(::checkJarForTrove)
     }
 
     @Test
@@ -41,19 +43,40 @@ class EmbeddableContentsTest {
         assertFailsWith<AssertionError> {
             konanHomeJars.single {
                 it.name.startsWith("trove")
-            }.let(::checkJarFile)
+            }.let(::checkJarForTrove)
         }
     }
 
-    private fun checkJarFile(it: File) {
-        JarFile(it).use { jar ->
+    private fun checkJarForTrove(file: File) {
+        JarFile(file).use { jar ->
             jar.entries().iterator().forEachRemaining { entry ->
                 assert(!entry.name.contains("gnu/trove")) {
                     """
-                    Jar file ${it.name} contains trove element: ${entry.name}
+                    Jar file ${jar.name} contains trove element: ${entry.name}
                     Check dependencies of embeddable configurations
                     """.trimIndent()
                 }
+            }
+        }
+    }
+
+    @Test
+    fun `test jars contain intellij dependencies`() {
+        konanHomeJars.filterNot {
+            it.name.startsWith("trove")
+        }.forEach {
+            it.checkJarContains("it/unimi/dsi/fastutil/objects/ReferenceOpenHashSet")
+            it.checkJarContains("com/intellij/openapi/util/")
+        }
+    }
+
+    private fun File.checkJarContains(string: String) {
+        JarFile(this).use { jar ->
+            assert(jar.entries()
+                    .asSequence()
+                    .any { it.name.contains(string) }
+            ) {
+                "Jar file ${jar.name} doesn't contain element: $string"
             }
         }
     }
