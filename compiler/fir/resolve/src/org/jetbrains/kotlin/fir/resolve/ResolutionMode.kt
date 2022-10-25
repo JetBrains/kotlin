@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.Companion.prettyString
 import org.jetbrains.kotlin.fir.types.*
@@ -33,6 +34,7 @@ sealed class ResolutionMode {
         val expectedTypeRef: FirTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
+        val returnTargetIfFromReturnType: FirFunction? = null,
     ) : ResolutionMode() {
         override fun toString(): String {
             return "WithExpectedType: ${expectedTypeRef.prettyString()}"
