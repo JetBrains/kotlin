@@ -4289,6 +4289,11 @@ createInterop("kt54284") {
     it.defFile 'interop/kt54284/kt54284.def'
 }
 
+createInterop("kt54284_fmodules") {
+    it.defFile 'interop/kt54284/kt54284.def'
+    it.extraOpts '-compiler-option', '-fmodules'
+}
+
 createInterop("kt43502") {
     it.defFile 'interop/kt43502/kt43502.def'
     it.headers "$projectDir/interop/kt43502/kt43502.h"
@@ -4766,6 +4771,12 @@ interopTest("interop_kt44283") {
 interopTest("interop_kt54284") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'kt54284'
+    source = "interop/kt54284/main.kt"
+}
+
+interopTest("interop_kt54284_fmodules") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = 'kt54284_fmodules'
     source = "interop/kt54284/main.kt"
 }
 

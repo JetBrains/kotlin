@@ -498,10 +498,20 @@ internal fun buildNativeLibrary(
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
     }
 
+    // Expanding macros such as __FILE__ or __TIME__ exposes arbitrary generated filenames and timestamps from the compiler pipeline
+    // which are not useful for interop and makes the klib generation non-deterministic. See KT-54284
+    // This macro redefinition just maps to their name in the properties available from Kotlin.
+    // Note: libclang requires main set of compilation options to be the same during precompiled header creation and its usage.
+    // Hence, macro redefinitions are created at the earliest possible point to spread into all libclang invocations.
+    val predefinedMacros = listOf("__DATE__", "__TIME__", "__TIMESTAMP__", "__FILE__", "__FILE_NAME__", "__BASE_FILE__", "__LINE__")
+    val predefinedMacroRedefinitions = listOf("-Wno-builtin-macro-redefined") + predefinedMacros.map {
+        "-D$it=\"$it\""
+    }
+
     val compilation = CompilationImpl(
             includes = headerFiles,
             additionalPreambleLines = def.defHeaderLines,
-            compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts,
+            compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts + predefinedMacroRedefinitions,
             language = language
     )
 
