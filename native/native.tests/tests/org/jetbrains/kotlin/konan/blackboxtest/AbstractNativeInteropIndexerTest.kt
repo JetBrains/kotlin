@@ -23,20 +23,19 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRun
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 
-@Tag("cinterop")
 abstract class AbstractNativeInteropIndexerFModulesTest : AbstractNativeInteropIndexerTest() {
     override val fmodules = true
 }
 
-@Tag("cinterop")
 abstract class AbstractNativeInteropIndexerNoFModulesTest : AbstractNativeInteropIndexerTest() {
     override val fmodules = false
 }
 
-@Tag("cinterop")
+@Tag("interop-indexer")
 abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
     abstract val fmodules: Boolean
 
+    @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = File(KtTestUtil.getHomeDirectory()).resolve(testPath)
         val tempDir = testRunSettings.get<BaseDirs>().testBuildDir.resolve(testPath).apply { mkdirs() }
