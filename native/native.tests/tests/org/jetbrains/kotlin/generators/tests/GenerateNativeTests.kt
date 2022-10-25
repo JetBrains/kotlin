@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeInteropIndexerTest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeCodegenBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibABITest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibBinaryCompatibilityTest
+import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -63,18 +59,20 @@ fun main() {
 
         // CInterop tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeInteropIndexerTest>(
-                suiteTestClassName = "InteropIndexerTestGenerated"
+            testClass<AbstractNativeInteropIndexerFModulesTest>(
+                suiteTestClassName = "InteropIndexerTestFModulesGenerated"
             ) {
                 model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
 //                model("Interop/Indexer/twoframeworks/defs", pattern = "^([^_](.+))$", recursive = false)
             }
-//            testClass<AbstractNativeInteropIndexerTest>(
-//                suiteTestClassName = "InteropIndexerSimpleTestGenerated"
-//            ) {
-//                model("Interop/Indexer/simple", pattern = "^([^_](.+))$", recursive = false)
-//            }
+            testClass<AbstractNativeInteropIndexerNoFModulesTest>(
+                suiteTestClassName = "InteropIndexerNoFmodulesTestGenerated"
+            ) {
+                model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+//                model("Interop/Indexer/twoframeworks/defs", pattern = "^([^_](.+))$", recursive = false)
+            }
         }
     }
 }

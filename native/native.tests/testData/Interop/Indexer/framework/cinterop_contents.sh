@@ -1,11 +1,13 @@
 #!/bin/sh
 # exit when any command fails
 set -e
-cinterop "$@"
-# Arg indices below must correspond to parameter building in AbstractIndexerFromSourcesTest.doTestSuccessfulCInterop
-KLIB=$2
-DEF=$4
-KLIB_OUTPUT=$KLIB.contents.txt
-klib contents $KLIB > $KLIB_OUTPUT
-diff $DEF.contents.gold.txt $KLIB_OUTPUT
+TESTPATH=$1
+WORK_DIR=$2
+FMODULES_ARG=$3
+
+TESTDATA=$TESTPATH/../..
+KLIB=klib.klib
+cd $WORK_DIR
+cinterop -o $KLIB -def $TESTPATH/pod1.def -compiler-option -F$TESTDATA $FMODULES_ARG
+klib contents $KLIB
 exit 0
