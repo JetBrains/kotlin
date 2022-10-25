@@ -16,7 +16,59 @@ KtConstructorSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/MyColor.x)
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /MyColor.x
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/Int
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+          getDispatchReceiver(): MyColor
+          getContainingModule: KtSourceModule "Sources of main"
+          deprecationStatus: null
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: null
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: x
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Int
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
+        getDispatchReceiver(): MyColor
+        getContainingModule: KtSourceModule "Sources of main"
+        deprecationStatus: null
+        getterDeprecationStatus: null
+        javaGetterName: getX
+        javaSetterName: null
+        setterDeprecationStatus: null
       hasDefaultValue: false
       isCrossinline: false
       isExtension: false
@@ -35,7 +87,59 @@ KtConstructorSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/MyColor.y)
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /MyColor.y
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/Int
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+          getDispatchReceiver(): MyColor
+          getContainingModule: KtSourceModule "Sources of main"
+          deprecationStatus: null
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: null
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: y
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Int
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
+        getDispatchReceiver(): MyColor
+        getContainingModule: KtSourceModule "Sources of main"
+        deprecationStatus: null
+        getterDeprecationStatus: null
+        javaGetterName: getY
+        javaSetterName: null
+        setterDeprecationStatus: null
       hasDefaultValue: false
       isCrossinline: false
       isExtension: false
@@ -54,7 +158,59 @@ KtConstructorSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/MyColor.z)
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /MyColor.z
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/Int
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+          getDispatchReceiver(): MyColor
+          getContainingModule: KtSourceModule "Sources of main"
+          deprecationStatus: null
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: null
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: z
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Int
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
+        getDispatchReceiver(): MyColor
+        getContainingModule: KtSourceModule "Sources of main"
+        deprecationStatus: null
+        getterDeprecationStatus: null
+        javaGetterName: getZ
+        javaSetterName: null
+        setterDeprecationStatus: null
       hasDefaultValue: false
       isCrossinline: false
       isExtension: false

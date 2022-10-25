@@ -44,11 +44,11 @@ KtConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val a: Int)
+        initializer: null
         isConst: false
         isDelegatedProperty: false
         isExtension: false
-        isFromPrimaryConstructor: true
+        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
