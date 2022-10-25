@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.AbstractConfigurationCacheIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_42
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Configuration cache in Android project")
-@JvmGradlePluginTests
+@AndroidGradlePluginTests
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         androidVersion = AGP_42
