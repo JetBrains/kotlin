@@ -42,7 +42,7 @@ public:
         void ClearForTests() noexcept;
 
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
-        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
+        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements);
 
         void OnStoppedForGC() noexcept;
         void OnSuspendForGC() noexcept;

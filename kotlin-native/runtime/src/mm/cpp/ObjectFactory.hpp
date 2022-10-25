@@ -12,6 +12,7 @@
 #include <type_traits>
 
 #include "Alignment.hpp"
+#include "Exceptions.h"
 #include "FinalizerHooks.hpp"
 #include "Memory.h"
 #include "Mutex.hpp"
@@ -536,9 +537,17 @@ public:
             return Storage::Node::GetSizeForDataSize(allocSize);
         }
 
-        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
+        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) {
             RuntimeAssert(typeInfo->IsArray(), "Must be an array");
             size_t allocSize = ArrayAllocatedDataSize(typeInfo, count);
+            // On 32-bit systems, overflow can happen in several places along
+            // the size calculation. If overflow did not happen in the
+            // multiplication checked in the previous call, but any of the
+            // subsequent additions overflowed, then the overflowed value will
+            // be small compared to the number of entries in the array.
+            if (Storage::Node::GetSizeForDataSize(allocSize) < count) {
+                ThrowOutOfMemoryError();
+            }
             auto& node = producer_.Insert(allocSize);
             auto* heapArray = new (node.Data()) HeapArrayHeader();
             auto* array = &heapArray->array;
@@ -562,7 +571,10 @@ public:
         }
 
         static size_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
-            uint32_t membersSize = static_cast<uint32_t>(-typeInfo->instanceSize_) * count;
+            size_t membersSize;
+            if (__builtin_mul_overflow(static_cast<size_t>(-typeInfo->instanceSize_), count, &membersSize)) {
+                ThrowOutOfMemoryError();
+            }
             // Note: array body is aligned, but for size computation it is enough to align the sum.
             return AlignUp(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
         }
