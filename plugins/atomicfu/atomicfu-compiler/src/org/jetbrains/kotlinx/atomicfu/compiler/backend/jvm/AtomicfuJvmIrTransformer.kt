@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 import org.jetbrains.kotlin.backend.common.extensions.*
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.*
@@ -434,6 +435,7 @@ class AtomicfuJvmIrTransformer(
             return context.irFactory.buildFun {
                 name = Name.identifier(mangledName)
                 isInline = true
+                visibility = atomicExtension.visibility
             }.apply {
                 val newDeclaration = this
                 extensionReceiverParameter = null
@@ -760,6 +762,7 @@ class AtomicfuJvmIrTransformer(
             return context.irFactory.buildFun {
                 name = Name.identifier(mangledName)
                 isInline = true
+                visibility = DescriptorVisibilities.PRIVATE
             }.apply {
                 dispatchReceiverParameter = (parent as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
                 if (functionName == LOOP) {
