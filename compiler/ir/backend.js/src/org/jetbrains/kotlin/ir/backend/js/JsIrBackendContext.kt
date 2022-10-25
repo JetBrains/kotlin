@@ -161,7 +161,7 @@ class JsIrBackendContext(
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
     override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
-        enabled = configuration.getBoolean(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION),
+        enabled = configuration.get(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true),
         eagerInitialization = symbolTable.referenceClass(getJsInternalClass("EagerInitialization"))
     )
 
