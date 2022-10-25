@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAnd
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
@@ -729,12 +730,17 @@ internal class KonanIrLinker(
                 }
             }
 
-            partialLinkageSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
-            partialLinkageSupport.markUsedClassifiersInInlineLazyIrFunction(function)
+            partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+            partialLinkageSupport.exploreClassifiersInInlineLazyIrFunction(function)
 
             fakeOverrideBuilder.provideFakeOverrides()
 
-            partialLinkageSupport.processUnlinkedDeclarations { listOf(function) }
+            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) { listOf(function) }
+
+            linker.checkNoUnboundSymbols(
+                    symbolTable,
+                    "after deserializing lazy-IR function ${function.name.asString()} in inline functions lowering"
+            )
 
             return InlineFunctionOriginInfo(function, fileDeserializationState.file, inlineFunctionReference.startOffset, inlineFunctionReference.endOffset)
         }

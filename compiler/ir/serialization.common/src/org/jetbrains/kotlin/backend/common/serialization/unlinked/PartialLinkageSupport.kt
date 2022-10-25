@@ -8,24 +8,39 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface PartialLinkageSupport {
     val partialLinkageEnabled: Boolean
 
-    /** For general use in IR linker. */
-    fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder)
+    /**
+     * For general use in IR linker.
+     *
+     * Note: Those classifiers that were detected as partially linked are excluded from the fake overrides generation
+     * to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
+     */
+    fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder)
 
-    /** For local use only in inline lazy-IR functions. */
-    fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction)
+    /**
+     * For local use only in inline lazy-IR functions.
+     *
+     * Such functions are fully deserialized when e.g. a cache is generated for a Kotlin/Native library given that the function itself
+     * is from another library. The rest of IR from another library remains lazy meantime.
+     */
+    fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction)
 
-    fun processUnlinkedDeclarations(roots: () -> Collection<IrElement>)
+    /**
+     * Generate stubs for the remaining unbound symbols. Traverse the IR tree and patch every usage of any unbound symbol
+     * to throw an appropriate IrLinkageError on access.
+     */
+    fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrElement>) {}
 
     companion object {
         val DISABLED = object : PartialLinkageSupport {
             override val partialLinkageEnabled get() = false
-            override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
-            override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
-            override fun processUnlinkedDeclarations(roots: () -> Collection<IrElement>) = Unit
+            override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
+            override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
+            override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Collection<IrElement>) = Unit
         }
     }
 }
