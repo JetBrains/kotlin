@@ -28,7 +28,8 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         }
         val resultExpression = expression.result
         // To avoid duplications with NO_ELSE_IN_WHEN or INVALID_IF_AS_EXPRESSION
-        if (resultExpression is FirWhenExpression && !resultExpression.isExhaustive) return
+        // as well as duplicate RETURN_TYPE_MISMATCH
+        if (resultExpression is FirResolvable) return
 
         val functionReturnType = if (targetElement is FirConstructor)
             context.session.builtinTypes.unitType.coneType

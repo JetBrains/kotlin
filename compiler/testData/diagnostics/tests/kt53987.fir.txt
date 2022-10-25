@@ -1,0 +1,15 @@
+FILE: kt53987.kt
+    public final fun box(): R|kotlin/String| {
+        ^box when () {
+            Boolean(true) ->  {
+                lval a: R|kotlin/Int| = Int(1)
+            }
+            else ->  {
+                String(fail:)
+            }
+        }
+
+    }
+    public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        lval test: R|kotlin/String| = R|/box|()
+    }

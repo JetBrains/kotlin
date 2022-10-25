@@ -385,12 +385,22 @@ private fun ConstraintSystemError.toDiagnostic(
                         else
                             upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
 
-                    FirErrors.TYPE_MISMATCH.createOn(
-                        qualifiedAccessSource ?: source,
-                        upperConeType.removeTypeVariableTypes(typeContext),
-                        inferredType.removeTypeVariableTypes(typeContext),
-                        typeMismatchDueToNullability
-                    )
+                    when (val target = position.returnTargetIfFromReturnType) {
+                        null -> FirErrors.TYPE_MISMATCH.createOn(
+                            qualifiedAccessSource ?: source,
+                            upperConeType.removeTypeVariableTypes(typeContext),
+                            inferredType.removeTypeVariableTypes(typeContext),
+                            typeMismatchDueToNullability
+                        )
+
+                        else -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
+                            qualifiedAccessSource ?: source,
+                            upperConeType.removeTypeVariableTypes(typeContext),
+                            inferredType.removeTypeVariableTypes(typeContext),
+                            target,
+                            typeMismatchDueToNullability
+                        )
+                    }
                 }
 
                 is ExplicitTypeParameterConstraintPosition<*>,

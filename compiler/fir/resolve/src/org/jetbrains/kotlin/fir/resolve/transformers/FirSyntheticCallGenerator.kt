@@ -197,13 +197,13 @@ class FirSyntheticCallGenerator(
             return createErrorReferenceWithExistingCandidate(
                 candidate,
                 ConeInapplicableCandidateError(applicability, candidate),
-                source = null,
+                source = callSite.source,
                 context,
                 components.resolutionStageRunner
             )
         }
 
-        return FirNamedReferenceWithCandidate(null, name, candidate)
+        return FirNamedReferenceWithCandidate(callSite.source, name, candidate)
     }
 
     private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate {

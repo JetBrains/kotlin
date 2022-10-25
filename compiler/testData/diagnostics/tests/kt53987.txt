@@ -1,0 +1,7 @@
+package
+
+public fun box(): kotlin.String
+public fun </*0*/ K> first(/*0*/ a: K, /*1*/ b: K): K
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun mox(): kotlin.String
+
