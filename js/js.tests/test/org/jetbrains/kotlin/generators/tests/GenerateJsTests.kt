@@ -120,7 +120,7 @@ fun main(args: Array<String>) {
                 model("lineNumbers/")
             }
 
-            testClass<AbstractFirBoxJsTest> {
+            testClass<AbstractFirJsBoxTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$")
             }
 
@@ -190,7 +190,7 @@ fun main(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirCodegenWasmJsInteropJsTest> {
+            testClass<AbstractFirJsCodegenWasmJsInteropTest> {
                 model("codegen/boxWasmJsInterop")
             }
 
