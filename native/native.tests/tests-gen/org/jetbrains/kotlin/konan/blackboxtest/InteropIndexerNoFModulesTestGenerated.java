@@ -160,4 +160,20 @@ public class InteropIndexerNoFModulesTestGenerated extends AbstractNativeInterop
             runTest("native/native.tests/testData/Interop/Indexer/builtins/builtinsDefs/fullStdargH/");
         }
     }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/Interop/Indexer/framework.macros/macrosDefs")
+    @TestDataPath("$PROJECT_ROOT")
+    public class MacrosDefs {
+        @Test
+        public void testAllFilesPresentInMacrosDefs() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/Interop/Indexer/framework.macros/macrosDefs"), Pattern.compile("^([^_](.+))$"), null, false);
+        }
+
+        @Test
+        @TestMetadata("myMacroType")
+        public void testMyMacroType() throws Exception {
+            runTest("native/native.tests/testData/Interop/Indexer/framework.macros/macrosDefs/myMacroType/");
+        }
+    }
 }
