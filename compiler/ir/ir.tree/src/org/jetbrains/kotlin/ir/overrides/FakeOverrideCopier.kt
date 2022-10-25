@@ -62,10 +62,6 @@ class FakeOverrideCopier(
                 extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
                 returnType = typeRemapper.remapType(declaration.returnType)
                 valueParameters = declaration.valueParameters.transform()
-
-                if (customization.needToCreateBody && body == null) {
-                    body = factory.createBlockBody(startOffset, endOffset)
-                }
             }
         }
     }

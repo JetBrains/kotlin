@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsProcessor.Companion.MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartiallyLinkedDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
@@ -75,9 +75,8 @@ private object ImplementAsErrorThrowingStubs : IrUnimplementedOverridesStrategy 
             && parent.modality != Modality.SEALED
         ) {
             Customization(
-                origin = MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION,
-                modality = parent.modality, // Use modality of class for implemented callable member.
-                needToCreateBody = true // At least it should have empty body. Later, the body will be patched in UnlinkedDeclarationsProcessor.
+                origin = PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER,
+                modality = parent.modality // Use modality of class for implemented callable member.
             )
         } else
             Customization.NO

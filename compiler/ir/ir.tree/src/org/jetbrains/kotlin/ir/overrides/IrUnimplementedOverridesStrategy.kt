@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 
 interface IrUnimplementedOverridesStrategy {
-    class Customization(val origin: IrDeclarationOrigin?, val modality: Modality?, val needToCreateBody: Boolean) {
+    class Customization(val origin: IrDeclarationOrigin?, val modality: Modality?) {
         companion object {
-            val NO = Customization(null, null, false)
+            val NO = Customization(null, null)
         }
     }
 
