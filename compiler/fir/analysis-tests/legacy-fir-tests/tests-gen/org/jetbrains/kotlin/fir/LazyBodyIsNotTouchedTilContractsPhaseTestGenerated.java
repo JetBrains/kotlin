@@ -3055,6 +3055,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/properties/kotlinOverridesJavaComplex.kt");
         }
 
+        @TestMetadata("lazyValWithElvisToNothingInside.kt")
+        public void testLazyValWithElvisToNothingInside() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properties/lazyValWithElvisToNothingInside.kt");
+        }
+
         @TestMetadata("noBackingFieldForExtension.kt")
         public void testNoBackingFieldForExtension() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/properties/noBackingFieldForExtension.kt");
