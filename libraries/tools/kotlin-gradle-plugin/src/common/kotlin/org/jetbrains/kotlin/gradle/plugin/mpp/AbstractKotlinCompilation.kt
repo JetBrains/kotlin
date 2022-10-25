@@ -53,8 +53,6 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val compilerOptions: HasCompilerOptions<*>
         get() = compilationData.compilerOptions
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Replaced by compilerOptions", replaceWith = ReplaceWith("compilerOptions.options"))
     final override val kotlinOptions: T get() = compilationData.kotlinOptions
     final override val kotlinSourceDirectoriesByFragmentName get() = compilationData.kotlinSourceDirectoriesByFragmentName
     //endregion
@@ -75,13 +73,10 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = compilationDetails.allKotlinSourceSets
-
     override val defaultSourceSet: KotlinSourceSet get() = compilationDetails.defaultSourceSet
 
     final override val compilationName: String get() = compilationDetails.compilationData.compilationPurpose
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Replaced by compilerOptions.configure { }", replaceWith = ReplaceWith("compilerOptions.configure(configure)"))
     override fun kotlinOptions(configure: T.() -> Unit) =
         configure(kotlinOptions)
 
