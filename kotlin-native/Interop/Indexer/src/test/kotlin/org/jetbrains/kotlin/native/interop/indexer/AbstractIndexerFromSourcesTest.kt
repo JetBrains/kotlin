@@ -4,7 +4,7 @@ import java.io.File
 import kotlin.contracts.ExperimentalContracts
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import kotlin.io.path.createTempDirectory
+import java.nio.file.Files
 
 @ExperimentalContracts
 abstract class AbstractIndexerFromSourcesTest : KtUsefulTestCase() {
@@ -43,7 +43,7 @@ abstract class AbstractIndexerFromSourcesTest : KtUsefulTestCase() {
                 "-compiler-option", "-F$testCaseDir", "-compiler-option", "-I$testCaseDir/include"
         )
         val fmodulesArgs = if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
-        val tempDirectory = createTempDirectory("$testDirectoryName-")
+        val tempDirectory = Files.createTempDirectory("$testDirectoryName-")
         TestRunner(programArgs + fmodulesArgs, tempDirectory.toFile()).run()
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeInteropIndexerTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibABITest
@@ -57,6 +58,20 @@ fun main() {
                 suiteTestClassName = "KlibBinaryCompatibilityTestGenerated"
             ) {
                 model("binaryCompatibility/klibEvolution", recursive = false)
+            }
+        }
+
+        // CInterop tests.
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeInteropIndexerTest>(
+                suiteTestClassName = "InteropIndexerTestGenerated"
+            ) {
+                model("Interop/Indexer/", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeInteropIndexerTest>(
+                suiteTestClassName = "InteropIndexerFModulesTestGenerated"
+            ) {
+                model("Interop/Indexer/", pattern = "^([^_](.+))$", recursive = false)
             }
         }
     }
