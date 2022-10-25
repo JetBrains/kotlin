@@ -32443,6 +32443,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("inProjectedDnnParameter.kt")
+            public void testInProjectedDnnParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/inProjectedDnnParameter.kt");
+            }
+
+            @Test
             @TestMetadata("kt42042.kt")
             public void testKt42042() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/kt42042.kt");
