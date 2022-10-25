@@ -62,7 +62,7 @@ internal class ClassifierUsageMarker(private val usedClassifierSymbols: UsedClas
                 }
 
                 for (typeParameter in classifier.typeParameters) {
-                    if (typeParameter.superTypes.any { it.isUnlinkedType(visited) })
+                    if (typeParameter.symbol.isUnlinkedClassifier(visited))
                         return usedClassifierSymbols.register(this, UsedClassifierSymbolStatus.UNLINKED)
                 }
 
