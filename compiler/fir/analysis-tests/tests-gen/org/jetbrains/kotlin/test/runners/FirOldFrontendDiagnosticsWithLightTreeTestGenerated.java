@@ -22591,6 +22591,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("augmentedAssignForJavaSyntheticProperty.kt")
+            public void testAugmentedAssignForJavaSyntheticProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/augmentedAssignForJavaSyntheticProperty.kt");
+            }
+
+            @Test
             @TestMetadata("compareToNullable.kt")
             public void testCompareToNullable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/compareToNullable.kt");
