@@ -13,5 +13,3 @@ headers = \
     cups/raster.h
 headerFilter = cups/**
 linkerOpts = -lcups
-
-# Some disabled frameworks depends on it, so let's keep it for now.

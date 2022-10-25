@@ -1,4 +1,4 @@
-depends = CoreFoundationBase darwin posix
+depends = CFCGTypes CoreFoundationBase darwin posix
 language = Objective-C
 package = platform.CoreFoundation
 headers = CoreFoundation/CoreFoundation.h CoreFoundation/CFPlugInCOM.h
