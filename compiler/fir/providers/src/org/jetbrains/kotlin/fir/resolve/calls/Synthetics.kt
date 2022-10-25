@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeNullability.NOT_NULL
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -96,11 +95,10 @@ class FirSyntheticPropertiesScope private constructor(
     private fun checkGetAndCreateSynthetic(
         propertyName: Name,
         getterName: Name,
-        getterSymbol: FirFunctionSymbol<*>,
+        getterSymbol: FirNamedFunctionSymbol,
         needCheckForSetter: Boolean,
         processor: (FirVariableSymbol<*>) -> Unit
     ) {
-        if (getterSymbol !is FirNamedFunctionSymbol) return
         val getter = getterSymbol.fir
 
         if (getter.typeParameters.isNotEmpty()) return
@@ -116,28 +114,14 @@ class FirSyntheticPropertiesScope private constructor(
             val setterName = syntheticNamesProvider.setterNameByGetterName(getterName)
             baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirNamedFunctionSymbol) {
                 if (matchingSetter != null) return
+
                 val setter = setterSymbol.fir
                 val parameter = setter.valueParameters.singleOrNull() ?: return
                 if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
                 val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-                // TODO: at this moment it works for cases like
-                // class Base {
-                //     void setSomething(Object value) {}
-                // }
-                // class Derived extends Base {
-                //     String getSomething() { return ""; }
-                // }
-                // In FE 1.0, we should have also Object getSomething() in class Base for this to work
-                // I think details here are worth designing
-                if (!AbstractTypeChecker.isSubtypeOf(
-                        session.typeContext,
-                        getterReturnType.withNullability(NOT_NULL, session.typeContext),
-                        parameterType.withNullability(NOT_NULL, session.typeContext)
-                    )
-                ) {
-                    return
-                }
-                matchingSetter = setter
+
+                if (!setterTypeIsConsistentWithGetterType(getterSymbol, parameterType, baseScope)) return
+                matchingSetter = setterSymbol.fir
             })
         }
 
@@ -163,6 +147,24 @@ class FirSyntheticPropertiesScope private constructor(
             }
         }
         processor(syntheticSymbol)
+    }
+
+    private fun setterTypeIsConsistentWithGetterType(
+        getterSymbol: FirNamedFunctionSymbol,
+        parameterType: ConeKotlinType,
+        scopeOfGetter: FirTypeScope
+    ): Boolean {
+        val getterReturnType = getterSymbol.resolvedReturnTypeRef.type
+        if (AbstractTypeChecker.equalTypes(session.typeContext, getterReturnType, parameterType)) return true
+        if (!AbstractTypeChecker.isSubtypeOf(session.typeContext, getterReturnType, parameterType)) return false
+        /*
+         * Here we search for some getter in overrides hierarchy which type is consistent with type of setter
+         */
+        for ((overriddenGetter, scope) in scopeOfGetter.getDirectOverriddenFunctionsWithBaseScope(getterSymbol)) {
+            val foundGoodOverride = setterTypeIsConsistentWithGetterType(overriddenGetter, parameterType, scope)
+            if (foundGoodOverride) return true
+        }
+        return false
     }
 
     private fun FirNamedFunctionSymbol.hasJavaOverridden(): Boolean {
