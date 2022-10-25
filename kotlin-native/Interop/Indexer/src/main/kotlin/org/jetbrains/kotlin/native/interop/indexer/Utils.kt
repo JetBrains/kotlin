@@ -537,12 +537,7 @@ internal interface Indexer {
     fun indexDeclaration(info: CXIdxDeclInfo) {}
 }
 
-internal fun interface IndexerFactory {
-    fun newInstance(tu: CXTranslationUnit): Indexer
-}
-
-internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslationUnit, options: Int, indexerFactory: IndexerFactory) {
-    val indexer = indexerFactory.newInstance(translationUnit)
+internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslationUnit, options: Int, indexer: Indexer) {
     val indexerStableRef = StableRef.create(indexer)
     try {
         val clientData = indexerStableRef.asCPointer()
@@ -722,70 +717,70 @@ private fun filterHeadersByName(
 
     var curUnitIndex = 0
     while (curUnitIndex < translationUnits.size) {
-        indexTranslationUnit(index, translationUnits[curUnitIndex++], 0) { unit: CXTranslationUnit ->
-            object : Indexer {
-                override fun enteredMainFile(file: CXFile) {
-                    mainFile = file
-                    allHeaders += file
+        val curUnit = translationUnits[curUnitIndex++]
+
+        indexTranslationUnit(index, curUnit, 0, object : Indexer {
+            override fun enteredMainFile(file: CXFile) {
+                mainFile = file
+                allHeaders += file
+            }
+
+            override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
+                val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
+                val file = info.file!!
+
+                allHeaders += file
+
+                if (clang_Location_isFromMainFile(includeLocation) != 0) {
+                    topLevelFiles.add(file)
                 }
 
-                override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
-                    val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
-                    val file = info.file!!
+                val name = info.filename!!.toKString()
+                val headerName = if (info.isAngled != 0) {
+                    // If the header is included with `#include <$name>`, then `name` is probably
+                    // the path relative to the include path element.
+                    name
+                } else if (includeLocation.getContainingFile() == null) {
+                    name // containingFile is null when one module imports another via AST file
+                } else {
+                    // If it is included with `#include "$name"`, then `name` can also be the path relative to the includer.
+                    val includerFile = includeLocation.getContainingFile()!!
+                    val includerName = headerToName[includerFile.canonicalPath] ?: ""
+                    val includerPath = includerFile.path
 
-                    allHeaders += file
-
-                    if (clang_Location_isFromMainFile(includeLocation) != 0) {
-                        topLevelFiles.add(file)
-                    }
-
-                    val name = info.filename!!.toKString()
-                    val headerName = if (info.isAngled != 0) {
-                        // If the header is included with `#include <$name>`, then `name` is probably
-                        // the path relative to the include path element.
-                        name
-                    } else if (includeLocation.getContainingFile() == null) {
-                        name // containingFile is null when one module imports another via AST file
+                    val resolvedSibling = Paths.get(includerPath).resolveSibling(name).toString()
+                    if (clang_getFile(translationUnit, resolvedSibling)?.canonicalPath == file.canonicalPath) {
+                        // included file is accessible from the includer by `name` used as relative path, so
+                        // `name` seems to be relative to the includer:
+                        Paths.get(includerName).resolveSibling(name).normalize().toString()
                     } else {
-                        // If it is included with `#include "$name"`, then `name` can also be the path relative to the includer.
-                        val includerFile = includeLocation.getContainingFile()!!
-                        val includerName = headerToName[includerFile.canonicalPath] ?: ""
-                        val includerPath = includerFile.path
-
-                        val resolvedSibling = Paths.get(includerPath).resolveSibling(name).toString()
-                        if (clang_getFile(translationUnit, resolvedSibling)?.canonicalPath == file.canonicalPath) {
-                            // included file is accessible from the includer by `name` used as relative path, so
-                            // `name` seems to be relative to the includer:
-                            Paths.get(includerName).resolveSibling(name).normalize().toString()
-                        } else {
-                            name
-                        }
+                        name
                     }
+                }
 
-                    if (includeLocation.getContainingFile() != null) {
-                        // headerToName is stored only for known containing file of include location, which does not happen inside imported AST file.
-                        // Right before AST import, `ppIncludedFile` receives included source file in `info.file`, and another source as include location in `info.hashLoc`
-                        // Inside AST import, `ppIncludedFile` is called again for the same included source file,
-                        //   though include location is not a source, but `.m` file, and its `getContainingFile()` is null
-                        // So include location makes sense only the first
-                        headerToName[file.canonicalPath] = headerName
-                    }
-                    if (!filter.policy.excludeUnused(headerName)) {
-                        ownHeaders.add(file)
+                if (includeLocation.getContainingFile() != null) {
+                    // headerToName is stored only for known containing file of include location, which does not happen inside imported AST file.
+                    // Right before AST import, `ppIncludedFile` receives included source file in `info.file`, and another source as include location in `info.hashLoc`
+                    // Inside AST import, `ppIncludedFile` is called again for the same included source file,
+                    //   though include location is not a source, but `.m` file, and its `getContainingFile()` is null
+                    // So include location makes sense only the first
+                    headerToName[file.canonicalPath] = headerName
+                }
+                if (!filter.policy.excludeUnused(headerName)) {
+                    ownHeaders.add(file)
+                    ownTranslationUnits += curUnit
+                }
+            }
+
+            override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
+                unitsHolder.load(info).also { unit ->
+                    if (!translationUnits.contains(unit)) {
+                        translationUnits.add(unit)
                         ownTranslationUnits += unit
                     }
                 }
-
-                override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                    unitsHolder.load(info).also { unit ->
-                        if (!translationUnits.contains(unit)) {
-                            translationUnits.add(unit)
-                            ownTranslationUnits += unit
-                        }
-                    }
-                }
             }
-        }
+        })
     }
 
     if (filter.excludeDepdendentModules) {
@@ -820,31 +815,29 @@ private fun filterHeadersByPredefined(
     // Note: suboptimal but simple.
     var curUnitIndex = 0
     while (curUnitIndex < translationUnits.size) {
-        indexTranslationUnit(index, translationUnits[curUnitIndex++], 0) {
-            object : Indexer {
-                override fun enteredMainFile(file: CXFile) {
-                    ownHeaders += file
-                    allHeaders += file
-                }
-
-                override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
-                    val file = info.file
-                    allHeaders += file
-                    if (file?.canonicalPath in filter.headers) {
-                        ownHeaders += file
-                    }
-                }
-
-                override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                    unitsHolder.load(info).also { unit ->
-                        if (!translationUnits.contains(unit)) {
-                            translationUnits.add(unit)
-                        }
-                    }
-                }
-
+        indexTranslationUnit(index, translationUnits[curUnitIndex++], 0, object : Indexer {
+            override fun enteredMainFile(file: CXFile) {
+                ownHeaders += file
+                allHeaders += file
             }
-        }
+
+            override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
+                val file = info.file
+                allHeaders += file
+                if (file?.canonicalPath in filter.headers) {
+                    ownHeaders += file
+                }
+            }
+
+            override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
+                unitsHolder.load(info).also { unit ->
+                    if (!translationUnits.contains(unit)) {
+                        translationUnits.add(unit)
+                    }
+                }
+            }
+
+        })
     }
 }
 

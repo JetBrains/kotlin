@@ -1214,21 +1214,19 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 }
 
                 unitsToProcess.forEach {
-                    indexTranslationUnit(index, it, 0) {
-                        object : Indexer {
-                            override fun indexDeclaration(info: CXIdxDeclInfo) {
-                                val file = memScoped {
-                                    val fileVar = alloc<CXFileVar>()
-                                    clang_indexLoc_getFileLocation(info.loc.readValue(), null, fileVar.ptr, null, null, null)
-                                    fileVar.value
-                                }
+                    indexTranslationUnit(index, it, 0, object : Indexer {
+                        override fun indexDeclaration(info: CXIdxDeclInfo) {
+                            val file = memScoped {
+                                val fileVar = alloc<CXFileVar>()
+                                clang_indexLoc_getFileLocation(info.loc.readValue(), null, fileVar.ptr, null, null, null)
+                                fileVar.value
+                            }
 
-                                if (file?.canonicalPath in headersCanonicalPaths) {
-                                    nativeIndex.indexDeclaration(info)
-                                }
+                            if (file?.canonicalPath in headersCanonicalPaths) {
+                                nativeIndex.indexDeclaration(info)
                             }
                         }
-                    }
+                    })
                 }
 
                 if (nativeIndex.library.language == Language.CPP) {
