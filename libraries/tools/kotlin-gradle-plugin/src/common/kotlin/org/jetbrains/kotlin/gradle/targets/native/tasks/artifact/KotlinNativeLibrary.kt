@@ -56,8 +56,6 @@ class KotlinNativeLibraryImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
-    @Suppress("DEPRECATION")
-    @Deprecated("Replaced by compilerOptionsConfigure", replaceWith = ReplaceWith("compilerOptionsConfigure"))
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,

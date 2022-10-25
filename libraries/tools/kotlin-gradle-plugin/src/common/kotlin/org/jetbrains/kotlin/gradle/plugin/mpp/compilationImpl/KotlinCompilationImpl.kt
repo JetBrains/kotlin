@@ -187,7 +187,6 @@ internal class KotlinCompilationImpl constructor(
 
     //region CompilerOptions & KotlinOptions
 
-    @Deprecated(message = "Replaced by compilerOptions", replaceWith = ReplaceWith("compilerOptions.options"))
     override val kotlinOptions: KotlinCommonOptions
         get() = params.kotlinOptions
 
