@@ -1640,6 +1640,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("methodWithDefaultParameter.kt")
+            public void testMethodWithDefaultParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/bridges/methodWithDefaultParameter.kt");
+            }
+
+            @Test
             @TestMetadata("noBridgeOnMutableCollectionInheritance.kt")
             public void testNoBridgeOnMutableCollectionInheritance() throws Exception {
                 runTest("compiler/testData/codegen/box/bridges/noBridgeOnMutableCollectionInheritance.kt");
