@@ -31,9 +31,10 @@ object BuilderInferenceAssignmentChecker : CallChecker {
         if (resultingDescriptor !is PropertyDescriptor) return
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.NoBuilderInferenceWithoutAnnotationRestriction)) return
         if (resolvedCall.candidateDescriptor.returnType !is StubTypeForBuilderInference) return
-        if (reportOn !is KtNameReferenceExpression) return
-        val binaryExpression = reportOn.getParentOfType<KtBinaryExpression>(strict = true) ?: return
-        if (!BasicExpressionTypingVisitor.isLValue(reportOn, binaryExpression)) return
+        val callElement = resolvedCall.call.callElement
+        if (callElement !is KtNameReferenceExpression) return
+        val binaryExpression = callElement.getParentOfType<KtBinaryExpression>(strict = true) ?: return
+        if (!BasicExpressionTypingVisitor.isLValue(callElement, binaryExpression)) return
 
         val leftType = resultingDescriptor.returnType?.takeIf { !it.isError } ?: return
         val right = binaryExpression.right ?: return
