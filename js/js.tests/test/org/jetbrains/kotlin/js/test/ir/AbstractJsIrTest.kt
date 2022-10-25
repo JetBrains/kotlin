@@ -191,7 +191,7 @@ open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
     testGroupOutputDirPrefix = "codegen/wasmJsInteropJs"
 )
 
-open class AbstractFirJsTest(
+open class AbstractFirJsBlackBoxCodegenTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String = "firBox/",
 ) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
@@ -251,12 +251,12 @@ open class AbstractFirJsTest(
     }
 }
 
-open class AbstractFirBoxJsTest : AbstractFirJsTest(
+open class AbstractFirJsBoxTest : AbstractFirJsBlackBoxCodegenTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix = "irBox/"
 )
 
-open class AbstractFirJsCodegenBoxTest : AbstractFirJsTest(
+open class AbstractFirJsCodegenBoxTest : AbstractFirJsBlackBoxCodegenTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "codegen/irBox/"
 ) {
@@ -272,12 +272,12 @@ open class AbstractFirJsCodegenBoxTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsCodegenBoxErrorTest : AbstractFirJsTest(
+open class AbstractFirJsCodegenBoxErrorTest : AbstractFirJsBlackBoxCodegenTest(
     pathToTestDir = "compiler/testData/codegen/boxError/",
     testGroupOutputDirPrefix = "codegen/irBoxError/"
 )
 
-open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
+open class AbstractFirJsCodegenInlineTest : AbstractFirJsBlackBoxCodegenTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/irBoxInline/"
 )
@@ -315,7 +315,7 @@ open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
 //    }
 //}
 
-open class AbstractFirCodegenWasmJsInteropJsTest : AbstractFirJsTest(
+open class AbstractFirJsCodegenWasmJsInteropTest : AbstractFirJsBlackBoxCodegenTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop",
     testGroupOutputDirPrefix = "codegen/wasmJsInteropJs"
 )
