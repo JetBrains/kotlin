@@ -184,15 +184,18 @@ fun <T : ConeKotlinType> T.withNullability(
                 upperBound.withNullability(nullability, typeContext)
             )
         }
+
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag, attributes)
         is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor, attributes)
         is ConeIntersectionType -> when (nullability) {
             ConeNullability.NULLABLE -> this.mapTypes {
                 it.withNullability(nullability, typeContext)
             }
+
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> this
         }
+
         is ConeStubTypeForSyntheticFixation -> ConeStubTypeForSyntheticFixation(constructor, nullability)
         is ConeStubTypeForChainInference -> ConeStubTypeForChainInference(constructor, nullability)
         is ConeStubTypeForTypeVariableInSubtyping -> ConeStubTypeForTypeVariableInSubtyping(constructor, nullability)
@@ -201,6 +204,7 @@ fun <T : ConeKotlinType> T.withNullability(
             ConeNullability.NULLABLE -> original.withNullability(nullability, typeContext)
             ConeNullability.UNKNOWN -> original.withNullability(nullability, typeContext)
         }
+
         is ConeIntegerLiteralConstantType -> ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullability)
         is ConeIntegerConstantOperatorType -> ConeIntegerConstantOperatorTypeImpl(isUnsigned, nullability)
         else -> error("sealed: ${this::class}")
@@ -424,9 +428,11 @@ private fun ConeKotlinType.approximateToOnlySupertype(session: FirSession): Cone
                         index++
                     }
                 }
+
                 is ConeErrorType -> {
                     return false
                 }
+
                 is ConeClassLikeType -> {
                     for (typeArgument in projection.typeArguments) {
                         if (!addSubstitution(typeArgument)) {
@@ -434,11 +440,13 @@ private fun ConeKotlinType.approximateToOnlySupertype(session: FirSession): Cone
                         }
                     }
                 }
+
                 is ConeKotlinTypeProjection -> {
                     if (!addSubstitution(projection.type)) {
                         return false
                     }
                 }
+
                 is ConeStarProjection -> {
                     index++
                 }
@@ -581,6 +589,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
 
             ConeFlexibleType(lowerIntersectedType.coneLowerBoundIfFlexible(), upperIntersectedType.coneUpperBoundIfFlexible())
         }
+
         is ConeSimpleKotlinType -> {
             intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type)).withNullability(type.isMarkedNullable) as ConeKotlinType
         }
@@ -600,6 +609,7 @@ private fun ConeTypeContext.captureArgumentsForIntersectionType(type: ConeKotlin
                     (ConeFlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(it) ?: it.typeConstructor(this)) to it.typeArguments
                 }
             }
+
             is ConeIntersectionType -> type.intersectedTypes
             else -> error("Should not be here")
         }
@@ -677,17 +687,21 @@ fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
                         if (lowerThanBound(session.typeContext, argument, typeParameterSymbol) || argument.canHaveSubtypes(session)) {
                             return true
                         }
+
                     ProjectionKind.IN ->
                         if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
                             return true
                         }
+
                     ProjectionKind.OUT ->
                         if (argument.canHaveSubtypes(session)) {
                             return true
                         }
+
                     ProjectionKind.STAR ->
                         return true
                 }
+
             Variance.IN_VARIANCE ->
                 if (typeProjection.kind != ProjectionKind.OUT) {
                     if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
@@ -698,6 +712,7 @@ fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
                         return true
                     }
                 }
+
             Variance.OUT_VARIANCE ->
                 if (typeProjection.kind != ProjectionKind.IN) {
                     if (argument.canHaveSubtypes(session)) {
@@ -814,6 +829,7 @@ private fun ConeKotlinType.eraseAsUpperBound(
                 withArguments(typeArguments.map { ConeStarProjection }.toTypedArray())
             }
         }
+
         is ConeFlexibleType ->
             // If one bound is a type parameter, the other is probably the same type parameter,
             // so there is no exponential complexity here due to cache lookups.
@@ -822,12 +838,15 @@ private fun ConeKotlinType.eraseAsUpperBound(
                 lowerBound.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively),
                 upperBound.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively)
             )
+
         is ConeTypeParameterType ->
             lookupTag.typeParameterSymbol.fir.eraseToUpperBound(session, cache, intersectUpperBounds, eraseRecursively).let {
                 if (isNullable) it.withNullability(nullability, session.typeContext) else it
             }
+
         is ConeDefinitelyNotNullType ->
             original.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively)
                 .makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+
         else -> error("unexpected Java type parameter upper bound kind: $this")
     }
