@@ -150,6 +150,10 @@ class IrInlineCodegen(
         }
     }
 
+    override fun beforeContextParametersStart() {
+        invocationParamBuilder.markValueParametersStart(0)
+    }
+
     override fun beforeValueParametersStart(contextReceiversCount: Int) {
         invocationParamBuilder.markValueParametersStart(contextReceiversCount)
     }

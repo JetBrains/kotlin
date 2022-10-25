@@ -499,6 +499,7 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
         }
 
+        callGenerator.beforeContextParametersStart()
         val contextReceivers = callee.valueParameters.subList(0, callee.contextReceiverParametersCount)
         contextReceivers.forEachIndexed(::handleValueParameter)
 
