@@ -642,8 +642,8 @@ internal class KonanIrLinker(
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
         private val inlineFunctionReferences by lazy {
-            (cachedLibraries.getLibraryCache(klib)
-                    ?: error("No cache for ${klib.libraryName}")).serializedInlineFunctionBodies.associateBy {
+            val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
+            cache.serializedInlineFunctionBodies.associateBy {
                 fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
             }
         }
@@ -740,8 +740,8 @@ internal class KonanIrLinker(
         }
 
         private val classesFields by lazy {
-            (cachedLibraries.getLibraryCache(klib)
-                    ?: error("No cache for ${klib.libraryName}")).serializedClassFields.associateBy {
+            val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
+            cache.serializedClassFields.associateBy {
                 fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.classSignature)
             }
         }
