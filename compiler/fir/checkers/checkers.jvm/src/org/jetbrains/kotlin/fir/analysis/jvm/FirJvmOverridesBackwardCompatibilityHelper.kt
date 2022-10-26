@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isJavaOrEnhancement
-import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
+import org.jetbrains.kotlin.fir.dispatchReceiverClassTypeOrNull
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -85,7 +85,7 @@ object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatib
         }
 
         val scope =
-            symbol.dispatchReceiverTypeOrNull()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return false
+            symbol.dispatchReceiverClassTypeOrNull()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return false
         val overriddenSymbols = when (originalMember) {
             is FirSimpleFunction -> scope.getDirectOverriddenFunctions(originalMember.symbol)
             is FirProperty -> scope.getDirectOverriddenProperties(originalMember.symbol)

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
+import org.jetbrains.kotlin.fir.dispatchReceiverClassTypeOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
@@ -40,7 +40,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
 
         if (rValue.explicitReceiver?.typeRef?.coneType?.isPrimitive != true) return
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
-        if (rValueResolvedSymbol.dispatchReceiverTypeOrNull()?.isPrimitive != true) return
+        if (rValueResolvedSymbol.dispatchReceiverClassTypeOrNull()?.isPrimitive != true) return
 
         var needToReport = false
         val assignmentSource = expression.source
