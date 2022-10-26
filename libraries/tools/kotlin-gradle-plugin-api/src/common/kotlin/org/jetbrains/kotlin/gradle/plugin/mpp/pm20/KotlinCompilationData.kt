@@ -34,7 +34,6 @@ interface KotlinCompilationData<T : KotlinCommonOptionsDeprecated> {
     val platformType: KotlinPlatformType
 
     val moduleName: String
-    val ownModuleName: String
 
     @Deprecated(
         message = "Replaced with compilerOptions.options",

@@ -1368,7 +1368,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/Grad
 	public abstract fun getKotlinSourceDirectoriesByFragmentName ()Ljava/util/Map;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/project/model/LanguageSettings;
 	public abstract fun getOutput ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationOutput;
-	public abstract fun getOwnModuleName ()Ljava/lang/String;
 	public abstract fun getOwner ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariant;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public abstract fun getProject ()Lorg/gradle/api/Project;
@@ -1418,7 +1417,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/Kotl
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/project/model/LanguageSettings;
 	public abstract fun getModuleName ()Ljava/lang/String;
 	public abstract fun getOutput ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationOutput;
-	public abstract fun getOwnModuleName ()Ljava/lang/String;
 	public abstract fun getOwner ()Ljava/lang/Object;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public abstract fun getProject ()Lorg/gradle/api/Project;

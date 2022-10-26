@@ -20,7 +20,6 @@ internal fun interface KotlinCompilationAssociator {
 
 internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
-        target.project.kotlinCompilationModuleManager.unionModules(first.compilationModule, second.compilationModule)
         val project = target.project
 
         /*
@@ -54,7 +53,6 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
 
 internal object NativeKotlinCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
-        target.project.kotlinCompilationModuleManager.unionModules(first.compilationModule, second.compilationModule)
 
         first.compileDependencyFiles +=
             second.output.classesDirs + target.project.filesProvider { second.compileDependencyFiles }
@@ -67,8 +65,6 @@ internal object NativeKotlinCompilationAssociator : KotlinCompilationAssociator 
 
 internal object JvmKotlinCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
-        target.project.kotlinCompilationModuleManager.unionModules(first.compilationModule, second.compilationModule)
-
         /* Main to Test association handled already by java plugin */
         if (target is KotlinJvmTarget && target.withJavaEnabled && first.isMain() && second.isTest()) {
             return
@@ -87,7 +83,6 @@ internal object JvmKotlinCompilationAssociator : KotlinCompilationAssociator {
 */
 internal object AndroidKotlinCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
-        target.project.kotlinCompilationModuleManager.unionModules(first.compilationModule, second.compilationModule)
         first.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
             target.project,
             second.apiConfigurationName,
