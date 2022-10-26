@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
@@ -160,7 +160,7 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     protected val konanTarget by project.provider {
         when (val compilation = compilation) {
-            is KotlinCompilationProjection.KPM -> (compilation.compilationData as KotlinNativeCompilationData<*>).konanTarget
+            is KotlinCompilationProjection.KPM -> (compilation.compilationData as GradleKpmNativeCompilationData<*>).konanTarget
             is KotlinCompilationProjection.TCS -> (compilation.compilation as AbstractKotlinNativeCompilation).konanTarget
         }
     }
@@ -455,7 +455,7 @@ internal constructor(
     }
 
     private val isMetadataCompilation: Boolean = when (compilation) {
-        is KotlinCompilationProjection.KPM -> compilation.compilationData is KotlinMetadataCompilationData<*>
+        is KotlinCompilationProjection.KPM -> compilation.compilationData is GradleKpmMetadataCompilationData<*>
         is KotlinCompilationProjection.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
 

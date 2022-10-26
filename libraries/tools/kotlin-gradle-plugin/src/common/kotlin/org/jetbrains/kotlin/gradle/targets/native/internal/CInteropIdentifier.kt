@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmCompilationData
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import java.io.Serializable
 
@@ -26,7 +26,7 @@ internal data class CInteropIdentifier internal constructor(
             }
 
             @OptIn(UnsafeApi::class)
-            fun create(compilation: KotlinCompilationData<*>): Scope {
+            fun create(compilation: GradleKpmCompilationData<*>): Scope {
                 return Scope("compilation/${compilation.compileKotlinTaskName}")
             }
         }

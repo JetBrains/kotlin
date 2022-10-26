@@ -10,8 +10,8 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAbstractFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import java.io.File
@@ -24,7 +24,7 @@ internal class KotlinCompileCommonConfig(
             task.expectActualLinker.value(
                 providers.provider {
                     (compilationProjection.origin as? KotlinCommonCompilation)?.isKlibCompilation == true ||
-                            compilationProjection.origin is KotlinMetadataCompilationData<*>
+                            compilationProjection.origin is GradleKpmMetadataCompilationData<*>
                 }
             ).disallowChanges()
             task.refinesMetadataPaths.from(getRefinesMetadataPaths(project)).disallowChanges()
@@ -43,7 +43,7 @@ internal class KotlinCompileCommonConfig(
                 }
 
                 is KotlinCompilationProjection.KPM -> {
-                    val compilationData = compilationProjection.compilationData as AbstractKotlinFragmentMetadataCompilationData<*>
+                    val compilationData = compilationProjection.compilationData as GradleKpmAbstractFragmentMetadataCompilationData<*>
                     val fragment = compilationData.fragment
                     project.files(
                         fragment.refinesClosure.minus(fragment).map {

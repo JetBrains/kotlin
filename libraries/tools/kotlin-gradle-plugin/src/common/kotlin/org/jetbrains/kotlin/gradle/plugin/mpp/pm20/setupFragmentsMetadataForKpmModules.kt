@@ -180,7 +180,7 @@ private fun createCommonMetadataCompilation(
     val project = module.project
 
     val metadataCompilationData =
-        KotlinCommonFragmentMetadataCompilationDataImpl(
+        GradleKpmCommonFragmentMetadataCompilationDataImpl(
             project,
             fragment,
             module,
@@ -201,7 +201,7 @@ private fun createNativeMetadataCompilation(
     val project = module.project
 
     val metadataCompilationData =
-        KotlinNativeFragmentMetadataCompilationDataImpl(
+        GradleKpmNativeFragmentMetadataCompilationDataImpl(
             project,
             fragment,
             module,
@@ -216,7 +216,7 @@ private fun createNativeMetadataCompilation(
 private class GradleKpmMetadataCompilationTasksConfigurator(project: Project) : GradleKpmCompilationTaskConfigurator(project) {
     fun createKotlinCommonCompilationTask(
         fragment: GradleKpmFragment,
-        compilationData: KotlinCommonFragmentMetadataCompilationData
+        compilationData: GradleKpmCommonFragmentMetadataCompilationData
     ) {
         KotlinCommonSourceSetProcessor(KotlinCompilationProjection.KPM(compilationData), KotlinTasksProvider()).run()
         val allSources = getSourcesForFragmentCompilation(fragment)
@@ -232,7 +232,7 @@ private class GradleKpmMetadataCompilationTasksConfigurator(project: Project) : 
 
     fun createKotlinNativeMetadataCompilationTask(
         fragment: GradleKpmFragment,
-        compilationData: KotlinNativeFragmentMetadataCompilationData
+        compilationData: GradleKpmNativeFragmentMetadataCompilationData
     ): TaskProvider<KotlinNativeCompile> = createKotlinNativeCompilationTask(fragment, compilationData) {
         kotlinPluginData = project.compilerPluginProviderForNativeMetadata(fragment, compilationData)
     }
@@ -276,7 +276,7 @@ private fun createExtractMetadataTask(
 
 // FIXME: use this function once more than one platform is supported
 private fun disableMetadataCompilationIfNotYetSupported(
-    metadataCompilationData: AbstractKotlinFragmentMetadataCompilationData<*>
+    metadataCompilationData: GradleKpmAbstractFragmentMetadataCompilationData<*>
 ) {
     val fragment = metadataCompilationData.fragment
     val platforms = fragment.containingVariants.map { it.platformType }.toSet()
