@@ -24,9 +24,9 @@ import kotlin.io.path.*
 import kotlin.test.assertTrue
 
 /**
- * Create new test project.
+ * Create a new test project.
  *
- * @param [projectName] test project name in 'src/test/resources/testProject` directory.
+ * @param [projectName] test project name in `src/test/resources/testProject` directory.
  * @param [buildOptions] common Gradle build options
  * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
  */
@@ -83,7 +83,7 @@ fun KGPBaseTest.project(
 }
 
 /**
- * Create new test project with configuring single native target.
+ * Create a new test project with configuring single native target.
  *
  * @param [projectName] test project name in 'src/test/resources/testProject` directory.
  * @param [buildOptions] common Gradle build options

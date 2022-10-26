@@ -537,7 +537,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("KT-27170: android lint works with dependency on non-android mpp project")
     @GradleAndroidTest
-    @Disabled // not fully migrated yet
     fun testLintInAndroidProjectsDependingOnMppWithoutAndroid(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -549,8 +548,8 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-//            embedProject(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) // TODO
-            subProject("lib").buildGradle.appendText(
+            includeOtherProjectAsSubmodule(pathPrefix = "new-mpp-lib-and-app", otherProjectName = "sample-lib")
+            subProject("Lib").buildGradle.appendText(
                 //language=Gradle
                 """
 
