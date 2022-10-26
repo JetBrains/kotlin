@@ -158,7 +158,10 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
     ) + "_" + abs(signature.hashCode()).toString(Character.MAX_RADIX) + RESERVED_MEMBER_NAME_SUFFIX
 }
 
-fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
+fun jsFunctionSignature(
+    declaration: IrFunction,
+    context: JsIrBackendContext
+): String {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
 
@@ -172,7 +175,7 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): S
     }
 
     val declarationSignature = (declaration as? IrSimpleFunction)?.resolveFakeOverride() ?: declaration
-    return context.getFunctionSignatureFromCache(declarationSignature)
+    return calculateJsFunctionSignature(declarationSignature, context)
 }
 
 class NameTables(
