@@ -656,8 +656,8 @@ internal object EscapeAnalysis {
             else -> null
         }
 
-        private fun arraySize(itemSize: Int, length: Int) =
-                pointerSize /* typeinfo */ + 4 /* size */ + itemSize * length
+        private fun arraySize(itemSize: Int, length: Int): Long =
+                pointerSize /* typeinfo */ + 4 /* size */ + itemSize * length.toLong()
 
         private fun analyze(callGraph: CallGraph, pointsToGraph: PointsToGraph, function: DataFlowIR.FunctionSymbol.Declared) {
             context.log {"Before calls analysis" }
@@ -1573,6 +1573,8 @@ internal object EscapeAnalysis {
 
                 escapeOrigins.forEach { propagateEscapeOrigin(it) }
 
+                // TODO: To a setting?
+                val allowedToAlloc = 65536
                 val stackArrayCandidates = mutableListOf<ArrayStaticAllocation>()
                 for ((node, ptgNode) in nodes) {
                     if (node.ir == null) continue
@@ -1592,9 +1594,9 @@ internal object EscapeAnalysis {
                             if (itemSize != null) {
                                 val sizeArgument = node.arguments.first().node
                                 val arrayLength = arrayLengthOf(sizeArgument)
-                                if (arrayLength != null) {
-                                    stackArrayCandidates +=
-                                            ArrayStaticAllocation(ptgNode, irClass, arraySize(itemSize, arrayLength))
+                                val arraySize = arraySize(itemSize, arrayLength ?: Int.MAX_VALUE)
+                                if (arraySize <= allowedToAlloc) {
+                                    stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arraySize.toInt())
                                 } else {
                                     // Can be placed into the local arena.
                                     // TODO. Support Lifetime.LOCAL
@@ -1616,14 +1618,13 @@ internal object EscapeAnalysis {
                 }
 
                 stackArrayCandidates.sortBy { it.size }
-                // TODO: To a setting?
-                var allowedToAlloc = 65536
+                var remainedToAlloc = allowedToAlloc
                 for ((ptgNode, irClass, size) in stackArrayCandidates) {
                     if (lifetimeOf(ptgNode) != Lifetime.STACK) continue
-                    if (size <= allowedToAlloc)
-                        allowedToAlloc -= size
+                    if (size <= remainedToAlloc)
+                        remainedToAlloc -= size
                     else {
-                        allowedToAlloc = 0
+                        remainedToAlloc = 0
                         // Do not exile primitive arrays - they ain't reference no object.
                         if (irClass.symbol == symbols.array && propagateExiledToHeapObjects) {
                             context.log { "Forcing node ${nodeToString(ptgNode.node!!)} to escape" }
