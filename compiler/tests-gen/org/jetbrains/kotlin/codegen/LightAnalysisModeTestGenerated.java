@@ -28970,11 +28970,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/properties/genericWithSameName.kt");
         }
 
-        @TestMetadata("sideEffectInTopLevelInitializerMultiModule.kt")
-        public void ignoreSideEffectInTopLevelInitializerMultiModule() throws Exception {
-            runTest("compiler/testData/codegen/box/properties/sideEffectInTopLevelInitializerMultiModule.kt");
-        }
-
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
