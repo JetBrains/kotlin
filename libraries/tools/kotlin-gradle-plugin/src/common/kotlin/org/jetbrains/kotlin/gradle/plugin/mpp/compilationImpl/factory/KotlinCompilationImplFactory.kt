@@ -11,15 +11,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager.CompilationModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.decoratedInstance
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 internal class KotlinCompilationImplFactory(
     private val compilerOptionsFactory: KotlinCompilerOptionsFactory,
-
-    private val compilationModuleFactory: CompilationModuleFactory =
-        DefaultCompilationModuleFactory,
 
     private val compilationSourceSetsContainerFactory: KotlinCompilationSourceSetsContainerFactory =
         DefaultKotlinCompilationSourceSetsContainerFactory(),
@@ -51,9 +47,6 @@ internal class KotlinCompilationImplFactory(
     private val postConfigureAction: PostConfigure =
         DefaultKotlinCompilationPostConfigure
 ) {
-    fun interface CompilationModuleFactory {
-        fun create(target: KotlinTarget, compilationName: String): CompilationModule
-    }
 
     fun interface KotlinCompilationSourceSetsContainerFactory {
         fun create(target: KotlinTarget, compilationName: String): KotlinCompilationSourceSetsContainer
@@ -102,7 +95,7 @@ internal class KotlinCompilationImplFactory(
         val compilation = KotlinCompilationImpl(
             KotlinCompilationImpl.Params(
                 target = target,
-                compilationModule = compilationModuleFactory.create(target, compilationName),
+                compilationName = compilationName,
                 sourceSets = compilationSourceSetsContainerFactory.create(target, compilationName),
                 dependencyConfigurations = compilationDependencyConfigurationsFactory.create(target, compilationName),
                 compilationTaskNames = compilationTaskNamesContainerFactory.create(target, compilationName),
