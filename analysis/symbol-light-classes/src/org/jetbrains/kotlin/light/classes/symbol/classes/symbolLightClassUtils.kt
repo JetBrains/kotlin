@@ -416,14 +416,26 @@ internal fun SymbolLightClassBase.createInheritanceList(forExtendsList: Boolean,
         return forExtendsList == !isJvmInterface
     }
 
-    //TODO Add support for kotlin.collections.
     superTypes.asSequence()
         .filter { it.needToAddTypeIntoList() }
-        .mapNotNull { type ->
-            if (type !is KtNonErrorClassType) return@mapNotNull null
-            mapType(type, this@createInheritanceList, KtTypeMappingMode.SUPER_TYPE)
+        .forEach { superType ->
+            if (superType !is KtNonErrorClassType) return@forEach
+            val mappedType =
+                mapType(superType, this@createInheritanceList, KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS)
+                    ?: return@forEach
+            listBuilder.addReference(mappedType)
+            if (mappedType.canonicalText.startsWith("kotlin.collections.")) {
+                val mappedToNoCollectionAsIs = mapType(superType, this@createInheritanceList, KtTypeMappingMode.SUPER_TYPE)
+                if (mappedToNoCollectionAsIs != null &&
+                    mappedType.canonicalText != mappedToNoCollectionAsIs.canonicalText
+                ) {
+                    // Add java supertype
+                    listBuilder.addReference(mappedToNoCollectionAsIs)
+                    // Add marker interface
+                    listBuilder.addMarkerInterfaceIfNeeded(superType.classId)
+                }
+            }
         }
-        .forEach { listBuilder.addReference(it) }
 
     return listBuilder
 }

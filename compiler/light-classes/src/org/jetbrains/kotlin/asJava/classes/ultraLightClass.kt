@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
@@ -143,8 +144,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 //Add java supertype
                 listBuilder.addReference(mappedToNoCollectionAsIs)
                 //Add marker interface
-                superType.tryResolveMarkerInterfaceFQName()?.let { marker ->
-                    listBuilder.addReference(marker)
+                superType.constructor.declarationDescriptor.classId?.let { classId ->
+                    listBuilder.addMarkerInterfaceIfNeeded(classId)
                 }
             }
         }
