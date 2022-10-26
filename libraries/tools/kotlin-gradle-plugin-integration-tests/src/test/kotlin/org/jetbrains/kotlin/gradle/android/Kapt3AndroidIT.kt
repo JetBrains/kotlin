@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.gradle.api.JavaVersion
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.Kapt3BaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_42
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
-import java.io.File
-import java.nio.file.Path
 import kotlin.io.path.appendText
-import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
 
 @DisplayName("android with kapt3 tests")
