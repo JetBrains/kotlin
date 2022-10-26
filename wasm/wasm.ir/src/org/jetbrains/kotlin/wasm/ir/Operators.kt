@@ -73,7 +73,10 @@ sealed class WasmImmediate {
         constructor(value: WasmMemory) : this(WasmSymbol(value))
     }
 
-    class DataIdx(val value: Int) : WasmImmediate()
+    class DataIdx(val value: WasmSymbol<Int>) : WasmImmediate() {
+        constructor(value: Int) : this(WasmSymbol(value))
+    }
+
     class TableIdx(val value: WasmSymbolReadOnly<Int>) : WasmImmediate() {
         constructor(value: Int) : this(WasmSymbol(value))
     }
@@ -356,6 +359,7 @@ enum class WasmOp(
     ARRAY_LEN("array.len", 0xFB_17, listOf(STRUCT_TYPE_IDX)),
     ARRAY_COPY("array.copy", 0xFB_18, listOf(STRUCT_TYPE_IDX, STRUCT_TYPE_IDX)),
     ARRAY_NEW_DATA("array.new_data", 0xFB_1D, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
+    ARRAY_NEW_FIXED("array.new_fixed", 0xFB_1A, listOf(STRUCT_TYPE_IDX, CONST_I32)),
 
     I31_NEW("i31.new", 0xFB_20),
     I31_GET_S("i31.get_s", 0xFB_21),

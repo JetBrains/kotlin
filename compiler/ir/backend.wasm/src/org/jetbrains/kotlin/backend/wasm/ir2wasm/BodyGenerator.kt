@@ -73,6 +73,59 @@ class BodyGenerator(
         error("Unexpected element of type ${element::class}")
     }
 
+    private fun tryGenerateConstVarargArray(irVararg: IrVararg, wasmArrayType: WasmImmediate.GcType): Boolean {
+        if (irVararg.elements.isEmpty()) return false
+
+        val kind = (irVararg.elements[0] as? IrConst<*>)?.kind ?: return false
+        if (kind == IrConstKind.String || kind == IrConstKind.Null) return false
+        if (irVararg.elements.any { it !is IrConst<*> || it.kind != kind }) return false
+
+        val elementConstValues = irVararg.elements.map { (it as IrConst<*>).value!! }
+
+        val resource = when (irVararg.varargElementType) {
+            irBuiltIns.byteType -> elementConstValues.map { (it as Byte).toLong() } to WasmI8
+            irBuiltIns.booleanType -> elementConstValues.map { if (it as Boolean) 1L else 0L } to WasmI8
+            irBuiltIns.intType -> elementConstValues.map { (it as Int).toLong() } to WasmI32
+            irBuiltIns.shortType -> elementConstValues.map { (it as Short).toLong() } to WasmI16
+            irBuiltIns.longType -> elementConstValues.map { it as Long } to WasmI64
+            else -> return false
+        }
+
+        val constantArrayId = context.referenceConstantArray(resource)
+
+        body.buildConstI32(0)
+        body.buildConstI32(irVararg.elements.size)
+        body.buildInstr(WasmOp.ARRAY_NEW_DATA, wasmArrayType, WasmImmediate.DataIdx(constantArrayId))
+        return true
+    }
+
+    private fun tryGenerateVarargArray(irVararg: IrVararg, wasmArrayType: WasmImmediate.GcType) {
+        irVararg.elements.forEach {
+            check(it is IrExpression)
+            generateExpression(it)
+        }
+
+        val length = WasmImmediate.ConstI32(irVararg.elements.size)
+        body.buildInstr(WasmOp.ARRAY_NEW_FIXED, wasmArrayType, length)
+    }
+
+    override fun visitVararg(expression: IrVararg) {
+        val arrayClass = expression.type.getClass()!!
+
+        val wasmArrayType = arrayClass.constructors
+            .mapNotNull { it.valueParameters.singleOrNull()?.type }
+            .firstOrNull { it.getClass()?.getWasmArrayAnnotation() != null }
+            ?.getRuntimeClass(irBuiltIns)?.symbol
+            ?.let(context::referenceGcType)
+            ?.let(WasmImmediate::GcType)
+
+        check(wasmArrayType != null)
+
+        generateAnyParameters(arrayClass.symbol)
+        if (!tryGenerateConstVarargArray(expression, wasmArrayType)) tryGenerateVarargArray(expression, wasmArrayType)
+        body.buildStructNew(context.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol))
+    }
+
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
         body.buildThrow(context.tagIdx)
@@ -256,14 +309,18 @@ class BodyGenerator(
         generateCall(expression)
     }
 
+    private fun generateBox(expression: IrExpression, type: IrType) {
+        val klassSymbol = type.getRuntimeClass(irBuiltIns).symbol
+        generateAnyParameters(klassSymbol)
+        generateExpression(expression)
+        body.buildStructNew(context.referenceGcType(klassSymbol))
+    }
+
     private fun generateCall(call: IrFunctionAccessExpression) {
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
         if (call.symbol == wasmSymbols.boxIntrinsic) {
-            val klassSymbol = call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol
-            generateAnyParameters(klassSymbol)
-            generateExpression(call.getValueArgument(0)!!)
-            body.buildStructNew(context.referenceGcType(klassSymbol))
+            generateBox(call.getValueArgument(0)!!, call.getTypeArgument(0)!!)
             return
         }
 
@@ -491,15 +548,15 @@ class BodyGenerator(
                 body.buildInstr(WasmOp.ARRAY_COPY, immediate, immediate)
             }
 
-            wasmSymbols.wasmArrayNewData0 -> {
-                val immediate = WasmImmediate.GcType(
-                    context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
-                )
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, immediate, WasmImmediate.DataIdx(0))
-            }
-
             wasmSymbols.stringGetPoolSize -> {
                 body.buildConstI32Symbol(context.stringPoolSize)
+            }
+
+            wasmSymbols.wasmArrayNewData0 -> {
+                val arrayGcType = WasmImmediate.GcType(
+                    context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
+                )
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, arrayGcType, WasmImmediate.DataIdx(0))
             }
 
             else -> {

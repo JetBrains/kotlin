@@ -108,16 +108,14 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
         return this.useAsArgument(expression.target.valueParameters[parameter.index])
     }
 
-
-    override fun IrExpression.useAsVarargElement(expression: IrVararg): IrExpression {
-        return this.useAs(
+    override fun useAsVarargElement(element: IrExpression, expression: IrVararg): IrExpression =
+        element.useAs(
             // Do not box primitive inline classes
-            if (icUtils.isTypeInlined(type) && !icUtils.isTypeInlined(expression.type) && !expression.type.isPrimitiveArray())
+            if (icUtils.isTypeInlined(element.type) && !icUtils.isTypeInlined(expression.type) && !expression.type.isPrimitiveArray())
                 irBuiltIns.anyNType
             else
                 expression.varargElementType
         )
-    }
 }
 
 class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsageLowering(context) {

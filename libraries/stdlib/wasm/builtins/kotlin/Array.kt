@@ -17,6 +17,10 @@ import kotlin.wasm.internal.*
 public class Array<T> constructor(size: Int) {
     internal val storage: WasmAnyArray = WasmAnyArray(size)
 
+    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @WasmPrimitiveConstructor
+    internal constructor(storage: WasmAnyArray) : this(check(false) as Int)
+
     /**
      * Creates a new array with the specified [size], where each element is calculated by calling the specified
      * [init] function.

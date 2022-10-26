@@ -37,6 +37,14 @@ internal class WasmUsefulDeclarationProcessor(
             super.visitVariable(declaration, data)
         }
 
+        override fun visitVararg(expression: IrVararg, data: IrDeclaration) {
+            expression.type.getClass()!!
+                .constructors
+                .firstOrNull { it.hasWasmPrimitiveConstructorAnnotation() }
+                ?.enqueue(data, "implicit vararg constructor")
+            super.visitVararg(expression, data)
+        }
+
         private fun tryToProcessIntrinsicCall(from: IrDeclaration, call: IrCall): Boolean = when (call.symbol) {
             context.wasmSymbols.unboxIntrinsic -> {
                 val fromType = call.getTypeArgument(0)

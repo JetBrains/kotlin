@@ -114,10 +114,6 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
                 data.forEach { appendData(it) }
             }
 
-            appendSection(12u) {
-                b.writeVarUInt32(data.size)
-            }
-
             //text section (should be placed after data)
             if (emitNameSection) {
                 appendTextSection(definedFunctions)
@@ -217,7 +213,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
             is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.TypeIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.MemoryIdx -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value)
+            is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.TagIdx -> b.writeVarUInt32(x.value)

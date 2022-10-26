@@ -40,6 +40,8 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         ReferencableElements<String, Int>()
     val stringLiteralPoolId =
         ReferencableElements<String, Int>()
+    val constantArrayDataSegmentId =
+        ReferencableElements<Pair<List<Long>, WasmType>, Int>()
 
     private val tagFuncType = WasmFunctionType(
         listOf(
@@ -148,6 +150,18 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
 
         val data = mutableListOf<WasmData>()
         data.add(WasmData(WasmDataMode.Passive, stringDataSectionBytes.toByteArray()))
+        constantArrayDataSegmentId.unbound.forEach { (constantArraySegment, symbol) ->
+            symbol.bind(data.size)
+            val integerSize = when (constantArraySegment.second) {
+                WasmI8 -> BYTE_SIZE_BYTES
+                WasmI16 -> SHORT_SIZE_BYTES
+                WasmI32 -> INT_SIZE_BYTES
+                WasmI64 -> LONG_SIZE_BYTES
+                else -> TODO("type ${constantArraySegment.second} is not implemented")
+            }
+            val constData = ConstantDataIntegerArray("constant_array", constantArraySegment.first, integerSize)
+            data.add(WasmData(WasmDataMode.Passive, constData.toBytes()))
+        }
         typeInfo.buildData(data, address = { klassIds.getValue(it) })
 
         val masterInitFunctionType = WasmFunctionType(emptyList(), emptyList())
@@ -203,6 +217,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             startFunction = null,  // Module is initialized via export call
             elements = emptyList(),
             data = data,
+            dataCount = true,
             tags = listOf(tag)
         )
         module.calculateIds()

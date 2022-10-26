@@ -38,6 +38,8 @@ interface WasmBaseCodegenContext {
 
     fun referenceStringLiteralAddressAndId(string: String): Pair<WasmSymbol<Int>, WasmSymbol<Int>>
 
+    fun referenceConstantArray(resource: Pair<List<Long>, WasmType>): WasmSymbol<Int>
+
     fun transformType(irType: IrType): WasmType
     fun transformFieldType(irType: IrType): WasmType
 

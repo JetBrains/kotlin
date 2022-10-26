@@ -28,7 +28,7 @@ internal fun <To> wasm_ref_test(a: Any?): Boolean =
 internal fun <T> wasm_array_copy(destination: T, destinationIndex: Int, source: T, sourceIndex: Int, length: Int): Unit =
     implementedAsIntrinsic
 
-internal fun <T> array_new_data0(address: Int, length: Int): WasmCharArray =
+internal fun <T> array_new_data0(address: Int, length: Int): T =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_EQ)
