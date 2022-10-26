@@ -176,7 +176,7 @@ class FakeOverrideGenerator(
     }
 
     private fun FirCallableSymbol<*>.shouldHaveComputedBaseSymbolsForClass(classLookupTag: ConeClassLikeLookupTag): Boolean =
-        fir.origin.fromSupertypes && dispatchReceiverClassOrNull() == classLookupTag
+        fir.origin.fromSupertypes && dispatchReceiverClassLookupTagOrNull() == classLookupTag
 
     private inline fun <reified D : FirCallableDeclaration, reified S : FirCallableSymbol<D>, reified I : IrDeclaration> createFakeOverriddenIfNeeded(
         klass: FirClass,
@@ -197,7 +197,7 @@ class FakeOverrideGenerator(
         val classLookupTag = klass.symbol.toLookupTag()
         val originalDeclaration = originalSymbol.fir
 
-        if (originalSymbol.dispatchReceiverClassOrNull() == classLookupTag && !originalDeclaration.origin.fromSupertypes) return
+        if (originalSymbol.dispatchReceiverClassLookupTagOrNull() == classLookupTag && !originalDeclaration.origin.fromSupertypes) return
         // Data classes' methods from Any (toString/equals/hashCode) are not handled by the line above because they have Any-typed dispatch receiver
         // (there are no special FIR method for them, it's just fake overrides)
         // But they are treated differently in IR (real declarations have already been declared before) and such methods are present among realDeclarationSymbols
@@ -330,7 +330,7 @@ class FakeOverrideGenerator(
 
         return scope.directOverridden(symbol).map {
             // Unwrapping should happen only for fake overrides members from the same class, not from supertypes
-            if (it.fir.isSubstitutionOverride && it.dispatchReceiverClassOrNull() == containingClass)
+            if (it.fir.isSubstitutionOverride && it.dispatchReceiverClassLookupTagOrNull() == containingClass)
                 it.originalForSubstitutionOverride!!
             else
                 it

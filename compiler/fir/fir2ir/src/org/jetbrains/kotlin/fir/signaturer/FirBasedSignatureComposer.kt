@@ -91,7 +91,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableDeclaration) {
             if (declaration.visibility == Visibilities.Local) return null
-            if (!allowLocalClasses && (declaration.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true)) return null
+            if (!allowLocalClasses && (declaration.dispatchReceiverClassLookupTagOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true)) return null
         }
 
         val declarationWithParentId = FirDeclarationWithParentId(declaration, containingClass?.classId)

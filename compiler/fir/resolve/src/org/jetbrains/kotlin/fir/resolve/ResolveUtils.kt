@@ -541,7 +541,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
         }
         // referenced function of a Kotlin function type
         FirDeclarationOrigin.BuiltIns -> {
-            if (dispatchReceiverClassOrNull()?.isBuiltinFunctionalType() == true) {
+            if (dispatchReceiverClassLookupTagOrNull()?.isBuiltinFunctionalType() == true) {
                 ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
             } else {
                 null

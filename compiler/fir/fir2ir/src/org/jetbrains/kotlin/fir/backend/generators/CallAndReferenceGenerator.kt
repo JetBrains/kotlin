@@ -698,7 +698,7 @@ class CallAndReferenceGenerator(
                 val resolvedReference = callableReferenceAccess.calleeReference as FirResolvedNamedReference
                 val firCallableSymbol = resolvedReference.resolvedSymbol as FirCallableSymbol<*>
                 // Make sure the reference indeed refers to a member of that companion
-                if (firCallableSymbol.dispatchReceiverClassOrNull() != classSymbol.toLookupTag()) {
+                if (firCallableSymbol.dispatchReceiverClassLookupTagOrNull() != classSymbol.toLookupTag()) {
                     return null
                 }
             }

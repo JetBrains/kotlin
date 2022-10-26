@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
-import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -197,7 +195,7 @@ class Fir2IrLazyClass(
             scope.processFunctionsByName(name) {
                 if (it.isSubstitutionOrIntersectionOverride) return@processFunctionsByName
                 if (!shouldBuildStub(it.fir)) return@processFunctionsByName
-                if (it.dispatchReceiverClassOrNull() == ownerLookupTag) {
+                if (it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag) {
                     if (it.isAbstractMethodOfAny()) {
                         return@processFunctionsByName
                     }
@@ -207,7 +205,7 @@ class Fir2IrLazyClass(
             scope.processPropertiesByName(name) {
                 if (it.isSubstitutionOrIntersectionOverride) return@processPropertiesByName
                 if (!shouldBuildStub(it.fir)) return@processPropertiesByName
-                if (it is FirPropertySymbol && it.dispatchReceiverClassOrNull() == ownerLookupTag) {
+                if (it is FirPropertySymbol && it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag) {
                     result.addIfNotNull(
                         declarationStorage.getIrPropertySymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner as? IrDeclaration
                     )

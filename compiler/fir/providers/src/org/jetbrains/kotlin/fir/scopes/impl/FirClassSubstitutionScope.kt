@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -286,7 +286,7 @@ class FirClassSubstitutionScope(
             member as FirTypeParameterRefsOwner,
             symbolForOverride,
             substitutor,
-            forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != member.dispatchReceiverClassOrNull()
+            forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != member.dispatchReceiverClassLookupTagOrNull()
         )
 
         val receiverType = member.receiverTypeRef?.coneType

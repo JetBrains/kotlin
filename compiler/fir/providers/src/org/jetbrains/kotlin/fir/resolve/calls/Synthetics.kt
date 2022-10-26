@@ -125,7 +125,7 @@ class FirSyntheticPropertiesScope private constructor(
             })
         }
 
-        val classLookupTag = getterSymbol.originalOrSelf().dispatchReceiverClassOrNull()
+        val classLookupTag = getterSymbol.originalOrSelf().dispatchReceiverClassLookupTagOrNull()
         val packageName = classLookupTag?.classId?.packageFqName ?: getterSymbol.callableId.packageName
         val className = classLookupTag?.classId?.relativeClassName
 

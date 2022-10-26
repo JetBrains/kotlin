@@ -356,7 +356,7 @@ class FirTypeIntersectionScopeContext(
         val key = mostSpecific.first() as FirNamedFunctionSymbol
         val keyFir = key.fir
         val callableId = CallableId(
-            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassOrNull()?.classId!!,
+            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!,
             keyFir.name
         )
         val newSymbol = FirIntersectionOverrideFunctionSymbol(callableId, overrides)
@@ -381,7 +381,7 @@ class FirTypeIntersectionScopeContext(
         val key = mostSpecific.first() as FirPropertySymbol
         val keyFir = key.fir
         val callableId = CallableId(
-            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassOrNull()?.classId!!,
+            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!,
             keyFir.name
         )
         val newSymbol = FirIntersectionOverridePropertySymbol(callableId, overrides)
