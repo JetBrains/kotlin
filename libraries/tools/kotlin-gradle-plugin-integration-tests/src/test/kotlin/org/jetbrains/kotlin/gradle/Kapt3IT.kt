@@ -37,7 +37,6 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
 
-@OtherGradlePluginTests
 abstract class Kapt3BaseIT : KGPBaseTest() {
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
@@ -116,6 +115,7 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 }
 
 @DisplayName("Kapt base checks")
+@OtherGradlePluginTests
 open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
