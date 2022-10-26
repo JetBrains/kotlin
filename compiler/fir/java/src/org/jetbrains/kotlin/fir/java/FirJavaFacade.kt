@@ -537,7 +537,7 @@ abstract class FirJavaFacade(
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
                 annotationBuilder = { javaField.convertAnnotationsToFir(session, javaTypeParameterStack) }
-                initializer = convertJavaInitializerToFir(javaField.initializerValue)
+                lazyInitializer = createLazyFieldInitializer(javaField)
 
                 if (!javaField.isStatic) {
                     dispatchReceiverType = dispatchReceiver
@@ -550,9 +550,13 @@ abstract class FirJavaFacade(
         }
     }
 
-    private fun convertJavaInitializerToFir(value: Any?): FirExpression? {
-        // NB: null should be converted to null
-        return value?.createConstantIfAny(session)
+    private fun createLazyFieldInitializer(javaField: JavaField): Lazy<FirExpression?> {
+        // Sic! This avoids capturing too much into a lazy lambda
+        val session = this.session
+        return lazy {
+            // NB: null should be converted to null
+            javaField.initializerValue?.createConstantIfAny(session)
+        }
     }
 
     private fun convertJavaMethodToFir(
