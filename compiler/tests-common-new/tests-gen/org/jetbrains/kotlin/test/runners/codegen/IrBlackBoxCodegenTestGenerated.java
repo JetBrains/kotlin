@@ -2364,15 +2364,15 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
-        @TestMetadata("nestedClassTypeParameters.kt")
-        public void testNestedClassTypeParameters() throws Exception {
-            runTest("compiler/testData/codegen/box/bridges/nestedClassTypeParameters.kt");
-        }
-
-        @Test
         @TestMetadata("methodWithDefaultParameter.kt")
         public void testMethodWithDefaultParameter() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/methodWithDefaultParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedClassTypeParameters.kt")
+        public void testNestedClassTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/nestedClassTypeParameters.kt");
         }
 
         @Test
