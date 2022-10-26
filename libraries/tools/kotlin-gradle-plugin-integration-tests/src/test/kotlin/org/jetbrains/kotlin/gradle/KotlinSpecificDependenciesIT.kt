@@ -211,7 +211,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            buildAndFail("checkDebugDuplicateClasses", forceOutput = true) {
+            buildAndFail("checkDebugDuplicateClasses") {
                 assertOutputContains("Duplicate class kotlin.internal.jdk8.JDK8PlatformImplementations")
             }
         }
@@ -240,6 +240,87 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 checkModulesNotInClasspath = listOf("kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"),
                 isBuildGradleKts = true
             )
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("KT-54653: stdlib-jdk7, jdk8 substitution should not work for unrelated configuration")
+    @GradleTest
+    fun stdlibJdkVariantsSubstitutionOnlyConfiguration(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.modify {
+                """
+                |$it
+                |
+                |// Stdlib-jdk8 version should be <1.8.0
+                |configurations.create("specificDeps")
+                |
+                |dependencies {
+                |    specificDeps "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20"
+                |    implementation "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}"
+                |}
+                """.trimMargin()
+            }
+
+            build("dependencies") {
+                assertOutputDoesNotContain(
+                    """
+                    |
+                    |specificDeps
+                    |\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20 -> org.jetbrains.kotlin:kotlin-stdlib:1.7.20
+                    |     +--- org.jetbrains.kotlin:kotlin-stdlib-common:1.7.20
+                    |     \--- org.jetbrains:annotations:13.0
+                    """.trimMargin()
+                )
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("KT-54653: stdlib-jdk7, jdk8 substitution works for complex resolvable configurations hierarchy")
+    @GradleTest
+    fun stdlibJdkVariantSubstitutionComplexResolvableConfiguration(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.modify {
+                """
+                |$it
+                |
+                |// Stdlib-jdk8 version should be <1.8.0
+                |def specificDepsConf = configurations.create("specificDeps") {
+                |    setCanBeResolved(true)
+                |}
+                |
+                |configurations.create("specificDepsChild") {
+                |    setCanBeResolved(true)
+                |    extendsFrom specificDepsConf
+                |}
+                |
+                |dependencies {
+                |    specificDeps "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}"
+                |    // brings transitevly older stdlib-jdk7,8 dependencies
+                |    specificDepsChild "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
+                |}
+                """.trimMargin()
+            }
+
+            build("dependencies") {
+                assertOutputDoesNotContain(
+                    """
+                    |
+                    |specificDepsChild
+                    |+--- org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}
+                    ||    +--- org.jetbrains.kotlin:kotlin-stdlib-common:${buildOptions.kotlinVersion}
+                    ||    \--- org.jetbrains:annotations:13.0
+                    |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
+                    |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
+                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30
+                    |          |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.5.30 -> ${buildOptions.kotlinVersion} (*)
+                    |          |    \--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.30
+                    |          |         \--- org.jetbrains.kotlin:kotlin-stdlib:1.5.30 -> ${buildOptions.kotlinVersion} (*)
+                    |          \--- org.jetbrains.kotlin:kotlin-stdlib-common:1.5.30 -> ${buildOptions.kotlinVersion}
+                    """.trimMargin()
+                )
+            }
         }
     }
 
