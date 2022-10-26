@@ -79,7 +79,7 @@ dependencies {
     implementation("org.ow2.asm:asm-tree:9.2")
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     compileOnly("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:1.6.0")
-    compileOnly("com.android.tools.build:gradle:${androidGradlePluginVersion}")
+//    compileOnly("com.android.tools.build:gradle:${androidGradlePluginVersion}")
 
     // The test needs the full kotlin multiplatform plugin loaded as it has no visibility of previously loaded plugins,
     // unlike the regular way gradle loads plugins.

@@ -7,9 +7,11 @@ package kotlinx.validation.test
 
 import kotlinx.validation.api.*
 import org.junit.Assume
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
+@Ignore // Leftovers after revert of #94
 internal class AndroidLibraryTest : BaseKotlinGradleTest() {
 
     // region Kotlin Android Library
