@@ -36,15 +36,6 @@ class FirClassSubstitutionScope(
     private val skipPrivateMembers: Boolean,
     private val makeExpect: Boolean = false
 ) : FirTypeScope() {
-    companion object {
-        private val FirVariableSymbol<*>.isOverridable: Boolean
-            get() = when (this) {
-                is FirPropertySymbol,
-                is FirFieldSymbol,
-                is FirSyntheticPropertySymbol -> true
-                else -> false
-            }
-    }
 
     private val substitutionOverrideCache = session.substitutionOverrideStorage.substitutionOverrideCacheByScope.getValue(key, null)
     private val newOwnerClassId = dispatchReceiverTypeForSubstitutedMembers.lookupTag.classId
@@ -86,7 +77,7 @@ class FirClassSubstitutionScope(
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
-            val symbol = if (original.isOverridable) {
+            val symbol = if (original is FirPropertySymbol || original is FirFieldSymbol) {
                 substitutionOverrideCache.overridesForVariables.getValue(original, this)
             } else {
                 original
@@ -183,7 +174,8 @@ class FirClassSubstitutionScope(
         val constructor = original.fir
 
         val symbolForOverride = FirConstructorSymbol(original.callableId)
-        val (newTypeParameters, _, _, newReturnType, newSubstitutor, fakeOverrideSubstitution) = createSubstitutedData(constructor, symbolForOverride)
+        val (newTypeParameters, _, _, newReturnType, newSubstitutor, fakeOverrideSubstitution) =
+            createSubstitutedData(constructor, symbolForOverride)
 
         // If constructor has a dispatch receiver, it should be an inner class' constructor.
         // It means that we need to substitute its dispatcher as every other type,
