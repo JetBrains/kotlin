@@ -2,7 +2,7 @@
 #define __POD1_H__
 
 #import "pod1A.h"
-int pod1;
 MY_MACRO_TYPE myVar;
+#define MY_MACRO_CONST_POD1 42
 
 #endif
