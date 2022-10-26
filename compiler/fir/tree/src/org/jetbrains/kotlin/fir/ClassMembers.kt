@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-fun FirCallableSymbol<*>.dispatchReceiverTypeOrNull(): ConeKotlinType? =
-    fir.dispatchReceiverType
+fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
+    fir.dispatchReceiverClassTypeOrNull()
 
 fun FirCallableDeclaration.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
     if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride)
