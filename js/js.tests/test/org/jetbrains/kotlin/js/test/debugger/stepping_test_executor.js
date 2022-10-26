@@ -14,7 +14,13 @@ const code = fs.readFileSync(testFilePath, 'utf-8');
 
 try {
     vm.runInContext(code, sandbox, testFilePath);
-    vm.runInContext('main.box()', sandbox);
+    // language=JavaScript
+    vm.runInContext(`
+            debugger;
+            main.box();
+        `,
+        sandbox
+    );
 } catch (e) {
     // Ignore any exceptions
 }
