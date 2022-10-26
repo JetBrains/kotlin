@@ -304,7 +304,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             val dispatchReceiverParameterClassSymbol =
                 (fir as? FirCallableDeclaration)
                     ?.propertyIfAccessor?.propertyIfBackingField
-                    ?.dispatchReceiverClassOrNull()?.toSymbol(session)
+                    ?.dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)
                     ?: return true
 
             val dispatchReceiverParameterClassLookupTag = dispatchReceiverParameterClassSymbol.toLookupTag()

@@ -224,7 +224,7 @@ class FirElementSerializer private constructor(
             if (declaration.isSubstitutionOrIntersectionOverride) return
 
             // non-intersection or substitution fake override
-            if (!declaration.isStatic && declaration.dispatchReceiverClassOrNull() != this@declarations.symbol.toLookupTag()) return
+            if (!declaration.isStatic && declaration.dispatchReceiverClassLookupTagOrNull() != this@declarations.symbol.toLookupTag()) return
 
             add(declaration)
         }

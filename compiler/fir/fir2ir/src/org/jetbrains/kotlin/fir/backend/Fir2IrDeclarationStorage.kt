@@ -1406,8 +1406,8 @@ class Fir2IrDeclarationStorage(
             symbolTable.declareProperty(signature, { symbol }) {
                 val isFakeOverride =
                     fir.isSubstitutionOrIntersectionOverride &&
-                            firPropertySymbol.dispatchReceiverClassOrNull() !=
-                            firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
+                            firPropertySymbol.dispatchReceiverClassLookupTagOrNull() !=
+                            firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassLookupTagOrNull()
                 Fir2IrLazyProperty(
                     components, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
                 ).apply {

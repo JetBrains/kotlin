@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -36,7 +36,7 @@ fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSessi
     val target = when (this) {
         is FirCallableSymbol -> {
             // callable fake overrides have use-site FirModuleData
-            dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(firResolveSession.useSiteFirSession) ?: this
+            dispatchReceiverClassLookupTagOrNull()?.toFirRegularClassSymbol(firResolveSession.useSiteFirSession) ?: this
         }
         else -> this
     }

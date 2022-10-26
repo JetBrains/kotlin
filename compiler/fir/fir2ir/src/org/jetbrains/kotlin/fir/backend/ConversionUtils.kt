@@ -414,7 +414,7 @@ fun FirTypeScope.processOverriddenFunctionsFromSuperClasses(
 ): ProcessorAction =
     processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { overridden, _ ->
         val unwrapped = if (overridden.fir.isSubstitutionOverride &&
-            overridden.dispatchReceiverClassOrNull() == containingClass.symbol.toLookupTag()
+            overridden.dispatchReceiverClassLookupTagOrNull() == containingClass.symbol.toLookupTag()
         )
             overridden.originalForSubstitutionOverride!!
         else
@@ -430,7 +430,7 @@ fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
 ): ProcessorAction =
     processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, _ ->
         val unwrapped = if (overridden.fir.isSubstitutionOverride &&
-            overridden.dispatchReceiverClassOrNull() == containingClass.symbol.toLookupTag()
+            overridden.dispatchReceiverClassLookupTagOrNull() == containingClass.symbol.toLookupTag()
         )
             overridden.originalForSubstitutionOverride!!
         else

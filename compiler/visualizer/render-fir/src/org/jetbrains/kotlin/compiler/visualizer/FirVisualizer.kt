@@ -856,7 +856,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             return when (val fir = this.fir) {
                 is FirConstructor -> fir.returnTypeRef.coneType.isLocal()
                 is FirCallableDeclaration -> {
-                    fir.dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(session)?.isLocal ?: false
+                    fir.dispatchReceiverClassLookupTagOrNull()?.toFirRegularClassSymbol(session)?.isLocal ?: false
                 }
                 else -> false
             }
