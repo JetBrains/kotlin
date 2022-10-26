@@ -1982,6 +1982,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/bridges/methodFromTrait.kt");
         }
 
+        @TestMetadata("nestedClassTypeParameters.kt")
+        public void testNestedClassTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/nestedClassTypeParameters.kt");
+        }
+
         @TestMetadata("noBridgeOnMutableCollectionInheritance.kt")
         public void testNoBridgeOnMutableCollectionInheritance() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/noBridgeOnMutableCollectionInheritance.kt");
