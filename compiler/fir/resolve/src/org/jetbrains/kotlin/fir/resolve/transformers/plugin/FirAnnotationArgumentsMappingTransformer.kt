@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 
 open class FirAnnotationArgumentsMappingTransformer(
     session: FirSession,
@@ -23,13 +22,10 @@ open class FirAnnotationArgumentsMappingTransformer(
 ) : FirBodyResolveTransformer(
     session,
     resolvePhase,
-    implicitTypeOnly = true,
+    implicitTypeOnly = false,
     scopeSession,
     outerBodyResolveContext = outerBodyResolveContext
 ) {
-    override val expressionsTransformer: FirExpressionsResolveTransformer =
-        FirExpressionsResolveTransformer(this)
-
     override val declarationsTransformer: FirDeclarationsResolveTransformer =
         FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(this)
 }
@@ -42,8 +38,12 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         doTransformTypeParameters(regularClass)
 
         context.withContainingClass(regularClass) {
-            return doTransformRegularClass(regularClass, data)
+            context.withRegularClass(regularClass, components) {
+                transformDeclarationContent(regularClass, data) as FirRegularClass
+            }
         }
+
+        return regularClass
     }
 
     override fun transformAnonymousInitializer(
@@ -62,7 +62,6 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         }
 
         doTransformTypeParameters(simpleFunction)
-        dataFlowAnalyzer.enterFunction(simpleFunction)
 
         context.withSimpleFunction(simpleFunction, session) {
             simpleFunction
@@ -72,14 +71,12 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
                 .transformAnnotations(transformer, data)
         }
 
-        dataFlowAnalyzer.exitFunction(simpleFunction)
         return simpleFunction
     }
 
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
-        val owningClass = context.containerIfAny as? FirRegularClass
+        val containingClass = context.containerIfAny as? FirRegularClass
         doTransformTypeParameters(constructor)
-        dataFlowAnalyzer.enterFunction(constructor)
 
         context.withConstructor(constructor) {
             constructor
@@ -87,34 +84,27 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
                 .transformReceiverTypeRef(transformer, data)
                 .transformReturnTypeRef(transformer, data)
 
-            context.forConstructorParameters(constructor, owningClass, components) {
+            context.forConstructorParameters(constructor, containingClass, components) {
                 constructor.transformValueParameters(transformer, data)
             }
-
-            constructor.transformDelegatedConstructor(transformer, data)
         }
 
-        dataFlowAnalyzer.exitFunction(constructor)
         return constructor
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
-        dataFlowAnalyzer.enterValueParameter(valueParameter)
-
         context.withValueParameter(valueParameter, session) {
             valueParameter
                 .transformAnnotations(transformer, data)
                 .transformReturnTypeRef(transformer, data)
         }
 
-        dataFlowAnalyzer.exitValueParameter(valueParameter)
         return valueParameter
     }
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
         property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
         doTransformTypeParameters(property)
-        dataFlowAnalyzer.enterProperty(property)
 
         context.withProperty(property) {
             property
@@ -125,7 +115,6 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
                 .transformSetter(transformer, data)
         }
 
-        dataFlowAnalyzer.exitProperty(property)
         return property
     }
 
@@ -158,13 +147,10 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
     }
 
     override fun transformField(field: FirField, data: ResolutionMode): FirField {
-        dataFlowAnalyzer.enterField(field)
-
         context.withField(field) {
             field.transformAnnotations(transformer, data)
         }
 
-        dataFlowAnalyzer.exitField(field)
         return field
     }
 

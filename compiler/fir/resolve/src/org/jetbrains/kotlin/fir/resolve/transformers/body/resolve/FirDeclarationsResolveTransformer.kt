@@ -68,7 +68,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
+    protected fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         transformer.firTowerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
         return transformer.transformDeclarationContent(declaration, data)
     }
@@ -517,7 +517,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return typeAlias
     }
 
-    protected fun doTransformRegularClass(
+    private fun doTransformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode
     ): FirRegularClass {

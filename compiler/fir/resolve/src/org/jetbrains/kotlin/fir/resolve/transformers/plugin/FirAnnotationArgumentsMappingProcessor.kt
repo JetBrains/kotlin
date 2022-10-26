@@ -28,7 +28,7 @@ class FirAnnotationArgumentsMappingTransformerAdapter(session: FirSession, scope
     private val transformer = FirAnnotationArgumentsMappingTransformer(session, scopeSession, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
-        return element
+        error("Should only be called via transformFile()")
     }
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
