@@ -399,7 +399,8 @@ class CallAndReferenceGenerator(
 
             val symbol = calleeReference.toSymbolForCall(
                 dispatchReceiver,
-                conversionScope
+                conversionScope,
+                explicitReceiver = qualifiedAccess.explicitReceiver
             )
 
             // We might have had a dynamic receiver, but resolved

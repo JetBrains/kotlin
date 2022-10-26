@@ -179,7 +179,7 @@ fun FirReference.toSymbolForCall(
     dispatchReceiver: FirExpression,
     conversionScope: Fir2IrConversionScope,
     preferGetter: Boolean = true,
-    explicitReceiver: FirExpression? = null, // Actual only for callable references
+    explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false,
     isReference: Boolean = false
 ): IrSymbol? {
@@ -227,23 +227,27 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     isDelegate: Boolean = false,
     isReference: Boolean = false
 ): IrSymbol? {
-    val dispatchReceiverLookupTag = when {
-        dispatchReceiver is FirNoReceiverExpression -> {
+    val dispatchReceiverType = when (dispatchReceiver) {
+        is FirNoReceiverExpression -> {
             val containingClass = containingClassLookupTag()
             if (containingClass != null && containingClass.classId != StandardClassIds.Any) {
                 // Make sure that symbol is not extension and is not from inline class
-                val coneType = ((explicitReceiver as? FirResolvedQualifier)?.symbol as? FirClassSymbol)?.defaultType()
-                coneType?.findClassRepresentation(coneType, declarationStorage.session)
+                ((explicitReceiver as? FirResolvedQualifier)?.symbol as? FirClassSymbol)?.defaultType()
             } else {
                 null
             }
         }
 
+        is FirResolvedQualifier -> {
+            if (isStatic) (dispatchReceiver.symbol as? FirClassSymbol)?.defaultType() else dispatchReceiver.typeRef.coneType
+        }
+
         else -> {
-            val coneType = dispatchReceiver.typeRef.coneType
-            dispatchReceiver.typeRef.coneType.findClassRepresentation(coneType, declarationStorage.session)
+            dispatchReceiver.typeRef.coneType
         }
     }
+    val dispatchReceiverLookupTag = dispatchReceiverType?.findClassRepresentation(dispatchReceiverType, declarationStorage.session)
+
     return when (this) {
         is FirSimpleSyntheticPropertySymbol -> {
             if (isDelegate) {

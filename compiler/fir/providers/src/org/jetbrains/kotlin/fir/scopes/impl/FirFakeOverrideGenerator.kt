@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -89,6 +90,9 @@ object FirFakeOverrideGenerator {
             fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
             originalForSubstitutionOverrideAttr = baseFunction
+            if (isStatic) {
+                containingClassForStaticMemberAttr = (newDispatchReceiverType as? ConeClassLikeType)?.lookupTag
+            }
         }
     }
 
@@ -298,6 +302,9 @@ object FirFakeOverrideGenerator {
             fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
+            if (isStatic) {
+                containingClassForStaticMemberAttr = (newDispatchReceiverType as? ConeClassLikeType)?.lookupTag
+            }
         }
         return symbolForSubstitutionOverride
     }
