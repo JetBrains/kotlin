@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
@@ -819,6 +820,121 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                 PathUtil.kotlinPathsForDistDirectoryForTests.lombokPluginJarPath.path,
                 PathUtil.kotlinPathsForDistDirectoryForTests.allOpenPluginJarPath.path
             )
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnJvmTargetChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmTarget = "1.8"
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmTarget = "9"
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnBackendChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).useK2 = false
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).useK2 = true
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnJvmDefaultChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefault = JvmDefaultMode.DEFAULT.description
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefault = JvmDefaultMode.ALL_COMPATIBILITY.description
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnAddJavaMoudlesChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).additionalJavaModules = arrayOf("ALL-MODULE-PATH")
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,
                 JpsKotlinFacetModuleExtension(facet)
