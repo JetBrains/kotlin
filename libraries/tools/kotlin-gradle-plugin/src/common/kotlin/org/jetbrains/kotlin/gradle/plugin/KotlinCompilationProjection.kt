@@ -56,7 +56,7 @@ internal sealed class KotlinCompilationProjection {
             get() = origin.internal.compilationModule.ownModuleName.get()
 
         override val moduleName: String
-            get() = origin.internal.moduleName
+            get() = ownModuleName//origin.internal.moduleName
 
         override val compilerOptions: HasCompilerOptions<*>
             get() = origin.compilerOptions
