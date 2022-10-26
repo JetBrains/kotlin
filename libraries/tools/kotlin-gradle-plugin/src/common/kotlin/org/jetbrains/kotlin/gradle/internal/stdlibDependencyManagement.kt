@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
@@ -53,9 +54,7 @@ internal fun Project.configureStdlibDefaultDependency(
  * Replacing kotlin-stdlib-jdk8 and kotlin-stdlib-jdk7 artifacts with kotlin-stdlib
  * when project stdlib version is >= 1.8.0
  */
-internal fun ConfigurationContainer.configureStdlibSubstitution(
-    dependencies: DependencyHandler
-) = all { configuration ->
+internal fun ConfigurationContainer.configureStdlibSubstitution() = all { configuration ->
     configuration.withDependencies { dependencySet ->
         dependencySet
             .withType<ExternalDependency>()
@@ -65,22 +64,30 @@ internal fun ConfigurationContainer.configureStdlibSubstitution(
                     dependency.version != null &&
                     SemVer.from(dependency.version!!) >= kotlin180Version
                 ) {
-                    dependencies.modules { componentModuleMetadataHandler ->
-                        componentModuleMetadataHandler.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7") {
-                            it.replacedBy(
-                                "org.jetbrains.kotlin:kotlin-stdlib",
-                                "kotlin-stdlib-jdk7 is now part of kotlin-stdlib"
-                            )
-                        }
-                        componentModuleMetadataHandler.module("org.jetbrains.kotlin:kotlin-stdlib-jdk8") {
-                            it.replacedBy(
-                                "org.jetbrains.kotlin:kotlin-stdlib",
-                                "kotlin-stdlib-jdk8 is now part of kotlin-stdlib"
-                            )
-                        }
+                    if (configuration.isCanBeResolved) configuration.substitudeStdlibJvmVariants(dependency)
+
+                    // dependency substitution only works for resolvable configuration,
+                    // so we need to find all configuration that extends current one
+                    filter {
+                        it.isCanBeResolved && it.hierarchy.contains(configuration)
+                    }.forEach {
+                        it.substitudeStdlibJvmVariants(dependency)
                     }
                 }
             }
+    }
+}
+
+private fun Configuration.substitudeStdlibJvmVariants(
+    kotlinStdlibDependency: ExternalDependency
+) {
+    resolutionStrategy.dependencySubstitution {
+        it.substitute(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
+            .using(it.module("org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdlibDependency.version}"))
+            .because("kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
+        it.substitute(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
+            .using(it.module("org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdlibDependency.version}"))
+            .because("kotlin-stdlib-jdk8 is now part of kotlin-stdlib")
     }
 }
 
