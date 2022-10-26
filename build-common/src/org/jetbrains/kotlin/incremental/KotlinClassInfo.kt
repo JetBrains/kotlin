@@ -84,7 +84,7 @@ class KotlinClassInfo constructor(
         }
 
         fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
-            val (constants, inlineFunctionsAndAccessors) = getConstantsAndInlineFunctionsOrAccessors(classId, classHeader, classContents)
+            val (constants, inlineFunctionsAndAccessors) = getConstantsAndInlineFunctionsOrAccessors(classHeader, classContents)
 
             return KotlinClassInfo(
                 classId,
@@ -104,7 +104,6 @@ class KotlinClassInfo constructor(
  * separately in two passes.
  */
 private fun getConstantsAndInlineFunctionsOrAccessors(
-    classId: ClassId,
     classHeader: KotlinClassHeader,
     classContents: ByteArray
 ): Pair<Map<JvmMemberSignature.Field, Any>, Map<InlineFunctionOrAccessor, Long>> {
@@ -126,10 +125,14 @@ private fun getConstantsAndInlineFunctionsOrAccessors(
         ClassReader(classContents).accept(inlineFunctionsAndAccessorsClassVisitor, 0)
         val constantsMap = constantsClassVisitor.getResult()
         val methodHashesMap = inlineFunctionsAndAccessorsClassVisitor.getResult()
-        val inlineFunctionsAndAccessorsMap = inlineFunctionsAndAccessors.associateWith {
-            methodHashesMap[it.jvmMethodSignature]
-                ?: error("Unable to find method with signature '${it.jvmMethodSignature.asString()}' in the bytecode of class '${classId.asString()}'")
-        }
+        val inlineFunctionsAndAccessorsMap = inlineFunctionsAndAccessors.mapNotNull { inline ->
+            // Note that internal/private inline functions may be removed from the bytecode if code shrinker is used. For example,
+            // `kotlin-reflect-1.7.20.jar` contains `/kotlin/reflect/jvm/internal/UtilKt.class` in which the internal inline function
+            // `reflectionCall` appears in the Kotlin metadata (also in the source file), but not in the bytecode.
+            // When that happens (i.e., when the map lookup below returns null), we will ignore the method. It is safe to ignore because the
+            // method is not declared in the bytecode and therefore can't be referenced.
+            methodHashesMap[inline.jvmMethodSignature]?.let { inline to it }
+        }.toMap()
         Pair(constantsMap, inlineFunctionsAndAccessorsMap)
     }
 }
