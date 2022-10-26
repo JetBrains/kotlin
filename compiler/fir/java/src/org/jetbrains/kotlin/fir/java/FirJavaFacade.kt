@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
@@ -539,7 +538,11 @@ abstract class FirJavaFacade(
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
                 annotationBuilder = { javaField.convertAnnotationsToFir(session, javaTypeParameterStack) }
-                initializer = convertJavaInitializerToFir(javaField.initializerValue)
+
+                lazyInitializer = lazy {
+                    // NB: null should be converted to null
+                    javaField.initializerValue?.createConstantIfAny(session)
+                }
 
                 if (!javaField.isStatic) {
                     dispatchReceiverType = dispatchReceiver
@@ -550,11 +553,6 @@ abstract class FirJavaFacade(
                 }
             }
         }
-    }
-
-    private fun convertJavaInitializerToFir(value: Any?): FirExpression? {
-        // NB: null should be converted to null
-        return value?.createConstantIfAny(session)
     }
 
     private fun convertJavaMethodToFir(
