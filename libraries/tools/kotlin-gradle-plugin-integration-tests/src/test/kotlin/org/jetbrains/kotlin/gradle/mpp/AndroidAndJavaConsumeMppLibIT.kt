@@ -4,9 +4,12 @@
  */
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.gradle.mpp
 
-import org.jetbrains.kotlin.gradle.ResolvedVariantChecker.ResolvedVariantRequest
+import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.embedProject
+import org.jetbrains.kotlin.gradle.mpp.ResolvedVariantChecker.ResolvedVariantRequest
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.checkedReplace
@@ -19,7 +22,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
 import java.util.*
-import kotlin.test.assertTrue
 import java.lang.Boolean as RefBoolean
 
 class AndroidAndJavaConsumeMppLibBuiltByGradle69IT : AndroidAndJavaConsumeMppLibIT() {
