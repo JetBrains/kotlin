@@ -11,22 +11,17 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.Fir2IrDeclarationStorage
 import org.jetbrains.kotlin.fir.backend.unwrapSubstitutionAndIntersectionOverrides
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.allowsToHaveFakeOverride
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.isStatic
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -98,18 +93,27 @@ class FakeOverrideGenerator(
             // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
             realDeclarationSymbols = emptySet()
         )
+        if (firClass.isEnumClass) return@buildList // F/O for values/valueOf/entries aren't needed, for other members aren't possible
+        val staticScope = firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, session, scopeSession)
+        if (staticScope != null) {
+            generateFakeOverridesForName(
+                irClass, staticScope, name, firClass, this,
+                // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
+                realDeclarationSymbols = emptySet()
+            )
+        }
     }
 
     internal fun generateFakeOverridesForName(
         irClass: IrClass,
-        useSiteMemberScope: FirTypeScope,
+        useSiteOrStaticScope: FirScope,
         name: Name,
         firClass: FirClass,
         result: MutableList<IrDeclaration>,
         realDeclarationSymbols: Set<FirBasedSymbol<*>>
     ) {
         val isLocal = firClass !is FirRegularClass || firClass.isLocal
-        useSiteMemberScope.processFunctionsByName(name) { functionSymbol ->
+        useSiteOrStaticScope.processFunctionsByName(name) { functionSymbol ->
             createFakeOverriddenIfNeeded(
                 firClass, irClass, isLocal, functionSymbol,
                 declarationStorage::getCachedIrFunction,
@@ -129,11 +133,11 @@ class FakeOverrideGenerator(
                 },
                 realDeclarationSymbols,
                 FirTypeScope::getDirectOverriddenFunctions,
-                useSiteMemberScope,
+                useSiteOrStaticScope,
             )
         }
 
-        useSiteMemberScope.processPropertiesByName(name) { propertySymbol ->
+        useSiteOrStaticScope.processPropertiesByName(name) { propertySymbol ->
             createFakeOverriddenIfNeeded(
                 firClass, irClass, isLocal, propertySymbol,
                 declarationStorage::getCachedIrProperty,
@@ -154,7 +158,7 @@ class FakeOverrideGenerator(
                 },
                 realDeclarationSymbols,
                 FirTypeScope::getDirectOverriddenProperties,
-                useSiteMemberScope,
+                useSiteOrStaticScope,
             )
         }
     }
@@ -191,13 +195,13 @@ class FakeOverrideGenerator(
         containsErrorTypes: (I) -> Boolean,
         realDeclarationSymbols: Set<FirBasedSymbol<*>>,
         computeDirectOverridden: FirTypeScope.(S) -> List<S>,
-        scope: FirTypeScope,
+        scope: FirScope,
     ) {
         if (originalSymbol !is S) return
         val classLookupTag = klass.symbol.toLookupTag()
         val originalDeclaration = originalSymbol.fir
 
-        if (originalSymbol.dispatchReceiverClassLookupTagOrNull() == classLookupTag && !originalDeclaration.origin.fromSupertypes) return
+        if (originalSymbol.containingClassLookupTag() == classLookupTag && !originalDeclaration.origin.fromSupertypes) return
         // Data classes' methods from Any (toString/equals/hashCode) are not handled by the line above because they have Any-typed dispatch receiver
         // (there are no special FIR method for them, it's just fake overrides)
         // But they are treated differently in IR (real declarations have already been declared before) and such methods are present among realDeclarationSymbols
@@ -321,11 +325,15 @@ class FakeOverrideGenerator(
     private inline fun <reified S : FirCallableSymbol<*>> computeBaseSymbols(
         symbol: S,
         directOverridden: FirTypeScope.(S) -> List<S>,
-        scope: FirTypeScope,
+        scope: FirScope,
         containingClass: ConeClassLikeLookupTag,
     ): List<S> {
         if (symbol.fir.origin == FirDeclarationOrigin.SubstitutionOverride) {
             return listOf(symbol.originalForSubstitutionOverride!!)
+        }
+
+        if (scope !is FirTypeScope) {
+            return emptyList()
         }
 
         return scope.directOverridden(symbol).map {
@@ -390,8 +398,11 @@ class FakeOverrideGenerator(
                 ?: return emptyList()
 
         return superClasses.mapNotNull { superClass ->
-            if (superClass == overriddenContainingIrClass) {
-                // `overridden` was a FIR declaration in some of the supertypes
+            if (superClass == overriddenContainingIrClass ||
+                // Note: Kotlin static scopes cannot find base symbol in this case, so we have to fallback to the very base declaration
+                overridden.isStatic && superClass.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+            ) {
+                // `overridden` was a FIR declaration in some supertypes
                 irProducer(overridden)
             } else {
                 // There were no FIR declaration in supertypes, but we know that we have fake overrides in some of them
