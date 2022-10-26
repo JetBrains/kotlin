@@ -132,7 +132,7 @@ fun TestProject.build(
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
-) {
+): BuildResult {
     if (enableBuildScan) agreeToBuildScanService()
 
     val allBuildArguments = commonBuildSetup(
@@ -147,10 +147,12 @@ fun TestProject.build(
         .also { if (forceOutput) it.forwardOutput() }
         .withDebug(enableGradleDebug)
         .withArguments(allBuildArguments)
-    withBuildSummary(allBuildArguments) {
+
+    return withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunnerForBuild.build()
         if (enableBuildScan) buildResult.printBuildScanUrl()
         assertions(buildResult)
+        buildResult
     }
 }
 
@@ -359,12 +361,12 @@ private fun commonBuildSetup(
     )
 }
 
-private fun TestProject.withBuildSummary(
+private fun <T> TestProject.withBuildSummary(
     buildArguments: List<String>,
-    run: () -> Unit
-) {
+    run: () -> T
+): T {
     try {
-        run()
+        return run()
     } catch (t: Throwable) {
         println("<=== Test build: $projectName ===>")
         println("<=== Using Gradle version: ${gradleVersion.version} ===>")

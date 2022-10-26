@@ -153,20 +153,18 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     abstract val baseName: String
 
+    override val libraries: ConfigurableFileCollection = objectFactory.fileCollection()
+        .from({
+                  // Avoid resolving these dependencies during task graph construction when we can't build the target:
+                  if (konanTarget.enabledOnCurrentHost)
+                      compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
+                  else objectFactory.fileCollection()
+              })
+
     @get:Internal
     protected val konanTarget by project.provider {
         compilation.konanTarget
     }
-
-    @get:Classpath
-    override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from({
-        // Avoid resolving these dependencies during task graph construction when we can't build the target:
-        if (konanTarget.enabledOnCurrentHost)
-            objectFactory.fileCollection().from(
-                compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
-            )
-        else objectFactory.fileCollection()
-    })
 
     @get:Classpath
     protected val friendModule: FileCollection = project.files({ compilation.friendPaths })
@@ -441,13 +439,15 @@ constructor(
         )
     }
 
+    private val isKotlinNativeFragmentMetadataCompilationData = compilation is KotlinNativeFragmentMetadataCompilationData
+
     @TaskAction
     fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
         var sharedCompilationData: SharedCompilationData? = null
-        if (compilation is KotlinNativeFragmentMetadataCompilationData) {
+        if (isKotlinNativeFragmentMetadataCompilationData) {
             val manifestFile: File = manifestFile.get().asFile
             manifestFile.ensureParentDirsCreated()
             val properties = java.util.Properties()
