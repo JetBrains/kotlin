@@ -1199,6 +1199,24 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind : java/lang
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmCompilationData {
+	public abstract fun getCompilationClassifier ()Ljava/lang/String;
+	public abstract fun getCompilationPurpose ()Ljava/lang/String;
+	public abstract fun getCompileAllTaskName ()Ljava/lang/String;
+	public abstract fun getCompileDependencyFiles ()Lorg/gradle/api/file/FileCollection;
+	public abstract fun getCompileKotlinTaskName ()Ljava/lang/String;
+	public abstract fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
+	public abstract fun getFriendPaths ()Ljava/lang/Iterable;
+	public abstract fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
+	public abstract fun getKotlinSourceDirectoriesByFragmentName ()Ljava/util/Map;
+	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/project/model/LanguageSettings;
+	public abstract fun getModuleName ()Ljava/lang/String;
+	public abstract fun getOutput ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationOutput;
+	public abstract fun getOwner ()Ljava/lang/Object;
+	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
+	public abstract fun getProject ()Lorg/gradle/api/Project;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmCompilerPlugin : org/gradle/api/Plugin {
 	public abstract fun getKpmCompilerPlugin ()Lorg/jetbrains/kotlin/project/model/KpmCompilerPlugin;
 }
@@ -1359,7 +1377,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariant$
 	public static fun getWithRefinesClosure (Lorg/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariant;)Ljava/util/Set;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariantCompilationData : org/jetbrains/kotlin/gradle/plugin/mpp/pm20/KotlinCompilationData {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariantCompilationData : org/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmCompilationData {
 	public abstract fun getCompilationClassifier ()Ljava/lang/String;
 	public abstract fun getCompilationPurpose ()Ljava/lang/String;
 	public abstract fun getCompileAllTaskName ()Ljava/lang/String;
@@ -1402,24 +1420,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariantW
 	public static fun getRelatedConfigurationNames (Lorg/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariantWithRuntime;)Ljava/util/List;
 	public static fun getRuntimeOnlyConfigurationName (Lorg/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariantWithRuntime;)Ljava/lang/String;
 	public static fun getWithRefinesClosure (Lorg/jetbrains/kotlin/gradle/plugin/mpp/pm20/GradleKpmVariantWithRuntime;)Ljava/util/Set;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/KotlinCompilationData {
-	public abstract fun getCompilationClassifier ()Ljava/lang/String;
-	public abstract fun getCompilationPurpose ()Ljava/lang/String;
-	public abstract fun getCompileAllTaskName ()Ljava/lang/String;
-	public abstract fun getCompileDependencyFiles ()Lorg/gradle/api/file/FileCollection;
-	public abstract fun getCompileKotlinTaskName ()Ljava/lang/String;
-	public abstract fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
-	public abstract fun getFriendPaths ()Ljava/lang/Iterable;
-	public abstract fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
-	public abstract fun getKotlinSourceDirectoriesByFragmentName ()Ljava/util/Map;
-	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/project/model/LanguageSettings;
-	public abstract fun getModuleName ()Ljava/lang/String;
-	public abstract fun getOutput ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationOutput;
-	public abstract fun getOwner ()Ljava/lang/Object;
-	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public abstract fun getProject ()Lorg/gradle/api/Project;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/pm20/PublishedModuleCoordinatesProvider {

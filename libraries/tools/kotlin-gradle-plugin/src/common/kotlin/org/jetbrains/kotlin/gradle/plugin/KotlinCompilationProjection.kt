@@ -14,7 +14,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmCompilationData
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
@@ -83,9 +83,9 @@ internal sealed class KotlinCompilationProjection {
             get() = origin.allKotlinSourceSets.map { it.kotlin }
     }
 
-    class KPM(val compilationData: KotlinCompilationData<*>) : KotlinCompilationProjection() {
+    class KPM(val compilationData: GradleKpmCompilationData<*>) : KotlinCompilationProjection() {
 
-        override val origin: KotlinCompilationData<*> = compilationData
+        override val origin: GradleKpmCompilationData<*> = compilationData
 
         override val project: Project
             get() = origin.project

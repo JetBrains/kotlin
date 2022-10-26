@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal class GradleKpmNativeVariantCompilationData(
     val variant: GradleKpmNativeVariantInternal
-) : GradleKpmVariantCompilationDataInternal<KotlinCommonOptions>, KotlinNativeCompilationData<KotlinCommonOptions> {
+) : GradleKpmVariantCompilationDataInternal<KotlinCommonOptions>, GradleKpmNativeCompilationData<KotlinCommonOptions> {
     override val konanTarget: KonanTarget
         get() = variant.konanTarget
 
