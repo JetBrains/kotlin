@@ -10,6 +10,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiReferenceList
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
@@ -53,5 +55,26 @@ class KotlinSuperTypeListBuilder(kotlinOrigin: KtSuperTypeList?, manager: PsiMan
         this.addSuperTypeEntry(superTypeList, entry, element)
 
         return element
+    }
+
+    fun addMarkerInterfaceIfNeeded(classId: ClassId) {
+        tryResolveMarkerInterfaceFQName(classId)?.let { addReference(it) }
+    }
+
+    /***
+     * @see org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
+     */
+    private fun tryResolveMarkerInterfaceFQName(classId: ClassId): String? {
+        for (mapping in JavaToKotlinClassMap.mutabilityMappings) {
+            if (mapping.kotlinReadOnly == classId) {
+                return "kotlin.jvm.internal.markers.KMappedMarker"
+            } else if (mapping.kotlinMutable == classId) {
+                return "kotlin.jvm.internal.markers.K" + classId.relativeClassName.asString()
+                    .replace("MutableEntry", "Entry") // kotlin.jvm.internal.markers.KMutableMap.Entry for some reason
+                    .replace(".", "$")
+            }
+        }
+
+        return null
     }
 }
