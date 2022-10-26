@@ -115,6 +115,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     override val relatedConfigurationNames: List<String>
         get() = super.relatedConfigurationNames + compileDependencyConfigurationName
 
+    @Deprecated("Scheduled for removal with Kotlin 1.9. Use compilerOptions instead")
     val moduleName: String
 
     val disambiguatedName

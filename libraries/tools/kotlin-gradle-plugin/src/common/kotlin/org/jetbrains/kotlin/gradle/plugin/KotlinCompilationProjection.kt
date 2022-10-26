@@ -24,7 +24,6 @@ internal sealed class KotlinCompilationProjection {
     abstract val platformType: KotlinPlatformType
     abstract val targetDisambiguationClassifier: String?
     abstract val compilationName: String
-    abstract val ownModuleName: String
     abstract val moduleName: String
     abstract val compilerOptions: HasCompilerOptions<*>
     abstract val compileKotlinTaskName: String
@@ -52,11 +51,9 @@ internal sealed class KotlinCompilationProjection {
         override val compilationName: String
             get() = origin.compilationName
 
-        override val ownModuleName: String
-            get() = origin.internal.compilationModule.ownModuleName.get()
-
+        @Suppress("DEPRECATION")
         override val moduleName: String
-            get() = origin.internal.moduleName
+            get() = origin.moduleName
 
         override val compilerOptions: HasCompilerOptions<*>
             get() = origin.compilerOptions
@@ -102,8 +99,6 @@ internal sealed class KotlinCompilationProjection {
         override val compilationName: String
             get() = origin.compilationPurpose
 
-        override val ownModuleName: String
-            get() = origin.ownModuleName
 
         override val moduleName: String
             get() = origin.moduleName

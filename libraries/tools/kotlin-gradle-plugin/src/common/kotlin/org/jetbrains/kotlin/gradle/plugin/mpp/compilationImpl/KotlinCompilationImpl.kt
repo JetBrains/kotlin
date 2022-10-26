@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
@@ -34,7 +36,7 @@ internal class KotlinCompilationImpl @Inject constructor(
 
     data class Params(
         val target: KotlinTarget,
-        val compilationModule: KotlinCompilationModuleManager.CompilationModule,
+        val compilationName: String,
         val sourceSets: KotlinCompilationSourceSetsContainer,
         val dependencyConfigurations: KotlinCompilationConfigurationsContainer,
         val compilationTaskNames: KotlinCompilationTaskNamesContainer,
@@ -65,7 +67,7 @@ internal class KotlinCompilationImpl @Inject constructor(
         get() = params.dependencyConfigurations
 
     override val compilationName: String
-        get() = params.compilationModule.compilationName
+        get() = params.compilationName
 
     override val output: KotlinCompilationOutput
         get() = params.output
@@ -149,11 +151,13 @@ internal class KotlinCompilationImpl @Inject constructor(
 
     //region Compiler Module Management
 
-    override val compilationModule: KotlinCompilationModuleManager.CompilationModule
-        get() = params.compilationModule
-
+    @Suppress("OVERRIDE_DEPRECATION")
     override val moduleName: String
-        get() = project.kotlinCompilationModuleManager.getModuleLeader(compilationModule).ownModuleName.get()
+        get() {
+            val baseName = target.project.archivesName.orNull ?: target.project.name
+            val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
+            return filterModuleName("$baseName$suffix")
+        }
 
     //endregion
 
@@ -210,7 +214,6 @@ internal class KotlinCompilationImpl @Inject constructor(
     override fun associateWith(other: KotlinCompilation<*>) {
         require(other.target == target) { "Only associations between compilations of a single target are supported" }
         if (!associateWithImpl.add(other)) return
-        project.kotlinCompilationModuleManager.unionModules(this.compilationModule, other.internal.compilationModule)
         params.compilationAssociator.associate(target, this, other.internal)
     }
 

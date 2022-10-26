@@ -43,6 +43,4 @@ interface GradleKpmVariantCompilationData<T : KotlinCommonOptionsDeprecated> : K
 
     override val platformType: KotlinPlatformType
         get() = owner.platformType
-
-    override val ownModuleName: String
 }

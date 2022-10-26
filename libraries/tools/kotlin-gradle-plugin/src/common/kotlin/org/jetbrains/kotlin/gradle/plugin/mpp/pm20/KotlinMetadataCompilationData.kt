@@ -91,8 +91,6 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
             return filterModuleName("$baseName$suffix")
         }
 
-    override val ownModuleName: String
-        get() = moduleName
 
     override val friendPaths: Iterable<FileCollection>
         get() = metadataCompilationRegistry.run {
