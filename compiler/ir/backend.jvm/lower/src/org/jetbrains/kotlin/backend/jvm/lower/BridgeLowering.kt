@@ -113,7 +113,7 @@ internal val bridgePhase = makeIrFilePhase(
     ::BridgeLowering,
     name = "Bridge",
     description = "Generate bridges",
-    prerequisite = setOf(jvmInlineClassPhase, jvmMultiFieldValueClassPhase, inheritedDefaultMethodsOnClassesPhase)
+    prerequisite = setOf(jvmValueClassPhase, inheritedDefaultMethodsOnClassesPhase)
 )
 
 internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {

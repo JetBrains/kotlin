@@ -5,43 +5,36 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformerVoidWithContext() {
+internal abstract class JvmValueClassAbstractLowering(
+    val context: JvmBackendContext,
+    protected val fileClassNewDeclarations: MutableMap<IrFile, MutableList<IrSimpleFunction>>,
+    override val scopeStack: MutableList<ScopeWithIr>,
+) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     abstract val replacements: MemoizedValueClassAbstractReplacements
 
-    final override fun lower(irFile: IrFile) {
-        withinScope(irFile) {
-            irFile.transformChildrenVoid()
-            fileClassNewDeclarations[irFile]?.let { newDeclarations ->
-                val oldFileClass = irFile.declarations.filterIsInstanceAnd<IrClass> { it.isFileClass }.singleOrNull()
-                val allFileDeclarations = (oldFileClass?.declarations ?: listOf()) + newDeclarations
-                val newClass = createFileClass(context, irFile, allFileDeclarations)
-                oldFileClass?.let { irFile.declarations.remove(it) }
-                irFile.addChild(newClass)
-            }
-        }
+    final override fun lower(irFile: IrFile) = withinScope(irFile) {
+        irFile.transformChildrenVoid()
+        addDeclarations(context, fileClassNewDeclarations, irFile)
     }
 
     abstract fun IrClass.isSpecificLoweringLogicApplicable(): Boolean
-
-    abstract override fun visitClassNew(declaration: IrClass): IrStatement
 
     abstract fun handleSpecificNewClass(declaration: IrClass)
 
@@ -91,7 +84,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         }
     }
 
-    private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration>? {
+    private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
         replacement.valueParameters.forEach {
             visitParameter(it)
             it.defaultValue?.patchDeclarationParents(replacement)
@@ -155,7 +148,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         return super.visitReturn(expression)
     }
 
-    private fun visitStatementContainer(container: IrStatementContainer) {
+    internal fun visitStatementContainer(container: IrStatementContainer) {
         container.statements.transformFlat { statement ->
             if (statement is IrFunction)
                 transformFunctionFlat(statement)
@@ -248,5 +241,157 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
     protected abstract fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean)
 
-    protected open val fileClassNewDeclarations: Map<IrFile, List<IrSimpleFunction>> = emptyMap()
+
+    // Functions for common lowering dispatching
+    private inner class NeedsToVisit : IrElementVisitor<Boolean, Nothing?> {
+        override fun visitElement(element: IrElement, data: Nothing?): Boolean = false
+        override fun visitClass(declaration: IrClass, data: Nothing?): Boolean =
+            declaration.isSpecificLoweringLogicApplicable() || declaration.declarations.any { it.accept(this, null) }
+
+        override fun visitFunction(declaration: IrFunction, data: Nothing?): Boolean =
+            replacements.quickCheckIfFunctionIsNotApplicable(declaration)
+
+        override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): Boolean =
+            visitFunction(expression.symbol.owner, data)
+
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Nothing?): Boolean =
+            visitFunction(expression.symbol.owner, data)
+
+        override fun visitField(declaration: IrField, data: Nothing?): Boolean = declaration.type.needsHandling
+        override fun visitFieldAccess(expression: IrFieldAccessExpression, data: Nothing?): Boolean =
+            visitField(expression.symbol.owner, data)
+
+        override fun visitVariable(declaration: IrVariable, data: Nothing?): Boolean = visitValueDeclaration(declaration)
+
+        private fun visitValueDeclaration(declaration: IrValueDeclaration) = declaration.type.needsHandling
+        override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): Boolean = visitValueDeclaration(declaration)
+        override fun visitValueAccess(expression: IrValueAccessExpression, data: Nothing?): Boolean =
+            visitValueDeclaration(expression.symbol.owner)
+
+        override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): Boolean = false
+        override fun visitReturn(expression: IrReturn, data: Nothing?): Boolean = expression.returnTargetSymbol.owner.safeAs<IrFunction>()
+            ?.let { replacements.quickCheckIfFunctionIsNotApplicable(it) } ?: false
+
+        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): Boolean =
+            declaration.parent.safeAs<IrClass>()?.isSpecificLoweringLogicApplicable() == true
+
+        private fun visitStatementContainer(container: IrStatementContainer) = container.statements.any { it.accept(this, null) }
+
+        override fun visitContainerExpression(expression: IrContainerExpression, data: Nothing?): Boolean =
+            visitStatementContainer(expression)
+
+        override fun visitBlockBody(body: IrBlockBody, data: Nothing?): Boolean = visitStatementContainer(body)
+    }
+
+    internal fun needsToVisitClassNew(declaration: IrClass): Boolean = declaration.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitFunctionReference(expression: IrFunctionReference): Boolean = expression.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitFunctionAccess(expression: IrFunctionAccessExpression): Boolean = expression.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitCall(expression: IrCall): Boolean = expression.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitStringConcatenation(expression: IrStringConcatenation): Boolean = expression.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitGetField(expression: IrGetField): Boolean = expression.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitSetField(expression: IrSetField): Boolean = expression.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitGetValue(expression: IrGetValue): Boolean = expression.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitSetValue(expression: IrSetValue): Boolean = expression.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitVariable(declaration: IrVariable): Boolean = declaration.accept(NeedsToVisit(), null)
+
+    internal fun needsToVisitReturn(expression: IrReturn): Boolean = expression.accept(NeedsToVisit(), null)
+    internal abstract fun visitClassNewDeclarationsWhenParallel(declaration: IrDeclaration)
+
+    // forbid other overrides without modifying dispatcher file JvmValueClassLoweringDispatcher.kt
+
+    final override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment = super.visitModuleFragment(declaration)
+    final override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment = super.visitPackageFragment(declaration)
+    final override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
+        super.visitExternalPackageFragment(declaration)
+
+    final override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement = super.visitDeclaration(declaration)
+    final override fun visitSimpleFunction(declaration: IrSimpleFunction) = super.visitSimpleFunction(declaration)
+    final override fun visitConstructor(declaration: IrConstructor) = super.visitConstructor(declaration)
+    final override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) = super.visitLocalDelegatedProperty(declaration)
+    final override fun visitEnumEntry(declaration: IrEnumEntry) = super.visitEnumEntry(declaration)
+    final override fun visitTypeParameter(declaration: IrTypeParameter) = super.visitTypeParameter(declaration)
+    final override fun visitTypeAlias(declaration: IrTypeAlias) = super.visitTypeAlias(declaration)
+    final override fun visitBody(body: IrBody): IrBody = super.visitBody(body)
+    final override fun visitExpressionBody(body: IrExpressionBody) = super.visitExpressionBody(body)
+    final override fun visitSyntheticBody(body: IrSyntheticBody) = super.visitSyntheticBody(body)
+    final override fun visitSuspendableExpression(expression: IrSuspendableExpression) = super.visitSuspendableExpression(expression)
+    final override fun visitSuspensionPoint(expression: IrSuspensionPoint) = super.visitSuspensionPoint(expression)
+    final override fun visitExpression(expression: IrExpression): IrExpression = super.visitExpression(expression)
+    final override fun visitConst(expression: IrConst<*>) = super.visitConst(expression)
+    final override fun visitConstantValue(expression: IrConstantValue): IrConstantValue = super.visitConstantValue(expression)
+    final override fun visitConstantObject(expression: IrConstantObject) = super.visitConstantObject(expression)
+    final override fun visitConstantPrimitive(expression: IrConstantPrimitive) = super.visitConstantPrimitive(expression)
+    final override fun visitConstantArray(expression: IrConstantArray) = super.visitConstantArray(expression)
+    final override fun visitVararg(expression: IrVararg) = super.visitVararg(expression)
+    final override fun visitSpreadElement(spread: IrSpreadElement): IrSpreadElement = super.visitSpreadElement(spread)
+    final override fun visitBlock(expression: IrBlock) = super.visitBlock(expression)
+    final override fun visitComposite(expression: IrComposite) = super.visitComposite(expression)
+    final override fun visitDeclarationReference(expression: IrDeclarationReference) = super.visitDeclarationReference(expression)
+    final override fun visitSingletonReference(expression: IrGetSingletonValue) = super.visitSingletonReference(expression)
+    final override fun visitGetObjectValue(expression: IrGetObjectValue) = super.visitGetObjectValue(expression)
+    final override fun visitGetEnumValue(expression: IrGetEnumValue) = super.visitGetEnumValue(expression)
+    final override fun visitValueAccess(expression: IrValueAccessExpression) = super.visitValueAccess(expression)
+    final override fun visitFieldAccess(expression: IrFieldAccessExpression) = super.visitFieldAccess(expression)
+    final override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) = super.visitMemberAccess(expression)
+    final override fun visitConstructorCall(expression: IrConstructorCall) = super.visitConstructorCall(expression)
+    final override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) =
+        super.visitDelegatingConstructorCall(expression)
+
+    final override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = super.visitEnumConstructorCall(expression)
+    final override fun visitGetClass(expression: IrGetClass) = super.visitGetClass(expression)
+    final override fun visitCallableReference(expression: IrCallableReference<*>) = super.visitCallableReference(expression)
+    final override fun visitPropertyReference(expression: IrPropertyReference) = super.visitPropertyReference(expression)
+    final override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) =
+        super.visitLocalDelegatedPropertyReference(expression)
+
+    final override fun visitRawFunctionReference(expression: IrRawFunctionReference) = super.visitRawFunctionReference(expression)
+    final override fun visitFunctionExpression(expression: IrFunctionExpression) = super.visitFunctionExpression(expression)
+    final override fun visitClassReference(expression: IrClassReference) = super.visitClassReference(expression)
+    final override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = super.visitInstanceInitializerCall(expression)
+    final override fun visitTypeOperator(expression: IrTypeOperatorCall) = super.visitTypeOperator(expression)
+    final override fun visitWhen(expression: IrWhen) = super.visitWhen(expression)
+    final override fun visitBranch(branch: IrBranch): IrBranch = super.visitBranch(branch)
+    final override fun visitElseBranch(branch: IrElseBranch): IrElseBranch = super.visitElseBranch(branch)
+    final override fun visitLoop(loop: IrLoop) = super.visitLoop(loop)
+    final override fun visitWhileLoop(loop: IrWhileLoop) = super.visitWhileLoop(loop)
+    final override fun visitDoWhileLoop(loop: IrDoWhileLoop) = super.visitDoWhileLoop(loop)
+    final override fun visitTry(aTry: IrTry) = super.visitTry(aTry)
+    final override fun visitCatch(aCatch: IrCatch): IrCatch = super.visitCatch(aCatch)
+    final override fun visitBreakContinue(jump: IrBreakContinue) = super.visitBreakContinue(jump)
+    final override fun visitBreak(jump: IrBreak) = super.visitBreak(jump)
+    final override fun visitContinue(jump: IrContinue) = super.visitContinue(jump)
+    final override fun visitThrow(expression: IrThrow) = super.visitThrow(expression)
+    final override fun visitDynamicExpression(expression: IrDynamicExpression) = super.visitDynamicExpression(expression)
+    final override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression) =
+        super.visitDynamicOperatorExpression(expression)
+
+    final override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression) = super.visitDynamicMemberExpression(expression)
+    final override fun visitErrorDeclaration(declaration: IrErrorDeclaration) = super.visitErrorDeclaration(declaration)
+    final override fun visitErrorExpression(expression: IrErrorExpression) = super.visitErrorExpression(expression)
+    final override fun visitErrorCallExpression(expression: IrErrorCallExpression) = super.visitErrorCallExpression(expression)
+
+    companion object {
+        internal fun addDeclarations(
+            context: JvmBackendContext, fileClassNewDeclarations: MutableMap<IrFile, MutableList<IrSimpleFunction>>, irFile: IrFile
+        ) {
+            fileClassNewDeclarations[irFile]?.let { newDeclarations ->
+                val oldFileClass = irFile.declarations.filterIsInstanceAnd<IrClass> { it.isFileClass }.singleOrNull()
+                val allFileDeclarations = (oldFileClass?.declarations ?: listOf()) + newDeclarations
+                val newClass = createFileClass(context, irFile, allFileDeclarations)
+                oldFileClass?.let { irFile.declarations.remove(it) }
+                irFile.addChild(newClass)
+            }
+        }
+    }
+
+    abstract val IrType.needsHandling: Boolean
 }

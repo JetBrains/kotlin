@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
@@ -36,16 +35,14 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-val jvmMultiFieldValueClassPhase = makeIrFilePhase(
-    ::JvmMultiFieldValueClassLowering,
-    name = "Multi-field Value Classes",
-    description = "Lower multi-field value classes",
-    // Collection stubs may require mangling by multi-field value class rules.
-    // SAM wrappers may require mangling for fun interfaces with multi-field value class parameters
-    prerequisite = setOf(collectionStubMethodLowering, singleAbstractMethodPhase),
-)
+internal class JvmMultiFieldValueClassLowering(
+    context: JvmBackendContext,
+    fileClassNewDeclarations: MutableMap<IrFile, MutableList<IrSimpleFunction>>,
+    scopeStack: MutableList<ScopeWithIr>,
+) : JvmValueClassAbstractLowering(context, fileClassNewDeclarations, scopeStack) {
+    override val IrType.needsHandling: Boolean
+        get() = needsMfvcFlattening()
 
-private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
     private sealed class MfvcNodeInstanceAccessor {
         abstract val instance: MfvcNodeInstance
         abstract operator fun get(name: Name): MfvcNodeInstanceAccessor?
@@ -268,7 +265,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         variablesToAdd.getOrPut(variable.parent) { mutableSetOf() }.add(variable)
     }
 
-    override fun visitClassNew(declaration: IrClass): IrStatement {
+    override fun visitClassNew(declaration: IrClass): IrClass {
 
         if (declaration.isSpecificLoweringLogicApplicable()) {
             handleSpecificNewClass(declaration)
@@ -284,30 +281,37 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 null
             }).also { declarations ->
                 for (replacingDeclaration in declarations ?: listOf(memberDeclaration)) {
-                    when (replacingDeclaration) {
-                        is IrFunction -> replacingDeclaration.body = replacingDeclaration.body?.makeBodyWithAddedVariables(
-                            context, variablesToAdd[replacingDeclaration] ?: emptySet(), replacingDeclaration.symbol
-                        )?.apply {
-                            if (replacingDeclaration in possibleExtraBoxUsageGenerated) {
-                                removeAllExtraBoxes()
-                            }
-                        }
-
-                        is IrAnonymousInitializer -> replacingDeclaration.body = replacingDeclaration.body.makeBodyWithAddedVariables(
-                            context, variablesToAdd[replacingDeclaration.parent] ?: emptySet(), replacingDeclaration.symbol
-                        ).apply {
-                            if (replacingDeclaration in possibleExtraBoxUsageGenerated) {
-                                removeAllExtraBoxes()
-                            }
-                        } as IrBlockBody
-
-                        else -> Unit
-                    }
+                    postActionAfterTransformingClassDeclaration(replacingDeclaration)
                 }
             }
         }
 
         return declaration
+    }
+
+    override fun visitClassNewDeclarationsWhenParallel(declaration: IrDeclaration) =
+        postActionAfterTransformingClassDeclaration(declaration)
+
+    private fun postActionAfterTransformingClassDeclaration(replacingDeclaration: IrDeclaration) {
+        when (replacingDeclaration) {
+            is IrFunction -> replacingDeclaration.body = replacingDeclaration.body?.makeBodyWithAddedVariables(
+                context, variablesToAdd[replacingDeclaration] ?: emptySet(), replacingDeclaration.symbol
+            )?.apply {
+                if (replacingDeclaration in possibleExtraBoxUsageGenerated) {
+                    removeAllExtraBoxes()
+                }
+            }
+
+            is IrAnonymousInitializer -> replacingDeclaration.body = replacingDeclaration.body.makeBodyWithAddedVariables(
+                context, variablesToAdd[replacingDeclaration.parent] ?: emptySet(), replacingDeclaration.symbol
+            ).apply {
+                if (replacingDeclaration in possibleExtraBoxUsageGenerated) {
+                    removeAllExtraBoxes()
+                }
+            } as IrBlockBody
+
+            else -> Unit
+        }
     }
 
     private fun handleNonSpecificNewClass(irClass: IrClass) {
@@ -319,7 +323,8 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             val property = (propertyOrField as? IrPropertyOrIrField.Property)?.property ?: return@mapNotNull null
             property.backingField?.let { property to it }
         }.toMap()
-        val propertiesOrFieldsReplacement = collectRegularClassMfvcPropertiesOrFieldsReplacement(propertiesOrFields) // resets backing fields
+        val propertiesOrFieldsReplacement =
+            collectRegularClassMfvcPropertiesOrFieldsReplacement(propertiesOrFields) // resets backing fields
 
         val fieldsToRemove = propertiesOrFieldsReplacement.keys.mapNotNull {
             when (it) {
@@ -696,7 +701,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
     }
 
-    fun RootMfvcNode.replacePrimaryMultiFieldValueClassConstructor() {
+    private fun RootMfvcNode.replacePrimaryMultiFieldValueClassConstructor() {
         val rootMfvcNode = this
         mfvc.declarations.removeIf { it is IrConstructor && it.isPrimary }
         mfvc.declarations += listOf(newPrimaryConstructor, primaryConstructorImpl)
@@ -755,26 +760,28 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
     }
 
-    override val fileClassNewDeclarations = mutableMapOf<IrFile, MutableList<IrSimpleFunction>>()
-
-    private fun createMfvcPrimaryConstructorReferenceHelperFunction(rootNode: RootMfvcNode) = context.irFactory.buildFun {
-        name = Name.identifier("mfvcConstructorReferenceHelper\$${fileClassNewDeclarations[currentFile]?.size ?: 0}")
-        origin = JvmLoweredDeclarationOrigin.MFVC_PRIMARY_CONSTRUCTOR_REFERENCE_HELPER
-    }.apply function@{
-        fileClassNewDeclarations.getOrPut(currentFile) { mutableListOf() }.add(this)
-        copyParameterDeclarationsFrom(rootNode.primaryConstructorImpl)
-        returnType = rootNode.type.substitute(rootNode.mfvc.typeParameters, typeParameters.map { it.defaultType })
-        body = context.createJvmIrBuilder(this.symbol).run {
-            irExprBody(irBlock {
-                for (callee in listOf(rootNode.primaryConstructorImpl, rootNode.boxMethod)) {
-                    +irCall(callee).apply {
-                        passTypeArgumentsFrom(this@function)
-                        for ((index, parameter) in this@function.valueParameters.withIndex()) {
-                            putValueArgument(index, irGet(parameter))
+    private fun createMfvcPrimaryConstructorReferenceHelperFunction(rootNode: RootMfvcNode): IrSimpleFunction {
+        val currentFile = currentFile
+        return context.irFactory.buildFun {
+            name = Name.identifier("mfvcConstructorReferenceHelper\$${fileClassNewDeclarations[currentFile]?.size ?: 0}")
+            origin = JvmLoweredDeclarationOrigin.MFVC_PRIMARY_CONSTRUCTOR_REFERENCE_HELPER
+        }.apply function@{
+            parent = currentFile
+            fileClassNewDeclarations.getOrPut(currentFile) { mutableListOf() }.add(this)
+            copyParameterDeclarationsFrom(rootNode.primaryConstructorImpl)
+            returnType = rootNode.type.substitute(rootNode.mfvc.typeParameters, typeParameters.map { it.defaultType })
+            body = context.createJvmIrBuilder(this.symbol).run {
+                irExprBody(irBlock {
+                    for (callee in listOf(rootNode.primaryConstructorImpl, rootNode.boxMethod)) {
+                        +irCall(callee).apply {
+                            passTypeArgumentsFrom(this@function)
+                            for ((index, parameter) in this@function.valueParameters.withIndex()) {
+                                putValueArgument(index, irGet(parameter))
+                            }
                         }
                     }
-                }
-            })
+                })
+            }
         }
     }
 
@@ -971,7 +978,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
      * val b = 3
      * [a, b, b + 1]
      */
-    fun IrBuilderWithScope.removeExtraSetVariablesFromExpressionList(
+    private fun IrBuilderWithScope.removeExtraSetVariablesFromExpressionList(
         block: IrContainerExpression,
         variables: List<IrVariable>
     ): List<IrExpression> {
@@ -1114,7 +1121,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     /**
      * Takes not transformed expression and initialized given MfvcNodeInstance with transformed version of it
      */
-    fun IrBlockBuilder.flattenExpressionTo(expression: IrExpression, instance: MfvcNodeInstance) {
+    private fun IrBlockBuilder.flattenExpressionTo(expression: IrExpression, instance: MfvcNodeInstance) {
         val rootNode = replacements.getRootMfvcNodeOrNull(
             if (expression is IrConstructorCall) expression.symbol.owner.constructedClass else expression.type.erasedUpperBound
         )
@@ -1197,7 +1204,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     /**
      * Removes boxing when the result is not used
      */
-    fun IrBody.removeAllExtraBoxes() {
+    private fun IrBody.removeAllExtraBoxes() {
         // data is whether the expression result is used
         accept(object : IrElementVisitor<Unit, Boolean> {
             override fun visitElement(element: IrElement, data: Boolean) {

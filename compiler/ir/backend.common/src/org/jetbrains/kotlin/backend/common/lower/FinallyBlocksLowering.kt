@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -75,14 +74,14 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         val jumps = mutableMapOf<HighLevelJump, IrReturnTargetSymbol>()
     }
 
-    private val scopeStack = mutableListOf<Scope>()
+    private val otherScopeStack = mutableListOf<Scope>()
 
     private inline fun <S: Scope, R> using(scope: S, block: (S) -> R): R {
-        scopeStack.push(scope)
+        otherScopeStack.push(scope)
         try {
             return block(scope)
         } finally {
-            scopeStack.pop()
+            otherScopeStack.pop()
         }
     }
 
@@ -155,7 +154,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                                      endOffset: Int,
                                      value: IrExpression
     ): IrExpression? {
-        val tryScopes = scopeStack.reversed()
+        val tryScopes = otherScopeStack.reversed()
                 .takeWhile { !targetScopePredicate(it) }
                 .filterIsInstance<TryScope>()
                 .toList()
