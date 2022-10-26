@@ -542,8 +542,10 @@ public:
             // multiplication checked in the previous call, but any of the
             // subsequent additions overflowed, then the overflowed value will
             // be small compared to the number of entries in the array.
-            if (Storage::Node::GetSizeForDataSize(allocSize) < count) {
-                ThrowOutOfMemoryError();
+            if constexpr (sizeof(size_t) == sizeof(uint32_t)) {
+                if (Storage::Node::GetSizeForDataSize(allocSize) < count) {
+                    ThrowOutOfMemoryError();
+                }
             }
             auto& node = producer_.Insert(allocSize);
             auto* heapArray = new (node.Data()) HeapArrayHeader();
@@ -569,8 +571,12 @@ public:
 
         static size_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
             size_t membersSize;
-            if (__builtin_mul_overflow(static_cast<size_t>(-typeInfo->instanceSize_), count, &membersSize)) {
-                ThrowOutOfMemoryError();
+            if constexpr (sizeof(size_t) == sizeof(uint32_t)) {
+                if (__builtin_mul_overflow(static_cast<size_t>(-typeInfo->instanceSize_), count, &membersSize)) {
+                    ThrowOutOfMemoryError();
+                }
+            } else {
+                membersSize = static_cast<size_t>(-typeInfo->instanceSize_) * count;
             }
             // Note: array body is aligned, but for size computation it is enough to align the sum.
             return AlignUp(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
