@@ -34,7 +34,10 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
     private val primitiveToLiteralConstructor = context.intrinsics.primitiveToLiteralConstructor
 
     override fun getFunctionSignature(function: IrSimpleFunction) =
-        jsFunctionSignature(function, context)
+        jsFunctionSignature(
+            function,
+            context
+        )
 
     override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
         when {

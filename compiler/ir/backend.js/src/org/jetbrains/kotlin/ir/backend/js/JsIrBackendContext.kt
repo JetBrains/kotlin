@@ -415,10 +415,4 @@ class JsIrBackendContext(
         outlinedJsCodeFunctions[symbol] = parsedJsFunction
         return parsedJsFunction
     }
-
-    private var irFunctionSignatureCache = hashMapOf<IrFunction, String>()
-
-    fun getFunctionSignatureFromCache(f: IrFunction): String {
-        return irFunctionSignatureCache.getOrPut(f) { calculateJsFunctionSignature(f, this) }
-    }
 }
