@@ -34464,12 +34464,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
-        @TestMetadata("sideEffectInTopLevelInitializerMultiModule.kt")
-        public void testSideEffectInTopLevelInitializerMultiModule() throws Exception {
-            runTest("compiler/testData/codegen/box/properties/sideEffectInTopLevelInitializerMultiModule.kt");
-        }
-
-        @Test
         @TestMetadata("substituteJavaSuperField.kt")
         public void testSubstituteJavaSuperField() throws Exception {
             runTest("compiler/testData/codegen/box/properties/substituteJavaSuperField.kt");

@@ -25310,12 +25310,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
-        @TestMetadata("sideEffectInTopLevelInitializerMultiModule.kt")
-        public void testSideEffectInTopLevelInitializerMultiModule() throws Exception {
-            runTest("compiler/testData/codegen/box/properties/sideEffectInTopLevelInitializerMultiModule.kt");
-        }
-
-        @Test
         @TestMetadata("twoAnnotatedExtensionPropertiesWithoutBackingFields.kt")
         public void testTwoAnnotatedExtensionPropertiesWithoutBackingFields() throws Exception {
             runTest("compiler/testData/codegen/box/properties/twoAnnotatedExtensionPropertiesWithoutBackingFields.kt");
