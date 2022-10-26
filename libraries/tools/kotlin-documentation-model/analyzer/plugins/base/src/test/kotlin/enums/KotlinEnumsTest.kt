@@ -398,6 +398,9 @@ class KotlinEnumsTest : BaseAbstractTest() {
             |/src/main/kotlin/basic/KotlinEnum.kt
             |package testpackage
             |
+            |/**
+            |* Doc
+            |*/
             |enum class KotlinEnum {
             |    ONE, TWO, THREE
             |}
@@ -412,7 +415,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
                     .attr("href")
 
                 assertEquals(
-                    "https://github.com/user/repo/tree/master/src/main/kotlin/basic/KotlinEnum.kt#L3",
+                    "https://github.com/user/repo/tree/master/src/main/kotlin/basic/KotlinEnum.kt#L6",
                     sourceLink
                 )
             }
