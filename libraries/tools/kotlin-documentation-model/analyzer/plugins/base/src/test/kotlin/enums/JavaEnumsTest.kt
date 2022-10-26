@@ -47,6 +47,9 @@ class JavaEnumsTest : BaseAbstractTest() {
             |/src/main/java/basic/JavaEnum.java
             |package testpackage
             |
+            |/**
+            |* doc
+            |*/
             |public enum JavaEnum {
             |    ONE, TWO, THREE
             |}
@@ -62,7 +65,7 @@ class JavaEnumsTest : BaseAbstractTest() {
 
 
                 assertEquals(
-                    "https://github.com/user/repo/tree/master/src/main/java/basic/JavaEnum.java#L3",
+                    "https://github.com/user/repo/tree/master/src/main/java/basic/JavaEnum.java#L6",
                     sourceLink
                 )
             }
