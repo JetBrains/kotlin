@@ -99,8 +99,9 @@ subprojects { proj ->
 
 def rootBuildDirectory = projectDir.parentFile
 
-task buildAnalyzer {
-    dependsOn gradle.includedBuild("benchmarksAnalyzer").task(":${getAnalyzerTargetName()}Binaries")
+task buildAnalyzer(type: GradleBuild) {
+    buildFile = "../tools/benchmarksAnalyzer/build.gradle"
+    tasks = [":${getAnalyzerTargetName()}Binaries".toString()]
 }
 
 task konanRun {
