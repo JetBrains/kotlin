@@ -44,7 +44,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVar: Boolean,
     annotationBuilder: () -> List<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    override var initializer: FirExpression?,
+    private var lazyInitializer: Lazy<FirExpression?>,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val attributes: FirDeclarationAttributes,
 ) : FirField() {
@@ -60,6 +60,9 @@ class FirJavaField @FirImplementationDetail constructor(
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
+
+    override val initializer: FirExpression?
+        get() = lazyInitializer.value
 
     override val deprecationsProvider: DeprecationsProvider by lazy {
         annotations.getDeprecationsProviderFromAnnotations(fromJava = true, moduleData.session.firCachesFactory)
@@ -87,7 +90,7 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField {
         transformAnnotations(transformer, data)
-        initializer = initializer?.transformSingle(transformer, data)
+        replaceInitializer(initializer?.transformSingle(transformer, data))
         return this
     }
 
@@ -127,7 +130,7 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
-        initializer = newInitializer
+        lazyInitializer = lazyOf(newInitializer)
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
@@ -169,6 +172,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var isStatic: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
+    var lazyInitializer: Lazy<FirExpression?>? = null
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
@@ -186,7 +190,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             isVar,
             annotationBuilder,
             typeParameters,
-            initializer,
+            lazyInitializer ?: lazyOf(initializer),
             dispatchReceiverType,
             attributes,
         )
