@@ -179,7 +179,7 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
 
 
     fun tryOptimize(irWhen: IrWhen): JsStatement? {
-        return detectSwitch(irWhen)?.let { buildJsSwitch(it) }
+        return detectSwitch(irWhen)?.let { buildJsSwitch(it).withSource(irWhen, context) }
     }
 
 }

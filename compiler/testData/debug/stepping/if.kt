@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+
 // FILE: test.kt
 fun box(): Int {
     if (
@@ -25,3 +25,7 @@ inline fun getB(): Int {
 // test.kt:8 box
 
 // EXPECTATIONS JS_IR
+// test.kt:14 box
+// test.kt:5 box
+// test.kt:11 getA
+// test.kt:14 box
