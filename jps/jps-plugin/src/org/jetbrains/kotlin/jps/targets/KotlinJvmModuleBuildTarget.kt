@@ -62,11 +62,11 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     override fun createCacheStorage(paths: BuildDataPaths) =
         JpsIncrementalJvmCache(jpsModuleBuildTarget, paths, kotlinContext.fileToPathConverter)
 
-    override val buildMetaInfoFactory
-        get() = JvmBuildMetaInfo
-
-    override val buildMetaInfoFileName
+    override val compilerArgumentsFileName
         get() = JVM_BUILD_META_INFO_FILE_NAME
+
+    override val buildMetaInfo: JvmBuildMetaInfo
+        get() = JvmBuildMetaInfo()
 
     override val targetId: TargetId
         get() {
