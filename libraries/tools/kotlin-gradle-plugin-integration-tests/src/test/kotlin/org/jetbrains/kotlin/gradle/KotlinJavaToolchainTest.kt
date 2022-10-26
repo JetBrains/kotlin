@@ -19,7 +19,6 @@ import java.io.File
 @DisplayName("Kotlin Java Toolchain support")
 class KotlinJavaToolchainTest : KGPBaseTest() {
 
-    @GradleTestVersions
     @GradleTest
     @DisplayName("Should use by default same jvm as Gradle daemon for jdkHome")
     internal fun byDefaultShouldUseGradleJDK(gradleVersion: GradleVersion) {
@@ -101,7 +100,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Kotlin compile task should reuse build cache when toolchain is set and build is happening on different JDKs")
-    @GradleTestVersions
     @GradleTest
     internal fun differentBuildJDKBuildCacheHit(gradleVersion: GradleVersion) {
         val buildCache = workingDir.resolve("custom-jdk-build-cache")
@@ -304,7 +302,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should allow to set JDK version for tasks via Java toolchain")
-    @GradleTestVersions
     @GradleTest
     internal fun setJdkUsingJavaToolchain(gradleVersion: GradleVersion) {
         project(
@@ -319,7 +316,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should allow to set Java toolchain via extension")
-    @GradleTestVersions
     @GradleTest
     internal fun setJdkUsingJavaToolchainViaExtension(gradleVersion: GradleVersion) {
         project(
@@ -334,7 +330,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm targets")
-    @GradleTestVersions
     @GradleTest
     internal fun toolchainCorrectlySupportedInMPPlugin(gradleVersion: GradleVersion) {
         project(
@@ -392,7 +387,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should set 'jvmTarget' option if user does not specify it explicitly via toolchain setter")
-    @GradleTestVersions
     @GradleTest
     internal fun shouldSetJvmTargetNonSpecifiedByUserViaToolchain(gradleVersion: GradleVersion) {
         project(
@@ -410,7 +404,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should not override user specified 'jvmTarget' option via toolchain setter")
-    @GradleTestVersions
     @GradleTest
     internal fun shouldNotOverrideUserSpecifiedJvmTargetViaToolchain(gradleVersion: GradleVersion) {
         project(
@@ -429,7 +422,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Setting toolchain via java extension should also affect Kotlin compilations")
-    @GradleTestVersions
     @GradleTest
     internal fun settingToolchainViaJavaShouldAlsoWork(gradleVersion: GradleVersion) {
         project(
@@ -448,20 +440,12 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 
                 """.trimIndent()
             )
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
 
             build("build")
         }
     }
 
     @DisplayName("Build should not produce warnings when '-no-jdk' option is present")
-    @GradleTestVersions
     @GradleTest
     internal fun noWarningOnNoJdkOptionPresent(gradleVersion: GradleVersion) {
         project(
@@ -509,20 +493,11 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         ) {
             useToolchainExtension(11)
 
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
-
             build("assembleDebug")
         }
     }
 
     @DisplayName("Toolchain should not make an exception when build is running on JDK 11, but toolchain is set to JDK 1.8")
-    @GradleTestVersions
     @GradleTest
     internal fun shouldNotRaiseErrorOnJDK11withJDK1_8Toolchain(gradleVersion: GradleVersion) {
         project(
@@ -537,7 +512,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("JVM target shouldn't be changed when toolchain is not configured")
-    @GradleTestVersions
     @GradleTest
     internal fun shouldNotChangeJvmTargetWithNoToolchain(gradleVersion: GradleVersion) {
         project(
@@ -564,7 +538,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Kotlin toolchain should support configuration cache")
-    @GradleTestVersions
     @GradleTest
     internal fun testConfigurationCache(gradleVersion: GradleVersion) {
         project(
@@ -572,15 +545,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
-            useToolchainExtension(15)
-
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
+            useToolchainExtension(17)
 
             build("assemble")
             build("assemble") {
@@ -597,14 +562,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
-
             build("assemble")
             build("assemble")
         }
