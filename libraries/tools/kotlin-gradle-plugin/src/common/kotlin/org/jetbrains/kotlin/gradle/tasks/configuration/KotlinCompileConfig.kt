@@ -76,7 +76,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     task.associatedJavaCompileTaskName.value(javaTaskProvider.name)
                 }
 
-                task.ownModuleName.value(compilationProjection.ownModuleName)
+                task.ownModuleName.value(
+                    providers.provider {
+                        @Suppress("DEPRECATION")
+                        task.parentKotlinOptions.orNull?.moduleName ?: compilationProjection.ownModuleName
+                    })
             }
         }
     }
