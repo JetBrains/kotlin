@@ -32,7 +32,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     var startFunction: WasmFunction? = null
     val elements: MutableList<WasmElement> = mutableListOf()
     val data: MutableList<WasmData> = mutableListOf()
-    var dataCount: Boolean = false
+    var dataCount: Boolean = true
     val tags: MutableList<WasmTag> = mutableListOf()
 
     private fun <T> byIdx(l1: List<T>, l2: List<T>, index: Int): T {

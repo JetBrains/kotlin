@@ -67,6 +67,9 @@ class WasmModuleCodegenContextImpl(
         return address to id
     }
 
+    override fun referenceConstantArray(resource: Pair<List<Long>, WasmType>): WasmSymbol<Int> =
+        wasmFragment.constantArrayDataSegmentId.reference(resource)
+
     override fun generateTypeInfo(irClass: IrClassSymbol, typeInfo: ConstantDataElement) {
         wasmFragment.typeInfo.define(irClass, typeInfo)
     }
