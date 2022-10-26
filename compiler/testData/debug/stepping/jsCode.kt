@@ -33,10 +33,10 @@ val jesse1VarDecl = "var jesse1 = _.exclamate(jesse);"
 
 // FILE: test.kt
 
-fun noop() {}
+
 
 fun box() {
-    noop()
+
     exclamateAndConcat(
         "hello",
         "world")
@@ -56,8 +56,6 @@ fun box() {
 }
 
 // EXPECTATIONS
-// test.kt:39 box
-// test.kt:36 noop
 // test.kt:41 box
 // test.kt:42 box
 // a.kt:11 box
