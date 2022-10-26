@@ -25,20 +25,20 @@ import org.jetbrains.kotlin.gradle.utils.setValue
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-interface KotlinMetadataCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
+interface GradleKpmMetadataCompilationData<T : KotlinCommonOptions> : GradleKpmCompilationData<T> {
     val isActive: Boolean
 }
 
-interface KotlinCommonFragmentMetadataCompilationData : KotlinMetadataCompilationData<KotlinMultiplatformCommonOptions>
+interface GradleKpmCommonFragmentMetadataCompilationData : GradleKpmMetadataCompilationData<KotlinMultiplatformCommonOptions>
 
-internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : KotlinCommonOptions>(
+internal abstract class GradleKpmAbstractFragmentMetadataCompilationData<T : KotlinCommonOptions>(
     final override val project: Project,
     val fragment: GradleKpmFragment,
     private val module: GradleKpmModule,
     private val compileAllTask: TaskProvider<DefaultTask>,
     val metadataCompilationRegistry: MetadataCompilationRegistry,
     private val resolvedMetadataFiles: Lazy<Iterable<ResolvedMetadataFilesProvider>>
-) : KotlinMetadataCompilationData<T> {
+) : GradleKpmMetadataCompilationData<T> {
 
     override val owner
         get() = project.topLevelExtension
@@ -103,21 +103,21 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         }
 }
 
-internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
+internal open class GradleKpmCommonFragmentMetadataCompilationDataImpl(
     project: Project,
     fragment: GradleKpmFragment,
     module: GradleKpmModule,
     compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry,
     resolvedMetadataFiles: Lazy<Iterable<ResolvedMetadataFilesProvider>>
-) : AbstractKotlinFragmentMetadataCompilationData<KotlinMultiplatformCommonOptions>(
+) : GradleKpmAbstractFragmentMetadataCompilationData<KotlinMultiplatformCommonOptions>(
     project,
     fragment,
     module,
     compileAllTask,
     metadataCompilationRegistry,
     resolvedMetadataFiles
-), KotlinCommonFragmentMetadataCompilationData {
+), GradleKpmCommonFragmentMetadataCompilationData {
 
     override val isActive: Boolean
         get() = !fragment.isNativeShared() &&
@@ -141,9 +141,9 @@ internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
     }
 }
 
-interface KotlinNativeFragmentMetadataCompilationData :
-    KotlinMetadataCompilationData<KotlinCommonOptions>,
-    KotlinNativeCompilationData<KotlinCommonOptions>
+interface GradleKpmNativeFragmentMetadataCompilationData :
+    GradleKpmMetadataCompilationData<KotlinCommonOptions>,
+    GradleKpmNativeCompilationData<KotlinCommonOptions>
 
 internal fun GradleKpmFragment.isNativeShared(): Boolean =
     containingVariants.run {
@@ -153,21 +153,21 @@ internal fun GradleKpmFragment.isNativeShared(): Boolean =
 internal fun GradleKpmFragment.isNativeHostSpecific(): Boolean =
     this in getHostSpecificFragments(containingModule)
 
-internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
+internal open class GradleKpmNativeFragmentMetadataCompilationDataImpl(
     project: Project,
     fragment: GradleKpmFragment,
     module: GradleKpmModule,
     compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry,
     resolvedMetadataFiles: Lazy<Iterable<ResolvedMetadataFilesProvider>>
-) : AbstractKotlinFragmentMetadataCompilationData<KotlinCommonOptions>(
+) : GradleKpmAbstractFragmentMetadataCompilationData<KotlinCommonOptions>(
     project,
     fragment,
     module,
     compileAllTask,
     metadataCompilationRegistry,
     resolvedMetadataFiles
-), KotlinNativeFragmentMetadataCompilationData {
+), GradleKpmNativeFragmentMetadataCompilationData {
 
     override val compileKotlinTaskName: String
         get() = lowerCamelCaseName("compile", fragment.disambiguateName(""), "KotlinNativeMetadata")
@@ -202,10 +202,10 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
 // TODO think about more generic case: a fragment that can be compiled by an arbitrary compiler
 //      what tasks should we create? should there be a generic task for that?
 internal class MetadataCompilationRegistry {
-    private val commonCompilationDataPerFragment = LinkedHashMap<GradleKpmFragment, KotlinCommonFragmentMetadataCompilationDataImpl>()
-    private val nativeCompilationDataPerFragment = LinkedHashMap<GradleKpmFragment, KotlinNativeFragmentMetadataCompilationDataImpl>()
+    private val commonCompilationDataPerFragment = LinkedHashMap<GradleKpmFragment, GradleKpmCommonFragmentMetadataCompilationDataImpl>()
+    private val nativeCompilationDataPerFragment = LinkedHashMap<GradleKpmFragment, GradleKpmNativeFragmentMetadataCompilationDataImpl>()
 
-    fun registerCommon(fragment: GradleKpmFragment, compilationData: KotlinCommonFragmentMetadataCompilationDataImpl) {
+    fun registerCommon(fragment: GradleKpmFragment, compilationData: GradleKpmCommonFragmentMetadataCompilationDataImpl) {
         commonCompilationDataPerFragment.compute(fragment) { _, existing ->
             existing?.let { error("common compilation data for fragment $fragment already registered") }
             compilationData
@@ -213,7 +213,7 @@ internal class MetadataCompilationRegistry {
         withAllCommonCallbacks.forEach { it.invoke(compilationData) }
     }
 
-    fun registerNative(fragment: GradleKpmFragment, compilationData: KotlinNativeFragmentMetadataCompilationDataImpl) {
+    fun registerNative(fragment: GradleKpmFragment, compilationData: GradleKpmNativeFragmentMetadataCompilationDataImpl) {
         nativeCompilationDataPerFragment.compute(fragment) { _, existing ->
             existing?.let { error("native compilation data for fragment $fragment already registered") }
             compilationData
@@ -221,15 +221,15 @@ internal class MetadataCompilationRegistry {
         withAllNativeCallbacks.forEach { it.invoke(compilationData) }
     }
 
-    fun getForFragmentOrNull(fragment: GradleKpmFragment): AbstractKotlinFragmentMetadataCompilationData<*>? =
+    fun getForFragmentOrNull(fragment: GradleKpmFragment): GradleKpmAbstractFragmentMetadataCompilationData<*>? =
         listOf(commonCompilationDataPerFragment.getValue(fragment), nativeCompilationDataPerFragment.getValue(fragment)).singleOrNull {
             it.isActive
         }
 
-    private val withAllCommonCallbacks = mutableListOf<(AbstractKotlinFragmentMetadataCompilationData<*>) -> Unit>()
-    private val withAllNativeCallbacks = mutableListOf<(AbstractKotlinFragmentMetadataCompilationData<*>) -> Unit>()
+    private val withAllCommonCallbacks = mutableListOf<(GradleKpmAbstractFragmentMetadataCompilationData<*>) -> Unit>()
+    private val withAllNativeCallbacks = mutableListOf<(GradleKpmAbstractFragmentMetadataCompilationData<*>) -> Unit>()
 
-    fun withAll(action: (AbstractKotlinFragmentMetadataCompilationData<*>) -> Unit) {
+    fun withAll(action: (GradleKpmAbstractFragmentMetadataCompilationData<*>) -> Unit) {
         commonCompilationDataPerFragment.forEach { action(it.value) }
         nativeCompilationDataPerFragment.forEach { action(it.value) }
         withAllCommonCallbacks += action

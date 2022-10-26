@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
-interface KotlinCompilationData<T : KotlinCommonOptionsDeprecated> {
+/*
+Previously used to find a common representation for KPM and TCS.
+Not in use anymore. Can be removed/inlined into KPM later.
+ */
+interface GradleKpmCompilationData<T : KotlinCommonOptionsDeprecated> {
     val project: Project
     val owner: Any?
 

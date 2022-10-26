@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAbstractFragmentMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariantWithRuntime
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurationName
@@ -39,7 +39,7 @@ internal fun GradleKpmDependencyFilesHolder.Companion.ofVariantRuntimeDependenci
     }
 
 internal fun GradleKpmDependencyFilesHolder.Companion.ofMetadataCompilationDependencies(
-    compilationData: AbstractKotlinFragmentMetadataCompilationData<*>
+    compilationData: GradleKpmAbstractFragmentMetadataCompilationData<*>
 ) = object : GradleKpmDependencyFilesHolder {
     override val dependencyConfigurationName: String
         get() = compilationData.fragment.containingModule.resolvableMetadataConfigurationName
