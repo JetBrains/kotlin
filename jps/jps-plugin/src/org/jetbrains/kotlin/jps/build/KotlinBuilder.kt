@@ -357,7 +357,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         if (representativeTarget.targetId.name == "buildSrc") {
-            return NOTHING_DONE
+            try {
+                Class.forName("org.gradle.api.internal.SettingsInternal")
+            } catch (e: ClassNotFoundException) {
+                null
+            } ?: return NOTHING_DONE
         }
 
         val kotlinContext = context.kotlin
