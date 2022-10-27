@@ -78,7 +78,7 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     override fun getModifierList(): PsiModifierList = _modifierList
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(this, emptySet(), _annotations)
+        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyOf(_annotations))
     }
 
     private val _type: PsiType by lazyPub {

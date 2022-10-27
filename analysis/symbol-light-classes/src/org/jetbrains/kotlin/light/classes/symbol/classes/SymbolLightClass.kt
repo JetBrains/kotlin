@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 context(KtAnalysisSession)
@@ -49,22 +50,25 @@ internal open class SymbolLightClass(
     }
 
     private val _modifierList: PsiModifierList? by lazyPub {
-
-        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
-        classOrObjectSymbol.computeSimpleModality()?.run {
-            modifiers.add(this)
+        val lazyModifiers = lazy {
+            buildSet {
+                add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
+                addIfNotNull(classOrObjectSymbol.computeSimpleModality())
+                if (!isTopLevel && !classOrObjectSymbol.isInner) {
+                    add(PsiModifier.STATIC)
+                }
+            }
         }
-        if (!isTopLevel && !classOrObjectSymbol.isInner) {
-            modifiers.add(PsiModifier.STATIC)
+
+        val lazyAnnotations = lazyPub {
+            classOrObjectSymbol.computeAnnotations(
+                parent = this@SymbolLightClass,
+                nullability = NullabilityType.Unknown,
+                annotationUseSiteTarget = null,
+            )
         }
 
-        val annotations = classOrObjectSymbol.computeAnnotations(
-            parent = this@SymbolLightClass,
-            nullability = NullabilityType.Unknown,
-            annotationUseSiteTarget = null,
-        )
-
-        SymbolLightClassModifierList(this@SymbolLightClass, modifiers, annotations)
+        SymbolLightClassModifierList(this@SymbolLightClass, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
