@@ -51,7 +51,7 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
     }
 }
 
-internal object NativeKotlinCompilationAssociator : KotlinCompilationAssociator {
+internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
 
         first.compileDependencyFiles +=
@@ -63,7 +63,7 @@ internal object NativeKotlinCompilationAssociator : KotlinCompilationAssociator 
     }
 }
 
-internal object JvmKotlinCompilationAssociator : KotlinCompilationAssociator {
+internal object KotlinJvmCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
         /* Main to Test association handled already by java plugin */
         if (target is KotlinJvmTarget && target.withJavaEnabled && first.isMain() && second.isTest()) {
@@ -81,7 +81,7 @@ internal object JvmKotlinCompilationAssociator : KotlinCompilationAssociator {
 * We now explicitly add associate compilation dependencies to the Kotlin test compilation configurations (test classpaths).
 * This helps, because the Android test classpath configurations extend from the Kotlin test compilations' directly.
 */
-internal object AndroidKotlinCompilationAssociator : KotlinCompilationAssociator {
+internal object KotlinAndroidCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
         first.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
             target.project,
@@ -90,7 +90,6 @@ internal object AndroidKotlinCompilationAssociator : KotlinCompilationAssociator
             second.compileOnlyConfigurationName
         )
     }
-
 }
 
 /**
