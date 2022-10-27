@@ -266,6 +266,8 @@ object FirFakeOverrideGenerator {
                 origin = FirDeclarationOrigin.SubstitutionOverride
                 returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                 symbol = FirValueParameterSymbol(valueParameter.name)
+            }.apply {
+                originalForSubstitutionOverrideAttr = valueParameter
             }
         }
 
