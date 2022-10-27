@@ -24,32 +24,44 @@ import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.SmartList
 import java.nio.file.Paths
 
 class KlibBasedSymbolProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
-    private val resolvedLibrary: KotlinResolvedLibrary,
+    private val resolvedLibraries: Collection<KotlinResolvedLibrary>,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, KlibMetadataSerializerProtocol
 ) {
-    private val moduleHeader by lazy {
-        resolvedLibrary.loadModuleHeader(resolvedLibrary.library)
+    private val moduleHeaders by lazy {
+        resolvedLibraries.associate { it to it.loadModuleHeader(it.library) }
     }
 
-    private val fragmentNameList by lazy {
-        moduleHeader.packageFragmentNameList.toSet()
+    private val fragmentNamesInLibraries: Map<String, List<KotlinResolvedLibrary>> by lazy {
+        buildMap<String, SmartList<KotlinResolvedLibrary>> {
+            for ((library, header) in moduleHeaders) {
+                for (fragmentName in header.packageFragmentNameList) {
+                    getOrPut(fragmentName) { SmartList() }
+                        .add(library)
+                }
+            }
+        }
     }
 
     private val annotationDeserializer = KlibBasedAnnotationDeserializer(session)
     private val constDeserializer = FirConstDeserializer(session, KlibMetadataSerializerProtocol)
     private val deserializationConfiguration = CompilerDeserializationConfiguration(session.languageVersionSettings)
-    private val cachedFragments = mutableMapOf<Pair<String, String>, ProtoBuf.PackageFragment>()
+    private val cachedFragments = mutableMapOf<KotlinResolvedLibrary, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>>()
 
-    private fun getPackageFragment(packageStringName: String, packageMetadataPart: String): ProtoBuf.PackageFragment {
-        return cachedFragments.getOrPut(packageStringName to packageMetadataPart) {
+    private fun getPackageFragment(
+        resolvedLibrary: KotlinResolvedLibrary, packageStringName: String, packageMetadataPart: String
+    ): ProtoBuf.PackageFragment {
+        return cachedFragments.getOrPut(resolvedLibrary) {
+            mutableMapOf()
+        }.getOrPut(packageStringName to packageMetadataPart) {
             resolvedLibrary.loadPackageFragment(resolvedLibrary.library, packageStringName, packageMetadataPart)
         }
     }
@@ -57,31 +69,31 @@ class KlibBasedSymbolProvider(
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         val packageStringName = if (packageFqName.isRoot) "" else packageFqName.asString()
 
-        if (packageStringName !in fragmentNameList) {
-            return emptyList()
-        }
+        val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return emptyList()
 
-        return resolvedLibrary.library.packageMetadataParts(packageStringName).mapNotNull {
-            val fragment = getPackageFragment(packageStringName, it)
+        return librariesWithFragment.flatMap { resolvedLibrary ->
+            resolvedLibrary.library.packageMetadataParts(packageStringName).mapNotNull {
+                val fragment = getPackageFragment(resolvedLibrary, packageStringName, it)
 
-            val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
-            val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return@mapNotNull null
-            val packageProto = fragment.`package`
+                val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
+                val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return@mapNotNull null
+                val packageProto = fragment.`package`
 
-            val nameResolver = NameResolverImpl(
-                fragment.strings,
-                fragment.qualifiedNames,
-            )
+                val nameResolver = NameResolverImpl(
+                    fragment.strings,
+                    fragment.qualifiedNames,
+                )
 
-            PackagePartsCacheData(
-                packageProto,
-                FirDeserializationContext.createForPackage(
-                    packageFqName, packageProto, nameResolver, moduleData,
-                    annotationDeserializer,
-                    constDeserializer,
-                    null,
-                ),
-            )
+                PackagePartsCacheData(
+                    packageProto,
+                    FirDeserializationContext.createForPackage(
+                        packageFqName, packageProto, nameResolver, moduleData,
+                        annotationDeserializer,
+                        constDeserializer,
+                        null,
+                    ),
+                )
+            }
         }
     }
 
@@ -89,51 +101,52 @@ class KlibBasedSymbolProvider(
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         val packageStringName = classId.packageFqName.asString()
 
-        if (packageStringName !in fragmentNameList) {
-            return null
-        }
+        val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return null
 
-        resolvedLibrary.library.packageMetadataParts(packageStringName).forEach {
-            val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
-            val fragment = getPackageFragment(packageStringName, it)
+        for (resolvedLibrary in librariesWithFragment) {
+            for (packageMetadataPart in resolvedLibrary.library.packageMetadataParts(packageStringName)) {
+                val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
+                val fragment = getPackageFragment(resolvedLibrary, packageStringName, packageMetadataPart)
 
-            val nameResolver = NameResolverImpl(
-                fragment.strings,
-                fragment.qualifiedNames,
-            )
-
-            val finder = KlibMetadataClassDataFinder(fragment, nameResolver)
-            val classProto = finder.findClassData(classId)?.classProto ?: return@forEach
-
-            val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return null
-
-            return ClassMetadataFindResult.NoMetadata { symbol ->
-                val source = object : DeserializedContainerSource {
-                    override val incompatibility: IncompatibleVersionErrorData<*>? = null
-                    override val isPreReleaseInvisible =
-                        deserializationConfiguration.reportErrorsOnPreReleaseDependencies && (moduleHeader.flags and 1) != 0
-                    override val abiStability = DeserializedContainerAbiStability.STABLE
-                    override val presentableString = "Package '${classId.packageFqName}'"
-
-                    override fun getContainingFile() = SourceFile.NO_SOURCE_FILE
-                }
-
-                deserializeClassToSymbol(
-                    classId,
-                    classProto,
-                    symbol,
-                    nameResolver,
-                    session,
-                    moduleData,
-                    annotationDeserializer,
-                    kotlinScopeProvider,
-                    KlibMetadataSerializerProtocol,
-                    parentContext,
-                    source,
-                    origin = defaultDeserializationOrigin,
-                    deserializeNestedClass = this::getClass,
+                val nameResolver = NameResolverImpl(
+                    fragment.strings,
+                    fragment.qualifiedNames,
                 )
-                symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
+
+                val finder = KlibMetadataClassDataFinder(fragment, nameResolver)
+                val classProto = finder.findClassData(classId)?.classProto ?: continue
+
+                val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return null
+
+                return ClassMetadataFindResult.NoMetadata { symbol ->
+                    val source = object : DeserializedContainerSource {
+                        override val incompatibility: IncompatibleVersionErrorData<*>? = null
+                        override val isPreReleaseInvisible =
+                            deserializationConfiguration.reportErrorsOnPreReleaseDependencies &&
+                                    (moduleHeaders[resolvedLibrary]!!.flags and 1) != 0
+                        override val abiStability = DeserializedContainerAbiStability.STABLE
+                        override val presentableString = "Package '${classId.packageFqName}'"
+
+                        override fun getContainingFile() = SourceFile.NO_SOURCE_FILE
+                    }
+
+                    deserializeClassToSymbol(
+                        classId,
+                        classProto,
+                        symbol,
+                        nameResolver,
+                        session,
+                        moduleData,
+                        annotationDeserializer,
+                        kotlinScopeProvider,
+                        KlibMetadataSerializerProtocol,
+                        parentContext,
+                        source,
+                        origin = defaultDeserializationOrigin,
+                        deserializeNestedClass = this::getClass,
+                    )
+                    symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
+                }
             }
         }
 
@@ -143,7 +156,7 @@ class KlibBasedSymbolProvider(
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class) = false
 
     override fun getPackage(fqName: FqName): FqName? {
-        return if (fqName.toString() in fragmentNameList) {
+        return if (fqName.toString() in fragmentNamesInLibraries) {
             fqName
         } else {
             null
