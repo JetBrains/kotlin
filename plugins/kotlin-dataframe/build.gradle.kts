@@ -44,7 +44,7 @@ dependencies {
     }
 
     implementation("org.jetbrains.kotlinx:dataframe:0.9.0-dev")
-    implementation("org.jetbrains.kotlinx.dataframe:bridge-generator:0.9.0-dev")
+    //implementation("org.jetbrains.kotlinx.dataframe:bridge-generator:0.9.0-dev")
 
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-compiler-internal-test-framework:$kotlinVersion")

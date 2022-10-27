@@ -36,9 +36,9 @@ import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.*
-import org.jetbrains.kotlinx.dataframe.plugin.AddData.test0After
-import org.jetbrains.kotlinx.dataframe.plugin.AddData.test0Schema
-import org.jetbrains.kotlinx.dataframe.plugin.testing.atoms.Context
+//import org.jetbrains.kotlinx.dataframe.plugin.AddData.test0After
+//import org.jetbrains.kotlinx.dataframe.plugin.AddData.test0Schema
+//import org.jetbrains.kotlinx.dataframe.plugin.testing.atoms.Context
 
 abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
     lateinit var filePath: String
@@ -133,13 +133,13 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                 "kproperty_2" to KPropertyApproximation("name", TypeApproximationImpl("kotlin.Int", false)),
                 "addExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
                 "addExpression_2" to TypeApproximationImpl("kotlin.Any", nullable = true),
-                "add0_schema" to test0Schema,
-                "add0" to test0After,
+//                "add0_schema" to test0Schema,
+//                "add0" to test0After,
                 "varargKProperty_0" to listOf(
                     KPropertyApproximation("col1", TypeApproximationImpl("kotlin.Int", false)),
                     KPropertyApproximation("col2", TypeApproximationImpl("kotlin.Int", true))
                 ),
-                "memberFunction_1" to Context(123),
+//                "memberFunction_1" to Context(123),
                 "typeParameter_1" to TypeApproximationImpl("kotlin.Int", false),
                 "rowValueExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
                 "columnsSelector_1" to listOf(
