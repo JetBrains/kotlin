@@ -1,0 +1,267 @@
+FILE: dfIde.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Schema : R|kotlin/Any| {
+        public abstract val i: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val fff: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(i))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1), Int(2), Int(3))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>()
+        R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/i|)
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token99>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_99|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(ca), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            ^ Int(423)
+        }
+        )
+        lval res: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Token99.ca|
+        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|org/jetbrains/kotlinx/dataframe/Token99|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token99>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token99>|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ ==((this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/it|).R|org/jetbrains/kotlinx/dataframe/Token99.ca|, Int(12))
+        }
+        )
+        R|org/jetbrains/kotlinx/dataframe/Name is evaluated to age|(R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(123))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Cars|>())
+    }
+    public abstract interface Cars : R|kotlin/Any| {
+    }
+    public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Cars>|): R|kotlin/Unit| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token98>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_98|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            ^ Int(2022)
+        }
+        )
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/Name is evaluated to age|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Token98.age|
+        R|kotlin/io/println|(R|<local>/col|)
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Schema>|.i: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Schema>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Schema>|.fff: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Schema>|.fff: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+    local final class Token0 {
+    }
+    local final class Token1 {
+    }
+    local final class Token2 {
+    }
+    local final class Token3 {
+    }
+    local final class Token4 {
+    }
+    local final class Token5 {
+    }
+    local final class Token6 {
+    }
+    local final class Token7 {
+    }
+    local final class Token8 {
+    }
+    local final class Token9 {
+    }
+    local final class Token10 {
+    }
+    local final class Token11 {
+    }
+    local final class Token12 {
+    }
+    local final class Token13 {
+    }
+    local final class Token14 {
+    }
+    local final class Token15 {
+    }
+    local final class Token16 {
+    }
+    local final class Token17 {
+    }
+    local final class Token18 {
+    }
+    local final class Token19 {
+    }
+    local final class Token20 {
+    }
+    local final class Token21 {
+    }
+    local final class Token22 {
+    }
+    local final class Token23 {
+    }
+    local final class Token24 {
+    }
+    local final class Token25 {
+    }
+    local final class Token26 {
+    }
+    local final class Token27 {
+    }
+    local final class Token28 {
+    }
+    local final class Token29 {
+    }
+    local final class Token30 {
+    }
+    local final class Token31 {
+    }
+    local final class Token32 {
+    }
+    local final class Token33 {
+    }
+    local final class Token34 {
+    }
+    local final class Token35 {
+    }
+    local final class Token36 {
+    }
+    local final class Token37 {
+    }
+    local final class Token38 {
+    }
+    local final class Token39 {
+    }
+    local final class Token40 {
+    }
+    local final class Token41 {
+    }
+    local final class Token42 {
+    }
+    local final class Token43 {
+    }
+    local final class Token44 {
+    }
+    local final class Token45 {
+    }
+    local final class Token46 {
+    }
+    local final class Token47 {
+    }
+    local final class Token48 {
+    }
+    local final class Token49 {
+    }
+    local final class Token50 {
+    }
+    local final class Token51 {
+    }
+    local final class Token52 {
+    }
+    local final class Token53 {
+    }
+    local final class Token54 {
+    }
+    local final class Token55 {
+    }
+    local final class Token56 {
+    }
+    local final class Token57 {
+    }
+    local final class Token58 {
+    }
+    local final class Token59 {
+    }
+    local final class Token60 {
+    }
+    local final class Token61 {
+    }
+    local final class Token62 {
+    }
+    local final class Token63 {
+    }
+    local final class Token64 {
+    }
+    local final class Token65 {
+    }
+    local final class Token66 {
+    }
+    local final class Token67 {
+    }
+    local final class Token68 {
+    }
+    local final class Token69 {
+    }
+    local final class Token70 {
+    }
+    local final class Token71 {
+    }
+    local final class Token72 {
+    }
+    local final class Token73 {
+    }
+    local final class Token74 {
+    }
+    local final class Token75 {
+    }
+    local final class Token76 {
+    }
+    local final class Token77 {
+    }
+    local final class Token78 {
+    }
+    local final class Token79 {
+    }
+    local final class Token80 {
+    }
+    local final class Token81 {
+    }
+    local final class Token82 {
+    }
+    local final class Token83 {
+    }
+    local final class Token84 {
+    }
+    local final class Token85 {
+    }
+    local final class Token86 {
+    }
+    local final class Token87 {
+    }
+    local final class Token88 {
+    }
+    local final class Token89 {
+    }
+    local final class Token90 {
+    }
+    local final class Token91 {
+    }
+    local final class Token92 {
+    }
+    local final class Token93 {
+    }
+    local final class Token94 {
+    }
+    local final class Token95 {
+    }
+    local final class Token96 {
+    }
+    local final class Token97 {
+    }
+    local final class Token98 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token98>|.age: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token98>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Token98|
+
+    }
+    local final class Token99 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token99>|.ca: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token99>|.ca: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Token99|
+
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe.api
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/Add|))) @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add1)) public final inline fun <reified R, T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_98(name: R|kotlin/String|, infer: R|org/jetbrains/kotlinx/dataframe/api/Infer| = STUB, noinline expression: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/api/AddExpression<T, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token98>|
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/Add|))) @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add1)) public final inline fun <reified R, T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_99(name: R|kotlin/String|, infer: R|org/jetbrains/kotlinx/dataframe/api/Infer| = STUB, noinline expression: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/api/AddExpression<T, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token99>|
