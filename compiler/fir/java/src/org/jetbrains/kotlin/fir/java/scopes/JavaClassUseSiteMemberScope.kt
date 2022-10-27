@@ -89,7 +89,7 @@ class JavaClassUseSiteMemberScope(
                         chooseModalityForAccessor(property, delegateGetter)
                     }
                 )
-                deprecationsProvider = getDeprecationsProviderFromAccessors(delegateGetter, delegateSetter, session.firCachesFactory)
+                deprecationsProvider = getDeprecationsProviderFromAccessors(delegateGetter, delegateSetter, session)
             }.symbol
         }
     }

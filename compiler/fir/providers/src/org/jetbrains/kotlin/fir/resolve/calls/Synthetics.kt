@@ -154,7 +154,7 @@ class FirSyntheticPropertiesScope private constructor(
             )
             delegateGetter = getter
             delegateSetter = matchingSetter
-            deprecationsProvider = getDeprecationsProviderFromAccessors(getter, matchingSetter, session.firCachesFactory)
+            deprecationsProvider = getDeprecationsProviderFromAccessors(getter, matchingSetter, session)
         }
         val syntheticSymbol = property.symbol
         (baseScope as? FirUnstableSmartcastTypeScope)?.apply {

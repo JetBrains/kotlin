@@ -555,7 +555,7 @@ abstract class AbstractFirStatusResolveTransformer(
 
     protected fun calculateDeprecations(simpleFunction: FirCallableDeclaration) {
         if (simpleFunction.deprecationsProvider is UnresolvedDeprecationProvider) {
-            simpleFunction.replaceDeprecationsProvider(simpleFunction.getDeprecationsProvider(session.firCachesFactory))
+            simpleFunction.replaceDeprecationsProvider(simpleFunction.getDeprecationsProvider(session))
         }
     }
 }

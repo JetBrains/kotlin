@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.utils.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -91,33 +92,34 @@ fun FirBasedSymbol<*>.getDeprecation(apiVersion: ApiVersion, callSite: FirElemen
     }
 }
 
-fun FirAnnotationContainer.getDeprecationsProvider(firCachesFactory: FirCachesFactory): DeprecationsProvider {
-    return extractDeprecationInfoPerUseSite().toDeprecationsProvider(firCachesFactory)
+fun FirAnnotationContainer.getDeprecationsProvider(session: FirSession): DeprecationsProvider {
+    return extractDeprecationInfoPerUseSite(session).toDeprecationsProvider(session.firCachesFactory)
 }
 
-fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(): DeprecationAnnotationInfoPerUseSiteStorage {
+fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(session: FirSession): DeprecationAnnotationInfoPerUseSiteStorage {
     val fromJava = this is FirDeclaration && this.isJavaOrEnhancement
 
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        add(annotations.extractDeprecationAnnotationInfoPerUseSite(fromJava))
+        add(annotations.extractDeprecationAnnotationInfoPerUseSite(fromJava, session))
         if (this@extractDeprecationInfoPerUseSite is FirProperty) {
-            add(getDeprecationsAnnotationInfoByUseSiteFromAccessors(getter, setter))
+            add(getDeprecationsAnnotationInfoByUseSiteFromAccessors(getter, setter, session))
         }
     }
 }
 fun getDeprecationsProviderFromAccessors(
     getter: FirFunction?,
     setter: FirFunction?,
-    firCachesFactory: FirCachesFactory
+    session: FirSession,
 ): DeprecationsProvider {
-    return getDeprecationsAnnotationInfoByUseSiteFromAccessors(getter, setter).toDeprecationsProvider(firCachesFactory)
+    return getDeprecationsAnnotationInfoByUseSiteFromAccessors(getter, setter, session).toDeprecationsProvider(session.firCachesFactory)
 }
 fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
     getter: FirFunction?,
-    setter: FirFunction?
+    setter: FirFunction?,
+    session: FirSession,
 ): DeprecationAnnotationInfoPerUseSiteStorage {
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        val setterDeprecations = setter?.extractDeprecationInfoPerUseSite()
+        val setterDeprecations = setter?.extractDeprecationInfoPerUseSite(session)
         setterDeprecations?.storage?.forEach { (useSite, infos) ->
             if (useSite == null) {
                 add(AnnotationUseSiteTarget.PROPERTY_SETTER, infos)
@@ -125,7 +127,7 @@ fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
                 add(useSite, infos)
             }
         }
-        val getterDeprecations = getter?.extractDeprecationInfoPerUseSite()
+        val getterDeprecations = getter?.extractDeprecationInfoPerUseSite(session)
         getterDeprecations?.storage?.forEach { (useSite, infos) ->
             if (useSite == null) {
                 add(AnnotationUseSiteTarget.PROPERTY_GETTER, infos)
@@ -138,10 +140,10 @@ fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
 
 fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
     fromJava: Boolean,
-    firCachesFactory: FirCachesFactory
+    session: FirSession,
 ): DeprecationsProvider {
-    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava)
-    return deprecationAnnotationByUseSite.toDeprecationsProvider(firCachesFactory)
+    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava, session)
+    return deprecationAnnotationByUseSite.toDeprecationsProvider(session.firCachesFactory)
 }
 
 fun FirBasedSymbol<*>.getDeprecationForCallSite(
@@ -176,7 +178,8 @@ private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
 }
 
 private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
-    fromJava: Boolean
+    fromJava: Boolean,
+    session: FirSession,
 ): DeprecationAnnotationInfoPerUseSiteStorage {
     @Suppress("RemoveExplicitTypeArguments")
     val annotations = buildList<Pair<FirAnnotation, Boolean>> {
@@ -187,12 +190,12 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
 
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
         for ((deprecated, fromJavaAnnotation) in annotations) {
-            if (deprecated.classId == StandardClassIds.Annotations.SinceKotlin) {
+            if (deprecated.fullyExpandedClassId(session) == StandardClassIds.Annotations.SinceKotlin) {
                 val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
                 val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)
                     ?.let(ApiVersion.Companion::parse) ?: continue
                 val wasExperimental = this@extractDeprecationAnnotationInfoPerUseSite.any {
-                    it.classId == StandardClassIds.Annotations.WasExperimental
+                    it.fullyExpandedClassId(session) == StandardClassIds.Annotations.WasExperimental
                 }
                 if (!wasExperimental) {
                     add(deprecated.useSiteTarget, SinceKotlinInfo(apiVersion))

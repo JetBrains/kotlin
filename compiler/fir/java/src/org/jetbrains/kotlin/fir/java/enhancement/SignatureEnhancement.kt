@@ -167,7 +167,7 @@ class FirSignatureEnhancement(
                     delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
                     status = firElement.status
-                    deprecationsProvider = getDeprecationsProviderFromAccessors(delegateGetter, delegateSetter, session.firCachesFactory)
+                    deprecationsProvider = getDeprecationsProviderFromAccessors(delegateGetter, delegateSetter, session)
                 }.symbol
             }
             else -> {
@@ -317,7 +317,7 @@ class FirSignatureEnhancement(
             else -> throw AssertionError("Unknown Java method to enhance: ${firMethod.render()}")
         }.apply {
             annotations += firMethod.annotations
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = true, session.firCachesFactory)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = true, session)
         }.build().apply {
             if (isJavaRecordComponent) {
                 this.isJavaRecordComponent = true

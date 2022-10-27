@@ -201,7 +201,7 @@ abstract class FirJavaFacade(
             }
         }
         firJavaClass.replaceSuperTypeRefs(enhancedSuperTypes)
-        firJavaClass.replaceDeprecationsProvider(firJavaClass.getDeprecationsProvider(session.firCachesFactory))
+        firJavaClass.replaceDeprecationsProvider(firJavaClass.getDeprecationsProvider(session))
         return firJavaClass
     }
 

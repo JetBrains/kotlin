@@ -527,7 +527,7 @@ object FirFakeOverrideGenerator {
             delegateGetter = getter
             delegateSetter = setter
             status = baseProperty.status
-            deprecationsProvider = getDeprecationsProviderFromAccessors(getter, setter, session.firCachesFactory)
+            deprecationsProvider = getDeprecationsProviderFromAccessors(getter, setter, session)
         }.symbol
     }
 

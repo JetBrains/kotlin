@@ -153,7 +153,7 @@ class JvmClassFileBasedSymbolProvider(
             },
             kotlinClass.byteContent,
         )
-        symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session.firCachesFactory))
+        symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session))
     }
 
     private fun String?.toPath(): Path? {
