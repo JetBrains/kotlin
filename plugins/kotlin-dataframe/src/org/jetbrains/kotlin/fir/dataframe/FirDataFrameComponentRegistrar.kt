@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         val ids = List(100) {
-            val name = Name.identifier(it.toString())
+            val name = Name.identifier("Token$it")
             ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
         }.toSet()
         val queue = ArrayDeque(ids)

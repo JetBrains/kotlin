@@ -154,7 +154,7 @@ class FirDataFrameExtensionsGenerator(
         val firPropertySymbol = FirPropertySymbol(callableId)
         return buildProperty {
             moduleData = session.moduleData
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
@@ -174,6 +174,7 @@ class FirDataFrameExtensionsGenerator(
             val firPropertyAccessorSymbol = FirPropertyAccessorSymbol()
             getter = buildPropertyAccessor {
                 moduleData = session.moduleData
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 this.returnTypeRef = returnTypeRef
                 dispatchReceiverType = receiverType
