@@ -30,6 +30,7 @@ class JsClass(
     }
 
     override fun acceptChildren(visitor: JsVisitor) {
+        visitor.accept(baseClass)
         visitor.accept(constructor)
         visitor.acceptList(members)
     }
@@ -37,6 +38,7 @@ class JsClass(
     override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         if (v.visit(this, ctx)) {
             constructor = v.accept(constructor)
+            baseClass = v.accept(baseClass)
             v.acceptList(members)
         }
         v.endVisit(this, ctx)

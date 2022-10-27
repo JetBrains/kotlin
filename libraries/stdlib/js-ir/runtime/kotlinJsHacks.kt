@@ -59,7 +59,7 @@ internal annotation class JsImplicitExport
  * to generate specific handlers for them
  */
 @Target(AnnotationTarget.CLASS)
-internal annotation class InnerClassSuperType
+internal annotation class InnerOrLocalClassSuperType
 
 @Target(AnnotationTarget.CLASS)
 internal annotation class MetaClass

@@ -43,6 +43,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_RETURN = "return".toCharArray();
     private static final char[] CHARS_SWITCH = "switch".toCharArray();
     private static final char[] CHARS_THIS = "this".toCharArray();
+
+    private static final char[] CHARS_SUPER = "super".toCharArray();
     private static final char[] CHARS_THROW = "throw".toCharArray();
     private static final char[] CHARS_TRUE = "true".toCharArray();
     private static final char[] CHARS_TRY = "try".toCharArray();
@@ -1123,6 +1125,17 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printCommentsBeforeNode(x);
 
         p.print(CHARS_THIS);
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitSuper(@NotNull JsSuperRef x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        p.print(CHARS_SUPER);
 
         printCommentsAfterNode(x);
         popSourceInfo();

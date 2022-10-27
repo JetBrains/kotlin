@@ -149,5 +149,16 @@ internal fun <T> objectCreate(proto: T?) =
     js("Object.create(proto)")
 
 @Suppress("UNUSED_PARAMETER")
+internal fun createThis(ctor: Ctor) =
+    js("Object.create(ctor.prototype)")
+
+@Suppress("UNUSED_PARAMETER")
+internal fun createThisFromParent(
+    ctor: Ctor,
+    parentCtor: Ctor,
+    parameters: Array<Any?>
+) = js("Reflect.construct(parentCtor, parameters, ctor)")
+
+@Suppress("UNUSED_PARAMETER")
 internal fun defineProp(obj: Any, name: String, getter: Any?, setter: Any?) =
     js("Object.defineProperty(obj, name, { configurable: true, get: getter, set: setter })")

@@ -144,6 +144,9 @@ abstract class JsVisitor {
     open fun visitThis(x: JsThisRef): Unit =
             visitElement(x)
 
+    open fun visitSuper(x: JsSuperRef): Unit =
+            visitElement(x)
+
     open fun visitThrow(x: JsThrow): Unit =
             visitElement(x)
 

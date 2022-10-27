@@ -498,13 +498,6 @@ private val innerClassConstructorCallsLoweringPhase = makeBodyLoweringPhase(
     description = "Replace inner class constructor invocation"
 )
 
-private val es6AnnotateInnerClassParentLowering = makeDeclarationTransformerPhase(
-    ::ES6AnnotateInnerClassParentLowering,
-    name = "ES6AnnotateInnerClassParentLowering",
-    description = "Annotate all classes which should have extra parameters for inner class usages",
-    prerequisite = setOf(innerClassConstructorCallsLoweringPhase)
-)
-
 private val suspendFunctionsLoweringPhase = makeBodyLoweringPhase(
     ::JsSuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
@@ -610,25 +603,11 @@ private val primaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
     prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
-private val es6AddSuperCallToSyntheticPrimaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
-    ::AddSuperCallToSyntheticPrimaryConstructors,
-    name = "AddSuperCallToSyntheticPrimaryConstructors",
-    description = "Add super calls to synthetic primary constructors",
-    prerequisite = setOf(primaryConstructorLoweringPhase)
-)
-
 private val delegateToPrimaryConstructorLoweringPhase = makeBodyLoweringPhase(
     ::DelegateToSyntheticPrimaryConstructor,
     name = "DelegateToSyntheticPrimaryConstructor",
     description = "Delegates to synthetic primary constructor",
     prerequisite = setOf(primaryConstructorLoweringPhase)
-)
-
-private val es6InnerClassLowering = makeDeclarationTransformerPhase(
-    ::ES6InnerClassesLowering,
-    name = "ES6InnerClassesLowering",
-    description = "Add extra params to inner class and its parent classes",
-    prerequisite = setOf(delegateToPrimaryConstructorLoweringPhase)
 )
 
 private val annotationConstructorLowering = makeDeclarationTransformerPhase(
@@ -699,9 +678,16 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
 
 private val es6ConstructorLowering = makeDeclarationTransformerPhase(
     ::ES6ConstructorLowering,
-    name = "ES6ConstructorLoweringPhase",
-    description = "Lower constructors",
-    prerequisite = setOf(es6AddSuperCallToSyntheticPrimaryConstructorLoweringPhase, primaryConstructorLoweringPhase)
+    name = "ES6ConstructorLowering",
+    description = "Lower constructors declarations to support ES classes",
+    prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
+private val es6ConstructorUsageLowering = makeBodyLoweringPhase(
+    ::ES6ConstructorUsageLowering,
+    name = "ES6ConstructorUsageLowering",
+    description = "Lower constructors usages to support ES classes",
+    prerequisite = setOf(es6ConstructorLowering)
 )
 
 private val secondaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
@@ -874,14 +860,11 @@ val loweringList = listOf<Lowering>(
     innerClassesLoweringPhase,
     innerClassesMemberBodyLoweringPhase,
     innerClassConstructorCallsLoweringPhase,
-    es6AnnotateInnerClassParentLowering,
     jsClassUsageInReflectionPhase,
     propertiesLoweringPhase,
     primaryConstructorLoweringPhase,
-    es6AddSuperCallToSyntheticPrimaryConstructorLoweringPhase,
     annotationConstructorLowering,
     delegateToPrimaryConstructorLoweringPhase,
-    es6InnerClassLowering,
     initializersLoweringPhase,
     initializersCleanupLoweringPhase,
     kotlinNothingValueExceptionPhase,
@@ -922,17 +905,19 @@ val loweringList = listOf<Lowering>(
     defaultParameterCleanerPhase,
     captureStackTraceInThrowablesPhase,
     throwableSuccessorsLoweringPhase,
-    es6ConstructorLowering,
     varargLoweringPhase,
     multipleCatchesLoweringPhase,
     errorExpressionLoweringPhase,
     errorDeclarationLoweringPhase,
     bridgesConstructionPhase,
     typeOperatorLoweringPhase,
+    constLoweringPhase,
+    captureStackTraceInThrowablesPhase,
+    es6ConstructorLowering,
+    es6ConstructorUsageLowering,
     secondaryConstructorLoweringPhase,
     secondaryFactoryInjectorLoweringPhase,
     classReferenceLoweringPhase,
-    constLoweringPhase,
     inlineClassDeclarationLoweringPhase,
     inlineClassUsageLoweringPhase,
     autoboxingTransformerPhase,

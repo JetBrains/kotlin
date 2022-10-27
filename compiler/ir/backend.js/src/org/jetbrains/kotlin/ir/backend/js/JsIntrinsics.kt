@@ -334,7 +334,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     val jsImplicitExportAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("JsImplicitExport"))
-    val innerClassSuperTypeAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("InnerClassSuperType"))
+    val innerOrLocalClassSuperTypeAnnotationSymbol =
+        context.symbolTable.referenceClass(context.getJsInternalClass("InnerOrLocalClassSuperType"))
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
     val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
@@ -370,7 +371,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsPrototypeOfSymbol = getInternalFunction("protoOf")
     val jsDefinePropertySymbol = getInternalFunction("defineProp")
-    val jsObjectCreateSymbol = getInternalFunction("objectCreate") // Object.create
+    val jsObjectCreateSymbol = getInternalFunction("objectCreate")                 // Object.create(x)
+    val jsCreateThisSymbol = getInternalFunction("createThis")                     // Object.create(x.prototype)
+    val jsCreateThisFromParentSymbol = getInternalFunction("createThisFromParent") // Reflect.construct
 
     // Helpers:
 

@@ -81,13 +81,7 @@ override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
     }
 
     private fun IrBuilderWithScope.checkNullability(field: IrField): IrExpression {
-        val context = this@ObjectDeclarationLowering.context
-        val fieldGetExpr = irGetField(null, field)
-        return if (context.es6mode && context is JsIrBackendContext) {
-            irEqeqeq(fieldGetExpr, context.getVoid())
-        } else {
-            irEqualsNull(fieldGetExpr)
-        }
+        return irEqualsNull(irGetField(null, field))
     }
 }
 
@@ -98,33 +92,22 @@ class ObjectUsageLowering(
     private var IrClass.instanceField by context.mapping.objectToInstanceField
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (container is IrConstructor && container.isPrimary) {
-            val irClass = container.parentAsClass
-            irClass.instanceField?.let { instanceField ->
-                // Initialize instance field in the beginning of the constructor because it can be used inside the constructor later
-                val initInstanceField = context.createIrBuilder(container.symbol).buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                    irSetField(null, instanceField, irGet(irClass.thisReceiver!!))
-                }
-                if (context.es6mode && context is JsIrBackendContext) {
-                    val setToNull = JsIrBuilder.buildSetField(
-                        instanceField.symbol,
-                        null,
-                        JsIrBuilder.buildNull(context.dynamicType),
-                        context.dynamicType
-                    )
-                    //find `superCall` and put after
-                    (irBody as IrBlockBody).statements.transformFlat {
-                        if (it is IrDelegatingConstructorCall) {
-                            listOfNotNull(setToNull.takeIf { _ -> !it.symbol.owner.returnType.isAny() }, it, initInstanceField)
-                        } else if (it is IrVariable && it.origin === ES6_THIS_VARIABLE_ORIGIN) {
-                            initInstanceField.value = JsIrBuilder.buildGetValue(it.symbol)
-                            listOf(it, initInstanceField)
-                        } else null
-                    }
-                } else {
-                    (irBody as IrBlockBody).statements.add(0, initInstanceField)
-                }
+        val functionContainer = when {
+            context.es6mode && container is IrSimpleFunction && container.origin == ES6_CONSTRUCTOR_REPLACEMENT -> container
+            !context.es6mode && container is IrConstructor && container.isPrimary -> container
+            else -> null
+        }
+
+        val irClass = functionContainer?.parentAsClass
+
+        irClass?.instanceField?.let { instanceField ->
+            val receiver = if (context.es6mode) functionContainer.extensionReceiverParameter else irClass.thisReceiver
+            // Initialize instance field in the beginning of the constructor because it can be used inside the constructor later
+            val initInstanceField = context.createIrBuilder(container.symbol).buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                irSetField(null, instanceField, irGet(receiver!!))
             }
+
+            (irBody as IrBlockBody).statements.add(0, initInstanceField)
         }
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {

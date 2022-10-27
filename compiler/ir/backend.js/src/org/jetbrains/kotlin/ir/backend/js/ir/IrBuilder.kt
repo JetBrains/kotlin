@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -46,9 +47,18 @@ object JsIrBuilder {
         }
     }
 
+    fun buildArray(elements: List<IrExpression>, type: IrType, elementType: IrType): IrExpression {
+        return IrVarargImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            type,
+            elementType,
+            elements
+        )
+    }
+
     fun buildConstructorCall(
         target: IrConstructorSymbol,
-        type: IrType? = null,
         typeArguments: List<IrType>? = null,
         constructorTypeArguments: List<IrType>? = null,
         origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT

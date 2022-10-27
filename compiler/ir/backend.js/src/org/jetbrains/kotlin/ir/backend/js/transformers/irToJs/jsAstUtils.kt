@@ -379,8 +379,7 @@ fun translateCallArguments(
     val isValidForMemberAccessToHaveNullArg = expression.validWithNullArgs()
     val arguments = (0 until size)
         .mapTo(ArrayList(size)) { index ->
-            val couldArgumentBeNull = expression.couldArgumentBeNull(index)
-            expression.getValueArgument(index).checkOnNullability(couldArgumentBeNull || isValidForMemberAccessToHaveNullArg)
+            expression.getValueArgument(index).checkOnNullability(isValidForMemberAccessToHaveNullArg)
         }
         .dropLastWhile {
             allowDropTailVoids &&
@@ -416,11 +415,6 @@ private fun IrExpression?.checkOnNullability(validWithNullArgs: Boolean) =
 
 private fun IrMemberAccessExpression<*>.validWithNullArgs() =
     this is IrFunctionAccessExpression && symbol.owner.isExternalOrInheritedFromExternal()
-
-private fun IrMemberAccessExpression<*>.couldArgumentBeNull(index: Int) =
-    this is IrFunctionAccessExpression && symbol.owner.valueParameters[index].let {
-        it.origin == ES6_UTILITY_PARAMETER_ORIGIN
-    }
 
 fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)
 

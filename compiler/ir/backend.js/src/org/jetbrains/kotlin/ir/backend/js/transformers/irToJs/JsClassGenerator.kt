@@ -60,11 +60,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 is IrConstructor -> {
                     if (es6mode) {
                         declaration.accept(IrFunctionToJsTransformer(), context).let {
-                            //HACK: add superCall to Error
-                            if ((baseClass?.classifierOrNull?.owner as? IrClass)?.symbol === context.staticContext.backendContext.throwableClass) {
-                                it.body.statements.add(0, JsInvocation(JsNameRef("super")).makeStmt())
-                            }
-
                             if (it.body.statements.any { it !is JsEmpty }) {
                                 jsClass.constructor = it
                             }
