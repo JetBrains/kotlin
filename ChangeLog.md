@@ -20,6 +20,10 @@
 - [`KT-54387`](https://youtrack.jetbrains.com/issue/KT-54387) Remove MPP alpha stability warning
 - [`KT-48436`](https://youtrack.jetbrains.com/issue/KT-48436) False positive "The Kotlin source set androidAndroidTestRelease was configured but not added to any Kotlin compilation"
 
+### Tools. JPS
+
+- [`KT-45474`](https://youtrack.jetbrains.com/issue/KT-45474) False positive NO_ELSE_IN_WHEN on sealed class with incremental compilation
+
 
 ## 1.7.20
 
