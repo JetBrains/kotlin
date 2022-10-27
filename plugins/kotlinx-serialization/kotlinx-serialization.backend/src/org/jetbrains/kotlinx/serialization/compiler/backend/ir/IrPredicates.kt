@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey

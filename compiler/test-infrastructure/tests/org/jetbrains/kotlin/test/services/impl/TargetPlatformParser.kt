@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.services.impl
 
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatform
+import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatform
