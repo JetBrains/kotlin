@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -111,7 +112,7 @@ open class FirStatusResolveTransformer(
          */
         if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
             regularClass.transformStatus(this, statusResolver.resolveStatus(regularClass, containingClass, isLocal = false))
-            if (regularClass.status.isInline) {
+            if (regularClass.isInline) {
                 regularClass.valueClassRepresentation = computeValueClassRepresentation(regularClass, session)
             }
         }
