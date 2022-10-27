@@ -65,18 +65,14 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         registerExtraComponents = { it.registerJsSpecificResolveComponents() },
         createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
-            val klibProviders = resolvedLibraries.map {
-                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, it)
-            }
-
-            klibProviders +
-                listOf(
-                    FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    // (Most) builtins should be taken from the dependencies in JS compilation, therefore builtins provider is the last one
-                    // TODO: consider using "poisoning" provider for builtins to ensure that proper ones are taken from dependencies
-                    // NOTE: it requires precise filtering for true nuiltins, like Function*
-                    FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                )
+            listOf(
+                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
+                FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+                // (Most) builtins should be taken from the dependencies in JS compilation, therefore builtins provider is the last one
+                // TODO: consider using "poisoning" provider for builtins to ensure that proper ones are taken from dependencies
+                // NOTE: it requires precise filtering for true nuiltins, like Function*
+                FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+            )
         }
     )
 
