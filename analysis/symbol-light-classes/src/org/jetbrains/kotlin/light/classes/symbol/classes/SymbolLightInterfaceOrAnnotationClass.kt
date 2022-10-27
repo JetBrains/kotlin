@@ -34,19 +34,25 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(
     }
 
     private val _modifierList: PsiModifierList? by lazyPub {
-
-        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel), PsiModifier.ABSTRACT)
-        if (!isTopLevel && !classOrObjectSymbol.isInner) {
-            modifiers.add(PsiModifier.STATIC)
+        val lazyModifiers = lazy {
+            buildSet {
+                add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
+                add(PsiModifier.ABSTRACT)
+                if (!isTopLevel && !classOrObjectSymbol.isInner) {
+                    add(PsiModifier.STATIC)
+                }
+            }
         }
 
-        val annotations = classOrObjectSymbol.computeAnnotations(
-            parent = this@SymbolLightInterfaceOrAnnotationClass,
-            nullability = NullabilityType.Unknown,
-            annotationUseSiteTarget = null,
-        )
+        val lazyAnnotations = lazyPub {
+            classOrObjectSymbol.computeAnnotations(
+                parent = this@SymbolLightInterfaceOrAnnotationClass,
+                nullability = NullabilityType.Unknown,
+                annotationUseSiteTarget = null,
+            )
+        }
 
-        SymbolLightClassModifierList(this@SymbolLightInterfaceOrAnnotationClass, modifiers, annotations)
+        SymbolLightClassModifierList(this@SymbolLightInterfaceOrAnnotationClass, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
