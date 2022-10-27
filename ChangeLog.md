@@ -1,3 +1,26 @@
+## 1.7.21
+
+### Compiler
+
+- [`KT-54463`](https://youtrack.jetbrains.com/issue/KT-54463) Delegating to a field with a platform type causes java.lang.NoSuchFieldError: value$delegate
+- [`KT-54509`](https://youtrack.jetbrains.com/issue/KT-54509) Ir Interpreter: unable to evaluate string concatenation with "this" as argument
+- [`KT-54004`](https://youtrack.jetbrains.com/issue/KT-54004) Builder type inference does not work correctly with variable assignment and breaks run-time
+- [`KT-54393`](https://youtrack.jetbrains.com/issue/KT-54393) Change in behavior from 1.7.10 to 1.7.20 for java field override.
+- [`KT-54615`](https://youtrack.jetbrains.com/issue/KT-54615) JVM: Internal error in file lowering: java.lang.AssertionError: Error occurred while optimizing an expression
+- [`KT-54581`](https://youtrack.jetbrains.com/issue/KT-54581) JVM: "VerifyError: Bad type on operand stack" with generic inline function and `when` inside try-catch block
+- [`KT-53146`](https://youtrack.jetbrains.com/issue/KT-53146) JVM IR: unnecessary checkcast of null leads to NoClassDefFoundError if the type isn't available at runtime
+- [`KT-54600`](https://youtrack.jetbrains.com/issue/KT-54600) NPE on passing nullable Kotlin lambda as Java's generic SAM interface with `super` type bound
+
+### Native. Runtime. Memory
+
+- [`KT-54498`](https://youtrack.jetbrains.com/issue/KT-54498) Deprecation message of 'FreezingIsDeprecated' is not really helpful
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-54387`](https://youtrack.jetbrains.com/issue/KT-54387) Remove MPP alpha stability warning
+- [`KT-48436`](https://youtrack.jetbrains.com/issue/KT-48436) False positive "The Kotlin source set androidAndroidTestRelease was configured but not added to any Kotlin compilation"
+
+
 ## 1.7.20
 
 ### Analysis API
