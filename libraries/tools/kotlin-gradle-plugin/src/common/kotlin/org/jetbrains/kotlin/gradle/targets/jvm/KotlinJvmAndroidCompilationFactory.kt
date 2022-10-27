@@ -7,15 +7,20 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinAndroidCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinAndroidCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationSourceSetsContainerFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
 
 class KotlinJvmAndroidCompilationFactory internal constructor(
     override val target: KotlinAndroidTarget,
-    private val variant: BaseVariant,
+    private val variant: BaseVariant
+) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {
+
+    override val itemClass: Class<KotlinJvmAndroidCompilation>
+        get() = KotlinJvmAndroidCompilation::class.java
+
     private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
         compilerOptionsFactory = KotlinJvmCompilerOptionsFactory,
         compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
@@ -27,10 +32,6 @@ class KotlinJvmAndroidCompilationFactory internal constructor(
         compilationAssociator = KotlinAndroidCompilationAssociator,
         compilationSourceSetsContainerFactory = AndroidCompilationSourceSetsContainerFactory(target, variant)
     )
-) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {
-
-    override val itemClass: Class<KotlinJvmAndroidCompilation>
-        get() = KotlinJvmAndroidCompilation::class.java
 
     override fun create(name: String): KotlinJvmAndroidCompilation {
         return project.objects.newInstance(itemClass, compilationImplFactory.create(target, name), variant)

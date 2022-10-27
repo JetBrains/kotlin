@@ -14,7 +14,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.NativeKotl
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.NativeKotlinCompilationTaskNamesContainerFactory
 
 open class KotlinNativeCompilationFactory internal constructor(
-    override val target: KotlinNativeTarget,
+    override val target: KotlinNativeTarget
+) : KotlinCompilationFactory<KotlinNativeCompilation> {
+
+    override val itemClass: Class<KotlinNativeCompilation>
+        get() = KotlinNativeCompilation::class.java
+
     private val compilationImplFactory: KotlinCompilationImplFactory =
         KotlinCompilationImplFactory(
             compilationTaskNamesContainerFactory = NativeKotlinCompilationTaskNamesContainerFactory,
@@ -25,10 +30,6 @@ open class KotlinNativeCompilationFactory internal constructor(
                 DefaultKotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask
             ),
         )
-) : KotlinCompilationFactory<KotlinNativeCompilation> {
-
-    override val itemClass: Class<KotlinNativeCompilation>
-        get() = KotlinNativeCompilation::class.java
 
     override fun create(name: String): KotlinNativeCompilation {
         return target.project.objects.newInstance(
