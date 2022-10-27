@@ -171,7 +171,7 @@ object FirOverrideChecker : FirClassChecker() {
                 context.session,
                 file,
                 containingDeclarations,
-                null,
+                dispatchReceiver = null,
                 skipCheckForContainingClassVisibility = true
             )
         }
@@ -281,7 +281,7 @@ object FirOverrideChecker : FirClassChecker() {
                     context.session,
                     file,
                     containingDeclarations,
-                    null,
+                    dispatchReceiver = null,
                     skipCheckForContainingClassVisibility = true
                 )
             }?.originalOrSelf() ?: return

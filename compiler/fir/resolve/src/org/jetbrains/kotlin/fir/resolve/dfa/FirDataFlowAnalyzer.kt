@@ -132,12 +132,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                                     val symbol =
                                         fullyExpandedType(components.session).lookupTag.toSymbol(components.session) ?: return false
                                     val declaration = symbol.fir as? FirRegularClass ?: return true
-                                    visibilityChecker.isVisible(
+                                    visibilityChecker.isClassLikeVisible(
                                         declaration,
                                         components.session,
                                         components.context.file,
                                         components.context.containers,
-                                        dispatchReceiver = null
                                     )
                                 }
                                 is ConeTypeParameterType -> true

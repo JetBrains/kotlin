@@ -102,7 +102,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             if (isExpectAndActual(declaration, conflicting)) return
             if (
                 conflicting is FirMemberDeclaration &&
-                !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), null)
+                !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), dispatchReceiver = null)
             ) return
             val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
             val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)

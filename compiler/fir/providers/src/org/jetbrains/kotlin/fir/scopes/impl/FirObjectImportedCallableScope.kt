@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -26,13 +23,7 @@ class FirObjectImportedCallableScope(
 ) : FirContainingNamesAwareScope() {
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         objectUseSiteScope.processFunctionsByName(name) wrapper@{ symbol ->
-            val function = symbol.fir
-            val syntheticFunction = buildSimpleFunctionCopy(function) {
-                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-                this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
-            }.apply {
-                importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, function)
-            }
+            val syntheticFunction = symbol.fir.buildImportedCopy(importedClassId)
             processor(syntheticFunction.symbol)
         }
     }
@@ -43,14 +34,7 @@ class FirObjectImportedCallableScope(
                 processor(symbol)
                 return@wrapper
             }
-            val property = symbol.fir
-            val syntheticProperty = buildPropertyCopy(property) {
-                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-                this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
-                this.delegateFieldSymbol = null
-            }.apply {
-                importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, property)
-            }
+            val syntheticProperty = symbol.fir.buildImportedCopy(importedClassId)
             processor(syntheticProperty.symbol)
         }
     }
@@ -58,6 +42,25 @@ class FirObjectImportedCallableScope(
     override fun getCallableNames(): Set<Name> = objectUseSiteScope.getCallableNames()
 
     override fun getClassifierNames(): Set<Name> = emptySet()
+}
+
+internal fun FirSimpleFunction.buildImportedCopy(importedClassId: ClassId): FirSimpleFunction {
+    return buildSimpleFunctionCopy(this) {
+        origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
+        this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
+    }.apply {
+        importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedCopy)
+    }
+}
+
+internal fun FirProperty.buildImportedCopy(importedClassId: ClassId): FirProperty {
+    return buildPropertyCopy(this) {
+        origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
+        this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
+        this.delegateFieldSymbol = null
+    }.apply {
+        importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedCopy)
+    }
 }
 
 private object ImportedFromObjectOrStaticClassIdKey : FirDeclarationDataKey()

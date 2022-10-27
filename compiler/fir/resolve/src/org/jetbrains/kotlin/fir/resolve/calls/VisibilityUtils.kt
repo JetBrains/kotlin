@@ -9,12 +9,11 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirBackingField
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
@@ -23,20 +22,27 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
     callInfo: CallInfo,
     dispatchReceiverValue: ReceiverValue?
-): Boolean =
-    isVisible(
+): Boolean {
+    val staticQualifierForCallable = runIf(declaration is FirCallableDeclaration && declaration.isStatic) {
+        val explicitReceiver = callInfo.explicitReceiver ?: (dispatchReceiverValue as? ExpressionReceiverValue)?.explicitReceiver
+        (explicitReceiver as? FirResolvedQualifier)?.symbol?.fir as? FirRegularClass
+    }
+    return isVisible(
         declaration,
         callInfo.session,
         callInfo.containingFile,
         callInfo.containingDeclarations,
         dispatchReceiverValue,
-        callInfo.callSite is FirVariableAssignment
+        staticQualifierClassForCallable = staticQualifierForCallable,
+        isCallToPropertySetter = callInfo.callSite is FirVariableAssignment
     )
+}
 
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
