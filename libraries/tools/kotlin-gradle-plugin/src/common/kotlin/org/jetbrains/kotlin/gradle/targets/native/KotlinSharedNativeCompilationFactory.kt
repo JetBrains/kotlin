@@ -19,7 +19,12 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 open class KotlinSharedNativeCompilationFactory internal constructor(
     override val target: KotlinMetadataTarget,
     private val konanTargets: Set<KonanTarget>,
-    private val defaultSourceSet: KotlinSourceSet,
+    private val defaultSourceSet: KotlinSourceSet
+) : KotlinCompilationFactory<KotlinSharedNativeCompilation> {
+
+    override val itemClass: Class<KotlinSharedNativeCompilation>
+        get() = KotlinSharedNativeCompilation::class.java
+
     private val compilationImplFactory: KotlinCompilationImplFactory =
         KotlinCompilationImplFactory(
             compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithoutRuntime,
@@ -43,10 +48,6 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
              */
             compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) }
         )
-) : KotlinCompilationFactory<KotlinSharedNativeCompilation> {
-
-    override val itemClass: Class<KotlinSharedNativeCompilation>
-        get() = KotlinSharedNativeCompilation::class.java
 
     @Suppress("DEPRECATION")
     override fun create(name: String): KotlinSharedNativeCompilation {

@@ -8,13 +8,18 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinMultiplatformCommonCompilerOptionsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinMultiplatformCommonCompilerOptionsFactory
 
 class KotlinCommonCompilationFactory internal constructor(
     override val target: KotlinOnlyTarget<*>,
-    private val defaultSourceSet: KotlinSourceSet,
+    private val defaultSourceSet: KotlinSourceSet
+) : KotlinCompilationFactory<KotlinCommonCompilation> {
+
+    override val itemClass: Class<KotlinCommonCompilation>
+        get() = KotlinCommonCompilation::class.java
+
     private val compilationFactory: KotlinCompilationImplFactory =
         KotlinCompilationImplFactory(
             compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithoutRuntime,
@@ -31,9 +36,6 @@ class KotlinCommonCompilationFactory internal constructor(
             */
             compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) }
         )
-) : KotlinCompilationFactory<KotlinCommonCompilation> {
-    override val itemClass: Class<KotlinCommonCompilation>
-        get() = KotlinCommonCompilation::class.java
 
     override fun create(name: String): KotlinCommonCompilation = target.project.objects.newInstance(
         itemClass, compilationFactory.create(target, name)
