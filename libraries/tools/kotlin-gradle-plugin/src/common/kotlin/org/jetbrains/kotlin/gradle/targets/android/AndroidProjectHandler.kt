@@ -224,7 +224,7 @@ internal class AndroidProjectHandler(
 
         val defaultSourceSet = project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName)
 
-        val configAction = KotlinCompileConfig(KotlinCompilationProjection(compilation))
+        val configAction = KotlinCompileConfig(KotlinCompilationInfo(compilation))
         configAction.configureTask { task ->
             task.useModuleDetection.value(true).disallowChanges()
             // store kotlin classes in separate directory. They will serve as class-path to java compiler

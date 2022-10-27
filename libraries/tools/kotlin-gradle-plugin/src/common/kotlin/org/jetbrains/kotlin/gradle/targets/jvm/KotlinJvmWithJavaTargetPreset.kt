@@ -53,7 +53,7 @@ class KotlinJvmWithJavaTargetPreset(
             }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
-            Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationProjection(compilation))
+            Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationInfo(compilation))
         }
 
         target.compilations.getByName("test").run {

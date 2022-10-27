@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
@@ -142,7 +142,7 @@ abstract class AbstractKotlinNativeCompile<
     protected abstract val projectLayout: ProjectLayout
 
     @get:Internal
-    internal abstract val compilation: KotlinCompilationProjection
+    internal abstract val compilation: KotlinCompilationInfo
 
     // region inputs/outputs
     @get:Input
@@ -160,8 +160,8 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     protected val konanTarget by project.provider {
         when (val compilation = compilation) {
-            is KotlinCompilationProjection.KPM -> (compilation.compilationData as GradleKpmNativeCompilationData<*>).konanTarget
-            is KotlinCompilationProjection.TCS -> (compilation.compilation as AbstractKotlinNativeCompilation).konanTarget
+            is KotlinCompilationInfo.KPM -> (compilation.compilationData as GradleKpmNativeCompilationData<*>).konanTarget
+            is KotlinCompilationInfo.TCS -> (compilation.compilation as AbstractKotlinNativeCompilation).konanTarget
         }
     }
 
@@ -315,7 +315,7 @@ abstract class KotlinNativeCompile
 internal constructor(
     @get:Internal
     @Transient  // can't be serialized for Gradle configuration cache
-    final override val compilation: KotlinCompilationProjection,
+    final override val compilation: KotlinCompilationInfo,
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
@@ -455,8 +455,8 @@ internal constructor(
     }
 
     private val isMetadataCompilation: Boolean = when (compilation) {
-        is KotlinCompilationProjection.KPM -> compilation.compilationData is GradleKpmMetadataCompilationData<*>
-        is KotlinCompilationProjection.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
+        is KotlinCompilationInfo.KPM -> compilation.compilationData is GradleKpmMetadataCompilationData<*>
+        is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
 
     private fun createSharedCompilationDataOrNull(): SharedCompilationData? {

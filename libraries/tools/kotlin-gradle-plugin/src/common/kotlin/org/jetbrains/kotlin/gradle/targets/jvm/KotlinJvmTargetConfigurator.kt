@@ -72,6 +72,6 @@ open class KotlinJvmTargetConfigurator :
 
     override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider()
-        return Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationProjection(compilation))
+        return Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
     }
 }

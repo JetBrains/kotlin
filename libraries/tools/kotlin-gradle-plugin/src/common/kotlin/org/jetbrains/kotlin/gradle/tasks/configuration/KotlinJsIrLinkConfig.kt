@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.InvalidUserDataException
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 internal open class KotlinJsIrLinkConfig(
     private val binary: JsIrBinary
-) : BaseKotlin2JsCompileConfig<KotlinJsIrLink>(KotlinCompilationProjection(binary.compilation)) {
+) : BaseKotlin2JsCompileConfig<KotlinJsIrLink>(KotlinCompilationInfo(binary.compilation)) {
 
     private val compilation
         get() = binary.compilation
@@ -49,7 +49,7 @@ internal open class KotlinJsIrLinkConfig(
 
     override fun configureAdditionalFreeCompilerArguments(
         task: KotlinJsIrLink,
-        compilation: KotlinCompilationProjection
+        compilation: KotlinCompilationInfo
     ) {
         task.enhancedFreeCompilerArgs.value(
             task.compilerOptions.freeCompilerArgs.zip(task.modeProperty) { freeArgs, mode ->
@@ -85,7 +85,7 @@ internal open class KotlinJsIrLinkConfig(
     }
 
     private fun MutableList<String>.configureOptions(
-        compilation: KotlinCompilationProjection,
+        compilation: KotlinCompilationInfo,
         vararg additionalCompilerArgs: String
     ) {
         additionalCompilerArgs.forEach { arg ->

@@ -16,16 +16,16 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
 internal class KotlinCommonSourceSetProcessor(
-    compilation: KotlinCompilationProjection,
+    compilation: KotlinCompilationInfo,
     tasksProvider: KotlinTasksProvider
 ) : KotlinSourceSetProcessor<KotlinCompileCommon>(
     tasksProvider, taskDescription = "Compiles the kotlin sources in $compilation to Metadata.", kotlinCompilation = compilation
 ) {
     override fun doTargetSpecificProcessing() {
-        project.tasks.named(compilationProjection.compileAllTaskName).dependsOn(kotlinTask)
+        project.tasks.named(compilationInfo.compileAllTaskName).dependsOn(kotlinTask)
         // can be missing (e.g. in case of tests)
-        if (compilationProjection.isMain) {
-            compilationProjection.tcsOrNull?.compilation?.target?.let { target ->
+        if (compilationInfo.isMain) {
+            compilationInfo.tcsOrNull?.compilation?.target?.let { target ->
                 project.locateTask<Task>(target.artifactsTaskName)?.dependsOn(kotlinTask)
             }
         }
@@ -33,19 +33,19 @@ internal class KotlinCommonSourceSetProcessor(
         project.whenEvaluated {
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
             /* Not supported in KPM yet */
-            compilationProjection.tcsOrNull?.compilation?.let { compilation ->
+            compilationInfo.tcsOrNull?.compilation?.let { compilation ->
                 subpluginEnvironment.addSubpluginOptions(project, compilation)
             }
         }
     }
 
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out KotlinCompileCommon> {
-        val configAction = KotlinCompileCommonConfig(compilationProjection)
+        val configAction = KotlinCompileCommonConfig(compilationInfo)
         applyStandardTaskConfiguration(configAction)
         return tasksProvider.registerKotlinCommonTask(
             project,
             taskName,
-            compilationProjection.compilerOptions.options as KotlinMultiplatformCommonCompilerOptions,
+            compilationInfo.compilerOptions.options as KotlinMultiplatformCommonCompilerOptions,
             configAction
         )
     }

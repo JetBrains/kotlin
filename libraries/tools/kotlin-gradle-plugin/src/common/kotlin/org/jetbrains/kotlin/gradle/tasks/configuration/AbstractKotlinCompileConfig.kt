@@ -85,12 +85,14 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
     protected fun getClasspathSnapshotDir(task: TASK): Provider<Directory> =
         getKotlinBuildDir(task).map { it.dir("classpath-snapshot") }
 
-    constructor(compilationProjection: KotlinCompilationProjection) : this(
-        compilationProjection.project, compilationProjection.project.topLevelExtension, compilationProjection.project.provider { compilationProjection.languageSettings }
+    constructor(compilationInfo: KotlinCompilationInfo) : this(
+        compilationInfo.project,
+        compilationInfo.project.topLevelExtension,
+        compilationInfo.project.provider { compilationInfo.languageSettings }
     ) {
         configureTask { task ->
-            task.friendPaths.from({ compilationProjection.friendPaths })
-            compilationProjection.tcsOrNull?.compilation?.let { compilation ->
+            task.friendPaths.from({ compilationInfo.friendPaths })
+            compilationInfo.tcsOrNull?.compilation?.let { compilation ->
                 task.friendSourceSets
                     .value(providers.provider { compilation.associateWithClosure.map { it.name } })
                     .disallowChanges()
@@ -98,13 +100,13 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     compilation.internal.configurations.pluginConfiguration
                 )
             }
-            task.moduleName.set(providers.provider { compilationProjection.moduleName })
+            task.moduleName.set(providers.provider { compilationInfo.moduleName })
             @Suppress("DEPRECATION")
-            task.ownModuleName.set(project.provider { compilationProjection.moduleName })
-            task.sourceSetName.value(providers.provider { compilationProjection.compilationName })
+            task.ownModuleName.set(project.provider { compilationInfo.moduleName })
+            task.sourceSetName.value(providers.provider { compilationInfo.compilationName })
             task.multiPlatformEnabled.value(
                 providers.provider {
-                    compilationProjection.project.plugins.any {
+                    compilationInfo.project.plugins.any {
                         it is KotlinPlatformPluginBase ||
                                 it is AbstractKotlinMultiplatformPluginWrapper ||
                                 it is AbstractKotlinPm20PluginWrapper

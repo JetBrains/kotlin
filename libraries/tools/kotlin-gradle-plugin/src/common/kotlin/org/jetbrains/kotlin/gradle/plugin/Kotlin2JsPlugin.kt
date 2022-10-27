@@ -27,7 +27,7 @@ internal open class Kotlin2JsPlugin(
         project: Project,
         compilation: KotlinCompilation<*>
     ): KotlinSourceSetProcessor<*> =
-        Kotlin2JsSourceSetProcessor(tasksProvider, KotlinCompilationProjection(compilation))
+        Kotlin2JsSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
 
     override fun apply(project: Project) {
         @Suppress("UNCHECKED_CAST")

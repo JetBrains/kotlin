@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
@@ -34,7 +34,7 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         compilation: KotlinCompilation<*>,
         kotlinTaskProvider: TaskProvider<KotlinCompile>,
         kaptClassesDir: File
-    ) : super(KotlinCompilationProjection(compilation)) {
+    ) : super(KotlinCompilationInfo(compilation)) {
         configureFromExtension(project.extensions.getByType(KaptExtension::class.java))
         configureTask { task ->
             val kotlinCompileTask = kotlinTaskProvider.get()

@@ -10,7 +10,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
@@ -60,8 +60,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         }
     }
 
-    constructor(compilationProjection: KotlinCompilationProjection) : super(compilationProjection) {
-        val javaTaskProvider = when (val compilation = compilationProjection.tcsOrNull?.compilation) {
+    constructor(compilationInfo: KotlinCompilationInfo) : super(compilationInfo) {
+        val javaTaskProvider = when (val compilation = compilationInfo.tcsOrNull?.compilation) {
             is KotlinJvmCompilation -> compilation.compileJavaTaskProvider
             is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
             is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider
@@ -79,7 +79,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 @Suppress("DEPRECATION")
                 task.ownModuleName.value(
                     providers.provider {
-                        task.parentKotlinOptions.orNull?.moduleName ?: compilationProjection.moduleName
+                        task.parentKotlinOptions.orNull?.moduleName ?: compilationInfo.moduleName
                     })
             }
         }
