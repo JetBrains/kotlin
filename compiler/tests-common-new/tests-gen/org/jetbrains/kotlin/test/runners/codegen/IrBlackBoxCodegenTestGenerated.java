@@ -33758,6 +33758,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("packageOrNestedClass.kt")
+        public void testPackageOrNestedClass() throws Exception {
+            runTest("compiler/testData/codegen/box/package/packageOrNestedClass.kt");
+        }
+
+        @Test
         @TestMetadata("packageQualifiedMethod.kt")
         public void testPackageQualifiedMethod() throws Exception {
             runTest("compiler/testData/codegen/box/package/packageQualifiedMethod.kt");
