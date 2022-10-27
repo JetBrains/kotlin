@@ -70,7 +70,7 @@ dependencies {
 
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
 
-    api group: 'org.jetbrains', name: 'annotations', version:'13.0'
+    api group: 'org.jetbrains', name: 'annotations', version:'23.0.0'
 
     mainJdk7Api sourceSets.main.output
     mainJdk8Api sourceSets.main.output
