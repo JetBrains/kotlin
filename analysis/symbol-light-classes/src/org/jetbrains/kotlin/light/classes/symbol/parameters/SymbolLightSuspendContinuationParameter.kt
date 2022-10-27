@@ -50,12 +50,14 @@ internal class SymbolLightSuspendContinuationParameter(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val annotations =
-            if (functionSymbol.visibility.isPrivateOrPrivateToThis()) emptyList() else
-                listOf(
-                    SymbolLightSimpleAnnotation(NotNull::class.java.name, this@SymbolLightSuspendContinuationParameter)
-                )
-        SymbolLightClassModifierList(this, emptySet(), annotations)
+        val lazyAnnotations = lazy {
+            if (functionSymbol.visibility.isPrivateOrPrivateToThis())
+                emptyList()
+            else
+                listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, this@SymbolLightSuspendContinuationParameter))
+        }
+
+        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
     override fun hasModifierProperty(p0: String): Boolean = false

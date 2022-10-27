@@ -31,8 +31,9 @@ internal class SymbolLightClassForInterfaceDefaultImpls(
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        val modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
-        SymbolLightClassModifierList(this@SymbolLightClassForInterfaceDefaultImpls, modifiers, emptyList())
+        val lazyModifiers = lazyOf(setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL))
+        val lazyAnnotations = lazyOf(emptyList<PsiAnnotation>())
+        SymbolLightClassModifierList(this@SymbolLightClassForInterfaceDefaultImpls, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
