@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationSourceSetInclusion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.NativeKotlinCompilationAssociator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinNativeCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinNativeCompilerOptionsFactory
@@ -24,7 +24,7 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
         KotlinCompilationImplFactory(
             compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithoutRuntime,
             compilerOptionsFactory = KotlinNativeCompilerOptionsFactory,
-            compilationAssociator = NativeKotlinCompilationAssociator,
+            compilationAssociator = KotlinNativeCompilationAssociator,
 
             compilationSourceSetInclusion = DefaultKotlinCompilationSourceSetInclusion(
                 DefaultKotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask

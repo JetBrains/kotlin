@@ -7,7 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.AndroidKotlinCompilationAssociator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinAndroidCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationSourceSetsContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
@@ -24,7 +24,7 @@ class KotlinJvmAndroidCompilationFactory internal constructor(
                 DefaultKotlinCompilationFriendPathsResolver.AdditionalAndroidFriendArtifactResolver
             )
         ),
-        compilationAssociator = AndroidKotlinCompilationAssociator,
+        compilationAssociator = KotlinAndroidCompilationAssociator,
         compilationSourceSetsContainerFactory = AndroidCompilationSourceSetsContainerFactory(target, variant)
     )
 ) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {

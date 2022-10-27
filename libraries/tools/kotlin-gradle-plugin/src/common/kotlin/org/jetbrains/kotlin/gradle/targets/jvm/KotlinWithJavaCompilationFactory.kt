@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.JvmKotlinCompilationAssociator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationTaskNamesContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
@@ -34,7 +34,7 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
                 val kotlinOptions = kotlinOptionsFactory(compilerOptions.options)
                 KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options(compilerOptions, kotlinOptions)
             },
-            compilationAssociator = JvmKotlinCompilationAssociator,
+            compilationAssociator = KotlinJvmCompilationAssociator,
             compilationOutputFactory = { _, compilationName ->
                 KotlinWithJavaCompilationOutput(target.javaSourceSets.maybeCreate(compilationName))
             },
