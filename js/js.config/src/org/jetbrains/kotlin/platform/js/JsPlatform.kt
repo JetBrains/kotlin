@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.platform.js
 
-import org.jetbrains.kotlin.platform.SimplePlatform
+import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
-
-abstract class JsPlatform : SimplePlatform("JS") {
-    override val oldFashionedDescription: String
-        get() = "JavaScript "
-}
 
 @Suppress("DEPRECATION_ERROR")
 object JsPlatforms {
@@ -33,7 +28,3 @@ object JsPlatforms {
 
     val allJsPlatforms: List<TargetPlatform> = listOf(defaultJsPlatform)
 }
-
-// TODO: temporarily conservative implementation; use the same approach as for TargetPlatform?.isNative()
-//  when JsPlatform will become parameterized with "JS target"
-fun TargetPlatform?.isJs(): Boolean = this?.singleOrNull() is JsPlatform
