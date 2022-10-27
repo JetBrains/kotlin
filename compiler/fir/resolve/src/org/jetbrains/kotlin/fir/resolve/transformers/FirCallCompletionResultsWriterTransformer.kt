@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCall
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.writeResultType
+import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOperatorsWithSignedArgument
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -469,7 +470,7 @@ class FirCallCompletionResultsWriterTransformer(
         val arguments = argumentMapping?.map { (argument, valueParameter) ->
             val expectedType = when {
                 isIntegerOperator -> ConeIntegerConstantOperatorTypeImpl(
-                    isUnsigned = symbol.isWrappedIntegerOperatorForUnsignedType(),
+                    isUnsigned = symbol.isWrappedIntegerOperatorForUnsignedType() && callInfo.name in binaryOperatorsWithSignedArgument,
                     ConeNullability.NOT_NULL
                 )
                 valueParameter.isVararg -> valueParameter.returnTypeRef.substitute(this).varargElementType()

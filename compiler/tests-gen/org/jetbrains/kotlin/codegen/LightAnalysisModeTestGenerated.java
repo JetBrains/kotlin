@@ -31595,6 +31595,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("bitShifting.kt")
+            public void testBitShifting() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/unsigned/bitShifting.kt");
+            }
+
             @TestMetadata("inMixedUnsignedRange.kt")
             public void testInMixedUnsignedRange() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/unsigned/inMixedUnsignedRange.kt");
