@@ -48,7 +48,7 @@ internal val FirClassSymbol<*>?.classSerializer: FirClassSymbol<*>?
         // serializer annotation on class?
         serializableWith?.let { return it.toRegularClassSymbol(session) }
         // companion object serializer?
-        if (this is FirRegularClassSymbol && with(session) { hasCompanionObjectAsSerializer }) return companionObjectSymbol
+        if (this is FirRegularClassSymbol && with(session) { isInternallySerializableObject }) return companionObjectSymbol
         // can infer @Poly?
         polymorphicSerializerIfApplicableAutomatically?.let { return it }
         // default serializable?
@@ -147,7 +147,7 @@ internal val FirClassSymbol<*>.serializableAnnotationIsUseless: Boolean
     get() = !classKind.isEnumClass &&
             hasSerializableOrMetaAnnotationWithoutArgs &&
             !isInternalSerializable &&
-            !hasCompanionObjectAsSerializer &&
+            !isInternallySerializableObject &&
             !isSealedSerializableInterface
 
 // ---------------------- type utils ----------------------

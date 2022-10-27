@@ -1,0 +1,146 @@
+FILE: serializableWithCompanion.kt
+    package com.example
+
+    public final class NonSerializable : R|kotlin/Any| {
+        public constructor(): R|com/example/NonSerializable| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|com/example/NonSerializable.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/String| {
+                ^foo String(OK)
+            }
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final data class WithCompanion : R|kotlin/Any| {
+        public constructor(i: R|kotlin/Int|): R|com/example/WithCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|com/example/WithCompanion.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/String| {
+                ^foo String(OK)
+            }
+
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<com/example/WithCompanion>|
+
+        }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithCompanion|.R|com/example/WithCompanion.i|): R|com/example/WithCompanion|
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<com/example/WithCompanion>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/WithCompanion|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/WithCompanion|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|com/example/WithCompanion.$serializer|
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final data class WithNamedCompanion : R|kotlin/Any| {
+        public constructor(i: R|kotlin/Int|): R|com/example/WithNamedCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final companion object Named : R|kotlin/Any| {
+            private constructor(): R|com/example/WithNamedCompanion.Named| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/String| {
+                ^foo String(OK)
+            }
+
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<com/example/WithNamedCompanion>|
+
+        }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithNamedCompanion|.R|com/example/WithNamedCompanion.i|): R|com/example/WithNamedCompanion|
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<com/example/WithNamedCompanion>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/WithNamedCompanion|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/WithNamedCompanion|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|com/example/WithNamedCompanion.$serializer|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        R|com/example/encodeAndDecode|<R|com/example/WithCompanion|>(Q|com/example/WithCompanion|.R|com/example/WithCompanion.Companion.serializer|(), R|com/example/WithCompanion.WithCompanion|(Int(1)), String({"i":1}))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^box R|<local>/it|
+        }
+        ) }
+        R|com/example/encodeAndDecode|<R|com/example/WithNamedCompanion|>(Q|com/example/WithNamedCompanion|.R|com/example/WithNamedCompanion.Named.serializer|(), R|com/example/WithNamedCompanion.WithNamedCompanion|(Int(2)), String({"i":2}))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^box R|<local>/it|
+        }
+        ) }
+        when () {
+            !=(Q|com/example/NonSerializable|.R|com/example/NonSerializable.Companion.foo|(), String(OK)) ->  {
+                ^box Q|com/example/NonSerializable|.R|com/example/NonSerializable.Companion.foo|()
+            }
+        }
+
+        when () {
+            !=(Q|com/example/WithCompanion|.R|com/example/WithCompanion.Companion.foo|(), String(OK)) ->  {
+                ^box Q|com/example/WithCompanion|.R|com/example/WithCompanion.Companion.foo|()
+            }
+        }
+
+        when () {
+            !=(Q|com/example/WithNamedCompanion|.R|com/example/WithNamedCompanion.Named.foo|(), String(OK)) ->  {
+                ^box Q|com/example/WithNamedCompanion|.R|com/example/WithNamedCompanion.Named.foo|()
+            }
+        }
+
+        ^box String(OK)
+    }
+    private final fun <T> encodeAndDecode(serializer: R|kotlinx/serialization/KSerializer<T>|, value: R|T|, expectedEncoded: R|kotlin/String|, expectedDecoded: R|T?| = Null(null)): R|kotlin/String?| {
+        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|T|>(R|<local>/serializer|, R|<local>/value|)
+        when () {
+            !=(R|<local>/encoded|, R|<local>/expectedEncoded|) ->  {
+                ^encodeAndDecode R|<local>/encoded|
+            }
+        }
+
+        lval decoded: R|T| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|T|>(R|<local>/serializer|, R|<local>/encoded|)
+        when () {
+            !=(R|<local>/decoded|, R|<local>/expectedDecoded| ?: R|<local>/value|) ->  {
+                ^encodeAndDecode <strcat>(String(DECODED=), R|<local>/decoded|.R|kotlin/toString|())
+            }
+        }
+
+        ^encodeAndDecode Null(null)
+    }

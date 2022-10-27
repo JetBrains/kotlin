@@ -223,6 +223,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         }
 
         @Test
+        @TestMetadata("serializableWithCompanion.kt")
+        public void testSerializableWithCompanion() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/firMembers/serializableWithCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("serializerViaCompanion.kt")
         public void testSerializerViaCompanion() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/firMembers/serializerViaCompanion.kt");

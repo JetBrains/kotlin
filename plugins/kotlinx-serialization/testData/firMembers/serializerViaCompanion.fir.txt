@@ -1,8 +1,7 @@
 FILE: serializerViaCompanion.kt
-    @FILE:R|kotlin/Suppress|(names = vararg(String(COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED)))
     package com.example
 
-    @R|kotlinx/serialization/Serializable|() public final data class WithCompanion : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|com/example/WithCompanion.Companion|)) public final data class WithCompanion : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|): R|com/example/WithCompanion| {
             super<R|kotlin/Any|>()
         }
@@ -31,7 +30,7 @@ FILE: serializerViaCompanion.kt
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithCompanion|.R|com/example/WithCompanion.i|): R|com/example/WithCompanion|
 
     }
-    @R|kotlinx/serialization/Serializable|() public final data class WithNamedCompanion : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|com/example/WithNamedCompanion.Named|)) public final data class WithNamedCompanion : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|): R|com/example/WithNamedCompanion| {
             super<R|kotlin/Any|>()
         }
@@ -60,7 +59,7 @@ FILE: serializerViaCompanion.kt
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithNamedCompanion|.R|com/example/WithNamedCompanion.i|): R|com/example/WithNamedCompanion|
 
     }
-    @R|kotlinx/serialization/Serializable|() public final data class WithExplicitType : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|com/example/WithExplicitType.Companion|)) public final data class WithExplicitType : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|): R|com/example/WithExplicitType| {
             super<R|kotlin/Any|>()
         }
@@ -89,7 +88,7 @@ FILE: serializerViaCompanion.kt
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithExplicitType|.R|com/example/WithExplicitType.i|): R|com/example/WithExplicitType|
 
     }
-    @R|kotlinx/serialization/Serializable|() public final data class PartiallyOverridden : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|com/example/PartiallyOverridden.Companion|)) public final data class PartiallyOverridden : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|): R|com/example/PartiallyOverridden| {
             super<R|kotlin/Any|>()
         }
@@ -125,7 +124,7 @@ FILE: serializerViaCompanion.kt
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.i|): R|com/example/PartiallyOverridden|
 
     }
-    @R|kotlinx/serialization/Serializable|() public final data class PartiallyWithoutType : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|com/example/PartiallyWithoutType.Companion|)) public final data class PartiallyWithoutType : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|): R|com/example/PartiallyWithoutType| {
             super<R|kotlin/Any|>()
         }
@@ -174,7 +173,7 @@ FILE: serializerViaCompanion.kt
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/PartiallyWithoutType|.R|com/example/PartiallyWithoutType.i|): R|com/example/PartiallyWithoutType|
 
     }
-    @R|kotlinx/serialization/Serializable|() public final data class FullyOverridden : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|com/example/FullyOverridden.Companion|)) public final data class FullyOverridden : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|): R|com/example/FullyOverridden| {
             super<R|kotlin/Any|>()
         }

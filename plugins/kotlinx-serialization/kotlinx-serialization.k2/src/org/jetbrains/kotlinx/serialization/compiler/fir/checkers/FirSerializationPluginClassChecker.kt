@@ -352,7 +352,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         with(session) {
             if (!classSymbol.hasSerializableOrMetaAnnotation) return null
             if (!classSymbol.isInternalSerializable) return null
-            if (classSymbol.hasCompanionObjectAsSerializer) return null
+            if (classSymbol.isInternallySerializableObject) return null
         }
 
         val properties = session.serializablePropertiesProvider.getSerializablePropertiesForClass(classSymbol)

@@ -1,7 +1,5 @@
 // WITH_STDLIB
-// !DIAGNOSTICS: -COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED
 
-@file:Suppress("COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED")
 package com.example
 
 import kotlinx.serialization.*
@@ -10,25 +8,25 @@ import kotlinx.serialization.encoding.*
 import kotlinx.serialization.descriptors.*
 
 
-@Serializable
+@Serializable(WithCompanion.Companion::class)
 data class WithCompanion(val i: Int) {
     @Serializer(forClass = WithCompanion::class)
     companion object
 }
 
-@Serializable
+@Serializable(WithNamedCompanion.Named::class)
 data class WithNamedCompanion(val i: Int) {
     @Serializer(forClass = WithNamedCompanion::class)
     companion object Named
 }
 
-@Serializable
+@Serializable(WithExplicitType.Companion::class)
 data class WithExplicitType(val i: Int) {
     @Serializer(forClass = WithExplicitType::class)
     companion object : KSerializer<WithExplicitType>
 }
 
-@Serializable
+@Serializable(PartiallyOverridden.Companion::class)
 data class PartiallyOverridden(val i: Int) {
     @Serializer(forClass = PartiallyOverridden::class)
     companion object : KSerializer<PartiallyOverridden> {
@@ -44,7 +42,7 @@ data class PartiallyOverridden(val i: Int) {
     }
 }
 
-@Serializable
+@Serializable(PartiallyWithoutType.Companion::class)
 data class PartiallyWithoutType(val i: Int) {
     @Serializer(forClass = PartiallyWithoutType::class)
     companion object {
@@ -66,7 +64,7 @@ data class PartiallyWithoutType(val i: Int) {
 }
 
 
-@Serializable
+@Serializable(FullyOverridden.Companion::class)
 data class FullyOverridden(val i: Int) {
     @Serializer(forClass = FullyOverridden::class)
     companion object : KSerializer<FullyOverridden> {
