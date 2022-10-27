@@ -89,7 +89,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
     private fun FirDeclaration.isValidForResolve(): Boolean = when (origin) {
         is FirDeclarationOrigin.Source,
-        is FirDeclarationOrigin.ImportedFromObject,
+        is FirDeclarationOrigin.ImportedFromObjectOrStatic,
         is FirDeclarationOrigin.Delegated,
         is FirDeclarationOrigin.Synthetic,
         is FirDeclarationOrigin.SubstitutionOverride,
