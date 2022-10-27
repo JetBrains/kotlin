@@ -26,7 +26,7 @@ import java.util.concurrent.Callable
 internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     val tasksProvider: KotlinTasksProvider,
     val taskDescription: String,
-    kotlinCompilation: KotlinCompilationProjection
+    kotlinCompilation: KotlinCompilationInfo
 ) : KotlinCompilationProcessor<T>(kotlinCompilation) {
     protected abstract fun doTargetSpecificProcessing()
     protected val logger = Logging.getLogger(this.javaClass)!!
@@ -36,7 +36,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     override val kotlinTask: TaskProvider<out T> = prepareKotlinCompileTask()
 
     protected val javaSourceSet: SourceSet?
-        get() = when (val compilation = compilationProjection.safeAs<KotlinCompilationProjection.TCS>()?.origin) {
+        get() = when (val compilation = compilationInfo.safeAs<KotlinCompilationInfo.TCS>()?.origin) {
             is KotlinWithJavaCompilation<*, *> -> compilation.javaSourceSet
             is KotlinJvmCompilation -> if (compilation.target.withJavaEnabled) {
                 project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
@@ -49,15 +49,15 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         }
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
-        doRegisterTask(project, compilationProjection.compileKotlinTaskName).also { task ->
-            compilationProjection.classesDirs.from(task.flatMap { it.destinationDirectory })
+        doRegisterTask(project, compilationInfo.compileKotlinTaskName).also { task ->
+            compilationInfo.classesDirs.from(task.flatMap { it.destinationDirectory })
         }
 
     override fun run() {
         addKotlinDirectoriesToJavaSourceSet()
         doTargetSpecificProcessing()
 
-        if (compilationProjection.tcsOrNull?.compilation is KotlinWithJavaCompilation<*, *>) {
+        if (compilationInfo.tcsOrNull?.compilation is KotlinWithJavaCompilation<*, *>) {
             createAdditionalClassesTaskForIdeRunner()
         }
     }
@@ -67,7 +67,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
         // Try to avoid duplicate Java sources in allSource; run lazily to allow changing the directory set:
         val kotlinSrcDirsToAdd = Callable {
-            compilationProjection.sources.map { filterOutJavaSrcDirsIfPossible(it) }
+            compilationInfo.sources.map { filterOutJavaSrcDirsIfPossible(it) }
         }
 
         java.allJava.srcDirs(kotlinSrcDirsToAdd)
@@ -82,7 +82,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     }
 
     private fun createAdditionalClassesTaskForIdeRunner() {
-        val kotlinCompilation = compilationProjection.tcsOrNull?.compilation ?: return
+        val kotlinCompilation = compilationInfo.tcsOrNull?.compilation ?: return
 
         open class IDEClassesTask : DefaultTask()
         // Workaround: as per KT-26641, when there's a Kotlin compilation with a Java source set, we create another task
@@ -106,7 +106,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             } else {
                 it.destinationDirectory.convention(defaultKotlinDestinationDir)
             }
-            it.libraries.from({ compilationProjection.compileDependencyFiles })
+            it.libraries.from({ compilationInfo.compileDependencyFiles })
         }
     }
 

@@ -22,32 +22,32 @@ import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
 
 internal class Kotlin2JvmSourceSetProcessor(
     tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: KotlinCompilationProjection
+    kotlinCompilation: KotlinCompilationInfo
 ) : KotlinSourceSetProcessor<KotlinCompile>(
     tasksProvider, "Compiles the $kotlinCompilation.", kotlinCompilation
 ) {
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out KotlinCompile> {
-        val configAction = KotlinCompileConfig(compilationProjection)
+        val configAction = KotlinCompileConfig(compilationInfo)
         applyStandardTaskConfiguration(configAction)
         return tasksProvider.registerKotlinJVMTask(
             project,
             taskName,
-            compilationProjection.compilerOptions.options as KotlinJvmCompilerOptions,
+            compilationInfo.compilerOptions.options as KotlinJvmCompilerOptions,
             configAction
         )
     }
 
     override fun doTargetSpecificProcessing() {
         project.whenKaptEnabled {
-            Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, compilationProjection.compilationName)
+            Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, compilationInfo.compilationName)
         }
 
-        ScriptingGradleSubplugin.configureForSourceSet(project, compilationProjection.compilationName)
+        ScriptingGradleSubplugin.configureForSourceSet(project, compilationInfo.compilationName)
 
         project.whenEvaluated {
             val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
             /* Not supported in KPM yet */
-            compilationProjection.tcsOrNull?.compilation?.let { compilation ->
+            compilationInfo.tcsOrNull?.compilation?.let { compilation ->
                 subpluginEnvironment.addSubpluginOptions(project, compilation)
             }
 

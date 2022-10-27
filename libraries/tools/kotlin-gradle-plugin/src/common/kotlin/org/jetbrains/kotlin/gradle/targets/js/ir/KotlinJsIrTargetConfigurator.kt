@@ -56,7 +56,7 @@ open class KotlinJsIrTargetConfigurator() :
 
     override fun buildCompilationProcessor(compilation: KotlinJsIrCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider()
-        return KotlinJsIrSourceSetProcessor(tasksProvider, KotlinCompilationProjection(compilation))
+        return KotlinJsIrSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
     }
 
     override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {

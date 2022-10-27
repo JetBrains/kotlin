@@ -218,7 +218,7 @@ private class GradleKpmMetadataCompilationTasksConfigurator(project: Project) : 
         fragment: GradleKpmFragment,
         compilationData: GradleKpmCommonFragmentMetadataCompilationData
     ) {
-        KotlinCommonSourceSetProcessor(KotlinCompilationProjection.KPM(compilationData), KotlinTasksProvider()).run()
+        KotlinCommonSourceSetProcessor(KotlinCompilationInfo.KPM(compilationData), KotlinTasksProvider()).run()
         val allSources = getSourcesForFragmentCompilation(fragment)
         val commonSources = getCommonSourcesForFragmentCompilation(fragment)
 

@@ -13,12 +13,12 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
-internal sealed class KotlinCompilationProjection {
+internal sealed class KotlinCompilationInfo {
     abstract val origin: Any
     abstract val project: Project
     abstract val platformType: KotlinPlatformType
@@ -35,7 +35,7 @@ internal sealed class KotlinCompilationProjection {
     abstract val compileDependencyFiles: FileCollection
     abstract val sources: List<SourceDirectorySet>
 
-    class TCS(val compilation: KotlinCompilation<*>) : KotlinCompilationProjection() {
+    class TCS(val compilation: KotlinCompilation<*>) : KotlinCompilationInfo() {
 
         override val origin: KotlinCompilation<*> = compilation
 
@@ -83,7 +83,7 @@ internal sealed class KotlinCompilationProjection {
             get() = origin.allKotlinSourceSets.map { it.kotlin }
     }
 
-    class KPM(val compilationData: GradleKpmCompilationData<*>) : KotlinCompilationProjection() {
+    class KPM(val compilationData: GradleKpmCompilationData<*>) : KotlinCompilationInfo() {
 
         override val origin: GradleKpmCompilationData<*> = compilationData
 
@@ -98,7 +98,6 @@ internal sealed class KotlinCompilationProjection {
 
         override val compilationName: String
             get() = origin.compilationPurpose
-
 
         override val moduleName: String
             get() = origin.moduleName
@@ -133,18 +132,18 @@ internal sealed class KotlinCompilationProjection {
     }
 }
 
-internal fun KotlinCompilationProjection(compilation: KotlinCompilation<*>): KotlinCompilationProjection.TCS {
-    return KotlinCompilationProjection.TCS(compilation)
+internal fun KotlinCompilationInfo(compilation: KotlinCompilation<*>): KotlinCompilationInfo.TCS {
+    return KotlinCompilationInfo.TCS(compilation)
 }
 
-internal val KotlinCompilationProjection.tcsOrNull: KotlinCompilationProjection.TCS?
+internal val KotlinCompilationInfo.tcsOrNull: KotlinCompilationInfo.TCS?
     get() = when (this) {
-        is KotlinCompilationProjection.KPM -> null
-        is KotlinCompilationProjection.TCS -> this
+        is KotlinCompilationInfo.KPM -> null
+        is KotlinCompilationInfo.TCS -> this
     }
 
-internal val KotlinCompilationProjection.kpmOrNull: KotlinCompilationProjection.KPM?
+internal val KotlinCompilationInfo.kpmOrNull: KotlinCompilationInfo.KPM?
     get() = when (this) {
-        is KotlinCompilationProjection.KPM -> this
-        is KotlinCompilationProjection.TCS -> null
+        is KotlinCompilationInfo.KPM -> this
+        is KotlinCompilationInfo.TCS -> null
     }

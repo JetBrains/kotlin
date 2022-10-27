@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
@@ -14,7 +13,7 @@ import java.io.File
 internal typealias Kotlin2JsCompileConfig = BaseKotlin2JsCompileConfig<Kotlin2JsCompile>
 
 internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
-    compilation: KotlinCompilationProjection
+    compilation: KotlinCompilationInfo
 ) : AbstractKotlinCompileConfig<TASK>(compilation) {
 
     init {
@@ -69,7 +68,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
     protected open fun configureAdditionalFreeCompilerArguments(
         task: TASK,
-        compilation: KotlinCompilationProjection
+        compilation: KotlinCompilationInfo
     ) {
         task.enhancedFreeCompilerArgs.value(
             task.compilerOptions.freeCompilerArgs.map { freeArgs ->
@@ -81,7 +80,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
     }
 
     protected fun MutableList<String>.commonJsAdditionalCompilerFlags(
-        compilation: KotlinCompilationProjection
+        compilation: KotlinCompilationInfo
     ) {
         if (contains(DISABLE_PRE_IR) &&
             !contains(PRODUCE_UNZIPPED_KLIB) &&

@@ -23,7 +23,7 @@ internal open class KotlinCommonPlugin(
         project: Project,
         compilation: KotlinCompilation<*>
     ): KotlinSourceSetProcessor<*> =
-        KotlinCommonSourceSetProcessor(KotlinCompilationProjection(compilation), tasksProvider)
+        KotlinCommonSourceSetProcessor(KotlinCompilationInfo(compilation), tasksProvider)
 
     override fun apply(project: Project) {
         @Suppress("UNCHECKED_CAST")
