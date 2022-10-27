@@ -505,7 +505,7 @@ internal fun buildNativeLibrary(
     // Hence, macro redefinitions are created at the earliest possible point to spread into all libclang invocations.
     val predefinedMacros = listOf("__DATE__", "__TIME__", "__TIMESTAMP__", "__FILE__", "__FILE_NAME__", "__BASE_FILE__", "__LINE__")
     val predefinedMacroRedefinitions = listOf("-Wno-builtin-macro-redefined") + predefinedMacros.map {
-        "-D$it=\"$it\""
+        "-D$it=$it"
     }
 
     val compilation = CompilationImpl(
