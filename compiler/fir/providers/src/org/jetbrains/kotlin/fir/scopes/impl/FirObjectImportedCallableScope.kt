@@ -28,10 +28,10 @@ class FirObjectImportedCallableScope(
         objectUseSiteScope.processFunctionsByName(name) wrapper@{ symbol ->
             val function = symbol.fir
             val syntheticFunction = buildSimpleFunctionCopy(function) {
-                origin = FirDeclarationOrigin.ImportedFromObject
+                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
                 this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
             }.apply {
-                importedFromObjectData = ImportedFromObjectData(importedClassId, function)
+                importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, function)
             }
             processor(syntheticFunction.symbol)
         }
@@ -45,11 +45,11 @@ class FirObjectImportedCallableScope(
             }
             val property = symbol.fir
             val syntheticProperty = buildPropertyCopy(property) {
-                origin = FirDeclarationOrigin.ImportedFromObject
+                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
                 this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
                 this.delegateFieldSymbol = null
             }.apply {
-                importedFromObjectData = ImportedFromObjectData(importedClassId, property)
+                importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, property)
             }
             processor(syntheticProperty.symbol)
         }
@@ -60,12 +60,12 @@ class FirObjectImportedCallableScope(
     override fun getClassifierNames(): Set<Name> = emptySet()
 }
 
-private object ImportedFromObjectClassIdKey : FirDeclarationDataKey()
+private object ImportedFromObjectOrStaticClassIdKey : FirDeclarationDataKey()
 
-class ImportedFromObjectData<D : FirCallableDeclaration>(
+class ImportedFromObjectOrStaticData<D : FirCallableDeclaration>(
     val objectClassId: ClassId,
     val original: D,
 )
 
-var <D : FirCallableDeclaration>
-        D.importedFromObjectData: ImportedFromObjectData<D>? by FirDeclarationDataRegistry.data(ImportedFromObjectClassIdKey)
+var <D : FirCallableDeclaration> D.importedFromObjectOrStaticData: ImportedFromObjectOrStaticData<D>?
+by FirDeclarationDataRegistry.data(ImportedFromObjectOrStaticClassIdKey)

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -314,7 +314,7 @@ class ScopeTowerLevel(
     fun areThereExtensionReceiverOptions(): Boolean = givenExtensionReceiverOptions.isNotEmpty()
 
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
-        candidate.fir.importedFromObjectData?.let { data ->
+        candidate.fir.importedFromObjectOrStaticData?.let { data ->
             val objectClassId = data.objectClassId
             val symbol = session.symbolProvider.getClassLikeSymbolByClassId(objectClassId)
             if (symbol is FirRegularClassSymbol) {
@@ -384,7 +384,7 @@ class ScopeTowerLevel(
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
             return
         }
-        val unwrappedCandidate = candidate.fir.importedFromObjectData?.original?.symbol ?: candidate
+        val unwrappedCandidate = candidate.fir.importedFromObjectOrStaticData?.original?.symbol ?: candidate
         @Suppress("UNCHECKED_CAST")
         processor.consumeCandidate(
             unwrappedCandidate as T, dispatchReceiverValue,

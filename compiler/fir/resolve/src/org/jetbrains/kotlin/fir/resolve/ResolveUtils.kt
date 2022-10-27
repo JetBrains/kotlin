@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -523,7 +523,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
     return when (origin) {
         FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
         FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
-        FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.getAsForbiddenNamedArgumentsTarget(session)
+        FirDeclarationOrigin.ImportedFromObjectOrStatic -> importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
         is FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
         FirDeclarationOrigin.SamConstructor -> null
         FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride -> {

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 
 internal interface KtFirSymbol<out S : FirBasedSymbol<*>> : KtSymbol, KtLifetimeOwner {
     val firSymbol: S
@@ -73,8 +72,8 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
         }
     }
 
-    FirDeclarationOrigin.ImportedFromObject -> {
-        val importedFromObjectData = (this as FirCallableDeclaration).importedFromObjectData
+    FirDeclarationOrigin.ImportedFromObjectOrStatic -> {
+        val importedFromObjectData = (this as FirCallableDeclaration).importedFromObjectOrStaticData
             ?: buildErrorWithAttachment("Declaration has ImportedFromObject origin, but no importedFromObjectData present") {
                 withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
             }
