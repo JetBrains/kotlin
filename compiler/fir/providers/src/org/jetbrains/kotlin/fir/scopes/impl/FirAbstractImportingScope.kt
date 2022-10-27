@@ -61,9 +61,14 @@ abstract class FirAbstractImportingScope(
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
             if (isExcluded(import, importedName)) continue
-            val staticsScope = import.resolvedParentClassId?.let(::getStaticsScope)
+            val parentClassId = import.resolvedParentClassId
+            val staticsScope = parentClassId?.let { getStaticsScope(it) }
+
             if (staticsScope != null) {
-                staticsScope.processFunctionsByName(importedName, processor)
+                staticsScope.processFunctionsByName(importedName) {
+                    if (it.isStatic) processor(it.fir.buildImportedCopy(parentClassId).symbol)
+                    else processor(it)
+                }
             } else if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
                 for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, importedName)) {
                     processor(symbol)
@@ -76,9 +81,18 @@ abstract class FirAbstractImportingScope(
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
             if (isExcluded(import, importedName)) continue
-            val staticsScope = import.resolvedParentClassId?.let(::getStaticsScope)
+            val parentClassId = import.resolvedParentClassId
+            val staticsScope = parentClassId?.let { getStaticsScope(it) }
+
             if (staticsScope != null) {
-                staticsScope.processPropertiesByName(importedName, processor)
+                staticsScope.processPropertiesByName(importedName) {
+                    if (it is FirPropertySymbol) {
+                        if (it.isStatic) processor(it.fir.buildImportedCopy(parentClassId).symbol)
+                        else processor(it)
+                    } else {
+                        processor(it)
+                    }
+                }
             } else if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
                 for (symbol in provider.getTopLevelPropertySymbols(import.packageFqName, importedName)) {
                     processor(symbol)

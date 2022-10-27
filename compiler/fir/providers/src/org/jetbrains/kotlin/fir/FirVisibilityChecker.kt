@@ -72,6 +72,25 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
     }
 
+    fun isClassLikeVisible(
+        declaration: FirClassLikeDeclaration,
+        session: FirSession,
+        useSiteFile: FirFile,
+        containingDeclarations: List<FirDeclaration>,
+    ): Boolean {
+        return isVisible(
+            declaration,
+            session,
+            useSiteFile,
+            containingDeclarations,
+            dispatchReceiver = null,
+            isCallToPropertySetter = false,
+            staticQualifierClassForCallable = null,
+            skipCheckForContainingClassVisibility = false,
+            supertypeSupplier = SupertypeSupplier.Default
+        )
+    }
+
     fun isVisible(
         declaration: FirMemberDeclaration,
         session: FirSession,
@@ -79,6 +98,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,
         isCallToPropertySetter: Boolean = false,
+        staticQualifierClassForCallable: FirRegularClass? = null,
         // There's no need to check if containing class is visible in case we check if a member might be overridden in a subclass
         // because visibility for its supertype that contain overridden member is being checked when resolving the type reference.
         // Such flag is not necessary in FE1.0, since there are full structure of fake overrides and containing declaration for overridden
@@ -108,8 +128,14 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             supertypeSupplier
         ) ?: return true
         return generateSequence(parentClass) { it.containingNonLocalClass(session) }.all { parent ->
+            val classLikeToCheck =
+                if (staticQualifierClassForCallable?.isSubClass(parent.symbol.toLookupTag(), session, supertypeSupplier) == true) {
+                    staticQualifierClassForCallable
+                } else {
+                    parent
+                }
             isSpecificDeclarationVisible(
-                parent,
+                classLikeToCheck,
                 session,
                 useSiteFile,
                 containingDeclarations,
