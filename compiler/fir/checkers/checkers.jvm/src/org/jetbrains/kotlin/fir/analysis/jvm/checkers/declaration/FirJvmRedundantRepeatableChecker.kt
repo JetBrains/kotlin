@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.classId
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.coneClassLikeType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Repeatable
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRepeatable
@@ -30,11 +31,14 @@ object FirJvmRedundantRepeatableChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(
                 kotlinRepeatable.source,
                 FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION,
-                kotlinRepeatable.classId?.asSingleFqName() ?: FqName.ROOT,
-                javaRepeatable.classId?.asSingleFqName() ?: FqName.ROOT,
+                kotlinRepeatable.abbreviatedFqName ?: FqName.ROOT,
+                javaRepeatable.abbreviatedFqName ?: FqName.ROOT,
                 context
             )
         }
     }
+
+    private inline val FirAnnotation.abbreviatedFqName: FqName?
+        get() = coneClassLikeType?.lookupTag?.classId?.asSingleFqName()
 }
 
