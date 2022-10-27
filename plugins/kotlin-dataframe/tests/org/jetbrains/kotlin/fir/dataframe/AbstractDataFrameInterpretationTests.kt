@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.extensions.*
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -28,7 +30,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -68,16 +69,26 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
         ) {
 
             val ids = List(100) {
-                val name = Name.identifier(it.toString())
+                val name = Name.identifier("Token$it")
                 ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
             }.toSet()
-            val queue = ArrayDeque(ids)
-            val state = mutableMapOf<ClassId, SchemaContext>()
+            val callables = List(100) {
+                CallableId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("refined_$it"))
+            }
+            val tokens = List(100) {
+                ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
+            }
+            val scopeIds = ArrayDeque(ids)
+            val tokenIds = ArrayDeque(tokens)
+            val callableNames = ArrayDeque(callables)
+
+            val scopeState = mutableMapOf<ClassId, SchemaContext>()
+            val callableState = mutableMapOf<Name, FirSimpleFunction>()
 
             FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
-                    +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, ids, state) }
-                    +{ it: FirSession -> InterpretersRunner(it, queue, state, getTestFilePath) }
+                    +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, ids, scopeState, callables, callableState) }
+                    +{ it: FirSession -> InterpretersRunner(it, scopeIds, scopeState, getTestFilePath) }
                     +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
                 }
             })

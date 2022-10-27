@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    kotlin("jvm") version "1.8.0-dev-2843"
+    kotlin("jvm") version "1.8.255-SNAPSHOT"
     kotlin("libs.publisher") version "0.0.60-dev-30"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }

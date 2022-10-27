@@ -40,7 +40,9 @@ import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 class FirDataFrameExtensionsGenerator(
     session: FirSession,
     private val ids: Set<ClassId>,
-    private val state: Map<ClassId, SchemaContext>
+    private val state: Map<ClassId, SchemaContext>,
+    val callables: List<CallableId>,
+    val callableState: MutableMap<Name, FirSimpleFunction>
 ) :
     FirDeclarationGenerationExtension(session) {
     private val predicateBasedProvider = session.predicateBasedProvider
@@ -70,7 +72,10 @@ class FirDataFrameExtensionsGenerator(
     )
 
     override fun getTopLevelCallableIds(): Set<CallableId> {
-        return fields.mapTo(mutableSetOf()) { it.callableId }
+        return buildSet {
+            fields.mapTo(this) { it.callableId }
+            addAll(callables)
+        }
     }
 
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
@@ -249,6 +254,11 @@ class FirDataFrameExtensionsGenerator(
             names.add(SpecialNames.INIT)
         }
         return names
+    }
+
+    override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
+        val state = callableState[callableId.callableName] ?: return emptyList()
+        return listOf(state.symbol)
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
