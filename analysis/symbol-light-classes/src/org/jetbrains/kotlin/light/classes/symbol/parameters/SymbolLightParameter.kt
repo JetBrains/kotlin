@@ -44,7 +44,7 @@ internal class SymbolLightParameter(
 
     override fun getModifierList(): PsiModifierList = _modifierList
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(this, emptySet(), _annotations)
+        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyOf(_annotations))
     }
 
     override fun isVarArgs() = parameterSymbol.isVararg
