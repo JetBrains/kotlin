@@ -363,7 +363,8 @@ private class SyntheticAccessorTransformer(
 
             if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
                 origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR
+                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
+                origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             ) {
                 return false
             }
