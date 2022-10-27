@@ -1,2 +1,2 @@
 KtType: MyInt
-PsiType: PsiType:MyInt
+PsiType: PsiType:int
