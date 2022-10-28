@@ -1,2 +1,2 @@
-KtType: Outer.<no name provided>.Inner
+KtType: Outer.`<no name provided>`.Inner
 PsiType: null
