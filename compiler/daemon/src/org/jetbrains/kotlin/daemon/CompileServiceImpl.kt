@@ -1235,7 +1235,10 @@ class CompileServiceImpl(
 
     override fun clearJarCache() {
         ZipHandler.clearFileAccessorCache()
-        (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
+        KotlinCoreEnvironment.applicationEnvironment?.apply {
+            (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
+            idleCleanup()
+        }
     }
 
     private inline fun <R> ifAlive(
