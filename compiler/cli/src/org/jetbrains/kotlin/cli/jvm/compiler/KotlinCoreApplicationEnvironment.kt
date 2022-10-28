@@ -51,7 +51,7 @@ class KotlinCoreApplicationEnvironment private constructor(
         }
 
     fun idleCleanup() {
-        fastJarFileSystemField?.cleanOpenFilesCache()
+        fastJarFileSystemField?.clearHandlersCache()
     }
 
     companion object {
