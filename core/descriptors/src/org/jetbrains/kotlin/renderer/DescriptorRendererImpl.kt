@@ -364,7 +364,8 @@ internal class DescriptorRendererImpl(
 
         if (receiverType != null) {
             val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable ||
-                    receiverType.hasModifiersOrAnnotations()
+                    receiverType.hasModifiersOrAnnotations() ||
+                    receiverType is DefinitelyNotNullType
             if (surroundReceiver) {
                 append("(")
             }
@@ -743,7 +744,7 @@ internal class DescriptorRendererImpl(
 
     private fun KotlinType.renderForReceiver(): String {
         var result = renderType(this)
-        if (shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) {
+        if ((shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) || this is DefinitelyNotNullType) {
             result = "($result)"
         }
         return result
