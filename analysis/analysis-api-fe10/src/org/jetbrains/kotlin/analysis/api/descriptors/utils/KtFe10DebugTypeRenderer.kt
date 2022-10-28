@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getKtNamedAnnotationArguments
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.builtins.*
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PossiblyInnerType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -32,7 +30,7 @@ import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, private val isDebugText: Boolean = false) {
+internal class KtFe10DebugTypeRenderer {
     private companion object {
         const val ERROR_TYPE_TEXT = "ERROR_TYPE"
     }
@@ -41,18 +39,8 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         consumer.renderType(type)
     }
 
-    private fun KtFe10RendererConsumer.renderType(type: KotlinType) {
-        if (isDebugText) {
-            renderTypeAnnotationsDebug(type)
-        } else {
-            renderFe10Annotations(
-                type.annotations,
-                isSingleLineAnnotations = true,
-                renderAnnotationWithShortNames = options.shortQualifiedNames
-            ) { classId ->
-                classId != StandardClassIds.Annotations.ExtensionFunctionType
-            }
-        }
+    private fun PrettyPrinter.renderType(type: KotlinType) {
+        renderTypeAnnotationsDebug(type)
         when (val unwrappedType = type.unwrap()) {
             is DynamicType -> append("dynamic")
             is FlexibleType -> renderFlexibleType(unwrappedType)
@@ -67,9 +55,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
                     is IntersectionTypeConstructor -> renderIntersectionType(typeConstructor)
                     else -> {
                         val descriptor = unwrappedType.constructor.declarationDescriptor
-                        if (!isDebugText && options.renderFunctionType && descriptor is FunctionClassDescriptor) {
-                            renderFunctionType(unwrappedType)
-                        } else if (descriptor is TypeParameterDescriptor) {
+                        if (descriptor is TypeParameterDescriptor) {
                             renderTypeParameterType(descriptor)
                         } else if (descriptor is ClassifierDescriptorWithTypeParameters) {
                             renderOrdinaryType(unwrappedType)
@@ -86,19 +72,19 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         }
     }
 
-    private fun KtFe10RendererConsumer.renderTypeAnnotationsDebug(type: KotlinType) {
+    private fun PrettyPrinter.renderTypeAnnotationsDebug(type: KotlinType) {
         val annotations = type.annotations
             .filter { it.annotationClass?.classId != StandardClassIds.Annotations.ExtensionFunctionType }
 
         printCollectionIfNotEmpty(annotations, separator = " ", postfix = "  ") { renderTypeAnnotationDebug(it) }
     }
 
-    private fun KtFe10RendererConsumer.renderTypeAnnotationDebug(annotation: AnnotationDescriptor) {
+    private fun PrettyPrinter.renderTypeAnnotationDebug(annotation: AnnotationDescriptor) {
         val namedValues = annotation.getKtNamedAnnotationArguments()
         renderAnnotationDebug(annotation.annotationClass?.classId, namedValues)
     }
 
-    private fun KtFe10RendererConsumer.renderAnnotationDebug(classId: ClassId?, namedValues: List<KtNamedAnnotationValue>) {
+    private fun PrettyPrinter.renderAnnotationDebug(classId: ClassId?, namedValues: List<KtNamedAnnotationValue>) {
         append("@")
 
         if (classId != null) {
@@ -116,7 +102,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         }
     }
 
-    private fun KtFe10RendererConsumer.renderConstantValueDebug(value: KtAnnotationValue) {
+    private fun PrettyPrinter.renderConstantValueDebug(value: KtAnnotationValue) {
         when (value) {
             is KtAnnotationApplicationValue -> renderAnnotationDebug(value.annotationValue.classId, value.annotationValue.arguments)
             is KtArrayAnnotationValue ->
@@ -128,46 +114,44 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         }
     }
 
-    private fun KtFe10RendererConsumer.renderFlexibleType(type: FlexibleType) {
+    private fun PrettyPrinter.renderFlexibleType(type: FlexibleType) {
         val lowerBoundText = prettyPrint { renderType(type.lowerBound) }
         val upperBoundText = prettyPrint { renderType(type.upperBound) }
         append(DescriptorRenderer.COMPACT.renderFlexibleType(lowerBoundText, upperBoundText, type.builtIns))
     }
 
-    private fun KtFe10RendererConsumer.renderDefinitelyNotNullType(type: DefinitelyNotNullType) {
+    private fun PrettyPrinter.renderDefinitelyNotNullType(type: DefinitelyNotNullType) {
         renderType(type.original)
         append(" & Any")
     }
 
-    private fun KtFe10RendererConsumer.renderErrorType() {
+    private fun PrettyPrinter.renderErrorType() {
         append(ERROR_TYPE_TEXT)
     }
 
-    private fun KtFe10RendererConsumer.renderCapturedType(type: CapturedType) {
+    private fun PrettyPrinter.renderCapturedType(type: CapturedType) {
         append("CapturedType(")
         renderTypeProjection(type.typeProjection)
         append(")")
     }
 
-    private fun KtFe10RendererConsumer.renderCapturedType(type: NewCapturedType) {
+    private fun PrettyPrinter.renderCapturedType(type: NewCapturedType) {
         append("CapturedType(")
         renderTypeProjection(type.constructor.projection)
         append(")")
     }
 
-    private fun KtFe10RendererConsumer.renderTypeVariableType(typeConstructor: NewTypeVariableConstructor) {
+    private fun PrettyPrinter.renderTypeVariableType(typeConstructor: NewTypeVariableConstructor) {
         val name = typeConstructor.originalTypeParameter?.name ?: SpecialNames.NO_NAME_PROVIDED
         append("TypeVariable(").append(name.asString()).append(")")
     }
 
-    private fun KtFe10RendererConsumer.renderIntersectionType(typeConstructor: IntersectionTypeConstructor) {
-        if (isDebugText) {
-            append("it")
-        }
+    private fun PrettyPrinter.renderIntersectionType(typeConstructor: IntersectionTypeConstructor) {
+        append("it")
         printCollection(typeConstructor.supertypes, separator = " & ", prefix = "(", postfix = ")") { renderType(it) }
     }
 
-    private fun KtFe10RendererConsumer.renderFunctionType(type: SimpleType) {
+    private fun PrettyPrinter.renderFunctionType(type: SimpleType) {
         if (type.isSuspendFunctionType || type.isKSuspendFunctionType) {
             append("suspend ")
         }
@@ -193,41 +177,30 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         renderType(returnType)
     }
 
-    private fun KtFe10RendererConsumer.renderTypeParameterType(descriptor: TypeParameterDescriptor) {
+    private fun PrettyPrinter.renderTypeParameterType(descriptor: TypeParameterDescriptor) {
         append(descriptor.name.render())
     }
 
-    private fun KtFe10RendererConsumer.renderOrdinaryType(type: SimpleType) {
+    private fun PrettyPrinter.renderOrdinaryType(type: SimpleType) {
         val nestedType = KtFe10JvmTypeMapperContext.getNestedType(type)
-        renderTypeSegment(nestedType.root, isRoot = true)
+        renderTypeSegment(nestedType.root)
         printCollectionIfNotEmpty(nestedType.nested, separator = ".", prefix = ".", postfix = "") { renderTypeSegment(it) }
     }
 
-    private fun KtFe10RendererConsumer.renderTypeSegment(typeSegment: PossiblyInnerType, isRoot: Boolean = false) {
+    private fun PrettyPrinter.renderTypeSegment(typeSegment: PossiblyInnerType) {
         val classifier = typeSegment.classifierDescriptor
 
-        if (isDebugText) {
-            append(classifier.maybeLocalClassId.asString())
-        } else if (isRoot) {
-            val classId = classifier.maybeLocalClassId
-            if (!options.shortQualifiedNames && !classId.packageFqName.isRoot) {
-                renderFqName(classId.packageFqName)
-                append('.')
-            }
-            renderFqName(classId.relativeClassName)
-        } else {
-            append(classifier.name.render())
-        }
+        append(classifier.maybeLocalClassId.asString())
 
         val arguments = typeSegment.arguments
         printCollectionIfNotEmpty(arguments, separator = ", ", prefix = "<", postfix = ">") { renderTypeProjection(it) }
     }
 
-    private fun KtFe10RendererConsumer.renderFqName(fqName: FqName) {
+    private fun PrettyPrinter.renderFqName(fqName: FqName) {
         printCollection(fqName.pathSegments(), separator = ".") { append(it.render()) }
     }
 
-    private fun KtFe10RendererConsumer.renderTypeProjection(projection: TypeProjection) {
+    private fun PrettyPrinter.renderTypeProjection(projection: TypeProjection) {
         if (projection.isStarProjection) {
             append("*")
         } else {
