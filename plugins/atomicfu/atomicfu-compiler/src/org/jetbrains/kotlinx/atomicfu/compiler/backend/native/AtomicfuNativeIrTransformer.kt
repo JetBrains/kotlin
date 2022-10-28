@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.AtomicSymbols
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.JvmAtomicSymbols
 import org.jetbrains.kotlin.ir.builders.*
 
 private const val AFU_PKG = "kotlinx.atomicfu"
@@ -35,7 +35,7 @@ private const val UPDATE = "update"
 
 class AtomicfuNativeIrTransformer(
     val context: IrPluginContext,
-    val atomicSymbols: AtomicSymbols
+    val atomicSymbols: JvmAtomicSymbols
 ) {
     private val ATOMIC_VALUE_TYPES = setOf("AtomicInt", "AtomicLong", "AtomicBoolean", "AtomicRef")
 
@@ -60,13 +60,14 @@ class AtomicfuNativeIrTransformer(
         private fun IrProperty.transformAtomicfuProperty(parent: IrDeclarationContainer) {
             when {
                 isAtomic() -> {
-                    transformAtomicProperty(parent as IrClass)
+                    println(parent)
+                    transformAtomicProperty()
                 }
                 else -> error("Property type not supported")
             }
         }
 
-        private fun IrProperty.transformAtomicProperty(parentClass: IrClass) {
+        private fun IrProperty.transformAtomicProperty() {
             backingField?.let { backingField ->
                 backingField.initializer?.let {
                     val initializer = it.expression as IrCall

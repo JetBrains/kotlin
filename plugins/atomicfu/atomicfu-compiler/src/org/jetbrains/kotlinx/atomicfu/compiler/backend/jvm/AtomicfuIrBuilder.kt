@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.util.*
 
 // An IR builder with access to AtomicSymbols and convenience methods to build IR constructions for atomicfu JVM/IR transformation.
 class AtomicfuIrBuilder internal constructor(
-    val atomicSymbols: AtomicSymbols,
+    val atomicSymbols: JvmAtomicSymbols,
     symbol: IrSymbol,
     startOffset: Int,
     endOffset: Int

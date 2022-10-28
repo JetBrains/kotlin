@@ -6,11 +6,11 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.backend
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.AtomicSymbols
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.JvmAtomicSymbols
 
 abstract class AtomicfuIrTransformerBase(
     private val context: IrPluginContext,
-    private val atomicSymbols: AtomicSymbols
+    private val atomicSymbols: JvmAtomicSymbols
 ) {
 
 }

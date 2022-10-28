@@ -43,7 +43,7 @@ private const val UPDATE = "update"
 
 class AtomicfuJvmIrTransformer(
     private val context: IrPluginContext,
-    private val atomicSymbols: AtomicSymbols
+    private val atomicSymbols: JvmAtomicSymbols
 ) {
     private val irBuiltIns = context.irBuiltIns
 

@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
 
 // Contains IR declarations needed by the atomicfu plugin.
-class AtomicSymbols(
-    val irBuiltIns: IrBuiltIns,
-    private val moduleFragment: IrModuleFragment
-) {
-    private val irFactory: IrFactory = IrFactoryImpl
+class JvmAtomicSymbols(
+    irBuiltIns: IrBuiltIns,
+    moduleFragment: IrModuleFragment
+) : AtomicSymbols(irBuiltIns, moduleFragment) {
+
     private val javaLang: IrPackageFragment = createPackage("java.lang")
     private val javaUtilConcurrent: IrPackageFragment = createPackage("java.util.concurrent.atomic")
     private val kotlinJvm: IrPackageFragment = createPackage("kotlin.jvm")
@@ -514,38 +514,6 @@ class AtomicSymbols(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.kClassClass.starProjectedType, irBuiltIns.kClassClass, classType
         )
 
-    fun function0Type(returnType: IrType) = buildFunctionSimpleType(
-        irBuiltIns.functionN(0).symbol,
-        listOf(returnType)
-    )
-
-    fun function1Type(argType: IrType, returnType: IrType) = buildFunctionSimpleType(
-        irBuiltIns.functionN(1).symbol,
-        listOf(argType, returnType)
-    )
-
-    val invoke0Symbol = irBuiltIns.functionN(0).getSimpleFunction("invoke")!!
-    val invoke1Symbol = irBuiltIns.functionN(1).getSimpleFunction("invoke")!!
-
-    private fun buildIrGet(
-        type: IrType,
-        receiver: IrExpression?,
-        getterSymbol: IrFunctionSymbol
-    ): IrCall = IrCallImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-        type,
-        getterSymbol as IrSimpleFunctionSymbol,
-        typeArgumentsCount = getterSymbol.owner.typeParameters.size,
-        valueArgumentsCount = 0,
-        origin = IrStatementOrigin.GET_PROPERTY
-    ).apply {
-        dispatchReceiver = receiver
-    }
-
-    private val volatileConstructor = buildAnnotationConstructor(buildClass(JvmNames.VOLATILE_ANNOTATION_FQ_NAME, ClassKind.ANNOTATION_CLASS, kotlinJvm))
-    val volatileAnnotationConstructorCall =
-        IrConstructorCallImpl.fromSymbolOwner(volatileConstructor.returnType, volatileConstructor.symbol)
-
     fun buildClassWithPrimaryConstructor(
         name: String,
         parent: IrDeclarationContainer
@@ -565,47 +533,24 @@ class AtomicSymbols(
         }
     }
 
-    fun buildClass(
-        fqName: FqName,
-        classKind: ClassKind,
-        parent: IrDeclarationContainer
-    ): IrClass = irFactory.buildClass {
-        name = fqName.shortName()
-        kind = classKind
-    }.apply {
-        val irClass = this
-        this.parent = parent
-        parent.addChild(irClass)
-        thisReceiver = buildValueParameter(irClass) {
-            name = Name.identifier("\$this")
-            type = IrSimpleTypeImpl(irClass.symbol, false, emptyList(), emptyList())
-        }
+    private fun buildIrGet(
+        type: IrType,
+        receiver: IrExpression?,
+        getterSymbol: IrFunctionSymbol
+    ): IrCall = IrCallImpl(
+        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+        type,
+        getterSymbol as IrSimpleFunctionSymbol,
+        typeArgumentsCount = getterSymbol.owner.typeParameters.size,
+        valueArgumentsCount = 0,
+        origin = IrStatementOrigin.GET_PROPERTY
+    ).apply {
+        dispatchReceiver = receiver
     }
 
-    private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor =
-        annotationClass.addConstructor { isPrimary = true }
-
-    private fun createPackage(packageName: String): IrPackageFragment =
-        IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
-            moduleFragment.descriptor,
-            FqName(packageName)
-        )
-
-    private fun createClass(
-        irPackage: IrPackageFragment,
-        shortName: String,
-        classKind: ClassKind,
-        classModality: Modality,
-        isValueClass: Boolean = false,
-    ): IrClassSymbol = irFactory.buildClass {
-        name = Name.identifier(shortName)
-        kind = classKind
-        modality = classModality
-        isValue = isValueClass
-    }.apply {
-        parent = irPackage
-        createImplicitParameterDeclarationWithWrappedDescriptor()
-    }.symbol
+    private val volatileConstructor = buildAnnotationConstructor(buildClass(JvmNames.VOLATILE_ANNOTATION_FQ_NAME, ClassKind.ANNOTATION_CLASS, kotlinJvm))
+    val volatileAnnotationConstructorCall =
+        IrConstructorCallImpl.fromSymbolOwner(volatileConstructor.returnType, volatileConstructor.symbol)
 
     fun createBuilder(
         symbol: IrSymbol,
