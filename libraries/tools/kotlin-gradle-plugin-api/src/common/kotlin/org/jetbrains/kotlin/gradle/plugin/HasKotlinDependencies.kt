@@ -183,7 +183,7 @@ interface HasKotlinDependencies {
         get() = listOf(apiConfigurationName, implementationConfigurationName, compileOnlyConfigurationName, runtimeOnlyConfigurationName)
 }
 
-internal fun warnNpmGenerateExternals(logger: Logger) {
+fun warnNpmGenerateExternals(logger: Logger) {
     logger.warn(
         """
                 |
