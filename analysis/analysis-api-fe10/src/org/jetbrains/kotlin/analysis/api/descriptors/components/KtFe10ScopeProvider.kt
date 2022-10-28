@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
@@ -63,21 +62,21 @@ internal class KtFe10ScopeProvider(
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(descriptor.unsubstitutedMemberScope, analysisContext)
+        return KtFe10ScopeMember(descriptor.unsubstitutedMemberScope, descriptor.constructors, analysisContext)
     }
 
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(DeclaredMemberScope(descriptor), analysisContext)
+        return KtFe10ScopeMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
     }
 
     override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope  {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), analysisContext)
+        return KtFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), emptyList(), analysisContext)
     }
 
     private class DeclaredMemberScope(
@@ -90,13 +89,13 @@ internal class KtFe10ScopeProvider(
 
         override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
             return allMemberScope.getContributedVariables(name, location).filter {
-                it.containingDeclaration == owner && it.isDelegatedIfRequired()
+                it.isDeclaredInOwner() && it.isDelegatedIfRequired()
             }.mapToDelegatedIfRequired()
         }
 
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
             return allMemberScope.getContributedFunctions(name, location).filter {
-                it.containingDeclaration == owner && it.isDelegatedIfRequired()
+                it.isDeclaredInOwner() && it.isDelegatedIfRequired()
             }.mapToDelegatedIfRequired()
         }
 
@@ -125,7 +124,7 @@ internal class KtFe10ScopeProvider(
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
             if (forDelegatedMembersOnly) return null
-            return allMemberScope.getContributedClassifier(name, location)?.takeIf { it.containingDeclaration == owner }
+            return allMemberScope.getContributedClassifier(name, location)?.takeIf { it.isDeclaredInOwner() }
         }
 
         override fun getContributedDescriptors(
@@ -133,7 +132,7 @@ internal class KtFe10ScopeProvider(
             nameFilter: (Name) -> Boolean
         ): Collection<DeclarationDescriptor> {
             return allMemberScope.getContributedDescriptors(kindFilter, nameFilter).filter {
-                it.containingDeclaration == owner && it.isDelegatedIfRequired()
+                it.isDeclaredInOwner() && it.isDelegatedIfRequired()
             }.mapToDelegatedIfRequired()
         }
 
@@ -153,11 +152,17 @@ internal class KtFe10ScopeProvider(
             }
         }
 
+
+        private fun DeclarationDescriptor.isDeclaredInOwner() = when (this) {
+            is CallableDescriptor -> dispatchReceiverParameter?.containingDeclaration == owner
+            else -> containingDeclaration == owner
+        }
     }
+
 
     override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(symbol) ?: return getEmptyScope()
-        return KtFe10ScopeMember(descriptor.staticScope, analysisContext)
+        return KtFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
     }
 
     override fun getEmptyScope(): KtScope {
