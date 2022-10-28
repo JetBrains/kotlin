@@ -5,31 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.findLightDeclarationContext
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.getContainingKtLightClass
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiSingleFileTest(){
+abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
-        val containingClass =
-            getContainingKtLightClass(declaration, ktFile)
+        val containingClass = getContainingKtLightClass(declaration, ktFile)
         val psiContext = containingClass.findLightDeclarationContext(declaration)
             ?: error("Can't find psi context for $declaration")
         val actual = buildString {
@@ -43,51 +34,4 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiSingl
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
-
-    private fun getContainingKtLightClass(
-        declaration: KtDeclaration,
-        ktFile: KtFile,
-    ): KtLightClass {
-        val project = ktFile.project
-        return createLightClassByContainingClass(declaration, project)
-            ?: getFacadeLightClass(ktFile, project)
-            ?: error("Can't get or create containing KtLightClass for $declaration")
-
-    }
-
-    private fun getFacadeLightClass(
-        ktFile: KtFile,
-        project: Project,
-    ): KtLightClass? = project.getService(KotlinAsJavaSupport::class.java).getLightFacade(ktFile)
-
-    private fun createLightClassByContainingClass(
-        declaration: KtDeclaration,
-        project: Project
-    ): KtLightClass? {
-        val containingClass = declaration.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return null
-        return KotlinAsJavaSupport.getInstance(project).getLightClass(containingClass)
-    }
-
-    private fun KtLightClass.findLightDeclarationContext(ktDeclaration: KtDeclaration): KtLightElement<*, *>? {
-        val selfOrParents = listOf(ktDeclaration) + ktDeclaration.parents.filterIsInstance<KtDeclaration>()
-        var result: KtLightElement<*, *>? = null
-        val visitor = object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                if (element !is KtLightElement<*, *>) return
-                // NB: intentionally visit members first so that `self` can be found first if matched
-                if (element is PsiClass) {
-                    element.fields.forEach { it.accept(this) }
-                    element.methods.forEach { it.accept(this) }
-                    element.innerClasses.forEach { it.accept(this) }
-                }
-                if (result == null && element.kotlinOrigin in selfOrParents) {
-                    result = element
-                    return
-                }
-            }
-        }
-        accept(visitor)
-        return result
-    }
-
 }
