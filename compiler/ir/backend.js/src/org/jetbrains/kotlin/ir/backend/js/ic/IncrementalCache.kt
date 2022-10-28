@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import java.io.BufferedOutputStream
 import java.io.File
 
 
@@ -85,18 +87,23 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
     fun buildModuleArtifactAndCommitCache(
         moduleName: String,
         externalModuleName: String?,
-        rebuiltFileFragments: Map<KotlinSourceFile, JsIrFragmentAndBinaryAst>,
+        rebuiltFileFragments: Map<KotlinSourceFile, JsIrProgramFragment>,
         signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>
     ): ModuleArtifact {
+        val serializer = JsIrAstSerializer()
+
         val fileArtifacts = kotlinLibraryHeader.sourceFiles.map { srcFile ->
             val binaryAstFile = srcFile.getCacheFile(BINARY_AST_SUFFIX)
             val rebuiltFileFragment = rebuiltFileFragments[srcFile]
             if (rebuiltFileFragment != null) {
-                binaryAstFile.apply { recreate() }.writeBytes(rebuiltFileFragment.binaryAst)
+                binaryAstFile.recreate()
+                BufferedOutputStream(binaryAstFile.outputStream()).use { bufferedOutStream ->
+                    serializer.serialize(rebuiltFileFragment, bufferedOutStream)
+                }
             }
 
             commitSourceFileMetadata(srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
-            SrcFileArtifact(srcFile.path, rebuiltFileFragment?.fragment, binaryAstFile)
+            SrcFileArtifact(srcFile.path, rebuiltFileFragment, binaryAstFile)
         }
 
         return ModuleArtifact(moduleName, fileArtifacts, cacheDir, forceRebuildJs, externalModuleName)
