@@ -1,7 +1,5 @@
-enum class Style {
+enum class Style(value: kotlin.String) {
   SHEET;
-
-  constructor(value: kotlin.String)
 
   val value: kotlin.String
 

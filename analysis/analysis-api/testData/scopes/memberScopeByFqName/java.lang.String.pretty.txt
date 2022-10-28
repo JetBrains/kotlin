@@ -2,11 +2,12 @@ private val value: kotlin.CharArray!
 
 private open var hash: kotlin.Int
 
-public/*package*/ open fun hash32(): kotlin.Int
+open fun hash32(): kotlin.Int
 
 private open var hash32: kotlin.Int
 
 open val length: kotlin.Int
+  open get()
 
 open fun isEmpty(): kotlin.Boolean
 
@@ -18,7 +19,7 @@ open fun codePointCount(beginIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.In
 
 open fun offsetByCodePoints(index: kotlin.Int, codePointOffset: kotlin.Int): kotlin.Int
 
-public/*package*/ open fun getChars(dst: kotlin.CharArray!, dstBegin: kotlin.Int)
+open fun getChars(dst: kotlin.CharArray!, dstBegin: kotlin.Int)
 
 open fun getChars(srcBegin: kotlin.Int, srcEnd: kotlin.Int, dst: kotlin.CharArray!, dstBegin: kotlin.Int)
 
@@ -95,9 +96,9 @@ open fun replaceFirst(regex: kotlin.String!, replacement: kotlin.String!): kotli
 
 open fun replaceAll(regex: kotlin.String!, replacement: kotlin.String!): kotlin.String!
 
-open fun split(regex: kotlin.String!, limit: kotlin.Int): kotlin.Array<(out) kotlin.String!>!
+open fun split(regex: kotlin.String!, limit: kotlin.Int): (kotlin.Array<kotlin.String!>..kotlin.Array<out kotlin.String!>?)
 
-open fun split(regex: kotlin.String!): kotlin.Array<(out) kotlin.String!>!
+open fun split(regex: kotlin.String!): (kotlin.Array<kotlin.String!>..kotlin.Array<out kotlin.String!>?)
 
 open fun toLowerCase(locale: java.util.Locale!): kotlin.String!
 
@@ -117,7 +118,7 @@ open fun intern(): kotlin.String!
 
 open operator fun get(index: kotlin.Int): kotlin.Char
 
-private open class CaseInsensitiveComparator : kotlin.Any, java.util.Comparator<kotlin.String!>, java.io.Serializable
+private open class CaseInsensitiveComparator : java.util.Comparator<kotlin.String!>, java.io.Serializable
 
 constructor()
 
@@ -151,7 +152,7 @@ constructor(buffer: java.lang.StringBuffer!)
 
 constructor(builder: java.lang.StringBuilder!)
 
-public/*package*/ constructor(value: kotlin.CharArray!, share: kotlin.Boolean)
+constructor(value: kotlin.CharArray!, share: kotlin.Boolean)
 
 @kotlin.Deprecated(message = "Deprecated in Java")
-public/*package*/ constructor(offset: kotlin.Int, count: kotlin.Int, value: kotlin.CharArray!)
+constructor(offset: kotlin.Int, count: kotlin.Int, value: kotlin.CharArray!)

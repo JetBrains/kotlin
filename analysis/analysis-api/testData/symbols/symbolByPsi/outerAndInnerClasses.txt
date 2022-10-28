@@ -4,9 +4,7 @@ KtTypeParameterSymbol:
   name: T
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -17,9 +15,7 @@ KtTypeParameterSymbol:
   name: T1
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -55,9 +51,7 @@ KtTypeParameterSymbol:
   name: T2
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -93,9 +87,7 @@ KtTypeParameterSymbol:
   name: T3
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -106,9 +98,7 @@ KtTypeParameterSymbol:
   name: T4
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -119,9 +109,7 @@ KtTypeParameterSymbol:
   name: T5
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -157,9 +145,7 @@ KtTypeParameterSymbol:
   name: T6
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

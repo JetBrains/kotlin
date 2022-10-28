@@ -1,4 +1,4 @@
-open var kotlin.Int.zoo: kotlin.Unit
+open var kotlin.Int.zoo
 
 open fun foo()
 

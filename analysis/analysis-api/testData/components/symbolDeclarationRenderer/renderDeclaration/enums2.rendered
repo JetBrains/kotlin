@@ -4,14 +4,12 @@ object O1 : Some
 
 object O2 : Some
 
-enum class SomeEnum {
+enum class SomeEnum(x: Some) {
   FIRST,
   SECOND;
 
-  constructor(x: Some)
+  abstract fun check(y: Some): Boolean
 
   val x: Some
-
-  abstract fun check(y: Some): Boolean
 }
 

@@ -4,7 +4,7 @@ abstract class A {
 
 typealias TA = A
 
-class B : TA() {
+class B : A() {
   class NestedInB : A.Nested()
 }
 

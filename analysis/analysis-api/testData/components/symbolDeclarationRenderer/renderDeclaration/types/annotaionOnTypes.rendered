@@ -2,9 +2,7 @@
 annotation class A1
 
 @Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
-annotation class A2 {
-  constructor(value: String)
-
+annotation class A2(value: String) {
   val value: String
 }
 

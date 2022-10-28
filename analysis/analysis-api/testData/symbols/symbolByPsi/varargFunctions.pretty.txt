@@ -4,4 +4,4 @@ fun nullablePrimitive(vararg b: kotlin.Float?)
 
 fun nonPrimitive(vararg c: kotlin.Any)
 
-fun error(vararg d: Unresolved)
+fun error(vararg d: ERROR_TYPE(Symbol not found for Unresolved))

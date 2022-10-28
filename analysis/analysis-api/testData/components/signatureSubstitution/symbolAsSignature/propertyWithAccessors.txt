@@ -1,6 +1,8 @@
 KtDeclaration: KtProperty
 Symbol:
 var foo: kotlin.Int
+  get()
+  set(value: kotlin.Int)
 
 Signature:
 KtVariableLikeSignature:
