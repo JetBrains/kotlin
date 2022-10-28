@@ -15,7 +15,7 @@ internal object MultiplatformLayoutV2SourceDirConfigurator : KotlinAndroidSource
         val androidKotlinSourceDirectorySet = androidSourceSet.javaClass.getMethod("getKotlin")
             .invoke(androidSourceSet) as AndroidSourceDirectorySet
 
-        androidKotlinSourceDirectorySet.srcDirs(target.project.provider { kotlinSourceSet.kotlin.srcDirs })
+        androidKotlinSourceDirectorySet.setSrcDirs(listOf(target.project.provider { kotlinSourceSet.kotlin.srcDirs }))
         kotlinSourceSet.kotlin.srcDir(target.project.provider { androidSourceSet.java.srcDirs })
         kotlinSourceSet.kotlin.srcDir("src/${androidSourceSet.name}/kotlin")
     }
