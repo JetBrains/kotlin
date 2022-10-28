@@ -59,3 +59,27 @@ internal inline fun <E> buildSetUntil(to: Int, builderAction: MutableSet<E>.(Int
 internal inline fun <K, V> buildMapUntil(to: Int, builderAction: MutableMap<K, V>.(Int) -> Unit): Map<K, V> {
     return buildMap(to) { repeat(to) { builderAction(it) } }
 }
+
+internal class StopwatchIC {
+    private var lapStart: Long = 0
+    private var lapDescription: String? = null
+
+    private val lapsImpl = mutableListOf<Pair<String, Long>>()
+
+    val laps: List<Pair<String, Long>>
+        get() = lapsImpl
+
+    fun startNext(description: String) {
+        val now = System.nanoTime()
+        stop(now)
+        lapDescription = description
+        lapStart = now
+    }
+
+    fun stop(stopTime: Long? = null) {
+        lapDescription?.let { description ->
+            lapsImpl += description to ((stopTime ?: System.nanoTime()) - lapStart)
+        }
+        lapDescription = null
+    }
+}

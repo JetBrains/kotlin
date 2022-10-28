@@ -104,7 +104,7 @@ class JsIrBackendFacade(
                         caches = testServices.jsIrIncrementalDataProvider.getCaches(),
                         relativeRequirePath = false
                     )
-                    jsExecutableProducer.buildExecutable(it.perModule, true)
+                    jsExecutableProducer.buildExecutable(it.perModule, true).compilationOut
                 },
                 tsDefinitions = null
             )

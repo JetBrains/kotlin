@@ -181,7 +181,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             relativeRequirePath = true
         )
 
-        return jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true) {}
+        return jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true).compilationOut
     }
 
     private fun buildBinaryNoIC(
