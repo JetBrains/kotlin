@@ -107,14 +107,14 @@ public class DebugSymbolRenderer(
     }
 
     context(KtAnalysisSession)
-    private fun PrettyPrinter.renderSymbolInternals(symbol: KtSymbol, customIgnoredPropertynames: List<String> = emptyList()) {
+    private fun PrettyPrinter.renderSymbolInternals(symbol: KtSymbol, customIgnoredPropertyNames: List<String> = emptyList()) {
         renderSymbolHeader(symbol)
         val apiClass = getSymbolApiClass(symbol)
         withIndent {
             apiClass.members
                 .asSequence()
                 .filterIsInstance<KProperty<*>>()
-                .filter { it.name !in ignoredPropertyNames && it.name !in customIgnoredPropertynames }
+                .filter { it.name !in ignoredPropertyNames && it.name !in customIgnoredPropertyNames }
                 .sortedBy { it.name }
                 .forEach { member ->
                     renderProperty(
