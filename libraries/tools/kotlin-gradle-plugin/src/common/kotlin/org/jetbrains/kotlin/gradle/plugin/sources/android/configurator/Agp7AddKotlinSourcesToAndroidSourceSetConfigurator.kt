@@ -15,6 +15,6 @@ object Agp7AddKotlinSourcesToAndroidSourceSetConfigurator: KotlinAndroidSourceSe
         val androidKotlinSourceDirectorySet = androidSourceSet.javaClass.getMethod("getKotlin")
             .invoke(androidSourceSet) as AndroidSourceDirectorySet
 
-        androidKotlinSourceDirectorySet.srcDirs(target.project.provider { kotlinSourceSet.kotlin.srcDirs })
+        androidKotlinSourceDirectorySet.setSrcDirs(listOf(target.project.provider { kotlinSourceSet.kotlin.srcDirs }))
     }
 }
