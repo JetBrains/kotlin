@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -27,7 +27,7 @@ fun interface JsIrCompilerICInterface {
         allModules: Collection<IrModuleFragment>,
         dirtyFiles: Collection<IrFile>,
         mainArguments: List<String>?
-    ): List<JsIrFragmentAndBinaryAst>
+    ): List<Pair<IrFile, JsIrProgramFragment>>
 }
 
 fun interface JsIrCompilerICInterfaceFactory {
@@ -567,13 +567,13 @@ class CacheUpdater(
     private fun buildModuleArtifactsAndCommitCache(
         jsIrLinker: JsIrLinker,
         loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
-        rebuiltFileFragments: List<JsIrFragmentAndBinaryAst>
+        rebuiltFileFragments: List<Pair<IrFile, JsIrProgramFragment>>
     ): List<ModuleArtifact> {
         stopwatch.startNext("Cache committing")
         val fragmentToLibName = loadedFragments.entries.associate { it.value to it.key }
 
         val rebuiltSrcFiles = rebuiltFileFragments.groupBy {
-            fragmentToLibName[it.irFile.module] ?: notFoundIcError("loaded fragment lib name", srcFile = KotlinSourceFile(it.irFile))
+            fragmentToLibName[it.first.module] ?: notFoundIcError("loaded fragment lib name", srcFile = KotlinSourceFile(it.first))
         }
 
         val visited = hashSetOf<KotlinLibrary>()
@@ -585,7 +585,7 @@ class CacheUpdater(
                 val libFile = KotlinLibraryFile(lib)
                 val incrementalCache = getLibIncrementalCache(libFile)
                 val libFragment = loadedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)
-                val libRebuiltFiles = rebuiltSrcFiles[libFile]?.associateBy { KotlinSourceFile(it.irFile) } ?: emptyMap()
+                val libRebuiltFiles = rebuiltSrcFiles[libFile]?.associate { KotlinSourceFile(it.first) to it.second } ?: emptyMap()
                 val moduleDeserializer = jsIrLinker.moduleDeserializer(libFragment.descriptor)
 
                 val signatureToIndexMapping = moduleDeserializer.fileDeserializers().associate {
@@ -675,7 +675,7 @@ class CacheUpdater(
         compilerForIC: JsIrCompilerICInterface,
         loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
         dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>
-    ): List<JsIrFragmentAndBinaryAst> {
+    ): List<Pair<IrFile, JsIrProgramFragment>> {
         stopwatch.startNext("Processing IR - lowering")
         val result = compilerForIC.compile(
             allModules = loadedFragments.values,
@@ -779,7 +779,7 @@ fun rebuildCacheForDirtyFiles(
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName>,
     mainArguments: List<String>?,
-): Pair<IrModuleFragment, List<JsIrFragmentAndBinaryAst>> {
+): Pair<IrModuleFragment, List<Pair<IrFile, JsIrProgramFragment>>> {
     val emptyMetadata = object : KotlinSourceFileExports() {
         override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
     }

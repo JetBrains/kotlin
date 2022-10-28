@@ -53,7 +53,7 @@ class JsIrCompilerWithIC(
         allModules: Collection<IrModuleFragment>,
         dirtyFiles: Collection<IrFile>,
         mainArguments: List<String>?
-    ): List<JsIrFragmentAndBinaryAst> {
+    ): List<Pair<IrFile, JsIrProgramFragment>> {
         val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
 
         allModules.forEach {

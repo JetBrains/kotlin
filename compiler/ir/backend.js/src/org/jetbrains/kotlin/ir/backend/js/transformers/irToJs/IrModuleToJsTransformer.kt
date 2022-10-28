@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.*
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
-import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
@@ -71,8 +70,6 @@ enum class TranslationMode(
         }
     }
 }
-
-class JsIrFragmentAndBinaryAst(val irFile: IrFile, val fragment: JsIrProgramFragment, val binaryAst: ByteArray)
 
 class JsCodeGenerator(
     private val program: JsIrProgram,
@@ -177,20 +174,15 @@ class IrModuleToJsTransformer(
         return makeJsCodeGeneratorFromIr(exportData, mode) to dts
     }
 
-    fun generateBinaryAst(files: Collection<IrFile>, allModules: Collection<IrModuleFragment>): List<JsIrFragmentAndBinaryAst> {
+    fun generateBinaryAst(files: Collection<IrFile>, allModules: Collection<IrModuleFragment>): List<Pair<IrFile, JsIrProgramFragment>> {
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
 
         val exportData = files.map { it to exportModelGenerator.generateExportWithExternals(it) }
 
         doStaticMembersLowering(allModules)
 
-        val serializer = JsIrAstSerializer()
         return exportData.map { (file, exports) ->
-            val fragment = generateProgramFragment(file, exports, minimizedMemberNames = false)
-            val output = ByteArrayOutputStream()
-            serializer.serialize(fragment, output)
-            val binaryAst = output.toByteArray()
-            JsIrFragmentAndBinaryAst(file, fragment, binaryAst)
+            file to generateProgramFragment(file, exports, minimizedMemberNames = false)
         }
     }
 
@@ -490,4 +482,3 @@ fun generateSingleWrappedModuleBody(
         sourceMapBuilder?.build()
     )
 }
-
