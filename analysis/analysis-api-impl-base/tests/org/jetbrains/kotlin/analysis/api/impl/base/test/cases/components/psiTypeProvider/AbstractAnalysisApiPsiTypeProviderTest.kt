@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
@@ -31,7 +33,7 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiBased
             executeOnPooledThreadInReadAction {
                 analyze(declaration) {
                     val ktType = declaration.getReturnKtType()
-                    appendLine("KtType: ${ktType.render()}")
+                    appendLine("KtType: ${ktType.render(position = Variance.INVARIANT)}")
                     appendLine("PsiType: ${ktType.asPsiType(psiContext)}")
                 }
             }

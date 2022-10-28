@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.types.Variance
 
 /**
  * KtType to string renderer options
  * @see KtType
- * @see KtSymbolDeclarationRendererProvider.render
+ * @see KtSymbolDeclarationRendererProvider.renderType
  */
 public data class KtTypeRendererOptions(
     /**
@@ -49,7 +53,7 @@ public data class KtTypeRendererOptions(
 /**
  * KtSymbol to string renderer options
  * @see KtSymbol
- * @see KtSymbolDeclarationRendererProvider.render
+ * @see KtSymbolDeclarationRendererProvider.renderType
  */
 public data class KtDeclarationRendererOptions(
     /**
@@ -127,9 +131,9 @@ public enum class RendererModifier(public val includeByDefault: Boolean) {
 }
 
 public abstract class KtSymbolDeclarationRendererProvider : KtAnalysisSessionComponent() {
-    public abstract fun renderDeclaration(symbol: KtDeclarationSymbol, options: KtDeclarationRendererOptions): String
+    public abstract fun renderDeclaration(symbol: KtDeclarationSymbol, renderer: KtDeclarationRenderer): String
 
-    public abstract fun render(type: KtType, options: KtTypeRendererOptions): String
+    public abstract fun renderType(type: KtType, renderer: KtTypeRenderer, position: Variance): String
 }
 
 /**
@@ -139,12 +143,15 @@ public interface KtSymbolDeclarationRendererMixIn : KtAnalysisSessionMixIn {
     /**
      * Render symbol into the representable Kotlin string
      */
-    public fun KtDeclarationSymbol.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
-        withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.renderDeclaration(this, options) }
+    public fun KtDeclarationSymbol.render(renderer: KtDeclarationRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES): String =
+        withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.renderDeclaration(this, renderer) }
 
     /**
      * Render kotlin type into the representable Kotlin type string
      */
-    public fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
-        withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.render(this, options) }
+    public fun KtType.render(
+        renderer: KtTypeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES,
+        position: Variance,
+    ): String =
+        withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.renderType(this, renderer, position) }
 }
