@@ -118,10 +118,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(annotation) {
-            withCopy()
-        }
-
         builder(receiverParameter) {
             withCopy()
         }
