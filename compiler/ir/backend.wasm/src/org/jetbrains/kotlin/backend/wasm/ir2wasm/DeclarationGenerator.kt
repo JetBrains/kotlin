@@ -133,6 +133,10 @@ class DeclarationGenerator(
             isGetUnitFunction = declaration == unitGetInstanceFunction
         )
 
+        if (declaration is IrConstructor) {
+            bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
+        }
+
         require(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
         declaration.body?.acceptVoid(bodyBuilder)
 
