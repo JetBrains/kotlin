@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -27,43 +26,64 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class ConstTransformer(private val context: JsIrBackendContext) : IrElementTransformerVoid() {
     private fun <C> lowerConst(
+        expression: IrConst<*>,
         irClass: IrClassSymbol,
         carrierFactory: (Int, Int, IrType, C) -> IrExpression,
         vararg args: C
     ): IrExpression {
         val constructor = irClass.constructors.single { it.owner.isPrimary }
         val argType = constructor.owner.valueParameters.first().type
-        return IrConstructorCallImpl.fromSymbolOwner(irClass.defaultType, constructor).apply {
+        return IrConstructorCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset, irClass.defaultType, constructor).apply {
             for (i in args.indices) {
-                putValueArgument(i, carrierFactory(UNDEFINED_OFFSET, UNDEFINED_OFFSET, argType, args[i]))
+                putValueArgument(i, carrierFactory(startOffset, endOffset, argType, args[i]))
             }
         }
     }
 
-    private fun createLong(v: Long): IrExpression =
-        lowerConst(context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
+    private fun createLong(expression: IrConst<*>, v: Long): IrExpression =
+        lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
 
     override fun visitConst(expression: IrConst<*>): IrExpression {
         with(context.intrinsics) {
             if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
                 return when (expression.type.classifierOrNull) {
-                    uByteClassSymbol -> lowerConst(uByteClassSymbol, IrConstImpl.Companion::byte, IrConstKind.Byte.valueOf(expression))
+                    uByteClassSymbol -> lowerConst(
+                        expression,
+                        uByteClassSymbol,
+                        IrConstImpl.Companion::byte,
+                        IrConstKind.Byte.valueOf(expression)
+                    )
 
-                    uShortClassSymbol -> lowerConst(uShortClassSymbol, IrConstImpl.Companion::short, IrConstKind.Short.valueOf(expression))
+                    uShortClassSymbol -> lowerConst(
+                        expression,
+                        uShortClassSymbol,
+                        IrConstImpl.Companion::short,
+                        IrConstKind.Short.valueOf(expression)
+                    )
 
-                    uIntClassSymbol -> lowerConst(uIntClassSymbol, IrConstImpl.Companion::int, IrConstKind.Int.valueOf(expression))
+                    uIntClassSymbol -> lowerConst(
+                        expression,
+                        uIntClassSymbol,
+                        IrConstImpl.Companion::int,
+                        IrConstKind.Int.valueOf(expression)
+                    )
 
-                    uLongClassSymbol -> lowerConst(uLongClassSymbol, { _, _, _, v -> createLong(v) }, IrConstKind.Long.valueOf(expression))
+                    uLongClassSymbol -> lowerConst(
+                        expression,
+                        uLongClassSymbol,
+                        { _, _, _, v -> createLong(expression, v) },
+                        IrConstKind.Long.valueOf(expression)
+                    )
 
                     else -> compilationException("Unknown unsigned type", expression)
                 }
             }
             return when {
                 expression.kind is IrConstKind.Char ->
-                    lowerConst(charClassSymbol, IrConstImpl.Companion::int, IrConstKind.Char.valueOf(expression).code)
+                    lowerConst(expression, charClassSymbol, IrConstImpl.Companion::int, IrConstKind.Char.valueOf(expression).code)
 
                 expression.kind is IrConstKind.Long ->
-                    createLong(IrConstKind.Long.valueOf(expression))
+                    createLong(expression, IrConstKind.Long.valueOf(expression))
 
                 else -> super.visitConst(expression)
             }
