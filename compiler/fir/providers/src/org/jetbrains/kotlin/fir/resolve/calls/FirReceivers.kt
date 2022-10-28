@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.smartcastScope
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -100,10 +99,20 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     final override var receiverExpression: FirExpression = originalReceiverExpression
         private set
 
+    @RequiresOptIn
+    annotation class ImplicitReceiverInternals
+
+    @OptIn(ImplicitReceiverInternals::class)
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Builder inference should not modify implicit receivers. KT-54708")
+    fun updateTypeInBuilderInference(type: ConeKotlinType) {
+        updateTypeFromSmartcast(type)
+    }
+
     /*
      * Should be called only in ImplicitReceiverStack
      */
-    fun replaceType(type: ConeKotlinType) {
+    @ImplicitReceiverInternals
+    fun updateTypeFromSmartcast(type: ConeKotlinType) {
         if (type == this.type) return
         if (!mutable) throw IllegalStateException("Cannot mutate an immutable ImplicitReceiverValue")
         this.type = type

@@ -242,7 +242,8 @@ class FirBuilderInferenceSession(
         lambda.transformSingle(stubTypeSubstitutor, null)
 
         for (receiver in lambdaImplicitReceivers) {
-            receiver.replaceType(substitutor.substituteOrSelf(receiver.type))
+            @Suppress("DEPRECATION_ERROR")
+            receiver.updateTypeInBuilderInference(substitutor.substituteOrSelf(receiver.type))
         }
 
         // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
