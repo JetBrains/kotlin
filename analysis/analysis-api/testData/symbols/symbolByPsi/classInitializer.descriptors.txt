@@ -57,7 +57,7 @@ KtClassInitializerSymbol:
   origin: SOURCE
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingModule: Could not render due to org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments: Unexpected KtSymbol KtFe10PsiClassInitializerSymbol
+  getContainingModule: Could not render due to java.lang.StackOverflowError
 
   deprecationStatus: null
 
