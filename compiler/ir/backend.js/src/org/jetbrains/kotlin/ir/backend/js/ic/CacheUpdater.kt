@@ -116,7 +116,7 @@ class CacheUpdater(
     ) : KotlinSourceFileExports() {
         override fun getExportedSignatures(): Set<IdSignature> = allExportedSignatures
 
-        val allExportedSignatures = mutableSetOf<IdSignature>()
+        val allExportedSignatures = hashSetOf<IdSignature>()
     }
 
     private class DirtyFileMetadata(
@@ -129,13 +129,13 @@ class CacheUpdater(
     ) : KotlinSourceFileMetadata() {
         fun addInverseDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature) =
             when (val signatures = inverseDependencies[lib, src]) {
-                null -> inverseDependencies[lib, src] = mutableSetOf(signature)
+                null -> inverseDependencies[lib, src] = hashSetOf(signature)
                 else -> signatures += signature
             }
 
         fun addDirectDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature, hash: ICHash) =
             when (val signatures = directDependencies[lib, src]) {
-                null -> directDependencies[lib, src] = mutableMapOf(signature to hash)
+                null -> directDependencies[lib, src] = hashMapOf(signature to hash)
                 else -> signatures[signature] = hash
             }
     }
@@ -194,7 +194,7 @@ class CacheUpdater(
     }
 
     private fun loadModifiedFiles(): KotlinSourceFileMap<KotlinSourceFileMetadata> {
-        val removedFilesMetadata = mutableMapOf<KotlinLibraryFile, Map<KotlinSourceFile, KotlinSourceFileMetadata>>()
+        val removedFilesMetadata = hashMapOf<KotlinLibraryFile, Map<KotlinSourceFile, KotlinSourceFileMetadata>>()
 
         val modifiedFiles = KotlinSourceFileMap(incrementalCaches.entries.associate { (lib, cache) ->
             val (dirtyFiles, removedFiles, newFiles, modifiedConfigFiles) = cache.collectModifiedFiles(configHash)
@@ -225,7 +225,7 @@ class CacheUpdater(
         val exportedSymbols = KotlinSourceFileMutableMap<KotlinSourceFileExports>()
 
         for ((libFile, srcFiles) in dirtyFiles) {
-            val exportedSymbolFiles = mutableMapOf<KotlinSourceFile, KotlinSourceFileExports>()
+            val exportedSymbolFiles = HashMap<KotlinSourceFile, KotlinSourceFileExports>(srcFiles.size)
             for ((srcFile, srcFileMetadata) in srcFiles) {
                 val loadingFileExports = DirtyFileExports()
                 for ((dependentLib, dependentFiles) in srcFileMetadata.inverseDependencies) {
@@ -261,7 +261,7 @@ class CacheUpdater(
     }
 
     private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSymbol>): Map<IdSignature, IrSymbol> {
-        return buildMap(deserializedSymbols.size) {
+        return HashMap<IdSignature, IrSymbol>(deserializedSymbols.size).apply {
             for ((signature, symbol) in deserializedSymbols) {
                 put(signature, symbol)
 
@@ -347,7 +347,7 @@ class CacheUpdater(
         val incrementalCache = getLibIncrementalCache(libFile)
         for (fileDeserializer in moduleDeserializer.fileDeserializers()) {
             val reachableSignatures = fileDeserializer.symbolDeserializer.signatureDeserializer.signatureToIndexMapping()
-            val maybeImportedSignatures = reachableSignatures.keys.toMutableSet()
+            val maybeImportedSignatures = HashSet(reachableSignatures.keys)
             val implementedSymbols = collectImplementedSymbol(fileDeserializer.symbolDeserializer.deserializedSymbols)
             for ((signature, symbol) in implementedSymbols) {
                 var symbolCanBeExported = maybeImportedSignatures.remove(signature)
@@ -501,7 +501,7 @@ class CacheUpdater(
                     }
                     dependentSignatures.keys != newSignatures -> {
                         val newMetadata = addNewMetadata(dependentLibFile, dependentSrcFile, dependentSrcMetadata)
-                        newMetadata.directDependencies[libFile, srcFile] = newSignatures.associateWith {
+                        newMetadata.directDependencies[libFile, srcFile] = newSignatures.associateWithTo(HashMap(newSignatures.size)) {
                             signatureHashCalculator[it] ?: notFoundIcError("signature $it hash", libFile, srcFile)
                         }
                     }
@@ -566,7 +566,7 @@ class CacheUpdater(
             fragmentToLibName[it.irFile.module] ?: notFoundIcError("loaded fragment lib name", srcFile = KotlinSourceFile(it.irFile))
         }
 
-        val visited = mutableSetOf<KotlinLibrary>()
+        val visited = hashSetOf<KotlinLibrary>()
         val artifacts = mutableListOf<ModuleArtifact>()
         fun addArtifact(lib: KotlinLibrary) {
             if (visited.add(lib)) {

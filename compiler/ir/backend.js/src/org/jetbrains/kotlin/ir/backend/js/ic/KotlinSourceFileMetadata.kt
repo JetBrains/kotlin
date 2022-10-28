@@ -53,17 +53,17 @@ open class KotlinSourceFileMap<out T>(files: Map<KotlinLibraryFile, Map<KotlinSo
 }
 
 class KotlinSourceFileMutableMap<T>(
-    private val files: MutableMap<KotlinLibraryFile, MutableMap<KotlinSourceFile, T>> = mutableMapOf()
+    private val files: MutableMap<KotlinLibraryFile, MutableMap<KotlinSourceFile, T>> = hashMapOf()
 ) : KotlinSourceFileMap<T>(files) {
 
     operator fun set(libFile: KotlinLibraryFile, sourceFile: KotlinSourceFile, data: T) = getOrPutFiles(libFile).put(sourceFile, data)
     operator fun set(libFile: KotlinLibraryFile, sourceFiles: MutableMap<KotlinSourceFile, T>) = files.put(libFile, sourceFiles)
 
-    fun getOrPutFiles(libFile: KotlinLibraryFile) = files.getOrPut(libFile) { mutableMapOf() }
+    fun getOrPutFiles(libFile: KotlinLibraryFile) = files.getOrPut(libFile) { hashMapOf() }
 
     fun copyFilesFrom(other: KotlinSourceFileMap<T>) {
         for ((libFile, srcFiles) in other) {
-            files.getOrPut(libFile) { mutableMapOf() } += srcFiles
+            files.getOrPut(libFile) { hashMapOf() } += srcFiles
         }
     }
 
@@ -81,11 +81,11 @@ class KotlinSourceFileMutableMap<T>(
 }
 
 fun <T> KotlinSourceFileMap<T>.toMutable(): KotlinSourceFileMutableMap<T> {
-    return KotlinSourceFileMutableMap(entries.associateTo(mutableMapOf()) { it.key to it.value.toMutableMap() })
+    return KotlinSourceFileMutableMap(entries.associateTo(HashMap(entries.size)) { it.key to HashMap(it.value) })
 }
 
 fun KotlinSourceFileMap<Set<IdSignature>>.flatSignatures(): Set<IdSignature> {
-    val allSignatures = mutableSetOf<IdSignature>()
+    val allSignatures = hashSetOf<IdSignature>()
     forEachFile { _, _, signatures -> allSignatures += signatures }
     return allSignatures
 }

@@ -101,7 +101,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
 
     private fun IrClass.fieldData(): Map<IrField, String> {
         return context.fieldDataCache.getOrPut(this) {
-            val nameCnt = mutableMapOf<String, Int>()
+            val nameCnt = hashMapOf<String, Int>()
 
             val allClasses = DFS.topologicalOrder(listOf(this)) { node ->
                 node.superTypes.mapNotNull {
@@ -109,7 +109,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                 }
             }
 
-            val result = mutableMapOf<IrField, String>()
+            val result = hashMapOf<IrField, String>()
 
             if (minimizedMemberNames) {
                 allClasses.reversed().forEach {

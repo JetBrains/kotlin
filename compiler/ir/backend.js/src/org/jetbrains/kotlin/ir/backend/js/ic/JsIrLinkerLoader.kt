@@ -62,7 +62,7 @@ internal class JsIrLinkerLoader(
     }
 
     private fun loadModules(): Map<ModuleDescriptor, KotlinLibrary> {
-        val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
+        val descriptors = hashMapOf<KotlinLibrary, ModuleDescriptorImpl>()
         var runtimeModule: ModuleDescriptorImpl? = null
 
         // TODO: deduplicate this code using part from klib.kt

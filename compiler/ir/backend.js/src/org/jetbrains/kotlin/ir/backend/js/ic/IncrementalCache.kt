@@ -25,7 +25,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
 
     private var forceRebuildJs = false
     private val cacheDir = File(cachePath)
-    private val signatureToIndexMappingFromMetadata = mutableMapOf<KotlinSourceFile, MutableMap<IdSignature, Int>>()
+    private val signatureToIndexMappingFromMetadata = hashMapOf<KotlinSourceFile, MutableMap<IdSignature, Int>>()
 
     private val libraryFile = KotlinLibraryFile(library)
 
@@ -69,7 +69,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
         override val directDependencies = KotlinSourceFileMap<Map<IdSignature, ICHash>>(emptyMap())
     }
 
-    private val kotlinLibrarySourceFileMetadata = mutableMapOf<KotlinSourceFile, KotlinSourceFileMetadata>()
+    private val kotlinLibrarySourceFileMetadata = hashMapOf<KotlinSourceFile, KotlinSourceFileMetadata>()
 
     private fun KotlinSourceFile.getCacheFile(suffix: String) = File(cacheDir, "${File(path).name}.${path.stringHashForIC()}.$suffix")
 
@@ -123,11 +123,11 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
         }
 
         val cachedFingerprints = loadCachedFingerprints()
-        val deletedFiles = cachedFingerprints.keys.toMutableSet()
+        val deletedFiles = HashSet(cachedFingerprints.keys)
         val unknownFiles = mutableSetOf<KotlinSourceFile>()
 
         val newFingerprints = kotlinLibraryHeader.sourceFiles.mapIndexed { index, file -> file to library.fingerprint(index) }
-        val modifiedFiles = buildMap(newFingerprints.size) {
+        val modifiedFiles = HashMap<KotlinSourceFile, KotlinSourceFileMetadata>(newFingerprints.size).apply {
             for ((file, fileNewFingerprint) in newFingerprints) {
                 val oldFingerprint = cachedFingerprints[file]
                 if (oldFingerprint == null) {
@@ -170,7 +170,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
 
     private fun fetchSourceFileMetadata(srcFile: KotlinSourceFile, loadSignatures: Boolean) =
         kotlinLibrarySourceFileMetadata.getOrPut(srcFile) {
-            val signatureToIndexMapping = signatureToIndexMappingFromMetadata.getOrPut(srcFile) { mutableMapOf() }
+            val signatureToIndexMapping = signatureToIndexMappingFromMetadata.getOrPut(srcFile) { hashMapOf() }
             val deserializer: IdSignatureDeserializer by lazy {
                 kotlinLibraryHeader.signatureDeserializers[srcFile] ?: notFoundIcError("signature deserializer", libraryFile, srcFile)
             }

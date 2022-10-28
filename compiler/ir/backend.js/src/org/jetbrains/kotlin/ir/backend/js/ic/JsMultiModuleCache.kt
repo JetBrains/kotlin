@@ -23,7 +23,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
 
     class CachedModuleInfo(val artifact: ModuleArtifact, val jsIrHeader: JsIrModuleHeader, var crossModuleReferencesHash: ICHash = ICHash())
 
-    private val headerToCachedInfo = mutableMapOf<JsIrModuleHeader, CachedModuleInfo>()
+    private val headerToCachedInfo = hashMapOf<JsIrModuleHeader, CachedModuleInfo>()
 
     private fun ModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
         val definitions = mutableSetOf<String>()
