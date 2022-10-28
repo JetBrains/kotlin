@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.scopes
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -44,14 +44,6 @@ internal abstract class KtFe10ScopeResolution : KtScope, KtLifetimeOwner {
             .mapNotNull { it.toKtSymbol(analysisContext) as? KtClassifierSymbol }
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
-        return scope
-            .getContributedDescriptors(kindFilter = DescriptorKindFilter.FUNCTIONS)
-            .asSequence()
-            .filterIsInstance<ConstructorDescriptor>()
-            .map { it.toKtConstructorSymbol(analysisContext) }
-    }
-
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
@@ -71,10 +63,20 @@ internal class KtFe10ScopeLexical(
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         return emptySet()
     }
+
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+        return scope
+            .getContributedDescriptors(kindFilter = DescriptorKindFilter.FUNCTIONS)
+            .asSequence()
+            .filterIsInstance<ConstructorDescriptor>()
+            .map { it.toKtConstructorSymbol(analysisContext) }
+    }
+
 }
 
 internal open class KtFe10ScopeMember(
     override val scope: MemberScope,
+    private val constructors: Collection<ConstructorDescriptor>,
     override val analysisContext: Fe10AnalysisContext
 ) : KtFe10ScopeResolution() {
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
@@ -83,5 +85,9 @@ internal open class KtFe10ScopeMember(
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         return scope.getClassifierNames() ?: emptySet()
+    }
+
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = sequence {
+        constructors.forEach { yield(it.toKtConstructorSymbol(analysisContext)) }
     }
 }
