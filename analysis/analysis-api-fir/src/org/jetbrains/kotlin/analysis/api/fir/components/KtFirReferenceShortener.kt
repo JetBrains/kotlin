@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -601,8 +600,15 @@ private class ElementsToShortenCollector(
         // If its parent has a type parameter, we cannot shorten it because it will lose its type parameter.
         if (classSymbol.hasTypeParameterFromParent()) return false
 
+        /**
+         * Class use-site member scopes may contain classifiers which are not actually available without explicit import.
+         *
+         * See KTIJ-24684 and KTIJ-24662 for examples.
+         */
+        val scopes = positionScopes.filterNot { it is FirClassUseSiteMemberScope }
+
         val name = classId.shortClassName
-        val availableClassifiers = shorteningContext.findClassifiersInScopesByName(positionScopes, name)
+        val availableClassifiers = shorteningContext.findClassifiersInScopesByName(scopes, name)
         val matchingAvailableSymbol = availableClassifiers.firstOrNull { it.availableSymbol.symbol == classId }
         val scopeForClass = matchingAvailableSymbol?.scope ?: return false
 
@@ -618,7 +624,7 @@ private class ElementsToShortenCollector(
          *      my.component.foo::class.java  // If we drop `my.component`, it will reference `B` instead of `A`
          *    }
          */
-        if (shorteningContext.findPropertiesInScopes(positionScopes, name).isNotEmpty()) {
+        if (shorteningContext.findPropertiesInScopes(scopes, name).isNotEmpty()) {
             val firForElement = element.getOrBuildFir(firResolveSession) as? FirQualifiedAccessExpression
             val typeArguments = firForElement?.typeArguments ?: emptyList()
             val qualifiedAccessCandidates = findCandidatesForPropertyAccess(classSymbol.annotations, typeArguments, name, element)
