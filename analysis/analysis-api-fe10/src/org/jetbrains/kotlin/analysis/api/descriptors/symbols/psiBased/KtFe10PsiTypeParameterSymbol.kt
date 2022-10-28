@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 
 internal class KtFe10PsiTypeParameterSymbol(
     override val psi: KtTypeParameter,
@@ -36,7 +37,7 @@ internal class KtFe10PsiTypeParameterSymbol(
         get() = withValidityAssertion { psi.variance }
 
     override val upperBounds: List<KtType>
-        get() = withValidityAssertion { descriptor?.upperBounds?.map { it.toKtType(analysisContext) } ?: emptyList() }
+        get() = withValidityAssertion { descriptor?.upperBounds?.filterNot { it.isNullableAny() }?.map { it.toKtType(analysisContext) } ?: emptyList() }
 
     override val isReified: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.REIFIED_KEYWORD) }
