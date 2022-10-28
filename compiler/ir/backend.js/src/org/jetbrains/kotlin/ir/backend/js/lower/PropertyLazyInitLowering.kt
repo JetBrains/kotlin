@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.name.Name
@@ -101,7 +102,9 @@ class PropertyLazyInitLowering(
             }
 
         return irFactory.addFunction(file) {
-            name = Name.identifier("init properties $fileName")
+            name = Name.special("<init properties $fileName>")
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
             returnType = irBuiltIns.unitType
             visibility = INTERNAL
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION
