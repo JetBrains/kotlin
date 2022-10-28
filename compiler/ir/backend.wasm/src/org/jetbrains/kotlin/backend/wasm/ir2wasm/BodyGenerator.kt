@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
@@ -262,9 +263,8 @@ class BodyGenerator(
             return
         }
 
-        generateAnyParameters(klassSymbol)
-
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
+            generateAnyParameters(klassSymbol)
             for (i in 0 until expression.valueArgumentsCount) {
                 generateExpression(expression.getValueArgument(i)!!)
             }
@@ -272,14 +272,7 @@ class BodyGenerator(
             return
         }
 
-        val irFields: List<IrField> = klass.allFields(backendContext.irBuiltIns)
-        irFields.forEachIndexed { index, field ->
-            if (index > 1) {
-                generateDefaultInitializerForType(context.transformType(field.type), body)
-            }
-        }
-
-        body.buildStructNew(wasmGcType)
+        body.buildRefNull(WasmHeapType.Simple.NullNone) // this = null
         generateCall(expression)
     }
 
@@ -294,6 +287,26 @@ class BodyGenerator(
 
         body.buildConstI32Symbol(context.referenceClassId(klassSymbol))
         body.buildConstI32(0) // Any::_hashCode
+    }
+
+    fun generateObjectCreationPrefixIfNeeded(constructor: IrConstructor) {
+        val parentClass = constructor.parentAsClass
+        if (constructor.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) return
+        if (parentClass.isAbstractOrSealed) return
+        val thisParameter = context.referenceLocal(parentClass.thisReceiver!!.symbol)
+        body.buildGetLocal(thisParameter)
+        body.buildInstr(WasmOp.REF_IS_NULL)
+        body.buildIf("this_init")
+        generateAnyParameters(parentClass.symbol)
+        val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
+        irFields.forEachIndexed { index, field ->
+            if (index > 1) {
+                generateDefaultInitializerForType(context.transformType(field.type), body)
+            }
+        }
+        body.buildStructNew(context.referenceGcType(parentClass.symbol))
+        body.buildSetLocal(thisParameter)
+        body.buildEnd()
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
