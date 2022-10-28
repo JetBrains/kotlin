@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types.base
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
-import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10TypeRenderer
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10DebugTypeRenderer
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -33,6 +32,6 @@ interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
 }
 
 internal fun KotlinType.asStringForDebugging(): String {
-    val renderer = KtFe10TypeRenderer(KtTypeRendererOptions.DEFAULT, isDebugText = true)
+    val renderer = KtFe10DebugTypeRenderer()
     return prettyPrint { renderer.render(this@asStringForDebugging, this) }
 }
