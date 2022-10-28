@@ -6,36 +6,38 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.Variance
 
 object TestReferenceResolveResultRenderer {
     fun KtAnalysisSession.renderResolvedTo(
         symbols: List<KtSymbol>,
-        renderingOptions: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT
+        renderer: KtDeclarationRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES,
     ) =
-        symbols.map { renderResolveResult(it, renderingOptions) }
+        symbols.map { renderResolveResult(it, renderer) }
             .sorted()
             .withIndex()
             .joinToString(separator = "\n") { "${it.index}: ${it.value}" }
 
     private fun KtAnalysisSession.renderResolveResult(
         symbol: KtSymbol,
-        renderingOptions: KtDeclarationRendererOptions
+        renderer: KtDeclarationRenderer
     ): String {
         return buildString {
             symbolContainerFqName(symbol)?.let { fqName ->
                 append("(in $fqName) ")
             }
             when (symbol) {
-                is KtDeclarationSymbol -> append(symbol.render(renderingOptions))
+                is KtDeclarationSymbol -> append(symbol.render(renderer))
                 is KtPackageSymbol -> append("package ${symbol.fqName}")
                 is KtReceiverParameterSymbol -> {
                     append("extension receiver with type ")
-                    append(symbol.type.render(renderingOptions.typeRendererOptions))
+                    append(symbol.type.render(renderer.typeRenderer, position = Variance.INVARIANT))
                 }
                 else -> error("Unexpected symbol ${symbol::class}")
             }

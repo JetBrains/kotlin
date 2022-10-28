@@ -73,7 +73,7 @@ internal class KtFe10Renderer(
 
     private fun KtFe10RendererConsumer.renderType(type: KotlinType, shouldApproximate: Boolean = false) {
         if (shouldApproximate) {
-            val approximatedType = typeApproximator.approximateToSuperType(type.unwrap(), PublicApproximatorConfiguration)
+            val approximatedType = typeApproximator.approximateToSuperType(type.unwrap(), PublicApproximatorConfiguration(localTypes = true))
                 ?: type.takeIf { it.constructor.declarationDescriptor?.name != SpecialNames.NO_NAME_PROVIDED }
                 ?: analysisContext.builtIns.anyType
 

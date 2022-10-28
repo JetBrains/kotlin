@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -41,7 +42,10 @@ internal class KtFirTypeParameterSymbol(
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val upperBounds: List<KtType> by cached {
-        firSymbol.resolvedBounds.map { type -> builder.typeBuilder.buildKtType(type) }
+        firSymbol.resolvedBounds.mapNotNull { type ->
+            if (type.isNullableAny) return@mapNotNull null
+            builder.typeBuilder.buildKtType(type)
+        }
     }
 
     override val variance: Variance get() = withValidityAssertion { firSymbol.variance }
