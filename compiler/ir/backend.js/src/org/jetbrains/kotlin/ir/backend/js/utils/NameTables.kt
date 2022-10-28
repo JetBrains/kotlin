@@ -149,13 +149,11 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
         }
     }
 
-    val signature = nameBuilder.toString()
+    val signature = abs(nameBuilder.toString().hashCode()).toString(Character.MAX_RADIX)
 
     // TODO: Use better hashCode
-    return sanitizeName(
-        declarationName,
-        withHash = false
-    ) + "_" + abs(signature.hashCode()).toString(Character.MAX_RADIX) + RESERVED_MEMBER_NAME_SUFFIX
+    val sanitizedName = sanitizeName(declarationName, withHash = false)
+    return "${sanitizedName}_$signature$RESERVED_MEMBER_NAME_SUFFIX".intern()
 }
 
 fun jsFunctionSignature(
