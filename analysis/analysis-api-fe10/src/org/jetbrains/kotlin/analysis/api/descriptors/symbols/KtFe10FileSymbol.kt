@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10AnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -32,5 +32,13 @@ internal class KtFe10FileSymbol(
 
     override fun createPointer(): KtSymbolPointer<KtFileSymbol> = withValidityAssertion {
         return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return this.file == (other as? KtFe10FileSymbol)?.file
+    }
+
+    override fun hashCode(): Int {
+        return file.hashCode()
     }
 }

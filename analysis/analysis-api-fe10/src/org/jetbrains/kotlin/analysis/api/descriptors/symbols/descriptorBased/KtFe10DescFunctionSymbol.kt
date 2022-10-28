@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescFunctionLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
@@ -18,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.CallableId
@@ -99,6 +101,9 @@ internal class KtFe10DescFunctionSymbol private constructor(
 
         return KtFe10NeverRestoringSymbolPointer()
     }
+
+    override fun equals(other: Any?): Boolean = isEqualTo(other)
+    override fun hashCode(): Int = calculateHashCode()
 
     companion object {
         fun build(descriptor: FunctionDescriptor, analysisContext: Fe10AnalysisContext): KtFe10DescFunctionSymbol {

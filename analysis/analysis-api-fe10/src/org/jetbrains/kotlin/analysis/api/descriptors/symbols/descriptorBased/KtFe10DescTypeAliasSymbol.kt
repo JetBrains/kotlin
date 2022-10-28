@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
@@ -49,4 +51,7 @@ internal class KtFe10DescTypeAliasSymbol(
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
         return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
+
+    override fun equals(other: Any?): Boolean = isEqualTo(other)
+    override fun hashCode(): Int = calculateHashCode()
 }

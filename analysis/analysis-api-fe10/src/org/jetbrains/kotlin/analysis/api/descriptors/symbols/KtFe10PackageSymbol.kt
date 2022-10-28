@@ -9,14 +9,13 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10PackageSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 
 internal class KtFe10PackageSymbol(
@@ -44,4 +43,12 @@ internal class KtFe10PackageSymbol(
                 KtSymbolOrigin.LIBRARY
             }
         }
+
+    override fun hashCode(): Int {
+        return packageName.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return packageName == (other as? KtFe10PackageSymbol)?.fqName
+    }
 }

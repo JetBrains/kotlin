@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
@@ -47,4 +49,8 @@ internal class KtFe10PsiLoopParameterLocalVariableSymbol(
     override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> = withValidityAssertion {
         return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
+
+
+    override fun equals(other: Any?): Boolean = isEqualTo(other)
+    override fun hashCode(): Int = calculateHashCode()
 }
