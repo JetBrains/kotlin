@@ -19,23 +19,24 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTreeVerifierHandler
+import org.jetbrains.kotlin.test.backend.handlers.JvmBoxRunner
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.fir2IrStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
+import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.RunnerWithTargetBackendForTestGeneratorMarker
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
-open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner(), RunnerWithTargetBackendForTestGeneratorMarker {
+open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWithTargetBackendForTestGeneratorMarker*/ {
 
-    override val targetBackend: TargetBackend
-        get() = TargetBackend.JVM_IR
     override fun TestConfigurationBuilder.configuration() {
+        globalDefaults {
+            targetBackend = TargetBackend.JVM_IR
+        }
         commonFirWithPluginFrontendConfiguration()
         useConfigurators(::TestExtensionRegistrarConfigurator)
         firHandlersStep {
@@ -49,9 +50,15 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner(), RunnerWithTa
             )
         }
         facadeStep(::JvmIrBackendFacade)
+        jvmArtifactsHandlersStep {
+            useHandlers(::JvmBoxRunner)
+        }
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
     }
 
+    /**
+     * @see org.jetbrains.kotlin.fir.dataframe.DataFrameBlackBoxCodegenTestGenerated.testLowerManualImplicitReceiver
+     */
     class TestExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
         override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
             module: TestModule,
