@@ -1,5 +1,11 @@
 enum class MyEnumClass {
-  FirstEntry,
+  FirstEntry {
+    fun a()
+  },
   SecondEntry,
-  ThirdEntry
+  ThirdEntry {
+    fun one()
+
+    fun one(i: kotlin.Int)
+  }
 }

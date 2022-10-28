@@ -4,9 +4,7 @@ KtTypeParameterSymbol:
   name: X
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

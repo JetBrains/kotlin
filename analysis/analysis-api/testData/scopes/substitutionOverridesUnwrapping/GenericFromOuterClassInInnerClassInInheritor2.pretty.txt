@@ -8,4 +8,4 @@ open fun hashCode(): kotlin.Int
 
 open fun toString(): kotlin.String
 
-inner constructor()
+constructor()

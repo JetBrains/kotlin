@@ -1,1 +1,2 @@
 val y: kotlin.Int
+  get()
