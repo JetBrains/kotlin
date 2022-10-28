@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 
-class IdSignatureHashCalculator {
+internal class IdSignatureHashCalculator {
     private val flatHashes = hashMapOf<IrFunction, ICHash>()
     private val inlineFunctionCallGraph = hashMapOf<IrFunction, Set<IrFunction>>()
     private val processingFunctions = hashSetOf<IrFunction>()
@@ -124,9 +124,11 @@ class IdSignatureHashCalculator {
         updateTransitiveHashesByCallGraph()
     }
 
-    fun addHashForSignatureIfNotExist(signature: IdSignature, symbol: IrSymbol) {
-        if (signature !in allIdSignatureHashes) {
-            allIdSignatureHashes[signature] = symbol.irSymbolHashForIC()
+    fun addAllSignatureSymbols(idSignatureToFile: Map<IdSignature, IdSignatureSource>) {
+        for ((signature, signatureSrc) in idSignatureToFile) {
+            if (signature !in allIdSignatureHashes) {
+                allIdSignatureHashes[signature] = signatureSrc.symbol.irSymbolHashForIC()
+            }
         }
     }
 

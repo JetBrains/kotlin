@@ -251,100 +251,13 @@ class CacheUpdater(
         return exportedSymbols
     }
 
-    private fun resolveFakeOverrideFunction(symbol: IrSymbol): IdSignature? {
-        return (symbol.owner as? IrSimpleFunction)?.let { overridable ->
-            if (overridable.isFakeOverride) {
-                overridable.resolveFakeOverride()?.symbol?.signature
-            } else {
-                null
-            }
-        }
-    }
-
-    private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSymbol>): Map<IdSignature, IrSymbol> {
-        return HashMap<IdSignature, IrSymbol>(deserializedSymbols.size).apply {
-            for ((signature, symbol) in deserializedSymbols) {
-                put(signature, symbol)
-
-                fun <T> addSymbol(decl: T): Boolean where T : IrDeclarationWithVisibility, T : IrSymbolOwner {
-                    when (decl.visibility) {
-                        DescriptorVisibilities.LOCAL -> return false
-                        DescriptorVisibilities.PRIVATE -> return false
-                        DescriptorVisibilities.PRIVATE_TO_THIS -> return false
-                    }
-
-                    val sig = decl.symbol.signature
-                    if (sig != null && sig !in deserializedSymbols) {
-                        return put(sig, decl.symbol) == null
-                    }
-                    return false
-                }
-
-                fun addNestedDeclarations(irClass: IrClass) {
-                    for (decl in irClass.declarations) {
-                        when (decl) {
-                            is IrSimpleFunction -> addSymbol(decl)
-                            is IrProperty -> {
-                                decl.getter?.let(::addSymbol)
-                                decl.setter?.let(::addSymbol)
-                            }
-
-                            is IrClass -> {
-                                if (addSymbol(decl)) {
-                                    addNestedDeclarations(decl)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                (symbol.owner as? IrClass)?.let(::addNestedDeclarations)
-            }
-        }
-    }
-
-    private data class SignatureSource(val lib: KotlinLibraryFile, val src: KotlinSourceFile, val symbol: IrSymbol)
-
-    private fun addParentSignatures(
-        signatures: Collection<IdSignature>,
-        idSignatureToFile: Map<IdSignature, SignatureSource>,
-        importerLibFile: KotlinLibraryFile,
-        importerSrcFile: KotlinSourceFile
-    ): Set<IdSignature> {
-        val allSignatures = HashSet<IdSignature>(signatures.size)
-
-        fun addAllParents(sig: IdSignature) {
-            val signatureSrc = idSignatureToFile[sig] ?: return
-            if (signatureSrc.lib == importerLibFile && signatureSrc.src == importerSrcFile) {
-                return
-            }
-            if (allSignatures.add(sig)) {
-                (signatureSrc.symbol.owner as? IrDeclaration)?.let { declaration ->
-                    (declaration.parent as? IrSymbolOwner)?.let { parent ->
-                        parent.symbol.signature?.let(::addAllParents)
-                    }
-                }
-            }
-        }
-
-        signatures.forEach(::addAllParents)
-
-        return allSignatures
-    }
-
-    private fun IdSignatureHashCalculator.addAllSignatureSymbols(idSignatureToFile: Map<IdSignature, SignatureSource>) {
-        for ((signature, signatureSrc) in idSignatureToFile) {
-            addHashForSignatureIfNotExist(signature, signatureSrc.symbol)
-        }
-    }
-
     private fun KotlinSourceFileMutableMap<DirtyFileMetadata>.getExportedSignaturesAndAddMetadata(
         jsIrLinker: JsIrLinker,
         irModule: IrModuleFragment,
         libFile: KotlinLibraryFile,
         dirtySrcFiles: Set<KotlinSourceFile>
-    ): Map<IdSignature, SignatureSource> {
-        val idSignatureToFile = hashMapOf<IdSignature, SignatureSource>()
+    ): Map<IdSignature, IdSignatureSource> {
+        val idSignatureToFile = hashMapOf<IdSignature, IdSignatureSource>()
         val moduleDeserializer = jsIrLinker.moduleDeserializer(irModule.descriptor)
         val incrementalCache = getLibIncrementalCache(libFile)
         for (fileDeserializer in moduleDeserializer.fileDeserializers()) {
@@ -360,7 +273,7 @@ class CacheUpdater(
                     symbolCanBeExported = true
                 }
                 if (symbolCanBeExported) {
-                    idSignatureToFile[signature] = SignatureSource(libFile, KotlinSourceFile(fileDeserializer.file), symbol)
+                    idSignatureToFile[signature] = IdSignatureSource(libFile, KotlinSourceFile(fileDeserializer.file), symbol)
                 }
             }
 
@@ -375,7 +288,7 @@ class CacheUpdater(
 
     private fun DirtyFileMetadata.setAllDependencies(
         signatureHashCalculator: IdSignatureHashCalculator,
-        idSignatureToFile: Map<IdSignature, SignatureSource>,
+        idSignatureToFile: Map<IdSignature, IdSignatureSource>,
         updatedMetadata: KotlinSourceFileMap<DirtyFileMetadata>,
         libFile: KotlinLibraryFile,
         srcFile: KotlinSourceFile
@@ -399,7 +312,7 @@ class CacheUpdater(
         loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
         dirtySrcFiles: KotlinSourceFileMap<KotlinSourceFileExports>,
     ): KotlinSourceFileMap<DirtyFileMetadata> {
-        val idSignatureToFile = hashMapOf<IdSignature, SignatureSource>()
+        val idSignatureToFile = hashMapOf<IdSignature, IdSignatureSource>()
         val updatedMetadata = KotlinSourceFileMutableMap<DirtyFileMetadata>()
 
         for ((lib, irModule) in loadedFragments) {
