@@ -56,7 +56,7 @@ internal class KtFe10DescConstructorSymbol(
 
         val callableId = descriptor.callableIdIfNotLocal
         if (callableId != null) {
-            val signature = descriptor.getSymbolPointerSignature(analysisContext)
+            val signature = descriptor.getSymbolPointerSignature()
             return KtFe10DescFunctionLikeSymbolPointer(callableId, signature)
         }
 
