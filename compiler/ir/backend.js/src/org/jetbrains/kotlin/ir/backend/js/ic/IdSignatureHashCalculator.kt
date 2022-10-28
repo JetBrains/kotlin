@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 
 class IdSignatureHashCalculator {
-    private val flatHashes = mutableMapOf<IrFunction, ICHash>()
-    private val inlineFunctionCallGraph: MutableMap<IrFunction, Set<IrFunction>> = mutableMapOf()
-    private val processingFunctions = mutableSetOf<IrFunction>()
-    private val functionTransitiveHashes = mutableMapOf<IrFunction, ICHash>()
+    private val flatHashes = hashMapOf<IrFunction, ICHash>()
+    private val inlineFunctionCallGraph = hashMapOf<IrFunction, Set<IrFunction>>()
+    private val processingFunctions = hashSetOf<IrFunction>()
+    private val functionTransitiveHashes = hashMapOf<IrFunction, ICHash>()
 
-    private val allIdSignatureHashes = mutableMapOf<IdSignature, ICHash>()
+    private val allIdSignatureHashes = hashMapOf<IdSignature, ICHash>()
 
 
     private inner class FlatHashCalculator : IrElementVisitorVoid {

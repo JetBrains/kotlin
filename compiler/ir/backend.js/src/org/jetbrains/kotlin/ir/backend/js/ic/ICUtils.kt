@@ -53,11 +53,11 @@ internal inline fun <E> buildListUntil(to: Int, builderAction: MutableList<E>.(I
 }
 
 internal inline fun <E> buildSetUntil(to: Int, builderAction: MutableSet<E>.(Int) -> Unit): Set<E> {
-    return buildSet(to) { repeat(to) { builderAction(it) } }
+    return HashSet<E>(to).apply { repeat(to) { builderAction(it) } }
 }
 
 internal inline fun <K, V> buildMapUntil(to: Int, builderAction: MutableMap<K, V>.(Int) -> Unit): Map<K, V> {
-    return buildMap(to) { repeat(to) { builderAction(it) } }
+    return HashMap<K, V>(to).apply { repeat(to) { builderAction(it) } }
 }
 
 internal class StopwatchIC {
