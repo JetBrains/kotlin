@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
-import org.jetbrains.kotlin.analysis.api.components.RendererModifier
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtRendererAnnotationsFilter
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KtPropertyAccessorsRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -89,9 +90,11 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedSingleModu
         )
     }
 
-    private val renderingOptions = KtDeclarationRendererOptions.DEFAULT.copy(
-        modifiers = RendererModifier.DEFAULT - RendererModifier.ANNOTATIONS,
-        sortNestedDeclarations = true
-    )
+    private val renderingOptions = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES.with {
+        annotationRenderer = annotationRenderer.with {
+            annotationFilter = KtRendererAnnotationsFilter.NONE
+        }
+        propertyAccessorsRenderer = KtPropertyAccessorsRenderer.NONE
+    }
 
 }

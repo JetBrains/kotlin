@@ -98,4 +98,5 @@ public enum class KtClassKind {
     ANONYMOUS_OBJECT;
 
     public val isObject: Boolean get() = this == OBJECT || this == COMPANION_OBJECT || this == ANONYMOUS_OBJECT
+    public val isClass: Boolean get() = this == CLASS || this == ANNOTATION_CLASS || this == ENUM_CLASS
 }

@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalysisApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
@@ -22,7 +23,7 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
                 ?: error("Not a typable expression ${declarationAtCaret::class} ${declarationAtCaret.text}")
             val psiType = returnType.asPsiType(declarationAtCaret)
             buildString {
-                appendLine("KtType: ${returnType.render()}")
+                appendLine("KtType: ${returnType.render(position = Variance.INVARIANT)}")
                 appendLine("PsiType: $psiType")
             }
         }

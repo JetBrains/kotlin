@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERING_MODE
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KtClassifierBodyRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import kotlin.test.fail
 
 abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
-    private val renderingOptions = KtDeclarationRendererOptions.DEFAULT
+    private val renderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
     open val prettyRenderMode: PrettyRenderingMode = PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE
 
@@ -48,8 +49,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
         val renderMode = directives[PRETTY_RENDERING_MODE].singleOrNull()
         val prettyRenderOptions = when (renderMode ?: prettyRenderMode) {
-            PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE -> renderingOptions
-            PrettyRenderingMode.RENDER_SYMBOLS_NESTED -> renderingOptions.copy(renderClassMembers = true)
+            PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE -> renderer
+            PrettyRenderingMode.RENDER_SYMBOLS_NESTED -> renderer.with {
+                classifierBodyRenderer = KtClassifierBodyRenderer.BODY_WITH_MEMBERS
+            }
         }
 
         fun KtSymbol.safePointer(): KtSymbolPointer<KtSymbol>? {

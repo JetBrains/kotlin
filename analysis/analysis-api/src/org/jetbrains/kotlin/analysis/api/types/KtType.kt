@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 public sealed interface KtType : KtLifetimeOwner, KtAnnotated {
     public val nullability: KtTypeNullability

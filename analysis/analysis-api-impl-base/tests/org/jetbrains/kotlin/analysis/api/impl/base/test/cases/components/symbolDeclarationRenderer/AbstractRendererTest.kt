@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer
 
-import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
-import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.KtRendererBodyMemberScopeSorter
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KtClassifierBodyRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtFile
@@ -17,19 +20,24 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractRendererTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val options = KtDeclarationRendererOptions.DEFAULT.copy(
-            approximateTypes = true,
-            renderClassMembers = true,
-            typeRendererOptions = KtTypeRendererOptions.SHORT_NAMES,
-            sortNestedDeclarations = true
-        )
+        val renderer = KtDeclarationRendererForSource.WITH_SHORT_NAMES.with {
+            classifierBodyRenderer = KtClassifierBodyRenderer.BODY_WITH_MEMBERS
+            bodyMemberScopeSorter = object : KtRendererBodyMemberScopeSorter {
+                context(KtAnalysisSession)
+                override fun sortMembers(members: List<KtDeclarationSymbol>, owner: KtSymbolWithMembers): List<KtDeclarationSymbol> {
+                    return KtRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
+                        .sortMembers(members, owner)
+                        .sortedBy { it.render() }
+                }
+            }
+        }
 
         val actual = executeOnPooledThreadInReadAction {
             buildString {
                 ktFile.declarations.forEach { declaration ->
                     analyseForTest(declaration) {
                         val symbol = declaration.getSymbol() as? KtDeclarationSymbol ?: return@analyseForTest
-                        append(symbol.render(options))
+                        append(symbol.render(renderer))
                         appendLine()
                         appendLine()
                     }

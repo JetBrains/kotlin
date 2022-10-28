@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiSingleFileTest(){
@@ -36,7 +37,7 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiSingl
             executeOnPooledThreadInReadAction {
                 analyze(declaration) {
                     val ktType = declaration.getReturnKtType()
-                    appendLine("KtType: ${ktType.render()}")
+                    appendLine("KtType: ${ktType.render(position = Variance.INVARIANT)}")
                     appendLine("PsiType: ${ktType.asPsiType(psiContext)}")
                 }
             }

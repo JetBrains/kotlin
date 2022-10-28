@@ -67,9 +67,14 @@ internal class KtFe10TypeProvider(
 
     override val builtinTypes: KtBuiltinTypes by lazy(LazyThreadSafetyMode.PUBLICATION) { KtFe10BuiltinTypes(analysisContext) }
 
-    override fun approximateToSuperPublicDenotableType(type: KtType): KtType? {
+    override fun approximateToSuperPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
         require(type is KtFe10Type)
-        return typeApproximator.approximateToSuperType(type.type, PublicApproximatorConfiguration)?.toKtType(analysisContext)
+        return typeApproximator.approximateToSuperType(type.type, PublicApproximatorConfiguration(approximateLocalTypes))?.toKtType(analysisContext)
+    }
+
+    override fun approximateToSubPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
+        require(type is KtFe10Type)
+        return typeApproximator.approximateToSubType(type.type, PublicApproximatorConfiguration(approximateLocalTypes))?.toKtType(analysisContext)
     }
 
     override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
