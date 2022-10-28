@@ -152,11 +152,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsAnyToString = getInternalFunction("anyToString")
     val jsCompareTo = getInternalFunction("compareTo")
     val jsEquals = getInternalFunction("equals")
-    val jsConstruct = getInternalFunction("construct")
     val jsNewTarget = getInternalFunction("jsNewTarget")
     val jsEmptyObject = getInternalFunction("emptyObject")
     val jsOpenInitializerBox = getInternalFunction("openInitializerBox")
-    val es6DefaultType = getInternalFunction("DefaultType")
 
     val jsImul = getInternalFunction("imul")
 
@@ -334,8 +332,6 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     val jsImplicitExportAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("JsImplicitExport"))
-    val innerOrLocalClassSuperTypeAnnotationSymbol =
-        context.symbolTable.referenceClass(context.getJsInternalClass("InnerOrLocalClassSuperType"))
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
     val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))

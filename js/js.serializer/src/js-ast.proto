@@ -72,10 +72,14 @@ message Expression {
         PropertyReference property_reference = 40;
         Invocation invocation = 41;
         Instantiation instantiation = 42;
+        SuperLiteral super_literal = 43;
     }
 }
 
 message ThisLiteral {
+}
+
+message SuperLiteral {
 }
 
 message NullLiteral {

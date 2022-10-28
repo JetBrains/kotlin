@@ -54,12 +54,5 @@ internal annotation class JsFun(val code: String)
 @Target(AnnotationTarget.CLASS)
 internal annotation class JsImplicitExport
 
-/**
- * The annotation is needed for annotating class declarations that is in the set of inner classes supertypes
- * to generate specific handlers for them
- */
-@Target(AnnotationTarget.CLASS)
-internal annotation class InnerOrLocalClassSuperType
-
 @Target(AnnotationTarget.CLASS)
 internal annotation class MetaClass

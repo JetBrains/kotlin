@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.getOrPut
-import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.SYNTHESIZED_DECLARATION
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -87,7 +88,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
         newConstructor.copyTypeParametersFrom(oldConstructor)
 
         val newValueParameters = mutableListOf(buildValueParameter(newConstructor) {
-            origin = BOUND_VALUE_PARAMETER
+            origin = SYNTHESIZED_DECLARATION
             name = Name.identifier(Namer.OUTER_NAME)
             index = 0
             type = outerThisType

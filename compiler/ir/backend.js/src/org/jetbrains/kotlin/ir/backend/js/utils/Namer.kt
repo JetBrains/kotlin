@@ -38,6 +38,4 @@ object Namer {
     const val KCALLABLE_ARITY = "\$arity"
 
     const val SHARED_BOX_V = "_v"
-
-    val INIT_METHOD = "\$init"
 }

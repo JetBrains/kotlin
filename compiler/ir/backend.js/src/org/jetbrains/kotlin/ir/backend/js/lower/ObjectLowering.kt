@@ -69,7 +69,7 @@ override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
                 if (initEntryInstancesFun != null)
                     +irCall(initEntryInstancesFun)
                 +irIfThen(
-                    checkNullability(instanceField),
+                    irEqualsNull(irGetField(null, instanceField)),
                     // Instance field initialized inside constructor
                     irCallConstructor(primaryConstructor.symbol, emptyList())
                 )
@@ -78,10 +78,6 @@ override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         }
 
         return listOf(declaration, instanceField, getInstanceFun)
-    }
-
-    private fun IrBuilderWithScope.checkNullability(field: IrField): IrExpression {
-        return irEqualsNull(irGetField(null, field))
     }
 }
 

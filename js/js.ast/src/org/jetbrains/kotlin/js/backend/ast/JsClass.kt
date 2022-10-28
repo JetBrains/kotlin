@@ -37,8 +37,8 @@ class JsClass(
 
     override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         if (v.visit(this, ctx)) {
-            constructor = v.accept(constructor)
             baseClass = v.accept(baseClass)
+            constructor = v.accept(constructor)
             v.acceptList(members)
         }
         v.endVisit(this, ctx)

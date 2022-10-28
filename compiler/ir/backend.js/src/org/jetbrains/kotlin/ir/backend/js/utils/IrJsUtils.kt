@@ -10,15 +10,11 @@ import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.calls.getFunction
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
@@ -64,15 +60,3 @@ fun JsIrBackendContext.getVoid(): IrExpression =
         UNDEFINED_OFFSET,
         irBuiltIns.nothingNType
     )
-
-fun JsIrBackendContext.irArrayAccess(target: IrExpression, index: Int): IrCall {
-    val intType = irBuiltIns.intType
-    val arrayGetFunction = intrinsics.array.getFunction
-
-    return JsIrBuilder.buildCall(arrayGetFunction).apply {
-        dispatchReceiver = target
-        putValueArgument(0, index.toIrConst(intType))
-    }
-}
-
-

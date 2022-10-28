@@ -43,7 +43,7 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
     private val unitType = context.irBuiltIns.unitType
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
-        val declaration = irClass.addConstructor(0) {
+        val declaration = irClass.addConstructor {
             origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
             isPrimary = true
             visibility = DescriptorVisibilities.PRIVATE

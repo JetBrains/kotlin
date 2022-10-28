@@ -72,7 +72,7 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
 private val IrClassSymbol.sizeProperty
     get() = getPropertyGetter("size")!!
 
-val IrClassSymbol.getFunction
+private val IrClassSymbol.getFunction
     get() = getSimpleFunction("get")!!
 
 private val IrClassSymbol.setFunction

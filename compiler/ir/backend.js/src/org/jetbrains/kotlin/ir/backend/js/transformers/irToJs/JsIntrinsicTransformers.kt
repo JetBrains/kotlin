@@ -119,11 +119,6 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsObjectLiteral()
             }
 
-            add(intrinsics.es6DefaultType) { call, context ->
-                val typeArgument = call.getTypeArgument(0)!!
-                typeArgument.getClassRef(context)
-            }
-
             addIfNotNull(intrinsics.jsCode) { call, _ ->
                 compilationException(
                     "Should not be called",

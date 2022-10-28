@@ -181,12 +181,10 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }
 
     private fun irAnyArray(elements: List<IrExpression>): IrExpression {
-        return IrVarargImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+        return JsIrBuilder.buildArray(
+            elements,
             context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType),
             context.irBuiltIns.anyNType,
-            elements
         )
     }
 
