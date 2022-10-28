@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
@@ -56,16 +56,32 @@ internal class KtFe10FunctionalType(
         get() = withValidityAssertion { descriptor.arity }
 
     override val hasReceiver: Boolean
-        get() = withValidityAssertion { type.getReceiverTypeFromFunctionType() != null }
+        get() = withValidityAssertion {
+            if (descriptor.functionKind.isReflectType) false
+            else type.getReceiverTypeFromFunctionType() != null
+        }
 
     override val receiverType: KtType?
-        get() = withValidityAssertion { type.getReceiverTypeFromFunctionType()?.toKtType(analysisContext) }
+        get() = withValidityAssertion {
+            if (descriptor.functionKind.isReflectType) null
+            else type.getReceiverTypeFromFunctionType()?.toKtType(analysisContext)
+        }
 
     override val parameterTypes: List<KtType>
-        get() = withValidityAssertion { type.getValueParameterTypesFromFunctionType().map { it.type.toKtType(analysisContext) } }
+        get() = withValidityAssertion {
+            when {
+                descriptor.functionKind.isReflectType -> type.arguments.dropLast(1)
+                else -> type.getValueParameterTypesFromFunctionType()
+            }.map { it.type.toKtType(analysisContext) }
+        }
 
     override val returnType: KtType
-        get() = withValidityAssertion { type.getReturnTypeFromFunctionType().toKtType(analysisContext) }
+        get() = withValidityAssertion {
+            when {
+                descriptor.functionKind.isReflectType -> type.arguments.last().type
+                else -> type.getReturnTypeFromFunctionType()
+            }.toKtType(analysisContext)
+        }
 
     override val classId: ClassId
         get() = withValidityAssertion {
