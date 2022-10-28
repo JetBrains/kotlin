@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.IrType
@@ -58,7 +56,10 @@ class WasmStringSwitchOptimizerLowering(
     private fun tryMatchCaseToNullableStringConstant(condition: IrExpression): IrConst<*>? {
         val eqCall = asEqCall(condition) ?: return null
         if (eqCall.valueArgumentsCount < 2) return null
-        val constantReceiver = eqCall.getValueArgument(1) as? IrConst<*> ?: return null
+        val constantReceiver =
+            eqCall.getValueArgument(0) as? IrConst<*>
+                ?: eqCall.getValueArgument(1) as? IrConst<*>
+                ?: return null
         return when (constantReceiver.kind) {
             IrConstKind.String, IrConstKind.Null -> constantReceiver
             else -> null
@@ -66,7 +67,17 @@ class WasmStringSwitchOptimizerLowering(
     }
 
     private fun IrBlockBuilder.addHashCodeVariable(firstEqCall: IrCall): IrVariable {
-        val subject = firstEqCall.getValueArgument(0)!!
+        val subject: IrExpression
+        val subjectArgumentIndex: Int
+        val firstArgument = firstEqCall.getValueArgument(0)!!
+        if (firstArgument is IrConst<*>) {
+            subject = firstEqCall.getValueArgument(1)!!
+            subjectArgumentIndex = 1
+        } else {
+            subject = firstArgument
+            subjectArgumentIndex = 0
+        }
+
         val subjectType = subject.type
 
         val whenSubject = buildVariable(
@@ -80,7 +91,7 @@ class WasmStringSwitchOptimizerLowering(
 
         whenSubject.initializer = subject
         +whenSubject
-        firstEqCall.putValueArgument(0, irGet(whenSubject))
+        firstEqCall.putValueArgument(subjectArgumentIndex, irGet(whenSubject))
 
         val tmpIntWhenSubject = buildVariable(
             scope.getLocalDeclarationParent(),
