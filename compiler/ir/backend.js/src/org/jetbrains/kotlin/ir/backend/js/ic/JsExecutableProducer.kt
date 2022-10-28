@@ -17,13 +17,23 @@ class JsExecutableProducer(
     private val caches: List<ModuleArtifact>,
     private val relativeRequirePath: Boolean
 ) {
-    fun buildExecutable(multiModule: Boolean, outJsProgram: Boolean, rebuildCallback: (String) -> Unit = {}) = if (multiModule) {
-        buildMultiModuleExecutable(outJsProgram, rebuildCallback)
-    } else {
-        buildSingleModuleExecutable(outJsProgram, rebuildCallback)
+    data class BuildResult(val compilationOut: CompilationOutputs, val buildModules: List<String>)
+
+    private val stopwatch = StopwatchIC()
+
+    fun getStopwatchLaps() = buildMap {
+        stopwatch.laps.forEach {
+            this[it.first] = it.second + (this[it.first] ?: 0L)
+        }
     }
 
-    private fun buildSingleModuleExecutable(outJsProgram: Boolean, rebuildCallback: (String) -> Unit): CompilationOutputs {
+    fun buildExecutable(multiModule: Boolean, outJsProgram: Boolean) = if (multiModule) {
+        buildMultiModuleExecutable(outJsProgram)
+    } else {
+        buildSingleModuleExecutable(outJsProgram)
+    }
+
+    private fun buildSingleModuleExecutable(outJsProgram: Boolean): BuildResult {
         val modules = caches.map { cacheArtifact -> cacheArtifact.loadJsIrModule() }
         val out = generateSingleWrappedModuleBody(
             moduleName = mainModuleName,
@@ -33,31 +43,39 @@ class JsExecutableProducer(
             generateCallToMain = true,
             outJsProgram = outJsProgram
         )
-        rebuildCallback(mainModuleName)
-        return out
+        return BuildResult(out, listOf(mainModuleName))
     }
 
-    private fun buildMultiModuleExecutable(outJsProgram: Boolean, rebuildCallback: (String) -> Unit): CompilationOutputs {
+    private fun buildMultiModuleExecutable(outJsProgram: Boolean): BuildResult {
+        val rebuildModules = mutableListOf<String>()
+        stopwatch.startNext("JS code cache loading")
         val jsMultiModuleCache = JsMultiModuleCache(caches)
         val cachedProgram = jsMultiModuleCache.loadProgramHeadersFromCache()
 
+        stopwatch.startNext("Cross module references resolving")
         val resolver = CrossModuleDependenciesResolver(moduleKind, cachedProgram.map { it.jsIrHeader })
         val crossModuleReferences = resolver.resolveCrossModuleDependencies(relativeRequirePath)
 
+        stopwatch.startNext("Loading JS IR modules with updated cross module references")
         jsMultiModuleCache.loadRequiredJsIrModules(crossModuleReferences)
 
         fun JsMultiModuleCache.CachedModuleInfo.compileModule(moduleName: String, generateCallToMain: Boolean): CompilationOutputs {
             if (jsIrHeader.associatedModule == null) {
+                stopwatch.startNext("Fetching cached JS code")
                 val compilationOutputs = jsMultiModuleCache.fetchCompiledJsCode(artifact)
                 if (compilationOutputs != null) {
                     return compilationOutputs
                 }
+                // theoretically should never happen
+                stopwatch.startNext("Loading JS IR modules")
                 jsIrHeader.associatedModule = artifact.loadJsIrModule()
             }
+            stopwatch.startNext("Initializing JS imports")
             val associatedModule = jsIrHeader.associatedModule ?: icError("can not load module $moduleName")
             val crossRef = crossModuleReferences[jsIrHeader] ?: icError("can not find cross references for module $moduleName")
             crossRef.initJsImportsForModule(associatedModule)
 
+            stopwatch.startNext("Generating JS code")
             val compiledModule = generateSingleWrappedModuleBody(
                 moduleName = moduleName,
                 moduleKind = moduleKind,
@@ -67,8 +85,10 @@ class JsExecutableProducer(
                 crossModuleReferences = crossRef,
                 outJsProgram = outJsProgram
             )
+
+            stopwatch.startNext("Committing compiled JS code")
             jsMultiModuleCache.commitCompiledJsCode(artifact, compiledModule)
-            rebuildCallback(moduleName)
+            rebuildModules += moduleName
             return compiledModule
         }
 
@@ -79,6 +99,8 @@ class JsExecutableProducer(
         val dependencies = cachedOtherModules.map {
             it.jsIrHeader.externalModuleName to it.compileModule(it.jsIrHeader.externalModuleName, false)
         }
-        return CompilationOutputs(mainModule.jsCode, mainModule.jsProgram, mainModule.sourceMap, dependencies)
+        stopwatch.stop()
+        val compilationOut = CompilationOutputs(mainModule.jsCode, mainModule.jsProgram, mainModule.sourceMap, dependencies)
+        return BuildResult(compilationOut, rebuildModules)
     }
 }

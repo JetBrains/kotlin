@@ -190,7 +190,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: Set<String>, expectedRebuilt: List<String>) {
+        private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: List<String>, expectedRebuilt: List<String>) {
             val got = gotRebuilt.filter { it != STDLIB_MODULE_NAME }
             JUnit4Assertions.assertSameElements(got, expectedRebuilt) {
                 "Mismatched rebuilt modules at step $stepId"
@@ -255,8 +255,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                     relativeRequirePath = true
                 )
 
-                val rebuiltModules = mutableSetOf<String>()
-                val jsOutput = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true) { rebuiltModules += it }
+                val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true)
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
                 verifyJsCode(projStep.id, mainModuleName, jsOutput)
             }

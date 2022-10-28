@@ -251,18 +251,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 compilerInterfaceFactory = { mainModule, cfg -> JsIrCompilerWithIC(mainModule, cfg, arguments.granularity) }
             )
 
-            var tp = System.currentTimeMillis()
-            val icTimeMessages = mutableListOf("cache updater initialization: ${tp - start}ms")
-
-            val artifacts = cacheUpdater.actualizeCaches {
-                val now = System.currentTimeMillis()
-                icTimeMessages += "$it: ${now - tp}ms"
-                tp = now
-            }
-
+            val artifacts = cacheUpdater.actualizeCaches()
             messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
-            for (icTimeMessage in icTimeMessages) {
-                messageCollector.report(INFO, "  $icTimeMessage")
+            for ((event, duration) in cacheUpdater.getStopwatchLaps()) {
+                messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
             }
 
             var libIndex = 0
@@ -337,17 +329,17 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     relativeRequirePath = true
                 )
 
-                val outputs = jsExecutableProducer.buildExecutable(
-                    multiModule = arguments.irPerModule,
-                    outJsProgram = false,
-                    rebuildCallback = { rebuiltModule ->
-                        messageCollector.report(INFO, "IC module builder rebuilt module [${File(rebuiltModule).name}]")
-                    }
-                )
-
+                val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.irPerModule, outJsProgram = false)
                 outputs.write(outputDir, outputName)
 
                 messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+                for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
+                    messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+                }
+
+                for (module in rebuiltModules) {
+                    messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
+                }
 
                 return OK
             }
