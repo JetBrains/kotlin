@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -24,7 +25,11 @@ interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
 
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {
-            KtFe10AnnotationsList.create(type.annotations, token)
+            KtFe10AnnotationsList.create(
+                type.annotations,
+                token,
+                ignoreAnnotations = setOf(StandardClassIds.Annotations.ExtensionFunctionType)
+            )
         }
 
     override val token: KtLifetimeToken
