@@ -45,7 +45,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<R : ResultingArt
     open val directiveToSuppressTest: ValueDirective<TargetBackend> = IGNORE_BACKEND_MULTI_MODULE
 
     override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
         useInlineHandlers()
         configureCommonHandlersForBoxTest()
         useModuleStructureTransformers(
