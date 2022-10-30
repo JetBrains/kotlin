@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirClassErrorType(
-    override val coneType: ConeErrorType,
+    override val coneType: ConeClassLikeType,
     private val coneDiagnostic: ConeDiagnostic,
     override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
@@ -43,7 +43,7 @@ internal class KtFirClassErrorType(
 
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
-    override val errorMessage: String get() = withValidityAssertion { coneType.diagnostic.reason }
+    override val errorMessage: String get() = withValidityAssertion { coneDiagnostic.reason }
 
     override val annotationsList: KtAnnotationsList by cached {
         KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
@@ -51,7 +51,7 @@ internal class KtFirClassErrorType(
 
 
     override val candidateClassSymbols: Collection<KtClassLikeSymbol> by cached {
-        val symbols = coneType.diagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
+        val symbols = coneDiagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
         symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it) }
     }
 

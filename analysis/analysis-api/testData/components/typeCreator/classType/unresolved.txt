@@ -1,0 +1,2 @@
+originalTypeString: UNRESOLVED
+ktType: ERROR_TYPE(Symbol not found for /UNRESOLVED)
