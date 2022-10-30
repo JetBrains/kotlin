@@ -285,6 +285,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it is KtDestructuringDeclarationEntry && it.text == "_" ||
                 it is KtIfExpression && it.parent is KtContainerNodeForControlStructureBody && it.parent.parent is KtIfExpression ||
                 it is KtContextReceiverList ||
+                it is KtContextReceiver && it.parent is KtContextReceiverList && it.parent?.parent is KtFunctionType ||
                 it is KtConstantExpression && it.parent.let { parent ->
             parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)
         }
