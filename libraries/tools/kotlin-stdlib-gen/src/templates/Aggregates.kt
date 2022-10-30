@@ -65,7 +65,7 @@ object Aggregates : TemplateGroupBase() {
             Returns `true` if no ${f.element.pluralize()} match the given [predicate].
             """
         }
-        sample("samples.collections.Collections.Aggregates.noneWithPredicate")
+        sample("samples.text.Strings.Aggregates.noneWithPredicate")
         returns("Boolean")
         body {
             """
@@ -91,7 +91,7 @@ object Aggregates : TemplateGroupBase() {
             Returns `true` if the ${f.collection} has no ${f.element.pluralize()}.
             """
         }
-        sample("samples.collections.Collections.Aggregates.none")
+        sample("samples.text.Strings.Aggregates.none")
         returns("Boolean")
         body {
             "return !iterator().hasNext()"
