@@ -130,8 +130,8 @@ fun MavenPublication.configureKotlinPomAttributes(project: Project, explicitDesc
 }
 
 val Project.signLibraryPublication: Boolean
-    get() = project.providers.gradleProperty("signingRequired").forUseAtConfigurationTime().orNull?.toBoolean()
-        ?: project.providers.gradleProperty("isSonatypeRelease").forUseAtConfigurationTime().orNull?.toBoolean()
+    get() = project.providers.gradleProperty("signingRequired").orNull?.toBoolean()
+        ?: project.providers.gradleProperty("isSonatypeRelease").orNull?.toBoolean()
         ?: false
 
 fun Project.configureDefaultPublishing(

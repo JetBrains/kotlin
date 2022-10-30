@@ -88,7 +88,7 @@ val Project.isConfigurationCacheDisabled
     get() = (gradle.startParameter as? org.gradle.api.internal.StartParameterInternal)?.configurationCache?.get() != true
 
 val Project.isIdeaActive
-    get() = providers.systemProperty("idea.active").forUseAtConfigurationTime().isPresent
+    get() = providers.systemProperty("idea.active").isPresent
 
 val Project.intellijCommunityDir: File
     get() = rootDir.resolve("intellij/community").takeIf { it.isDirectory } ?: rootDir.resolve("intellij")
