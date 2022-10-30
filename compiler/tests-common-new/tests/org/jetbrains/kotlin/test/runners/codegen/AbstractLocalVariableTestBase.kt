@@ -23,7 +23,9 @@ abstract class AbstractLocalVariableTestBase<R : ResultingArtifact.FrontendOutpu
     abstract val backendFacade: Constructor<BackendFacade<I, BinaryArtifacts.Jvm>>
 
     override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForDebugTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade) {
+            commonServicesConfigurationForDebugTest(it)
+        }
 
         configureCommonHandlersForLocalVariableTest()
 

@@ -37,7 +37,7 @@ abstract class AbstractBytecodeListingTestBase<R : ResultingArtifact.FrontendOut
             +CodegenTestDirectives.CHECK_BYTECODE_LISTING
         }
 
-        commonConfigurationForCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
         commonHandlersForCodegenTest()
 
         configureJvmArtifactsHandlersStep {
