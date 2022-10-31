@@ -111,7 +111,13 @@ internal class CallGraphBuilder(
                     is DataFlowIR.Node.Call -> block(node, node)
 
                     is DataFlowIR.Node.Singleton ->
-                        node.constructor?.let { block(DataFlowIR.Node.Call(it, node.arguments ?: emptyList(), node.type, null), node) }
+                        node.constructor?.let { constructor ->
+                            val arguments = buildList {
+                                add(DataFlowIR.Edge(node, null)) // this.
+                                node.arguments?.let { addAll(it) }
+                            }
+                            block(DataFlowIR.Node.Call(constructor, arguments, node.type, null), node)
+                        }
 
                     is DataFlowIR.Node.ArrayRead ->
                         block(DataFlowIR.Node.Call(
