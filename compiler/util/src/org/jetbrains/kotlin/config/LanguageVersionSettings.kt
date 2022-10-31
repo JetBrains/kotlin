@@ -251,7 +251,6 @@ enum class LanguageFeature(
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX), // KT-24643
     SynchronizedSuspendError(KOTLIN_1_8, kind = BUG_FIX), // KT-48516
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
-    RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_8, kind = BUG_FIX), // KT-46727
     RangeUntilOperator(KOTLIN_1_8), // KT-15613
     GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
 
@@ -282,6 +281,7 @@ enum class LanguageFeature(
     ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
     CustomEqualsInInlineClasses(KOTLIN_1_9), // KT-24874
     EnhanceNullabilityOfPrimitiveArrays(KOTLIN_1_9, kind = BUG_FIX), // KT-54521
+    RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
 
 
     // Disabled for indefinite time. See KT-53751
