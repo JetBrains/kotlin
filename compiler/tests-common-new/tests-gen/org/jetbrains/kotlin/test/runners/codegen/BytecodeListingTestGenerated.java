@@ -1037,6 +1037,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testDelegatedPropertiesInCompanionObject() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/delegatedProperty/delegatedPropertiesInCompanionObject.kt");
         }
+
+        @Test
+        @TestMetadata("localDelegatedProperty.kt")
+        public void testLocalDelegatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/delegatedProperty/localDelegatedProperty.kt");
+        }
     }
 
     @Nested

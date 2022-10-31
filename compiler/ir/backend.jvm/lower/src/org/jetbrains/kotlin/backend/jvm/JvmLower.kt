@@ -138,6 +138,7 @@ internal val localDeclarationsPhase = makeIrFilePhase(
                 private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             },
+            compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
             forceFieldsForInlineCaptures = true,
             postLocalDeclarationLoweringCallback = context.localDeclarationsLoweringData?.let {
                 { data ->
