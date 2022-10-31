@@ -12,6 +12,8 @@ public fun g2(): I2<kotlin.String, kotlin.String>
 public fun g3(): I<I2<*, kotlin.Int>>
 public fun main(): kotlin.Unit
 private fun </*0*/ T> test(/*0*/ t: T): test.`<no name provided>`<T>
+private fun </*0*/ V, /*1*/ W> I3<V>.f4(/*0*/ block: (W) -> V): f4.`<no name provided>`<V, W>
+public fun </*0*/ V, /*1*/ W> I3<V>.g4(/*0*/ block: (W) -> V): I3<W>
 
 public abstract class A</*0*/ T> {
     public constructor A</*0*/ T>()
@@ -39,6 +41,13 @@ public interface I</*0*/ T> {
 
 public interface I2</*0*/ A, /*1*/ B> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I3</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(/*0*/ x: T): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
