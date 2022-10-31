@@ -97,7 +97,7 @@ class ObjectUsageLowering(
         val irClass = functionContainer?.parentAsClass
 
         irClass?.instanceField?.let { instanceField ->
-            val receiver = if (context.es6mode) functionContainer.extensionReceiverParameter else irClass.thisReceiver
+            val receiver = if (context.es6mode) functionContainer.dispatchReceiverParameter else irClass.thisReceiver
             // Initialize instance field in the beginning of the constructor because it can be used inside the constructor later
             val initInstanceField = context.createIrBuilder(container.symbol).buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 irSetField(null, instanceField, irGet(receiver!!))

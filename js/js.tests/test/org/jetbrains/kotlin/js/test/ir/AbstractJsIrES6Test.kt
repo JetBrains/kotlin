@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 abstract class AbstractJsIrES6Test(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractJsIrTest(pathToTestDir, testGroupOutputDirPrefix) {
+) : AbstractJsIrTest(pathToTestDir, testGroupOutputDirPrefix, TargetBackend.JS_IR_ES6) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

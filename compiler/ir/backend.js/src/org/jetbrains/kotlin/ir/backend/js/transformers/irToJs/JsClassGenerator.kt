@@ -72,9 +72,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     properties.addIfNotNull(declaration.correspondingPropertySymbol?.owner)
 
                     if (es6mode) {
-                        val (memberRef, function) = generateMemberFunction(declaration)
+                        val (_, function) = generateMemberFunction(declaration)
                         function?.let { jsClass.members += it }
-                        declaration.generateAssignmentIfMangled(memberRef)
                     } else {
                         val (memberRef, function) = generateMemberFunction(declaration)
                         function?.let { classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
@@ -401,6 +400,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             ?.let { JsObjectLiteral(it) }
     }
 }
+
+fun JsName.escaped(): JsName = JsName("\"${ident}\"", isTemporary)
 
 fun IrSimpleFunction?.shouldExportAccessor(context: JsIrBackendContext): Boolean {
     if (this == null) return false

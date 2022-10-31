@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class IrJsES6CodegenBoxErrorTestGenerated extends AbstractIrJsES6CodegenBoxErrorTest {
     @Test
     public void testAllFilesPresentInBoxError() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "compileKotlinAgainstKotlin");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true, "compileKotlinAgainstKotlin");
     }
 
     @Nested
@@ -31,7 +31,7 @@ public class IrJsES6CodegenBoxErrorTestGenerated extends AbstractIrJsES6CodegenB
     public class Semantic {
         @Test
         public void testAllFilesPresentInSemantic() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/semantic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/semantic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -101,7 +101,7 @@ public class IrJsES6CodegenBoxErrorTestGenerated extends AbstractIrJsES6CodegenB
     public class Syntax {
         @Test
         public void testAllFilesPresentInSyntax() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/syntax"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/syntax"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test

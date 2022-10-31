@@ -125,6 +125,13 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                         return builder.irGet(initFunction.valueParameters.single())
                                     return expression
                                 }
+
+                                override fun visitSetValue(expression: IrSetValue): IrExpression {
+                                    expression.transformChildrenVoid()
+                                    if (expression.symbol == origParameterSymbol)
+                                        return builder.irSet(initFunction.valueParameters.single(), expression.value)
+                                    return expression
+                                }
                             })
                         }
                         +irReturn(unboxedInlineClassValue())

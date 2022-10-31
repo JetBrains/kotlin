@@ -79,11 +79,15 @@ private fun JsNode.computeScopes(): Scope {
             // We need it to not rename methods and fields inside class body
             // Because if they are in clash with something, it means overriding
             x.constructor?.accept(this)
-            x.members.forEach { it.acceptChildren(this) }
+            x.members.forEach { visitFunction(it, shouldReserveName = false) }
         }
 
         override fun visitFunction(x: JsFunction) {
-            x.name?.let { currentScope.declaredNames += it }
+            visitFunction(x, shouldReserveName = true)
+        }
+
+        fun visitFunction(x: JsFunction, shouldReserveName: Boolean) {
+            x.name?.takeIf { shouldReserveName }?.let { currentScope.declaredNames += it }
             val oldScope = currentScope
             currentScope = Scope().apply {
                 currentScope.children += this

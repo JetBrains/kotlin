@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isSubtypeOf
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -117,7 +120,11 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
         .withSource(declaration, context, useNameOf = declaration)
 
-    function.name = name
+    function.name = if (context.staticContext.backendContext.es6mode && name?.ident?.isValidES5Identifier() == false) {
+        JsName("'${name.ident}'", name.isTemporary)
+    } else {
+        name
+    }
 
     fun JsFunction.addParameter(parameter: JsName, irValueParameter: IrValueParameter) {
         parameters.add(JsParameter(parameter).withSource(irValueParameter, functionContext, useNameOf = irValueParameter))
@@ -148,6 +155,7 @@ fun translateCall(
     transformer: IrElementToJsExpressionTransformer
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
+    val currentDispatchReceiver = context.currentFunction?.parentClassOrNull
 
     context.staticContext.intrinsics[function.symbol]?.let {
         return it(expression, context)
@@ -195,7 +203,13 @@ fun translateCall(
             Pair(function, superQualifier.owner)
         }
 
-        if (context.staticContext.backendContext.es6mode && !klass.isInterface) {
+        if (
+            currentDispatchReceiver != null &&
+            context.staticContext.backendContext.es6mode &&
+            !klass.isInterface &&
+            !currentDispatchReceiver.isInner &&
+            !currentDispatchReceiver.isLocal
+        ) {
             return JsInvocation(JsNameRef(context.getNameForMemberFunction(target), JsSuperRef()), arguments)
         }
 

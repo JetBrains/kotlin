@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6_CONSTRUCTOR_REPLACEMENT
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,8 +31,11 @@ internal class JsUsefulDeclarationProcessor(
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
 
-            if (expression.superQualifierSymbol != null && !context.es6mode) {
-                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
+            if (expression.superQualifierSymbol != null) {
+                val currentClass = (data as? IrSimpleFunction)?.parentClassOrNull
+                if (!context.es6mode || currentClass != null && (currentClass.isInner || currentClass.isLocal)) {
+                    context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
+                }
             }
 
             when (expression.symbol) {
@@ -147,12 +151,15 @@ internal class JsUsefulDeclarationProcessor(
         if (!irClass.isExpect && !irClass.isExternal && !irClass.defaultType.isAny()) {
             context.intrinsics.setMetadataForSymbol.owner.enqueue(irClass, "metadata")
 
-
-            if (irClass.isInterface && irClass.declarations.any { it is IrFunction && it.body != null }) {
+            if (
+                irClass.superTypes.any { it.classOrNull?.owner?.isExternal == true } ||
+                irClass.isExported(context) ||
+                irClass.isInterface && irClass.declarations.any { it is IrFunction && it.body != null }
+            ) {
                 context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")
             }
 
-            if (context.es6mode) return;
+            if (context.es6mode) return
 
             if (!irClass.isInterface) {
                 context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "class prototype access")
@@ -170,6 +177,10 @@ internal class JsUsefulDeclarationProcessor(
 
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {
         super.processSimpleFunction(irFunction)
+
+        if (irFunction.origin == ES6_CONSTRUCTOR_REPLACEMENT) {
+            constructedClasses += irFunction.dispatchReceiverParameter?.type?.classOrNull?.owner!!
+        }
 
         if (irFunction.isReal && irFunction.body != null) {
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")

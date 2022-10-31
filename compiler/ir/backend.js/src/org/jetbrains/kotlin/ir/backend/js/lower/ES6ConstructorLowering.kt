@@ -42,8 +42,8 @@ class ES6ConstructorUsageLowering(val context: JsIrBackendContext) : BodyLowerin
                 val replacement = expression.symbol.owner.initFunction ?: return super.visitDelegatingConstructorCall(expression)
                 return JsIrBuilder.buildCall(replacement.symbol).apply {
                     copyValueArgumentsFrom(expression, symbol.owner)
-                    val currentExtensionReceiver = container.extensionReceiverParameter ?: return@apply
-                    extensionReceiver = JsIrBuilder.buildGetValue(currentExtensionReceiver.symbol)
+                    val currentDispatchReceiver = container.dispatchReceiverParameter ?: return@apply
+                    dispatchReceiver = JsIrBuilder.buildGetValue(currentDispatchReceiver.symbol)
                 }
             }
         })
@@ -73,8 +73,8 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     private fun IrConstructor.generateInitMethod(): IrSimpleFunction {
         val constructor = this
         val parent = parentAsClass
-        val constructorName = "${parent.name}_init"
-        val functionName = "${constructorName}_\$Init\$"
+        val prefix = if (isPrimary) "primary" else "secondary"
+        val functionName = "\$${prefix}Init${parent.name}"
 
         return context.irFactory.buildFun {
             name = Name.identifier(functionName)
@@ -87,20 +87,19 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }.also { factory ->
             factory.parent = parent
             factory.copyTypeParametersFrom(parent)
-            factory.extensionReceiverParameter = parent.thisReceiver?.copyTo(factory)
+            factory.dispatchReceiverParameter = parent.thisReceiver?.copyTo(factory)
             factory.valueParameters = valueParameters.map { it.copyTo(factory) }
 
             factory.body = body?.deepCopyWithSymbols(factory)?.apply {
                 val remappingSchema = constructor.valueParameters.asSequence()
                     .zip(factory.valueParameters.asSequence())
                     .map { it.first.symbol to it.second.symbol }
-                    .plus(parent.thisReceiver!!.symbol to factory.extensionReceiverParameter!!.symbol)
+                    .plus(parent.thisReceiver!!.symbol to factory.dispatchReceiverParameter!!.symbol)
                     .toMap<IrValueSymbol, IrValueSymbol>()
 
                 removeExternalSuperCallWithRemapping(remappingSchema)
             }
             factory.annotations = annotations
-            factory.dispatchReceiverParameter = null
 
             constructor.initFunction = factory
         }
@@ -136,7 +135,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         function.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             val thisVariable = generateThisVariable(superCall).also { statements += it }
             statements += JsIrBuilder.buildCall(initMethod.symbol).apply {
-                extensionReceiver = JsIrBuilder.buildGetValue(thisVariable.symbol)
+                dispatchReceiver = JsIrBuilder.buildGetValue(thisVariable.symbol)
                 function.valueParameters.forEachIndexed { i, p -> putValueArgument(i, JsIrBuilder.buildGetValue(p.symbol)) }
             }
             statements += JsIrBuilder.buildReturn(function.symbol, JsIrBuilder.buildGetValue(thisVariable.symbol), function.returnType)

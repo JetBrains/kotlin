@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInlineTest {
     @Test
     public void testAllFilesPresentInBoxInline() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
     }
 
     @Nested
@@ -31,7 +31,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Annotations {
         @Test
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -53,7 +53,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class AnonymousObject {
         @Test
         public void testAllFilesPresentInAnonymousObject() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -446,7 +446,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class EnumEntries {
             @Test
             public void testAllFilesPresentInEnumEntries() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
         }
 
@@ -456,7 +456,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class EnumWhen {
             @Test
             public void testAllFilesPresentInEnumWhen() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -490,7 +490,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class ProperRecapturing {
             @Test
             public void testAllFilesPresentInProperRecapturing() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -536,7 +536,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class ProperRecapturingInClass {
             @Test
             public void testAllFilesPresentInProperRecapturingInClass() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -618,7 +618,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Sam {
             @Test
             public void testAllFilesPresentInSam() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
         }
 
@@ -628,7 +628,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class TwoCapturedReceivers {
             @Test
             public void testAllFilesPresentInTwoCapturedReceivers() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -681,7 +681,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class ArgumentOrder {
         @Test
         public void testAllFilesPresentInArgumentOrder() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -775,7 +775,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class ArrayConvention {
         @Test
         public void testAllFilesPresentInArrayConvention() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -821,7 +821,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Assert {
         @Test
         public void testAllFilesPresentInAssert() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -831,7 +831,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Builders {
         @Test
         public void testAllFilesPresentInBuilders() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -841,7 +841,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class BytecodePreprocessing {
         @Test
         public void testAllFilesPresentInBytecodePreprocessing() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -857,7 +857,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
 
         @Test
         public void testAllFilesPresentInCallableReference() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -956,7 +956,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class AdaptedReferences {
             @Test
             public void testAllFilesPresentInAdaptedReferences() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -1002,7 +1002,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Bound {
             @Test
             public void testAllFilesPresentInBound() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -1169,7 +1169,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Capture {
         @Test
         public void testAllFilesPresentInCapture() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -1227,7 +1227,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Complex {
         @Test
         public void testAllFilesPresentInComplex() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -1273,7 +1273,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class ComplexStack {
         @Test
         public void testAllFilesPresentInComplexStack() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -1337,7 +1337,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Contracts {
         @Test
         public void testAllFilesPresentInContracts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -1449,7 +1449,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
 
         @Test
         public void testAllFilesPresentInDefaultValues() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -1566,7 +1566,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class LambdaInlining {
             @Test
             public void testAllFilesPresentInLambdaInlining() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -1773,7 +1773,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class CallableReferences {
                 @Test
                 public void testAllFilesPresentInCallableReferences() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -1964,7 +1964,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
 
             @Test
             public void testAllFilesPresentInMaskElimination() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -2005,7 +2005,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class DelegatedProperty {
         @Test
         public void testAllFilesPresentInDelegatedProperty() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2051,7 +2051,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class EnclosingInfo {
         @Test
         public void testAllFilesPresentInEnclosingInfo() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -2061,7 +2061,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Enum {
         @Test
         public void testAllFilesPresentInEnum() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2149,7 +2149,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class FunctionExpression {
         @Test
         public void testAllFilesPresentInFunctionExpression() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2165,7 +2165,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class InlineArgsInplace {
         @Test
         public void testAllFilesPresentInInlineArgsInplace() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2181,7 +2181,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2232,7 +2232,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class UnboxGenericParameter {
             @Test
             public void testAllFilesPresentInUnboxGenericParameter() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Nested
@@ -2241,7 +2241,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class FunInterface {
                 @Test
                 public void testAllFilesPresentInFunInterface() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -2287,7 +2287,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class Lambda {
                 @Test
                 public void testAllFilesPresentInLambda() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -2333,7 +2333,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class ObjectLiteral {
                 @Test
                 public void testAllFilesPresentInObjectLiteral() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -2381,7 +2381,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class InnerClasses {
         @Test
         public void testAllFilesPresentInInnerClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2439,7 +2439,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Invokedynamic {
         @Test
         public void testAllFilesPresentInInvokedynamic() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Nested
@@ -2448,7 +2448,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Lambdas {
             @Test
             public void testAllFilesPresentInLambdas() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
         }
 
@@ -2458,7 +2458,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Sam {
             @Test
             public void testAllFilesPresentInSam() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
         }
     }
@@ -2469,7 +2469,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class JvmName {
         @Test
         public void testAllFilesPresentInJvmName() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -2479,7 +2479,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class JvmPackageName {
         @Test
         public void testAllFilesPresentInJvmPackageName() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -2489,7 +2489,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class LambdaClassClash {
         @Test
         public void testAllFilesPresentInLambdaClassClash() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2511,7 +2511,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class LambdaTransformation {
         @Test
         public void testAllFilesPresentInLambdaTransformation() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2551,7 +2551,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class LocalFunInLambda {
         @Test
         public void testAllFilesPresentInLocalFunInLambda() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2585,7 +2585,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class MultiModule {
         @Test
         public void testAllFilesPresentInMultiModule() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2601,7 +2601,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class MultifileClasses {
         @Test
         public void testAllFilesPresentInMultifileClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -2611,7 +2611,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Multiplatform {
         @Test
         public void testAllFilesPresentInMultiplatform() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Nested
@@ -2620,7 +2620,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class DefaultArguments {
             @Test
             public void testAllFilesPresentInDefaultArguments() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -2637,7 +2637,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class NoInline {
         @Test
         public void testAllFilesPresentInNoInline() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2689,7 +2689,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class NonLocalReturns {
         @Test
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -2836,7 +2836,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Deparenthesize {
             @Test
             public void testAllFilesPresentInDeparenthesize() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -2858,7 +2858,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class TryFinally {
             @Test
             public void testAllFilesPresentInTryFinally() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -2945,7 +2945,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class CallSite {
                 @Test
                 public void testAllFilesPresentInCallSite() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -2991,7 +2991,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class Chained {
                 @Test
                 public void testAllFilesPresentInChained() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -3049,7 +3049,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class DeclSite {
                 @Test
                 public void testAllFilesPresentInDeclSite() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -3131,7 +3131,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class ExceptionTable {
                 @Test
                 public void testAllFilesPresentInExceptionTable() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -3261,7 +3261,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
             public class Variables {
                 @Test
                 public void testAllFilesPresentInVariables() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
 
                 @Test
@@ -3279,7 +3279,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Optimizations {
         @Test
         public void testAllFilesPresentInOptimizations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -3313,7 +3313,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
 
         @Test
         public void testAllFilesPresentInPrivate() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -3377,7 +3377,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Property {
         @Test
         public void testAllFilesPresentInProperty() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -3471,7 +3471,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Reified {
         @Test
         public void testAllFilesPresentInReified() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -3606,7 +3606,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class CheckCast {
             @Test
             public void testAllFilesPresentInCheckCast() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -3670,7 +3670,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class DefaultLambda {
             @Test
             public void testAllFilesPresentInDefaultLambda() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
         }
 
@@ -3680,7 +3680,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class IsCheck {
             @Test
             public void testAllFilesPresentInIsCheck() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -3709,7 +3709,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Signature {
         @Test
         public void testAllFilesPresentInSignature() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -3719,7 +3719,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class SignatureMangling {
         @Test
         public void testAllFilesPresentInSignatureMangling() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
     }
 
@@ -3729,7 +3729,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Simple {
         @Test
         public void testAllFilesPresentInSimple() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -3877,7 +3877,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Smap {
         @Test
         public void testAllFilesPresentInSmap() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -3994,7 +3994,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Anonymous {
             @Test
             public void testAllFilesPresentInAnonymous() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4064,7 +4064,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class DefaultLambda {
             @Test
             public void testAllFilesPresentInDefaultLambda() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4128,7 +4128,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class InlineOnly {
             @Test
             public void testAllFilesPresentInInlineOnly() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4162,7 +4162,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Newsmap {
             @Test
             public void testAllFilesPresentInNewsmap() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4196,7 +4196,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Resolve {
             @Test
             public void testAllFilesPresentInResolve() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4219,7 +4219,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Special {
         @Test
         public void testAllFilesPresentInSpecial() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -4283,7 +4283,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class StackOnReturn {
         @Test
         public void testAllFilesPresentInStackOnReturn() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -4389,7 +4389,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Suspend {
         @Test
         public void testAllFilesPresentInSuspend() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -4542,7 +4542,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class CallableReference {
             @Test
             public void testAllFilesPresentInCallableReference() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4582,7 +4582,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class DefaultParameter {
             @Test
             public void testAllFilesPresentInDefaultParameter() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/defaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/defaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4628,7 +4628,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class InlineClass {
             @Test
             public void testAllFilesPresentInInlineClass() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4662,7 +4662,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class InlineUsedAsNoinline {
             @Test
             public void testAllFilesPresentInInlineUsedAsNoinline() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4684,7 +4684,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class Receiver {
             @Test
             public void testAllFilesPresentInReceiver() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/receiver"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/receiver"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4742,7 +4742,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class StateMachine {
             @Test
             public void testAllFilesPresentInStateMachine() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -4891,7 +4891,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class SyntheticAccessors {
         @Test
         public void testAllFilesPresentInSyntheticAccessors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -4948,7 +4948,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         public class WithinInlineLambda {
             @Test
             public void testAllFilesPresentInWithinInlineLambda() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
@@ -5013,7 +5013,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Trait {
         @Test
         public void testAllFilesPresentInTrait() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -5029,7 +5029,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class TryCatchFinally {
         @Test
         public void testAllFilesPresentInTryCatchFinally() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test
@@ -5063,7 +5063,7 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     public class Varargs {
         @Test
         public void testAllFilesPresentInVarargs() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
         @Test

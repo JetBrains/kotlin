@@ -15,16 +15,16 @@ package foo
 
 
 interface ExportedInterface {
-    .Ignore
+    @JsExport.Ignore
     val baz: String
 
-    .Ignore
+    @JsExport.Ignore
     fun inter(): String
 
-    .Ignore
+    @JsExport.Ignore
     class NotExportableNestedInsideInterface
 
-    .Ignore
+    @JsExport.Ignore
     companion object {
         val foo: String ="FOO"
     }
@@ -32,32 +32,32 @@ interface ExportedInterface {
 
 
 class OnlyFooParamExported(val foo: String) : ExportedInterface {
-    .Ignore
+    @JsExport.Ignore
     constructor() : this("TEST")
 
     override val baz = "Baz"
 
     override fun inter(): String = "Inter"
 
-    .Ignore
+    @JsExport.Ignore
     val bar = "Bar"
 
-    .Ignore
+    @JsExport.Ignore
     inline fun <A, reified B> A.notExportableReified(): Boolean = this is B
 
-    .Ignore
+    @JsExport.Ignore
     suspend fun notExportableSuspend(): String = "SuspendResult"
 
-    .Ignore
+    @JsExport.Ignore
     fun notExportableReturn(): List<String> = listOf("1", "2")
 
-    .Ignore
+    @JsExport.Ignore
     val String.notExportableExentsionProperty: String
         get() = "notExportableExentsionProperty"
 
-    .Ignore
+    @JsExport.Ignore
     annotation class NotExportableAnnotation
 
-    .Ignore
+    @JsExport.Ignore
     value class NotExportableInlineClass(val value: Int)
 }

@@ -29,8 +29,9 @@ import java.lang.Boolean.getBoolean
 abstract class AbstractJsIrTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
+    targetBackend: TargetBackend = TargetBackend.JS_IR
 ) : AbstractJsBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
-    FrontendKinds.ClassicFrontend, TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
+    FrontendKinds.ClassicFrontend, targetBackend, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade
