@@ -27,7 +27,6 @@ buildscript {
         maven {
             url 'https://cache-redirector.jetbrains.com/jcenter'
         }
-        jcenter()
         maven {
             url project.bootstrapKotlinRepo
         }
@@ -42,7 +41,6 @@ repositories {
     maven {
         url 'https://cache-redirector.jetbrains.com/jcenter'
     }
-    jcenter()
     maven {
         url project.bootstrapKotlinRepo
     }

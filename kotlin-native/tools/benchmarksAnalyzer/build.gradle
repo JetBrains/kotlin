@@ -23,7 +23,6 @@ buildscript {
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        jcenter()
         mavenCentral()
     }
 
@@ -38,7 +37,6 @@ repositories {
     maven {
         url project.bootstrapKotlinRepo
     }
-    jcenter()
     mavenCentral()
 }
 
