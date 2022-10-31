@@ -78,7 +78,11 @@ internal class JsUsefulDeclarationProcessor(
                 }
 
                 context.intrinsics.jsCreateThisFromParentSymbol, context.intrinsics.jsCreateThisSymbol -> {
-                    val jsClassCall = expression.getValueArgument(0) as IrCall
+                    val jsClassOrNewTarget = expression.getValueArgument(0) as IrCall
+                    val jsClassCall = when(jsClassOrNewTarget.symbol) {
+                        context.intrinsics.jsNewTarget -> jsClassOrNewTarget.getValueArgument(0) as IrCall
+                        else -> jsClassOrNewTarget
+                    }
                     val classToCreate = jsClassCall.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
                     classToCreate.enqueue(data, "intrinsic: jsCreateThis")
                     constructedClasses += classToCreate

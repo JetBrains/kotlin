@@ -72,8 +72,12 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     properties.addIfNotNull(declaration.correspondingPropertySymbol?.owner)
 
                     if (es6mode) {
-                        val (_, function) = generateMemberFunction(declaration)
+                        val (memberRef, function) = generateMemberFunction(declaration)
                         function?.let { jsClass.members += it }
+
+                        if (function?.name?.toString() != declaration.getJsNameOrKotlinName().toString()) {
+                            declaration.generateAssignmentIfMangled(memberRef)
+                        }
                     } else {
                         val (memberRef, function) = generateMemberFunction(declaration)
                         function?.let { classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt() }

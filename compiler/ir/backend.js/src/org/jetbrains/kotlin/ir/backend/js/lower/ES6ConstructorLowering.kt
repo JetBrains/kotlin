@@ -13,12 +13,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -148,6 +151,14 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         val currentClass = parentAsClass
         val superClass = currentClass.superClass
         val currentCtor = currentClass.constructorRef
+            .let {
+                if (!currentClass.isExported(context) || !isPrimary) {
+                    it
+                } else {
+                    JsIrBuilder.buildCall(context.intrinsics.jsNewTarget)
+                        .apply { putValueArgument(0, it) }
+                }
+            }
 
         val initializer = if (superClass?.isEffectivelyExternal() == true) {
             val superCtor = superCall?.getExternallyDelegatedSuperCall()?.symbol?.owner
