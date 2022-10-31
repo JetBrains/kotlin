@@ -6,7 +6,6 @@ pluginManagement {
                 artifact()
             }
         }
-        jcenter()
         mavenCentral()
         gradlePluginPortal()
     }

@@ -33,7 +33,6 @@ buildscript {
 
     repositories {
         mavenCentral()
-        jcenter()
         gradlePluginPortal()
     }
 
@@ -91,11 +90,6 @@ ext {
 }
 
 allprojects {
-    buildscript {
-        repositories {
-            jcenter()
-        }
-    }
     if (path != ":kotlin-native:dependencies") {
         evaluationDependsOn(":kotlin-native:dependencies")
     }

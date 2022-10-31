@@ -26,7 +26,6 @@ buildscript {
         maven {
             url = 'https://cache-redirector.jetbrains.com/jcenter'
         }
-        jcenter()
         maven {
             url "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2/"
         }
