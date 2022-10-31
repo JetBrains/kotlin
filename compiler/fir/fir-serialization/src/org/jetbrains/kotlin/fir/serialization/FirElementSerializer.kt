@@ -67,7 +67,7 @@ class FirElementSerializer private constructor(
 ) {
     private val contractSerializer = FirContractSerializer()
 
-    fun packagePartProto(packageFqName: FqName, file: FirFile): ProtoBuf.Package.Builder = whileAnalysing(file) {
+    fun packagePartProto(packageFqName: FqName, file: FirFile): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
         for (declaration in file.declarations) {
@@ -84,7 +84,7 @@ class FirElementSerializer private constructor(
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable?.serialize()?.let { builder.versionRequirementTable = it }
 
-        builder
+        return builder
     }
 
     fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(klass) {
