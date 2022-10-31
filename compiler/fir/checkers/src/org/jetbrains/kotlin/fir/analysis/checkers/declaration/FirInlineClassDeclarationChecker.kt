@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
-    private val boxAndUnboxNames = setOf("box", "unbox")
-    private val equalsAndHashCodeNames = setOf("equals", "hashCode")
+    private val reservedNames = setOf("equals", "hashCode", "box", "unbox")
     private val javaLangFqName = FqName("java.lang")
     private val cloneableFqName = FqName("Cloneable")
 
@@ -96,10 +95,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 is FirSimpleFunction -> {
                     val functionName = innerDeclaration.name.asString()
 
-                    if (functionName in boxAndUnboxNames
-                        || (functionName in equalsAndHashCodeNames
-                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
-                    ) {
+                    if (!context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses) && functionName in reservedNames) {
                         reporter.reportOn(
                             innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
                         )

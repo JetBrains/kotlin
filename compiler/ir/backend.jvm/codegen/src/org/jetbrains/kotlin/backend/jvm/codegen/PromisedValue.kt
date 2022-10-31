@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isBoxFunction
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -37,7 +38,10 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         val isToTypeUnboxed = InlineClassAbi.unboxType(erasedTargetType)?.let(typeMapper::mapType) == target
         if (isFromTypeUnboxed && !isToTypeUnboxed) {
             val boxed = typeMapper.mapType(erasedSourceType, TypeMappingMode.CLASS_DECLARATION)
-            StackValue.boxInlineClass(type, boxed, erasedSourceType.isNullable(), mv)
+            StackValue.boxInlineClass(
+                type, boxed, erasedSourceType.isNullable(),
+                mv, codegen.irFunction.isBoxFunction(codegen.context.typeSystem)
+            )
 
             if (typeMapper.mapType(erasedTargetType) == target) {
                 if (!erasedSourceType.isSubtypeOf(erasedTargetType, codegen.context.typeSystem)) {

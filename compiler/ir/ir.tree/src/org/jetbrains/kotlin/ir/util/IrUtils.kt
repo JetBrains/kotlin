@@ -106,6 +106,7 @@ fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter
             assert(this.field == null) { "Field should be null to use `getArgumentsWithIr` on IrPropertyReference: ${this.dump()}}" }
             this.getter!!.owner
         }
+
         else -> error(this)
     }
 
@@ -372,10 +373,13 @@ fun ReferenceSymbolTable.referenceClassifier(classifier: ClassifierDescriptor): 
     when (classifier) {
         is TypeParameterDescriptor ->
             referenceTypeParameter(classifier)
+
         is ScriptDescriptor ->
             referenceScript(classifier)
+
         is ClassDescriptor ->
             referenceClass(classifier)
+
         else ->
             throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
     }
@@ -385,8 +389,10 @@ fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunc
     when (callable) {
         is ClassConstructorDescriptor ->
             referenceConstructor(callable)
+
         is FunctionDescriptor ->
             referenceSimpleFunction(callable)
+
         else ->
             throw IllegalArgumentException("Unexpected callable descriptor: $callable")
     }
@@ -489,9 +495,11 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
         receiversAsArguments && srcFunction.dispatchReceiverParameter != null -> {
             putValueArgument(destValueArgumentIndex++, src.dispatchReceiver)
         }
+
         argumentsAsReceivers && destFunction.dispatchReceiverParameter != null -> {
             dispatchReceiver = src.getValueArgument(srcValueArgumentIndex++)
         }
+
         else -> {
             dispatchReceiver = src.dispatchReceiver
         }
@@ -501,9 +509,11 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
         receiversAsArguments && srcFunction.extensionReceiverParameter != null -> {
             putValueArgument(destValueArgumentIndex++, src.extensionReceiver)
         }
+
         argumentsAsReceivers && destFunction.extensionReceiverParameter != null -> {
             extensionReceiver = src.getValueArgument(srcValueArgumentIndex++)
         }
+
         else -> {
             extensionReceiver = src.extensionReceiver
         }
@@ -626,6 +636,7 @@ fun IrExpression.shallowCopyOrNull(): IrExpression? =
                 type,
                 symbol
             )
+
         is IrGetObjectValue ->
             IrGetObjectValueImpl(
                 startOffset,
@@ -633,6 +644,7 @@ fun IrExpression.shallowCopyOrNull(): IrExpression? =
                 type,
                 symbol
             )
+
         is IrGetValueImpl ->
             IrGetValueImpl(
                 startOffset,
@@ -641,6 +653,7 @@ fun IrExpression.shallowCopyOrNull(): IrExpression? =
                 symbol,
                 origin
             )
+
         is IrErrorExpressionImpl ->
             IrErrorExpressionImpl(
                 startOffset,
@@ -648,6 +661,7 @@ fun IrExpression.shallowCopyOrNull(): IrExpression? =
                 type,
                 description
             )
+
         else -> null
     }
 
@@ -661,14 +675,25 @@ internal fun <T> IrConst<T>.shallowCopy() = IrConstImpl(
 
 fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrValueParameter?): IrExpression = when (this) {
     is IrGetField ->
-        IrGetFieldImpl(startOffset, endOffset, symbol, type, receiver?.remapReceiver(oldReceiver, newReceiver), origin, superQualifierSymbol)
+        IrGetFieldImpl(
+            startOffset,
+            endOffset,
+            symbol,
+            type,
+            receiver?.remapReceiver(oldReceiver, newReceiver),
+            origin,
+            superQualifierSymbol
+        )
+
     is IrGetValue ->
         IrGetValueImpl(startOffset, endOffset, type, newReceiver?.symbol.takeIf { symbol == oldReceiver?.symbol } ?: symbol, origin)
+
     is IrCall ->
         IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol).also {
             it.dispatchReceiver = dispatchReceiver?.remapReceiver(oldReceiver, newReceiver)
             it.extensionReceiver = extensionReceiver?.remapReceiver(oldReceiver, newReceiver)
         }
+
     else -> shallowCopy()
 }
 
@@ -975,6 +1000,7 @@ fun IrType.remapTypeParameters(
                                     it.type.remapTypeParameters(source, target, srcToDstParameterMap),
                                     it.variance
                                 )
+
                                 else -> it
                             }
                         },
@@ -984,6 +1010,7 @@ fun IrType.remapTypeParameters(
                 else -> this
             }
         }
+
         else -> this
     }
 
@@ -1134,10 +1161,12 @@ fun IrClass.addFakeOverrides(
     ignoredParentSymbols: List<IrSymbol> = emptyList()
 ) {
     IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings())
-        .buildFakeOverridesForClassUsingOverriddenSymbols(this,
-                                                          implementedMembers = implementedMembers,
-                                                          compatibilityMode = false,
-                                                          ignoredParentSymbols = ignoredParentSymbols)
+        .buildFakeOverridesForClassUsingOverriddenSymbols(
+            this,
+            implementedMembers = implementedMembers,
+            compatibilityMode = false,
+            ignoredParentSymbols = ignoredParentSymbols
+        )
         .forEach { addChild(it) }
 }
 
@@ -1284,6 +1313,7 @@ fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): List<IrSimpleF
                 current = overridden[0].owner
                 result.add(current)
             }
+
             else -> {
                 val resultSet = result.toMutableSet()
                 computeAllOverridden(current, resultSet)
@@ -1315,3 +1345,13 @@ val IrFunction.isTypedEquals: Boolean
                 && (valueParameters[0].type.classFqName?.run { parentClass.hasEqualFqName(this) } ?: false)
                 && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && parentClass.isValue
     }
+
+fun IrFunction.isBoxFunction(typeSystem: IrTypeSystemContext): Boolean {
+    val companionClass = parent as? IrClass ?: return false
+    if (!companionClass.isCompanion) return false
+    val parentClass = companionClass.parent as? IrClass ?: return false
+    return name == OperatorNameConventions.BOX && returnType.isSubtypeOf(parentClass.defaultType, typeSystem)
+            && parentClass.isSingleFieldValueClass && valueParameters.size == 1
+            && valueParameters[0].type == parentClass.inlineClassRepresentation!!.underlyingType
+            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+}

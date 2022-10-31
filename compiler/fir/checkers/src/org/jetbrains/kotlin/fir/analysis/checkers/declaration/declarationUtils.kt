@@ -9,20 +9,17 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.getContainingClassLookupTag
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isBoolean
-import org.jetbrains.kotlin.fir.types.isNullableAny
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
@@ -35,12 +32,10 @@ internal fun isInsideExternalClass(containingClass: FirClass, context: CheckerCo
 
 // Note that the class that contains the currently visiting declaration will *not* be in the context's containing declarations *yet*.
 private inline fun isInsideSpecificClass(
-    containingClass: FirClass,
-    context: CheckerContext,
-    predicate: (FirClass) -> Boolean
+    containingClass: FirClass, context: CheckerContext, predicate: (FirClass) -> Boolean
 ): Boolean {
-    return predicate.invoke(containingClass) ||
-            context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
+    return predicate.invoke(containingClass) || context.containingDeclarations.asReversed()
+        .any { it is FirRegularClass && predicate.invoke(it) }
 }
 
 internal fun FirMemberDeclaration.isEffectivelyFinal(context: CheckerContext): Boolean {
@@ -122,9 +117,23 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
 fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
     containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
         with(this@isTypedEqualsInInlineClass) {
-            contextReceivers.isEmpty() && receiverTypeRef == null && name == OperatorNameConventions.EQUALS
-                    && this@run.isInline && valueParameters.size == 1 && returnTypeRef.isBoolean
-                    && valueParameters[0].returnTypeRef.coneType.classId == this@run.classId
+            contextReceivers.isEmpty() && receiverTypeRef == null && name == OperatorNameConventions.EQUALS && this@run.isInline && valueParameters.size == 1 && returnTypeRef.isBoolean && valueParameters[0].returnTypeRef.coneType.classId == this@run.classId
         }
     } ?: false
 
+val FirRegularClassSymbol.inlineClassUnderlyingType: ConeKotlinType
+    get() {
+        require(this.isInline)
+        return this.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnType
+    }
+
+fun FirSimpleFunction.isInlineClassCustomBox(session: FirSession): Boolean =
+    containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
+        if (!this.isCompanion) return false
+        val enclosingClass = this.getContainingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return false
+        with(this@isInlineClassCustomBox) {
+            contextReceivers.isEmpty() && receiverTypeRef == null && name == OperatorNameConventions.BOX && enclosingClass.isInline
+                    && valueParameters.size == 1 && (returnTypeRef.coneType.isSubtypeOf(enclosingClass.defaultType(), session))
+                    && valueParameters[0].returnTypeRef.coneType == enclosingClass.inlineClassUnderlyingType
+        }
+    } ?: false

@@ -17939,6 +17939,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("mydebug.kt")
+            public void testMydebug() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/mydebug.kt");
+            }
+
+            @Test
             @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")
             public void testPresenceOfInitializerBlockInsideInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfInitializerBlockInsideInlineClass.kt");

@@ -56,6 +56,11 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
                     return transformFlattenedConstructor(function, constructorReplacement)
                 }
             }
+            /*
+            if (function.isBoxFunction(context.typeSystem)) {
+                return null
+            }
+            */
             function.transformChildrenVoid()
             // Non-mangled functions can override mangled functions under some conditions, e.g., a function
             // `fun f(): Nothing` can override a function `fun f(): UInt`. The former is not mangled, while

@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.sure
 import kotlin.contracts.ExperimentalContracts
@@ -27,11 +27,11 @@ fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: Lookup
     if (fqName.isRoot) return null
 
     (getPackage(fqName.parent())
-            .memberScope.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor)?.let { return it }
+        .memberScope.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor)?.let { return it }
 
     return resolveClassByFqName(fqName.parent(), lookupLocation)
-            ?.unsubstitutedInnerClassesScope
-            ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
+        ?.unsubstitutedInnerClassesScope
+        ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
 }
 
 fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: LookupLocation): ClassDescriptor? =
@@ -103,3 +103,13 @@ fun FunctionDescriptor.isTypedEqualsInInlineClass() = name == OperatorNameConven
 fun FunctionDescriptor.overridesEqualsFromAny(): Boolean = name == OperatorNameConventions.EQUALS
         && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
         && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
+
+val FunctionDescriptor.isInlineClassCustomBoxing: Boolean
+    get() {
+        val companionObject = containingDeclaration.takeIf { isCompanionObject() } ?: return false
+        val inlineClass = (companionObject.containingDeclaration.takeIf { isInlineClass() }) as? ClassDescriptor ?: return false
+        val underlyingType = inlineClass.inlineClassRepresentation!!.underlyingType
+        val parameterType = if (valueParameters.size == 1) (valueParameters[0].returnType ?: return false) else return false
+        return name == OperatorNameConventions.BOX && (returnType?.isSubtypeOf(inlineClass.defaultType) ?: false)
+                && underlyingType.isSubtypeOf(parameterType) && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
+    }

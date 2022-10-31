@@ -544,14 +544,17 @@ class ExpressionCodegen(
                 // don't generate redundant UNIT/pop instructions
                 unitValue
             }
+
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_TYPE -> {
                 wrapJavaClassIntoKClass(mv)
                 MaterialValue(this, AsmTypes.K_CLASS_TYPE, expression.type)
             }
+
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_ARRAY_TYPE -> {
                 wrapJavaClassesIntoKClasses(mv)
                 MaterialValue(this, AsmTypes.K_CLASS_ARRAY_TYPE, expression.type)
             }
+
             unboxedInlineClassIrType != null && !irFunction.isNonBoxingSuspendDelegation() ->
                 MaterialValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType).apply {
                     if (!irFunction.shouldContainSuspendMarkers()) {
@@ -560,8 +563,10 @@ class ExpressionCodegen(
                     }
                     mv.checkcast(type)
                 }
+
             callee.resultIsActuallyAny(null) == true ->
                 MaterialValue(this, callable.asmMethod.returnType, context.irBuiltIns.anyNType)
+
             else ->
                 MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
         }
@@ -582,6 +587,7 @@ class ExpressionCodegen(
             // This includes inline lambdas, but only in functions intended for the inliner; in others, they stay as `f.invoke()`.
             dispatchReceiver.isReadOfInlineLambda() ->
                 SuspensionPointKind.NOT_INLINE
+
             else ->
                 SuspensionPointKind.ALWAYS
         }
@@ -812,6 +818,7 @@ class ExpressionCodegen(
                 mv.nop()
                 return BooleanConstant(this, value)
             }
+
             is Char -> mv.iconst(value.code)
             is Long -> mv.lconst(value)
             is Float -> mv.fconst(value)
@@ -1150,6 +1157,7 @@ class ExpressionCodegen(
                     genFinallyBlock(it, null, endLabel, data, nestedTryWithoutFinally)
                     nestedTryWithoutFinally.clear()
                 }
+
                 it is TryInfo -> nestedTryWithoutFinally.add(it)
                 it is LoopInfo && stop(it) -> return it
             }
@@ -1406,6 +1414,7 @@ class ExpressionCodegen(
                 // TODO transform one sort of access into the other?
                 JavaClassProperty.invokeWith(classReference.argument.accept(this, data), wrapPrimitives)
             }
+
             is IrClassReference -> {
                 val classType = classReference.classType
                 val classifier = classType.classifierOrNull
@@ -1418,6 +1427,7 @@ class ExpressionCodegen(
 
                 generateClassInstance(mv, classType, typeMapper, wrapPrimitives)
             }
+
             else -> {
                 throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
             }

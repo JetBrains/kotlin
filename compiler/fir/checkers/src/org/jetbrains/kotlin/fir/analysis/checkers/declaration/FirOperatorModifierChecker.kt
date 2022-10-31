@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
+import org.jetbrains.kotlin.util.OperatorNameConventions.BOX
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPONENT_REGEX
 import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
@@ -218,6 +219,12 @@ private object OperatorFunctionChecks {
             }
         )
         checkFor(ASSIGNMENT_OPERATIONS, memberOrExtension, Returns.unit, ValueParametersCount.single, noDefaultAndVarargs)
+        checkFor(
+            BOX,
+            member,
+            Checks.full("must have inline class boxing function signature") { ctx, function ->
+                function.isInlineClassCustomBox(ctx.session)
+            })
     }
 
     val regexChecks: List<Pair<Regex, List<Check>>> = buildList {

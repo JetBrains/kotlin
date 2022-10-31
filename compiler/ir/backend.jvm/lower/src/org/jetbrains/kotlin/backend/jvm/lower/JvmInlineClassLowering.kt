@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -29,8 +30,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
@@ -117,7 +118,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
         }
         buildPrimaryInlineClassConstructor(declaration, irConstructor)
-        buildBoxFunction(declaration)
+        buildBoxFunctions(declaration)
         buildUnboxFunction(declaration)
         buildSpecializedEqualsMethodIfNeeded(declaration)
         addJvmInlineAnnotation(declaration)
@@ -240,6 +241,15 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
+
+        if (function.name == Name.identifier("createInlineClassInstance")) {
+            expression.transformChildrenVoid()
+            val inlineClass = expression.getTypeArgument(0)!!.getClass()!!
+            return IrConstructorCallImpl.fromSymbolOwner(expression.type, inlineClass.primaryConstructor!!.symbol).apply {
+                putValueArgument(0, expression.getValueArgument(0))
+            }
+        }
+
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)
 
@@ -455,8 +465,37 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         valueClass.declarations += function
     }
 
-    fun buildBoxFunction(valueClass: IrClass) {
-        val function = context.inlineClassReplacements.getBoxFunction(valueClass)
+    fun buildBoxFunctions(valueClass: IrClass) {
+        if (valueClass.hasWithCustomBoxing) {
+            buildDefaultBoxFunction(valueClass, defaultSuffix = true)
+            buildCustomBoxFunction(valueClass)
+        } else {
+            buildDefaultBoxFunction(valueClass, defaultSuffix = false)
+        }
+    }
+
+    private fun buildCustomBoxFunction(valueClass: IrClass) {
+        val customBox = valueClass.companionObject()?.functions?.single { it.isBoxFunction(context.typeSystem) && it.isOperator } ?: return
+        val function = context.inlineClassReplacements.getBoxFunction(valueClass, defaultSuffix = false)
+        with(context.createIrBuilder(function.symbol)) {
+            val companionObject = valueClass.companionObject()!!
+            function.body = irExprBody(
+                irCall(customBox.symbol).apply {
+                    dispatchReceiver = irGetObjectValue(companionObject.defaultType, companionObject.symbol)
+                    putValueArgument(0, irGet(function.valueParameters[0]))
+                }
+            )
+        }
+        valueClass.declarations += function
+    }
+
+
+    val IrClass.hasWithCustomBoxing: Boolean
+        get() = companionObject()?.functions?.any { it.isBoxFunction(context.typeSystem) && it.isOperator } ?: false
+
+    fun buildDefaultBoxFunction(valueClass: IrClass, defaultSuffix: Boolean) {
+        val function = context.inlineClassReplacements.getBoxFunction(valueClass, defaultSuffix)
+            .also { if (defaultSuffix) it.name = Name.identifier(KotlinTypeMapper.BOX_JVM_DEFAULT_METHOD_NAME) }
         with(context.createIrBuilder(function.symbol)) {
             function.body = irExprBody(
                 irCall(valueClass.primaryConstructor!!.symbol).apply {
@@ -495,7 +534,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             val underlyingType = getInlineClassUnderlyingType(valueClass)
             irExprBody(
                 if (untypedEquals.origin == IrDeclarationOrigin.DEFINED) {
-                    val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass)
+                    val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass, defaultSuffix = false)
 
                     fun irBox(expr: IrExpression) = irCall(boxFunction).apply { putValueArgument(0, expr) }
 

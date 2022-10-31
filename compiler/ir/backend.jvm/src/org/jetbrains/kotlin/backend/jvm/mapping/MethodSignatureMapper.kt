@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -196,6 +197,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
         isBoxMethodForInlineClass(function) ||
+                function.isBoxFunction(context.typeSystem) ||
                 forceFoxedReturnTypeOnOverride(function) ||
                 forceBoxedReturnTypeOnDefaultImplFun(function) ||
                 function.isFromJava() && function.returnType.isInlineClassType()
@@ -214,7 +216,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     private fun isBoxMethodForInlineClass(function: IrFunction): Boolean =
         function.parent.let { it is IrClass && it.isSingleFieldValueClass } &&
                 function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER &&
-                function.name.asString() == "box-impl"
+                (function.name.asString() == "box-impl" || function.name.asString() == KotlinTypeMapper.BOX_JVM_DEFAULT_METHOD_NAME)
 
     fun mapSignatureSkipGeneric(function: IrFunction): JvmMethodSignature =
         mapSignature(function, true)

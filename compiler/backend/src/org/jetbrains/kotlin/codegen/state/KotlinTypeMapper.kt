@@ -1579,6 +1579,9 @@ class KotlinTypeMapper @JvmOverloads constructor(
         val BOX_JVM_METHOD_NAME = InlineClassDescriptorResolver.BOX_METHOD_NAME.toString() + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
 
         @JvmField
+        val BOX_JVM_DEFAULT_METHOD_NAME = BOX_JVM_METHOD_NAME + "-default"
+
+        @JvmField
         val UNBOX_JVM_METHOD_NAME = InlineClassDescriptorResolver.UNBOX_METHOD_NAME.toString() + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS
 
         private fun getPartSimpleNameForMangling(callableDescriptor: CallableMemberDescriptor): String? {
