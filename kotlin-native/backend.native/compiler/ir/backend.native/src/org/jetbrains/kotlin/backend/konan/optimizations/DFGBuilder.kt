@@ -309,6 +309,15 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     expressions += expression to currentLoop
             }
 
+            if (expression is IrCall && expression.symbol == initInstanceSymbol) {
+                // Skip the constructor call as initInstance is handled specially later.
+                val thiz = expression.getValueArgument(0)!!
+                val constructorCall = expression.getValueArgument(1)!!
+                thiz.acceptVoid(this)
+                constructorCall.acceptChildrenVoid(this)
+                return
+            }
+
             if (expression is IrCall && expression.symbol == executeImplSymbol) {
                 // Producer and job of executeImpl are called externally, we need to reflect this somehow.
                 val producerInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
