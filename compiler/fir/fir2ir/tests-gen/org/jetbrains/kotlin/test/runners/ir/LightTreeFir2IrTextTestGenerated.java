@@ -155,6 +155,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         }
 
         @Test
+        @TestMetadata("fakeOverridesForJavaNonStaticMembers.kt")
+        public void testFakeOverridesForJavaNonStaticMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/fakeOverridesForJavaNonStaticMembers.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverridesForJavaStaticMembers.kt")
         public void testFakeOverridesForJavaStaticMembers() throws Exception {
             runTest("compiler/testData/ir/irText/classes/fakeOverridesForJavaStaticMembers.kt");
