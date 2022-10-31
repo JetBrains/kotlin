@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -14,9 +15,9 @@ import kotlin.io.path.appendText
 class StdlibAlignmentIT : KGPBaseTest() {
 
     @AndroidGradlePluginTests
-    @DisplayName("stdlib-jdk7, stdlib-jdk8 are substituted with stdlib:1.8+")
+    @DisplayName("stdlib-jdk7, stdlib-jdk8 versions aligned with stdlib:1.8+")
     @GradleAndroidTest
-    fun testStdlibSubstitutionAndroid(
+    fun testStdlibAlignmentAndroid(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk
@@ -45,9 +46,9 @@ class StdlibAlignmentIT : KGPBaseTest() {
     }
 
     @AndroidGradlePluginTests
-    @DisplayName("stdlib-jdk7, stdlib-jdk8 substitution with stdlib:1.8+ is possible to disable")
+    @DisplayName("alignment is possible to disable")
     @GradleAndroidTest
-    fun testDisableStdlibSubstitutionAndroid(
+    fun testDisableStdlibAlignmentAndroid(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk
@@ -74,7 +75,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
             gradleProperties.appendText(
                 """
                 |
-                |kotlin.stdlib.jdk.variants.substitution=false
+                |kotlin.stdlib.jdk.variants.version.alignment=false
                 """.trimMargin()
             )
 
@@ -85,9 +86,9 @@ class StdlibAlignmentIT : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("substitution is working when stldib-jdk7:1.8+ is added as dependency")
+    @DisplayName("alignment is working when stdlib-jdk7:1.8+ is added as dependency")
     @GradleTest
-    fun stdlibJdk7Substitution(gradleVersion: GradleVersion) {
+    fun stdlibJdk7Alignment(gradleVersion: GradleVersion) {
         project("sourceSetsKotlinDsl", gradleVersion) {
             buildGradleKts.appendText(
                 """
@@ -104,19 +105,17 @@ class StdlibAlignmentIT : KGPBaseTest() {
                     """
                     |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
                     |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
-                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion} (*)
-                    |          \--- org.jetbrains.kotlin:kotlin-stdlib-common:1.5.30 -> ${buildOptions.kotlinVersion}
-                    |
-                    """.trimMargin()
+                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> ${buildOptions.kotlinVersion}
+                    """.trimMargin().normalizeLineEndings()
                 )
             }
         }
     }
 
     @JvmGradlePluginTests
-    @DisplayName("stdlib-jdk7, stdlib-jdk8 substitution with stdlib:1.8+ in Kotlin DSL")
+    @DisplayName("alignment in Kotlin DSL")
     @GradleTest
-    fun stdlibJdkVariantsSubstitutionKotlinDsl(gradleVersion: GradleVersion) {
+    fun stdlibJdkAlignmentKotlinDsl(gradleVersion: GradleVersion) {
         project("sourceSetsKotlinDsl", gradleVersion) {
             buildGradleKts.appendText(
                 """
@@ -133,19 +132,17 @@ class StdlibAlignmentIT : KGPBaseTest() {
                     """
                     |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
                     |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
-                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion} (*)
-                    |          \--- org.jetbrains.kotlin:kotlin-stdlib-common:1.5.30 -> ${buildOptions.kotlinVersion}
-                    |
-                    """.trimMargin()
+                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> ${buildOptions.kotlinVersion}
+                    """.trimMargin().normalizeLineEndings()
                 )
             }
         }
     }
 
     @JvmGradlePluginTests
-    @DisplayName("KT-54653: stdlib-jdk7, jdk8 substitution should not work for unrelated configuration")
+    @DisplayName("KT-54653: alignment should not work for unrelated configuration")
     @GradleTest
-    fun stdlibJdkVariantsSubstitutionOnlyConfiguration(gradleVersion: GradleVersion) {
+    fun stdlibJdkAlignmentUnrelatedConfigurations(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             buildGradle.modify {
                 """
@@ -169,16 +166,16 @@ class StdlibAlignmentIT : KGPBaseTest() {
                     |\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20 -> org.jetbrains.kotlin:kotlin-stdlib:1.7.20
                     |     +--- org.jetbrains.kotlin:kotlin-stdlib-common:1.7.20
                     |     \--- org.jetbrains:annotations:13.0
-                    """.trimMargin()
+                    """.trimMargin().normalizeLineEndings()
                 )
             }
         }
     }
 
     @JvmGradlePluginTests
-    @DisplayName("KT-54653: stdlib-jdk7, jdk8 substitution works for complex resolvable configurations hierarchy")
+    @DisplayName("KT-54653: alignment works for complex resolvable configurations hierarchy")
     @GradleTest
-    fun stdlibJdkVariantSubstitutionComplexResolvableConfiguration(gradleVersion: GradleVersion) {
+    fun stdlibJdkAlignmentComplexResolvableConfiguration(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             buildGradle.modify {
                 """
@@ -196,7 +193,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
                 |
                 |dependencies {
                 |    specificDeps "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}"
-                |    // brings transitevly older stdlib-jdk7,8 dependencies
+                |    // brings transitively older stdlib-jdk7,8 dependencies
                 |    specificDepsChild "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
                 |}
                 """.trimMargin()
@@ -220,6 +217,52 @@ class StdlibAlignmentIT : KGPBaseTest() {
                     """.trimMargin()
                 )
             }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("KT-54703: JPMS projects with dependency on kotlin.stdlib.jdk8 work as expected")
+    @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    @GradleWithJdkTest
+    fun alignmentWorksCorrectlyForJPMS(
+        gradleVersion: GradleVersion,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "jpmsProject",
+            gradleVersion,
+            buildJdk = providedJdk.location
+        ) {
+            subProject("list").buildGradleKts.appendText(
+                """
+                |
+                |dependencies {
+                |    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
+                |}
+                """.trimMargin()
+            )
+            subProject("list").javaSourcesDir()
+                .resolve("module-info.java")
+                .modify {
+                    val lines = it.lines()
+                    """
+                    |${lines.first()}
+                    |    requires transitive kotlin.stdlib.jdk8;
+                    |${lines.drop(1).joinToString(separator = System.lineSeparator())}
+                    """.trimMargin()
+                }
+
+            subProject("application").buildGradleKts.appendText(
+                """
+                |
+                |dependencies {
+                |    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+                |}
+                """.trimMargin()
+            )
+
+            build(":application:assemble")
         }
     }
 }
