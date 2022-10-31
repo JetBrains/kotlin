@@ -6,23 +6,21 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
-import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
-import java.io.BufferedOutputStream
 import java.io.File
 
 
-class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
+internal class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
     companion object {
         private const val CACHE_HEADER = "ic.header.bin"
 
         private const val BINARY_AST_SUFFIX = "ast.bin"
         private const val METADATA_SUFFIX = "metadata.bin"
+        private const val METADATA_TMP_SUFFIX = "metadata.tmp.bin"
     }
 
     private var forceRebuildJs = false
@@ -84,29 +82,11 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
         }
     }
 
-    fun buildModuleArtifactAndCommitCache(
-        moduleName: String,
-        externalModuleName: String?,
-        rebuiltFileFragments: Map<KotlinSourceFile, JsIrProgramFragment>,
-        signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>
-    ): ModuleArtifact {
-        val serializer = JsIrAstSerializer()
-
+    fun buildIncrementalCacheArtifact(signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>): IncrementalCacheArtifact {
         val fileArtifacts = kotlinLibraryHeader.sourceFiles.map { srcFile ->
-            val binaryAstFile = srcFile.getCacheFile(BINARY_AST_SUFFIX)
-            val rebuiltFileFragment = rebuiltFileFragments[srcFile]
-            if (rebuiltFileFragment != null) {
-                binaryAstFile.recreate()
-                BufferedOutputStream(binaryAstFile.outputStream()).use { bufferedOutStream ->
-                    serializer.serialize(rebuiltFileFragment, bufferedOutStream)
-                }
-            }
-
-            commitSourceFileMetadata(srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
-            SrcFileArtifact(srcFile.path, rebuiltFileFragment, binaryAstFile)
+            commitSourceFileMetadata(srcFile.getCacheFile(BINARY_AST_SUFFIX), srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
         }
-
-        return ModuleArtifact(moduleName, fileArtifacts, cacheDir, forceRebuildJs, externalModuleName)
+        return IncrementalCacheArtifact(cacheDir, forceRebuildJs, fileArtifacts)
     }
 
     data class ModifiedFiles(
@@ -125,6 +105,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
                 isConfigModified = cacheHeader.configHash != ICHash()
                 CacheHeader(klibFileHash, configHash)
             }
+
             cacheHeader.klibFileHash != klibFileHash -> CacheHeader(klibFileHash, configHash)
             else -> return ModifiedFiles()
         }
@@ -228,15 +209,19 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
             } ?: KotlinSourceFileMetadataNotExist
         }
 
-    private fun commitSourceFileMetadata(srcFile: KotlinSourceFile, signatureToIndexMapping: Map<IdSignature, Int>) {
+    private fun commitSourceFileMetadata(
+        binaryAstFile: File,
+        srcFile: KotlinSourceFile,
+        signatureToIndexMapping: Map<IdSignature, Int>
+    ): SourceFileCacheArtifact {
         val headerCacheFile = srcFile.getCacheFile(METADATA_SUFFIX)
-        val sourceFileMetadata = kotlinLibrarySourceFileMetadata[srcFile] ?: return
+        val sourceFileMetadata = kotlinLibrarySourceFileMetadata[srcFile]
+            ?: return SourceFileCacheArtifact.DoNotChangeMetadata(srcFile, binaryAstFile)
         if (sourceFileMetadata.isEmpty()) {
-            headerCacheFile.delete()
-            return
+            return SourceFileCacheArtifact.RemoveMetadata(srcFile, binaryAstFile, headerCacheFile)
         }
         if (sourceFileMetadata is KotlinSourceFileMetadataFromDisk) {
-            return
+            return SourceFileCacheArtifact.DoNotChangeMetadata(srcFile, binaryAstFile)
         }
 
         val signatureToIndexMappingSaved = signatureToIndexMappingFromMetadata[srcFile] ?: emptyMap()
@@ -270,9 +255,11 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
             }
         }
 
-        headerCacheFile.useCodedOutput {
+        val tmpCacheFile = srcFile.getCacheFile(METADATA_TMP_SUFFIX)
+        tmpCacheFile.useCodedOutput {
             writeDirectDependencies(sourceFileMetadata.directDependencies)
             writeInverseDependencies(sourceFileMetadata.inverseDependencies)
         }
+        return SourceFileCacheArtifact.CommitMetadata(srcFile, binaryAstFile, headerCacheFile, tmpCacheFile)
     }
 }
