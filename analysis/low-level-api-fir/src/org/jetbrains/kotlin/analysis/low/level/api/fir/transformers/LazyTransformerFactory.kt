@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
 
 internal object LazyTransformerFactory {
     fun createLazyTransformer(
@@ -84,6 +83,7 @@ internal object LazyTransformerFactory {
             designation.firFile.moduleData.session,
             scopeSession
         )
-        else -> error("Non-lazy phase $phase")
+        FirResolvePhase.RAW_FIR -> error("Non-lazy phase $phase")
+        FirResolvePhase.IMPORTS -> error("Non-lazy phase $phase")
     }
 }
