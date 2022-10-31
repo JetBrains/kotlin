@@ -131,15 +131,6 @@ internal class CallGraphBuilder(
                                 node
                         )
 
-                    is DataFlowIR.Node.FunctionReference ->
-                        block(DataFlowIR.Node.Call(
-                                callee = node.symbol,
-                                arguments = emptyList(),
-                                returnType = node.symbol.returnParameter.type,
-                                irCallSite = null),
-                                node
-                        )
-
                     else -> { }
                 }
             }
