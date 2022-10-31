@@ -53,7 +53,7 @@ class JsIrCompilerWithIC(
         allModules: Collection<IrModuleFragment>,
         dirtyFiles: Collection<IrFile>,
         mainArguments: List<String>?
-    ): List<Pair<IrFile, JsIrProgramFragment>> {
+    ): List<() -> JsIrProgramFragment> {
         val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
 
         allModules.forEach {
@@ -68,7 +68,7 @@ class JsIrCompilerWithIC(
         lowerPreservingTags(allModules, context, PhaseConfig(jsPhases), context.irFactory.stageController as WholeWorldStageController)
 
         val transformer = IrModuleToJsTransformer(context, mainArguments)
-        return transformer.generateBinaryAst(dirtyFiles, allModules)
+        return transformer.makeIrFragmentsGenerators(dirtyFiles, allModules)
     }
 }
 

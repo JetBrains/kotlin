@@ -174,7 +174,7 @@ class IrModuleToJsTransformer(
         return makeJsCodeGeneratorFromIr(exportData, mode) to dts
     }
 
-    fun generateBinaryAst(files: Collection<IrFile>, allModules: Collection<IrModuleFragment>): List<Pair<IrFile, JsIrProgramFragment>> {
+    fun makeIrFragmentsGenerators(files: Collection<IrFile>, allModules: Collection<IrModuleFragment>): List<() -> JsIrProgramFragment> {
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
 
         val exportData = files.map { it to exportModelGenerator.generateExportWithExternals(it) }
@@ -182,7 +182,7 @@ class IrModuleToJsTransformer(
         doStaticMembersLowering(allModules)
 
         return exportData.map { (file, exports) ->
-            file to generateProgramFragment(file, exports, minimizedMemberNames = false)
+            { generateProgramFragment(file, exports, minimizedMemberNames = false) }
         }
     }
 
