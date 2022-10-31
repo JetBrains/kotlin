@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProv
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformerExecutor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
@@ -207,21 +208,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun fastTrackForImportsPhase(
-        firDeclarationToResolve: FirDeclaration,
-        checkPCE: Boolean,
-    ): Boolean {
-        val provider = firDeclarationToResolve.moduleData.session.firProvider
-        val firFile = when (firDeclarationToResolve) {
-            is FirFile -> firDeclarationToResolve
-            is FirCallableDeclaration -> provider.getFirCallableContainerFile(firDeclarationToResolve.symbol)
-            is FirClassLikeDeclaration -> provider.getFirClassifierContainerFile(firDeclarationToResolve.symbol)
-            else -> null
-        } ?: return false
-        resolveFileToImports(firFile, checkPCE)
-        return true
-    }
-
     /**
      * Run designated resolve only designation with fully resolved path (synchronized).
      * Suitable for body resolve or/and on-air resolve.
@@ -250,9 +236,9 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     ) {
         if (firDeclarationToResolve.resolvePhase >= toPhase) return
         if (toPhase == FirResolvePhase.IMPORTS) {
-            if (fastTrackForImportsPhase(firDeclarationToResolve, checkPCE)) {
-                return
-            }
+            val firFile = firDeclarationToResolve.getContainingFile() ?: return
+            resolveFileToImports(firFile, checkPCE)
+            return
         }
         if (firDeclarationToResolve is FirFile) {
             lazyResolveFileDeclaration(firDeclarationToResolve, toPhase, scopeSession, checkPCE = checkPCE)
