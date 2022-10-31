@@ -258,32 +258,17 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
         when (firDeclarationToResolve) {
             is FirSyntheticPropertyAccessor -> {
-                lazyResolveDeclaration(
-                    firDeclarationToResolve.delegate,
-                    scopeSession,
-                    toPhase,
-                    checkPCE,
-                )
+                lazyResolveDeclaration(firDeclarationToResolve.delegate, scopeSession, toPhase, checkPCE,)
                 return
             }
 
             is FirBackingField -> {
-                lazyResolveDeclaration(
-                    firDeclarationToResolve.propertySymbol.fir,
-                    scopeSession,
-                    toPhase,
-                    checkPCE,
-                )
+                lazyResolveDeclaration(firDeclarationToResolve.propertySymbol.fir, scopeSession, toPhase, checkPCE,)
                 return
             }
 
             is FirFile -> {
-                lazyResolveFileDeclaration(
-                    firFile = firDeclarationToResolve,
-                    toPhase = toPhase,
-                    scopeSession = scopeSession,
-                    checkPCE = checkPCE,
-                )
+                lazyResolveFileDeclaration(firDeclarationToResolve, toPhase, scopeSession, checkPCE = checkPCE)
                 return
             }
             else -> {}
