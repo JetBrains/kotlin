@@ -41,8 +41,8 @@ internal fun customizeKotlinDependencies(project: Project) {
         coreLibrariesVersion
     )
 
-    if (propertiesProvider.stdlibJdkVariantsSubstitution) {
-        project.configurations.configureStdlibSubstitution()
+    if (propertiesProvider.stdlibJdkVariantsVersionAlignment) {
+        project.configurations.configureStdlibVersionAlignment()
     }
 
     excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project)
