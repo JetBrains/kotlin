@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin
 
+import com.intellij.openapi.progress.ProcessCanceledException
+
 val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $message"
 
 class SourceCodeAnalysisException(val source: KtSourceElement, override val cause: Throwable) : Exception() {
@@ -15,6 +17,8 @@ inline fun <R> whileAnalysing(element: KtSourceElement?, block: () -> R): R {
     return try {
         block()
     } catch (exception: SourceCodeAnalysisException) {
+        throw exception
+    } catch (exception: ProcessCanceledException) {
         throw exception
     } catch (exception: Exception) {
         val source = element?.takeIf { it is KtRealPsiSourceElement } ?: throw exception
