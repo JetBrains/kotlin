@@ -157,9 +157,29 @@ object JsIrBuilder {
     fun buildBreak(type: IrType, loop: IrLoop) = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
     fun buildContinue(type: IrType, loop: IrLoop) = IrContinueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
 
-    fun buildIfElse(type: IrType, cond: IrExpression, thenBranch: IrExpression, elseBranch: IrExpression? = null): IrWhen = buildIfElse(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, cond, thenBranch, elseBranch, JsStatementOrigins.SYNTHESIZED_STATEMENT
-    )
+    fun buildIfElse(
+        type: IrType,
+        cond: IrExpression,
+        thenBranch: IrExpression,
+        elseBranch: IrExpression? = null,
+        thenBranchStartOffset: Int = cond.startOffset,
+        thenBranchEndOffset: Int = thenBranch.endOffset,
+        elseBranchStartOffset: Int = UNDEFINED_OFFSET,
+        elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
+    ): IrWhen =
+        buildIfElse(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = type,
+            cond = cond,
+            thenBranch = thenBranch,
+            elseBranch = elseBranch,
+            origin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+            thenBranchStartOffset = thenBranchStartOffset,
+            thenBranchEndOffset = thenBranchEndOffset,
+            elseBranchStartOffset = elseBranchStartOffset,
+            elseBranchEndOffset = elseBranchEndOffset
+        )
 
     fun buildIfElse(
         startOffset: Int,
@@ -168,13 +188,17 @@ object JsIrBuilder {
         cond: IrExpression,
         thenBranch: IrExpression,
         elseBranch: IrExpression? = null,
-        origin: IrStatementOrigin? = null
+        origin: IrStatementOrigin? = null,
+        thenBranchStartOffset: Int = cond.startOffset,
+        thenBranchEndOffset: Int = thenBranch.endOffset,
+        elseBranchStartOffset: Int = UNDEFINED_OFFSET,
+        elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
     ): IrWhen {
         val element = IrIfThenElseImpl(startOffset, endOffset, type, origin)
-        element.branches.add(IrBranchImpl(cond, thenBranch))
+        element.branches.add(IrBranchImpl(thenBranchStartOffset, thenBranchEndOffset, cond, thenBranch))
         if (elseBranch != null) {
-            val irTrue = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, cond.type, true)
-            element.branches.add(IrElseBranchImpl(irTrue, elseBranch))
+            val irTrue = IrConstImpl.constTrue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, cond.type)
+            element.branches.add(IrElseBranchImpl(elseBranchStartOffset, elseBranchEndOffset, irTrue, elseBranch))
         }
 
         return element
