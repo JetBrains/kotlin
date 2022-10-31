@@ -26,6 +26,6 @@ inline fun getB(): Int {
 
 // EXPECTATIONS JS_IR
 // test.kt:14 box
-// test.kt:5 box
+// test.kt:4 box
 // test.kt:11 getA
 // test.kt:14 box
