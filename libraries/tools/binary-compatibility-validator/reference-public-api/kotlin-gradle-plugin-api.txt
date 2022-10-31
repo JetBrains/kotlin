@@ -652,6 +652,10 @@ public final class org/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies$Defa
 	public static fun getRelatedConfigurationNames (Lorg/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies;)Ljava/util/List;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/HasKotlinDependenciesKt {
+	public static final fun warnNpmGenerateExternals (Lorg/gradle/api/logging/Logger;)V
+}
+
 public class org/jetbrains/kotlin/gradle/plugin/InternalSubpluginOption : org/jetbrains/kotlin/gradle/plugin/SubpluginOption {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 }
