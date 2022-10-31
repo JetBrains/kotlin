@@ -29,6 +29,19 @@ private val DataFlowIR.Node.ir
         else -> null
     }
 
+private val CallGraphNode.CallSite.arguments: List<DataFlowIR.Node>
+    get() {
+        return if (call is DataFlowIR.Node.NewObject) {
+            (0..call.arguments.size).map {
+                if (it == 0) node else call.arguments[it - 1].node
+            }
+        } else {
+            (0..call.arguments.size).map {
+                if (it < call.arguments.size) call.arguments[it].node else node
+            }
+        }
+    }
+
 internal object EscapeAnalysis {
 
     /*
@@ -991,15 +1004,7 @@ internal object EscapeAnalysis {
                     +calleeEscapeAnalysisResult.toString()
                 }
 
-                val arguments = if (call is DataFlowIR.Node.NewObject) {
-                                    (0..call.arguments.size).map {
-                                        if (it == 0) call else call.arguments[it - 1].node
-                                    }
-                                } else {
-                                    (0..call.arguments.size).map {
-                                        if (it < call.arguments.size) call.arguments[it].node else call
-                                    }
-                                }
+                val arguments = callSite.arguments
 
                 val calleeDrains = Array(calleeEscapeAnalysisResult.numberOfDrains) { newNode() }
 
