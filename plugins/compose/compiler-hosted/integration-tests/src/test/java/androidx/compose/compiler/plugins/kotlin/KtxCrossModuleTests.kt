@@ -187,6 +187,88 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         }
     }
 
+    @Test // see: b/255983530
+    fun testNonComposableWithComposableReturnTypeCrossModule(): Unit = ensureSetup {
+        compile(
+            mapOf(
+                "library module" to mapOf(
+                    "x/MakeComposable.kt" to """
+                      package x
+                      import androidx.compose.runtime.Composable
+
+                      fun makeComposable(): @Composable () -> Unit = @Composable {}
+                    """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/User.kt" to """
+                      package y
+                      import x.makeComposable
+                      import androidx.compose.runtime.Composable
+
+                      fun acceptComposable(composable: @Composable () -> Unit) {
+
+                      }
+
+                      fun test() {
+                        acceptComposable(makeComposable())
+                      }
+                    """.trimIndent()
+                )
+            ),
+        ) {
+            assert(
+                it.contains("public final static makeComposable()Lkotlin/jvm/functions/Function2;")
+            )
+            assert(
+                !it.contains(
+                "INVOKESTATIC x/MakeComposableKt.makeComposable ()Lkotlin/jvm/functions/Function0;"
+                )
+            )
+            assert(
+                it.contains(
+                "INVOKESTATIC x/MakeComposableKt.makeComposable ()Lkotlin/jvm/functions/Function2;"
+                )
+            )
+        }
+    }
+
+    @Test // see: b/255983530
+    fun testNonComposableWithNestedComposableReturnTypeCrossModule(): Unit = ensureSetup {
+        compile(
+            mapOf(
+                "library module" to mapOf(
+                    "x/MakeComposable.kt" to """
+                      package x
+                      import androidx.compose.runtime.Composable
+
+                      fun makeComposable(): List<@Composable () -> Unit> = listOf(@Composable {})
+                    """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/User.kt" to """
+                      package y
+                      import x.makeComposable
+                      import androidx.compose.runtime.Composable
+
+                      fun acceptComposable(composable: @Composable () -> Unit) {
+
+                      }
+
+                      fun test() {
+                        acceptComposable(makeComposable().single())
+                      }
+                    """.trimIndent()
+                )
+            ),
+        ) {
+            assert(
+                it.contains("INVOKESTATIC x/MakeComposableKt.makeComposable ()Ljava/util/List;")
+            )
+            assert(!it.contains("CHECKCAST kotlin/jvm/functions/Function0"))
+            assert(it.contains("CHECKCAST kotlin/jvm/functions/Function2"))
+        }
+    }
+
     @Test
     fun testInlineClassOverloading(): Unit = ensureSetup {
         compile(
