@@ -169,7 +169,7 @@ object FirSupertypesChecker : FirClassChecker() {
     ) {
         for (subDeclaration in declaration.declarations) {
             if (subDeclaration is FirField) {
-                if (subDeclaration.visibility == Visibilities.Local &&
+                if (subDeclaration.visibility == Visibilities.Private &&
                     subDeclaration.name.isSpecial &&
                     subDeclaration.name.isDelegated
                 ) {

@@ -1857,10 +1857,12 @@ class DeclarationsConverter(
                 origin = FirDeclarationOrigin.Synthetic
                 name = delegateName
                 returnTypeRef = firTypeRef
-                symbol = FirFieldSymbol(CallableId(name))
+                symbol = FirFieldSymbol(CallableId(context.currentClassId, name))
                 isVar = false
-                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
                 initializer = calculatedFirExpression
+            }.also {
+                it.initContainingClassAttr()
             }.symbol
         )
         return firTypeRef

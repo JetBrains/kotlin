@@ -28,7 +28,7 @@ FILE: Platform.kt
             super<R|kotlin/Any|>()
         }
 
-        local final field <$$delegate_0>: R|Configurables| = R|<local>/configurables|
+        private final field <$$delegate_0>: R|Configurables| = R|<local>/configurables|
 
         public final val configurables: R|Configurables| = R|<local>/configurables|
             public get(): R|Configurables|

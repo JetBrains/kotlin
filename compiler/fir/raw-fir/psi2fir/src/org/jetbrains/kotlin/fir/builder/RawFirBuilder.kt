@@ -11,6 +11,10 @@ import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
@@ -857,10 +861,12 @@ open class RawFirBuilder(
                             origin = FirDeclarationOrigin.Synthetic
                             name = delegateName
                             returnTypeRef = type
-                            symbol = FirFieldSymbol(CallableId(name))
+                            symbol = FirFieldSymbol(CallableId(this@RawFirBuilder.context.currentClassId, name))
                             isVar = false
-                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
                             initializer = delegateExpression
+                        }.also {
+                            it.initContainingClassAttr()
                         }
                         delegateFieldsMap[index] = delegateField.symbol
                     }
