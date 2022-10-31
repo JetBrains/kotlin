@@ -558,7 +558,6 @@ internal object EscapeAnalysis {
                 }
             }
 
-            val nonTrivialComponent = nodes.size > 1
             val pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, PointsToGraph>()
             val toAnalyze = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
             toAnalyze.addAll(nodes)
@@ -574,33 +573,40 @@ internal object EscapeAnalysis {
 
                 val pointsToGraph = PointsToGraph(function)
                 pointsToGraphs[function] = pointsToGraph
-                analyze(callGraph, pointsToGraph, function)
-                val endResult = escapeAnalysisResults[function]!!
 
-                if (startResult == endResult) {
-                    context.log { "Escape analysis is not changed" }
-                } else {
-                    context.log { "Escape analysis was refined:\n$endResult" }
-                    if (with(DivergenceResolutionParams) {
-                                // A heuristic: the majority of functions have their points-to graph size linear in number of IR (or DFG) nodes,
-                                // there are exceptions but it's a trade-off we have to make.
-                                // The trick with [NegligibleSize] handles functions that basically delegate their work to other functions.
-                                val numberOfNodes = intraproceduralAnalysisResults[function]!!.function.body.allScopes.sumOf { it.nodes.size }
-                                val maxAllowedGraphSize = NegligibleSize + numberOfNodes * SwellingFactor
+                val maxAllowedGraphSize = with(DivergenceResolutionParams) {
+                    // A heuristic: the majority of functions have their points-to graph size linear in number of IR (or DFG) nodes,
+                    // there are exceptions but it's a trade-off we have to make.
+                    // The trick with [NegligibleSize] handles functions that basically delegate their work to other functions.
+                    val numberOfNodes = intraproceduralAnalysisResults[function]!!.function.body.allScopes.sumOf { it.nodes.size }
+                    NegligibleSize + numberOfNodes * SwellingFactor
+                }
 
-                                numberOfRuns[function]!! > MaxAttempts
-                                        || (nonTrivialComponent && pointsToGraph.allNodes.size > maxAllowedGraphSize)
-                            }
-                    ) {
-                        // TODO: suboptimal. May be it is possible somehow handle the entire component at once?
-                        context.log {
-                            "WARNING: Escape analysis for $function seems not to be converging." +
-                                    " Assuming conservative results."
-                        }
-                        escapeAnalysisResults[function] = FunctionEscapeAnalysisResult.pessimistic(function.parameters.size)
-                        nodes.remove(function)
+                var analyzedSuccessfully = analyze(callGraph, pointsToGraph, function, maxAllowedGraphSize)
+                var processCallers = true
+                if (analyzedSuccessfully) {
+                    val endResult = escapeAnalysisResults[function]!!
+                    if (startResult == endResult) {
+                        context.log { "Escape analysis is not changed" }
+                        processCallers = false
+                    } else {
+                        context.log { "Escape analysis was refined:\n$endResult" }
+                        if (numberOfRuns[function]!! > DivergenceResolutionParams.MaxAttempts)
+                            analyzedSuccessfully = false
                     }
+                }
 
+                if (!analyzedSuccessfully) {
+                    // TODO: suboptimal. May be it is possible somehow handle the entire component at once?
+                    context.log {
+                        "WARNING: Escape analysis for $function seems not to be converging." +
+                                " Assuming conservative results."
+                    }
+                    escapeAnalysisResults[function] = FunctionEscapeAnalysisResult.pessimistic(function.parameters.size)
+                    nodes.remove(function)
+                }
+
+                if (processCallers) {
                     callGraph.reversedEdges[function]?.forEach {
                         if (nodes.contains(it))
                             toAnalyze.add(it)
@@ -659,19 +665,27 @@ internal object EscapeAnalysis {
         private fun arraySize(itemSize: Int, length: Int): Long =
                 pointerSize /* typeinfo */ + 4 /* size */ + itemSize * length.toLong()
 
-        private fun analyze(callGraph: CallGraph, pointsToGraph: PointsToGraph, function: DataFlowIR.FunctionSymbol.Declared) {
-            context.log {"Before calls analysis" }
+        private fun analyze(
+                callGraph: CallGraph,
+                pointsToGraph: PointsToGraph,
+                function: DataFlowIR.FunctionSymbol.Declared,
+                maxAllowedGraphSize: Int
+        ): Boolean {
+            context.log { "Before calls analysis" }
             pointsToGraph.log()
             pointsToGraph.logDigraph(false)
 
             callGraph.directEdges[function]!!.callSites.forEach {
                 val callee = it.actualCallee
                 val calleeEAResult = if (it.isVirtual)
-                                         getExternalFunctionEAResult(it)
-                                     else
-                                         callGraph.directEdges[callee]?.let { escapeAnalysisResults[it.symbol]!! }
-                                             ?: getExternalFunctionEAResult(it)
+                    getExternalFunctionEAResult(it)
+                else
+                    callGraph.directEdges[callee]?.let { escapeAnalysisResults[it.symbol]!! }
+                            ?: getExternalFunctionEAResult(it)
                 pointsToGraph.processCall(it, calleeEAResult)
+
+                if (pointsToGraph.allNodes.size > maxAllowedGraphSize)
+                    return false
             }
 
             context.log { "After calls analysis" }
@@ -686,6 +700,8 @@ internal object EscapeAnalysis {
             pointsToGraph.logDigraph(true)
 
             escapeAnalysisResults[function] = eaResult
+
+            return true
         }
 
         private fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
