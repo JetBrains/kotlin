@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
@@ -183,6 +185,7 @@ interface HasKotlinDependencies {
         get() = listOf(apiConfigurationName, implementationConfigurationName, compileOnlyConfigurationName, runtimeOnlyConfigurationName)
 }
 
+@Deprecated("Do not use in your build script")
 fun warnNpmGenerateExternals(logger: Logger) {
     logger.warn(
         """
