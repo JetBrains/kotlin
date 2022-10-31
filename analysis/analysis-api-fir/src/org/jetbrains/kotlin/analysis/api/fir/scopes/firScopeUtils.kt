@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.Name
 
 
@@ -27,6 +30,9 @@ internal fun FirScope.getCallableSymbols(
         }
         yieldList {
             processPropertiesByName(name) { firSymbol ->
+                if (firSymbol is FirEnumEntrySymbol) {
+                    firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                }
                 add(builder.callableBuilder.buildCallableSymbol(firSymbol))
             }
         }
