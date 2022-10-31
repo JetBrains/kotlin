@@ -95,7 +95,7 @@ internal class KtFirReferenceShortener(
         firDeclaration.accept(collector)
 
         return ShortenCommandImpl(
-            file,
+            file.createSmartPointer(),
             collector.namesToImport.distinct(),
             collector.namesToImportWithStar.distinct(),
             collector.typesToShorten.distinct().map { it.createSmartPointer() },
@@ -616,7 +616,7 @@ private class ElementsToShortenCollector(
 }
 
 private class ShortenCommandImpl(
-    val targetFile: KtFile,
+    val targetFile: SmartPsiElementPointer<KtFile>,
     val importsToAdd: List<FqName>,
     val starImportsToAdd: List<FqName>,
     val typesToShorten: List<SmartPsiElementPointer<KtUserType>>,
@@ -624,6 +624,9 @@ private class ShortenCommandImpl(
 ) : ShortenCommand {
 
     override fun invokeShortening() {
+        // if the file has been invalidated, there's nothing we can shorten
+        val targetFile = targetFile.element ?: return
+
         for (nameToImport in importsToAdd) {
             addImportToFile(targetFile.project, targetFile, nameToImport)
         }
