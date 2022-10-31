@@ -85,6 +85,35 @@ class StdlibAlignmentIT : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
+    @DisplayName("substitution is working when stldib-jdk7:1.8+ is added as dependency")
+    @GradleTest
+    fun stdlibJdk7Substitution(gradleVersion: GradleVersion) {
+        project("sourceSetsKotlinDsl", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                |
+                |dependencies {
+                |   implementation(kotlin("stdlib-jdk7"))
+                |   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+                |}
+                """.trimMargin()
+            )
+
+            build("dependencies", "--configuration", "compileClasspath") {
+                assertOutputContains(
+                    """
+                    |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
+                    |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
+                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion} (*)
+                    |          \--- org.jetbrains.kotlin:kotlin-stdlib-common:1.5.30 -> ${buildOptions.kotlinVersion}
+                    |
+                    """.trimMargin()
+                )
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
     @DisplayName("stdlib-jdk7, stdlib-jdk8 substitution with stdlib:1.8+ in Kotlin DSL")
     @GradleTest
     fun stdlibJdkVariantsSubstitutionKotlinDsl(gradleVersion: GradleVersion) {

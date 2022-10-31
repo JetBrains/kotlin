@@ -60,7 +60,7 @@ internal fun ConfigurationContainer.configureStdlibSubstitution() = all { config
             .withType<ExternalDependency>()
             .configureEach { dependency ->
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
-                    dependency.name == "kotlin-stdlib" &&
+                    (dependency.name == "kotlin-stdlib" || dependency.name == "kotlin-stdlib-jdk7") &&
                     dependency.version != null &&
                     SemVer.from(dependency.version!!) >= kotlin180Version
                 ) {
@@ -82,9 +82,12 @@ private fun Configuration.substitudeStdlibJvmVariants(
     kotlinStdlibDependency: ExternalDependency
 ) {
     resolutionStrategy.dependencySubstitution {
-        it.substitute(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
-            .using(it.module("org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdlibDependency.version}"))
-            .because("kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
+        if (kotlinStdlibDependency.name != "kotlin-stdlib-jdk7") {
+            it.substitute(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
+                .using(it.module("org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdlibDependency.version}"))
+                .because("kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
+        }
+
         it.substitute(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
             .using(it.module("org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdlibDependency.version}"))
             .because("kotlin-stdlib-jdk8 is now part of kotlin-stdlib")
