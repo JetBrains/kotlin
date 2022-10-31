@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.isClassWithFqName
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -139,7 +140,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         if (
             ownerFn != null &&
             ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
-            ownerFn.hasComposableArguments()
+            ownerFn.needsComposableRemapping()
         ) {
             if (symbolRemapper.getReferencedConstructor(ownerFn.symbol) == ownerFn.symbol) {
                 // Not remapped yet, so remap now.
@@ -167,15 +168,24 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         return super.visitConstructorCall(expression)
     }
 
-    private fun IrFunction.hasComposableArguments(): Boolean {
+    private fun IrFunction.needsComposableRemapping(): Boolean {
         if (
-            dispatchReceiverParameter?.type?.isComposable() == true ||
-            extensionReceiverParameter?.type?.isComposable() == true
+            needsComposableRemapping(dispatchReceiverParameter?.type) ||
+            needsComposableRemapping(extensionReceiverParameter?.type) ||
+            needsComposableRemapping(returnType)
         ) return true
 
         for (param in valueParameters) {
-            if (param.type.isComposable()) return true
+            if (needsComposableRemapping(param.type)) return true
         }
+        return false
+    }
+
+    private fun needsComposableRemapping(type: IrType?): Boolean {
+        if (type == null) return false
+        if (type !is IrSimpleType) return false
+        if (type.isComposable()) return true
+        if (type.arguments.any { needsComposableRemapping(it.typeOrNull) }) return true
         return false
     }
 
@@ -247,7 +257,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
                 // avoid java properties since they go through a different lowering and it is
                 // also impossible for them to have composable types
                 if (property.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB &&
-                    property.getter?.returnType?.isComposable() == true
+                    property.getter?.needsComposableRemapping() == true
                 ) {
                     if (symbolRemapper.getReferencedProperty(property.symbol) == property.symbol) {
                         // Not remapped yet, so remap now.
@@ -261,7 +271,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
                         }
                     }
                 }
-            } else if (ownerFn.hasComposableArguments()) {
+            } else if (ownerFn.needsComposableRemapping()) {
                 if (symbolRemapper.getReferencedSimpleFunction(ownerFn.symbol) == ownerFn.symbol) {
                     // Not remapped yet, so remap now.
                     // Remap only once to avoid IdSignature clash (on k/js 1.7.20).
@@ -281,7 +291,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
 
         if (
             ownerFn != null &&
-            ownerFn.hasComposableArguments()
+            ownerFn.needsComposableRemapping()
         ) {
             val newFn = visitSimpleFunction(ownerFn).also {
                 it.overriddenSymbols = ownerFn.overriddenSymbols.map { override ->
