@@ -189,9 +189,9 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("android app can depend on mpp lib")
+    @DisplayName("android mpp lib flavors publication can be configured")
     @GradleAndroidTest
-    fun testAndroidWithNewMppApp(
+    fun testMppAndroidLibFlavorsPublication(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
@@ -202,37 +202,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
-                // KT-30784
-                assertOutputDoesNotContain("API 'variant.getPackageLibrary()' is obsolete and has been replaced")
-
-                assertOutputContains("KT-29964 OK") // Output from lib/build.gradle
-
-                assertTasksExecuted(
-                    ":lib:compileDebugKotlinAndroidLib",
-                    ":lib:compileReleaseKotlinAndroidLib",
-                    ":lib:compileKotlinJvmLib",
-                    ":lib:compileKotlinJsLib",
-                    ":lib:compileCommonMainKotlinMetadata",
-                    ":app:compileDebugKotlinAndroidApp",
-                    ":app:compileReleaseKotlinAndroidApp",
-                    ":app:compileKotlinJvmApp",
-                    ":app:compileKotlinJsApp",
-                    ":app:compileCommonMainKotlinMetadata",
-                    ":lib:compileDebugUnitTestJavaWithJavac",
-                    ":app:compileDebugUnitTestJavaWithJavac"
-                )
-
-                listOf("debug", "release").forEach { variant ->
-                    assertFileInProjectExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/ExpectedLibClass.class")
-                    assertFileInProjectExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/CommonLibClass.class")
-                    assertFileInProjectExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/AndroidLibClass.class")
-
-                    assertFileInProjectExists("app/build/tmp/kotlin-classes/$variant/com/example/app/AKt.class")
-                    assertFileInProjectExists("app/build/tmp/kotlin-classes/$variant/com/example/app/KtUsageKt.class")
-                }
-            }
-
             val groupDir = subProject("lib").projectPath.resolve("build/repo/com/example")
             build("publish") {
                 assertDirectoryExists(groupDir.resolve("lib-jvmlib"))
@@ -243,7 +212,13 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             groupDir.deleteRecursively()
 
             // Choose a single variant to publish, check that it's there:
-            subProject("lib").buildGradle.appendText("\nkotlin.android('androidLib').publishLibraryVariants = ['release']")
+            subProject("lib").buildGradle.appendText(
+                //language=Gradle
+                """
+                    
+                kotlin.android('androidLib').publishLibraryVariants = ['release']
+                """.trimIndent()
+            )
             build("publish") {
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.aar"))
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-sources.jar"))
@@ -252,7 +227,13 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             groupDir.deleteRecursively()
 
             // Enable publishing for all Android variants:
-            subProject("lib").buildGradle.appendText("\nkotlin.android('androidLib') { publishAllLibraryVariants() }")
+            subProject("lib").buildGradle.appendText(
+                //language=Gradle
+                """
+
+                kotlin.android('androidLib') { publishAllLibraryVariants() }
+                """.trimIndent()
+            )
             build("publish") {
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.aar"))
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-sources.jar"))
@@ -262,7 +243,13 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             groupDir.deleteRecursively()
 
             // Then group the variants by flavor and check that only one publication is created:
-            subProject("lib").buildGradle.appendText("\nkotlin.android('androidLib').publishLibraryVariantsGroupedByFlavor = true")
+            subProject("lib").buildGradle.appendText(
+                //language=Gradle
+                """
+
+                kotlin.android('androidLib').publishLibraryVariantsGroupedByFlavor = true
+                """.trimIndent()
+            )
             build("publish") {
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.aar"))
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-sources.jar"))
@@ -273,7 +260,11 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
             // Add one flavor dimension with two flavors, check that the flavors produce grouped publications:
             subProject("lib").buildGradle.appendText(
-                "\nandroid { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }"
+                //language=Gradle
+                """
+
+                android { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }                    
+                """.trimIndent()
             )
             build("publish") {
                 listOf("foobar", "foobaz").forEach { flavor ->
@@ -287,7 +278,11 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
             // Disable the grouping and check that all the variants are published under separate artifactIds:
             subProject("lib").buildGradle.appendText(
-                "\nkotlin.android('androidLib') { publishLibraryVariantsGroupedByFlavor = false }"
+                //language=Gradle
+                """
+                    
+                kotlin.android('androidLib') { publishLibraryVariantsGroupedByFlavor = false }    
+                """.trimIndent()
             )
             build("publish") {
                 listOf("foobar", "foobaz").forEach { flavor ->
@@ -297,11 +292,33 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                     }
                 }
             }
-            groupDir.deleteRecursively()
+        }
+    }
 
-            // Convert the 'app' project to a library, publish the two without metadata,
+    @DisplayName("android mpp lib dependencies are properly rewritten")
+    @GradleAndroidTest
+    fun testMppAndroidLibDependenciesRewriting(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "new-mpp-android",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            // Convert the 'app' project to a library, publish two flavors without metadata,
             // check that the dependencies in the POMs are correctly rewritten:
             val appGroupDir = subProject("app").projectPath.resolve("build/repo/com/example")
+
+            subProject("lib").buildGradle.appendText(
+                //language=Gradle
+                """
+                
+                android { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }
+                """.trimIndent()
+            )
 
             subProject("app").buildGradle.modify {
                 it.replace("com.android.application", "com.android.library")
@@ -358,6 +375,52 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                             "<artifactId>kotlin-reflect</artifactId><version>${buildOptions.kotlinVersion}</version><scope>runtime</scope>"
                         )
                     }
+                }
+            }
+        }
+    }
+
+    @DisplayName("android app can depend on mpp lib")
+    @GradleAndroidTest
+    fun testAndroidWithNewMppApp(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "new-mpp-android",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
+                // KT-30784
+                assertOutputDoesNotContain("API 'variant.getPackageLibrary()' is obsolete and has been replaced")
+
+                assertOutputContains("KT-29964 OK") // Output from lib/build.gradle
+
+                assertTasksExecuted(
+                    ":lib:compileDebugKotlinAndroidLib",
+                    ":lib:compileReleaseKotlinAndroidLib",
+                    ":lib:compileKotlinJvmLib",
+                    ":lib:compileKotlinJsLib",
+                    ":lib:compileCommonMainKotlinMetadata",
+                    ":app:compileDebugKotlinAndroidApp",
+                    ":app:compileReleaseKotlinAndroidApp",
+                    ":app:compileKotlinJvmApp",
+                    ":app:compileKotlinJsApp",
+                    ":app:compileCommonMainKotlinMetadata",
+                    ":lib:compileDebugUnitTestJavaWithJavac",
+                    ":app:compileDebugUnitTestJavaWithJavac"
+                )
+
+                listOf("debug", "release").forEach { variant ->
+                    assertFileInProjectExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/ExpectedLibClass.class")
+                    assertFileInProjectExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/CommonLibClass.class")
+                    assertFileInProjectExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/AndroidLibClass.class")
+
+                    assertFileInProjectExists("app/build/tmp/kotlin-classes/$variant/com/example/app/AKt.class")
+                    assertFileInProjectExists("app/build/tmp/kotlin-classes/$variant/com/example/app/KtUsageKt.class")
                 }
             }
         }
