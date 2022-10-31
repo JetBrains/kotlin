@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -765,13 +764,7 @@ class CallAndReferenceGenerator(
             is FirAnnotationCall -> call.calleeReference
             else -> null
         }
-        val function = if (calleeReference == FirReferencePlaceholderForResolvedAnnotations) {
-            val coneClassLikeType = (call as FirAnnotation).annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
-            val firClass = (coneClassLikeType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol)?.fir
-            firClass?.declarations?.filterIsInstance<FirConstructor>()?.firstOrNull()
-        } else {
-            ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
-        }
+        val function = ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
         val valueParameters = function?.valueParameters
         val argumentMapping = call.resolvedArgumentMapping
         val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledFunction(function) ?: ConeSubstitutor.Empty
