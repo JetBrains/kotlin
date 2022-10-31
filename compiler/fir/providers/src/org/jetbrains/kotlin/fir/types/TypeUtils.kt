@@ -416,46 +416,10 @@ private fun ConeKotlinType.approximateToOnlySupertype(session: FirSession): Cone
         return null
     }
     val result = superType.type.withNullability(nullability, session.typeContext)
-    if (typeArguments.isNotEmpty()) {
-        val substitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-
-        var index = 0
-        fun addSubstitution(projection: ConeTypeProjection): Boolean {
-            when (projection) {
-                is ConeTypeParameterType -> {
-                    val symbol = projection.lookupTag.typeParameterSymbol
-                    if (!substitution.containsKey(symbol)) {
-                        substitution[symbol] = typeArguments[index].type!!
-                        index++
-                    }
-                }
-
-                is ConeErrorType -> {
-                    return false
-                }
-
-                is ConeClassLikeType -> {
-                    for (typeArgument in projection.typeArguments) {
-                        if (!addSubstitution(typeArgument)) {
-                            return false
-                        }
-                    }
-                }
-
-                is ConeKotlinTypeProjection -> {
-                    if (!addSubstitution(projection.type)) {
-                        return false
-                    }
-                }
-
-                is ConeStarProjection -> {
-                    index++
-                }
-            }
-            return true
+    if (typeArguments.isNotEmpty() && typeArguments.size == firClass.typeParameters.size) {
+        val substitution = firClass.typeParameters.zip(typeArguments).associate { (parameter, argument) ->
+            parameter.symbol to argument.type!!
         }
-
-        addSubstitution(result)
         return ConeSubstitutorByMap(substitution, session).substituteOrSelf(result)
     }
     return result
