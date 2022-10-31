@@ -10,18 +10,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.AtomicfuIrBuilder
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.AtomicfuJvmIrBuilder
 
 abstract class AtomicSymbols(
     val irBuiltIns: IrBuiltIns,
@@ -83,4 +80,6 @@ abstract class AtomicSymbols(
         parent = irPackage
         createImplicitParameterDeclarationWithWrappedDescriptor()
     }.symbol
+
+    abstract fun createBuilder(symbol: IrSymbol, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): AtomicIrBuilder
 }

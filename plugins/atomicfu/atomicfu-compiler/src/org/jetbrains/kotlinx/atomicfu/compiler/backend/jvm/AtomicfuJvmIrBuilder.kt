@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicIrBuilder
 
 // An IR builder with access to AtomicSymbols and convenience methods to build IR constructions for atomicfu JVM/IR transformation.
-class AtomicfuIrBuilder internal constructor(
+class AtomicfuJvmIrBuilder internal constructor(
     val atomicSymbols: JvmAtomicSymbols,
     symbol: IrSymbol,
     startOffset: Int,
     endOffset: Int
-) : IrBuilderWithScope(IrGeneratorContextBase(atomicSymbols.irBuiltIns), Scope(symbol), startOffset, endOffset) {
+) : AtomicIrBuilder(atomicSymbols, symbol, startOffset, endOffset) {
 
     fun getProperty(property: IrProperty, dispatchReceiver: IrExpression?) =
         irCall(property.getter?.symbol ?: error("Getter is not defined for the property ${property.render()}")).apply {

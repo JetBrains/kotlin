@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
@@ -31,16 +29,6 @@ class JvmAtomicSymbols(
     private val javaUtilConcurrent: IrPackageFragment = createPackage("java.util.concurrent.atomic")
     private val kotlinJvm: IrPackageFragment = createPackage("kotlin.jvm")
     val javaLangClass: IrClassSymbol = createClass(javaLang, "Class", ClassKind.CLASS, Modality.FINAL)
-
-    // Native classes
-    private val kotlinNativeConcurrentPackage: IrPackageFragment = createPackage("kotlin.native.concurrent")
-
-    val atomicIntNativeClass: IrClassSymbol =
-        createClass(kotlinNativeConcurrentPackage, "AtomicInt", ClassKind.CLASS, Modality.FINAL)
-
-    val atomicIntNativeConstructor: IrConstructorSymbol = atomicIntNativeClass.owner.addConstructor().apply {
-        addValueParameter("value_", irBuiltIns.intType)
-    }.symbol
 
     // AtomicIntegerFieldUpdater
     val atomicIntFieldUpdaterClass: IrClassSymbol =
@@ -552,9 +540,9 @@ class JvmAtomicSymbols(
     val volatileAnnotationConstructorCall =
         IrConstructorCallImpl.fromSymbolOwner(volatileConstructor.returnType, volatileConstructor.symbol)
 
-    fun createBuilder(
+    override fun createBuilder(
         symbol: IrSymbol,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
-    ) = AtomicfuIrBuilder(this, symbol, startOffset, endOffset)
+        startOffset: Int,
+        endOffset: Int
+    ): AtomicfuJvmIrBuilder = AtomicfuJvmIrBuilder(this, symbol, startOffset, endOffset)
 }

@@ -644,7 +644,7 @@ class AtomicfuJvmIrTransformer(
             return super.visitContainerExpression(expression, data)
         }
 
-        private fun AtomicfuIrBuilder.getAtomicFieldInfo(
+        private fun AtomicfuJvmIrBuilder.getAtomicFieldInfo(
             receiver: IrExpression,
             parentFunction: IrFunction?
         ): AtomicFieldInfo? {

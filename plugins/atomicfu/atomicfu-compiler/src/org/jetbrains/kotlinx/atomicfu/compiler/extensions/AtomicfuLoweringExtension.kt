@@ -22,6 +22,7 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.JvmAtomicSymbols
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.js.AtomicfuJsIrTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.AtomicfuJvmIrTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.native.AtomicfuNativeIrTransformer
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.native.NativeAtomicSymbols
 
 public open class AtomicfuLoweringExtension : IrGenerationExtension {
     override fun generate(
@@ -35,7 +36,7 @@ public open class AtomicfuLoweringExtension : IrGenerationExtension {
                 AtomicfuJvmIrTransformer(pluginContext, atomicSymbols).transform(moduleFragment)
             }
             platform.isNative() -> {
-                val atomicSymbols = JvmAtomicSymbols(pluginContext.irBuiltIns, moduleFragment)
+                val atomicSymbols = NativeAtomicSymbols(pluginContext.irBuiltIns, moduleFragment)
                 AtomicfuNativeIrTransformer(pluginContext, atomicSymbols).transform(moduleFragment)
             }
             platform.isJs() -> {

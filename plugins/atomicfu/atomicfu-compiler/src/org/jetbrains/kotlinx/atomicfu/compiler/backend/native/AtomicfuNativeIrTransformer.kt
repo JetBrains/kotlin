@@ -6,46 +6,52 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.native
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.JvmAtomicSymbols
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.capture
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.getValueArguments
 
 private const val AFU_PKG = "kotlinx.atomicfu"
-private const val TRACE_BASE_TYPE = "TraceBase"
 private const val ATOMIC_VALUE_FACTORY = "atomic"
-private const val INVOKE = "invoke"
-private const val APPEND = "append"
-private const val GET = "get"
-private const val ATOMICFU = "atomicfu"
-private const val ATOMIC_ARRAY_RECEIVER_SUFFIX = "\$array"
-private const val DISPATCH_RECEIVER = "${ATOMICFU}\$dispatchReceiver"
-private const val ATOMIC_HANDLER = "${ATOMICFU}\$handler"
-private const val ACTION = "${ATOMICFU}\$action"
-private const val INDEX = "${ATOMICFU}\$index"
-private const val VOLATILE_WRAPPER_SUFFIX = "\$VolatileWrapper"
-private const val LOOP = "loop"
-private const val UPDATE = "update"
 
 class AtomicfuNativeIrTransformer(
     val context: IrPluginContext,
-    val atomicSymbols: JvmAtomicSymbols
+    val atomicSymbols: NativeAtomicSymbols
 ) {
     private val ATOMIC_VALUE_TYPES = setOf("AtomicInt", "AtomicLong", "AtomicBoolean", "AtomicRef")
 
+    private val AFU_VALUE_TYPES: Map<String, IrType> = mapOf(
+        "AtomicInt" to context.irBuiltIns.intType,
+        "AtomicLong" to context.irBuiltIns.longType,
+        "AtomicBoolean" to context.irBuiltIns.booleanType,
+        "AtomicRef" to context.irBuiltIns.anyNType
+    )
+
     fun transform(moduleFragment: IrModuleFragment) {
         transformAtomicFields(moduleFragment)
+        transformAtomicCalls(moduleFragment)
     }
 
     private fun transformAtomicFields(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
             irFile.transform(AtomicHandlerTransformer(), null)
+        }
+    }
+
+    private fun transformAtomicCalls(moduleFragment: IrModuleFragment) {
+        for (irFile in moduleFragment.files) {
+            irFile.transform(AtomicfuTransformer(), null)
         }
     }
 
@@ -83,28 +89,54 @@ class AtomicfuNativeIrTransformer(
                 }
             }
         }
-
-        private fun IrProperty.isAtomic(): Boolean =
-            !isDelegated && backingField?.type?.isAtomicValueType() ?: false
-
-        private fun IrType.isAtomicValueType() =
-            classFqName?.let {
-                it.parent().asString() == AFU_PKG && it.shortName().asString() in ATOMIC_VALUE_TYPES
-            } ?: false
-
-        private fun fromKotlinxAtomicfu(declaration: IrDeclaration): Boolean =
-            declaration is IrProperty &&
-                    declaration.backingField?.type?.isKotlinxAtomicfuPackage() ?: false
-
-        private fun IrType.isKotlinxAtomicfuPackage() =
-            classFqName?.let { it.parent().asString() == AFU_PKG } ?: false
-
-        private fun IrCall.isAtomicFactory(): Boolean =
-            symbol.isKotlinxAtomicfuPackage() && symbol.owner.name.asString() == ATOMIC_VALUE_FACTORY &&
-                    type.isAtomicValueType()
-
-        // todo abstract
-        private fun IrSimpleFunctionSymbol.isKotlinxAtomicfuPackage(): Boolean =
-            owner.parent.kotlinFqName.asString() == AFU_PKG
     }
+
+    private inner class AtomicfuTransformer : IrElementTransformer<IrFunction?> {
+        override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
+            (expression.extensionReceiver ?: expression.dispatchReceiver)?.transform(this, data)?.let {
+                with(atomicSymbols.createBuilder(expression.symbol)) {
+                    val receiver = if (it is IrTypeOperatorCallImpl) it.argument else it
+                    if (receiver.type.isAtomicValueType()) { // todo only AtomicInt is supported
+                        val functionName = expression.symbol.owner.name.asString()
+                        val irCall = irCall(atomicSymbols.atomicIntNativeClass.getSimpleFunction(functionName)!!).apply {
+                            this.dispatchReceiver = (receiver as IrCall).dispatchReceiver
+                            expression.getValueArguments().forEachIndexed { index, arg ->
+                                putValueArgument(index, arg)
+                            }
+                        }
+                        return super.visitCall(irCall, data)
+                    }
+                }
+            }
+            return super.visitCall(expression, data)
+        }
+    }
+
+    private fun IrProperty.isAtomic(): Boolean =
+        !isDelegated && backingField?.type?.isAtomicValueType() ?: false
+
+    private fun IrType.isAtomicValueType() =
+        classFqName?.let {
+            it.parent().asString() == AFU_PKG && it.shortName().asString() in ATOMIC_VALUE_TYPES
+        } ?: false
+
+    private fun IrType.atomicToValueType(): IrType =
+        classFqName?.let {
+            AFU_VALUE_TYPES[it.shortName().asString()]
+        } ?: error("No corresponding value type was found for this atomic type: ${this.render()}")
+
+    private fun fromKotlinxAtomicfu(declaration: IrDeclaration): Boolean =
+        declaration is IrProperty &&
+                declaration.backingField?.type?.isKotlinxAtomicfuPackage() ?: false
+
+    private fun IrType.isKotlinxAtomicfuPackage() =
+        classFqName?.let { it.parent().asString() == AFU_PKG } ?: false
+
+    private fun IrCall.isAtomicFactory(): Boolean =
+        symbol.isKotlinxAtomicfuPackage() && symbol.owner.name.asString() == ATOMIC_VALUE_FACTORY &&
+                type.isAtomicValueType()
+
+    // todo abstract
+    private fun IrSimpleFunctionSymbol.isKotlinxAtomicfuPackage(): Boolean =
+        owner.parent.kotlinFqName.asString() == AFU_PKG
 }
