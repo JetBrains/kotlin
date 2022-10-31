@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isComposite
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
 class FakeOverrideGenerator(
@@ -47,12 +46,6 @@ class FakeOverrideGenerator(
 
     private fun IrProperty.withProperty(f: IrProperty.() -> Unit): IrProperty {
         return conversionScope.withProperty(this, firProperty = null, f)
-    }
-
-    private fun FirCallableDeclaration.allowsToHaveFakeOverrideIn(klass: FirClass): Boolean {
-        if (!allowsToHaveFakeOverride) return false
-        if (this.visibility != JavaDescriptorVisibilities.PACKAGE_VISIBILITY) return true
-        return this.symbol.callableId.packageName == klass.symbol.classId.packageFqName
     }
 
     private fun IrType.containsErrorType(): Boolean {
@@ -218,7 +211,7 @@ class FakeOverrideGenerator(
                 // We have already a FIR declaration for such fake override
                 originalDeclaration to computeBaseSymbols(originalSymbol, computeDirectOverridden, scope, classLookupTag)
             }
-            originalDeclaration.allowsToHaveFakeOverrideIn(klass) -> {
+            originalDeclaration.allowsToHaveFakeOverride -> {
                 // Trivial fake override case
                 // We've got no relevant declaration in FIR world for such a fake override in current class, thus we're creating it here
                 val fakeOverrideSymbol = createFakeOverrideSymbol(originalDeclaration, baseSymbol)
@@ -272,7 +265,7 @@ class FakeOverrideGenerator(
                     scope, classLookupTag
                 )
             }
-            originalDeclaration.allowsToHaveFakeOverrideIn(klass) -> {
+            originalDeclaration.allowsToHaveFakeOverride -> {
                 // Trivial fake override case
                 // We've got no relevant declaration in FIR world for such a fake override in current class, thus we're creating it here
                 val fakeOverrideSymbol = createFakeOverrideSymbol(originalDeclaration, baseSymbol)
