@@ -25,7 +25,6 @@ buildscript {
     repositories {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         mavenCentral()
-        jcenter()
         project.bootstrapKotlinRepo?.let {
             maven(url = it)
         }
@@ -49,7 +48,6 @@ plugins {
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 repositories {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-    jcenter()
     mavenCentral()
     gradlePluginPortal()
     extra["bootstrapKotlinRepo"]?.let {
