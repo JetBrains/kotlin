@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 class FirAnnotationArgumentsResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
     override val transformer: FirTransformer<Any?> = FirAnnotationArgumentsResolveTransformerAdapter(session, scopeSession)
 }
 

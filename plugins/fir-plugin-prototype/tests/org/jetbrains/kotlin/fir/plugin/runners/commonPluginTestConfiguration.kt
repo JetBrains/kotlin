@@ -8,12 +8,24 @@ package org.jetbrains.kotlin.fir.plugin.runners
 import org.jetbrains.kotlin.fir.plugin.services.ExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
+import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolveContractViolationErrorHandler
 
 fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
     baseFirDiagnosticTestConfiguration()
+    useAfterAnalysisCheckers(
+        ::DisableLazyResolveChecksAfterAnalysisChecker,
+    )
+
+    firHandlersStep {
+        useHandlers(
+          ::FirResolveContractViolationErrorHandler,
+        )
+    }
 
     defaultDirectives {
         +ENABLE_PLUGIN_PHASES

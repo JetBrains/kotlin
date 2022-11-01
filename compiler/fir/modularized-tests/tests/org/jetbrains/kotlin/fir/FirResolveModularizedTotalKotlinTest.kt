@@ -325,7 +325,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 class FirCheckersResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
     val diagnosticCollector: AbstractDiagnosticCollector = FirDiagnosticsCollector.create(session, scopeSession)
 
     override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)

@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 
 object FirJsSessionFactory : FirAbstractSessionFactory() {
-
     fun createJsModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker?,
+        registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
         return createModuleBasedSession(
@@ -38,7 +38,10 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             lookupTracker,
             null,
             init,
-            registerExtraComponents = { it.registerJsSpecificResolveComponents() },
+            registerExtraComponents = { session ->
+                session.registerJsSpecificResolveComponents()
+                registerExtraComponents(session)
+            },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependenciesSymbolProvider ->
@@ -57,12 +60,16 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        registerExtraComponents: ((FirSession) -> Unit),
     ) = createLibrarySession(
         mainModuleName,
         sessionProvider,
         moduleDataProvider,
         languageVersionSettings,
-        registerExtraComponents = { it.registerJsSpecificResolveComponents() },
+        registerExtraComponents = {
+            it.registerJsSpecificResolveComponents()
+            registerExtraComponents(it)
+        },
         createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
             listOf(

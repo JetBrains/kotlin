@@ -62,8 +62,8 @@ import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.pipeline.runResolution
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
+import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -71,10 +71,15 @@ import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.*
+import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
+import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -510,7 +515,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             resolvedLibraries,
             sessionProvider,
             dependencyList.moduleDataProvider,
-            configuration.languageVersionSettings
+            configuration.languageVersionSettings,
+            registerExtraComponents = {},
         )
 
         val mainModuleData = FirModuleDataImpl(
@@ -528,7 +534,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             extensionRegistrars,
             configuration.languageVersionSettings,
             null,
-            sessionConfigurator,
+            registerExtraComponents = {},
+            init = sessionConfigurator,
         )
 
         val rawFirFiles = session.buildFirFromKtFiles(ktFiles)

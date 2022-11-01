@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 class FirCompanionGenerationProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     override val transformer: FirTransformer<Nothing?> = FirCompanionGenerationTransformer(session)
 }
 
