@@ -248,12 +248,6 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
     }
 
     @Test
-    @TestMetadata("jsCode.kt")
-    public void testJsCode() throws Exception {
-        runTest("compiler/testData/debug/stepping/jsCode.kt");
-    }
-
-    @Test
     @TestMetadata("kt15259.kt")
     public void testKt15259() throws Exception {
         runTest("compiler/testData/debug/stepping/kt15259.kt");

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
+import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
@@ -157,8 +158,25 @@ open class AbstractIrJsSteppingTest : AbstractJsIrTest(
         defaultDirectives {
             +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
         }
+        useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
         jsArtifactsHandlersStep {
-            useHandlers(::JsDebugRunner)
+            useHandlers({ JsDebugRunner(it, localVariables = false) })
+        }
+    }
+}
+
+open class AbstractIrJsLocalVariableTest : AbstractJsIrTest(
+    pathToTestDir = "compiler/testData/debug/localVariables/",
+    testGroupOutputDirPrefix = "debug/localVariables/"
+) {
+    override fun TestConfigurationBuilder.configuration() {
+        commonConfigurationForJsBlackBoxCodegenTest()
+        defaultDirectives {
+            +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
+        }
+        useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
+        jsArtifactsHandlersStep {
+            useHandlers({ JsDebugRunner(it, localVariables = true) })
         }
     }
 }

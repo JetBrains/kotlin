@@ -206,12 +206,6 @@ public class JsIrLineNumberTestGenerated extends AbstractJsIrLineNumberTest {
     }
 
     @Test
-    @TestMetadata("jsCode.kt")
-    public void testJsCode() throws Exception {
-        runTest("js/js.translator/testData/lineNumbers/jsCode.kt");
-    }
-
-    @Test
     @TestMetadata("lambdaWithClosure.kt")
     public void testLambdaWithClosure() throws Exception {
         runTest("js/js.translator/testData/lineNumbers/lambdaWithClosure.kt");
