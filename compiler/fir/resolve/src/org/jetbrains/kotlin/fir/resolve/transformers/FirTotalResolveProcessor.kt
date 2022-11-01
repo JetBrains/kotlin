@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherP
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
-class FirTotalResolveProcessor(session: FirSession) {
+class FirTotalResolveProcessor(private val session: FirSession) {
     val scopeSession: ScopeSession = ScopeSession()
 
     private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(
@@ -28,19 +28,22 @@ class FirTotalResolveProcessor(session: FirSession) {
     fun process(files: List<FirFile>) {
         for (processor in processors) {
             processor.beforePhase()
-            when (processor) {
-                is FirTransformerBasedResolveProcessor -> {
-                    for (file in files) {
-                        withFileAnalysisExceptionWrapping(file) {
-                            processor.processFile(file)
+            try {
+                when (processor) {
+                    is FirTransformerBasedResolveProcessor -> {
+                        for (file in files) {
+                            withFileAnalysisExceptionWrapping(file) {
+                                processor.processFile(file)
+                            }
                         }
                     }
+                    is FirGlobalResolveProcessor -> {
+                        processor.process(files)
+                    }
                 }
-                is FirGlobalResolveProcessor -> {
-                    processor.process(files)
-                }
+            } finally {
+                processor.afterPhase()
             }
-            processor.afterPhase()
         }
     }
 }

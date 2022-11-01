@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
@@ -29,6 +31,7 @@ object TestFirJsSessionFactory {
         testServices: TestServices,
         configuration: CompilerConfiguration,
         languageVersionSettings: LanguageVersionSettings,
+        registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
         val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
         val logger = configuration.resolverLogger
@@ -36,16 +39,28 @@ object TestFirJsSessionFactory {
         val resolvedLibraries = jsResolveLibraries(libraries, repositories, logger).getFullResolvedList()
 
         return FirJsSessionFactory.createJsLibrarySession(
-            mainModuleName, resolvedLibraries, sessionProvider, dependencyListForCliModule.moduleDataProvider, languageVersionSettings
+            mainModuleName,
+            resolvedLibraries,
+            sessionProvider,
+            dependencyListForCliModule.moduleDataProvider,
+            languageVersionSettings,
+            registerExtraComponents,
         )
     }
 
     fun createModuleBasedSession(
         mainModuleData: FirModuleDataImpl, sessionProvider: FirProjectSessionProvider, extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings, lookupTracker: LookupTracker?,
-        sessionConfigurator: FirSessionConfigurator.() -> Unit
+        registerExtraComponents: ((FirSession) -> Unit),
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
         FirJsSessionFactory.createJsModuleBasedSession(
-            mainModuleData, sessionProvider, extensionRegistrars, languageVersionSettings, lookupTracker, sessionConfigurator
+            mainModuleData,
+            sessionProvider,
+            extensionRegistrars,
+            languageVersionSettings,
+            lookupTracker,
+            registerExtraComponents,
+            sessionConfigurator
         )
 }

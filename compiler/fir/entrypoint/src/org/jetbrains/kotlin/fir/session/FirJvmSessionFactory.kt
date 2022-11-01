@@ -34,13 +34,17 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         scope: AbstractProjectFileSearchScope,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
+        registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
         return createLibrarySession(
             mainModuleName,
             sessionProvider,
             dependencyList.moduleDataProvider,
             languageVersionSettings,
-            registerExtraComponents = { it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver()) },
+            registerExtraComponents = {
+                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
+                registerExtraComponents(it)
+            },
             createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 listOf(
@@ -72,6 +76,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         lookupTracker: LookupTracker? = null,
         enumWhenTracker: EnumWhenTracker? = null,
         needRegisterJavaElementFinder: Boolean,
+        registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
         return createModuleBasedSession(
@@ -85,6 +90,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
                 it.registerJavaSpecificResolveComponents()
+                registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerJvmCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },

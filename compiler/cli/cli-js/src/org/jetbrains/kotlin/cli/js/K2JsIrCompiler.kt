@@ -517,7 +517,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             resolvedLibraries,
             sessionProvider,
             dependencyList.moduleDataProvider,
-            configuration.languageVersionSettings
+            configuration.languageVersionSettings,
+            registerExtraComponents = {},
         )
 
         val mainModuleData = FirModuleDataImpl(
@@ -535,7 +536,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             extensionRegistrars,
             configuration.languageVersionSettings,
             null,
-            sessionConfigurator,
+            registerExtraComponents = {},
+            init = sessionConfigurator,
         )
 
         val rawFirFiles = session.buildFirFromKtFiles(ktFiles)

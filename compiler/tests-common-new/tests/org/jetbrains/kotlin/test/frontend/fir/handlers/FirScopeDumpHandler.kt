@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.renderer.FirCallNoArgumentsRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -80,12 +80,14 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         val firClass = symbol.fir as? FirRegularClass ?: assertions.fail { "$fqName is not a class but ${symbol.fir.render()}" }
         println("$fqName: ")
 
-        val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
-        val names = namesFromDirective.takeIf { it.isNotEmpty() }?.map { Name.identifier(it) } ?: scope.getCallableNames()
-        withIndent {
-            for (name in names) {
-                processFunctions(name, scope)
-                processProperties(name, scope)
+        session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+            val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+            val names = namesFromDirective.takeIf { it.isNotEmpty() }?.map { Name.identifier(it) } ?: scope.getCallableNames()
+            withIndent {
+                for (name in names) {
+                    processFunctions(name, scope)
+                    processProperties(name, scope)
+                }
             }
         }
         println()
