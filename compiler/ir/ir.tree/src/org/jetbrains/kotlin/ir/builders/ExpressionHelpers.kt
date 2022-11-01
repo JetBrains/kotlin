@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.util.isImmutable
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
 
@@ -76,9 +75,8 @@ fun IrBuilderWithScope.irReturn(value: IrExpression) =
     IrReturnImpl(
         startOffset, endOffset,
         context.irBuiltIns.nothingType,
-        scope.scopeOwnerSymbol.assertedCast<IrReturnTargetSymbol> {
-            "Function scope expected: ${scope.scopeOwnerSymbol.owner.render()}"
-        },
+        scope.scopeOwnerSymbol as? IrReturnTargetSymbol
+            ?: throw AssertionError("Function scope expected: ${scope.scopeOwnerSymbol.owner.render()}"),
         value
     )
 

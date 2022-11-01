@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface VisibilityPolicy {
     fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
@@ -909,7 +908,7 @@ class LocalDeclarationsLowering(
             get() {
                 val parentFun = parent as? IrSimpleFunction
                     ?: throw AssertionError("Extension receiver parent is not a simple function: ${parent.render()}")
-                val correspondingProperty = parentFun.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner
+                val correspondingProperty = parentFun.correspondingPropertySymbol?.owner
                 return when {
                     correspondingProperty != null ->
                         correspondingProperty.name.asStringStripSpecialMarkers()
