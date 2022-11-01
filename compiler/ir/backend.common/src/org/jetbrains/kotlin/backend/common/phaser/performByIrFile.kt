@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -63,12 +62,12 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
             try {
                 val filePhaserState = phaserState.changeType<IrModuleFragment, IrFile>()
                 for (phase in lower) {
-                    withFileAnalysisExceptionWrapping(irFile) {
-                        phase.invoke(phaseConfig, filePhaserState, context, irFile)
-                    }
+                    phase.invoke(phaseConfig, filePhaserState, context, irFile)
                 }
             } catch (e: Throwable) {
-                CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name)
+                CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name) {
+                    irFile.fileEntry.getLineNumber(it) to irFile.fileEntry.getColumnNumber(it)
+                }
             }
         }
 
@@ -113,7 +112,9 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         executor.awaitTermination(1, TimeUnit.DAYS) // Wait long enough
 
         thrownFromThread.get()?.let { (e, irFile) ->
-            CodegenUtil.reportBackendException(e, "Experimental parallel IR backend", irFile.fileEntry.name)
+            CodegenUtil.reportBackendException(e, "Experimental parallel IR backend", irFile.fileEntry.name) {
+                irFile.fileEntry.getLineNumber(it) to irFile.fileEntry.getColumnNumber(it)
+            }
         }
 
         // Presumably each thread has run through the same list of phases.

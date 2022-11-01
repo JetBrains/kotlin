@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.SourceCodeAnalysisException
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -233,13 +234,20 @@ object CodegenUtil {
     }
 
     @JvmStatic
-    fun reportBackendException(exception: Throwable, phase: String, location: String?, additionalMessage: String? = null): Nothing {
+    fun reportBackendException(
+        exception: Throwable,
+        phase: String,
+        location: String?,
+        additionalMessage: String? = null,
+        linesMapping: (Int) -> Pair<Int, Int>? = { _ -> null },
+    ): Nothing {
         // CompilationException (the only KotlinExceptionWithAttachments possible here) is already supposed
         // to have all information about the context.
         if (exception is KotlinExceptionWithAttachments) throw exception
         if (exception is ProcessCanceledException) throw exception
+        val lineAndOffset = (exception as? SourceCodeAnalysisException)?.let { linesMapping(it.source.startOffset) }
         throw BackendException(
-            getExceptionMessage("Backend", "Exception during $phase", exception, location) +
+            getExceptionMessage("Backend", "Exception during $phase", exception, location, lineAndOffset) +
                     additionalMessage?.let { "\n" + it }.orEmpty(),
             exception
         )

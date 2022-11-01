@@ -11,7 +11,8 @@ fun getExceptionMessage(
     subsystemName: String,
     message: String,
     cause: Throwable?,
-    location: String?
+    location: String?,
+    lineAndOffset: Pair<Int, Int>? = null,
 ): String = ApplicationManager.getApplication().runReadAction<String> {
     buildString {
         append(subsystemName).append(" Internal error: ").appendLine(message)
@@ -20,6 +21,11 @@ fun getExceptionMessage(
             append("File being compiled: ").appendLine(location)
         } else {
             appendLine("File is unknown")
+        }
+
+        if (lineAndOffset != null) {
+            append("Line: ").appendLine(lineAndOffset.first + 1)
+            append("Offset: ").appendLine(lineAndOffset.second + 1)
         }
 
         if (cause != null) {

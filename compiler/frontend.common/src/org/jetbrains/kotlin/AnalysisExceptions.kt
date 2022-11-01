@@ -19,7 +19,7 @@ inline fun <R> whileAnalysing(element: KtSourceElement?, block: () -> R): R {
     } catch (exception: SourceCodeAnalysisException) {
         throw exception
     } catch (exception: ProcessCanceledException) {
-        throw exception
+        throw exception // KT-38483
     } catch (exception: Exception) {
         val source = element?.takeIf { it is KtRealPsiSourceElement } ?: throw exception
         throw SourceCodeAnalysisException(source, exception)
@@ -58,6 +58,8 @@ inline fun <R> withFileAnalysisExceptionWrapping(
 
         val lineAndOffset = linesMapping(exception.source.startOffset)
         throw FileAnalysisException(path, exception.cause, lineAndOffset)
+    } catch (exception: ProcessCanceledException) {
+        throw exception // KT-38483
     } catch (exception: Exception) {
         val path = filePath ?: throw exception
         throw FileAnalysisException(path, exception)
