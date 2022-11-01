@@ -338,8 +338,8 @@ enum class WasmOp(
     // ============================================================
     // Typed Function References
     // WIP: https://github.com/WebAssembly/function-references
-    CALL_REF("call_ref", 0x14),
-    RETURN_CALL_REF("return_call_ref", 0x15),
+    CALL_REF("call_ref", 0x14, TYPE_IDX),
+    RETURN_CALL_REF("return_call_ref", 0x15, TYPE_IDX),
     REF_AS_NOT_NULL("ref.as_non_null", 0xD3),
     BR_ON_NULL("br_on_null", 0xD4, LABEL_IDX),
     BR_ON_NON_NULL("br_on_non_null", 0xD6, LABEL_IDX),
