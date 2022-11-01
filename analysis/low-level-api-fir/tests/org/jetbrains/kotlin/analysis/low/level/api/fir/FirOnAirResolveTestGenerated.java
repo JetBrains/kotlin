@@ -31,6 +31,12 @@ public class FirOnAirResolveTestGenerated extends AbstractFirOnAirResolveTest {
     }
 
     @Test
+    @TestMetadata("enumValueMember.kt")
+    public void testEnumValueMember() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/onAirResolve/enumValueMember.kt");
+    }
+
+    @Test
     @TestMetadata("fileAnnotation.kt")
     public void testFileAnnotation() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/onAirResolve/fileAnnotation.kt");
