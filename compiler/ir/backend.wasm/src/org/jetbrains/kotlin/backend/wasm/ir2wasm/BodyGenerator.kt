@@ -396,7 +396,7 @@ class BodyGenerator(
 
                 body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0))
                 body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot))
-                body.buildInstr(WasmOp.CALL_REF)
+                body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
             } else {
                 val symbol = klass.symbol
                 if (symbol in hierarchyDisjointUnions) {
@@ -412,7 +412,7 @@ class BodyGenerator(
                         .indexOfFirst { it.function == function }
 
                     body.buildStructGet(context.referenceVTableGcType(symbol), WasmSymbol(vfSlot))
-                    body.buildInstr(WasmOp.CALL_REF)
+                    body.buildInstr(WasmOp.CALL_REF, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
                 } else {
                     body.buildUnreachable()
                 }
@@ -877,4 +877,3 @@ class BodyGenerator(
         return false
     }
 }
-
