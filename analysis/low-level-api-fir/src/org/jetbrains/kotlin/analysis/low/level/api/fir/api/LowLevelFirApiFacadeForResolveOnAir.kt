@@ -37,25 +37,20 @@ import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 object LowLevelFirApiFacadeForResolveOnAir {
-
-    private fun KtDeclaration.canBeEnclosingDeclaration(): Boolean = when (this) {
-        is KtNamedFunction -> isTopLevel || containingClassOrObject?.isLocal == false
-        is KtProperty -> isTopLevel || containingClassOrObject?.isLocal == false
-        is KtClassOrObject -> !isLocal
-        is KtTypeAlias -> isTopLevel() || containingClassOrObject?.isLocal == false
-        else -> false
+    private fun findNonLocalParentMaybeSelf(position: KtElement): KtNamedDeclaration? {
+        return position.parentsWithSelf
+            .filterIsInstance<KtNamedDeclaration>()
+            .filter { it is KtNamedFunction || it is KtProperty || (it is KtClassOrObject && it !is KtEnumEntry) || it is KtTypeAlias }
+            .filter { !KtPsiUtil.isLocal(it) && it.containingClassOrObject !is KtEnumEntry }
+            .firstOrNull()
     }
-
-    private fun findEnclosingNonLocalDeclaration(position: KtElement): KtNamedDeclaration? =
-        position.parentsOfType<KtNamedDeclaration>().firstOrNull { ktDeclaration ->
-            ktDeclaration.canBeEnclosingDeclaration()
-        }
 
     private fun recordOriginalDeclaration(targetDeclaration: KtNamedDeclaration, originalDeclaration: KtNamedDeclaration) {
         require(originalDeclaration.containingKtFile !== targetDeclaration.containingKtFile)
@@ -150,7 +145,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(originalFirResolveSession is LLFirResolvableResolveSession)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
 
-        val dependencyNonLocalDeclaration = findEnclosingNonLocalDeclaration(elementToAnalyze)
+        val dependencyNonLocalDeclaration = findNonLocalParentMaybeSelf(elementToAnalyze)
             ?: return LLFirResolveSessionDepended(
                 originalFirResolveSession,
                 FileTowerProvider(elementToAnalyze.containingKtFile, onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)),
@@ -216,7 +211,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         onAirCreatedDeclaration: Boolean,
         collector: FirTowerDataContextCollector? = null,
     ): FirElement {
-        val nonLocalDeclaration = findEnclosingNonLocalDeclaration(replacement.from)
+        val nonLocalDeclaration = findNonLocalParentMaybeSelf(replacement.from)
         val originalFirFile = firResolveSession.getOrBuildFirFile(replacement.from.containingKtFile)
 
         if (nonLocalDeclaration == null) {
