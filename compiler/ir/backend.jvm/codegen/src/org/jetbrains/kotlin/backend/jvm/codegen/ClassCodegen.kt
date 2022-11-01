@@ -57,9 +57,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
@@ -247,7 +245,8 @@ class ClassCodegen private constructor(
             if (supertypeArgument is IrTypeProjection) {
                 val typeArgument = supertypeArgument.type
                 if (typeArgument.isReifiedTypeParameter) {
-                    reifiedTypeParametersUsages.addUsedReifiedParameter(typeArgument.classifierOrFail.cast<IrTypeParameterSymbol>().owner.name.asString())
+                    val typeParameter = typeArgument.classifierOrFail as IrTypeParameterSymbol
+                    reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
                 } else {
                     processTypeParameters(typeArgument)
                 }
@@ -580,7 +579,7 @@ class ClassCodegen private constructor(
             // The one exception to this rule are anonymous objects defined as members of a class. These are nested inside of the
             // class initializer, but can be referred to from anywhere within the scope of the class. That's why we have to ensure
             // that all references to classes inside of <clinit> have a non-null `parentFunction`.
-            parentFunction: IrFunction? = irClass.parent.safeAs<IrFunction>()?.takeIf {
+            parentFunction: IrFunction? = (irClass.parent as? IrFunction)?.takeIf {
                 it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
             },
         ): ClassCodegen =

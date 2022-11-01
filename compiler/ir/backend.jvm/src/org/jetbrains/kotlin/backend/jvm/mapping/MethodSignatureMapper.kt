@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -131,8 +130,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             origin != IrDeclarationOrigin.PROPERTY_DELEGATE &&
             !isPublishedApi()
         ) {
-            return originalFunction.takeIf { it != this }
-                ?.safeAs<IrSimpleFunction>()
+            return (originalFunction.takeIf { it != this } as? IrSimpleFunction)
                 ?.getInternalFunctionForManglingIfNeeded()
                 ?: this
         }
@@ -449,7 +447,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private val IrSimpleFunction.isBuiltIn: Boolean
         get() = getPackageFragment().fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
-                parent.safeAs<IrClass>()?.fqNameWhenAvailable?.toUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava) != null
+                (parent as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava) != null
 
     // From BuiltinMethodsWithDifferentJvmName.isBuiltinFunctionWithDifferentNameInJvm, BuiltinMethodsWithDifferentJvmName.getJvmName
     private fun IrSimpleFunction.getDifferentNameForJvmBuiltinFunction(): String? {

@@ -39,12 +39,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -187,9 +186,9 @@ fun ResolvedCall<*>.isSuspensionPoint(codegen: ExpressionCodegen): SuspensionPoi
     if (functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm()) return SuspensionPointKind.ALWAYS
     if (functionDescriptor.isInline) return SuspensionPointKind.NEVER
 
-    val isInlineLambda = this.safeAs<VariableAsFunctionResolvedCall>()
-        ?.variableCall?.resultingDescriptor?.safeAs<ValueParameterDescriptor>()
-        ?.let { it.isCrossinline || (!it.isNoinline && codegen.context.functionDescriptor.isInline) } == true
+    val parameter = (this as? VariableAsFunctionResolvedCall)?.variableCall?.resultingDescriptor as? ValueParameterDescriptor
+    val isInlineLambda = parameter != null &&
+            (parameter.isCrossinline || (!parameter.isNoinline && codegen.context.functionDescriptor.isInline))
     return if (isInlineLambda) SuspensionPointKind.NOT_INLINE else SuspensionPointKind.ALWAYS
 }
 
@@ -225,7 +224,7 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
         annotations = Annotations.EMPTY,
         name = CONTINUATION_PARAMETER_NAME,
         // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1
-        outType = if (function.containingDeclaration.safeAs<ClassDescriptor>()?.isBuiltinFunctionalClassDescriptor == true)
+        outType = if ((function.containingDeclaration as? ClassDescriptor)?.isBuiltinFunctionalClassDescriptor == true)
             function.builtIns.nullableAnyType
         else
             function.getContinuationParameterTypeOfSuspendFunction(),
@@ -363,8 +362,7 @@ private fun InstructionAdapter.invokeGetContext() {
 
 @Suppress("UNCHECKED_CAST")
 fun <D : CallableDescriptor?> D.unwrapInitialDescriptorForSuspendFunction(): D =
-    this.safeAs<SimpleFunctionDescriptor>()?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) as D ?: this
-
+    (this as? SimpleFunctionDescriptor)?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) as D ?: this
 
 fun FunctionDescriptor.getOriginalSuspendFunctionView(bindingContext: BindingContext): FunctionDescriptor =
     if (isSuspend)

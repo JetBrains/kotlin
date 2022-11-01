@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -1502,7 +1501,7 @@ class ExpressionCodegen(
         get() = irFunction.isInline || irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA
 
     val IrType.isReifiedTypeParameter: Boolean
-        get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
+        get() = (classifierOrNull as? IrTypeParameterSymbol)?.owner?.isReified == true
 
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {

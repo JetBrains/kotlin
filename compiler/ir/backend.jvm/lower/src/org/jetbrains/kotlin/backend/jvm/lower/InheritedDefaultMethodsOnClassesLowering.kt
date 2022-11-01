@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val inheritedDefaultMethodsOnClassesPhase = makeIrFilePhase(
     ::InheritedDefaultMethodsOnClassesLowering,
@@ -284,7 +283,7 @@ internal fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(
 
 private fun IrSimpleFunction.isCloneableClone(): Boolean =
     name.asString() == "clone" &&
-            parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
+            (parent as? IrClass)?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
             valueParameters.isEmpty()
 
 internal val interfaceObjectCallsPhase = makeIrFilePhase(

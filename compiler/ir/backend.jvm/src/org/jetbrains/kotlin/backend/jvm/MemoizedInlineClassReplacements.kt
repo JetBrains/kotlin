@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -56,7 +55,7 @@ class MemoizedInlineClassReplacements(
                         null
 
                 // Mangle all functions in the body of an inline class
-                it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
+                (it.parent as? IrClass)?.isSingleFieldValueClass == true ->
                     when {
                         it.isValueClassTypedEquals -> createStaticReplacement(it).also {
                             it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME

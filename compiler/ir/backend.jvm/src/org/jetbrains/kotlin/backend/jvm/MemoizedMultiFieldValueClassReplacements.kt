@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -235,7 +234,7 @@ class MemoizedMultiFieldValueClassReplacements(
                         function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ||
                         function.isMultiFieldValueClassFieldGetter -> null
 
-                function.parent.safeAs<IrClass>()?.isMultiFieldValueClass == true -> when {
+                (function.parent as? IrClass)?.isMultiFieldValueClass == true -> when {
                     function.isValueClassTypedEquals -> createStaticReplacement(function).also {
                         it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
                     }

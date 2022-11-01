@@ -12,12 +12,11 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmArgumentNullabilityAssertions = makeIrFilePhase(
     ::JvmArgumentNullabilityAssertionsLowering,
@@ -92,7 +91,7 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
     }
 
     private fun isCallToMethodWithTypeCheckBarrier(expression: IrMemberAccessExpression<*>): Boolean =
-        expression.symbol.owner.safeAs<IrSimpleFunction>()
+        (expression.symbol.owner as? IrSimpleFunction)
             ?.let {
                 val bridgeInfo = specialBridgeMethods.findSpecialWithOverride(it, includeSelf = true)
                 // The JVM BE adds null checks around platform dependent special bridge methods (Map.getOrDefault and the version of

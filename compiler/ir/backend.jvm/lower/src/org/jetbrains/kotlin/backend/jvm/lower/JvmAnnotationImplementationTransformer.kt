@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val annotationImplementationPhase = makeIrFilePhase<JvmBackendContext>(
     { ctxt -> AnnotationImplementationLowering { JvmAnnotationImplementationTransformer(ctxt, it) } },
@@ -44,7 +43,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
 
     // FIXME: Copied from JvmSingleAbstractMethodLowering
     private val inInlineFunctionScope: Boolean
-        get() = allScopes.any { it.irElement.safeAs<IrDeclaration>()?.isInPublicInlineScope == true }
+        get() = allScopes.any { (it.irElement as? IrDeclaration)?.isInPublicInlineScope == true }
 
     private val implementor = AnnotationPropertyImplementor(
         jvmContext.irFactory,

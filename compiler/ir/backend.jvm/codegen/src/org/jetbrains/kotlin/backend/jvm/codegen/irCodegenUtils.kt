@@ -29,10 +29,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -106,7 +104,7 @@ private fun IrDeclaration.getVisibilityAccessFlagForAnonymous(): Int =
 
 fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
     val isLambda = superTypes.any {
-        it.safeAs<IrSimpleType>()?.classifier === context.ir.symbols.lambdaClass
+        it.classOrNull === context.ir.symbols.lambdaClass
     }
     val visibility = when {
         isLambda -> getVisibilityAccessFlagForAnonymous()
@@ -245,7 +243,7 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type): JvmCl
 
     val superInterfaces = LinkedHashSet<String>()
     for (superType in irClass.superTypes) {
-        val superClass = superType.safeAs<IrSimpleType>()?.classifier?.safeAs<IrClassSymbol>()?.owner ?: continue
+        val superClass = superType.classOrNull?.owner ?: continue
         if (superClass.isJvmInterface) {
             sw.writeInterface()
             superInterfaces.add(mapSupertype(superType, sw).internalName)
