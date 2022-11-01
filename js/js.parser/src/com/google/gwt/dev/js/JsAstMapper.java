@@ -589,7 +589,7 @@ public class JsAstMapper {
         while (fromParamNode != null) {
             String fromParamName = fromParamNode.getString();
             JsName name = scopeContext.localNameFor(fromParamName);
-            toFn.getParameters().add(new JsParameter(name));
+            toFn.getParameters().add(withLocation(new JsParameter(name), fromParamNode));
             fromParamNode = fromParamNode.getNext();
         }
 
@@ -1132,17 +1132,28 @@ public class JsAstMapper {
         if (astNode == null) return null;
 
         CodePosition location = node.getPosition();
-        // For functions, consider their location to be at the opening parenthesis.
-        if (node.getType() == TokenStream.FUNCTION) {
-            Node c = node.getFirstChild();
-            while (c != null && c.getType() != TokenStream.LP)
-                c = c.getNext();
-            if (c != null && c.getPosition() != null)
-                location = c.getPosition();
+        switch (node.getType()) {
+            case TokenStream.FUNCTION:
+                // For functions, consider their location to be at the opening parenthesis.
+                Node c = node.getFirstChild();
+                while (c != null && c.getType() != TokenStream.LP)
+                    c = c.getNext();
+                if (c != null && c.getPosition() != null)
+                    location = c.getPosition();
+                break;
+            case TokenStream.GETPROP:
+                // For dot-qualified references, consider their position to be at the rightmost name reference.
+                location = node.getLastChild().getPosition();
+                break;
         }
 
         if (location != null) {
-            JsLocation jsLocation = new JsLocation(fileName, location.getLine(), location.getOffset());
+            String originalName = null;
+            if (astNode instanceof JsFunction || astNode instanceof JsVars.JsVar || astNode instanceof JsParameter) {
+                JsName name = ((HasName) astNode).getName();
+                originalName = name != null ? name.toString() : null;
+            }
+            JsLocation jsLocation = new JsLocation(fileName, location.getLine(), location.getOffset(), originalName);
             if (astNode instanceof SourceInfoAwareJsNode) {
                 astNode.setSource(jsLocation);
             }
