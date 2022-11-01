@@ -69,7 +69,7 @@ internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject): KtLi
 
         else -> {
             analyzeForLightClasses(classOrObject) {
-                classOrObject.getClassOrObjectSymbol().createLightClassNoCache(classOrObject.manager)
+                classOrObject.getClassOrObjectSymbol()?.createLightClassNoCache(classOrObject.manager)
             }
         }
     }
@@ -480,7 +480,7 @@ internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject,
         return false
     }
 
-    val superClassSymbol = superClassOrigin.getClassOrObjectSymbol()
+    val superClassSymbol = superClassOrigin.getClassOrObjectSymbol() ?: return false
 
     when (this) {
         is KtEnumEntry -> {
@@ -498,7 +498,7 @@ internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject,
         else -> {
             val subClassSymbol = this.getClassOrObjectSymbol()
 
-            if (subClassSymbol == superClassSymbol) return false
+            if (subClassSymbol == null || subClassSymbol == superClassSymbol) return false
 
             return if (checkDeep) {
                 subClassSymbol.isSubClassOf(superClassSymbol)
