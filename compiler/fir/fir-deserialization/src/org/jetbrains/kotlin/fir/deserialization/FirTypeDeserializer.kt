@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
