@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
@@ -12,11 +13,10 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -44,17 +43,29 @@ internal data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: 
 
 internal class EnumsSupport(
         mapping: NativeMapping,
-        symbols: KonanSymbols,
         private val irBuiltIns: IrBuiltIns,
         private val irFactory: IrFactory,
 ) {
-    private val enumImplObjects = mapping.enumImplObjects
     private val enumValueGetters = mapping.enumValueGetters
     private val enumEntriesMaps = mapping.enumEntriesMaps
-    private val array = symbols.array
-    private val enumEntries = symbols.enumEntriesInterface
-    private val genericValueOfSymbol = symbols.valueOfForEnum
-    private val genericValuesSymbol = symbols.valuesForEnum
+
+    private val valuesFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
+    private val valueOfFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
+
+    fun getValuesFunction(enumClass: IrClass) = valuesFunctions.getOrPut(enumClass) {
+        enumClass.simpleFunctions().single {
+            it.name == valuesFunctionName && it.dispatchReceiverParameter == null
+        }
+    }
+    fun saveValuesFunction(enumClass: IrClass) { getValuesFunction(enumClass) }
+
+    fun getValueOfFunction(enumClass: IrClass) = valueOfFunctions.getOrPut(enumClass) {
+        enumClass.simpleFunctions().single {
+            it.name == valueOfFunctionName && it.dispatchReceiverParameter == null
+        }
+    }
+    fun saveValueOfFunction(enumClass: IrClass) { getValueOfFunction(enumClass) }
+
 
     fun enumEntriesMap(enumClass: IrClass): Map<Name, LoweredEnumEntryDescription> {
         require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
@@ -67,41 +78,6 @@ internal class EnumsSupport(
                     .withIndex()
                     .associate { it.value.name to LoweredEnumEntryDescription(it.value.ordinal, it.index) }
                     .toMap()
-        }
-    }
-
-    fun getImplObject(enumClass: IrClass): IrClass {
-        require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
-        return enumImplObjects.getOrPut(enumClass) {
-            irFactory.buildClass {
-                startOffset = enumClass.startOffset
-                endOffset = enumClass.endOffset
-                origin = DECLARATION_ORIGIN_ENUM
-                name = implObjectName
-                kind = ClassKind.OBJECT
-            }.apply {
-                superTypes = listOf(irBuiltIns.anyType)
-                parent = enumClass
-
-                addChild(irFactory.buildField {
-                    startOffset = enumClass.startOffset
-                    endOffset = enumClass.endOffset
-                    origin = DECLARATION_ORIGIN_ENUM
-                    name = valuesFieldName
-                    type = array.typeWith(enumClass.defaultType)
-                    visibility = DescriptorVisibilities.PRIVATE
-                    isFinal = true
-                })
-                addChild(irFactory.buildField {
-                    startOffset = enumClass.startOffset
-                    endOffset = enumClass.endOffset
-                    origin = DECLARATION_ORIGIN_ENUM
-                    name = entriesFieldName
-                    type = enumEntries.typeWith(enumClass.defaultType)
-                    visibility = DescriptorVisibilities.PRIVATE
-                    isFinal = true
-                })
-            }
         }
     }
 
@@ -126,36 +102,9 @@ internal class EnumsSupport(
         }
     }
 
-    fun getValuesField(implObject: IrClass) = implObject.fields.single { it.name == valuesFieldName }
-    fun getEntriesField(implObject: IrClass) = implObject.fields.single { it.name == entriesFieldName }
-
-    fun IrBuilderWithScope.irGetValuesField(enumClass: IrClass): IrExpression {
-        val implObject = getImplObject(enumClass)
-        val valuesField = getValuesField(implObject)
-        return irGetField(irGetObject(implObject.symbol), valuesField)
-    }
-
-    fun IrBuilderWithScope.irEnumValues(enumClass: IrClass) : IrExpression =
-            irCall(genericValuesSymbol, listOf(enumClass.defaultType)).apply {
-                putValueArgument(0, irGetValuesField(enumClass))
-            }
-
-    fun IrBuilderWithScope.irEnumValueOf(enumClass: IrClass, value: IrExpression) : IrExpression =
-            irCall(genericValueOfSymbol, listOf(enumClass.defaultType)).apply {
-                putValueArgument(0, value)
-                putValueArgument(1, irGetValuesField(enumClass))
-            }
-
-    fun IrBuilderWithScope.irEnumEntries(enumClass: IrClass) : IrExpression  {
-        val implObject = getImplObject(enumClass)
-        val entriesField = getEntriesField(implObject)
-        return irGetField(irGetObject(implObject.symbol), entriesField)
-    }
-
     companion object {
-        val valuesFieldName = "VALUES".synthesizedName
-        val entriesFieldName = "ENTRIES".synthesizedName
-        val implObjectName = "OBJECT".synthesizedName
+        val valuesFunctionName = Name.identifier("values")
+        val valueOfFunctionName = Name.identifier("valueOf")
     }
 }
 
@@ -170,8 +119,6 @@ internal class NativeEnumWhenLowering constructor(context: Context) : EnumWhenLo
 
 internal class EnumUsageLowering(val context: Context) : IrElementTransformer<IrBuilderWithScope?>, FileLoweringPass {
     private val enumsSupport = context.enumsSupport
-    private val symbols = context.ir.symbols
-    private val arrayGet = symbols.arrayGet[symbols.array]!!
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile, data = null)
@@ -206,19 +153,21 @@ internal class EnumUsageLowering(val context: Context) : IrElementTransformer<Ir
 
         require(irClass.kind == ClassKind.ENUM_CLASS)
 
-        return with(enumsSupport) {
-            if (intrinsicType == IntrinsicType.ENUM_VALUES)
-                data.irEnumValues(irClass)
-            else
-                data.irEnumValueOf(irClass, expression.getValueArgument(0)!!)
+        return when (intrinsicType) {
+            IntrinsicType.ENUM_VALUES -> data.irCall(enumsSupport.getValuesFunction(irClass))
+            IntrinsicType.ENUM_VALUE_OF -> data.irCall(enumsSupport.getValueOfFunction(irClass)).apply {
+                putValueArgument(0, expression.getValueArgument(0)!!)
+            }
+            else -> TODO("Unsupported intrinsic type ${intrinsicType}")
         }
     }
 
-    private fun IrBuilderWithScope.loadEnumEntry(enumClass: IrClass, name: Name) =
-            irCall(arrayGet, enumClass.defaultType).apply {
-                dispatchReceiver = with(enumsSupport) { irGetValuesField(enumClass) }
-                putValueArgument(0, irInt(enumsSupport.enumEntriesMap(enumClass).getValue(name).getterId))
-            }
+    private fun IrBuilderWithScope.loadEnumEntry(enumClass: IrClass, name: Name) = with (enumsSupport) {
+        irCall(getValueGetter(enumClass).symbol, enumClass.defaultType).apply {
+            putValueArgument(0, irInt(enumEntriesMap(enumClass).getValue(name).getterId))
+        }
+    }
+
 }
 
 internal class EnumClassLowering(val context: Context) : FileLoweringPass {
@@ -228,7 +177,6 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
     private val createEnumEntries = symbols.createEnumEntries
     private val initInstance = symbols.initInstance
     private val arrayGet = symbols.array.owner.functions.single { it.name == KonanNameConventions.getWithoutBoundCheck }.symbol
-    private val constructorOfAny = context.irBuiltIns.anyClass.owner.constructors.first()
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -242,14 +190,37 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
     }
 
     private inner class EnumClassTransformer(val irClass: IrClass) {
-        private val implObject = enumsSupport.getImplObject(irClass)
-        private val valuesField = enumsSupport.getValuesField(implObject)
-        private val entriesField = enumsSupport.getEntriesField(implObject)
+        private val valuesField = context.irFactory.buildField {
+            startOffset = irClass.startOffset
+            endOffset = irClass.endOffset
+            origin = DECLARATION_ORIGIN_ENUM
+            name = "VALUES".synthesizedName
+            type = context.irBuiltIns.arrayClass.typeWith(irClass.defaultType)
+            visibility = DescriptorVisibilities.PRIVATE
+            isFinal = true
+            isStatic = true
+        }
+        private val entriesField = context.irFactory.buildField {
+            startOffset = irClass.startOffset
+            endOffset = irClass.endOffset
+            origin = DECLARATION_ORIGIN_ENUM
+            name = "ENTRIES".synthesizedName
+            type = symbols.enumEntriesInterface.typeWith(irClass.defaultType)
+            visibility = DescriptorVisibilities.PRIVATE
+            isFinal = true
+            isStatic = true
+        }
+
+        // also saves this in enumSupport before removing them from list
         private val enumEntriesMap = enumsSupport.enumEntriesMap(irClass)
+
 
         fun run() {
             val enumEntries = transformEnumBody()
-            defineImplObject(enumEntries)
+            // These fields are inserted into begining to be initialized before companion object
+            // The values field should be initialized first, so we need to insert entries field first
+            defineEntriesField()
+            defineValuesField(enumEntries)
             defineValueGetter()
         }
 
@@ -263,23 +234,31 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                         declaration.correspondingClass = null
                         listOfNotNull(correspondingClass)
                     }
+
                     else -> null
                 }
             }
+            enumsSupport.saveValuesFunction(irClass)
+            enumsSupport.saveValueOfFunction(irClass)
             irClass.simpleFunctions().forEach { declaration ->
                 val body = declaration.body
                 if (body is IrSyntheticBody) {
                     declaration.body = when (body.kind) {
                         IrSyntheticBodyKind.ENUM_VALUEOF -> context.createIrBuilder(declaration.symbol).irBlockBody(declaration) {
-                            +irReturn(with(enumsSupport) { irEnumValueOf(irClass, irGet(declaration.valueParameters[0])) })
+                            +irReturn(irCall(symbols.valueOfForEnum, listOf(irClass.defaultType)).apply {
+                                putValueArgument(0, irGet(declaration.valueParameters[0]))
+                                putValueArgument(1, irGetField(null, valuesField))
+                            })
                         }
 
                         IrSyntheticBodyKind.ENUM_VALUES -> context.createIrBuilder(declaration.symbol).irBlockBody(declaration) {
-                            +irReturn(with(enumsSupport) { irEnumValues(irClass) })
+                            +irReturn(irCall(symbols.valuesForEnum, listOf(irClass.defaultType)).apply {
+                                putValueArgument(0, irGetField(null, valuesField))
+                            })
                         }
 
                         IrSyntheticBodyKind.ENUM_ENTRIES -> context.createIrBuilder(declaration.symbol).irBlockBody(declaration) {
-                            +irReturn(with(enumsSupport) { irEnumEntries(irClass) })
+                            +irReturn(irGetField(null, entriesField))
                         }
                     }
                 }
@@ -292,7 +271,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             context.createIrBuilder(valueGetter.symbol).run {
                 valueGetter.body = irBlockBody(valueGetter) {
                     +irReturn(irCall(arrayGet, irClass.defaultType).apply {
-                        dispatchReceiver = with(enumsSupport) { irGetValuesField(irClass) }
+                        dispatchReceiver = irGetField(null, valuesField)
                         putValueArgument(0, irGet(valueGetter.valueParameters[0]))
                     })
                 }
@@ -300,49 +279,18 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             irClass.declarations.add(valueGetter)
         }
 
-        private fun defineImplObject(enumEntries: List<IrEnumEntry>) {
-            implObject.createParameterDeclarations()
-
-            implObject.addSimpleDelegatingConstructor(constructorOfAny, context.irBuiltIns, true /* TODO: why primary? */)
-            implObject.addFakeOverrides(context.typeSystem)
-            irClass.declarations.add(implObject)
-
-            ImplConstructorBuilder(implObject.constructors.single()).build(enumEntries)
-        }
-
-        private inner class ImplConstructorBuilder(val constructor: IrConstructor) {
-            private val irBuilder = context.createIrBuilder(constructor.symbol, constructor.startOffset, constructor.endOffset)
-
-            fun build(enumEntries: List<IrEnumEntry>) {
-                val statements = (constructor.body as IrBlockBody).statements
-
-                // The initialization order is the following:
-                // - first all enum entries in their declaration order
-                // - then companion object if it exists
-                statements += buildValuesFieldInitializer(enumEntries)
-                // Split allocation and constructors calling because enum entries can reference one another.
-                statements += callEnumEntriesConstructors(enumEntries)
-                statements += buildEntriesFieldInitializer()
-
-                // Needed for legacy MM targets that do not support threads.
-                if (this@EnumClassLowering.context.memoryModel != MemoryModel.EXPERIMENTAL) {
-                    statements += irBuilder.irBlock {
-                        irCall(this@EnumClassLowering.context.ir.symbols.freeze, listOf(valuesField.type)).apply {
-                            extensionReceiver = irGet(implObject.thisReceiver!!)
-                        }
-                    }
+        private fun IrBlockBuilder.irInitInstanceCall(instance: IrCall, constructor: IrConstructorCall): IrCall =
+                irCall(initInstance).apply {
+                    putValueArgument(0, instance)
+                    putValueArgument(1, constructor)
                 }
 
-                irClass.companionObject()?.let { statements += irBuilder.irGetObject(it.symbol) }
-            }
+        private fun defineValuesField(enumEntries: List<IrEnumEntry>) {
+            irClass.declarations.add(0, valuesField)
+            valuesField.parent = irClass
+            val irBuilder = context.createIrBuilder(valuesField.symbol, irClass.startOffset, irClass.endOffset)
 
-            private fun IrBlockBuilder.irInitInstanceCall(instance: IrCall, constructor: IrConstructorCall): IrCall =
-                    irCall(initInstance).apply {
-                        putValueArgument(0, instance)
-                        putValueArgument(1, constructor)
-                    }
-
-            private fun buildValuesFieldInitializer(enumEntries: List<IrEnumEntry>) = irBuilder.run {
+            valuesField.initializer = irBuilder.irExprBody(irBuilder.irBlock {
                 val irValuesInitializer = this@EnumClassLowering.context.createArrayOfExpression(
                         startOffset, endOffset,
                         irClass.defaultType,
@@ -363,11 +311,22 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                                     irCall(createUninitializedInstance, listOf(entryClass.defaultType))
                                 }
                 )
-                irSetField(irGet(implObject.thisReceiver!!), valuesField, irValuesInitializer)
+                val instances = irTemporary(irValuesInitializer)
+                +irSetField(null, valuesField, irGet(instances), origin = ObjectClassLowering.IrStatementOriginFieldPreInit)
+                callEnumEntriesConstructors(instances, enumEntries)
+                +irGet(instances)
+            }).also {
+                it.setDeclarationsParent(valuesField)
             }
+            valuesField.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.sharedImmutable.owner)
+        }
 
-            private fun buildEntriesFieldInitializer() = irBuilder.irBlock {
-                val irValuesArray = irTemporary(irGetField(irGet(implObject.thisReceiver!!), valuesField))
+        fun defineEntriesField() {
+            irClass.declarations.add(0, entriesField)
+            entriesField.parent = irClass
+            val irBuilder = context.createIrBuilder(entriesField.symbol, irClass.startOffset, irClass.endOffset)
+            entriesField.initializer = irBuilder.irExprBody(irBuilder.irBlock {
+                val irValuesArray = irTemporary(irGetField(null, valuesField))
                 val irEntriesArray = this@EnumClassLowering.context.createArrayOfExpression(
                         startOffset, endOffset,
                         irClass.defaultType,
@@ -380,34 +339,30 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                                     }
                                 }
                 )
-                val irEntriesInitializer = irCall(createEnumEntries, listOf(irClass.defaultType)).apply {
+                +irCall(createEnumEntries, listOf(irClass.defaultType)).apply {
                     putValueArgument(0, irEntriesArray)
                 }
-                +irSetField(irGet(implObject.thisReceiver!!), entriesField, irEntriesInitializer)
-            }
+            })
+        }
 
-            private fun callEnumEntriesConstructors(enumEntries: List<IrEnumEntry>) = irBuilder.irBlock {
-                val receiver = implObject.thisReceiver!!
-                val instances = irTemporary(irGetField(irGet(receiver), valuesField))
-                enumEntries.forEach {
-                    val instance = irCall(arrayGet).apply {
-                        dispatchReceiver = irGet(instances)
-                        putValueArgument(0, irInt(enumEntriesMap[it.name]!!.getterId))
+        private fun IrBlockBuilder.callEnumEntriesConstructors(instances: IrVariable, enumEntries: List<IrEnumEntry>) {
+            enumEntries.forEach {
+                val instance = irCall(arrayGet).apply {
+                    dispatchReceiver = irGet(instances)
+                    putValueArgument(0, irInt(enumEntriesMap[it.name]!!.getterId))
+                }
+                val initializer = it.initializerExpression!!.expression
+                when {
+                    initializer is IrConstructorCall -> +irInitInstanceCall(instance, initializer)
+
+                    initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL -> {
+                        val statements = initializer.statements
+                        val constructorCall = statements.last() as IrConstructorCall
+                        statements[statements.lastIndex] = irInitInstanceCall(instance, constructorCall)
+                        +initializer
                     }
-                    val initializer = it.initializerExpression!!.expression
-                    initializer.setDeclarationsParent(constructor)
-                    when {
-                        initializer is IrConstructorCall -> +irInitInstanceCall(instance, initializer)
 
-                        initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL -> {
-                            val statements = initializer.statements
-                            val constructorCall = statements.last() as IrConstructorCall
-                            statements[statements.lastIndex] = irInitInstanceCall(instance, constructorCall)
-                            +initializer
-                        }
-
-                        else -> error("Unexpected initializer: $initializer")
-                    }
+                    else -> error("Unexpected initializer: $initializer")
                 }
             }
         }

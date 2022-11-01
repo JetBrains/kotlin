@@ -481,8 +481,6 @@ internal class Llvm(private val context: Context, val module: LLVMModuleRef) : R
 
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
-    val initThreadLocalSingleton = importRtFunction("InitThreadLocalSingleton")
-    val initSingletonFunction = importRtFunction("InitSingleton")
     val initAndRegisterGlobalFunction = importRtFunction("InitAndRegisterGlobal")
     val updateHeapRefFunction = importRtFunction("UpdateHeapRef")
     val updateStackRefFunction = importRtFunction("UpdateStackRef")
@@ -564,7 +562,6 @@ internal class Llvm(private val context: Context, val module: LLVMModuleRef) : R
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
     val otherStaticInitializers = mutableListOf<LLVMValueRef>()
-    var fileUsesThreadLocalObjects = false
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()

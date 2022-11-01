@@ -232,6 +232,8 @@ internal class KonanSymbols(
 
     val reinterpret = internalFunction("reinterpret")
 
+    val theUnitInstance = internalFunction("theUnitInstance")
+
     val ieee754Equals = internalFunctions("ieee754Equals")
 
     val equals = irBuiltIns.findBuiltInClassMemberFunctions(any, Name.identifier("equals")).single()
@@ -312,8 +314,6 @@ internal class KonanSymbols(
     val createUninitializedInstance = internalFunction("createUninitializedInstance")
 
     val initInstance = internalFunction("initInstance")
-
-    val freeze = irBuiltIns.findFunctions(Name.identifier("freeze"), "kotlin", "native", "concurrent").single()
 
     val println = irBuiltIns.findFunctions(Name.identifier("println"), "kotlin", "io")
             .single { it.descriptor.valueParameters.singleOrNull()?.type == (irBuiltIns as IrBuiltInsOverDescriptors).builtIns.stringType }

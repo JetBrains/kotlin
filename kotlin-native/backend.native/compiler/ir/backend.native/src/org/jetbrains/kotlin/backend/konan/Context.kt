@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.needSmallBinary
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.FqName
@@ -50,15 +49,13 @@ internal class NativeMapping : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
 
     val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
-    val enumImplObjects = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrClass>()
     val enumValueGetters = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
     val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
     val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
     val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
-    val companionObjectCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val outerThisCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val lateinitPropertyCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrProperty, IrSimpleFunction>()
-    val enumValuesCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val objectInstanceGetter = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config), ConfigChecks {
@@ -95,8 +92,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
-    val enumsSupport by lazy { EnumsSupport(mapping, ir.symbols, irBuiltIns, irFactory) }
-    val cachesAbiSupport by lazy { CachesAbiSupport(mapping, ir.symbols, irFactory) }
+    val enumsSupport by lazy { EnumsSupport(mapping, irBuiltIns, irFactory) }
+    val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
 
     open class LazyMember<T>(val initializer: Context.() -> T) {
         operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)

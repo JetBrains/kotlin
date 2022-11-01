@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongArrayList
+import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -106,7 +107,7 @@ internal object DevirtualizationAnalysis {
 
                 context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
                     assert(it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
-                    associatedObjectConstructors += moduleDFG.symbolTable.mapFunction(it.constructors.single())
+                    associatedObjectConstructors += moduleDFG.symbolTable.mapFunction(context.getObjectClassInstanceFunction(it))
                 }
             }
 

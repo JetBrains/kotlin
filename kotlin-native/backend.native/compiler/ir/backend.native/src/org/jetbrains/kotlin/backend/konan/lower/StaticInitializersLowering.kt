@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENTRY_POINT
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
-import org.jetbrains.kotlin.backend.konan.llvm.needsGCRegistration
-import org.jetbrains.kotlin.backend.konan.llvm.storageKind
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*

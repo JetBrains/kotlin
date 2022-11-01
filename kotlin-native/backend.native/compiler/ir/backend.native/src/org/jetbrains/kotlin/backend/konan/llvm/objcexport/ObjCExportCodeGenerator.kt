@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
+import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -995,7 +996,8 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         target: IrFunction?,
         baseMethod: IrFunction,
         methodBridge: MethodBridge,
-        isVirtual: Boolean = false
+        isVirtual: Boolean = false,
+        customBridgeSuffix: String? = null,
 ) = if (target == null) {
     generateAbstractObjCImp(methodBridge, baseMethod)
 } else {
@@ -1003,7 +1005,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             methodBridge,
             isDirect = !isVirtual,
             baseMethod = baseMethod,
-            bridgeSuffix = (if (isVirtual) "virtual_" else "") + target.computeSymbolName()
+            bridgeSuffix = customBridgeSuffix ?: ((if (isVirtual) "virtual_" else "") + target.computeSymbolName())
     ) { args, resultLifetime, exceptionHandler ->
         if (target is IrConstructor && target.constructedClass.isAbstract()) {
             callFromBridge(
@@ -1913,12 +1915,20 @@ private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     assert(objectClass.kind == ClassKind.OBJECT)
     assert(!objectClass.isUnit())
-    val bridgeSuffix = "${owner.computeTypeInfoSymbolName()}#$selector"
-    return generateObjCToKotlinSyntheticGetter(selector, bridgeSuffix) {
-        initRuntimeIfNeeded() // For instance methods it gets called when allocating.
-        val value = getObjectValue(objectClass, startLocationInfo = null, exceptionHandler = ExceptionHandler.Caller)
-        autoreleaseAndRet(kotlinReferenceToRetainedObjC(value))
-    }
+
+    val methodBridge = MethodBridge(
+            returnBridge = MethodBridge.ReturnValue.Mapped(ReferenceBridge),
+            receiver = MethodBridgeReceiver.Static,
+            valueParameters = emptyList()
+    )
+
+    val function = context.getObjectClassInstanceFunction(objectClass)
+    val imp = generateObjCImp(
+            function, function, methodBridge,
+            isVirtual = false,
+            customBridgeSuffix = "${owner.computeTypeInfoSymbolName()}#$selector")
+
+    return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.createEnumEntryAdapter(

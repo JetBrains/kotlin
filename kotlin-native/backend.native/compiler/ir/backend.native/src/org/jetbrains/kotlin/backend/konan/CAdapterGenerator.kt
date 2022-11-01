@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -257,7 +258,13 @@ private class ExportedElement(val kind: ElementKind,
                 // Produce instance getter if needed.
                 if (isSingletonObject) {
                     generateFunction(owner.codegen, owner.kGetObjectFuncType, "${cname}_instance") {
-                        val value = getObjectValue(irClass, ExceptionHandler.Caller, null)
+                        val value = call(
+                                owner.codegen.llvmFunction(context.getObjectClassInstanceFunction(irClass)),
+                                emptyList(),
+                                Lifetime.GLOBAL,
+                                ExceptionHandler.Caller,
+                                false,
+                                returnSlot)
                         ret(value)
                     }
                 }

@@ -52,9 +52,6 @@ internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDe
     fun forStaticField(field: IrField) = (field.metadata as? CodegenStaticFieldMetadata)?.llvm ?:
             error(field.descriptor.toString())
 
-    fun forSingleton(irClass: IrClass) = forClass(irClass).singletonDeclarations ?:
-            error(irClass.descriptor.toString())
-
     fun forUnique(kind: UniqueKind) = unique[kind] ?: error("No unique $kind")
 
 }
@@ -64,10 +61,7 @@ internal class ClassLlvmDeclarations(
         val typeInfoGlobal: StaticData.Global,
         val writableTypeInfoGlobal: StaticData.Global?,
         val typeInfo: ConstPointer,
-        val singletonDeclarations: SingletonLlvmDeclarations?,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?)
-
-internal class SingletonLlvmDeclarations(val instanceStorage: AddressAccess)
 
 internal class KotlinObjCClassLlvmDeclarations(
         val classInfoGlobal: StaticData.Global,
@@ -219,12 +213,6 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         if (declaration.isUnit() || declaration.isKotlinArray())
             createUniqueDeclarations(declaration, typeInfoPtr, bodyType)
 
-        val singletonDeclarations = if (declaration.kind.isSingleton) {
-            createSingletonDeclarations(declaration)
-        } else {
-            null
-        }
-
         val objCDeclarations = if (declaration.isKotlinObjCClass()) {
             createKotlinObjCClassDeclarations(declaration)
         } else {
@@ -245,8 +233,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             it.setZeroInitializer()
         }
 
-        return ClassLlvmDeclarations(bodyType, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr,
-                singletonDeclarations, objCDeclarations)
+        return ClassLlvmDeclarations(bodyType, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr, objCDeclarations)
     }
 
     private fun createUniqueDeclarations(
@@ -262,28 +249,6 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                 }
                 else -> TODO("Unsupported unique $irClass")
         }
-    }
-
-    private fun createSingletonDeclarations(irClass: IrClass): SingletonLlvmDeclarations? {
-        if (irClass.isUnit()) {
-            return null
-        }
-
-        val storageKind = irClass.storageKind(context)
-        val threadLocal = storageKind == ObjectStorageKind.THREAD_LOCAL
-        val isExported = irClass.isExported()
-        val symbolName = if (isExported) {
-            irClass.globalObjectStorageSymbolName
-        } else {
-            "kobjref:" + qualifyInternalName(irClass)
-        }
-        val instanceAddress = if (threadLocal) {
-            addKotlinThreadLocal(symbolName, irClass.defaultType.toLLVMType(llvm))
-        } else {
-            addKotlinGlobal(symbolName, irClass.defaultType.toLLVMType(llvm), isExported)
-        }
-
-        return SingletonLlvmDeclarations(instanceAddress)
     }
 
     private fun createKotlinObjCClassDeclarations(irClass: IrClass): KotlinObjCClassLlvmDeclarations {
@@ -312,7 +277,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         super.visitField(declaration)
 
         val containingClass = declaration.parent as? IrClass
-        if (containingClass != null) {
+        if (containingClass != null && !declaration.isStatic) {
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? CodegenClassMetadata)?.llvm
                     ?: error(containingClass.descriptor.toString())

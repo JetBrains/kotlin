@@ -498,8 +498,8 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         }
         return declarations.mapNotNull {
             when (it) {
-                is IrField -> it.takeIf { it.isReal }?.toFieldInfo()
-                is IrProperty -> it.takeIf { it.isReal }?.backingField?.toFieldInfo()
+                is IrField -> it.takeIf { it.isReal && !it.isStatic }?.toFieldInfo()
+                is IrProperty -> it.takeIf { it.isReal }?.backingField?.takeIf { !it.isStatic }?.toFieldInfo()
                 else -> null
             }
         }

@@ -239,7 +239,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
         val field = expression.symbol.owner
         val parentClass = field.parentClassOrNull
-        return if (parentClass == null || !parentClass.isInlined())
+        return if (parentClass == null || !parentClass.isInlined() || field.isStatic)
             expression
         else {
             builder.at(expression)
@@ -254,7 +254,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     override fun visitSetField(expression: IrSetField): IrExpression {
         super.visitSetField(expression)
 
-        return if (expression.symbol.owner.parentClassOrNull?.isInlined() == true) {
+        return if (expression.symbol.owner.parentClassOrNull?.isInlined() == true && !expression.symbol.owner.isStatic) {
             // Happens in one of the cases:
             // 1. In primary constructor of the inlined class. Makes no sense, "has no effect", can be removed.
             //    The constructor will be lowered and used.
@@ -442,7 +442,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             lateinit var thisVar: IrValueDeclaration
 
             fun IrBuilderWithScope.genReturnValue(): IrExpression = if (irConstructor.isPrimary) {
-                irGetObject(irBuiltIns.unitClass)
+                irCall(symbols.theUnitInstance)
             } else {
                 irGet(thisVar)
             }

@@ -66,6 +66,7 @@ internal enum class IntrinsicType {
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
     IS_EXPERIMENTAL_MM,
+    THE_UNIT_INSTANCE,
     // Enums
     ENUM_VALUES,
     ENUM_VALUE_OF,
@@ -241,6 +242,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.IDENTITY -> emitIdentity(args)
                 IntrinsicType.INTEROP_MEMORY_COPY -> emitMemoryCopy(callSite, args)
                 IntrinsicType.IS_EXPERIMENTAL_MM -> emitIsExperimentalMM()
+                IntrinsicType.THE_UNIT_INSTANCE -> theUnitInstanceRef.llvm
                 IntrinsicType.GET_CONTINUATION,
                 IntrinsicType.RETURN_IF_SUSPENDED,
                 IntrinsicType.INTEROP_BITS_TO_FLOAT,

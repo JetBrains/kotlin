@@ -11,7 +11,6 @@
 #include "Freezing.hpp"
 #include "GC.hpp"
 #include "GlobalsRegistry.hpp"
-#include "InitializationScheme.hpp"
 #include "KAssert.h"
 #include "Natives.h"
 #include "ObjectOps.hpp"
@@ -144,18 +143,6 @@ extern "C" OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elem
     }
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     RETURN_RESULT_OF(mm::AllocateArray, threadData, typeInfo, static_cast<uint32_t>(elements));
-}
-
-extern "C" ALWAYS_INLINE OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-
-    RETURN_RESULT_OF(mm::InitThreadLocalSingleton, threadData, location, typeInfo, ctor);
-}
-
-extern "C" ALWAYS_INLINE OBJ_GETTER(InitSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-
-    RETURN_RESULT_OF(mm::InitSingleton, threadData, location, typeInfo, ctor);
 }
 
 extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {

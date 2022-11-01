@@ -46,12 +46,6 @@ internal enum class FieldStorageKind {
     THREAD_LOCAL
 }
 
-internal enum class ObjectStorageKind {
-    PERMANENT,
-    THREAD_LOCAL,
-    SHARED
-}
-
 // TODO: maybe unannotated singleton objects shall be accessed from main thread only as well?
 internal fun IrField.storageKind(context: Context): FieldStorageKind {
     // TODO: Is this correct?
@@ -77,12 +71,6 @@ internal fun IrField.needsGCRegistration(context: Context) =
                 (hasNonConstInitializer || // which are initialized from heap object
                         !isFinal) // or are not final
 
-internal fun IrClass.storageKind(context: Context): ObjectStorageKind = when {
-    this.annotations.hasAnnotation(KonanFqNames.threadLocal) &&
-            context.config.threadsAreAllowed -> ObjectStorageKind.THREAD_LOCAL
-    this.hasConstStateAndNoSideEffects(context) -> ObjectStorageKind.PERMANENT
-    else -> ObjectStorageKind.SHARED
-}
 
 internal fun IrField.isGlobalNonPrimitive(context: Context) = when  {
         type.computePrimitiveBinaryTypeOrNull() != null -> false
@@ -883,44 +871,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 }
             }
         }
-
-        if (declaration.kind.isSingleton && !declaration.isUnit()) {
-            val singleton = context.generationState.llvmDeclarations.forSingleton(declaration)
-            val access = singleton.instanceStorage
-            if (access is GlobalAddressAccess) {
-                // Global objects are kept in a data segment and can be accessed by any module (if exported) and also
-                // they need to be initialized statically.
-                LLVMSetInitializer(access.getAddress(null), if (declaration.storageKind(context) == ObjectStorageKind.PERMANENT)
-                    llvm.staticData.createConstKotlinObject(declaration,
-                            *computeFields(declaration)).llvm else codegen.kNullObjHeaderPtr)
-            } else {
-                // Thread local objects are kept in a special map, so they need a getter function to be accessible
-                // by other modules.
-                val isObjCCompanion = declaration.isCompanion && declaration.parentAsClass.isObjCClass()
-                // If can be exported and can be instantiated.
-                if (declaration.isExported() && !isObjCCompanion &&
-                        declaration.constructors.singleOrNull() { it.valueParameters.size == 0 } != null) {
-                    val valueGetterName = declaration.threadLocalObjectStorageGetterSymbolName
-                    generateFunction(codegen,
-                            functionType(codegen.kObjHeaderPtrPtr, false),
-                            valueGetterName) {
-                        val value = access.getAddress(this)
-                        ret(value)
-                    }
-                    // Getter uses TLS object, so need to ensure that this file's (de)initializer function
-                    // inits and deinits TLS.
-                    llvm.fileUsesThreadLocalObjects = true
-                }
-            }
-        }
-    }
-
-    private fun computeFields(declaration: IrClass): Array<ConstValue> {
-        val fields = context.getLayoutBuilder(declaration).fields
-        return Array(fields.size) { index ->
-            val initializer = fields[index].irField!!.initializer!!.expression as IrConst<*>
-            evaluateConst(initializer)
-        }
     }
 
     override fun visitProperty(declaration: IrProperty) {
@@ -987,7 +937,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrVararg              -> return evaluateVararg                 (value)
             is IrBreak               -> return evaluateBreak                  (value)
             is IrContinue            -> return evaluateContinue               (value)
-            is IrGetObjectValue      -> return evaluateGetObjectValue         (value, resultSlot)
+            is IrGetObjectValue      -> return evaluateGetObjectValue         (value)
             is IrFunctionReference   -> return evaluateFunctionReference      (value)
             is IrSuspendableExpression ->
                                         return evaluateSuspendableExpression  (value, resultSlot)
@@ -1012,14 +962,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateGetObjectValue(value: IrGetObjectValue, resultSlot: LLVMValueRef?): LLVMValueRef =
-        functionGenerationContext.getObjectValue(
-                value.symbol.owner,
-                currentCodeContext.exceptionHandler,
-                value.startLocation,
-                value.endLocation,
-                resultSlot
-        )
+    private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef {
+        error("Should be lowered out: ${value.symbol.owner.render()}")
+    }
 
 
     //-------------------------------------------------------------------------//
@@ -1798,7 +1743,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             )
             if (context.config.threadsAreAllowed && value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
-            if (value.symbol.owner.shouldBeFrozen(context))
+            if (value.symbol.owner.shouldBeFrozen(context) && value.origin != ObjectClassLowering.IrStatementOriginFieldPreInit)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
             functionGenerationContext.storeAny(valueToAssign, globalAddress, false)
         }
@@ -1909,14 +1854,29 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 val fields = if (value.constructor.owner.isConstantConstructorIntrinsic) {
                     intrinsicGenerator.evaluateConstantConstructorFields(value, value.valueArguments.map { evaluateConstantValue(it) })
                 } else {
-                    context.getLayoutBuilder(constructedClass).fields.map { field ->
-                        val index = value.constructor.owner.valueParameters
-                                .indexOfFirst { it.name.toString() == field.name }
-                                .takeIf { it >= 0 }
-                                ?: error("Bad statically initialized object: field ${field.name} value not set in ${constructedClass.name}")
-                        evaluateConstantValue(value.valueArguments[index])
+                    val fields = context.getLayoutBuilder(constructedClass).fields
+                    val valueParameters = value.constructor.owner.valueParameters.associateBy { it.name.toString() }
+                    fields.map { field ->
+                        if (field.isConst) {
+                            val init = field.irField!!.initializer?.expression
+                            require(field.name !in valueParameters) {
+                                "Constant field ${field.name} of class ${constructedClass.name} shouldn't be a constructor parameter"
+                            }
+                            when (init) {
+                                is IrConst<*> -> evaluateConst(init)
+                                is IrConstantValue -> evaluateConstantValue(init)
+                                null -> error("Constant field ${field.name} of class ${constructedClass.name} should have initializer")
+                                else -> error("Unexpected constant initializer type: ${init::class}")
+                            }
+                        } else {
+                            val index = valueParameters[field.name]?.index
+                                    ?: error("Bad statically initialized object: field ${field.name} value not set in ${constructedClass.name}")
+                            evaluateConstantValue(value.valueArguments[index])
+                        }
                     }.also {
-                        require(it.size == value.valueArguments.size) { "Bad statically initialized object: too many fields" }
+                        require(it.size == value.valueArguments.size + fields.count { it.isConst }) {
+                            "Bad statically initialized object of class ${constructedClass.name}: too many fields"
+                        }
                     }
                 }
 

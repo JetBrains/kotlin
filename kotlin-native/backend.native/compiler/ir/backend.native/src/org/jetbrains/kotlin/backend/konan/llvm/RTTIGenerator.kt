@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
+import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
@@ -463,17 +464,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         }
 
         val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
-            val associatedObjectGetter = generateFunction(
-                    CodeGenerator(context),
-                    functionType(kObjHeaderPtr, false, kObjHeaderPtrPtr),
-                    ""
-            ) {
-                ret(getObjectValue(value, ExceptionHandler.Caller, startLocationInfo = null))
-            }.also {
-                LLVMSetLinkage(it, LLVMLinkage.LLVMPrivateLinkage)
-            }
+            val function = context.getObjectClassInstanceFunction(value)
+            val llvmFunction = context.generationState.llvmDeclarations.forFunction(function).llvmValue
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, constPointer(associatedObjectGetter))
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, constPointer(llvmFunction))
         }
 
         return staticData.placeGlobalConstArray(

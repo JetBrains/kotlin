@@ -2373,104 +2373,6 @@ OBJ_GETTER(allocArrayInstance, const TypeInfo* type_info, int32_t elements) {
   RETURN_OBJ(container.GetPlace()->obj());
 }
 
-template <bool Strict>
-OBJ_GETTER(initThreadLocalSingleton,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  ObjHeader* value = *location;
-  if (value != nullptr) {
-    // OK'ish, inited by someone else.
-    RETURN_OBJ(value);
-  }
-  ObjHeader* object = allocInstance<Strict>(typeInfo, OBJ_RESULT);
-  updateHeapRef<Strict>(location, object);
-#if KONAN_NO_EXCEPTIONS
-  ctor(object);
-  return object;
-#else
-  try {
-    ctor(object);
-    return object;
-  } catch (...) {
-    UpdateReturnRef(OBJ_RESULT, nullptr);
-    ZeroHeapRef(location);
-    throw;
-  }
-#endif
-}
-
-template <bool Strict>
-OBJ_GETTER(initSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-#if KONAN_NO_THREADS
-  ObjHeader* value = *location;
-  if (value != nullptr) {
-    // OK'ish, inited by someone else.
-    RETURN_OBJ(value);
-  }
-  ObjHeader* object = AllocInstance(typeInfo, OBJ_RESULT);
-  UpdateHeapRef(location, object);
-#if KONAN_NO_EXCEPTIONS
-  ctor(object);
-  FreezeSubgraph(object);
-  return object;
-#else
-  try {
-    ctor(object);
-    if (Strict)
-      FreezeSubgraph(object);
-    return object;
-  } catch (...) {
-    UpdateReturnRef(OBJ_RESULT, nullptr);
-    ZeroHeapRef(location);
-    throw;
-  }
-#endif  // KONAN_NO_EXCEPTIONS
-#else  // KONAN_NO_THREADS
-  // Search from the top of the stack.
-  for (auto it = memoryState->initializingSingletons.rbegin(); it != memoryState->initializingSingletons.rend(); ++it) {
-    if (it->first == location) {
-      RETURN_OBJ(it->second);
-    }
-  }
-
-  ObjHeader* initializing = kInitializingSingleton;
-
-  // Spin lock.
-  ObjHeader* value = nullptr;
-  while ((value = __sync_val_compare_and_swap(location, nullptr, initializing)) == initializing);
-  if (value != nullptr) {
-    // OK'ish, inited by someone else.
-    RETURN_OBJ(value);
-  }
-  ObjHeader* object = AllocInstance(typeInfo, OBJ_RESULT);
-  memoryState->initializingSingletons.push_back(std::make_pair(location, object));
-#if KONAN_NO_EXCEPTIONS
-  ctor(object);
-  if (Strict)
-    FreezeSubgraph(object);
-  UpdateHeapRef(location, object);
-  synchronize();
-  memoryState->initializingSingletons.pop_back();
-  return object;
-#else  // KONAN_NO_EXCEPTIONS
-  try {
-    ctor(object);
-    if (Strict)
-      FreezeSubgraph(object);
-    UpdateHeapRef(location, object);
-    synchronize();
-    memoryState->initializingSingletons.pop_back();
-    return object;
-  } catch (...) {
-    UpdateReturnRef(OBJ_RESULT, nullptr);
-    zeroHeapRef(location);
-    memoryState->initializingSingletons.pop_back();
-    synchronize();
-    throw;
-  }
-#endif  // KONAN_NO_EXCEPTIONS
-#endif  // KONAN_NO_THREADS
-}
-
 /**
  * We keep thread affinity and reference value based cookie in the atomic references, so that
  * repeating read operation of the same value do not lead to the repeating rememberNewContainer() operation.
@@ -3396,20 +3298,6 @@ OBJ_GETTER(AllocArrayInstanceStrict, const TypeInfo* typeInfo, int32_t elements)
 }
 OBJ_GETTER(AllocArrayInstanceRelaxed, const TypeInfo* typeInfo, int32_t elements) {
   RETURN_RESULT_OF(allocArrayInstance<false>, typeInfo, elements);
-}
-
-OBJ_GETTER(InitThreadLocalSingletonStrict, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(initThreadLocalSingleton<true>, location, typeInfo, ctor);
-}
-OBJ_GETTER(InitThreadLocalSingletonRelaxed, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(initThreadLocalSingleton<false>, location, typeInfo, ctor);
-}
-
-OBJ_GETTER(InitSingletonStrict, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(initSingleton<true>, location, typeInfo, ctor);
-}
-OBJ_GETTER(InitSingletonRelaxed, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(initSingleton<false>, location, typeInfo, ctor);
 }
 
 void RUNTIME_NOTHROW InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {

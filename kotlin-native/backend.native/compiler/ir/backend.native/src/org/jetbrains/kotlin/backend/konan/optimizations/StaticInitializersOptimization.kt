@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.Context
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -427,15 +425,7 @@ internal object StaticInitializersOptimization {
                 }
 
                 override fun visitGetObjectValue(expression: IrGetObjectValue, data: BitSet): BitSet {
-                    val objectClass = expression.symbol.owner
-                    val constructor = objectClass.constructors.toList().atMostOne()
-                    if (constructor != null) {
-                        updateResultForFunction(constructor, data)
-                    } else {
-                        require(objectClass.isExternal || objectClass is IrLazyClass) { "No constructor for ${objectClass.render()}" }
-                    }
-                    // Don't update [data] as the constructor might not be called here (the object might be initialized already).
-                    return data
+                    error("IrGetObjectValue should be lowered away at this point")
                 }
 
                 private fun processCall(expression: IrFunctionAccessExpression, actualCallee: IrFunction, data: BitSet): BitSet {

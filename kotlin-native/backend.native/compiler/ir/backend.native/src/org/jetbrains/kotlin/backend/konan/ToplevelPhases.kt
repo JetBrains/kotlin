@@ -292,6 +292,7 @@ internal val allLoweringsPhase = SameTypeNamedCompilerPhase(
                         coroutinesPhase,
                         typeOperatorPhase,
                         expressionBodyTransformPhase,
+                        objectClassesPhase,
                         constantInliningPhase,
                         staticInitializersPhase,
                         bridgesPhase,
