@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class ParcelableIrTransformer(private val context: IrPluginContext, private val androidSymbols: AndroidSymbols) :
@@ -128,7 +127,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
             }
 
             declaration.functions.find {
-                it.descriptor.safeAs<ParcelableSyntheticComponent>()?.componentKind == ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
+                (it.descriptor as? ParcelableSyntheticComponent)?.componentKind == ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
             }?.let { stub ->
                 symbolMap[stub.symbol] = describeContents.symbol
                 declaration.declarations.remove(stub)
@@ -183,7 +182,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
             }
 
             declaration.functions.find {
-                it.descriptor.safeAs<ParcelableSyntheticComponent>()?.componentKind == ParcelableSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
+                (it.descriptor as? ParcelableSyntheticComponent)?.componentKind == ParcelableSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
             }?.let { stub ->
                 symbolMap[stub.symbol] = writeToParcel.symbol
                 declaration.declarations.remove(stub)

@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class ParcelizeIrTransformer(
@@ -141,7 +140,7 @@ class ParcelizeIrTransformer(
             }
 
             declaration.functions.find {
-                it.descriptor.safeAs<ParcelizeSyntheticComponent>()?.componentKind == ParcelizeSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
+                (it.descriptor as? ParcelizeSyntheticComponent)?.componentKind == ParcelizeSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
             }?.let { stub ->
                 symbolMap[stub.symbol] = describeContents.symbol
                 declaration.declarations.remove(stub)
@@ -178,7 +177,7 @@ class ParcelizeIrTransformer(
             }
 
             declaration.functions.find {
-                it.descriptor.safeAs<ParcelizeSyntheticComponent>()?.componentKind == ParcelizeSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
+                (it.descriptor as? ParcelizeSyntheticComponent)?.componentKind == ParcelizeSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
             }?.let { stub ->
                 symbolMap[stub.symbol] = writeToParcel.symbol
                 declaration.declarations.remove(stub)

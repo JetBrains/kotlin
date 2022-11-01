@@ -381,11 +381,6 @@ val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
         ":kotlin-reflect-api",
         ":kotlin-scripting-jvm-host-test",
         ":native:kotlin-klib-commonizer",
-        ":plugins:android-extensions-compiler",
-        ":plugins:jvm-abi-gen",
-        ":plugins:parcelize:parcelize-compiler:parcelize.k1",
-        ":plugins:parcelize:parcelize-compiler:parcelize.backend",
-        ":kotlinx-serialization-compiler-plugin.backend",
     )
 }
 

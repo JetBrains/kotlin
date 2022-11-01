@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class ParcelizeDeclarationChecker : DeclarationChecker {
     private companion object {
@@ -290,7 +289,7 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
     }
 
     private fun KotlinType.getErasedUpperBound(): KotlinType =
-        constructor.declarationDescriptor?.safeAs<TypeParameterDescriptor>()?.representativeUpperBound?.getErasedUpperBound()
+        (constructor.declarationDescriptor as? TypeParameterDescriptor)?.representativeUpperBound?.getErasedUpperBound()
             ?: this
 
     private fun ClassDescriptor.hasCustomParceler(): Boolean {

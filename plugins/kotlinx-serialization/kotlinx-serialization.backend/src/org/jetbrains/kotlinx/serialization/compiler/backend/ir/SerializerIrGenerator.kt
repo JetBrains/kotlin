@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -28,10 +30,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.CallingConventions
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.CACHED_CHILD_SERIALIZERS_PROPERTY_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENCODER_CLASS
@@ -41,6 +43,8 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SA
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UNKNOWN_FIELD_EXC
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
+import org.jetbrains.kotlinx.serialization.compiler.resolve.bitMaskSlotCount
 
 object SERIALIZATION_PLUGIN_ORIGIN : IrDeclarationOriginImpl("KOTLINX_SERIALIZATION", true)
 
@@ -275,7 +279,7 @@ open class SerializerIrGenerator(
         if (writeSelfFunction != null) {
             // extract Tx from KSerializer<Tx> list
             val typeArgs =
-                localSerializersFieldsDescriptors.map { ir -> ir.backingField!!.type.cast<IrSimpleType>().arguments.single().typeOrNull }
+                localSerializersFieldsDescriptors.map { ir -> (ir.backingField!!.type as IrSimpleType).arguments.single().typeOrNull }
             val args = mutableListOf<IrExpression>(irGet(objectToSerialize), irGet(localOutput), irGet(localSerialDesc))
             args.addAll(localSerializersFieldsDescriptors.map { ir ->
                 irGetField(
