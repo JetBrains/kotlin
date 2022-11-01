@@ -50,6 +50,12 @@ public class IrBlackBoxCodegenTestAssignmentPluginGenerated extends AbstractIrBl
     }
 
     @Test
+    @TestMetadata("typealias.kt")
+    public void testTypealias() throws Exception {
+        runTest("plugins/assign-plugin/testData/codegen/typealias.kt");
+    }
+
+    @Test
     @TestMetadata("varBehaviour.kt")
     public void testVarBehaviour() throws Exception {
         runTest("plugins/assign-plugin/testData/codegen/varBehaviour.kt");
