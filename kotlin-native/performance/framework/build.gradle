@@ -10,7 +10,6 @@ buildscript {
 
 apply plugin: 'kotlin-multiplatform'
 
-
 def toolsPath = '../../tools'
 def frameworkName = 'benchmarksAnalyzer'
 
