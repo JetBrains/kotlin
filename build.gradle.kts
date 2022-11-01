@@ -372,13 +372,10 @@ val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
         ":compiler",
         ":compiler:backend.js",
         ":compiler:light-classes",
-        ":core:reflection.jvm",
-        ":jps:jps-common",
         ":jps:jps-common",
         ":js:js.tests",
         ":kotlin-build-common",
         ":kotlin-gradle-plugin",
-        ":kotlin-reflect-api",
         ":kotlin-scripting-jvm-host-test",
         ":native:kotlin-klib-commonizer",
     )

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.net.URLClassLoader
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
