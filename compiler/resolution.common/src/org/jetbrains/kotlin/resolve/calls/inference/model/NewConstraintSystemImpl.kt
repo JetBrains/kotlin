@@ -276,6 +276,7 @@ class NewConstraintSystemImpl(
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
+        storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder

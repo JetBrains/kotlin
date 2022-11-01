@@ -14289,6 +14289,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("smartCastForkForExpectedTypeNested.kt")
+            public void testSmartCastForkForExpectedTypeNested() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/smartCastForkForExpectedTypeNested.kt");
+            }
+
+            @Test
             @TestMetadata("specialCallsWithCallableReferences.kt")
             public void testSpecialCallsWithCallableReferences() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/specialCallsWithCallableReferences.kt");

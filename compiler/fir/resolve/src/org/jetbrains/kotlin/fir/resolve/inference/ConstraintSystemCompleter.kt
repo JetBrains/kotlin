@@ -62,7 +62,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
-        resolveForkPointsConstraints()
+        if (completionMode == ConstraintSystemCompletionMode.FULL) {
+            resolveForkPointsConstraints()
+        }
 
         completion@ while (true) {
             // TODO: This is very slow
