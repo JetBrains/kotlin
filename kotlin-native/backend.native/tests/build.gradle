@@ -3443,6 +3443,24 @@ standaloneTest("stress_gc_allocations") {
     flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
+standaloneTest("array_out_of_memory") {
+    source = "runtime/memory/array_out_of_memory.kt"
+    flags = ['-tr']
+    switch(project.target.architecture) {
+        case Architecture.X64:
+        case Architecture.ARM64:
+            break;
+        case Architecture.X86:
+        case Architecture.ARM32:
+        case Architecture.MIPS32:
+        case Architecture.MIPSEL32:
+        case Architecture.WASM32:
+            expectedExitStatusChecker = { it != 0 }
+            outputChecker = { s -> s.contains("Out of memory trying to allocate") }
+            break;
+    }
+}
+
 standaloneTest("mpp1") {
     source = "codegen/mpp/mpp1.kt"
     flags = ['-tr', '-Xmulti-platform']

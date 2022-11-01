@@ -52,7 +52,7 @@ ALWAYS_INLINE ObjHeader* gc::GC::ThreadData::CreateObject(const TypeInfo* typeIn
     return impl_->objectFactoryThreadQueue().CreateObject(typeInfo);
 }
 
-ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) {
+ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
     return impl_->objectFactoryThreadQueue().CreateArray(typeInfo, elements);
 }
 
