@@ -22,13 +22,11 @@ import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.realm.Realm
-import io.realm.Sort
 import io.realm.RealmConfiguration
+import io.realm.Sort
 import io.realm.examples.kotlin.model.Cat
 import io.realm.examples.kotlin.model.Dog
 import io.realm.examples.kotlin.model.Person
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import kotlin.properties.Delegates
 
 
@@ -52,7 +50,7 @@ class KotlinExampleActivity : Activity() {
         // we can generally safely run them on the UI thread.
 
         // Create configuration and reset Realm.
-        realmConfig = RealmConfiguration.Builder(this).build()
+        realmConfig = RealmConfiguration.Builder().build()
         Realm.deleteRealm(realmConfig)
 
         // Open the realm for the UI thread.
@@ -69,17 +67,11 @@ class KotlinExampleActivity : Activity() {
             realm.delete(Person::class.java)
         }
 
-        // More complex operations can be executed on another thread, for example using
-        // Anko's async extension method.
-        doAsync() {
-            var info: String
-            info = complexReadWrite()
-            info += complexQuery()
+        var info: String
+        info = complexReadWrite()
+        info += complexQuery()
 
-            uiThread {
-                showStatus(info)
-            }
-        }
+        showStatus(info)
     }
 
     override fun onDestroy() {
@@ -107,7 +99,7 @@ class KotlinExampleActivity : Activity() {
         }
 
         // Find the first person (no query conditions) and read a field
-        var person = realm.where(Person::class.java).findFirst()
+        var person = realm.where(Person::class.java).findFirst() ?: error("No person")
         showStatus(person.name + ": " + person.age)
 
         // Update person in a transaction
@@ -122,7 +114,8 @@ class KotlinExampleActivity : Activity() {
         showStatus("\nPerforming basic Query operation...")
         showStatus("Number of persons: ${realm.where(Person::class.java).count()}")
 
-        val results = realm.where(Person::class.java).equalTo("age", 99).findAll()
+        val age = 99
+        val results = realm.where(Person::class.java).equalTo("age", age).findAll()
 
         showStatus("Size of result set: " + results.size)
     }
@@ -184,9 +177,9 @@ class KotlinExampleActivity : Activity() {
         }
 
         // Sorting
-        val sortedPersons = realm.where(Person::class.java).findAllSorted("age", Sort.DESCENDING);
-        check(realm.where(Person::class.java).findAll().last().name == sortedPersons.first().name)
-        status += "\nSorting ${sortedPersons.last().name} == ${realm.where(Person::class.java).findAll().first().name}"
+        val sortedPersons = realm.where(Person::class.java).sort("age", Sort.DESCENDING).findAll()
+        check(realm.where(Person::class.java).findAll().last()!!.name == sortedPersons.first()!!.name)
+        status += "\nSorting ${sortedPersons.last()!!.name} == ${realm.where(Person::class.java).findAll().first()!!.name}"
 
         realm.close()
         return status
@@ -203,10 +196,10 @@ class KotlinExampleActivity : Activity() {
 
             // Find all persons where age between 7 and 9 and name begins with "Person".
             val results = it
-                    .where(Person::class.java)
-                    .between("age", 7, 9)       // Notice implicit "and" operation
-                    .beginsWith("name", "Person")
-                    .findAll()
+                .where(Person::class.java)
+                .between("age", 7, 9)       // Notice implicit "and" operation
+                .beginsWith("name", "Person")
+                .findAll()
 
             status += "\nSize of result set: ${results.size}"
 

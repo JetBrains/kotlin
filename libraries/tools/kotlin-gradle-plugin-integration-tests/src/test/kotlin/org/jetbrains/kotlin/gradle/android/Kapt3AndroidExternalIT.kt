@@ -109,8 +109,12 @@ class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         ) {
             build("assembleDebug") {
                 assertKaptSuccessful()
-                assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/CatRealmProxy.java")
-                assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/CatRealmProxyInterface.java")
+                assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/io_realm_examples_kotlin_model_CatRealmProxy.java")
+                assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/io_realm_examples_kotlin_model_CatRealmProxyInterface.java")
+                assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/io_realm_examples_kotlin_model_DogRealmProxy.java")
+                assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/io_realm_examples_kotlin_model_DogRealmProxyInterface.java")
+                assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/io_realm_examples_kotlin_model_PersonRealmProxy.java")
+                assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/io_realm_examples_kotlin_model_PersonRealmProxyInterface.java")
                 assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/DefaultRealmModule.java")
                 assertFileInProjectExists("build/generated/source/kapt/debug/io/realm/DefaultRealmModuleMediator.java")
             }
