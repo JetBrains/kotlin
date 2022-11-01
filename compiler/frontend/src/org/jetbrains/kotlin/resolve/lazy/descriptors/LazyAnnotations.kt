@@ -125,7 +125,7 @@ class LazyAnnotationDescriptor(
         valueArgumentsWithSourceInfo.mapValues { it.value.first }
     }
 
-    override fun getSourceForArgument(name: Name): SourceElement =
+    fun getSourceForArgument(name: Name): SourceElement =
         valueArgumentsWithSourceInfo[name]?.second ?: SourceElement.NO_SOURCE
 
     override fun forceResolveAllContents() {
@@ -149,3 +149,6 @@ class LazyAnnotationDescriptor(
         override fun toString(): String = "${name.asString()} declared in LazyAnnotations.kt"
     }
 }
+
+fun AnnotationDescriptor.getSourceForArgument(name: Name): SourceElement =
+    (this as? LazyAnnotationDescriptor)?.getSourceForArgument(name) ?: SourceElement.NO_SOURCE

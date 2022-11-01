@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.lazy.descriptors.getSourceForArgument
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 class ConstantValueGeneratorImpl(
