@@ -40,6 +40,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Enables light tree parser instead of PSI"
     )
 
+    val FIR_DISABLE_LAZY_RESOLVE_CHECKS by directive(
+        description = "Temporary disables lazy resolve checks until the lazy resolve contract violation is fixed"
+    )
+
     val COMPARE_WITH_LIGHT_TREE by directive(
         description = """
             Enable comparing diagnostics between PSI and light tree modes

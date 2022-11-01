@@ -37,7 +37,7 @@ abstract class FirAbstractSessionFactory {
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
-        registerExtraComponents: ((FirSession) -> Unit)?,
+        registerExtraComponents: ((FirSession) -> Unit),
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider) -> List<FirSymbolProvider>
     ): FirSession {
@@ -49,7 +49,7 @@ abstract class FirAbstractSessionFactory {
 
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerExtraComponents?.invoke(this)
+            registerExtraComponents(this)
 
             val kotlinScopeProvider = createKotlinScopeProvider.invoke()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
@@ -77,7 +77,7 @@ abstract class FirAbstractSessionFactory {
         lookupTracker: LookupTracker?,
         enumWhenTracker: EnumWhenTracker?,
         init: FirSessionConfigurator.() -> Unit,
-        registerExtraComponents: ((FirSession) -> Unit)?,
+        registerExtraComponents: ((FirSession) -> Unit),
         registerExtraCheckers: ((FirSessionConfigurator) -> Unit)?,
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (
@@ -93,7 +93,7 @@ abstract class FirAbstractSessionFactory {
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker, enumWhenTracker)
-            registerExtraComponents?.invoke(this)
+            registerExtraComponents(this)
 
             val kotlinScopeProvider = createKotlinScopeProvider.invoke()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)

@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 
 @ThreadSafeMutableState
 internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
+    override fun startResolvingPhase(phase: FirResolvePhase) {}
+    override fun finishResolvingPhase(phase: FirResolvePhase) {}
+
     override fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
         val fir = symbol.fir
         val session = fir.moduleData.session

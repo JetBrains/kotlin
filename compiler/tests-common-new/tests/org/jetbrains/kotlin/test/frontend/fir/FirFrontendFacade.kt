@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import java.io.File
 import java.nio.file.Paths
 
-class FirFrontendFacade(
+open class FirFrontendFacade(
     testServices: TestServices,
     private val additionalSessionConfiguration: SessionConfiguration?
 ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
@@ -65,6 +65,8 @@ class FirFrontendFacade(
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
+
+    open fun registerExtraComponents(session: FirSession) {}
 
     override fun analyze(module: TestModule): FirOutputArtifact {
         val moduleInfoProvider = testServices.firModuleInfoProvider
@@ -126,6 +128,7 @@ class FirFrontendFacade(
                     projectFileSearchScope,
                     packagePartProvider,
                     languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
                 )
             }
             module.targetPlatform.isJs() -> {
@@ -138,6 +141,7 @@ class FirFrontendFacade(
                     testServices,
                     configuration,
                     languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
                 )
             }
             module.targetPlatform.isNative() -> {
@@ -147,6 +151,7 @@ class FirFrontendFacade(
                     moduleInfoProvider.firSessionProvider,
                     dependencyList,
                     languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
                 )
             }
             else -> error("Unsupported")
@@ -174,6 +179,7 @@ class FirFrontendFacade(
                     lookupTracker = null,
                     enumWhenTracker = null,
                     needRegisterJavaElementFinder = true,
+                    registerExtraComponents = ::registerExtraComponents,
                     sessionConfigurator,
                 )
             }
@@ -184,6 +190,7 @@ class FirFrontendFacade(
                     extensionRegistrars,
                     languageVersionSettings,
                     null,
+                    registerExtraComponents = ::registerExtraComponents,
                     sessionConfigurator,
                 )
             }
@@ -193,6 +200,7 @@ class FirFrontendFacade(
                     moduleInfoProvider.firSessionProvider,
                     extensionRegistrars,
                     languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator
                 )
             }

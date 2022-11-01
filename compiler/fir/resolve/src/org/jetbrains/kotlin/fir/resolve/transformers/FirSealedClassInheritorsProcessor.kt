@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.name.ClassId
 class FirSealedClassInheritorsProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirGlobalResolveProcessor(session, scopeSession) {
+) : FirGlobalResolveProcessor(session, scopeSession, FirResolvePhase.SEALED_CLASS_INHERITORS) {
     override fun process(files: Collection<FirFile>) {
         val sealedClassInheritorsMap = mutableMapOf<FirRegularClass, MutableList<ClassId>>()
         val inheritorsCollector = InheritorsCollector(session)
