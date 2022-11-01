@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 
 internal class KtFirSymbolProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -113,16 +114,22 @@ internal class KtFirSymbolProvider(
         )
     }
 
-    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol {
-        val firClass = psi.resolveToFirClassLikeSymbol()
-        return firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(firClass)
+    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol? {
+        if (psi is KtEnumEntry) {
+            return null
+        }
+
+        val firSymbol = psi.resolveToFirClassLikeSymbol()
+        return firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(firSymbol)
     }
 
     override fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol? {
-        require(psi !is KtObjectDeclaration || psi.parent !is KtObjectLiteralExpression)
-        // A KtClassOrObject may also map to an FirEnumEntry. Hence, we need to return null in this case.
-        if (psi is KtEnumEntry) return null
-        return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(psi.resolveToFirClassLikeSymbol() as FirRegularClassSymbol)
+        if (psi is KtEnumEntry || psi.isObjectLiteral()) {
+            return null
+        }
+
+        val firSymbol = psi.resolveToFirClassLikeSymbol() as FirRegularClassSymbol
+        return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(firSymbol)
     }
 
     private fun KtClassOrObject.resolveToFirClassLikeSymbol(): FirClassSymbol<*> {
