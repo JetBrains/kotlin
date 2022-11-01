@@ -42,6 +42,18 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTe
     }
 
     @Test
+    @TestMetadata("actual_jvmInline_typealias.kt")
+    public void testActual_jvmInline_typealias() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_jvmInline_typealias.kt");
+    }
+
+    @Test
+    @TestMetadata("actual_typealias.kt")
+    public void testActual_typealias() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_typealias.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInForDeclaration() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
