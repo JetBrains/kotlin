@@ -22,6 +22,13 @@ annotation class A3
 @Retention(SOURCE)
 annotation class C3(val value: Array<A3>)
 
+typealias TypeAliasedR = R
+<!REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR!>@TypeAliasedR(C4::class)<!>
+@Retention(RUNTIME)
+annotation class A4
+@Retention(BINARY)
+annotation class C4(val value: Array<A4>)
+
 
 
 @R(D1::class)

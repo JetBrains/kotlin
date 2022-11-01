@@ -21,6 +21,13 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+@TypeAliasedR /* = java.lang.annotation.Repeatable */(value = C4::class) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class A4 : kotlin.Annotation {
+    public constructor A4()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @java.lang.annotation.Repeatable(value = D1::class) public final annotation class B1 : kotlin.Annotation {
     public constructor B1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -66,6 +73,14 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class C4 : kotlin.Annotation {
+    public constructor C4(/*0*/ value: kotlin.Array<A4>)
+    public final val value: kotlin.Array<A4>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class D1 : kotlin.Annotation {
     public constructor D1(/*0*/ value: kotlin.Array<B1>)
     public final val value: kotlin.Array<B1>
@@ -89,3 +104,5 @@ public final annotation class D3 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias TypeAliasedR = java.lang.annotation.Repeatable
+

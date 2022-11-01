@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationRetention
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.*
@@ -47,7 +46,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
 
         val session = context.session
         for (annotation in annotations) {
-            val classId = annotation.classId ?: continue
+            val classId = annotation.fullyExpandedClassId(context.session) ?: continue
             val annotationClassId = annotation.toAnnotationClassId() ?: continue
             if (annotationClassId.isLocal) continue
             val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
@@ -69,7 +68,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
                     // on the same element.
                     // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
                     val explicitContainer = annotationClass.resolveContainerAnnotation()
-                    if (explicitContainer != null && annotations.any { it.classId == explicitContainer }) {
+                    if (explicitContainer != null && annotations.any { it.fullyExpandedClassId(context.session) == explicitContainer }) {
                         reporter.reportOn(
                             annotation.source,
                             FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER,
@@ -87,11 +86,11 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
         }
 
         if (declaration is FirRegularClass) {
-            val javaRepeatable = annotations.find { it.classId == StandardClassIds.Annotations.Java.Repeatable }
+            val javaRepeatable = annotations.find { it.fullyExpandedClassId(session) == StandardClassIds.Annotations.Java.Repeatable }
             if (javaRepeatable != null) {
                 checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
             } else {
-                val kotlinRepeatable = annotations.find { it.classId == StandardClassIds.Annotations.Repeatable }
+                val kotlinRepeatable = annotations.find { it.fullyExpandedClassId(session) == StandardClassIds.Annotations.Repeatable }
                 if (kotlinRepeatable != null) {
                     checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, context, reporter)
                 }
