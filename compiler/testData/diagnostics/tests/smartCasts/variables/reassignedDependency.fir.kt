@@ -9,7 +9,7 @@ fun test1() {
     x.length // ok
     c.x.length // ok
     c = C(null)
-    x<!UNSAFE_CALL!>.<!>length // ok
+    x.length // ok
     c.x<!UNSAFE_CALL!>.<!>length // bad
 }
 
@@ -18,10 +18,10 @@ fun test2() {
     val x = c.x
     if (x == null) return
     while (true) {
-        x<!UNSAFE_CALL!>.<!>length // ok
+        x.length // ok
         c.x<!UNSAFE_CALL!>.<!>length // bad
         c = C(null)
-        x<!UNSAFE_CALL!>.<!>length // ok
+        x.length // ok
         c.x<!UNSAFE_CALL!>.<!>length // bad
     }
 }

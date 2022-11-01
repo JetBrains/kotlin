@@ -1243,7 +1243,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         )
         val isAssignment = assignment != null
         if (isAssignment) {
-            logicSystem.removeLocalVariableAlias(flow, propertyVariable)
             logicSystem.removeAllAboutVariable(flow, propertyVariable)
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }
