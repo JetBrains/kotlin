@@ -16,8 +16,6 @@ fun box() {
     }
 }
 
-// EXPECTATIONS
-
 // EXPECTATIONS JVM
 // test.kt:6 box:
 // test.kt:12 box: map:java.util.Map=java.util.Collections$SingletonMap
@@ -33,3 +31,14 @@ fun box() {
 // test.kt:15 box: map:java.util.Map=java.util.Collections$SingletonMap, e:java.util.Map$Entry=java.util.AbstractMap$SimpleImmutableEntry
 // test.kt:8 box: map:java.util.Map=java.util.Collections$SingletonMap
 // test.kt:17 box: map:java.util.Map=java.util.Collections$SingletonMap
+
+// EXPECTATIONS JS_IR
+// test.kt:6 box:
+// test.kt:6 box:
+// test.kt:12 box: map=kotlin.collections.HashMap
+// test.kt:12 box: map=kotlin.collections.HashMap
+// test.kt:12 box: map=kotlin.collections.HashMap
+// test.kt:15 box: map=kotlin.collections.HashMap, e=kotlin.collections.AbstractMutableMap.SimpleEntry
+// test.kt:15 box: map=kotlin.collections.HashMap, e=kotlin.collections.AbstractMutableMap.SimpleEntry
+// test.kt:12 box: map=kotlin.collections.HashMap, e=kotlin.collections.AbstractMutableMap.SimpleEntry
+// test.kt:17 box: map=kotlin.collections.HashMap, e=kotlin.collections.AbstractMutableMap.SimpleEntry

@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -36,11 +38,6 @@ fun jsUndefined(context: IrNamer, backendContext: JsIrBackendContext): JsExpress
         is IrGetField -> context.getNameForField(void.symbol.owner).makeRef()
         else -> JsNullLiteral()
     }
-}
-
-fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
-    val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
-    return JsVars(JsVars.JsVar(name, jsInitializer))
 }
 
 fun <T : JsNode> IrWhen.toJsNode(
@@ -113,7 +110,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     val functionContext = context.newDeclaration(declaration, localNameGenerator)
 
-    val functionParams = declaration.valueParameters.map { functionContext.getNameForValueDeclaration(it) }
+    val functionParams = declaration.valueParameters.map { it to functionContext.getNameForValueDeclaration(it) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
@@ -121,12 +118,12 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     function.name = name
 
-    fun JsFunction.addParameter(parameter: JsName) {
-        parameters.add(JsParameter(parameter))
+    fun JsFunction.addParameter(parameter: JsName, irValueParameter: IrValueParameter) {
+        parameters.add(JsParameter(parameter).withSource(irValueParameter, functionContext, useNameOf = irValueParameter))
     }
 
-    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it)) }
-    functionParams.forEach { function.addParameter(it) }
+    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it), it) }
+    functionParams.forEach { (irValueParameter, name) -> function.addParameter(name, irValueParameter) }
     check(!declaration.isSuspend) { "All Suspend functions should be lowered" }
 
     return function
@@ -621,6 +618,19 @@ private fun IrDeclarationWithName.originalNameForUseInSourceMap(policy: SourceMa
                 return it.asString()
             }
         }
+
+        is IrValueDeclaration -> if (origin !in nameMappingOriginAllowList) {
+            return null
+        }
     }
     return name.asString()
 }
+
+private val nameMappingOriginAllowList = setOf(
+    IrDeclarationOrigin.DEFINED,
+    IrDeclarationOrigin.FOR_LOOP_VARIABLE,
+    IrDeclarationOrigin.CATCH_PARAMETER,
+    IrDeclarationOrigin.CONTINUATION,
+    BOUND_VALUE_PARAMETER,
+    JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER,
+)

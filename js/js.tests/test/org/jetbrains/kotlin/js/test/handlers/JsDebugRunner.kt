@@ -4,8 +4,16 @@
  */
 package org.jetbrains.kotlin.js.test.handlers
 
+import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
+import com.google.gwt.dev.js.rhino.CodePosition
+import com.google.gwt.dev.js.rhino.offsetOf
 import kotlinx.coroutines.withTimeout
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.test.debugger.*
 import org.jetbrains.kotlin.js.test.utils.getAllFilesForRunner
@@ -15,9 +23,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
-import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
-import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
+import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URI
 import java.net.URISyntaxException
@@ -39,7 +45,7 @@ import java.net.URISyntaxException
  * supported.
  *
  */
-class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(testServices) {
+class JsDebugRunner(testServices: TestServices, private val localVariables: Boolean) : AbstractJsArtifactsCollector(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (someAssertionWasFailed) return
 
@@ -69,7 +75,7 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
         mainModule: TestModule,
     ) {
         val originalFile = mainModule.files.first { !it.isAdditional }.originalFile
-        val debuggerFacade = NodeJsDebuggerFacade(jsFilePath)
+        val debuggerFacade = NodeJsDebuggerFacade(jsFilePath, localVariables)
 
         val jsFile = File(jsFilePath)
 
@@ -105,7 +111,7 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
             repeatedlyStepInto { callFrame ->
                 callFrame.isInFileUnderTest().also {
                     if (it)
-                        addCallFrameInfoToLoggedItems(sourceMap, callFrame, loggedItems)
+                        addCallFrameInfoToLoggedItems(jsFile, sourceMap, callFrame, loggedItems)
                 }
             }
 
@@ -120,7 +126,8 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
         )
     }
 
-    private fun addCallFrameInfoToLoggedItems(
+    private suspend fun NodeJsDebuggerFacade.Context.addCallFrameInfoToLoggedItems(
+        jsFile: File,
         sourceMap: SourceMap,
         topMostCallFrame: Debugger.CallFrame,
         loggedItems: MutableList<SteppingTestLoggedData>
@@ -139,6 +146,7 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
                 sourceLine + 1,
                 originalFunctionName ?: topMostCallFrame.functionName,
                 false,
+                getLocalVariables(jsFile, sourceMap, topMostCallFrame),
             )
             loggedItems.add(SteppingTestLoggedData(sourceLine + 1, false, expectation))
         }
@@ -164,7 +172,7 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
  *
  * @param jsFilePath the test file to execute and debug.
  */
-private class NodeJsDebuggerFacade(jsFilePath: String) {
+private class NodeJsDebuggerFacade(jsFilePath: String, private val localVariables: Boolean) {
 
     private val inspector =
         NodeJsInspectorClient("js/js.tests/test/org/jetbrains/kotlin/js/test/debugger/stepping_test_executor.js", listOf(jsFilePath))
@@ -172,6 +180,8 @@ private class NodeJsDebuggerFacade(jsFilePath: String) {
     private val scriptUrls = mutableMapOf<Runtime.ScriptId, String>()
 
     private var pausedEvent: Debugger.Event.Paused? = null
+
+    private val sourceCache = mutableMapOf<URI, String>()
 
     init {
         inspector.onEvent { event ->
@@ -220,6 +230,100 @@ private class NodeJsDebuggerFacade(jsFilePath: String) {
             }
 
         suspend fun waitForResumeEvent() = waitForConditionToBecomeTrue { pausedEvent == null }
+
+        suspend fun getLocalVariables(
+            jsFile: File,
+            sourceMap: SourceMap,
+            callFrame: Debugger.CallFrame
+        ): List<LocalVariableRecord>? {
+            if (!localVariables) return null
+            val functionScope = callFrame.scopeChain.find { it.type in setOf(Debugger.ScopeType.LOCAL, Debugger.ScopeType.CLOSURE) }
+                ?: return null
+            val scopeStart = functionScope.startLocation?.toCodePosition() ?: error("Missing scope location")
+            val scopeEnd = functionScope.endLocation?.toCodePosition() ?: error("Missing scope location")
+            val jsFileURI = jsFile.makeURI()
+            require(URI(scriptUrlByScriptId(functionScope.startLocation.scriptId)) == jsFileURI) {
+                "Invalid scope location: $scopeStart. Expected scope location to be in $jsFile"
+            }
+
+            val sourceText = sourceCache.getOrPut(jsFileURI, jsFile::readText)
+
+            val scopeText = sourceText.let {
+                it.substring(it.offsetOf(scopeStart), it.offsetOf(scopeEnd))
+            }
+
+            val prefix = "function"
+
+            // Function scope starts with an open paren, so we need to add the keyword to make it valid JavaScript.
+            // TODO: This will not work with arrows. As of 2022 we don't generate them, but we might in the future.
+            val parseableScopeText = prefix + scopeText
+            val scope = JsProgram().scope
+            val jsFunction = parseFunction(
+                parseableScopeText,
+                jsFile.name,
+                CodePosition(scopeStart.line, scopeStart.offset - prefix.length),
+                0,
+                ThrowExceptionOnErrorReporter,
+                scope
+            ) ?: error("Could not parse scope: \n$parseableScopeText")
+
+            val variables = mutableListOf<SourceInfoAwareJsNode /* JsVars.JsVar | JsParameter */>()
+
+            object : JsVisitor() {
+                override fun visitElement(node: JsNode) {
+                    node.acceptChildren(this)
+                }
+
+                override fun visit(x: JsVars.JsVar) {
+                    super.visit(x)
+                    variables.add(x)
+                }
+
+                override fun visitParameter(x: JsParameter) {
+                    super.visitParameter(x)
+                    variables.add(x)
+                }
+            }.accept(jsFunction)
+
+            val nameMapping = variables.mapNotNull { variable ->
+                if (variable !is HasName) error("Unexpected JsNode: $variable")
+
+                // Filter out variables declared in nested functions
+                if (!jsFunction.scope.hasOwnName(variable.name.toString())) return@mapNotNull null
+
+                val location = variable.source
+                if (location !is JsLocation?) error("JsLocation expected. Found instead: $location")
+                if (location == null)
+                    null
+                else sourceMap.segmentForGeneratedLocation(location.startLine, location.startChar)?.name?.let {
+                    it to variable.name.toString()
+                }
+            }
+
+            if (nameMapping.isEmpty()) return emptyList()
+
+            val expression = nameMapping.joinToString(separator = ",", prefix = "[", postfix = "]") { (_, generatedName) ->
+                "__makeValueDescriptionForSteppingTests($generatedName)"
+            }
+            val evaluationResult = debugger.evaluateOnCallFrame(callFrame.callFrameId, expression, returnByValue = true)
+            if (evaluationResult.exceptionDetails != null) {
+                evaluationResult.exceptionDetails.rethrow()
+            }
+
+            val valueDescriptions =
+                Json.Default.decodeFromJsonElement<List<ValueDescription?>>(evaluationResult.result.value ?: error("missing value"))
+
+            return nameMapping.mapIndexedNotNull { i, (originalName, _) ->
+                valueDescriptions[i]?.toLocalVariableRecord(originalName)
+            }
+        }
+
+        private fun Runtime.ExceptionDetails.rethrow(): Nothing {
+            if (exception?.description != null) error(exception.description)
+            if (scriptId == null) error(text)
+            val scriptURL = scriptUrls[scriptId] ?: url ?: error(text)
+            error("$text ($scriptURL:$lineNumber:$columnNumber)")
+        }
     }
 }
 
@@ -227,6 +331,8 @@ private fun File.makeURI(): URI = absoluteFile.toURI().withAuthority("")
 
 private fun URI.withAuthority(newAuthority: String?) =
     URI(scheme, newAuthority, path, query, fragment)
+
+private fun Debugger.Location.toCodePosition() = CodePosition(lineNumber, columnNumber ?: -1)
 
 private fun SourceMap.segmentForGeneratedLocation(lineNumber: Int, columnNumber: Int?): SourceMapSegment? {
 
@@ -244,4 +350,17 @@ private fun SourceMap.segmentForGeneratedLocation(lineNumber: Int, columnNumber:
         else
             group.segments[candidateIndex - 1]
     }
+}
+
+@Serializable
+private class ValueDescription(val isNull: Boolean, val isReferenceType: Boolean, val valueDescription: String, val typeName: String) {
+    fun toLocalVariableRecord(variableName: String) = LocalVariableRecord(
+        variable = variableName,
+        variableType = null, // In JavaScript variables are untyped
+        value = when {
+            isNull -> LocalNullValue
+            isReferenceType -> LocalReference("", typeName)
+            else -> LocalPrimitive(valueDescription, typeName)
+        }
+    )
 }

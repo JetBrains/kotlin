@@ -158,6 +158,10 @@ fun main(args: Array<String>) {
                 model("debug/stepping")
             }
 
+            testClass<AbstractIrJsLocalVariableTest> {
+                model("debug/localVariables")
+            }
+
             testClass<AbstractFir2IrJsTextTest>(
                 suiteTestClassName = "Fir2IrJsTextTestGenerated"
             ) {

@@ -20,7 +20,7 @@ suspend fun box() {
     }
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:10 box:
 // test.kt:12 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:6 h: $completion:kotlin.coroutines.Continuation=TestKt$box$1
@@ -45,3 +45,32 @@ suspend fun box() {
 // test.kt:19 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, x:int=1:int
 // test.kt:18 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, x:int=1:int
 // test.kt:21 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+
+// EXPECTATIONS JS_IR
+// test.kt:12 doResume:
+// test.kt:6 h: $completion=$boxCOROUTINE$0
+// test.kt:13 doResume:
+// test.kt:13 doResume:
+// test.kt:13 doResume:
+// test.kt:13 doResume: x=0:number
+// test.kt:14 doResume: x=0:number
+// test.kt:8 f: x=0:number
+// test.kt:13 doResume: x=0:number
+// test.kt:13 doResume: x=0:number
+// test.kt:13 doResume: x=1:number
+// test.kt:14 doResume: x=1:number
+// test.kt:8 f: x=1:number
+// test.kt:13 doResume: x=1:number
+// test.kt:18 doResume: x=1:number
+// test.kt:18 doResume: x=1:number
+// test.kt:18 doResume: x=1:number
+// test.kt:18 doResume: x=1:number, x=0:number
+// test.kt:19 doResume: x=1:number, x=0:number
+// test.kt:8 f: x=0:number
+// test.kt:18 doResume: x=1:number, x=0:number
+// test.kt:18 doResume: x=1:number, x=0:number
+// test.kt:18 doResume: x=1:number, x=1:number
+// test.kt:19 doResume: x=1:number, x=1:number
+// test.kt:8 f: x=1:number
+// test.kt:18 doResume: x=1:number, x=1:number
+// test.kt:21 doResume: x=1:number, x=1:number

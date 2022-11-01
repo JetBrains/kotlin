@@ -310,6 +310,9 @@ class Runtime(private val requestEvaluator: CDPRequestEvaluator) {
         @SerialName("symbol")
         SYMBOL,
 
+        @SerialName("accessor")
+        ACCESSOR,
+
         @SerialName("bigint")
         BIGINT,
     }
@@ -397,13 +400,17 @@ class Runtime(private val requestEvaluator: CDPRequestEvaluator) {
          */
         val className: String? = null,
         /**
+         * Remote object value in case of primitive values or JSON values (if it was requested).
+         */
+        val value: JsonElement? = null,
+        /**
          * String representation of the object.
          */
         val description: String? = null,
         /**
          * Unique object identifier (for non-primitive values).
          */
-        val objectId: RemoteObjectId? = null
+        val objectId: RemoteObjectId? = null,
     )
 
     /**
@@ -718,7 +725,11 @@ class Debugger(private val requestEvaluator: CDPRequestEvaluator) {
     }
 
     @Serializable
-    private class EvaluateOnCallFrameRequestParams(val callFrameId: CallFrameId, val expression: String) : CDPRequestParams()
+    private class EvaluateOnCallFrameRequestParams(
+        val callFrameId: CallFrameId,
+        val expression: String,
+        val returnByValue: Boolean? = null,
+    ) : CDPRequestParams()
 
     /**
      * Evaluates expression on a given call frame.
@@ -727,15 +738,19 @@ class Debugger(private val requestEvaluator: CDPRequestEvaluator) {
      *
      * @param callFrameId Call frame identifier to evaluate on.
      * @param expression Expression to evaluate.
+     * @param returnByValue Whether the result is expected to be a JSON object that should be sent by value.
      */
-    suspend fun evaluateOnCallFrame(callFrameId: CallFrameId, expression: String) =
-        requestEvaluator.evaluateRequest<Runtime.EvaluationResult> { messageId ->
-            encodeCDPMethodCall<Runtime.EvaluationResult, EvaluateOnCallFrameRequestParams>(
-                messageId,
-                "Debugger.evaluateOnCallFrame",
-                EvaluateOnCallFrameRequestParams(callFrameId, expression)
-            )
-        }
+    suspend fun evaluateOnCallFrame(
+        callFrameId: CallFrameId,
+        expression: String,
+        returnByValue: Boolean? = null,
+    ) = requestEvaluator.evaluateRequest<Runtime.EvaluationResult> { messageId ->
+        encodeCDPMethodCall<Runtime.EvaluationResult, EvaluateOnCallFrameRequestParams>(
+            messageId,
+            "Debugger.evaluateOnCallFrame",
+            EvaluateOnCallFrameRequestParams(callFrameId, expression, returnByValue)
+        )
+    }
 
     /**
      * Breakpoint identifier.
@@ -804,6 +819,11 @@ class Debugger(private val requestEvaluator: CDPRequestEvaluator) {
         val location: Location,
 
         /**
+         * Scope chain for this call frame.
+         */
+        val scopeChain: List<Scope>,
+
+        /**
          * `this` object for this call frame.
          */
         val `this`: Runtime.RemoteObject,
@@ -813,6 +833,66 @@ class Debugger(private val requestEvaluator: CDPRequestEvaluator) {
          */
         val returnValue: Runtime.RemoteObject? = null,
     )
+
+    @Serializable
+    class Scope private constructor(
+
+        /**
+         * Scope type.
+         */
+        val type: ScopeType,
+
+        /**
+         * Object representing the scope. For [ScopeType.GLOBAL] and [Scopetype.WITH] scopes it represents the actual object;
+         * for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties.
+         */
+        val `object`: Runtime.RemoteObject,
+
+        val name: String? = null,
+
+        /**
+         * Location in the source code where scope starts
+         */
+        val startLocation: Location? = null,
+
+        /**
+         * Location in the source code where scope ends
+         */
+        val endLocation: Location? = null,
+    )
+
+    @Serializable
+    enum class ScopeType {
+        @SerialName("global")
+        GLOBAL,
+
+        @SerialName("local")
+        LOCAL,
+
+        @SerialName("with")
+        WITH,
+
+        @SerialName("closure")
+        CLOSURE,
+
+        @SerialName("catch")
+        CATCH,
+
+        @SerialName("block")
+        BLOCK,
+
+        @SerialName("script")
+        SCRIPT,
+
+        @SerialName("eval")
+        EVAL,
+
+        @SerialName("module")
+        MODULE,
+
+        @SerialName("wasm-expression-stack")
+        WASM_EXPRESSION_STACK,
+    }
 
     @Serializable
     enum class PauseReason {

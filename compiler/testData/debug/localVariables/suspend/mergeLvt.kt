@@ -26,14 +26,16 @@ suspend fun box() {
     val a = suspendBar()
 }
 
-// EXPECTATIONS
+// FIXME(JS_IR): KT-54657
+
+// EXPECTATIONS JVM JVM_IR
 // test.kt:25 box:
 // test.kt:26 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:19 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar:int=0:int
 // EXPECTATIONS JVM
 // test.kt:19 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar:int=0:int
 // test.kt:14 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar:int=0:int, $this$extensionFun$iv$iv:AtomicInt=AtomicInt, $i$f$extensionFun:int=0:int
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:14 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar:int=0:int, $this$extensionFun$iv$iv:AtomicInt=AtomicInt, $i$f$extensionFun:int=0:int
 // test.kt:15 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar:int=0:int, $this$extensionFun$iv$iv:AtomicInt=AtomicInt, $i$f$extensionFun:int=0:int
 // test.kt:6 getValue:
@@ -46,3 +48,21 @@ suspend fun box() {
 // test.kt:23 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar:int=0:int
 // test.kt:26 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:27 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+
+// EXPECTATIONS JS_IR
+// test.kt:19 doResume:
+// test.kt:10 <init properties test.kt>:
+// test.kt:8 atomic: i=0:number
+// test.kt:6 <init>: value=0:number
+// test.kt:6 <init>: value=0:number
+// test.kt:11 <init properties test.kt>:
+// test.kt:10 <get-state>$accessor$1gle43a:
+// test.kt:10 <get-state>:
+// test.kt:14 doResume:
+// test.kt:11 <get-a>$accessor$1gle43a:
+// test.kt:11 <get-a>:
+// test.kt:37 doResume:
+// test.kt:37 doResume:
+// test.kt:37 doResume:
+// test.kt:26 doResume:
+// test.kt:27 doResume: a=Unit
