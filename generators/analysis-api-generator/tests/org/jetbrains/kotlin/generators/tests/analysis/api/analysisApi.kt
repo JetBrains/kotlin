@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.express
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.importOptimizer.AbstractAnalysisApiImportOptimizerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderMultiModuleTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
@@ -243,10 +242,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("psiTypeProvider") {
         test(AbstractAnalysisApiPsiTypeProviderTest::class) {
             model("psiType/forDeclaration")
-        }
-
-        test(AbstractAnalysisApiPsiTypeProviderMultiModuleTest::class) {
-            model("psiType/multiModule")
         }
 
         test(AbstractAnalysisApiExpressionPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
