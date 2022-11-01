@@ -79,7 +79,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         fun annotationsFilter(annotations: List<FirAnnotation>): List<Pair<ClassId, FirAnnotation>> {
             return annotations
                 .filter { it.annotationTypeRef.toRegularClassSymbol(session)?.isInheritableSerialInfoAnnotation == true }
-                .mapNotNull { annotation -> annotation.classId?.let { it to annotation } }
+                .mapNotNull { annotation -> annotation.fullyExpandedClassId(session)?.let { it to annotation } }
         }
 
         val annotationByClassId = buildMap {
