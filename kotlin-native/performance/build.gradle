@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.UtilsKt
 import org.jetbrains.kotlin.konan.CompilerVersionKt
 import org.jetbrains.kotlin.konan.target.DistributionKt
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 buildscript {
     ext.rootBuildDirectory = file('..')
@@ -102,6 +101,7 @@ def rootBuildDirectory = projectDir.parentFile
 task buildAnalyzer(type: GradleBuild) {
     buildFile = "../tools/benchmarksAnalyzer/build.gradle"
     tasks = [":${getAnalyzerTargetName()}Binaries".toString()]
+    startParameter.setProjectProperties(this.project.gradle.startParameter.projectProperties)
 }
 
 task konanRun {
