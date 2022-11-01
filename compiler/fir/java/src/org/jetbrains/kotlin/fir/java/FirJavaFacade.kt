@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.classId
+import org.jetbrains.kotlin.fir.expressions.coneClassLikeType
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -207,7 +207,7 @@ abstract class FirJavaFacade(
 
     private fun FirJavaClass.getPurelyImplementedSupertype(): ConeKotlinType? {
         val purelyImplementedClassIdFromAnnotation = annotations
-            .firstOrNull { it.classId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
+            .firstOrNull { it.coneClassLikeType?.classId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
             ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirConstExpression<*>) }
             ?.let { it.value as? String }
             ?.takeIf { it.isNotBlank() && isValidJavaFqName(it) }
