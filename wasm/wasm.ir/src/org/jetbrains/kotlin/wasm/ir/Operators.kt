@@ -334,15 +334,20 @@ enum class WasmOp(
     REF_NULL("ref.null", 0xD0, HEAP_TYPE),
     REF_IS_NULL("ref.is_null", 0xD1),
     REF_FUNC("ref.func", 0xD2, FUNC_IDX),
-    REF_AS_NOT_NULL("ref.as_non_null", 0xD3),
-    BR_ON_NULL("br_on_null", 0xD4, LABEL_IDX),
-    REF_EQ("ref.eq", 0xD5),
 
+    // ============================================================
+    // Typed Function References
+    // WIP: https://github.com/WebAssembly/function-references
     CALL_REF("call_ref", 0x14),
     RETURN_CALL_REF("return_call_ref", 0x15),
-    FUNC_BIND("func.bind", 0x16, FUNC_IDX),
+    REF_AS_NOT_NULL("ref.as_non_null", 0xD3),
+    BR_ON_NULL("br_on_null", 0xD4, LABEL_IDX),
+    BR_ON_NON_NULL("br_on_non_null", 0xD6, LABEL_IDX),
 
+
+    // ============================================================
     // GC
+    // WIP: https://github.com/WebAssembly/gc
     STRUCT_NEW("struct.new", 0xFB_07, STRUCT_TYPE_IDX),
     STRUCT_NEW_DEFAULT("struct.new_default", 0xFB_08, STRUCT_TYPE_IDX),
     STRUCT_GET("struct.get", 0xFB_03, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
@@ -365,6 +370,7 @@ enum class WasmOp(
     I31_GET_S("i31.get_s", 0xFB_21),
     I31_GET_U("i31.get_u", 0xFB_22),
 
+    REF_EQ("ref.eq", 0xD5),
     REF_TEST("ref.test", 0xFB_44, STRUCT_TYPE_IDX),
     REF_CAST("ref.cast", 0xFB_45, STRUCT_TYPE_IDX),
 
@@ -384,6 +390,7 @@ enum class WasmOp(
     EXTERN_INTERNALIZE("extern.internalize", 0xfb70), // externref -> anyref
     EXTERN_EXTERNALIZE("extern.externalize", 0xfb71), // anyref -> externref
 
+    // ============================================================
     // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.
     GET_UNIT("call", 0x10, FUNC_IDX)
     ;
