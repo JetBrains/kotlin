@@ -30698,6 +30698,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("reassignedDependency.kt")
+                public void testReassignedDependency() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedDependency.kt");
+                }
+
+                @Test
                 @TestMetadata("varAsUse.kt")
                 public void testVarAsUse() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/varAsUse.kt");
