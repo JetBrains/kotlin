@@ -82,7 +82,6 @@ konanTargetList.forEach { target ->
         libTask.configure {
             dependsOn(df.config.depends.map { defFileToLibName(targetName, it) })
             dependsOn(":kotlin-native:${targetName}CrossDist")
-
             enableParallel = project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true
         }
 
