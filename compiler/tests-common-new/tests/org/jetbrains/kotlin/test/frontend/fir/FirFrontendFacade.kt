@@ -20,11 +20,10 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -52,7 +51,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import java.io.File
 import java.nio.file.Paths
 
-class FirFrontendFacade(
+open class FirFrontendFacade(
     testServices: TestServices,
     private val additionalSessionConfiguration: SessionConfiguration?
 ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
@@ -66,6 +65,8 @@ class FirFrontendFacade(
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
+
+    open fun registerExtraComponents(session: FirSession) {}
 
     override fun analyze(module: TestModule): FirOutputArtifact {
         val moduleInfoProvider = testServices.firModuleInfoProvider
@@ -125,6 +126,7 @@ class FirFrontendFacade(
                     projectFileSearchScope,
                     packagePartProvider,
                     languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
                 )
             }
             module.targetPlatform.isJs() -> {
@@ -137,6 +139,7 @@ class FirFrontendFacade(
                     testServices,
                     configuration,
                     languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
                 )
             }
             module.targetPlatform.isNative() -> {
@@ -146,6 +149,7 @@ class FirFrontendFacade(
                     moduleInfoProvider.firSessionProvider,
                     dependencyList,
                     languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
                 )
             }
             else -> error("Unsupported")
@@ -173,6 +177,7 @@ class FirFrontendFacade(
                     lookupTracker = null,
                     enumWhenTracker = null,
                     needRegisterJavaElementFinder = true,
+                    registerExtraComponents = ::registerExtraComponents,
                     sessionConfigurator,
                 )
             }
@@ -183,6 +188,7 @@ class FirFrontendFacade(
                     extensionRegistrars,
                     languageVersionSettings,
                     null,
+                    registerExtraComponents = ::registerExtraComponents,
                     sessionConfigurator,
                 )
             }
@@ -192,6 +198,7 @@ class FirFrontendFacade(
                     moduleInfoProvider.firSessionProvider,
                     extensionRegistrars,
                     languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator
                 )
             }
@@ -220,6 +227,7 @@ class FirFrontendFacade(
         return FirOutputArtifactImpl(session, filesMap, firAnalyzerFacade)
     }
 }
+
 
 private fun DependencyListForCliModule.Builder.configureJvmDependencies(
     configuration: CompilerConfiguration,

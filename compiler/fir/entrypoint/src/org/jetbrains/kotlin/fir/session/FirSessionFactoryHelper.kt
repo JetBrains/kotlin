@@ -48,7 +48,8 @@ object FirSessionFactoryHelper {
             projectEnvironment,
             librariesScope,
             packagePartProvider,
-            languageVersionSettings
+            languageVersionSettings,
+            registerExtraComponents = null,
         )
 
         val mainModuleData = FirModuleDataImpl(
@@ -70,7 +71,8 @@ object FirSessionFactoryHelper {
             lookupTracker,
             enumWhenTracker,
             needRegisterJavaElementFinder,
-            sessionConfigurator
+            registerExtraComponents = null,
+            sessionConfigurator,
         )
     }
 

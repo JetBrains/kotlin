@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirImportResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+class FirImportResolveProcessor(session: FirSession, scopeSession: ScopeSession) :
+    FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.IMPORTS) {
     override val transformer = FirImportResolveTransformer(session)
 }
 

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstit
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
@@ -49,7 +50,7 @@ import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) :
-    FirTransformerBasedResolveProcessor(session, scopeSession) {
+    FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.SUPER_TYPES) {
     override val transformer = FirSupertypeResolverTransformer(session, scopeSession)
 }
 

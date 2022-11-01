@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
@@ -41,7 +40,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 class FirCompilerRequiredAnnotationsResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirGlobalResolveProcessor(session, scopeSession) {
+) : FirGlobalResolveProcessor(session, scopeSession, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
 
     override fun process(files: Collection<FirFile>) {
         val transformer = FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession)
@@ -58,11 +57,13 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
 
     @OptIn(FirSymbolProviderInternals::class)
     override fun beforePhase() {
+        super.beforePhase()
         session.generatedDeclarationsSymbolProvider?.disable()
     }
 
     @OptIn(FirSymbolProviderInternals::class)
     override fun afterPhase() {
+        super.afterPhase()
         session.generatedDeclarationsSymbolProvider?.enable()
     }
 }

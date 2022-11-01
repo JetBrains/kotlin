@@ -35,6 +35,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         testServices: TestServices,
         configuration: CompilerConfiguration,
         languageVersionSettings: LanguageVersionSettings,
+        registerExtraComponents: ((FirSession) -> Unit)? = null,
     ): FirSession {
         val moduleDataProvider = dependencyListForCliModule.moduleDataProvider
         return createLibrarySession(
@@ -42,7 +43,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
-            null,
+            registerExtraComponents,
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 listOf(
@@ -60,6 +61,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker?,
+        registerExtraComponents: ((FirSession) -> Unit)? = null,
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
         return createModuleBasedSession(
@@ -70,7 +72,10 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             lookupTracker,
             null,
             init,
-            registerExtraComponents = { it.registerJsSpecificResolveComponents() },
+            registerExtraComponents = { session ->
+                session.registerJsSpecificResolveComponents()
+                registerExtraComponents?.invoke(session)
+            },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependenciesSymbolProvider ->

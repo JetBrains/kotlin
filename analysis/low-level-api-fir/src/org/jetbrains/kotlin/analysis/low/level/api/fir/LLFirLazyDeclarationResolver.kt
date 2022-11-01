@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 
 @ThreadSafeMutableState
 internal class LLFirLazyDeclarationResolver(private val sessionInvalidator: LLFirSessionInvalidator) : FirLazyDeclarationResolver() {
+    override fun startResolvingPhase(phase: FirResolvePhase) {}
+    override fun finishResolvingPhase(phase: FirResolvePhase) {}
+
+    override fun disableLazyResolveContractChecks() {}
+    override fun enableLazyResolveContractsChecks() {}
+
     override fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
         val fir = symbol.fir
         val session = fir.moduleData.session

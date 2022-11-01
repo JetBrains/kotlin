@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 
 abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendOutput<R>> : AbstractKotlinCompilerTest() {
     abstract val targetFrontend: FrontendKind<R>
@@ -86,7 +86,7 @@ abstract class AbstractFirNativeDiagnosticsTest : AbstractDiagnosticsNativeTestB
         get() = FrontendKinds.FIR
 
     override val frontend: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
+        get() = ::FirFrontendFacadeForDiagnosticTests
 
     override fun handlersSetup(builder: TestConfigurationBuilder) {
         builder.firHandlersStep {
@@ -103,6 +103,11 @@ abstract class AbstractFirNativeDiagnosticsTest : AbstractDiagnosticsNativeTestB
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
+
+        builder.useAfterAnalysisCheckers(
+            ::DisableLazyResolveChecksAfterAnalysisChecker,
+        )
+
 
         builder.forTestsMatching("compiler/testData/diagnostics/*") {
             configurationForClassicAndFirTestsAlongside()

@@ -25,7 +25,8 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
         dependencyListForCliModule: DependencyListForCliModule,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        registerExtraComponents: ((FirSession) -> Unit)? = null,
     ): FirSession {
         val moduleDataProvider = dependencyListForCliModule.moduleDataProvider
         return createLibrarySession(
@@ -33,7 +34,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
-            null,
+            registerExtraComponents,
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 listOf(
@@ -48,7 +49,8 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
-        init: FirSessionConfigurator.() -> Unit
+        init: FirSessionConfigurator.() -> Unit,
+        registerExtraComponents: ((FirSession) -> Unit)? = null,
     ): FirSession {
         return createModuleBasedSession(
             moduleData,
@@ -58,7 +60,10 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             null,
             null,
             init,
-            registerExtraComponents = { it.registerExtraComponentsForModuleBased() },
+            registerExtraComponents = { session ->
+                session.registerExtraComponentsForModuleBased()
+                registerExtraComponents?.invoke(session)
+            },
             registerExtraCheckers = { it.registerNativeCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependenciesSymbolProvider ->

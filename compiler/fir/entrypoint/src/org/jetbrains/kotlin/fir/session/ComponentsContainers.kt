@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCompilerLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.PlatformSupertypeUpdater
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
@@ -74,7 +74,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
 fun FirSession.registerCliCompilerOnlyComponents() {
     register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
-    register(FirLazyDeclarationResolver::class, FirCompilerLazyDeclarationResolver)
+    register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
 
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))
