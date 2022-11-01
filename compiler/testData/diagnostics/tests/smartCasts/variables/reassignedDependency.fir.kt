@@ -36,5 +36,5 @@ fun test3(p: Boolean) {
         c = C(null)
     }
     x.length // ok
-    c.x.length // bad
+    c.x<!UNSAFE_CALL!>.<!>length // bad
 }

@@ -108,10 +108,15 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun joinFlow(flows: Collection<PersistentFlow>): PersistentFlow {
+        // One input flow executes - one set of statements is true, others might be false.
         return foldFlow(flows) { variable -> or(flows.map { it.getApprovedTypeStatements(variable) }).takeIf { it.isNotEmpty } }
     }
 
     override fun unionFlow(flows: Collection<PersistentFlow>): PersistentFlow {
+        // All input flows execute in some order. If none of them reassign the variable, then
+        // *all* sets of statements are true; otherwise the assignments might have happened in
+        // an arbitrary order, so only one set of statements is true depending on which assignment
+        // happened last (and the flows that don't reassign may or may not have executed after that).
         return foldFlow(flows) { variable ->
             or(flows.groupBy { it.assignmentIndex[variable] ?: -1 }.values.map { flowSubset ->
                 and(flowSubset.map { it.getApprovedTypeStatements(variable) })
@@ -119,45 +124,39 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
-    private inline fun foldFlow(
-        flows: Collection<PersistentFlow>,
-        mergeOperation: (RealVariable) -> MutableTypeStatement?,
-    ): PersistentFlow {
-        if (flows.isEmpty()) return createEmptyFlow()
-        flows.singleOrNull()?.let { return it }
+    private inline fun foldFlow(flows: Collection<PersistentFlow>, mergeOperation: (RealVariable) -> TypeStatement?): PersistentFlow =
+        when (flows.size) {
+            0 -> createEmptyFlow()
+            1 -> flows.first()
+            else -> foldFlow(flows, flows.flatMapTo(mutableSetOf()) { it.approvedTypeStatements.keys }.mapNotNull(mergeOperation))
+        }
 
+    private fun foldFlow(flows: Collection<PersistentFlow>, statements: Collection<TypeStatement>): PersistentFlow {
         val aliasedVariablesThatDontChangeAlias = computeAliasesThatDontChange(flows)
 
         val commonFlow = flows.reduce(::lowestCommonFlow)
 
-        val variables = flows.flatMap { it.approvedTypeStatements.keys }.toSet()
-        for (variable in variables) {
-            val info = mergeOperation(variable) ?: continue
-            commonFlow.approvedTypeStatements -= variable
-            commonFlow.approvedTypeStatementsDiff -= variable
-            val thereWereReassignments = variable.hasDifferentReassignments(flows)
-            if (thereWereReassignments) {
-                removeAllAboutVariable(commonFlow, variable)
+        for (flow in flows) {
+            for ((variable, index) in flow.assignmentIndex) {
+                if (commonFlow.assignmentIndex[variable] != index) {
+                    removeAllAboutVariable(commonFlow, variable)
+                }
             }
-            commonFlow.addApprovedStatements(info)
         }
 
-        commonFlow.addVariableAliases(aliasedVariablesThatDontChangeAlias)
+        val toReplace = statements.map { it.variable to it.toPersistent() }
+        commonFlow.approvedTypeStatements += toReplace
+        if (commonFlow.previousFlow != null) {
+            commonFlow.approvedTypeStatementsDiff += toReplace
+        }
+
+        for ((alias, underlyingVariable) in aliasedVariablesThatDontChangeAlias) {
+            addLocalVariableAlias(commonFlow, alias, underlyingVariable)
+        }
         return commonFlow
     }
 
-    private fun RealVariable.hasDifferentReassignments(flows: Collection<PersistentFlow>): Boolean {
-        val firstIndex = flows.first().assignmentIndex[this] ?: -1
-        for (flow in flows) {
-            val index = flow.assignmentIndex[this] ?: -1
-            if (index != firstIndex) return true
-        }
-        return false
-    }
-
-    private fun computeAliasesThatDontChange(
-        flows: Collection<PersistentFlow>
-    ): MutableMap<RealVariable, RealVariableAndType> {
+    private fun computeAliasesThatDontChange(flows: Collection<PersistentFlow>): MutableMap<RealVariable, RealVariableAndType> {
         val flowsSize = flows.size
         val aliasedVariablesThatDontChangeAlias = mutableMapOf<RealVariable, RealVariableAndType>()
 
@@ -171,23 +170,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
 
         return aliasedVariablesThatDontChangeAlias
-    }
-
-    private fun PersistentFlow.addVariableAliases(
-        aliasedVariablesThatDontChangeAlias: MutableMap<RealVariable, RealVariableAndType>
-    ) {
-        for ((alias, underlyingVariable) in aliasedVariablesThatDontChangeAlias) {
-            addLocalVariableAlias(this, alias, underlyingVariable)
-        }
-    }
-
-    private fun PersistentFlow.addApprovedStatements(
-        info: MutableTypeStatement
-    ) {
-        approvedTypeStatements = approvedTypeStatements.addTypeStatement(info)
-        if (previousFlow != null) {
-            approvedTypeStatementsDiff = approvedTypeStatementsDiff.addTypeStatement(info)
-        }
     }
 
     override fun addLocalVariableAlias(flow: PersistentFlow, alias: RealVariable, underlyingVariable: RealVariableAndType) {
@@ -527,22 +509,15 @@ private fun lowestCommonFlow(left: PersistentFlow, right: PersistentFlow): Persi
 private fun PersistentApprovedTypeStatements.addTypeStatement(info: TypeStatement): PersistentApprovedTypeStatements {
     val variable = info.variable
     val existingInfo = this[variable]
-    return if (existingInfo == null) {
-        val persistentInfo = if (info is PersistentTypeStatement) info else info.toPersistent()
-        put(variable, persistentInfo)
-    } else {
-        put(variable, existingInfo + info)
-    }
+    return put(variable, if (existingInfo != null) existingInfo + info else info.toPersistent())
 }
 
-private fun TypeStatement.toPersistent(): PersistentTypeStatement = PersistentTypeStatement(
-    variable,
-    exactType.toPersistentSet(),
-    exactNotType.toPersistentSet()
-)
+private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
+    is PersistentTypeStatement -> this
+    else -> PersistentTypeStatement(variable, exactType.toPersistentSet(), exactNotType.toPersistentSet())
+}
 
 fun TypeStatement.asMutableStatement(): MutableTypeStatement = when (this) {
     is MutableTypeStatement -> this
-    is PersistentTypeStatement -> MutableTypeStatement(variable, exactType.toMutableSet(), exactNotType.toMutableSet())
-    else -> throw IllegalArgumentException("Unknown TypeStatement type: ${this::class}")
+    else -> MutableTypeStatement(variable, exactType.toMutableSet(), exactNotType.toMutableSet())
 }
