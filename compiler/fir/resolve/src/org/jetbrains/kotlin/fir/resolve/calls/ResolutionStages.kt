@@ -683,10 +683,8 @@ internal object ConstraintSystemForks : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (candidate.system.hasContradiction) return
 
-        candidate.system.processForkConstraints()
-
-        if (candidate.system.hasContradiction) {
-            sink.yieldDiagnostic(candidate.system.errors.firstOrNull()?.let(::InferenceError) ?: InapplicableCandidate)
+        candidate.system.checkIfForksMightBeSuccessfullyResolved()?.let { csError ->
+            sink.yieldDiagnostic(InferenceError(csError))
         }
     }
 }

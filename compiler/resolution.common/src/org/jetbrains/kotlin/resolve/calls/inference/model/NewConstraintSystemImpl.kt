@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerC
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.isDefinitelyEmpty
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -370,6 +373,37 @@ class NewConstraintSystemImpl(
                 addError(NoSuccessfulFork(position))
             }
         }
+    }
+
+    /**
+     * Checks if current state of forked constraints is not contradictory.
+     *
+     * That function is expected to be pure, i.e. it should leave the system in the same state it was found before the call.
+     *
+     * @return null if for each fork we found a possible branch that doesn't contradict with all other constraints
+     * @return non-nullable error if there's a contradiction we didn't manage to resolve
+     */
+    fun checkIfForksMightBeSuccessfullyResolved(): ConstraintSystemError? {
+        if (constraintsFromAllForkPoints.isEmpty()) return null
+
+        val allForkPointsData = constraintsFromAllForkPoints.toList()
+        constraintsFromAllForkPoints.clear()
+
+        var result: ConstraintSystemError? = null
+        runTransaction {
+            for ((position, forkPointData) in allForkPointsData) {
+                if (!processForkPointData(forkPointData, position)) {
+                    result = NoSuccessfulFork(position)
+                    break
+                }
+            }
+
+            false
+        }
+
+        constraintsFromAllForkPoints.addAll(allForkPointsData)
+
+        return result
     }
 
     /**
