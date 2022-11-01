@@ -108,7 +108,9 @@ dependencies {
     use(DependenciesKt) {
         trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
         kotlin_reflect_jar commonDependency("org.jetbrains.kotlin:kotlin-reflect")
-        compilerApi commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")
+        compilerApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { setTransitive(false) }
+        compilerApi(commonDependency("org.jetbrains.intellij.deps:log4j")) { setTransitive(false) }
+        compilerApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
     }
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
