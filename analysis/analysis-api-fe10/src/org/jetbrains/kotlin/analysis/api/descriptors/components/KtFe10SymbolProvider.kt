@@ -87,8 +87,10 @@ internal class KtFe10SymbolProvider(
         return KtFe10PsiAnonymousObjectSymbol(psi.objectDeclaration, analysisContext)
     }
 
-    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol {
-        return if (psi is KtObjectDeclaration && psi.isObjectLiteral()) {
+    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol? {
+        return if (psi is KtEnumEntry) {
+            null
+        } else if (psi is KtObjectDeclaration && psi.isObjectLiteral()) {
             KtFe10PsiAnonymousObjectSymbol(psi, analysisContext)
         } else {
             KtFe10PsiNamedClassOrObjectSymbol(psi, analysisContext)

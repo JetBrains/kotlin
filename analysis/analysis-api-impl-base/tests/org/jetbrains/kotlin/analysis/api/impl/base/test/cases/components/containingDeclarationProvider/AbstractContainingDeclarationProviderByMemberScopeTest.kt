@@ -26,7 +26,7 @@ abstract class AbstractContainingDeclarationProviderByMemberScopeTest : Abstract
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(ktFile)
 
         val memberToContainingClass = analyseForTest(declaration) {
-            val symbol = declaration.getClassOrObjectSymbol()
+            val symbol = declaration.getClassOrObjectSymbol()!!
             renderScopeWithParentDeclarations(symbol.getMemberScope())
         }
 
