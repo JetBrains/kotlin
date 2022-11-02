@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
@@ -182,6 +183,7 @@ class FirRenderer(
             val receiverParameter = callableDeclaration.receiverParameter
             print(" ")
             if (receiverParameter != null) {
+                annotationRenderer?.render(receiverParameter, AnnotationUseSiteTarget.RECEIVER)
                 receiverParameter.type.accept(this)
                 print(".")
             }

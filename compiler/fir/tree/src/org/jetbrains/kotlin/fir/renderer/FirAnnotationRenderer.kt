@@ -19,22 +19,23 @@ open class FirAnnotationRenderer {
     protected val printer get() = components.printer
     protected val callArgumentsRenderer get() = components.callArgumentsRenderer
 
-    fun render(annotationContainer: FirAnnotationContainer) {
-        renderAnnotations(annotationContainer.annotations)
+    fun render(annotationContainer: FirAnnotationContainer, explicitAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null) {
+        renderAnnotations(annotationContainer.annotations, explicitAnnotationUseSiteTarget)
     }
 
-    internal fun renderAnnotations(annotations: List<FirAnnotation>) {
+    internal fun renderAnnotations(annotations: List<FirAnnotation>, explicitAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null) {
         for (annotation in annotations) {
-            renderAnnotation(annotation)
+            renderAnnotation(annotation, explicitAnnotationUseSiteTarget)
         }
     }
 
-    internal fun renderAnnotation(annotation: FirAnnotation) {
+    internal fun renderAnnotation(annotation: FirAnnotation, explicitAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null) {
         printer.print("@")
-        annotation.useSiteTarget?.let {
+        (explicitAnnotationUseSiteTarget ?: annotation.useSiteTarget)?.let {
             printer.print(it.name)
             printer.print(":")
         }
+
         annotation.annotationTypeRef.accept(visitor)
         when (annotation) {
             is FirAnnotationCall -> if (annotation.calleeReference.let { it is FirResolvedNamedReference || it is FirErrorNamedReference }) {
