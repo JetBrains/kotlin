@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.name.Name
 
 internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirExpression> {
-    return if (annotation.resolved) {
-        annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }
-    } else {
-        emptyMap()
-    }
+    assert(annotation.resolved) { "By now the annotations argument mapping should have been resolved" }
+    return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }
 }
