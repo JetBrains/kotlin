@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
 import org.jetbrains.kotlin.psi.KtParameter
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROPERTIES
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
-import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginMetadataExtensions
 
 class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) :
     ISerializableProperties<SerializableProperty> {

@@ -1,4 +1,4 @@
-package org.jetbrains.kotlinx.serialization.compiler.extensions;
+package org.jetbrains.kotlin.metadata;
 
 import "core/metadata/src/metadata.proto";
 import "core/metadata/src/ext_options.proto";

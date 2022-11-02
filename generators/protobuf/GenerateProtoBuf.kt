@@ -46,6 +46,7 @@ class ProtoPath(val file: String, val generateDebug: Boolean = true) {
 val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("core/metadata/src/metadata.proto"),
     ProtoPath("core/metadata/src/builtins.proto"),
+    ProtoPath("core/metadata/src/properties_order_extension.proto", generateDebug = false),
     ProtoPath("js/js.serializer/src/js.proto"),
     ProtoPath("js/js.serializer/src/js-ast.proto", false),
     ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
@@ -54,7 +55,6 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("compiler/util-klib-metadata/src/KlibMetadataProtoBuf.proto"),
     ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false),
     ProtoPath("compiler/ir/serialization.jvm/src/JvmIr.proto", false),
-    ProtoPath("plugins/kotlinx-serialization/kotlinx-serialization.k1/src/class_extensions.proto", generateDebug = false)
 )
 
 private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/metadata/src/ext_options.proto")

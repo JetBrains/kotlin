@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.metadata.deserialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder
 
 class VersionRequirementTable private constructor(private val infos: List<ProtoBuf.VersionRequirement>) {
     operator fun get(id: Int): ProtoBuf.VersionRequirement? = infos.getOrNull(id)
@@ -81,7 +81,7 @@ class VersionRequirement(
         "since $version $level" + (if (errorCode != null) " error $errorCode" else "") + (if (message != null) ": $message" else "")
 
     companion object {
-        fun create(proto: MessageLite, nameResolver: NameResolver, table: VersionRequirementTable): List<VersionRequirement> {
+        fun create(proto: MessageLiteOrBuilder, nameResolver: NameResolver, table: VersionRequirementTable): List<VersionRequirement> {
             val ids = when (proto) {
                 is ProtoBuf.Class -> proto.versionRequirementList
                 is ProtoBuf.Constructor -> proto.versionRequirementList
