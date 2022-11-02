@@ -16000,6 +16000,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("nestedCallVariableFixation.kt")
+                public void testNestedCallVariableFixation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/forks/nestedCallVariableFixation.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedCallVariableFixationSimple.kt")
+                public void testNestedCallVariableFixationSimple() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/forks/nestedCallVariableFixationSimple.kt");
+                }
+
+                @Test
                 @TestMetadata("overloadResolutionByLambdaReturnTypeAndExpectedType.kt")
                 public void testOverloadResolutionByLambdaReturnTypeAndExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/forks/overloadResolutionByLambdaReturnTypeAndExpectedType.kt");

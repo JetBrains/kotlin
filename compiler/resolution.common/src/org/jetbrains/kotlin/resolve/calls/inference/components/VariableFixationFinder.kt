@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.IncorporationConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
@@ -24,6 +26,8 @@ class VariableFixationFinder(
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
         val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
         val postponedTypeVariables: List<TypeVariableMarker>
+        val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
+
         fun isReified(variable: TypeVariableMarker): Boolean
     }
 
@@ -65,8 +69,9 @@ class VariableFixationFinder(
         variable: TypeConstructorMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
     ): TypeVariableFixationReadiness = when {
-        !notFixedTypeVariables.contains(variable) ||
-                dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
+        !notFixedTypeVariables.contains(variable) || dependencyProvider.isVariableRelatedToTopLevelType(variable) ||
+                variableHasUnprocessedConstraintsInForks(variable) ->
+            TypeVariableFixationReadiness.FORBIDDEN
         isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
@@ -83,6 +88,21 @@ class VariableFixationFinder(
             }
         }
         else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
+    }
+
+    private fun Context.variableHasUnprocessedConstraintsInForks(variableConstructor: TypeConstructorMarker): Boolean {
+        if (constraintsFromAllForkPoints.isEmpty()) return false
+
+        for ((_, forkPointData) in constraintsFromAllForkPoints) {
+            for (constraints in forkPointData) {
+                for ((typeVariableFromConstraint, constraint) in constraints) {
+                    if (typeVariableFromConstraint.freshTypeConstructor() == variableConstructor) return true
+                    if (containsTypeVariable(constraint.type, variableConstructor)) return true
+                }
+            }
+        }
+
+        return false
     }
 
     fun isTypeVariableHasProperConstraint(
