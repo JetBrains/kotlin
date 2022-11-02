@@ -513,6 +513,26 @@ private class ElementsToShortenCollector(
         val option = callableShortenOption(calledSymbol)
         if (option == ShortenOption.DO_NOT_SHORTEN) return
 
+        // When the symbol has an explicit receiver, we skip shortening it. In some cases, we can still short it but determining
+        // whether it is fine or not is complicated. For example,
+        //
+        //    package inspector.p30879
+        //    import inspector.p30879.C.G
+        //
+        //    val <T> T.letVar: Int; get() = 0
+        //
+        //    fun test() {
+        //        C.G.letVar   // We cannot shorten C.G.letVar to letVar because it needs a receiver i.e., G.
+        //    }
+        //
+        //    fun G.test() {
+        //        C.G.letVar   // We can shorten C.G.letVar to letVar.
+        //    }
+        //
+        //    class B { object G }
+        //    class C { object G }
+        if (calledSymbol.resolvedReceiverTypeRef != null) return
+
         val scopes = shorteningContext.findScopesAtPosition(expressionToGetScope, namesToImport, towerContextProvider) ?: return
         val availableCallables = findCallableInScopes(scopes, calledSymbol.name)
 
