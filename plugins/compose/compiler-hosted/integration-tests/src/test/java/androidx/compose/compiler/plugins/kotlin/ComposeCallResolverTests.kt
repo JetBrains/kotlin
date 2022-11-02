@@ -16,20 +16,18 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import kotlin.reflect.KClass
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.junit.Test
 
 class ComposeCallResolverTests : AbstractCodegenTest() {
-
+    @Test
     fun testProperties() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -52,6 +50,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    @Test
     fun testBasicCallTypes() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -69,6 +68,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    @Test
     fun testReceiverScopeCall() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -87,6 +87,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    @Test
     fun testInvokeOperatorCall() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -101,6 +102,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    @Test
     fun testComposableLambdaCall() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -112,6 +114,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    @Test
     fun testComposableLambdaCallWithGenerics() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -155,6 +158,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    @Test
     fun testReceiverLambdaInvocation() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -172,6 +176,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    @Test
     fun testReceiverLambda2() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -192,6 +197,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
+    @Test
     fun testInlineContent() = assertInterceptions(
         """
             import androidx.compose.runtime.*
@@ -211,23 +217,15 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
-    private fun <T> setup(block: () -> T): T {
-        return block()
-    }
-
-    fun assertInterceptions(srcText: String) = setup {
+    private fun assertInterceptions(srcText: String) {
         val (text, carets) = extractCarets(srcText)
 
-        val environment = myEnvironment ?: error("Environment not initialized")
-
-        val ktFile = KtPsiFactory(environment.project).createFile(text)
-        val bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(
-            environment,
-            listOf(ktFile)
-        ).bindingContext
+        val analysisResult = analyze(listOf(SourceFile("test.kt", text)))
+        val bindingContext = analysisResult.bindingContext!!
+        val ktFile = analysisResult.files.single()
 
         carets.forEachIndexed { index, (offset, calltype) ->
-            val resolvedCall = resolvedCallAtOffset(bindingContext, ktFile, offset)
+            val resolvedCall = ktFile.findElementAt(offset)?.getNearestResolvedCall(bindingContext)
                 ?: error(
                     "No resolved call found at index: $index, offset: $offset. Expected " +
                         "$calltype."
@@ -241,7 +239,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         }
     }
 
-    private val callPattern = Regex("(<normal>)|(<emit>)|(<call>)")
+    private val callPattern = Regex("(<normal>)|(<call>)")
     private fun extractCarets(text: String): Pair<String, List<Pair<Int, String>>> {
         val indices = mutableListOf<Pair<Int, String>>()
         var offset = 0
@@ -251,15 +249,6 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
             ""
         }
         return src to indices
-    }
-
-    private fun resolvedCallAtOffset(
-        bindingContext: BindingContext,
-        jetFile: KtFile,
-        index: Int
-    ): ResolvedCall<*>? {
-        val element = jetFile.findElementAt(index)!!
-        return element.getNearestResolvedCall(bindingContext)
     }
 }
 
@@ -279,10 +268,4 @@ fun PsiElement?.getNearestResolvedCall(bindingContext: BindingContext): Resolved
         node = node.parent
     }
     return null
-}
-
-private inline fun <reified T : PsiElement> PsiElement.parentOfType(): T? = parentOfType(T::class)
-
-private fun <T : PsiElement> PsiElement.parentOfType(vararg classes: KClass<out T>): T? {
-    return PsiTreeUtil.getParentOfType(this, *classes.map { it.java }.toTypedArray())
 }

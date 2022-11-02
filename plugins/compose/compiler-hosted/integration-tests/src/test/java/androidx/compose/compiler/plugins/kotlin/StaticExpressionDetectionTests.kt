@@ -16,10 +16,13 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Test
 
 class StaticExpressionDetectionTests : AbstractIrTransformTest() {
@@ -273,8 +276,8 @@ class StaticExpressionDetectionTests : AbstractIrTransformTest() {
         """.trimIndent()
 
         val files = listOf(
-            sourceFile("ExtraSrc.kt", extraSrc.replace('%', '$')),
-            sourceFile("Test.kt", source.replace('%', '$')),
+            SourceFile("ExtraSrc.kt", extraSrc),
+            SourceFile("Test.kt", source),
         )
         val irModule = compileToIr(files)
 

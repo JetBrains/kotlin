@@ -16,11 +16,10 @@
 
 package androidx.compose.compiler.plugins.kotlin.debug
 
-import junit.framework.Test
-import junit.framework.TestSuite
+import org.junit.Test
 
 class StepTest : AbstractDebuggerTest() {
-
+    @Test
     fun testSteppingIntoIf() {
         collectDebugEvents(
             """
@@ -48,18 +47,5 @@ class StepTest : AbstractDebuggerTest() {
             Test.kt:9 content
             """.trimIndent()
         )
-    }
-
-    companion object {
-        @JvmStatic
-        fun suite(): Test {
-            val testSuite = TestSuite(StepTest::class.java)
-            return DebugTestSetup(testSuite) { debugEnv ->
-                testSuite.tests().toList().filterIsInstance(AbstractDebuggerTest::class.java)
-                    .forEach {
-                        it.initialize(debugEnv.virtualMachine, debugEnv.proxyPort)
-                    }
-            }
-        }
     }
 }

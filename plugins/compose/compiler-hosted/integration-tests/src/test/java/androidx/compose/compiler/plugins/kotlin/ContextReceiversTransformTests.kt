@@ -17,12 +17,24 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.junit.Test
 
 class ContextReceiversTransformTests : AbstractIrTransformTest() {
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
+        languageVersionSettings = LanguageVersionSettingsImpl(
+            languageVersion = languageVersionSettings.languageVersion,
+            apiVersion = languageVersionSettings.apiVersion,
+            specificFeatures = mapOf(
+                LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
+            )
+        )
+    }
+
     private fun contextReceivers(
         @Language("kotlin")
         unchecked: String,
@@ -43,15 +55,6 @@ class ContextReceiversTransformTests : AbstractIrTransformTest() {
 
             fun used(x: Any?) {}
         """.trimIndent(),
-        applyExtraConfiguration = {
-            languageVersionSettings = LanguageVersionSettingsImpl(
-                languageVersion = languageVersionSettings.languageVersion,
-                apiVersion = languageVersionSettings.apiVersion,
-                specificFeatures = mapOf(
-                    LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
-                )
-            )
-        }
     )
 
     @Test

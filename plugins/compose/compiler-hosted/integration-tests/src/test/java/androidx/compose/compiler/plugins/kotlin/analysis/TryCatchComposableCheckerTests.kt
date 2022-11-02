@@ -17,15 +17,16 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
+import org.junit.Test
 
 /**
  * We're strongly considering supporting try-catch-finally blocks in the future.
  * If/when we do support them, these tests should be deleted.
  */
 class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
-
+    @Test
     fun testTryCatchReporting001() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.*;
 
@@ -41,8 +42,9 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testTryCatchReporting002() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.*;
 
@@ -58,8 +60,9 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testTryCatchReporting003() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.*;
 
@@ -77,8 +80,9 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testTryCatchReporting004() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.*;
 
@@ -94,8 +98,9 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testTryCatchReporting005() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.*
             var globalContent = @Composable {}
