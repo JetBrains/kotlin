@@ -813,15 +813,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             resolvedLambdaAtom != null -> obtainValueParametersFromResolvedLambdaAtom(resolvedLambdaAtom, lambda)
             else -> lambda.valueParameters
         }
-        val returnTypeRefFromResolvedAtom =
-            resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
+        val returnTypeRefFromResolvedAtom = resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
         lambda = buildAnonymousFunctionCopy(lambda) {
             receiverParameter = lambda.receiverParameter?.takeIf { it.type !is FirImplicitTypeRef }
                 ?: resolvedLambdaAtom?.receiver?.let { coneKotlinType ->
-                    lambda.receiverParameter?.let {
-                        buildReceiverParameterCopy(it) {
-                            type = it.type.resolvedTypeFromPrototype(coneKotlinType)
-                        }
+                    lambda.receiverParameter?.apply {
+                        replaceType(type.resolvedTypeFromPrototype(coneKotlinType))
                     }
                 }
 

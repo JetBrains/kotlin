@@ -29,6 +29,8 @@ abstract class FirReceiverParameter : FirPureAbstractElement(), FirAnnotationCon
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
         transformer.transformReceiverParameter(this, data) as E
 
+    abstract fun replaceType(newType: FirTypeRef)
+
     abstract fun <D> transformType(transformer: FirTransformer<D>, data: D): FirReceiverParameter
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReceiverParameter

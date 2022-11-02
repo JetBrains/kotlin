@@ -618,11 +618,7 @@ class FirCallCompletionResultsWriterTransformer(
         val initialReceiverType = receiverParameter?.type?.coneTypeSafe<ConeKotlinType>()
         val resultReceiverType = initialReceiverType?.let { finalSubstitutor.substituteOrNull(it) }
         if (resultReceiverType != null) {
-            anonymousFunction.replaceReceiverParameter(
-                buildReceiverParameterCopy(receiverParameter) {
-                    type = receiverParameter.type.resolvedTypeFromPrototype(resultReceiverType)
-                }
-            )
+            receiverParameter.replaceType(receiverParameter.type.resolvedTypeFromPrototype(resultReceiverType))
             needUpdateLambdaType = true
         }
 

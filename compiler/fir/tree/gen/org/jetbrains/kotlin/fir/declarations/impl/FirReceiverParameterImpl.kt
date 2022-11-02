@@ -43,4 +43,8 @@ internal class FirReceiverParameterImpl(
         annotations.transformInplace(transformer, data)
         return this
     }
+
+    override fun replaceType(newType: FirTypeRef) {
+        type = newType
+    }
 }

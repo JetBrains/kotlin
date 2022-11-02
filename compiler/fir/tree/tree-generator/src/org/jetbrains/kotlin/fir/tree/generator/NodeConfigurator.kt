@@ -394,7 +394,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         receiverParameter.configure {
-            +field("type", typeRef).withTransform()
+            +field("type", typeRef).withTransform().withReplace()
             +annotations
         }
 

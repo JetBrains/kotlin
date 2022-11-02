@@ -309,8 +309,8 @@ class FirCallCompleter(
             lambdaArgument.replaceReceiverParameter(
                 lambdaArgument.receiverParameter?.let { receiverParameter ->
                     receiverType?.approximateLambdaInputType()?.let { approximatedType ->
-                        buildReceiverParameterCopy(receiverParameter) {
-                            type = receiverParameter.type.resolvedTypeFromPrototype(approximatedType)
+                        receiverParameter.apply {
+                            replaceType(type.resolvedTypeFromPrototype(approximatedType))
                         }
                     }
                 }
