@@ -38,7 +38,6 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
     private val javaLangFqName = FqName("java.lang")
     private val cloneableFqName = FqName("Cloneable")
 
-    @Suppress("NAME_SHADOWING")
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.symbol.isInlineOrValueClass()) {
             return
@@ -274,5 +273,5 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
     private fun ClassId.isCloneableId(): Boolean =
         relativeClassName == cloneableFqName &&
-                packageFqName == StandardClassIds.BASE_KOTLIN_PACKAGE || packageFqName == javaLangFqName
+                (packageFqName == StandardClassIds.BASE_KOTLIN_PACKAGE || packageFqName == javaLangFqName)
 }
