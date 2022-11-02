@@ -36,7 +36,7 @@ public operator fun String?.plus(other: Any?): String
 public fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?>
 
 /**
- * Returns an inline class instance
+ * Returns a default-boxed inline class instance
  */
 public fun <reified @PureReifiable T> createInlineClassInstance(value: Any?): T
 

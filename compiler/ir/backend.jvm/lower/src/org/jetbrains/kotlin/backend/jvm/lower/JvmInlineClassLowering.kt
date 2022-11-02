@@ -242,7 +242,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
 
-        if (function.name == Name.identifier("createInlineClassInstance")) {
+        if (function.isIntrinsicInlineClassCreator) {
             expression.transformChildrenVoid()
             val inlineClass = expression.getTypeArgument(0)!!.getClass()!!
             val constructorBridge = replacements.getReplacementFunction(inlineClass.primaryConstructor!!)!!
@@ -254,13 +254,15 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             ).apply {
                 putValueArgument(0, expression.getValueArgument(0))
             }
-            val coerced = coerceInlineClasses(constructorBridgeCall, constructorBridgeCall.type, boxFunction.valueParameters[0].type)
             val boxCall = IrCallImpl(
                 expression.startOffset, expression.endOffset, boxFunction.returnType,
                 (boxFunction as IrSimpleFunction).symbol, boxFunction.typeParameters.size, boxFunction.valueParameters.size,
                 expression.origin, (expression as? IrCall)?.superQualifierSymbol
             ).apply {
-                putValueArgument(0, coerced)
+                putValueArgument(
+                    0,
+                    coerceInlineClasses(constructorBridgeCall, constructorBridgeCall.type, boxFunction.valueParameters[0].type)
+                )
             }
             return boxCall
         }

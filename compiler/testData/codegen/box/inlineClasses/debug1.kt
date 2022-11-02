@@ -14,5 +14,5 @@ fun foo(a: IC?) = a?.x ?: 0
 
 fun box(): String {
     if (foo(IC(1)) != 42) return "Fail 1"
-    return "OK1"
+    return "OK"
 }

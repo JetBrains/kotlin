@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -1355,3 +1356,9 @@ fun IrFunction.isBoxFunction(typeSystem: IrTypeSystemContext): Boolean {
             && valueParameters[0].type == parentClass.inlineClassRepresentation!!.underlyingType
             && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
 }
+
+val IrFunction.isIntrinsicInlineClassCreator: Boolean
+    get() = (parent as? IrPackageFragment)?.fqName == BUILT_INS_PACKAGE_FQ_NAME
+            && name == Name.identifier("createInlineClassInstance")
+            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+            && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
