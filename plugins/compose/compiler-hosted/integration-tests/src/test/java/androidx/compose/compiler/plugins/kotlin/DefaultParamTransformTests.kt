@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class DefaultParamTransformTests : ComposeIrTransformTest() {
+class DefaultParamTransformTests : AbstractIrTransformTest() {
     private fun defaultParams(
         @Language("kotlin")
         unchecked: String,

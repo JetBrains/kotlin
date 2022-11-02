@@ -16,34 +16,35 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import java.io.File
+import java.net.MalformedURLException
+import java.net.URL
+import java.net.URLClassLoader
 import junit.framework.TestCase
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.utils.rethrow
 import org.junit.After
-import java.io.File
-import java.net.MalformedURLException
-import java.net.URL
-import java.net.URLClassLoader
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
 private const val KOTLIN_RUNTIME_VERSION = "1.3.11"
 
@@ -110,8 +111,9 @@ abstract class AbstractCompilerTest : TestCase() {
     }
 
     protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        ComposeComponentRegistrar.registerProjectExtensions(
-            environment.project as MockProject,
+        ComposeComponentRegistrar.registerCommonExtensions(environment.project)
+        ComposeComponentRegistrar.registerIrExtension(
+            environment.project,
             environment.configuration
         )
     }
@@ -284,7 +286,7 @@ private fun computeHomeDirectory(): String {
     return FileUtil.toCanonicalPath(dir.absolutePath)
 }
 
-private const val TEST_MODULE_NAME = "test-module"
+const val TEST_MODULE_NAME = "test-module"
 
 fun newConfiguration(): CompilerConfiguration {
     val configuration = CompilerConfiguration()
@@ -295,30 +297,30 @@ fun newConfiguration(): CompilerConfiguration {
 
     configuration.put(JVMConfigurationKeys.VALIDATE_IR, true)
 
-    configuration.put(
-        CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
-        object : MessageCollector {
-            override fun clear() {}
+    val messageCollector = object : MessageCollector {
+        override fun clear() {}
 
-            override fun report(
-                severity: CompilerMessageSeverity,
-                message: String,
-                location: CompilerMessageSourceLocation?
-            ) {
-                if (severity === CompilerMessageSeverity.ERROR) {
-                    val prefix = if (location == null)
-                        ""
-                    else
-                        "(" + location.path + ":" + location.line + ":" + location.column + ") "
-                    throw AssertionError(prefix + message)
-                }
-            }
-
-            override fun hasErrors(): Boolean {
-                return false
+        override fun report(
+            severity: CompilerMessageSeverity,
+            message: String,
+            location: CompilerMessageSourceLocation?
+        ) {
+            if (severity === CompilerMessageSeverity.ERROR) {
+                val prefix = if (location == null)
+                    ""
+                else
+                    "(" + location.path + ":" + location.line + ":" + location.column + ") "
+                throw AssertionError(prefix + message)
             }
         }
-    )
+
+        override fun hasErrors(): Boolean {
+            return false
+        }
+    }
+
+    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+    configuration.put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(messageCollector))
 
     return configuration
 }

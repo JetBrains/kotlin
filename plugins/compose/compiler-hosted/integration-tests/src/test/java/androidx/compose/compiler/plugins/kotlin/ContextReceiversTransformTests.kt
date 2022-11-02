@@ -18,10 +18,11 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.junit.Test
 
-class ContextReceiversTransformTests : ComposeIrTransformTest() {
-
+class ContextReceiversTransformTests : AbstractIrTransformTest() {
     private fun contextReceivers(
         @Language("kotlin")
         unchecked: String,
@@ -42,7 +43,15 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
 
             fun used(x: Any?) {}
         """.trimIndent(),
-        compilation = JvmCompilation(specificFeature = setOf(LanguageFeature.ContextReceivers))
+        applyExtraConfiguration = {
+            languageVersionSettings = LanguageVersionSettingsImpl(
+                languageVersion = languageVersionSettings.languageVersion,
+                apiVersion = languageVersionSettings.apiVersion,
+                specificFeatures = mapOf(
+                    LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
+                )
+            )
+        }
     )
 
     @Test

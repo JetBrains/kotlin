@@ -38,8 +38,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -47,7 +45,6 @@ import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class ComposeIrGenerationExtension(
-    private val configuration: CompilerConfiguration,
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
     @Suppress("unused") private val liveLiteralsV2Enabled: Boolean = false,
     private val generateFunctionKeyMetaClasses: Boolean = false,
@@ -55,7 +52,8 @@ class ComposeIrGenerationExtension(
     private val intrinsicRememberEnabled: Boolean = true,
     private val decoysEnabled: Boolean = false,
     private val metricsDestination: String? = null,
-    private val reportsDestination: String? = null
+    private val reportsDestination: String? = null,
+    private val validateIr: Boolean = false,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
 
@@ -68,7 +66,7 @@ class ComposeIrGenerationExtension(
 
         // Input check.  This should always pass, else something is horribly wrong upstream.
         // Necessary because oftentimes the issue is upstream (compiler bug, prior plugin, etc)
-        if (configuration.getBoolean(JVMConfigurationKeys.VALIDATE_IR))
+        if (validateIr)
             validateIr(moduleFragment, pluginContext.irBuiltIns)
 
         // create a symbol remapper to be used across all transforms
@@ -217,7 +215,7 @@ class ComposeIrGenerationExtension(
         }
 
         // Verify that our transformations didn't break something
-        if (configuration.getBoolean(JVMConfigurationKeys.VALIDATE_IR))
+        if (validateIr)
             validateIr(moduleFragment, pluginContext.irBuiltIns)
     }
 }

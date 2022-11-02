@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-abstract class FunctionBodySkippingTransfomrTestsBase : ComposeIrTransformTest() {
+abstract class FunctionBodySkippingTransformTestsBase : AbstractIrTransformTest() {
     protected fun comparisonPropagation(
         @Language("kotlin")
         unchecked: String,
@@ -46,7 +46,7 @@ abstract class FunctionBodySkippingTransfomrTestsBase : ComposeIrTransformTest()
     )
 }
 
-class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBase() {
+class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBase() {
 
     @Test
     fun testIfInLambda(): Unit = comparisonPropagation(
@@ -3884,7 +3884,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
     )
 }
 
-class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransfomrTestsBase() {
+class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransformTestsBase() {
     override val sourceInformationEnabled: Boolean get() = false
 
     @Test
