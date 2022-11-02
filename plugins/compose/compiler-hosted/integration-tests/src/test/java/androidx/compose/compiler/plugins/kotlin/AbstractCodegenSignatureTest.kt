@@ -24,6 +24,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.robolectric.Robolectric
 import java.net.URLClassLoader
+import org.junit.Assert.assertEquals
 
 fun printPublicApi(classDump: String, name: String): String {
     return classDump
@@ -60,27 +61,15 @@ fun printPublicApi(classDump: String, name: String): String {
 }
 
 abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
-
-    private var isSetup = false
-    override fun setUp() {
-        isSetup = true
-        super.setUp()
-    }
-
-    private fun <T> ensureSetup(block: () -> T): T {
-        if (!isSetup) setUp()
-        return block()
-    }
-
     private fun OutputFile.printApi(): String {
         return printPublicApi(asText(), relativePath)
     }
 
-    fun checkApi(
+    protected fun checkApi(
         @Language("kotlin") src: String,
         expected: String,
         dumpClasses: Boolean = false
-    ): Unit = ensureSetup {
+    ) {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
 
@@ -96,8 +85,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         val apiString = loader
             .allGeneratedFiles
             .filter { it.relativePath.endsWith(".class") }
-            .map { it.printApi() }
-            .joinToString(separator = "\n")
+            .joinToString(separator = "\n") { it.printApi() }
             .replace(className, "Test")
 
         val expectedApiString = expected
@@ -109,10 +97,10 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         assertEquals(expectedApiString, apiString)
     }
 
-    fun checkComposerParam(
+    protected fun checkComposerParam(
         @Language("kotlin") src: String,
         dumpClasses: Boolean = false
-    ): Unit = ensureSetup {
+    ) {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val compiledClasses = classLoader(
             """
@@ -261,10 +249,10 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         }
     }
 
-    fun codegen(
+    protected fun codegen(
         @Language("kotlin") text: String,
         dumpClasses: Boolean = false
-    ): Unit = ensureSetup {
+    ) {
         codegenNoImports(
             """
            import android.content.Context
@@ -279,10 +267,10 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         )
     }
 
-    fun codegenNoImports(
+    private fun codegenNoImports(
         @Language("kotlin") text: String,
         dumpClasses: Boolean = false
-    ): Unit = ensureSetup {
+    ) {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 

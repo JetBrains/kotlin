@@ -16,9 +16,11 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
+import org.junit.Test
 
-    fun testImplicitlyPassedReceiverScope1() = doTest(
+class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
+    @Test
+    fun testImplicitlyPassedReceiverScope1() = check(
         """
             import androidx.compose.runtime.*
 
@@ -29,7 +31,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testImplicitlyPassedReceiverScope2() = doTest(
+    @Test
+    fun testImplicitlyPassedReceiverScope2() = check(
         """
             import androidx.compose.runtime.*
 
@@ -45,7 +48,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testSmartCastsAndPunning() = doTest(
+    @Test
+    fun testSmartCastsAndPunning() = check(
         """
             import androidx.compose.runtime.*
 
@@ -63,7 +67,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testExtensionInvoke() = doTest(
+    @Test
+    fun testExtensionInvoke() = check(
         """
             import androidx.compose.runtime.*
 
@@ -76,7 +81,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testResolutionInsideWhenExpression() = doTest(
+    @Test
+    fun testResolutionInsideWhenExpression() = check(
         """
             import androidx.compose.runtime.*
             
@@ -91,7 +97,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testUsedParameters() = doTest(
+    @Test
+    fun testUsedParameters() = check(
         """
             import androidx.compose.runtime.*
             import android.widget.LinearLayout
@@ -134,7 +141,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testDispatchInvoke() = doTest(
+    @Test
+    fun testDispatchInvoke() = check(
         """
             import androidx.compose.runtime.*
 
@@ -150,7 +158,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testDispatchAndExtensionReceiver() = doTest(
+    @Test
+    fun testDispatchAndExtensionReceiver() = check(
         """
             import androidx.compose.runtime.*
 
@@ -168,7 +177,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testDispatchAndExtensionReceiverLocal() = doTest(
+    @Test
+    fun testDispatchAndExtensionReceiverLocal() = check(
         """
             import androidx.compose.runtime.*
 
@@ -184,7 +194,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
-    fun testMissingAttributes() = doTest(
+    @Test
+    fun testMissingAttributes() = check(
         """
             import androidx.compose.runtime.*
 
@@ -213,7 +224,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """.trimIndent()
     )
 
-    fun testDuplicateAttributes() = doTest(
+    @Test
+    fun testDuplicateAttributes() = check(
         """
             import androidx.compose.runtime.*
 
@@ -232,7 +244,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """.trimIndent()
     )
 
-    fun testChildrenNamedAndBodyDuplicate() = doTest(
+    @Test
+    fun testChildrenNamedAndBodyDuplicate() = check(
         """
             import androidx.compose.runtime.*
 
@@ -245,7 +258,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """.trimIndent()
     )
 
-    fun testAbstractClassTags() = doTest(
+    @Test
+    fun testAbstractClassTags() = check(
         """
             import androidx.compose.runtime.*
             import android.content.Context
@@ -263,7 +277,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """.trimIndent()
     )
 
-    fun testGenerics() = doTest(
+    @Test
+    fun testGenerics() = check(
         """
             import androidx.compose.runtime.*
 
@@ -298,7 +313,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """.trimIndent()
     )
 
-    fun testUnresolvedAttributeValueResolvedTarget() = doTest(
+    @Test
+    fun testUnresolvedAttributeValueResolvedTarget() = check(
         """
             import androidx.compose.runtime.*
 
@@ -331,7 +347,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
     )
 
     // TODO(lmr): this triggers an exception!
-    fun testEmptyAttributeValue() = doTest(
+    @Test
+    fun testEmptyAttributeValue() = check(
         """
             import androidx.compose.runtime.*
 
@@ -349,10 +366,12 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 Foo(abc=123, xyz=)
             }
 
-        """.trimIndent()
+        """.trimIndent(),
+        ignoreParseErrors = true
     )
 
-    fun testMismatchedAttributes() = doTest(
+    @Test
+    fun testMismatchedAttributes() = check(
         """
             import androidx.compose.runtime.*
 
@@ -386,7 +405,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """.trimIndent()
     )
 
-    fun testErrorAttributeValue() = doTest(
+    @Test
+    fun testErrorAttributeValue() = check(
         """
             import androidx.compose.runtime.*
 
@@ -402,7 +422,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """.trimIndent()
     )
 
-    fun testUnresolvedQualifiedTag() = doTest(
+    @Test
+    fun testUnresolvedQualifiedTag() = check(
         """
             import androidx.compose.runtime.*
 
@@ -460,7 +481,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
     )
 
     // TODO(lmr): overloads creates resolution exception
-    fun testChildren() = doTest(
+    @Test
+    fun testChildren() = check(
         """
             import androidx.compose.runtime.*
             import android.widget.Button

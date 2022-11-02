@@ -513,6 +513,7 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest() {
         """
     )
 
+    @Test
     fun testLetIt() = verifyComposeIrTransform(
         """
         import androidx.compose.runtime.*

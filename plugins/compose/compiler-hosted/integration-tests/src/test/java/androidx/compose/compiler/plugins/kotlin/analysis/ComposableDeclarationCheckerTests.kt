@@ -17,10 +17,12 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
+import org.junit.Test
 
 class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
+    @Test
     fun testPropertyWithInitializer() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -30,8 +32,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableFunctionReferences() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -49,8 +52,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testNonComposableFunctionReferences() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -68,8 +72,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testPropertyWithGetterAndSetter() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -88,8 +93,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testPropertyGetterAllForms() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -104,8 +110,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testSuspendComposable() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -127,15 +134,16 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableMainFun() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
             @Composable fun <!COMPOSABLE_FUN_MAIN!>main<!>() {}
         """
         )
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -144,7 +152,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
             }
         """
         )
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -157,8 +165,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testMissingComposableOnOverride() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
 
@@ -193,8 +202,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testInferenceOverComplexConstruct1() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
             val composable: @Composable ()->Unit = if(true) { { } } else { { } }
@@ -202,8 +212,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testInferenceOverComplexConstruct2() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
             @Composable fun foo() { }
@@ -212,8 +223,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testInterfaceComposablesWithDefaultParameters() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
             interface A {
@@ -223,8 +235,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testAbstractComposablesWithDefaultParameters() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
             abstract class A {
@@ -234,8 +247,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testInterfaceComposablesWithoutDefaultParameters() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
             interface A {
@@ -245,8 +259,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testAbstractComposablesWithoutDefaultParameters() {
-        doTest(
+        check(
             """
             import androidx.compose.runtime.Composable
             abstract class A {
@@ -256,8 +271,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testOverrideWithoutComposeAnnotation() {
-        doTest(
+        check(
             """
                 import androidx.compose.runtime.Composable
                 interface Base {

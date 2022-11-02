@@ -17,51 +17,10 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
-import androidx.compose.compiler.plugins.kotlin.newConfiguration
-import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
+import org.junit.Test
 
 class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
-    override fun setUp() {
-        // intentionally don't call super.setUp() here since we are recreating an environment
-        // every test
-        System.setProperty(
-            "user.dir",
-            homeDir
-        )
-        System.setProperty(
-            "idea.ignore.disabled.plugins",
-            "true"
-        )
-    }
-
-    private fun check(text: String) {
-        val disposable = TestDisposable()
-        val classPath = createClasspath()
-        val configuration = newConfiguration()
-        configuration.addJvmClasspathRoots(classPath)
-        configuration.configureJdkClasspathRoots()
-
-        val environment =
-            KotlinCoreEnvironment.createForTests(
-                disposable,
-                configuration,
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
-            )
-        setupEnvironment(environment)
-
-        try {
-            doTest(text, environment)
-        } catch (e: ComposableCheckerTests.ExpectedFailureException) {
-            throw e
-        } finally {
-            Disposer.dispose(disposable)
-        }
-    }
-
+    @Test
     fun testExplicitTargetAnnotations() = check(
         """
         import androidx.compose.runtime.*
@@ -84,6 +43,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testInferredTargets() = check(
         """
         import androidx.compose.runtime.*
@@ -110,6 +70,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testInferBoundContainer() = check(
         """
         import androidx.compose.runtime.*
@@ -138,6 +99,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testInferGenericContainer() = check(
         """
         import androidx.compose.runtime.*
@@ -200,6 +162,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testReportExplicitFailure() = check(
         """
         import androidx.compose.runtime.*
@@ -216,6 +179,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testReportDisagreementFailure() = check(
         """
         import androidx.compose.runtime.*
@@ -236,6 +200,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testGenericDisagreement() = check(
         """
         import androidx.compose.runtime.*
@@ -263,6 +228,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testFunInterfaceInference() = check(
         """
         import androidx.compose.runtime.*
@@ -329,6 +295,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testFileScopeTargetDeclaration() = check(
         """
         @file:ComposableTarget("N")
@@ -346,6 +313,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testTargetMarker() = check(
         """
         import androidx.compose.runtime.Composable
@@ -373,6 +341,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testFileScopeTargetMarker() = check(
         """
         @file: NComposable
@@ -401,6 +370,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testUiTextAndInvalid() = check(
         """
         import androidx.compose.runtime.Composable
@@ -418,6 +388,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testOpenOverrideAttributesInheritTarget() = check(
         """
         import androidx.compose.runtime.Composable
@@ -444,6 +415,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testOpenOverrideTargetsMustAgree() = check(
         """
         import androidx.compose.runtime.Composable
@@ -468,6 +440,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         """
     )
 
+    @Test
     fun testOpenOverrideInferredToAgree() = check(
         """
         import androidx.compose.runtime.Composable

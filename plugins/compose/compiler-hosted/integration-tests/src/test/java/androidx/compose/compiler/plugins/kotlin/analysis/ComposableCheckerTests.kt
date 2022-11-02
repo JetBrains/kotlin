@@ -1,68 +1,10 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
-import androidx.compose.compiler.plugins.kotlin.newConfiguration
-import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
+import org.junit.Test
 
 class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
-    override fun setUp() {
-        // intentionally don't call super.setUp() here since we are recreating an environment
-        // every test
-        System.setProperty(
-            "user.dir",
-            homeDir
-        )
-        System.setProperty(
-            "idea.ignore.disabled.plugins",
-            "true"
-        )
-    }
-
-    private fun doTest(text: String, expectPass: Boolean) {
-        val disposable = TestDisposable()
-        val classPath = createClasspath()
-        val configuration = newConfiguration()
-        configuration.addJvmClasspathRoots(classPath)
-        configuration.configureJdkClasspathRoots()
-
-        val environment =
-            KotlinCoreEnvironment.createForTests(
-                disposable,
-                configuration,
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
-            )
-        setupEnvironment(environment)
-
-        try {
-            doTest(text, environment)
-            if (!expectPass) {
-                throw ExpectedFailureException(
-                    "Test unexpectedly passed, but SHOULD FAIL"
-                )
-            }
-        } catch (e: ExpectedFailureException) {
-            throw e
-        } catch (e: Exception) {
-            if (expectPass) throw Exception(e)
-        } finally {
-            Disposer.dispose(disposable)
-        }
-    }
-
-    class ExpectedFailureException(message: String) : Exception(message)
-
-    private fun check(expectedText: String) {
-        doTest(expectedText, true)
-    }
-
-    private fun checkFail(expectedText: String) {
-        doTest(expectedText, false)
-    }
-
+    @Test
     fun testCfromNC() = check(
         """
         import androidx.compose.runtime.*
@@ -72,6 +14,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testNCfromC() = check(
         """
         import androidx.compose.runtime.*
@@ -81,6 +24,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCfromC() = check(
         """
         import androidx.compose.runtime.*
@@ -90,6 +34,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinCLambdaArg() = check(
         """
         import androidx.compose.runtime.*
@@ -103,6 +48,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinInlinedNCLambdaArg() = check(
         """
         import androidx.compose.runtime.*
@@ -116,6 +62,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinNoinlineNCLambdaArg() = check(
         """
         import androidx.compose.runtime.*
@@ -129,6 +76,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinCrossinlineNCLambdaArg() = check(
         """
         import androidx.compose.runtime.*
@@ -142,6 +90,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinNestedInlinedNCLambdaArg() = check(
         """
         import androidx.compose.runtime.*
@@ -157,6 +106,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinLambdaArgOfNC() = check(
         """
         import androidx.compose.runtime.*
@@ -170,6 +120,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinLambdaArgOfC() = check(
         """
         import androidx.compose.runtime.*
@@ -183,6 +134,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinCPropGetter() = check(
         """
         import androidx.compose.runtime.*
@@ -191,6 +143,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinNCPropGetter() = check(
         """
         import androidx.compose.runtime.*
@@ -199,6 +152,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCinTopLevelInitializer() = check(
         """
         import androidx.compose.runtime.*
@@ -207,6 +161,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCTypeAlias() = check(
         """
         import androidx.compose.runtime.*
@@ -221,6 +176,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCfromComposableFunInterface() = check(
         """
         import androidx.compose.runtime.Composable
@@ -230,6 +186,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCfromAnnotatedComposableFunInterface() = check(
         """
         import androidx.compose.runtime.Composable
@@ -242,6 +199,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCfromComposableFunInterfaceArgument() = check(
         """
         import androidx.compose.runtime.Composable
@@ -252,6 +210,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCfromComposableTypeAliasFunInterface() = check(
         """
         import androidx.compose.runtime.Composable
@@ -263,6 +222,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCfromNonComposableFunInterface() = check(
         """
         import androidx.compose.runtime.Composable
@@ -276,6 +236,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testCfromNonComposableFunInterfaceArgument() = check(
         """
         import androidx.compose.runtime.Composable
@@ -290,6 +251,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testPreventedCaptureOnInlineLambda() = check(
         """
         import androidx.compose.runtime.*
@@ -305,6 +267,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testComposableReporting001() {
         checkFail(
             """
@@ -338,6 +301,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting002() {
         checkFail(
             """
@@ -363,6 +327,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting006() {
         checkFail(
             """
@@ -399,6 +364,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting007() {
         checkFail(
             """
@@ -411,6 +377,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting008() {
         checkFail(
             """
@@ -429,6 +396,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting009() {
         check(
             """
@@ -448,6 +416,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting017() {
         checkFail(
             """
@@ -485,6 +454,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting018() {
         checkFail(
             """
@@ -514,6 +484,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting021() {
         check(
             """
@@ -534,6 +505,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting022() {
         check(
             """
@@ -553,6 +525,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting023() {
         check(
             """
@@ -573,6 +546,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting024() {
         check(
             """
@@ -595,6 +569,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting024x() {
         check(
             """
@@ -610,6 +585,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting025() {
         check(
             """
@@ -626,6 +602,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting026() {
         check(
             """
@@ -647,6 +624,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting027() {
         check(
             """
@@ -670,6 +648,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting028() {
         checkFail(
             """
@@ -693,6 +672,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting030() {
         check(
             """
@@ -707,6 +687,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting032() {
         check(
             """
@@ -726,6 +707,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting033() {
         check(
             """
@@ -745,6 +727,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting034() {
         checkFail(
             """
@@ -774,6 +757,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting035() {
         check(
             """
@@ -788,6 +772,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting039() {
         check(
             """
@@ -809,6 +794,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting041() {
         check(
             """
@@ -830,6 +816,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting043() {
         check(
             """
@@ -845,6 +832,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting044() {
         check(
             """
@@ -863,6 +851,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting045() {
         check(
             """
@@ -878,6 +867,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting048() {
         // Type inference for non-null @Composable lambdas
         checkFail(
@@ -967,6 +957,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting049() {
         check(
             """
@@ -978,6 +969,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting050() {
         check(
             """
@@ -1004,6 +996,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting051() {
         checkFail(
             """
@@ -1061,6 +1054,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting052() {
         check(
             """
@@ -1089,6 +1083,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting053() {
         check(
             """
@@ -1104,6 +1099,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting054() {
         check(
             """
@@ -1141,6 +1137,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting055() {
         check(
             """
@@ -1173,6 +1170,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testComposableReporting057() {
         check(
             """
@@ -1191,6 +1189,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    @Test
     fun testDisallowComposableCallPropagation() = check(
         """
         import androidx.compose.runtime.*
@@ -1207,6 +1206,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testComposableLambdaToAll() = check(
         """
         import androidx.compose.runtime.*
@@ -1218,6 +1218,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    @Test
     fun testReadOnlyComposablePropagation() = check(
         """
         import androidx.compose.runtime.*

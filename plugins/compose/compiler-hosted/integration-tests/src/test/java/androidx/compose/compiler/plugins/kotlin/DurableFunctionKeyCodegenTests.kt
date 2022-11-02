@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -30,10 +31,8 @@ import org.robolectric.annotation.Config
     maxSdk = 23
 )
 class DurableFunctionKeyCodegenTests : AbstractCodegenSignatureTest() {
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configuration.put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY, true)
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY, true)
     }
 
     @Test

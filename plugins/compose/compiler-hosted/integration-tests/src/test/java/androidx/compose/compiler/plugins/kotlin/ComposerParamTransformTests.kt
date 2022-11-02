@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ComposerParamTransformTests : AbstractIrTransformTest() {

@@ -198,7 +198,10 @@ class ComposeComponentRegistrar :
     ) {
         if (checkCompilerVersion(configuration)) {
             registerCommonExtensions(project)
-            registerIrExtension(project, configuration)
+            IrGenerationExtension.registerExtension(
+                project,
+                createComposeIrExtension(configuration)
+            )
         }
     }
 
@@ -293,10 +296,9 @@ class ComposeComponentRegistrar :
             )
         }
 
-        fun registerIrExtension(
-            project: Project,
+        fun createComposeIrExtension(
             configuration: CompilerConfiguration
-        ) {
+        ): ComposeIrGenerationExtension {
             val liveLiteralsEnabled = configuration.getBoolean(
                 ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
             )
@@ -328,19 +330,16 @@ class ComposeComponentRegistrar :
                 JVMConfigurationKeys.VALIDATE_IR
             )
 
-            IrGenerationExtension.registerExtension(
-                project,
-                ComposeIrGenerationExtension(
-                    liveLiteralsEnabled = liveLiteralsEnabled,
-                    liveLiteralsV2Enabled = liveLiteralsV2Enabled,
-                    generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
-                    sourceInformationEnabled = sourceInformationEnabled,
-                    intrinsicRememberEnabled = intrinsicRememberEnabled,
-                    decoysEnabled = decoysEnabled,
-                    metricsDestination = metricsDestination,
-                    reportsDestination = reportsDestination,
-                    validateIr = validateIr,
-                )
+            return ComposeIrGenerationExtension(
+                liveLiteralsEnabled = liveLiteralsEnabled,
+                liveLiteralsV2Enabled = liveLiteralsV2Enabled,
+                generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
+                sourceInformationEnabled = sourceInformationEnabled,
+                intrinsicRememberEnabled = intrinsicRememberEnabled,
+                decoysEnabled = decoysEnabled,
+                metricsDestination = metricsDestination,
+                reportsDestination = reportsDestination,
+                validateIr = validateIr,
             )
         }
     }

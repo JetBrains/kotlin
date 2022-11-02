@@ -16,35 +16,26 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import java.io.File
+import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
+import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.jetbrains.kotlin.checkers.DiagnosedRange
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.junit.Assert
 
 abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
+    private class DiagnosticTestException(message: String) : Exception(message)
 
-    fun doTest(expectedText: String) {
-        doTest(expectedText, myEnvironment!!)
-    }
-
-    fun doTest(expectedText: String, environment: KotlinCoreEnvironment) {
+    protected fun check(expectedText: String, ignoreParseErrors: Boolean = false) {
         val diagnosedRanges: MutableList<DiagnosedRange> = ArrayList()
         val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges)
-        val file =
-            createFile("test.kt", clearText, environment.project)
-        val files = listOf(file)
 
-        // Use the JVM version of the analyzer to allow using classes in .jar files
-        val result = JvmResolveUtil.analyze(environment, files)
-
-        // Collect the errors
-        val errors = result.bindingContext.diagnostics.all().toMutableList()
-
-        val message = StringBuilder()
+        val errors = analyze(
+            listOf(SourceFile("test.kt", clearText, ignoreParseErrors))
+        ).diagnostics.toMutableList()
 
         // Ensure all the expected messages are there
-        val found = mutableSetOf<Diagnostic>()
+        val message = StringBuilder()
+        val found = mutableSetOf<AnalysisResult.Diagnostic>()
         for (range in diagnosedRanges) {
             for (diagnostic in range.getDiagnostics()) {
                 val reportedDiagnostics = errors.filter { it.factoryName == diagnostic.name }
@@ -59,15 +50,11 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
                         val firstRange = reportedDiagnostics.first().textRanges.first()
                         message.append(
                             "  Error ${diagnostic.name} reported at ${
-                            firstRange.startOffset
+                                firstRange.startOffset
                             }-${firstRange.endOffset} but expected at ${range.start}-${range.end}\n"
                         )
                         message.append(
-                            sourceInfo(
-                                clearText,
-                                firstRange.startOffset, firstRange.endOffset,
-                                "  "
-                            )
+                            sourceInfo(clearText, firstRange.startOffset, firstRange.endOffset)
                         )
                     } else {
                         errors.remove(reportedDiagnostic)
@@ -76,16 +63,11 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
                 } else {
                     message.append(
                         "  Diagnostic ${diagnostic.name} not reported, expected at ${
-                        range.start
+                            range.start
                         }\n"
                     )
                     message.append(
-                        sourceInfo(
-                            clearText,
-                            range.start,
-                            range.end,
-                            "  "
-                        )
+                        sourceInfo(clearText, range.start, range.end)
                     )
                 }
             }
@@ -97,46 +79,40 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
                 val range = diagnostic.textRanges.first()
                 message.append(
                     "  Unexpected diagnostic ${diagnostic.factoryName} reported at ${
-                    range.startOffset
+                        range.startOffset
                     }\n"
                 )
                 message.append(
-                    sourceInfo(
-                        clearText,
-                        range.startOffset,
-                        range.endOffset,
-                        "  "
-                    )
+                    sourceInfo(clearText, range.startOffset, range.endOffset)
                 )
             }
         }
 
         // Throw an error if anything was found that was not expected
-        if (message.length > 0) throw Exception("Mismatched errors:\n$message")
+        if (message.isNotEmpty()) throw DiagnosticTestException("Mismatched errors:\n$message")
     }
-}
 
-fun assertExists(file: File): File {
-    if (!file.exists()) {
-        throw IllegalStateException("'$file' does not exist. Run test from gradle")
+    protected fun checkFail(expectedText: String) {
+        Assert.assertThrows(DiagnosticTestException::class.java) {
+            check(expectedText)
+        }
     }
-    return file
-}
 
-fun String.lineStart(offset: Int): Int {
-    return this.lastIndexOf('\n', offset) + 1
-}
+    private fun String.lineStart(offset: Int): Int {
+        return this.lastIndexOf('\n', offset) + 1
+    }
 
-fun String.lineEnd(offset: Int): Int {
-    val result = this.indexOf('\n', offset)
-    return if (result < 0) this.length else result
-}
+    private fun String.lineEnd(offset: Int): Int {
+        val result = this.indexOf('\n', offset)
+        return if (result < 0) this.length else result
+    }
 
-// Return the source line that contains the given range with the range underlined with '~'s
-fun sourceInfo(clearText: String, start: Int, end: Int, prefix: String = ""): String {
-    val lineStart = clearText.lineStart(start)
-    val lineEnd = clearText.lineEnd(start)
-    val displayEnd = if (end > lineEnd) lineEnd else end
-    return prefix + clearText.substring(lineStart, lineEnd) + "\n" +
-        prefix + " ".repeat(start - lineStart) + "~".repeat(displayEnd - start) + "\n"
+    // Return the source line that contains the given range with the range underlined with '~'s
+    private fun sourceInfo(clearText: String, start: Int, end: Int): String {
+        val lineStart = clearText.lineStart(start)
+        val lineEnd = clearText.lineEnd(start)
+        val displayEnd = if (end > lineEnd) lineEnd else end
+        return "  " + clearText.substring(lineStart, lineEnd) + "\n" +
+            " ".repeat(2 + start - lineStart) + "~".repeat(displayEnd - start) + "\n"
+    }
 }

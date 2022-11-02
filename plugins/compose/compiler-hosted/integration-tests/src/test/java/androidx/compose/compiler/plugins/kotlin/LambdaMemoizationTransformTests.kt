@@ -20,7 +20,7 @@ import org.junit.Test
 
 class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     @Test
-    fun testCapturedThisFromFieldInitializer(): Unit = verifyComposeIrTransform(
+    fun testCapturedThisFromFieldInitializer() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -57,7 +57,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testLocalInALocal(): Unit = verifyComposeIrTransform(
+    fun testLocalInALocal() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -147,7 +147,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
 
     // Fixes b/201252574
     @Test
-    fun testLocalFunCaptures(): Unit = verifyComposeIrTransform(
+    fun testLocalFunCaptures() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.NonRestartableComposable
             import androidx.compose.runtime.Composable
@@ -193,7 +193,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testLocalClassCaptures1(): Unit = verifyComposeIrTransform(
+    fun testLocalClassCaptures1() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.NonRestartableComposable
             import androidx.compose.runtime.Composable
@@ -241,7 +241,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testLocalClassCaptures2(): Unit = verifyComposeIrTransform(
+    fun testLocalClassCaptures2() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
             import androidx.compose.runtime.NonRestartableComposable
@@ -283,7 +283,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testLocalFunCaptures3(): Unit = verifyComposeIrTransform(
+    fun testLocalFunCaptures3() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -351,7 +351,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testStateDelegateCapture(): Unit = verifyComposeIrTransform(
+    fun testStateDelegateCapture() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
             import androidx.compose.runtime.mutableStateOf
@@ -407,7 +407,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testTopLevelComposableLambdaProperties(): Unit = verifyComposeIrTransform(
+    fun testTopLevelComposableLambdaProperties() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -453,7 +453,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testLocalVariableComposableLambdas(): Unit = verifyComposeIrTransform(
+    fun testLocalVariableComposableLambdas() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -525,7 +525,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testParameterComposableLambdas(): Unit = verifyComposeIrTransform(
+    fun testParameterComposableLambdas() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -577,7 +577,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test // Regression test for b/180168881
-    fun testFunctionReferenceWithinInferredComposableLambda(): Unit = verifyComposeIrTransform(
+    fun testFunctionReferenceWithinInferredComposableLambda() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -610,7 +610,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testFunctionReferenceNonComposableMemoization(): Unit = verifyComposeIrTransform(
+    fun testFunctionReferenceNonComposableMemoization() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
             @Composable fun Example(x: Int) {
@@ -656,7 +656,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test // regression of b/162575428
-    fun testComposableInAFunctionParameter(): Unit = verifyComposeIrTransform(
+    fun testComposableInAFunctionParameter() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -725,7 +725,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testComposabableLambdaInLocalDeclaration(): Unit = verifyComposeIrTransform(
+    fun testComposabableLambdaInLocalDeclaration() = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 

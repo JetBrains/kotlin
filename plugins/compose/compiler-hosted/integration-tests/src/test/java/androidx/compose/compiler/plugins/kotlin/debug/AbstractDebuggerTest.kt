@@ -17,9 +17,11 @@
 package androidx.compose.compiler.plugins.kotlin.debug
 
 import androidx.compose.compiler.plugins.kotlin.AbstractCodegenTest
-import androidx.compose.compiler.plugins.kotlin.CodegenTestFiles
+import androidx.compose.compiler.plugins.kotlin.debug.clientserver.TestProcessServer
 import androidx.compose.compiler.plugins.kotlin.debug.clientserver.TestProxy
-import androidx.compose.compiler.plugins.kotlin.tmpDir
+import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import com.intellij.util.PathUtil
+import com.intellij.util.SystemProperties
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.VirtualMachine
 import com.sun.jdi.event.BreakpointEvent
@@ -35,13 +37,21 @@ import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.MethodEntryRequest
 import com.sun.jdi.request.MethodExitRequest
 import com.sun.jdi.request.StepRequest
+import com.sun.tools.jdi.SocketAttachingConnector
+import java.io.File
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.jetbrains.kotlin.psi.KtFile
 import java.net.URL
 import java.net.URLClassLoader
+import kotlin.properties.Delegates
+import org.junit.After
+import org.junit.AfterClass
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 
 private const val RUNNER_CLASS = "RunnerKt"
 private const val MAIN_METHOD = "main"
@@ -49,29 +59,70 @@ private const val CONTENT_METHOD = "content"
 private const val TEST_CLASS = "TestKt"
 
 abstract class AbstractDebuggerTest : AbstractCodegenTest() {
-    private lateinit var virtualMachine: VirtualMachine
-    private var proxyPort: Int = -1
+    companion object {
+        private lateinit var testServerProcess: Process
+        lateinit var virtualMachine: VirtualMachine
+        var proxyPort: Int = -1
+
+        @JvmStatic
+        @BeforeClass
+        fun startDebugProcess() {
+            testServerProcess = startTestProcessServer()
+            val (debuggerPort, _proxyPort) = testServerProcess.inputStream.bufferedReader().use {
+                val debuggerPort = it.readLine().split("address:").last().trim().toInt()
+                it.readLine()
+                val proxyPort = it.readLine().split("port ").last().trim().toInt()
+                (debuggerPort to proxyPort)
+            }
+            virtualMachine = attachDebugger(debuggerPort)
+            proxyPort = _proxyPort
+        }
+
+        @JvmStatic
+        @AfterClass
+        fun stopDebugProcess() {
+            testServerProcess.destroy()
+        }
+
+        private fun startTestProcessServer(): Process {
+            val classpath = listOf(
+                PathUtil.getJarPathForClass(TestProcessServer::class.java),
+                PathUtil.getJarPathForClass(Delegates::class.java) // Add Kotlin runtime JAR
+            )
+
+            val javaExec = File(File(SystemProperties.getJavaHome(), "bin"), "java")
+            assert(javaExec.exists())
+
+            val command = listOf(
+                javaExec.absolutePath,
+                "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=127.0.0.1:0",
+                "-ea",
+                "-classpath", classpath.joinToString(File.pathSeparator),
+                TestProcessServer::class.qualifiedName,
+                TestProcessServer.DEBUG_TEST
+            )
+
+            return ProcessBuilder(command).start()
+        }
+
+        private const val DEBUG_ADDRESS = "127.0.0.1"
+
+        private fun attachDebugger(port: Int): VirtualMachine {
+            val connector = SocketAttachingConnector()
+            return connector.attach(
+                connector.defaultArguments().apply {
+                    getValue("port").setValue("$port")
+                    getValue("hostname").setValue(DEBUG_ADDRESS)
+                }
+            )
+        }
+    }
+
     private lateinit var methodEntryRequest: MethodEntryRequest
     private lateinit var methodExitRequest: MethodExitRequest
 
-    fun initialize(vm: VirtualMachine, port: Int) {
-        virtualMachine = vm
-        proxyPort = port
-    }
-
-    override fun setUp() {
-        super.setUp()
-        if (proxyPort == -1) error("initialize method must be called on AbstractDebuggerTest")
-        createMethodEventsForTestClass()
-    }
-
-    override fun tearDown() {
-        super.tearDown()
-        virtualMachine.eventRequestManager()
-            .deleteEventRequests(listOf(methodEntryRequest, methodExitRequest))
-    }
-
-    private fun createMethodEventsForTestClass() {
+    @Before
+    fun createMethodEventsForTestClass() {
         val manager = virtualMachine.eventRequestManager()
         methodEntryRequest = manager.createMethodEntryRequest()
         methodEntryRequest.addClassFilter(TEST_CLASS)
@@ -84,13 +135,23 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
         methodExitRequest.enable()
     }
 
+    @After
+    fun deleteEventRequests() {
+        virtualMachine.eventRequestManager()
+            .deleteEventRequests(listOf(methodEntryRequest, methodExitRequest))
+    }
+
+    @JvmField
+    @Rule
+    val outDirectory = TemporaryFolder()
+
     private fun invokeRunnerMainInSeparateProcess(
         classLoader: URLClassLoader,
         port: Int
     ) {
         val classPath = classLoader.extractUrls().toMutableList()
         if (classLoader is GeneratedClassLoader) {
-            val outDir = tmpDir("${this::class.simpleName}_${this.name}")
+            val outDir = outDirectory.root
             val currentOutput = SimpleOutputFileCollection(classLoader.allGeneratedFiles)
             currentOutput.writeAllTo(outDir)
             classPath.add(0, outDir.toURI().toURL())
@@ -99,16 +160,12 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
     }
 
     fun collectDebugEvents(@Language("kotlin") source: String): List<LocatableEvent> {
-        val files = mutableListOf<KtFile>()
-        files.addAll(helperFiles())
-        files.add(sourceFile("Runner.kt", RUNNER_SOURCES))
-        files.add(sourceFile("Test.kt", source))
-        myFiles = CodegenTestFiles.create(files)
-        return doTest()
-    }
-
-    private fun doTest(): List<LocatableEvent> {
-        val classLoader = createClassLoader()
+        val classLoader = createClassLoader(
+            listOf(
+                SourceFile("Runner.kt", RUNNER_SOURCES),
+                SourceFile("Test.kt", source)
+            )
+        )
         val testClass = classLoader.loadClass(TEST_CLASS)
         assert(testClass.declaredMethods.any { it.name == CONTENT_METHOD }) {
             "Test method $CONTENT_METHOD not present on test class $TEST_CLASS"

@@ -28,6 +28,9 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.io.PrintWriter
+import org.junit.Assert.assertEquals
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 
 // AbstractCliTest
 private fun executeCompilerGrabOutput(
@@ -75,20 +78,20 @@ fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
     }
 
 abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
-    fun multiplatform(
+    @JvmField
+    @Rule
+    val sourceDirectory = TemporaryFolder()
+
+    protected fun multiplatform(
         @Language("kotlin")
         common: String,
         @Language("kotlin")
         jvm: String,
         output: String
     ) {
-        setUp()
-        val tmpdir = tmpDir(getTestName(true))
-
-        assert(
-            composePluginJar.exists(),
-            { "Compiler plugin jar does not exist: $composePluginJar" }
-        )
+        assert(composePluginJar.exists()) {
+            "Compiler plugin jar does not exist: $composePluginJar"
+        }
 
         val optionalArgs = arrayOf(
             "-cp",
@@ -96,21 +99,21 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
                 .filter { it.exists() }
                 .joinToString(File.pathSeparator) { it.absolutePath },
             "-kotlin-home",
-            AbstractCompilerTest.kotlinHome.absolutePath,
+            kotlinHome.absolutePath,
             "-Xplugin=${composePluginJar.absolutePath}",
             "-Xuse-ir"
         )
 
         val jvmOnlyArgs = arrayOf("-no-stdlib")
 
-        val srcDir = File(tmpdir, "srcs").absolutePath
+        val srcDir = sourceDirectory.newFolder("srcs").absolutePath
         val commonSrc = File(srcDir, "common.kt")
         val jvmSrc = File(srcDir, "jvm.kt")
 
         FileUtil.writeToFile(commonSrc, common)
         FileUtil.writeToFile(jvmSrc, jvm)
 
-        val jvmDest = File(tmpdir, "jvm").absolutePath
+        val jvmDest = sourceDirectory.newFolder("jvm").absolutePath
 
         val result = K2JVMCompiler().compile(
             jvmSrc,

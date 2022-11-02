@@ -20,14 +20,12 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
 class CodegenMetadataTests : AbstractLoweringTests() {
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configuration.put(ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY, true)
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY, true)
     }
 
     @Test
-    fun testBasicFunctionality(): Unit = ensureSetup {
+    fun testBasicFunctionality() {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
         val loader = classLoader(

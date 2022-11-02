@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
 import org.intellij.lang.annotations.Language
@@ -23,34 +24,43 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.psi.KtFile
+import org.junit.Assert.assertEquals
 
 abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
-    private fun computeKeys(files: List<KtFile>): List<String> {
+    private fun computeKeys(files: List<SourceFile>): List<String> {
         var builtKeys = mutableSetOf<String>()
-        compileToIrWithExtension(
+        compileToIr(
             files,
-            object : IrGenerationExtension {
-                override fun generate(
-                    moduleFragment: IrModuleFragment,
-                    pluginContext: IrPluginContext
-                ) {
-                    val symbolRemapper = DeepCopySymbolRemapper()
-                    val keyVisitor = DurableKeyVisitor(builtKeys)
-                    val transformer = object : LiveLiteralTransformer(
-                        liveLiteralsEnabled || liveLiteralsV2Enabled,
-                        liveLiteralsV2Enabled,
-                        keyVisitor,
-                        pluginContext,
-                        symbolRemapper,
-                        ModuleMetricsImpl("temp")
+            registerExtensions = { configuration ->
+                val liveLiteralsEnabled = configuration.getBoolean(
+                    ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY
+                )
+                val liveLiteralsV2Enabled = configuration.getBoolean(
+                    ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY
+                )
+                ComposeComponentRegistrar.registerCommonExtensions(this)
+                IrGenerationExtension.registerExtension(this, object : IrGenerationExtension {
+                    override fun generate(
+                        moduleFragment: IrModuleFragment,
+                        pluginContext: IrPluginContext
                     ) {
-                        override fun makeKeySet(): MutableSet<String> {
-                            return super.makeKeySet().also { builtKeys = it }
+                        val symbolRemapper = DeepCopySymbolRemapper()
+                        val keyVisitor = DurableKeyVisitor(builtKeys)
+                        val transformer = object : LiveLiteralTransformer(
+                            liveLiteralsEnabled || liveLiteralsV2Enabled,
+                            liveLiteralsV2Enabled,
+                            keyVisitor,
+                            pluginContext,
+                            symbolRemapper,
+                            ModuleMetricsImpl("temp")
+                        ) {
+                            override fun makeKeySet(): MutableSet<String> {
+                                return super.makeKeySet().also { builtKeys = it }
+                            }
                         }
+                        transformer.lower(moduleFragment)
                     }
-                    transformer.lower(moduleFragment)
-                }
+                })
             }
         )
         return builtKeys.toList()
@@ -59,20 +69,12 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
     // since the lowering will throw an exception if duplicate keys are found, all we have to do
     // is run the lowering
     protected fun assertNoDuplicateKeys(@Language("kotlin") src: String) {
-        computeKeys(
-            listOf(
-                sourceFile("Test.kt", src.replace('%', '$'))
-            )
-        )
+        computeKeys(listOf(SourceFile("Test.kt", src)))
     }
 
     // For a given src string, a
     protected fun assertKeys(vararg keys: String, makeSrc: () -> String) {
-        val builtKeys = computeKeys(
-            listOf(
-                sourceFile("Test.kt", makeSrc().replace('%', '$'))
-            )
-        )
+        val builtKeys = computeKeys(listOf(SourceFile("Test.kt", makeSrc())))
         assertEquals(
             keys.toList().sorted().joinToString(separator = ",\n") {
                 "\"${it.replace('$', '%')}\""
@@ -85,17 +87,8 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
 
     // test: have two src strings (before/after) and assert that the keys of the params didn't change
     protected fun assertDurableChange(before: String, after: String) {
-        val beforeKeys = computeKeys(
-            listOf(
-                sourceFile("Test.kt", before.replace('%', '$'))
-            )
-        )
-
-        val afterKeys = computeKeys(
-            listOf(
-                sourceFile("Test.kt", after.replace('%', '$'))
-            )
-        )
+        val beforeKeys = computeKeys(listOf(SourceFile("Test.kt", before)))
+        val afterKeys = computeKeys(listOf(SourceFile("Test.kt", after)))
 
         assertEquals(
             beforeKeys.toList().sorted().joinToString(separator = "\n"),
