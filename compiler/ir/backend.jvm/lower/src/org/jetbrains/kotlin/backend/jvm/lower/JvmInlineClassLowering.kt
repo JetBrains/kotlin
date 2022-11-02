@@ -247,24 +247,18 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             val inlineClass = expression.getTypeArgument(0)!!.getClass()!!
             val constructorBridge = replacements.getReplacementFunction(inlineClass.primaryConstructor!!)!!
             val boxFunction = context.inlineClassReplacements.getBoxFunction(inlineClass, defaultSuffix = true)
-            val constructorBridgeCall = IrCallImpl(
-                expression.startOffset, expression.endOffset, constructorBridge.returnType,
-                constructorBridge.symbol, constructorBridge.typeParameters.size, constructorBridge.valueParameters.size,
-                expression.origin, (expression as? IrCall)?.superQualifierSymbol
-            ).apply {
-                putValueArgument(0, expression.getValueArgument(0))
+            return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
+                irCall(boxFunction).apply {
+                    putValueArgument(
+                        0,
+                        coerceInlineClasses(
+                            irCall(constructorBridge).apply { putValueArgument(0, expression.getValueArgument(0)) },
+                            constructorBridge.returnType,
+                            boxFunction.valueParameters[0].type
+                        )
+                    )
+                }
             }
-            val boxCall = IrCallImpl(
-                expression.startOffset, expression.endOffset, boxFunction.returnType,
-                (boxFunction as IrSimpleFunction).symbol, boxFunction.typeParameters.size, boxFunction.valueParameters.size,
-                expression.origin, (expression as? IrCall)?.superQualifierSymbol
-            ).apply {
-                putValueArgument(
-                    0,
-                    coerceInlineClasses(constructorBridgeCall, constructorBridgeCall.type, boxFunction.valueParameters[0].type)
-                )
-            }
-            return boxCall
         }
 
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
