@@ -62,7 +62,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
-        if (completionMode == ConstraintSystemCompletionMode.FULL) {
+        if (completionMode == ConstraintSystemCompletionMode.FULL || completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA) {
             resolveForkPointsConstraints()
         }
 
