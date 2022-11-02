@@ -217,7 +217,10 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
     ): List<FirScope>? {
         val towerDataContext = towerContextProvider.getClosestAvailableParentContext(position) ?: return null
         val result = buildList {
-            addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope })
+            addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull {
+                // We must use `it.getAvailableScope()` instead of `it.scope` to check scopes of companion objects as well.
+                it.getAvailableScope()
+            })
             addIfNotNull(createFakeImportingScope(newImports))
             addAll(towerDataContext.localScopes)
         }
