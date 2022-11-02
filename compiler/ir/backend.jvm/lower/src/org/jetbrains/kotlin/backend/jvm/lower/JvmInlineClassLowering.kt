@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
@@ -246,7 +245,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             expression.transformChildrenVoid()
             val inlineClass = expression.getTypeArgument(0)!!.getClass()!!
             val constructorBridge = replacements.getReplacementFunction(inlineClass.primaryConstructor!!)!!
-            val boxFunction = context.inlineClassReplacements.getBoxFunction(inlineClass, defaultSuffix = true)
+            val boxFunction = context.inlineClassReplacements.getBoxFunction(inlineClass, withDefaultSuffix = true)
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
                 irCall(boxFunction).apply {
                     putValueArgument(
@@ -481,16 +480,16 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     fun buildBoxFunctions(valueClass: IrClass) {
         if (valueClass.hasWithCustomBoxing) {
-            buildDefaultBoxFunction(valueClass, defaultSuffix = true)
+            buildDefaultBoxFunction(valueClass, withDefaultSuffix = true)
             buildCustomBoxFunction(valueClass)
         } else {
-            buildDefaultBoxFunction(valueClass, defaultSuffix = false)
+            buildDefaultBoxFunction(valueClass, withDefaultSuffix = false)
         }
     }
 
     private fun buildCustomBoxFunction(valueClass: IrClass) {
         val customBox = valueClass.companionObject()?.functions?.single { it.isBoxFunction(context.typeSystem) && it.isOperator } ?: return
-        val function = context.inlineClassReplacements.getBoxFunction(valueClass, defaultSuffix = false)
+        val function = context.inlineClassReplacements.getBoxFunction(valueClass, withDefaultSuffix = false)
         with(context.createIrBuilder(function.symbol)) {
             val companionObject = valueClass.companionObject()!!
             function.body = irExprBody(
@@ -507,9 +506,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     val IrClass.hasWithCustomBoxing: Boolean
         get() = companionObject()?.functions?.any { it.isBoxFunction(context.typeSystem) && it.isOperator } ?: false
 
-    fun buildDefaultBoxFunction(valueClass: IrClass, defaultSuffix: Boolean) {
-        val function = context.inlineClassReplacements.getBoxFunction(valueClass, defaultSuffix)
-            .also { if (defaultSuffix) it.name = Name.identifier(KotlinTypeMapper.BOX_JVM_DEFAULT_METHOD_NAME) }
+    fun buildDefaultBoxFunction(valueClass: IrClass, withDefaultSuffix: Boolean) {
+        val function = context.inlineClassReplacements.getBoxFunction(valueClass, withDefaultSuffix)
+            .also { if (withDefaultSuffix) it.name = Name.identifier(KotlinTypeMapper.BOX_JVM_DEFAULT_METHOD_NAME) }
         with(context.createIrBuilder(function.symbol)) {
             function.body = irExprBody(
                 irCall(valueClass.primaryConstructor!!.symbol).apply {
@@ -548,7 +547,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             val underlyingType = getInlineClassUnderlyingType(valueClass)
             irExprBody(
                 if (untypedEquals.origin == IrDeclarationOrigin.DEFINED) {
-                    val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass, defaultSuffix = false)
+                    val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass, withDefaultSuffix = false)
 
                     fun irBox(expr: IrExpression) = irCall(boxFunction).apply { putValueArgument(0, expr) }
 

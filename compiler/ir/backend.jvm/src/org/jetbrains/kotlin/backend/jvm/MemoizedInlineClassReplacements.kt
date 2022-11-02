@@ -99,8 +99,8 @@ class MemoizedInlineClassReplacements(
      * static function named "box-impl" which takes an unboxed value and returns
      * a boxed value.
      */
-    fun getBoxFunction(irClass: IrClass, defaultSuffix: Boolean): IrFunction {
-        if (defaultSuffix) return createBoxFunction(irClass, defaultSuffix = true)
+    fun getBoxFunction(irClass: IrClass, withDefaultSuffix: Boolean): IrFunction {
+        if (withDefaultSuffix) return createBoxFunction(irClass, defaultSuffix = true)
         return boxFunctionsCache.computeIfAbsent(irClass) {
             createBoxFunction(irClass, defaultSuffix = false)
         }
