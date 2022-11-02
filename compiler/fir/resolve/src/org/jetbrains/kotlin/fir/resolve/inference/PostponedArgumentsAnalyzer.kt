@@ -116,6 +116,11 @@ class PostponedArgumentsAnalyzer(
         completionMode: ConstraintSystemCompletionMode,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ): ReturnArgumentsAnalysisResult {
+        // TODO: replace with `require(!lambda.analyzed)` when KT-54767 will be fixed
+        if (lambda.analyzed) {
+            return ReturnArgumentsAnalysisResult(lambda.returnStatements, inferenceSession = null)
+        }
+
         val unitType = components.session.builtinTypes.unitType.type
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })

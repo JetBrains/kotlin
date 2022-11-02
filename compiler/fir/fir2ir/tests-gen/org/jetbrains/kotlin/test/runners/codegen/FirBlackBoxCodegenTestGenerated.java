@@ -19872,6 +19872,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("builderAndDelegateInference.kt")
+        public void testBuilderAndDelegateInference() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/builderAndDelegateInference.kt");
+        }
+
+        @Test
         @TestMetadata("builderInference.kt")
         public void testBuilderInference() throws Exception {
             runTest("compiler/testData/codegen/box/inference/builderInference.kt");
