@@ -18,13 +18,12 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 
-abstract class AbstractControlFlowTransformTests : ComposeIrTransformTest() {
+abstract class AbstractControlFlowTransformTests : AbstractIrTransformTest() {
     protected fun controlFlow(
         @Language("kotlin")
         source: String,
         expectedTransformed: String,
         dumpTree: Boolean = false,
-        compilation: Compilation = JvmCompilation()
     ) = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
@@ -60,6 +59,5 @@ abstract class AbstractControlFlowTransformTests : ComposeIrTransformTest() {
             var c = 3
         """.trimIndent(),
         dumpTree = dumpTree,
-        compilation = compilation
     )
 }

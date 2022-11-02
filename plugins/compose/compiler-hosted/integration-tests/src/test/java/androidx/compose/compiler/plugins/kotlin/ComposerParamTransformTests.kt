@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.junit.Test
 
-class ComposerParamTransformTests : ComposeIrTransformTest() {
+class ComposerParamTransformTests : AbstractIrTransformTest() {
     private fun composerParam(
         @Language("kotlin")
         source: String,

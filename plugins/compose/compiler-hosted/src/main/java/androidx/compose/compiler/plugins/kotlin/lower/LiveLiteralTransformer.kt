@@ -270,6 +270,7 @@ open class LiveLiteralTransformer(
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
+                fn.correspondingPropertySymbol = p.symbol
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
                 fn.dispatchReceiverParameter = thisParam
                 fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
@@ -296,6 +297,7 @@ open class LiveLiteralTransformer(
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
+                fn.correspondingPropertySymbol = p.symbol
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
                 fn.dispatchReceiverParameter = thisParam
                 fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
@@ -307,6 +309,7 @@ open class LiveLiteralTransformer(
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
+                fn.correspondingPropertySymbol = p.symbol
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
                 fn.dispatchReceiverParameter = thisParam
                 val valueParam = fn.addValueParameter("value", stateType)

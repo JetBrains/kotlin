@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
+class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
     override val intrinsicRememberEnabled: Boolean
         get() = true
 

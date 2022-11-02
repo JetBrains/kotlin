@@ -18,7 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
 
-class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
+class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     @Test
     fun testCapturedThisFromFieldInitializer(): Unit = verifyComposeIrTransform(
         """
