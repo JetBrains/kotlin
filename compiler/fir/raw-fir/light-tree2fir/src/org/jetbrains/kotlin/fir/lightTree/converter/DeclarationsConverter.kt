@@ -1183,7 +1183,7 @@ class DeclarationsConverter(
                 )
             } else {
                 this.isLocal = false
-                receiverParameter = receiverType?.convertToReceiverParameter()
+                receiverParameter = receiverType?.asReceiverParameter(receiverType?.extractReceiverAnnotations())
 
                 dispatchReceiverType = currentDispatchReceiverType()
                 withCapturedTypeParameters(true, propertySource, firTypeParameters) {
@@ -1611,7 +1611,7 @@ class DeclarationsConverter(
             functionSymbol = FirAnonymousFunctionSymbol()
             FirAnonymousFunctionBuilder().apply {
                 source = functionSource
-                receiverParameter = receiverType?.convertToReceiverParameter()
+                receiverParameter = receiverType?.asReceiverParameter(receiverType?.extractReceiverAnnotations())
                 symbol = functionSymbol
                 isLambda = false
                 hasExplicitParameterList = true
@@ -1626,7 +1626,7 @@ class DeclarationsConverter(
             functionSymbol = FirNamedFunctionSymbol(callableIdForName(functionName))
             FirSimpleFunctionBuilder().apply {
                 source = functionSource
-                receiverParameter = receiverType?.convertToReceiverParameter()
+                receiverParameter = receiverType?.asReceiverParameter(receiverType?.extractReceiverAnnotations())
                 name = functionName
                 status = FirDeclarationStatusImpl(
                     if (isLocal) Visibilities.Local else modifiers.getVisibility(),
@@ -1948,6 +1948,13 @@ class DeclarationsConverter(
             }
             addDefaultBoundIfNecessary()
         }
+    }
+
+    private fun FirTypeRef.extractReceiverAnnotations(): List<FirAnnotationCall> {
+        @Suppress("UNCHECKED_CAST")
+        val receiverAnnotations = annotations.filter { it is FirAnnotationCall && it.useSiteTarget == RECEIVER } as List<FirAnnotationCall>
+        (annotations as? MutableList<FirAnnotation>)?.removeIf { it.useSiteTarget == RECEIVER }
+        return receiverAnnotations
     }
 
     /**
