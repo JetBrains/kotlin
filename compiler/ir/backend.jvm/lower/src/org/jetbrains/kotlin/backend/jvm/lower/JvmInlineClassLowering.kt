@@ -252,7 +252,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     putValueArgument(
                         0,
                         coerceInlineClasses(
-                            irCall(constructorBridge).apply { putValueArgument(0, expression.getValueArgument(0)) },
+                            irCall(constructorBridge).apply {
+                                //copyTypeArgumentsFrom(expression.getTypeArgument(0)!!)
+                                putValueArgument(0, expression.getValueArgument(0))
+                            },
                             constructorBridge.returnType,
                             boxFunction.valueParameters[0].type
                         )

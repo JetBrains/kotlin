@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.types.KotlinType
 object InlineClassDescriptorResolver {
     @JvmField
     val BOX_METHOD_NAME = Name.identifier("box")
-    @JvmField
-    val BOX_STATIC_REPLACEMENT_NAME = Name.identifier("box-impl")
 
     @JvmField
     val UNBOX_METHOD_NAME = Name.identifier("unbox")

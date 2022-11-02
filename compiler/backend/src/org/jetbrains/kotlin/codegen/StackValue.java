@@ -461,28 +461,26 @@ public abstract class StackValue {
         Type boxed = typeMapper.mapTypeCommon(kotlinType, TypeMappingMode.CLASS_DECLARATION);
         Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, typeMapper);
         boolean isNullable = typeMapper.getTypeSystem().isNullableType(kotlinType) && !isPrimitive(unboxed);
-        boxInlineClass(unboxed, boxed, isNullable, v, false);
+        boxInlineClass(unboxed, boxed, isNullable, v);
     }
 
     public static void boxInlineClass(
-            @NotNull Type unboxed, @NotNull Type boxed, boolean isNullable, @NotNull InstructionAdapter v, boolean useDefaultBoxing
-    ) {
+            @NotNull Type unboxed, @NotNull Type boxed, boolean isNullable, @NotNull InstructionAdapter v) {
         if (isNullable) {
-            boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxed, unboxed, useDefaultBoxing));
+            boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxed, unboxed));
         } else {
-            invokeBoxMethod(v, boxed, unboxed, useDefaultBoxing);
+            invokeBoxMethod(v, boxed, unboxed);
         }
     }
 
     private static void invokeBoxMethod(
             @NotNull InstructionAdapter v,
             @NotNull Type boxedType,
-            @NotNull Type underlyingType,
-            boolean useDefaultBoxing
+            @NotNull Type underlyingType
     ) {
         v.invokestatic(
                 boxedType.getInternalName(),
-                useDefaultBoxing ? KotlinTypeMapper.BOX_JVM_DEFAULT_METHOD_NAME : KotlinTypeMapper.BOX_JVM_METHOD_NAME,
+                KotlinTypeMapper.BOX_JVM_METHOD_NAME,
                 Type.getMethodDescriptor(boxedType, underlyingType),
                 false
         );
