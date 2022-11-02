@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeF
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -36,9 +37,9 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
@@ -490,7 +491,17 @@ private class ElementsToShortenCollector(
 
         val calleeReference = functionCall.calleeReference
         val calledSymbol = findUnambiguousReferencedCallableId(calleeReference) ?: return
-        processCallableQualifiedAccess(calledSymbol, qualifiedCallExpression, callExpression, shorteningContext::findFunctionsInScopes)
+
+        // Since the scope for a constructor (both primary and secondary constructors) does not return constructors when we call
+        // "getFunctions()", we cannot handle constructors in "processCallableQualifiedAccess(..)". Thus, we handle a constructor
+        // sperately.
+        // TODO: Consider if it is a bug of `FirClassDeclaredMemberScope`.
+        if (calledSymbol is FirConstructorSymbol) {
+            val classId = calledSymbol.fir.getContainingClass(calledSymbol.llFirSession)?.classId ?: return
+            findTypeQualifierToShorten(classId, qualifiedCallExpression)?.let(::addElementToShorten)
+        } else {
+            processCallableQualifiedAccess(calledSymbol, qualifiedCallExpression, callExpression, shorteningContext::findFunctionsInScopes)
+        }
     }
 
     private fun processCallableQualifiedAccess(
