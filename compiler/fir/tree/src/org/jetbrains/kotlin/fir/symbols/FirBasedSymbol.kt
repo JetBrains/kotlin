@@ -52,16 +52,19 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
         get() = fir.resolvedAnnotationClassIds(this)
 }
 
+@SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
     anchorElement.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
     return annotations
 }
 
+@SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
     anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
     return annotations
 }
 
+@SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
     anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
     return annotations.mapNotNull { (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId }
