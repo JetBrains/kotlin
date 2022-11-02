@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR_ES6
+// IGNORE_BACKEND: JS
 
 var a = 12
 

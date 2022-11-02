@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
@@ -20,17 +19,14 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 
 object ES6_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_CONSTRUCTOR_REPLACEMENT")
 
@@ -57,17 +53,14 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     private var IrConstructor.initFunction by context.mapping.constructorToInitFunction
     private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
 
-    private val delegatedExternalSuperCalls = mutableMapOf<IrConstructorSymbol, IrDelegatingConstructorCall?>()
-
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrConstructor || declaration.hasStrictSignature(context)) return null
 
         hackEnums(declaration)
         hackExceptions(context, declaration)
 
-        val superCall = declaration.getSuperCall()
         val initMethod = declaration.generateInitMethod()
-        val factoryFunction = declaration.generateCreateFunction(superCall, initMethod)
+        val factoryFunction = declaration.generateCreateFunction(initMethod)
 
 
         return listOf(factoryFunction, initMethod)
@@ -100,7 +93,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                     .plus(parent.thisReceiver!!.symbol to factory.dispatchReceiverParameter!!.symbol)
                     .toMap<IrValueSymbol, IrValueSymbol>()
 
-                removeExternalSuperCallWithRemapping(remappingSchema)
+                replaceExternalSuperCallWithRemapping(factory, remappingSchema)
             }
             factory.annotations = annotations
 
@@ -108,11 +101,13 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }
     }
 
-    private fun IrConstructor.generateCreateFunction(superCall: IrDelegatingConstructorCall?, initMethod: IrSimpleFunction): IrFunction {
+    private fun IrConstructor.generateCreateFunction(initMethod: IrSimpleFunction): IrFunction {
+        val irClass = parentAsClass
+        val throwableCtorField = irClass.declarations.findIsInstanceAnd<IrField> { it.origin == ES6_THROWABLE_CONSTRUCTOR_SLOT }
+
         val function = if (isPrimary) {
             this
         } else {
-            val irClass = parentAsClass
             val type = irClass.defaultType
             val constructorName = "${irClass.name}_init"
             val functionName = "${constructorName}_\$Create\$"
@@ -136,7 +131,17 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }
 
         function.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            val thisVariable = generateThisVariable(superCall).also { statements += it }
+            val thisVariable = generateThisVariable().also { statements += it }
+
+            if (throwableCtorField != null) {
+                statements += JsIrBuilder.buildSetField(
+                    throwableCtorField.symbol,
+                    JsIrBuilder.buildGetValue(thisVariable.symbol),
+                    if (isPrimary) irClass.constructorRef else JsIrBuilder.buildRawReference(function.symbol, context.dynamicType),
+                    context.dynamicType
+                )
+            }
+
             statements += JsIrBuilder.buildCall(initMethod.symbol).apply {
                 dispatchReceiver = JsIrBuilder.buildGetValue(thisVariable.symbol)
                 function.valueParameters.forEachIndexed { i, p -> putValueArgument(i, JsIrBuilder.buildGetValue(p.symbol)) }
@@ -147,9 +152,8 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         return function
     }
 
-    private fun IrConstructor.generateThisVariable(superCall: IrDelegatingConstructorCall?): IrVariable {
+    private fun IrConstructor.generateThisVariable(): IrVariable {
         val currentClass = parentAsClass
-        val superClass = currentClass.superClass
         val currentCtor = currentClass.constructorRef
             .let {
                 if (!currentClass.isExported(context) || !isPrimary) {
@@ -160,25 +164,14 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                 }
             }
 
-        val initializer = if (superClass?.isEffectivelyExternal() == true) {
-            val superCtor = superCall?.getExternallyDelegatedSuperCall()?.symbol?.owner
-
-            JsIrBuilder.buildCall(context.intrinsics.jsCreateThisFromParentSymbol).apply {
-                putValueArgument(0, currentCtor)
-                putValueArgument(1, (superCtor?.parentAsClass ?: superClass).constructorRef)
-                putValueArgument(2, irAnyArray(superCall?.valueArguments ?: emptyList()))
-            }
-        } else {
-            JsIrBuilder.buildCall(context.intrinsics.jsCreateThisSymbol).apply {
-                putValueArgument(0, currentCtor)
-            }
-        }
 
         return JsIrBuilder.buildVar(
             type = returnType,
             parent = this,
             name = Namer.SYNTHETIC_RECEIVER_NAME,
-            initializer = initializer
+            initializer = JsIrBuilder.buildCall(context.intrinsics.jsCreateThisSymbol).apply {
+                putValueArgument(0, currentCtor)
+            }
         )
     }
 
@@ -198,38 +191,42 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         )
     }
 
-    private fun IrConstructor.getSuperCall(): IrDelegatingConstructorCall? {
-        var result: IrDelegatingConstructorCall? = null
-        (body as IrBlockBody).acceptChildren(object : IrElementVisitor<Unit, Any?> {
-            override fun visitElement(element: IrElement, data: Any?) { }
+    private fun IrBody.replaceExternalSuperCallWithRemapping(constructor: IrFunction, remappings: Map<IrValueSymbol, IrValueSymbol>) {
+        val selfParameter = constructor.dispatchReceiverParameter!!.symbol
 
-            override fun visitBlock(expression: IrBlock, data: Any?) {
-                expression.statements.forEach { it.accept(this, data) }
-            }
-
-            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Any?) {
-                result = result ?: expression
-            }
-        }, null)
-        return result
-    }
-
-    private fun IrDelegatingConstructorCall.getExternallyDelegatedSuperCall(): IrDelegatingConstructorCall? =
-        if (symbol.owner.parentAsClass.isEffectivelyExternal()) this else delegatedExternalSuperCalls.getOrPut(symbol) {
-            symbol.owner.getSuperCall()?.getExternallyDelegatedSuperCall()
-        }
-
-    private fun IrBody.removeExternalSuperCallWithRemapping(remappings: Map<IrValueSymbol, IrValueSymbol>) {
         transformChildrenVoid(object : ValueRemapper(remappings) {
-            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                return if (expression.symbol.owner.isEffectivelyExternal()) {
-                    JsIrBuilder.buildGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
-                } else {
-                    super.visitDelegatingConstructorCall(expression)
+            var meetCapturing = false
+
+            override fun visitSetField(expression: IrSetField): IrExpression {
+                val receiver = expression.receiver as? IrGetValue
+                if (receiver?.symbol == constructor.dispatchReceiverParameter?.symbol) {
+                    meetCapturing = true
                 }
+                return super.visitSetField(expression)
+            }
+
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                val externalSuperCall = when {
+                    !expression.symbol.owner.isEffectivelyExternal() -> expression
+                    else ->
+                        JsIrBuilder.buildCall(context.intrinsics.externalSuperSymbol)
+                            .apply {
+                                extensionReceiver = JsIrBuilder.buildGetValue(selfParameter)
+                                putValueArgument(0, expression.symbol.owner.parentAsClass.constructorRef)
+                                putValueArgument(1, irAnyArray(expression.valueArguments))
+                                putValueArgument(2, meetCapturing.toIrConst(context.irBuiltIns.booleanType))
+                            }
+                }
+
+                return super.visitExpression(externalSuperCall)
             }
         })
     }
+}
+
+private inline fun <reified R> Iterable<*>.findIsInstanceAnd(predicate: (R) -> Boolean): R? {
+    for (element in this) if (element is R && predicate(element)) return element
+    return null
 }
 
 private fun hackEnums(constructor: IrConstructor) {

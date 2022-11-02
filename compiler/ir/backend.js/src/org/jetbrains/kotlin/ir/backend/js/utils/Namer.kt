@@ -15,6 +15,7 @@ object Namer {
 
     val OUTER_NAME = "\$outer"
     val UNREACHABLE_NAME = "\$unreachable"
+    val THROWABLE_CONSTRUCTOR = "\$throwableCtor"
 
     val DELEGATE = "\$delegate"
 

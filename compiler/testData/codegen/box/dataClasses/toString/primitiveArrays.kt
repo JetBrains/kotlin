@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM, JS, JS_IR
+// IGNORE_BACKEND: JVM, JS, JS_IR, JS_IR_ES6
 // KT-30080
 
 data class A(

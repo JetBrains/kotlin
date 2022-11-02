@@ -152,12 +152,21 @@ internal fun <T> objectCreate(proto: T?) =
 internal fun createThis(ctor: Ctor) =
     js("Object.create(ctor.prototype)")
 
-@Suppress("UNUSED_PARAMETER")
-internal fun createThisFromParent(
-    ctor: Ctor,
-    parentCtor: Ctor,
-    parameters: Array<Any?>
-) = js("Reflect.construct(parentCtor, parameters, ctor)")
+@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
+internal fun Any?.externalSuper(parentCtor: Ctor, parameters: Array<Any?>, captured: Boolean) {
+    val selfCtor = if (captured) {
+        this.asDynamic().constructor
+    } else {
+        val ctor = js("function() {}")
+        ctor.prototype = this;
+        ctor
+    }
+    merge(this, js("Reflect.construct(parentCtor, parameters, selfCtor)"))
+}
+
+@Suppress("UNUSED_PARAMETER", "NOTHING_TO_INLINE")
+private inline fun merge(a: dynamic, b: dynamic) =
+    js("Object.assign(a, b)")
 
 @Suppress("UNUSED_PARAMETER")
 internal fun defineProp(obj: Any, name: String, getter: Any?, setter: Any?) =

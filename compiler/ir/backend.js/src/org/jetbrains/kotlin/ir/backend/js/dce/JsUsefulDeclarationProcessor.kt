@@ -32,8 +32,9 @@ internal class JsUsefulDeclarationProcessor(
             super.visitCall(expression, data)
 
             if (expression.superQualifierSymbol != null) {
-                val currentClass = (data as? IrSimpleFunction)?.parentClassOrNull
-                if (!context.es6mode || currentClass != null && (currentClass.isInner || currentClass.isLocal)) {
+                val currentFun = (data as? IrSimpleFunction)
+                val currentClass = currentFun?.parentClassOrNull
+                if (!context.es6mode || currentFun?.dispatchReceiverParameter == null || currentClass != null && (currentClass.isInner || currentClass.isLocal)) {
                     context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
                 }
             }
@@ -77,7 +78,7 @@ internal class JsUsefulDeclarationProcessor(
                     constructedClasses += classToCreate
                 }
 
-                context.intrinsics.jsCreateThisFromParentSymbol, context.intrinsics.jsCreateThisSymbol -> {
+                context.intrinsics.jsCreateThisSymbol -> {
                     val jsClassOrNewTarget = expression.getValueArgument(0) as IrCall
                     val jsClassCall = when(jsClassOrNewTarget.symbol) {
                         context.intrinsics.jsNewTarget -> jsClassOrNewTarget.getValueArgument(0) as IrCall
