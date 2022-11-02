@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createSignature
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -97,7 +98,7 @@ internal class KtFirFunctionSymbol(
             KtSymbolKind.TOP_LEVEL -> KtFirTopLevelFunctionSymbolPointer(firSymbol.callableId, firSymbol.createSignature())
             KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberFunctionSymbolPointer(
-                    firSymbol.containingClassLookupTag()?.classId ?: error("ClassId should not be null for member function"),
+                    requireOwnerPointer(),
                     firSymbol.name,
                     firSymbol.createSignature()
                 )
