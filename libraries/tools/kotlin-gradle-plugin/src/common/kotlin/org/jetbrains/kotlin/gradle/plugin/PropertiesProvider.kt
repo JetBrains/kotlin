@@ -235,8 +235,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * By default individual test tasks will not fail build if this task will be executed,
      * also individual html and xml reports will replaced by one consolidated html report.
      */
-    val individualTaskReports: Boolean?
-        get() = booleanProperty("kotlin.tests.individualTaskReports")
+    val individualTaskReports: Boolean
+        get() = booleanProperty("kotlin.tests.individualTaskReports") ?: false
 
     /**
      * Allow a user to choose distribution type. The following distribution types are available:

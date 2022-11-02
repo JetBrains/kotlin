@@ -62,7 +62,7 @@ open class KotlinTestReport : TestReport() {
 
     @get:Input
     val overrideReporting: Boolean by lazy {
-        projectProperties.individualTaskReports == null
+        !projectProperties.individualTaskReports
     }
 
     @Input
