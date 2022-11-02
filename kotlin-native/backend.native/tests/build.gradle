@@ -6442,6 +6442,10 @@ fileCheckTest("filecheck_suspend_returnNothing") {
     annotatedSource = project.file('filecheck/suspend_returnNothing.kt')
 }
 
+fileCheckTest("filecheck_suspend_tailcalls") {
+    annotatedSource = project.file('filecheck/suspend_tailcalls.kt')
+}
+
 fileCheckTest("filecheck_bce") {
     enabled = enabled && cacheTesting == null
     annotatedSource = project.file('filecheck/bce.kt')
