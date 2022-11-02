@@ -524,6 +524,10 @@ abstract class AbstractFirStatusResolveTransformer(
         return transformDeclaration(field, data) as FirField
     }
 
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: FirResolvedDeclarationStatus?): FirStatement {
+        return propertyAccessor.also { transformProperty(it.propertySymbol.fir, data) }
+    }
+
     override fun transformEnumEntry(
         enumEntry: FirEnumEntry,
         data: FirResolvedDeclarationStatus?

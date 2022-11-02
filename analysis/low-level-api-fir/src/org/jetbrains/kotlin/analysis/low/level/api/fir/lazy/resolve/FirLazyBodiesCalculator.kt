@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
@@ -173,5 +174,9 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(designation)
         }
         return property
+    }
+
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: PersistentList<FirDeclaration>): FirStatement {
+        return propertyAccessor.also { transformProperty(it.propertySymbol.fir, data) }
     }
 }
