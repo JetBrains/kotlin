@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 import org.jetbrains.kotlin.fir.plugin.CoreSerializer
 import org.jetbrains.kotlin.fir.plugin.MySerializable
 

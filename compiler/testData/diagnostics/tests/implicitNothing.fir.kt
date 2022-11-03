@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun foo() = throw Exception()
 
 fun bar() = null!!

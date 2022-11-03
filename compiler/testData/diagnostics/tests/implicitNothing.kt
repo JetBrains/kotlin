@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>foo<!>() = throw Exception()
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 interface SomeInterface {
     fun foo(x: Int, y: String): String
 

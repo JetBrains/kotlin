@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 
 fun ubyte(vararg a: UByte): UByteArray = a
 fun ushort(vararg a: UShort): UShortArray = a

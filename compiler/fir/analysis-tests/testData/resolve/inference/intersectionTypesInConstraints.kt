@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: MyList.java
 public interface MyList<E> extends java.util.List<E>, I {}
 

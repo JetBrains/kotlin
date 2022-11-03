@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // SCOPE_DUMP: SomeMap:containsKey;containsValue;get;remove, MyMap:containsKey;containsValue;get
 
 // FILE: MyBaseMap.java

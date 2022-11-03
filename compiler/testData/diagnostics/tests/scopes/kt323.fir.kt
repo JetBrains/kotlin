@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 //KT-323 Handle visibility interactions with overriding
 package kt323
 

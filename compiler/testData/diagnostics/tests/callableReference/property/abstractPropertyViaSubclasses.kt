@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !CHECK_TYPE
 
 import kotlin.reflect.KProperty1

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses +ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 

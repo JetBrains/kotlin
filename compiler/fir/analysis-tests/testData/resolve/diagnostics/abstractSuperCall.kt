@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 open class C {
     open val x: Int = 10
     fun h() {}
