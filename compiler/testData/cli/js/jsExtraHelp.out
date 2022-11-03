@@ -45,6 +45,7 @@ where advanced options include:
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xuse-deprecated-legacy-compiler
                              Use deprecated legacy compiler without error
+  -Xes-next                  Generated JavaScript will use new ES2015+ features like ES classes.
   -Xwasm                     Use experimental WebAssembly compiler backend
   -Xwasm-debug-info          Add debug info to WebAssembly compiled module
   -Xwasm-enable-array-range-checks
