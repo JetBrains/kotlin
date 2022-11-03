@@ -33,7 +33,7 @@ public operator fun String?.plus(other: Any?): String
 /**
  * Returns a default-boxed inline class instance
  */
-public fun <reified @PureReifiable T> createInlineClassInstance(value: Any?): T
+public inline fun <reified @PureReifiable T> createInlineClassInstance(value: Any?): T
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
