@@ -170,7 +170,8 @@ fun test_9() {
     } else {
         b = a
     }
+    b<!UNSAFE_CALL!>.<!>length // bad
     if (a != null) {
-        b<!UNSAFE_CALL!>.<!>length // ok
+        b.length // ok
     }
 }

@@ -1286,32 +1286,35 @@ digraph boundSmartcastsInBranches_kt {
                 506 [label="Exit when branch result"];
                 507 [label="Exit when"];
             }
+            508 [label="Access variable R|<local>/b|"];
+            509 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
             subgraph cluster_97 {
                 color=blue
-                508 [label="Enter when"];
+                510 [label="Enter when"];
                 subgraph cluster_98 {
                     color=blue
-                    509 [label="Enter when branch condition "];
-                    510 [label="Access variable R|<local>/a|"];
-                    511 [label="Const: Null(null)"];
-                    512 [label="Equality operator !="];
-                    513 [label="Exit when branch condition"];
+                    511 [label="Enter when branch condition "];
+                    512 [label="Access variable R|<local>/a|"];
+                    513 [label="Const: Null(null)"];
+                    514 [label="Equality operator !="];
+                    515 [label="Exit when branch condition"];
                 }
-                514 [label="Synthetic else branch"];
-                515 [label="Enter when branch result"];
+                516 [label="Synthetic else branch"];
+                517 [label="Enter when branch result"];
                 subgraph cluster_99 {
                     color=blue
-                    516 [label="Enter block"];
-                    517 [label="Access variable R|<local>/b|"];
-                    518 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
-                    519 [label="Exit block"];
+                    518 [label="Enter block"];
+                    519 [label="Access variable R|<local>/b|"];
+                    520 [label="Smart cast: R|<local>/b|"];
+                    521 [label="Access variable R|kotlin/String.length|"];
+                    522 [label="Exit block"];
                 }
-                520 [label="Exit when branch result"];
-                521 [label="Exit when"];
+                523 [label="Exit when branch result"];
+                524 [label="Exit when"];
             }
-            522 [label="Exit block"];
+            525 [label="Exit block"];
         }
-        523 [label="Exit function test_9" style="filled" fillcolor=red];
+        526 [label="Exit function test_9" style="filled" fillcolor=red];
     }
     480 -> {481};
     481 -> {482};
@@ -1346,15 +1349,18 @@ digraph boundSmartcastsInBranches_kt {
     510 -> {511};
     511 -> {512};
     512 -> {513};
-    513 -> {515 514};
-    514 -> {521};
-    515 -> {516};
-    516 -> {517};
+    513 -> {514};
+    514 -> {515};
+    515 -> {517 516};
+    516 -> {524};
     517 -> {518};
     518 -> {519};
     519 -> {520};
     520 -> {521};
     521 -> {522};
     522 -> {523};
+    523 -> {524};
+    524 -> {525};
+    525 -> {526};
 
 }

@@ -56,8 +56,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         fir: FirElement,
         stability: PropertyStability
     ): RealVariable {
-        val variable = getOrCreateRealVariableWithoutUnwrappingAlias(flow, symbol, fir, stability)
-        return flow.directAliasMap[variable]?.variable ?: variable
+        return flow.unwrapVariable(getOrCreateRealVariableWithoutUnwrappingAlias(flow, symbol, fir, stability))
     }
 
     private fun FirElement.unwrapElement(): FirElement = when (this) {
