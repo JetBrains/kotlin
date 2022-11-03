@@ -357,7 +357,11 @@ class NewConstraintSystemImpl(
             return storage.constraintsFromAllForkPoints
         }
 
-    override fun processForkConstraints() {
+    /**
+     * This function tries to find the solution (set of constraints) that is consistent with some branch of each fork
+     * And those constraints are being immediately applied to the system
+     */
+    override fun resolveForkPointsConstraints() {
         if (constraintsFromAllForkPoints.isEmpty()) return
         val allForkPointsData = constraintsFromAllForkPoints.toList()
         constraintsFromAllForkPoints.clear()
@@ -369,7 +373,7 @@ class NewConstraintSystemImpl(
         // 1. {Xv=Int} – is a one-element set (but potentially there might be more constraints in the set)
         // 2. {Xv=T} – second constraints set
         for ((position, forkPointData) in allForkPointsData) {
-            if (!processForkPointData(forkPointData, position)) {
+            if (!applyConstraintsFromFirstSuccessfulBranchOfTheFork(forkPointData, position)) {
                 addError(NoSuccessfulFork(position))
             }
         }
@@ -392,7 +396,7 @@ class NewConstraintSystemImpl(
         var result: ConstraintSystemError? = null
         runTransaction {
             for ((position, forkPointData) in allForkPointsData) {
-                if (!processForkPointData(forkPointData, position)) {
+                if (!applyConstraintsFromFirstSuccessfulBranchOfTheFork(forkPointData, position)) {
                     result = NoSuccessfulFork(position)
                     break
                 }
@@ -409,20 +413,20 @@ class NewConstraintSystemImpl(
     /**
      * @return true if there is a successful constraints set for the fork
      */
-    private fun processForkPointData(
+    private fun applyConstraintsFromFirstSuccessfulBranchOfTheFork(
         forkPointData: ForkPointData,
         position: IncorporationConstraintPosition
     ): Boolean {
-        return forkPointData.any { constraintSetForSingleFork ->
+        return forkPointData.any { constraintSetForForkBranch ->
             runTransaction {
-                constraintInjector.processForkConstraints(
+                constraintInjector.processGivenForkPointBranchConstraints(
                     this@NewConstraintSystemImpl.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-                    constraintSetForSingleFork,
+                    constraintSetForForkBranch,
                     position,
                 )
 
                 if (constraintsFromAllForkPoints.isNotEmpty()) {
-                    processForkConstraints()
+                    resolveForkPointsConstraints()
                 }
 
                 !hasContradiction

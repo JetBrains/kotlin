@@ -62,8 +62,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
-        // NB: it's called in ConstraintSystemForks resolution stage by FE 1.0
-        processForkConstraints()
+        resolveForkPointsConstraints()
 
         completion@ while (true) {
             // TODO: This is very slow

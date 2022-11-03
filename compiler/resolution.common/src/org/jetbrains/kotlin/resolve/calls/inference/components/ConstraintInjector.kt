@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintsFromSingleFork
+import org.jetbrains.kotlin.resolve.calls.inference.ForkPointBranchDescription
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
@@ -46,7 +46,7 @@ class ConstraintInjector(
             constraints: MutableList<Pair<TypeVariableMarker, Constraint>>
         )
 
-        fun processForkConstraints()
+        fun resolveForkPointsConstraints()
     }
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
@@ -141,7 +141,7 @@ class ConstraintInjector(
         processConstraints(c, typeCheckerState, skipProperEqualityConstraints = false)
     }
 
-    fun processForkConstraints(
+    fun processGivenForkPointBranchConstraints(
         c: Context,
         constraintSet: Collection<Pair<TypeVariableMarker, Constraint>>,
         position: IncorporationConstraintPosition
@@ -166,7 +166,7 @@ class ConstraintInjector(
 
                 // During completion, we start processing fork constrains immediately
                 if (c.atCompletionState) {
-                    c.processForkConstraints()
+                    c.resolveForkPointsConstraints()
                 }
             }
         }
@@ -275,8 +275,8 @@ class ConstraintInjector(
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
 
         private var forkPointsData: MutableList<ForkPointData>? = null
-        private var stackForConstraintsSetsFromCurrentForkPoint: Stack<MutableList<ConstraintsFromSingleFork>>? = null
-        private var stackForCurrentConstraintSetFromSingleFork: Stack<MutableList<Pair<TypeVariableMarker, Constraint>>>? = null
+        private var stackForConstraintsSetsFromCurrentForkPoint: Stack<MutableList<ForkPointBranchDescription>>? = null
+        private var stackForConstraintSetFromCurrentForkPointBranch: Stack<MutableList<Pair<TypeVariableMarker, Constraint>>>? = null
 
         override val isInferenceCompatibilityEnabled = languageVersionSettings.supportsFeature(LanguageFeature.InferenceCompatibility)
 
@@ -294,9 +294,9 @@ class ConstraintInjector(
         fun addPossibleNewConstraint(variable: TypeVariableMarker, constraint: Constraint) {
             val constraintsSetsFromCurrentFork = stackForConstraintsSetsFromCurrentForkPoint?.lastOrNull()
             if (constraintsSetsFromCurrentFork != null) {
-                val currentConstraintSetForFork = stackForCurrentConstraintSetFromSingleFork?.lastOrNull()
-                require(currentConstraintSetForFork != null) { "Constraint has been added not under fork {...} call " }
-                currentConstraintSetForFork.add(variable to constraint)
+                val currentConstraintSetForForkPointBranch = stackForConstraintSetFromCurrentForkPointBranch?.lastOrNull()
+                require(currentConstraintSetForForkPointBranch != null) { "Constraint has been added not under fork {...} call " }
+                currentConstraintSetForForkPointBranch.add(variable to constraint)
                 return
             }
 
@@ -333,7 +333,7 @@ class ConstraintInjector(
                 )
                 return true
             } else if (constraintSets.size == 1) {
-                processForkConstraints(
+                processGivenForkPointBranchConstraints(
                     c,
                     constraintSets.single(),
                     position,
@@ -347,17 +347,17 @@ class ConstraintInjector(
             var anyForkSuccessful = false
 
             override fun fork(block: () -> Boolean) {
-                if (stackForCurrentConstraintSetFromSingleFork == null) {
-                    stackForCurrentConstraintSetFromSingleFork = SmartList()
+                if (stackForConstraintSetFromCurrentForkPointBranch == null) {
+                    stackForConstraintSetFromCurrentForkPointBranch = SmartList()
                 }
 
-                stackForCurrentConstraintSetFromSingleFork!!.add(SmartList())
+                stackForConstraintSetFromCurrentForkPointBranch!!.add(SmartList())
 
                 block().also { anyForkSuccessful = anyForkSuccessful || it }
 
                 stackForConstraintsSetsFromCurrentForkPoint!!.last()
                     .addIfNotNull(
-                        stackForCurrentConstraintSetFromSingleFork?.popLast()?.takeIf { it.isNotEmpty() }?.toSet()
+                        stackForConstraintSetFromCurrentForkPointBranch?.popLast()?.takeIf { it.isNotEmpty() }?.toSet()
                     )
             }
         }
