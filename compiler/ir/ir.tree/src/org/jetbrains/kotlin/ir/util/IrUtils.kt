@@ -1322,15 +1322,3 @@ val IrFunction.isIntrinsicInlineClassCreator: Boolean
             && name == Name.identifier("createInlineClassInstance")
             && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
             && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
-
-fun IrFunction.isBoxFunction(typeSystem: IrTypeSystemContext): Boolean {
-    if (this !is IrSimpleFunction) return false
-    val companionClass = parent as? IrClass ?: return false
-    if (!companionClass.isCompanion) return false
-    val parentClass = companionClass.parent as? IrClass ?: return false
-    return name == OperatorNameConventions.BOX && returnType.isSubtypeOf(parentClass.defaultType, typeSystem)
-            && parentClass.isSingleFieldValueClass && valueParameters.size == 1
-            && valueParameters[0].type == parentClass.inlineClassRepresentation!!.underlyingType
-            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && isOperator
-}
-

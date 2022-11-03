@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -171,3 +173,17 @@ val IrTypeParameter.representativeUpperBound: IrType
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
         } ?: superTypes.first()
     }
+
+fun IrFunction.isBoxFunction(typeSystem: IrTypeSystemContext): Boolean {
+    if (this !is IrSimpleFunction) return false
+    val companionClass = parent as? IrClass ?: return false
+    if (!companionClass.isCompanion) return false
+    val parentClass = companionClass.parent as? IrClass ?: return false
+    val underlyingTypeErased = parentClass.inlineClassRepresentation!!.underlyingType.erasedUpperBound.defaultType
+    val parameterTypeErased = valueParameters[0].type.erasedUpperBound.defaultType
+    return name == OperatorNameConventions.BOX
+            && (returnType.classOrNull?.defaultType?.isSubtypeOf(parentClass.defaultType, typeSystem) ?: false)
+            && parentClass.isSingleFieldValueClass && valueParameters.size == 1
+            && underlyingTypeErased.isSubtypeOf(parameterTypeErased, typeSystem)
+            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && isOperator
+}
