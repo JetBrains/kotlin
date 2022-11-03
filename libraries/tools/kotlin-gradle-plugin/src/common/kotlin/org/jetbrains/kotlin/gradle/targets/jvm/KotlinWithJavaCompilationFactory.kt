@@ -26,7 +26,15 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
 
     @Suppress("UNCHECKED_CAST")
     override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType, CO> {
-        val javaSourceSet = target.javaSourceSets.maybeCreate(name)
+        val javaSourceSet = target.javaSourceSets.findByName(name) ?: run {
+            /*
+            Creating the java SourceSet first here:
+            After the javaSourceSet is created, another .all hook will call into this factory creating the KotlinCompilation.
+            This call will just return this instance instead eagerly
+             */
+            target.javaSourceSets.create(name)
+            return target.compilations.getByName(name)
+        }
 
         val compilationImplFactory = KotlinCompilationImplFactory(
             compilerOptionsFactory = { _, _ ->

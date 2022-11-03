@@ -173,12 +173,8 @@ internal abstract class AbstractKotlinPlugin(
                 else -> KOTLIN_DSL_NAME
             }
 
-            // Workaround for indirect mutual recursion between the two `all { ... }` handlers:
-            val compilationsUnderConstruction = mutableMapOf<String, KotlinCompilation<*>>()
-
             javaSourceSets.all { javaSourceSet ->
-                val kotlinCompilation =
-                    compilationsUnderConstruction[javaSourceSet.name] ?: kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
+                val kotlinCompilation = kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
 
                 if (duplicateJavaSourceSetsAsKotlinSourceSets) {
                     val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
@@ -195,12 +191,7 @@ internal abstract class AbstractKotlinPlugin(
             }
 
             kotlinTarget.compilations.all { kotlinCompilation ->
-                val sourceSetName = kotlinCompilation.name
-                compilationsUnderConstruction[sourceSetName] = kotlinCompilation
-
-                // Another Kotlin source set following the other convention, named according to the compilation, not the Java source set:
-                val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.defaultSourceSetName)
-                kotlinCompilation.source(kotlinSourceSet)
+                kotlinCompilation.source(kotlinCompilation.defaultSourceSet)
             }
 
             kotlinTarget.compilations.run {
