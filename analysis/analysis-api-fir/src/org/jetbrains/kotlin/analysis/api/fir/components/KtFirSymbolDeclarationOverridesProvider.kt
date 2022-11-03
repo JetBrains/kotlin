@@ -112,7 +112,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         callableSymbol: KtFirSymbol<*>,
         crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {
-        containingDeclaration.firSymbol.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        containingDeclaration.firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         val firContainer = containingDeclaration.firSymbol.fir
         val firCallableDeclaration = callableSymbol.firSymbol.fir
 
