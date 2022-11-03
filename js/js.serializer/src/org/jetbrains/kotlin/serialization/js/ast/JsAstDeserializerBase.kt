@@ -218,6 +218,7 @@ abstract class JsAstDeserializerBase {
 
     protected fun deserializeNoMetadataHelper(proto: JsAstProtoBuf.Expression): JsExpression = when (proto.expressionCase) {
         JsAstProtoBuf.Expression.ExpressionCase.THIS_LITERAL -> JsThisRef()
+        JsAstProtoBuf.Expression.ExpressionCase.SUPER_LITERAL -> JsSuperRef()
         JsAstProtoBuf.Expression.ExpressionCase.NULL_LITERAL -> JsNullLiteral()
         JsAstProtoBuf.Expression.ExpressionCase.TRUE_LITERAL -> JsBooleanLiteral(true)
         JsAstProtoBuf.Expression.ExpressionCase.FALSE_LITERAL -> JsBooleanLiteral(false)

@@ -199,6 +199,10 @@ abstract class JsAstSerializerBase {
                 builder.thisLiteral = JsAstProtoBuf.ThisLiteral.newBuilder().build()
             }
 
+            override fun visitSuper(x: JsSuperRef) {
+                builder.superLiteral = JsAstProtoBuf.SuperLiteral.newBuilder().build()
+            }
+
             override fun visitNull(x: JsNullLiteral) {
                 builder.nullLiteral = JsAstProtoBuf.NullLiteral.newBuilder().build()
             }
