@@ -1,5 +1,6 @@
-// SKIP_TXT
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
+// SKIP_TXT
 
 // FILE: ObjectStubSerializer.java
 import org.jetbrains.annotations.*;
