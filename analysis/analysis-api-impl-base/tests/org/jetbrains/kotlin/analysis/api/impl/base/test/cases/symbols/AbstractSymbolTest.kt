@@ -57,14 +57,16 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         }
 
         fun KtSymbol.safePointer(): PointerWrapper? {
-            val regularPointer = runCatching(::createPointer).let {
+            val regularPointer = runCatching {
+                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = false, action = ::createPointer)
+            }.let {
                 if (directiveToIgnoreSymbolRestore == null) it.getOrThrow() else it.getOrNull()
             } ?: return null
 
             val nonPsiPointer = kotlin.runCatching {
                 if (this is KtFileSymbol) return@runCatching null
 
-                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(::createPointer)
+                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = true, action = ::createPointer)
             }
 
             return PointerWrapper(
