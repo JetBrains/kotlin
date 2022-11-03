@@ -51,7 +51,7 @@ class PersistentFlow : Flow {
      * backwardsAliasMap: { a -> [x, y] }
      */
     var directAliasMap: PersistentMap<RealVariable, RealVariable>
-    var backwardsAliasMap: PersistentMap<RealVariable, PersistentList<RealVariable>>
+    var backwardsAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>
 
     var assignmentIndex: PersistentMap<RealVariable, Int>
 
@@ -169,68 +169,54 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
 
     override fun addLocalVariableAlias(flow: PersistentFlow, alias: RealVariable, underlyingVariable: RealVariable) {
-        removeLocalVariableAlias(flow, alias)
-        flow.directAliasMap = flow.directAliasMap.put(alias, underlyingVariable)
-        flow.backwardsAliasMap = flow.backwardsAliasMap.put(
-            underlyingVariable,
-            { persistentListOf(alias) },
-            { variables -> variables + alias }
-        )
+        flow.addAliases(persistentSetOf(alias), flow.unwrapVariable(underlyingVariable))
     }
 
-    /**
-     * For example, consider `var b = a`. In this case, `b` is an alias of `a`. In other words, `a` is the original variable of `b`.
-     *
-     * For back alias, consider the following.
-     * ```
-     * var b = a
-     * var c = b
-     * ```
-     * Here, if the current `alias` references `b`, `c` is a back alias of `b`. So if one calls this method with `b`, we must also
-     * remove aliasing between `b` and `c`. But before removing aliasing, we need to copy any statements that apply to `b` to `c`.
-     */
     override fun removeLocalVariableAlias(flow: PersistentFlow, alias: RealVariable) {
-        val backAliases = flow.backwardsAliasMap[alias] ?: emptyList()
-        for (backAlias in backAliases) {
-            flow.logicStatements[alias]?.let { it ->
-                val newStatements = it.map { it.replaceVariable(alias, backAlias) }
-                val replacedStatements =
-                    flow.logicStatements[backAlias]?.let { existing -> existing + newStatements } ?: newStatements.toPersistentList()
-                flow.logicStatements = flow.logicStatements.put(backAlias, replacedStatements)
-            }
-
-            fun processApprovedStatements(isDiff: Boolean) {
-                val statements = if (isDiff) flow.approvedTypeStatementsDiff else flow.approvedTypeStatements
-                statements[alias]?.let { it ->
-                    val newStatements = it.replaceVariable(alias, backAlias)
-                    val replacedStatements =
-                        statements[backAlias]?.let { existing -> existing + newStatements } ?: newStatements
-                    val result = statements.put(backAlias, replacedStatements.toPersistent())
-                    if (isDiff) {
-                        flow.approvedTypeStatementsDiff = result
-                    } else {
-                        flow.approvedTypeStatements = result
-                    }
-                }
-            }
-
-            processApprovedStatements(isDiff = false)
-            processApprovedStatements(isDiff = true)
-        }
-
         val original = flow.directAliasMap[alias]
-        if (original != null) {
-            flow.directAliasMap = flow.directAliasMap.remove(alias)
-            val updatedBackwardsAliasList = flow.backwardsAliasMap.getValue(original).remove(alias)
-            flow.backwardsAliasMap = if (updatedBackwardsAliasList.isEmpty()) {
-                flow.backwardsAliasMap.remove(original)
-            } else {
-                flow.backwardsAliasMap.put(original, updatedBackwardsAliasList)
+        val backAliases = flow.backwardsAliasMap[alias]
+        flow.directAliasMap -= alias
+        flow.backwardsAliasMap -= alias
+
+        // Move all statements to the next representative of the equivalence set
+        val replacement = original ?: backAliases?.first()
+        if (replacement != null) {
+            flow.logicStatements[alias]?.let { statements ->
+                val newStatements = statements.map { it.replaceVariable(alias, replacement) }
+                flow.logicStatements = flow.logicStatements.put(replacement, { newStatements.toPersistentList() }, { it + newStatements })
+            }
+            flow.approvedTypeStatements[alias]?.let {
+                flow.approvedTypeStatements = flow.approvedTypeStatements.addTypeStatement(it.replaceVariable(alias, replacement))
+            }
+            flow.approvedTypeStatementsDiff[alias]?.let {
+                flow.approvedTypeStatementsDiff = flow.approvedTypeStatementsDiff.addTypeStatement(it.replaceVariable(alias, replacement))
             }
         }
-        flow.backwardsAliasMap = flow.backwardsAliasMap.remove(alias)
-        for (backAlias in backAliases) {
-            flow.directAliasMap = flow.directAliasMap.remove(backAlias)
+
+        // Point all other members of the equivalence set to the new representative
+        if (original != null) {
+            val siblings = flow.backwardsAliasMap.getValue(original).remove(alias)
+            // Although this code is written defensively, in practice `backAliases` should be null;
+            // any aliases to this variable should have been treated as aliases to `original` instead.
+            flow.backwardsAliasMap = if (backAliases != null) {
+                flow.directAliasMap += backAliases.map { it to original }
+                flow.backwardsAliasMap.put(original, siblings + backAliases)
+            } else if (siblings.isNotEmpty()) {
+                flow.backwardsAliasMap.put(original, siblings)
+            } else {
+                flow.backwardsAliasMap.remove(original)
+            }
+        } else if (replacement != null) {
+            flow.directAliasMap -= replacement
+            flow.addAliases(backAliases!!, replacement)
+        }
+    }
+
+    private fun PersistentFlow.addAliases(aliases: PersistentSet<RealVariable>, target: RealVariable) {
+        val withoutSelf = aliases - target
+        if (withoutSelf.isNotEmpty()) {
+            directAliasMap += withoutSelf.map { it to target }
+            backwardsAliasMap = backwardsAliasMap.put(target, { withoutSelf }, { it + withoutSelf })
         }
     }
 
