@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
+import org.jetbrains.kotlin.gradle.util.capitalize
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.DisplayName
 class AggregatingKotlinTestReportIT : KGPBaseTest() {
     @DisplayName("KT-54506: `allTests` is not false positively up-to-date after failure")
     @GradleTest
-    @Disabled
     fun testFailedTestsAreNotUpToDate(gradleVersion: GradleVersion) {
         project(
             "new-mpp-lib-with-tests",
@@ -27,6 +27,9 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                 it.replace("expectedFun()", "assertEquals(0, 1)")
             }
 
+            val nativeTarget = MPPNativeTargets.current
+            val capitalizedNativeTarget = nativeTarget.capitalize()
+
             buildAndFail(":allTests") {
                 // expect only an aggregate test task fail
                 assertTasksExecuted(
@@ -36,6 +39,9 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                     ":compileKotlinJvmWithoutJava",
                     ":compileTestKotlinJvmWithoutJava",
                     ":jvmWithoutJavaTest",
+                    ":compileKotlin$capitalizedNativeTarget",
+                    ":compileTestKotlin$capitalizedNativeTarget",
+                    ":${nativeTarget}Test"
                 )
                 assertTasksFailed(":allTests")
             }
@@ -47,16 +53,37 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                     ":compileTestKotlinJvmWithoutJava",
                     ":compileKotlinJs",
                     ":compileTestKotlinJs",
+                    ":compileKotlin$capitalizedNativeTarget",
+                    ":compileTestKotlin$capitalizedNativeTarget",
                 )
                 assertTasksExecuted(
                     ":jvmWithoutJavaTest",
                     ":jsTest",
+                    ":${nativeTarget}Test",
+                )
+                assertTasksFailed(":allTests")
+            }
+
+            buildAndFail(":allTests") {
+                // still expect only an aggregate test task fail
+                assertTasksUpToDate(
+                    ":compileKotlinJvmWithoutJava",
+                    ":compileTestKotlinJvmWithoutJava",
+                    ":compileKotlinJs",
+                    ":compileTestKotlinJs",
+                    ":compileKotlin$capitalizedNativeTarget",
+                    ":compileTestKotlin$capitalizedNativeTarget",
+                )
+                assertTasksExecuted(
+                    ":jvmWithoutJavaTest",
+                    ":jsTest",
+                    ":${nativeTarget}Test",
                 )
                 assertTasksFailed(":allTests")
             }
 
             buildAndFail(":jvmWithoutJavaTest") {
-                // expect a single test task still fails after an aggregate test task fail
+                // expect that a single test task invocation also still fails
                 assertTasksUpToDate(
                     ":compileKotlinJvmWithoutJava",
                     ":compileTestKotlinJvmWithoutJava",
