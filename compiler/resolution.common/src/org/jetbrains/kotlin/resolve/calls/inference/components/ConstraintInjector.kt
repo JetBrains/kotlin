@@ -322,22 +322,27 @@ class ConstraintInjector(
             }
 
             val constraintSets = stackForConstraintsSetsFromCurrentForkPoint?.popLast()
-            if (constraintSets == null || constraintSets.isEmpty()) return isThereSuccessfulFork
 
-            if (constraintSets.size > 1) {
-                if (forkPointsData == null) {
-                    forkPointsData = SmartList()
+            when {
+                // Just an optimization
+                constraintSets.isNullOrEmpty() -> return isThereSuccessfulFork
+                constraintSets.size > 1 -> {
+                    if (forkPointsData == null) {
+                        forkPointsData = SmartList()
+                    }
+                    forkPointsData!!.addIfNotNull(
+                        constraintSets
+                    )
+                    return true
                 }
-                forkPointsData!!.addIfNotNull(
-                    constraintSets
-                )
-                return true
-            } else if (constraintSets.size == 1) {
-                processGivenForkPointBranchConstraints(
-                    c,
-                    constraintSets.single(),
-                    position,
-                )
+                else -> {
+                    // The emptiness case has been already handled above
+                    processGivenForkPointBranchConstraints(
+                        c,
+                        constraintSets.single(),
+                        position,
+                    )
+                }
             }
 
             return isThereSuccessfulFork
