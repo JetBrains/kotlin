@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // LANGUAGE: +NoDeprecationOnDeprecatedEnumEntries
 // ISSUE: KT-37975

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 
 sealed class Tree<TIndex, out TCommon, out TInner, out TLeaf> {

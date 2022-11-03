@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 class Function1Impl : (String) -> Unit {
     override fun invoke(myParamName: String) {}
 }
