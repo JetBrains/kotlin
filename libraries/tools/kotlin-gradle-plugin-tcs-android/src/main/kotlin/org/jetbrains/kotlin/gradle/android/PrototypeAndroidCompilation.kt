@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalDecoratedKotlinCompilation
 
-class PrototypeAndroidCompilation(delegate: Delegate) : ExternalKotlinCompilation(delegate) {
+class PrototypeAndroidCompilation(delegate: Delegate) : ExternalDecoratedKotlinCompilation(delegate) {
     override val kotlinOptions: KotlinCommonOptions
         get() = super.kotlinOptions as KotlinJvmOptions
 

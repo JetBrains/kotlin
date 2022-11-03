@@ -64,8 +64,8 @@ class ExternalKotlinTarget internal constructor(
         project.buildAdhocComponentsFromKotlinVariants(kotlinComponents)
     }
 
-    override val compilations: NamedDomainObjectContainer<ExternalKotlinCompilation> by lazy {
-        project.container(ExternalKotlinCompilation::class.java)
+    override val compilations: NamedDomainObjectContainer<ExternalDecoratedKotlinCompilation> by lazy {
+        project.container(ExternalDecoratedKotlinCompilation::class.java)
     }
 
     override fun mavenPublication(action: Action<MavenPublication>) {

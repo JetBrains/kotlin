@@ -40,6 +40,7 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     target.onCreated()
     descriptor.configure?.invoke(decorated)
     targets.add(decorated)
+    decorated.logger.info("Created ${descriptor.platformType} target")
     return decorated
 }
 
