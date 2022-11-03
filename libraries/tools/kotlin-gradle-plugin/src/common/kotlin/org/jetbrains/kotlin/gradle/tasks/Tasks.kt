@@ -773,7 +773,7 @@ abstract class KotlinCompile @Inject constructor(
             javaPackagePrefix,
             args,
             environment,
-            defaultKotlinJavaToolchain.get().providedJvm.get().javaHome,
+            defaultKotlinJavaToolchain.get().buildJvm.get().javaHome,
             taskOutputsBackup
         )
         compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }

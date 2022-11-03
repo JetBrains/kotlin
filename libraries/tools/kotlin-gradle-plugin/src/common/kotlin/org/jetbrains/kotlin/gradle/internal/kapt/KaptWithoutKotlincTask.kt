@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.rootOrSelf
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.listPropertyWithConvention
 import org.jetbrains.kotlin.utils.PathUtil
 import org.slf4j.LoggerFactory
@@ -94,7 +93,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         if (addJdkClassesToClasspath.get()) {
             compileClasspath.addAll(
                 0,
-                PathUtil.getJdkClassesRoots(defaultKotlinJavaToolchain.get().providedJvm.get().javaHome)
+                PathUtil.getJdkClassesRoots(defaultKotlinJavaToolchain.get().buildJvm.get().javaHome)
             )
         }
 
@@ -153,7 +152,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     private fun getWorkerIsolationMode(): IsolationMode {
         val toolchainProvider = defaultKotlinJavaToolchain.get()
-        val gradleJvm = toolchainProvider.currentJvm.get()
+        val gradleJvm = toolchainProvider.gradleJvm.get()
         // Ensuring Gradle build JDK is set to kotlin toolchain by also comparing javaExecutable paths,
         // as user may set JDK with same major Java version, but from different vendor
         val isRunningOnGradleJvm = gradleJvm.javaVersion == toolchainProvider.javaVersion.get() &&
