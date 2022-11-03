@@ -214,31 +214,23 @@ abstract class KotlinTestReport : TestReport() {
         ignoreFailures = false
         checkFailedTests = true
 
-        disableIndividualTestTaskReportingAndFailing()
+        disableIndividualTestTaskFailing()
     }
 
-    private fun disableIndividualTestTaskReportingAndFailing() {
-        testTasks.forEach {
-            disableTestReporting(it)
+    private fun disableIndividualTestTaskFailing() {
+        testTasks.forEach { task ->
+            task.ignoreFailures = true
+            if (task is KotlinTest) {
+                task.ignoreRunFailures = true
+            }
         }
 
         children.forEach { child ->
             child.configure {
                 it.checkFailedTests = false
-                it.disableIndividualTestTaskReportingAndFailing()
+                it.disableIndividualTestTaskFailing()
             }
         }
-    }
-
-    private fun disableTestReporting(task: AbstractTestTask) {
-        task.ignoreFailures = true
-        if (task is KotlinTest) {
-            task.ignoreRunFailures = true
-        }
-
-        task.reports.html.required.set(false)
-
-        task.reports.junitXml.required.set(false)
     }
 
     private class SuppressedTestRunningFailureListener(
