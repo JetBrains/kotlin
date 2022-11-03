@@ -305,8 +305,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":plugins:jvm-abi-gen",
         ":plugins:jvm-abi-gen-embeddable",
         ":test-instrumenter",
-        ":wasm:wasm.ir"
-
+        ":wasm:wasm.ir",
+        ":repo:codebase-tests"
 
 include ":kotlinx-atomicfu-compiler-plugin",
         ":kotlinx-atomicfu-runtime",

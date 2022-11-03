@@ -628,6 +628,7 @@ tasks {
             ":compiler:tests-against-klib:test"
         )
         dependsOn(":plugins:jvm-abi-gen:test")
+        dependsOn(":repo:codebase-tests:test")
     }
 
     register("testsForBootstrapBuildTest") {
@@ -789,6 +790,10 @@ tasks {
         dependsOn(":kotlin-annotation-processing:testJdk11")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
+    }
+
+    register("codebaseTests") {
+        dependsOn(":repo:codebase-tests:test")
     }
 
     register("test") {

@@ -35,9 +35,6 @@ dependencies {
 
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(toolsJar())
-    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.7")
-    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.7")
-    testImplementation("com.fasterxml.woodstox:woodstox-core:6.2.4")
 
     antLauncherJar(commonDependency("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())
