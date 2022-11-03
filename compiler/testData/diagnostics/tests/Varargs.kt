@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun v(x : Int, y : String, vararg f : Long) {}
 fun v1(vararg f :  (Int) -> Unit) {}
 

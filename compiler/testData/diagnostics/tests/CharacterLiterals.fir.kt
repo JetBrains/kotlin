@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun test(c : Char) {
   test(<!EMPTY_CHARACTER_LITERAL!>''<!>)
   test('a')

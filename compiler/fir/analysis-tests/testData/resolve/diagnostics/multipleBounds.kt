@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 package Jet87
 
 open class A() {

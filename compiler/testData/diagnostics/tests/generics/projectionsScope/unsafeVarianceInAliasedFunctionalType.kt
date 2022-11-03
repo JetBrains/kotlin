@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 class Foo<out T>(val baz: Baz<T>)
 

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: annotation.kt
 package kotlin.native.concurrent
 

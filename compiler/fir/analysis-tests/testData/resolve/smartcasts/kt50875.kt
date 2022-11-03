@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // ISSUE: KT-50875
 
 interface A {

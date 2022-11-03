@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // COMPARE_WITH_LIGHT_TREE
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)

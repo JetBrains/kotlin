@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 class Expression<T>(val x: T)
 
 class GreaterOp(val expr1: Expression<*>, val expr2: Expression<*>)

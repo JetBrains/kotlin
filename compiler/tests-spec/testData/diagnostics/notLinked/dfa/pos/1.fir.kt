@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 // TODO: https://youtrack.jetbrains.com/issue/KT-49862

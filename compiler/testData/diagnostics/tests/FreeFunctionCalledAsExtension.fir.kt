@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun foo(a: (String) -> Unit) {
     "".<!UNRESOLVED_REFERENCE!>a<!>()
 }

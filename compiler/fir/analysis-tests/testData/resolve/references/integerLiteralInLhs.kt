@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun Short.foo(): Int = 1
 fun Int.foo(): Int = 2
 

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses -ApproximateIntegerLiteralTypesInReceiverPosition
 // SKIP_JAVAC
 // ALLOW_KOTLIN_PACKAGE

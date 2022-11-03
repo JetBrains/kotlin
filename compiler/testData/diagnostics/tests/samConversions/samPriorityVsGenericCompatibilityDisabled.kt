@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +DisableCompatibilityModeForNewInference
 // SKIP_TXT
 // FIR_IDENTICAL

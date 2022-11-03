@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +ClassTypeParameterAnnotations
 annotation class A1
 annotation class A2(val some: Int = 12)

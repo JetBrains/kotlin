@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 interface My {
     <!REDUNDANT_OPEN_IN_INTERFACE!>open<!> fun foo()

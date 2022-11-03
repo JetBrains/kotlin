@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 import java.lang.annotation.Retention
 import java.lang.annotation.Target

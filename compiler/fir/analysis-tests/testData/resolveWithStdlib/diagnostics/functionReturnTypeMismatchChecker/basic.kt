@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // bug: type of the expression in return statement is Char
 fun illegalReturnIf(): Char {
     return if (1 < 2) 'a' else { 1 }

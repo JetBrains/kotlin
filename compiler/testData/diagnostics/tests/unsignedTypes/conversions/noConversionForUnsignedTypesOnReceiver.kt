@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun UInt.fUInt() {}
 fun UByte.fUByte() {}
 fun UShort.fUShort() {}

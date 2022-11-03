@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 @Repeatable
 @Target( AnnotationTarget.TYPE_PARAMETER)
 annotation class TypeParameterAnn(val name: String)

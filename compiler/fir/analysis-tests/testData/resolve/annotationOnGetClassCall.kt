@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 annotation class Ann(val x: Long, val s: String)
 
 fun test() {

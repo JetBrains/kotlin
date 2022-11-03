@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: ObjectPattern.java
 
 import org.jetbrains.annotations.NotNull;

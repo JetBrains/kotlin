@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 interface List<out T : Any> {
     operator fun get(index: Int): T
 

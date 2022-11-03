@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 val p1 = -1
 val p2 = -1.toLong()
 val p3 = (-1).toByte()

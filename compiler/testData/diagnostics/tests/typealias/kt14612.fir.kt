@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // ISSUE: KT-14612
 
 typealias S = @S Suppress

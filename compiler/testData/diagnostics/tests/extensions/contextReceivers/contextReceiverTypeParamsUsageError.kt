@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun <T> f(t: <!UNSUPPORTED_FEATURE!>@ContextFunctionTypeParams(42)<!> T, tt: <!UNSUPPORTED_FEATURE!>@ContextFunctionTypeParams(1)<!> Int) {}
 
 fun test() {

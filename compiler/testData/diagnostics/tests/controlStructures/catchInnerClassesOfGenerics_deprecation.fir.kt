@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: -ProhibitInnerClassesOfGenericClassExtendingThrowable
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE

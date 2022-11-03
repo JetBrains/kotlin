@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // NI_EXPECTED_FILE
 
 open class MyClass private constructor(val x: Int) {

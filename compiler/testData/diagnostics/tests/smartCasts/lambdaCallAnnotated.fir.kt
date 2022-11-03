@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // See KT-9134: smart cast is not provided inside lambda call
 
 @Target(AnnotationTarget.EXPRESSION)

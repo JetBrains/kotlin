@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // TESTCASE NUMBER: 1
 fun case_1() {
     true checkType { <!NONE_APPLICABLE!>check<!><Boolean?>() }

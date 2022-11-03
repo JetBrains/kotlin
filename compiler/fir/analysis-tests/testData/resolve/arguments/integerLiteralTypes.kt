@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun takeInt(x: Int) {}
 fun takeLong(x: Long) {}
 fun takeByte(x: Byte) {}

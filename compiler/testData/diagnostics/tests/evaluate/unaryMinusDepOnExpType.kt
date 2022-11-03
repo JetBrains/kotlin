@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun fooInt(p: Int) = p
 fun fooLong(p: Long) = p
 fun fooByte(p: Byte) = p

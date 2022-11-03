@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)
 annotation class A
 

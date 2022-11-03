@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 //KT-559 Forbid abstract method call through super
 

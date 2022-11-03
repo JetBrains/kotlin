@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 interface Expression<K>
 
 interface ExpressionWithColumnType<K> : Expression<K>

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // !OPT_IN: kotlin.contracts.ExperimentalContracts

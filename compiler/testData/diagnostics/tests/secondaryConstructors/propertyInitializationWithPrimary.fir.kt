@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class A(val w: Char) {
     val x: Int

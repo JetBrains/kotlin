@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // See also KT-4285
 open class A {
     open fun foo(x: Int = 0) {}

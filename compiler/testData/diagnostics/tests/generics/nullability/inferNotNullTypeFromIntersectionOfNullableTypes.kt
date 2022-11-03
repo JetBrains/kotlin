@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 
 fun simpleTypeAndNumberType(b: Comparable<*>?) {
     if (b is Byte?) {

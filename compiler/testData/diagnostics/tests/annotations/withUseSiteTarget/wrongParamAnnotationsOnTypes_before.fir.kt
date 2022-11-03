@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 

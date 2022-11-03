@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // TESTCASE NUMBER: 1, 2
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)

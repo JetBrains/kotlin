@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 typealias SymbolToTransformer = MutableMap<Int, (String) -> Double>
 
 

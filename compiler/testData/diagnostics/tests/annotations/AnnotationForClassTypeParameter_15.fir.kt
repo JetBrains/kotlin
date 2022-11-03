@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: -ClassTypeParameterAnnotations
 @Target(AnnotationTarget.TYPE_PARAMETER)
 annotation class A1

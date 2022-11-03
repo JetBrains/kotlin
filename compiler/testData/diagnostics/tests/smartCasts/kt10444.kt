@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // KT-10444 Do not ignore smart (unchecked) casts to the same classifier
 

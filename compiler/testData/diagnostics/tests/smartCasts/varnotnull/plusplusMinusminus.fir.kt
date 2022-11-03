@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun foo(arg: Int?): Int {
     var i = arg
     if (i != null && i++ == 5) {

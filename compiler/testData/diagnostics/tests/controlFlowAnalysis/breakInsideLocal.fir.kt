@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // LANGUAGE: +BreakContinueInInlineLambdas
 
 inline fun <T> foo(block: () -> T): T  = block()

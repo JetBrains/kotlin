@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // FILE: Derived.java
 import kotlin.jvm.functions.Function0;

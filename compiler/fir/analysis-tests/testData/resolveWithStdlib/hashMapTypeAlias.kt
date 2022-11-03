@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 typealias MyT<X> = HashMap<X, Int>
 
 fun <X> MyT<X>.add(x: X, y: Int) {}

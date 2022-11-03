@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 annotation class Ann(val x: Int, val value: String, val y: Double)
 

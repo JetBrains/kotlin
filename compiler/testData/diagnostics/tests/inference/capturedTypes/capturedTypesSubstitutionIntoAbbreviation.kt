@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 typealias Action<K> = (@UnsafeVariance K) -> Unit
 typealias Action2<K> = (@UnsafeVariance K) -> K
 

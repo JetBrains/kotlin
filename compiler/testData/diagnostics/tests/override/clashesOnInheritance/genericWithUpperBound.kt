@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // FILE: JFooWithUpperBound.java
 public interface JFooWithUpperBound<T extends IBase> {

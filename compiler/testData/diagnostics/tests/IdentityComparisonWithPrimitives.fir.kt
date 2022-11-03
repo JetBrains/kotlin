@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 val z: Boolean = true
 val b: Byte = 0
 val s: Short = 0

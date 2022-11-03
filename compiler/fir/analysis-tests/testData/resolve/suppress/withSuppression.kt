@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 const val x = "123"
     @Suppress("CONST_VAL_WITH_GETTER")
     get() = field

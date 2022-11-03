@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 interface UpdatableRendering<out T : UpdatableRendering<T>> {
     fun canUpdateFrom(another: @UnsafeVariance T): Boolean
 }

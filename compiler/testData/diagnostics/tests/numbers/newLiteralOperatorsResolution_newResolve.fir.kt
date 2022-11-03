@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // LANGUAGE: +ApproximateIntegerLiteralTypesInReceiverPosition
 // WITH_STDLIB
 // ISSUE: KT-38895

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: -ProhibitNonConstValuesAsVarargsInAnnotations, -ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 val nonConstArray = longArrayOf(0)

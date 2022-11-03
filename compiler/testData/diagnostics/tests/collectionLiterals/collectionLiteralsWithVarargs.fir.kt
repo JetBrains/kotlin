@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 annotation class Ann1(vararg val a: String = [])

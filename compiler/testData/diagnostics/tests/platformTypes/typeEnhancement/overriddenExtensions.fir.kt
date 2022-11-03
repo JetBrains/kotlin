@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: A.kt
 open class A {
     open fun String.foo(y: String?): Int = 1

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 class None<T>
 class In<in T>
 class Out<out T>

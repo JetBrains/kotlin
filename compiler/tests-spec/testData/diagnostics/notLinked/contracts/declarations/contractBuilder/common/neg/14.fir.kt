@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // NB: should work after KT-5907 / KT-4450 fix
 
 val currentTimeMillis = 1234L

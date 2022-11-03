@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 import kotlin.reflect.KClass
 
 val javaClass: Class<String> = String::class.java

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 abstract class A {
     open val <D> Inv<D>.phasedFir: D get() = TODO()
 }

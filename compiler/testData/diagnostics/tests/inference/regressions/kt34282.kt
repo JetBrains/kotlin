@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun bar(y: (Int) -> Int) = 1

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // !DIAGNOSTICS: -USELESS_CAST
 // ISSUE: KT-46173

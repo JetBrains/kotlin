@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 //KT-1066 false 'Variable cannot be initialized before declaration'
 

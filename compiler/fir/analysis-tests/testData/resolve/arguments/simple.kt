@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun foo(first: Int, second: Double, third: Boolean, fourth: String) {}
 
 fun test() {

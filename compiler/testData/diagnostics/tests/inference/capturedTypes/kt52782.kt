@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // SKIP_TXT
 // FILE: Foo.java
 public abstract class Foo<K extends Bar<? extends Foo<K>>> {

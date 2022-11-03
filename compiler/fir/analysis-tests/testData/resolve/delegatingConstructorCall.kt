@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun <K> materialize(): K = null!!
 
 open class A1(val x: String)

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // SCOPE_DUMP: C:foo;x, D:foo;x
 
 interface A {

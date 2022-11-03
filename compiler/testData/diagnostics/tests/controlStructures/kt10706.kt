@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun fn(c: Char?): Any? =
         if (c == null) TODO()
         else when (<!DEBUG_INFO_SMARTCAST!>c<!>) {

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // LANGUAGE: +ApproximateIntegerLiteralTypesInReceiverPosition
 val p1: Byte = <!TYPE_MISMATCH!>(1 + 2) * 2<!>
 val p2: Short = <!TYPE_MISMATCH!>(1 + 2) * 2<!>

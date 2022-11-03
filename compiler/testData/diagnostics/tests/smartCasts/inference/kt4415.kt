@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 //KT-4415 Class Auto-Cast Bug
 
 interface SelfJson

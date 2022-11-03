@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: a.kt
 package boundsWithSubstitutors
     open class A<T>

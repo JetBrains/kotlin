@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +LateinitTopLevelProperties +LateinitLocalVariables
 import kotlin.reflect.KProperty
 

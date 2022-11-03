@@ -1,2 +1,3 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 val x: Char = '1'.plus(1)

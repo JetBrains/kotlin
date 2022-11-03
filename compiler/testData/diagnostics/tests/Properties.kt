@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 var x : Int = 1 + <!UNINITIALIZED_VARIABLE!>x<!>
    get() : Int = 1
    set(value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {

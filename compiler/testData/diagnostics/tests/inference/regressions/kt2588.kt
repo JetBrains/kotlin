@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 //T-2588 Allow to specify exact super type (expected) in inference if many

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 class Foo<T : Number>(var x: T) {
     fun setX1(y: T): T {
         this.x = y

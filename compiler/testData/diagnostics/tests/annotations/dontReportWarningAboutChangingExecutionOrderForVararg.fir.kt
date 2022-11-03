@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Anno(vararg val x: String, val y: String)
 

@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt

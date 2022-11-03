@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // JAVAC_EXPECTED_FILE
 // See also KT-10735
 fun test() {

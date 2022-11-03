@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: KtVisitor.java
 
 public class KtVisitor<R, D> {}

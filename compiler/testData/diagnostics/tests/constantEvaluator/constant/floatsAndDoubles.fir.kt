@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 package test
 
 // val prop1: 3.4028235E38.toFloat()

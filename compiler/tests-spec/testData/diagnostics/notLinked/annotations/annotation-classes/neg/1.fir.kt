@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // TESTCASE NUMBER: 2, 3, 4
 @Target(AnnotationTarget.CONSTRUCTOR)
 annotation class Case12_1

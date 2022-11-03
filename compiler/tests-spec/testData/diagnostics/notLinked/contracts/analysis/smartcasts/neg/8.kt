@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 

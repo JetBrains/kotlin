@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // KT-3563 Compiler requiring java.io.File, and it's unclear why
 

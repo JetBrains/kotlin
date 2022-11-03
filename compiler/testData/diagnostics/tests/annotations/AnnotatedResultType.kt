@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // Result type can be annotated
 @Target(AnnotationTarget.TYPE)

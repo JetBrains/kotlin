@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 const val p1: Int = '\n'.code
 const val p2: Long = '\n'.code.toLong()
 const val p3: Byte = '\n'.code.toByte()

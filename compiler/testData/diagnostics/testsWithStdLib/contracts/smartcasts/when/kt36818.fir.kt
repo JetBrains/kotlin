@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 fun main(x1: Double?, range: ClosedRange<Double>) {
     when (x1) {
         null -> throw Exception()

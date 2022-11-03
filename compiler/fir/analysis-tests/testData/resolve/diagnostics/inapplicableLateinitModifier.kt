@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 object Delegate {
     operator fun getValue(instance: Any?, property: Any) : String = ""
     operator fun setValue(instance: Any?, property: Any, value: String) {}
