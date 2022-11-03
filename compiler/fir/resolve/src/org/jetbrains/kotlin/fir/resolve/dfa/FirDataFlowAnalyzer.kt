@@ -1221,7 +1221,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             // TODO: add unstable smartcast for non-local var
             val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(node.flow, property.symbol, assignment)
             if (variable != null) {
-                logicSystem.removeAllAboutVariable(node.flow, variable)
+                logicSystem.recordNewAssignment(node.flow, variable, context.newAssignmentIndex())
             }
         }
         processConditionalContract(assignment)
@@ -1243,7 +1243,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         )
         val isAssignment = assignment != null
         if (isAssignment) {
-            logicSystem.removeAllAboutVariable(flow, propertyVariable)
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }
 

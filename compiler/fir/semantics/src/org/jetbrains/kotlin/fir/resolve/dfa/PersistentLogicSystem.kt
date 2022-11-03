@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
+import kotlin.math.max
 
 data class PersistentTypeStatement(
     override val variable: RealVariable,
@@ -138,12 +139,19 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         // the aliasing of `y` to `a.x` after `if (p) { y = a.x } else { y = a.x }`.
         val commonAliases = computeCommonAliases(flows)
 
+        // If a variable was reassigned in one branch, it was reassigned at the join point.
+        val reassignedVariables = mutableMapOf<RealVariable, Int>()
         for (flow in flows) {
             for ((variable, index) in flow.assignmentIndex) {
                 if (commonFlow.assignmentIndex[variable] != index) {
-                    removeAllAboutVariable(commonFlow, variable)
+                    // Ideally we should generate an entirely new index here, but it doesn't really
+                    // matter; the important part is that it's different from `commonFlow.previousFlow`.
+                    reassignedVariables[variable] = max(index, reassignedVariables[variable] ?: 0)
                 }
             }
+        }
+        for ((variable, index) in reassignedVariables) {
+            recordNewAssignment(commonFlow, variable, index)
         }
 
         val toReplace = statements.map { it.variable to it.toPersistent() }
@@ -158,7 +166,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         return commonFlow
     }
 
-    private fun computeCommonAliases(flows: Collection<PersistentFlow>): MutableMap<RealVariable, RealVariableAndType> =
+    private fun computeCommonAliases(flows: Collection<PersistentFlow>): Map<RealVariable, RealVariableAndType> =
         flows.first().directAliasMap.filterTo(mutableMapOf()) { (variable, alias) ->
             flows.all { it.directAliasMap[variable] == alias }
         }
@@ -471,6 +479,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun recordNewAssignment(flow: PersistentFlow, variable: RealVariable, index: Int) {
+        removeAllAboutVariable(flow, variable)
         flow.assignmentIndex = flow.assignmentIndex.put(variable, index)
     }
 
