@@ -79,6 +79,6 @@ fun test3() {
     if (b is String) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // error
         b.length // ok
-        c.<!UNRESOLVED_REFERENCE!>length<!> // ok
+        c.length // ok
     }
 }
