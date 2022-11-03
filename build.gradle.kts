@@ -708,7 +708,6 @@ tasks {
 
     register("scriptingTest") {
         dependsOn("scriptingJvmTest")
-        dependsOn(":kotlin-scripting-js-test:test")
     }
 
     register("compilerTest") {

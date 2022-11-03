@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -158,29 +157,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != OK) return pluginLoadResult
 
-        //TODO: add to configuration everything that may come in handy at script compiler and use it there
         if (arguments.script) {
-
-            if (!arguments.enableJsScripting) {
-                @Suppress("SpellCheckingInspection")
-                messageCollector.report(ERROR, "Script for K/JS should be enabled explicitly, see -Xenable-js-scripting")
-                return COMPILATION_ERROR
-            }
-
-            configuration.put(CommonConfigurationKeys.MODULE_NAME, "repl.kts")
-
-            val environment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration)
-            val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(rootDisposable, environment, configuration)
-            projectEnv.registerExtensionsFromPlugins(configuration)
-
-            val scriptingEvaluators = ScriptEvaluationExtension.getInstances(projectEnv.project)
-            val scriptingEvaluator = scriptingEvaluators.find { it.isAccepted(arguments) }
-            if (scriptingEvaluator == null) {
-                messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")
-                return COMPILATION_ERROR
-            }
-
-            return scriptingEvaluator.eval(arguments, configuration, projectEnv)
+            messageCollector.report(ERROR, "K/JS does not support Kotlin script (*.kts) files")
+            return COMPILATION_ERROR
         }
 
         if (arguments.freeArgs.isEmpty() && !(incrementalCompilationIsEnabledForJs(arguments))) {

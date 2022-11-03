@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
-import org.jetbrains.kotlin.scripting.js.loadScriptConfiguration
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
@@ -88,7 +87,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
     override fun configureTestSpecific(configuration: CompilerConfiguration, testFiles: List<TestFile>) {
         if (testFiles.any { it.name.endsWith(".kts") }) {
-            loadScriptConfiguration(configuration)
             loadPluginsForTests(configuration)
         }
     }

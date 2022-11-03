@@ -198,14 +198,4 @@ public class Fir2IrJsTextTestGenerated extends AbstractFir2IrJsTextTest {
             runTest("compiler/testData/ir/irJsText/native/nativeNativeKotlin.kt");
         }
     }
-
-    @Nested
-    @TestMetadata("compiler/testData/ir/irJsText/scripting")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Scripting {
-        @Test
-        public void testAllFilesPresentInScripting() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/scripting"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-    }
 }

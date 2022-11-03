@@ -187,32 +187,4 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/native/nativeNativeKotlin.kt");
         }
     }
-
-    @TestMetadata("compiler/testData/ir/irJsText/scripting")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Scripting extends AbstractIrJsTextTestCase {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInScripting() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/scripting"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
-        }
-
-        @TestMetadata("arrayAssignment.kts")
-        public void testArrayAssignment() throws Exception {
-            runTest("compiler/testData/ir/irJsText/scripting/arrayAssignment.kts");
-        }
-
-        @TestMetadata("fun.kts")
-        public void testFun() throws Exception {
-            runTest("compiler/testData/ir/irJsText/scripting/fun.kts");
-        }
-
-        @TestMetadata("safeCalls.kts")
-        public void testSafeCalls() throws Exception {
-            runTest("compiler/testData/ir/irJsText/scripting/safeCalls.kts");
-        }
-    }
 }
