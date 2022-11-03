@@ -23,5 +23,5 @@ fun bar(a: IC2?) = a?.x?.x ?: 0
 fun box(): String {
     if (foo(IC(1)) != 42) return "Fail 1"
     if (bar(IC2(IC(1))) != 1) return "Fail 2"
-    return "OK1"
+    return "OK"
 }
