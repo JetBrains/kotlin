@@ -10,18 +10,22 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberTypeAliasSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelTypeAliasSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -58,7 +62,14 @@ internal class KtFirTypeAliasSymbol(
 
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        TODO("Creating symbols for library typealiases is not supported yet")
+        when (val symbolKind = symbolKind) {
+            KtSymbolKind.LOCAL ->
+                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
+
+            KtSymbolKind.CLASS_MEMBER -> KtFirMemberTypeAliasSymbolPointer(requireOwnerPointer(), name)
+            KtSymbolKind.TOP_LEVEL -> KtFirTopLevelTypeAliasSymbolPointer(classIdIfNonLocal!!)
+            else -> throw UnsupportedSymbolKind(this::class, symbolKind)
+        }
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
