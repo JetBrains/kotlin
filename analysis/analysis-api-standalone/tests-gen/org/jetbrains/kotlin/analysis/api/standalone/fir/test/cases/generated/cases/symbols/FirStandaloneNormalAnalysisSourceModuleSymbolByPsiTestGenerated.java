@@ -131,6 +131,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("enumEntryFunctions.kt")
+    public void testEnumEntryFunctions() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enumEntryFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryOverride.kt")
+    public void testEnumEntryOverride() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enumEntryOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryProperties.kt")
+    public void testEnumEntryProperties() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enumEntryProperties.kt");
+    }
+
+    @Test
     @TestMetadata("enumValueMember.kt")
     public void testEnumValueMember() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enumValueMember.kt");
