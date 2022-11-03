@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
@@ -90,6 +91,57 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                 )
                 assertTasksFailed(
                     ":jvmWithoutJavaTest",
+                )
+            }
+        }
+    }
+
+    @DisplayName("Test tasks are up-to-date when called after `allTests`")
+    @GradleTest
+    @Disabled
+    fun testSuccessfulTestTasksAreUpToDate(gradleVersion: GradleVersion) {
+        project(
+            "new-mpp-lib-with-tests",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Pkotlin.tests.individualTaskReports=false"))
+        ) {
+            val nativeTarget = MPPNativeTargets.current
+
+            build(":allTests") {
+                assertTasksExecuted(
+                    ":jsNodeTest",
+                    ":jsTest",
+                    ":jvmWithoutJavaTest",
+                    ":${nativeTarget}Test",
+                    ":allTests",
+                )
+            }
+
+            build(":allTests") {
+                assertTasksUpToDate(
+                    ":jsNodeTest",
+                    ":jsTest",
+                    ":jvmWithoutJavaTest",
+                    ":${nativeTarget}Test",
+                    ":allTests",
+                )
+            }
+
+            build(":jvmWithoutJavaTest") {
+                assertTasksUpToDate(
+                    ":jvmWithoutJavaTest",
+                )
+            }
+
+            build(":jsTest") {
+                assertTasksUpToDate(
+                    ":jsNodeTest",
+                )
+            }
+
+            build(":${nativeTarget}Test") {
+                assertTasksUpToDate(
+                    ":${nativeTarget}Test",
                 )
             }
         }
