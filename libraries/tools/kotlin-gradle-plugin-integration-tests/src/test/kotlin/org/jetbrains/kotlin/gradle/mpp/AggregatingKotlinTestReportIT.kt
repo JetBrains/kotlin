@@ -98,7 +98,6 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
 
     @DisplayName("Test tasks are up-to-date when called after `allTests`")
     @GradleTest
-    @Disabled
     fun testSuccessfulTestTasksAreUpToDate(gradleVersion: GradleVersion) {
         project(
             "new-mpp-lib-with-tests",
