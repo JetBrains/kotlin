@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 @ExternalKotlinTargetApi
 abstract class DecoratedExternalKotlinTarget(
     internal val delegate: ExternalKotlinTarget
-) : KotlinTarget by delegate
+) : KotlinTarget by delegate {
+    internal val logger: Logger = Logging.getLogger("${ExternalKotlinTarget::class.qualifiedName}: $name")
+}

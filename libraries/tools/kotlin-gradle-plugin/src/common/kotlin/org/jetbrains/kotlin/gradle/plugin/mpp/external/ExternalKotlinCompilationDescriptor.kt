@@ -7,24 +7,23 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.*
 import kotlin.properties.Delegates
 
 @ExternalKotlinTargetApi
-interface ExternalKotlinCompilationDescriptor<T : ExternalKotlinCompilation> {
+interface ExternalKotlinCompilationDescriptor<T : ExternalDecoratedKotlinCompilation> {
     fun interface DecoratedKotlinCompilationFactory<T : DecoratedKotlinCompilation<*>> {
-        fun create(delegate: ExternalKotlinCompilation.Delegate): T
+        fun create(delegate: ExternalDecoratedKotlinCompilation.Delegate): T
     }
 
-    fun interface FriendArtifactResolver<T : ExternalKotlinCompilation> {
+    fun interface FriendArtifactResolver<T : ExternalDecoratedKotlinCompilation> {
         fun resolveFriendPaths(compilation: T): FileCollection
     }
 
-    fun interface CompilationAssociator<T : ExternalKotlinCompilation> {
-        fun associate(compilation: T, main: ExternalKotlinCompilation)
+    fun interface CompilationAssociator<T : ExternalDecoratedKotlinCompilation> {
+        fun associate(compilation: T, main: ExternalDecoratedKotlinCompilation)
     }
 
     val compilationName: String
@@ -38,7 +37,7 @@ interface ExternalKotlinCompilationDescriptor<T : ExternalKotlinCompilation> {
 }
 
 @ExternalKotlinTargetApi
-fun <T : ExternalKotlinCompilation> ExternalKotlinCompilationDescriptor(
+fun <T : ExternalDecoratedKotlinCompilation> ExternalKotlinCompilationDescriptor(
     configure: ExternalKotlinCompilationDescriptorBuilder<T>.() -> Unit
 ): ExternalKotlinCompilationDescriptor<T> {
     return ExternalKotlinCompilationDescriptorBuilderImpl<T>().also(configure).run {
@@ -56,7 +55,7 @@ fun <T : ExternalKotlinCompilation> ExternalKotlinCompilationDescriptor(
 }
 
 @ExternalKotlinTargetApi
-interface ExternalKotlinCompilationDescriptorBuilder<T : ExternalKotlinCompilation> {
+interface ExternalKotlinCompilationDescriptorBuilder<T : ExternalDecoratedKotlinCompilation> {
     var compilationName: String
     var compileTaskName: String?
     var compileAllTaskName: String?
@@ -73,7 +72,7 @@ interface ExternalKotlinCompilationDescriptorBuilder<T : ExternalKotlinCompilati
 }
 
 @ExternalKotlinTargetApi
-private class ExternalKotlinCompilationDescriptorBuilderImpl<T : ExternalKotlinCompilation> :
+private class ExternalKotlinCompilationDescriptorBuilderImpl<T : ExternalDecoratedKotlinCompilation> :
     ExternalKotlinCompilationDescriptorBuilder<T> {
     override var compilationName: String by Delegates.notNull()
     override var compileTaskName: String? = null
@@ -86,7 +85,7 @@ private class ExternalKotlinCompilationDescriptorBuilderImpl<T : ExternalKotlinC
 }
 
 @ExternalKotlinTargetApi
-private data class ExternalKotlinCompilationDescriptorImpl<T : ExternalKotlinCompilation>(
+private data class ExternalKotlinCompilationDescriptorImpl<T : ExternalDecoratedKotlinCompilation>(
     override val compilationName: String,
     override val compileTaskName: String?,
     override val compileAllTaskName: String?,
