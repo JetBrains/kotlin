@@ -126,7 +126,7 @@ object AndroidDependencyResolver {
         return versions[0].toInt() >= 4 || versions[0].toInt() >= 3 && versions[1].toInt() >= 6
     }
 
-    private data class SourceSetConfigs(val implConfig: Configuration, val compileConfigs: MutableList<Configuration> = ArrayList())
+    private data class SourceSetConfigs(val implConfigs: List<Configuration>, val compileConfigs: MutableList<Configuration> = ArrayList())
 
     fun getAndroidSourceSetDependencies(project: Project): Map<String, List<AndroidDependency>?> {
         val androidPluginVersions = getAndroidPluginVersions() ?: return emptyMap()
@@ -138,11 +138,14 @@ object AndroidDependencyResolver {
 
         project.forEachVariant { variant ->
             val compileConfig = variant.compileConfiguration
-            variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map {
-                val implConfig = project.configurations.getByName(it.implementationConfigurationName)
-                allImplConfigs.add(implConfig)
+            variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map { androidSourceSet ->
+                val implConfigs = listOf(project.configurations.getByName(androidSourceSet.implementationConfigurationName)) +
+                        (project.configurations.findByName(
+                            lowerCamelCaseName("android", androidSourceSet.name, "compilation", "implementation")
+                        )?.let { listOf(it) } ?: emptyList())
+                allImplConfigs.addAll(implConfigs)
                 val sourceSetConfigs =
-                    sourceSet2Impl.computeIfAbsent(lowerCamelCaseName("android", it.name)) { SourceSetConfigs(implConfig) }
+                    sourceSet2Impl.computeIfAbsent(lowerCamelCaseName("android", androidSourceSet.name)) { SourceSetConfigs(implConfigs) }
                 // The same sourceset can be included into multiple variants (e.g. androidMain)
                 sourceSetConfigs.compileConfigs.add(compileConfig)
             }
@@ -179,7 +182,6 @@ object AndroidDependencyResolver {
         }.toMap()
     }
 
-    @Suppress("UnstableApiUsage")
     private fun collectDependencies(
         dependencies: List<ExternalModuleDependency>,
         compileClasspathConfigs: List<Configuration>
@@ -224,7 +226,6 @@ object AndroidDependencyResolver {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     private tailrec fun doCollectDependencies(
         modules: List<ModuleIdentifier>,
         resolutionResults: Map<ModuleIdentifier, ResolvedComponentResult>,
@@ -246,7 +247,7 @@ object AndroidDependencyResolver {
         val attributes = sourceSetConfigs.compileConfigs.first().attributes
 
         return HashSet<Dependency>().also {
-            doFindDependencies(implConfigs, listOf(sourceSetConfigs.implConfig), attributes, attributesSchema, it)
+            doFindDependencies(implConfigs, sourceSetConfigs.implConfigs, attributes, attributesSchema, it)
         }
     }
 
