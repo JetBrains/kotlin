@@ -77,7 +77,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
 
                 if (extTestDataFile.isRelevant)
                     testCases += extTestDataFile.createTestCase(
-                        definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value,
+                        settings = settings,
                         sharedModules = sharedModules
                     )
                 else
@@ -149,11 +149,15 @@ private class ExtTestDataFile(
         return TestCompilerArgs(args)
     }
 
-    fun createTestCase(definitelyStandaloneTest: Boolean, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
+    fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
+        if (settings.get<MemoryModel>() == MemoryModel.LEGACY) {
+            makeObjectsMutable()
+        }
+
+        val definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
-        makeObjectsMutable()
         patchPackageNames(isStandaloneTest)
         patchFileLevelAnnotations()
         val entryPointFunctionFQN = findEntryPoint()
