@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
@@ -58,6 +60,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -422,6 +425,21 @@ private class ElementsToShortenCollector(
         )
     }
 
+    /**
+     * Returns true if the class symbol has a type parameter that is supposed to be provided for its parent class.
+     *
+     * Example:
+     * class Outer<T> {
+     *   inner class Inner // Inner has an implicit type parameter `T`.
+     * }
+     */
+    private fun FirClassLikeSymbol<*>.hasTypeParameterFromParent(): Boolean {
+        val psi = findPsi() ?: return false
+        return typeParameterSymbols?.any {
+            it.findPsi()?.getNonStrictParentOfType<KtClass>() != psi
+        } == true
+    }
+
     private inline fun <E> findClassifierElementsToShorten(
         positionScopes: List<FirScope>,
         allClassIds: Sequence<ClassId>,
@@ -429,10 +447,13 @@ private class ElementsToShortenCollector(
         createElementToShorten: (E, nameToImport: FqName?, importAllInParent: Boolean) -> ElementToShorten,
         findFakePackageToShortenFn: (E) -> ElementToShorten?,
     ): ElementToShorten? {
-
         for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
-            val option = classShortenOption(shorteningContext.toClassSymbol(classId) ?: return null)
+            val classSymbol = shorteningContext.toClassSymbol(classId)
+            val option = classShortenOption(classSymbol ?: return null)
             if (option == ShortenOption.DO_NOT_SHORTEN) continue
+
+            // If its parent has a type parameter, we cannot shorten it because the class will lose its type parameter.
+            if (classSymbol.hasTypeParameterFromParent()) continue
 
             // Find class with the same name that's already available in this file.
             val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)
