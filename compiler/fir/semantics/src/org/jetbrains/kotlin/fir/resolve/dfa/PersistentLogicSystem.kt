@@ -9,7 +9,6 @@ import com.google.common.collect.ArrayListMultimap
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.math.max
 
@@ -51,10 +50,10 @@ class PersistentFlow : Flow {
      * directAliasMap: { x -> a, y -> a}
      * backwardsAliasMap: { a -> [x, y] }
      */
-    override var directAliasMap: PersistentMap<RealVariable, RealVariableAndType>
-    override var backwardsAliasMap: PersistentMap<RealVariable, PersistentList<RealVariable>>
+    var directAliasMap: PersistentMap<RealVariable, RealVariable>
+    var backwardsAliasMap: PersistentMap<RealVariable, PersistentList<RealVariable>>
 
-    override var assignmentIndex: PersistentMap<RealVariable, Int>
+    var assignmentIndex: PersistentMap<RealVariable, Int>
 
     constructor(previousFlow: PersistentFlow) {
         this.previousFlow = previousFlow
@@ -78,24 +77,22 @@ class PersistentFlow : Flow {
         assignmentIndex = persistentMapOf()
     }
 
-    override fun getTypeStatement(variable: RealVariable): TypeStatement? {
-        return approvedTypeStatements[variable]
+    override fun unwrapVariable(variable: RealVariable): RealVariable {
+        return directAliasMap[variable] ?: variable
     }
 
-    override fun getImplications(variable: DataFlowVariable): Collection<Implication> {
-        return logicStatements[variable] ?: emptyList()
-    }
-
-    override fun getVariablesInTypeStatements(): Collection<RealVariable> {
-        return approvedTypeStatements.keys
-    }
-
-    override fun removeOperations(variable: DataFlowVariable): Collection<Implication> {
-        return getImplications(variable).also {
-            if (it.isNotEmpty()) {
-                logicStatements -= variable
-            }
+    fun getTypeStatement(variable: RealVariable): TypeStatement {
+        val result = MutableTypeStatement(variable)
+        approvedTypeStatements[variable]?.let { result += it }
+        val variableUnderAlias = directAliasMap[variable]
+        if (variableUnderAlias != null) {
+            approvedTypeStatements[variableUnderAlias]?.let { result += it }
         }
+        return result
+    }
+
+    override fun getType(variable: RealVariable): Set<ConeKotlinType> {
+        return getTypeStatement(variable).exactType
     }
 }
 
@@ -110,7 +107,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
 
     override fun joinFlow(flows: Collection<PersistentFlow>): PersistentFlow {
         // One input flow executes - one set of statements is true, others might be false.
-        return foldFlow(flows) { variable -> or(flows.map { it.getApprovedTypeStatements(variable) }).takeIf { it.isNotEmpty } }
+        return foldFlow(flows) { variable -> or(flows.map { it.getTypeStatement(variable) }).takeIf { it.isNotEmpty } }
     }
 
     override fun unionFlow(flows: Collection<PersistentFlow>): PersistentFlow {
@@ -120,7 +117,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         // happened last (and the flows that don't reassign may or may not have executed after that).
         return foldFlow(flows) { variable ->
             or(flows.groupBy { it.assignmentIndex[variable] ?: -1 }.values.map { flowSubset ->
-                and(flowSubset.map { it.getApprovedTypeStatements(variable) })
+                and(flowSubset.map { it.getTypeStatement(variable) })
             })
         }
     }
@@ -166,16 +163,16 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         return commonFlow
     }
 
-    private fun computeCommonAliases(flows: Collection<PersistentFlow>): Map<RealVariable, RealVariableAndType> =
+    private fun computeCommonAliases(flows: Collection<PersistentFlow>): Map<RealVariable, RealVariable> =
         flows.first().directAliasMap.filterTo(mutableMapOf()) { (variable, alias) ->
             flows.all { it.directAliasMap[variable] == alias }
         }
 
-    override fun addLocalVariableAlias(flow: PersistentFlow, alias: RealVariable, underlyingVariable: RealVariableAndType) {
+    override fun addLocalVariableAlias(flow: PersistentFlow, alias: RealVariable, underlyingVariable: RealVariable) {
         removeLocalVariableAlias(flow, alias)
         flow.directAliasMap = flow.directAliasMap.put(alias, underlyingVariable)
         flow.backwardsAliasMap = flow.backwardsAliasMap.put(
-            underlyingVariable.variable,
+            underlyingVariable,
             { persistentListOf(alias) },
             { variables -> variables + alias }
         )
@@ -221,7 +218,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             processApprovedStatements(isDiff = true)
         }
 
-        val original = flow.directAliasMap[alias]?.variable
+        val original = flow.directAliasMap[alias]
         if (original != null) {
             flow.directAliasMap = flow.directAliasMap.remove(alias)
             val updatedBackwardsAliasList = flow.backwardsAliasMap.getValue(original).remove(alias)
@@ -250,23 +247,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
         @Suppress("UNCHECKED_CAST")
         return statement as T
-    }
-
-
-    @OptIn(DfaInternals::class)
-    private fun PersistentFlow.getApprovedTypeStatements(variable: RealVariable): MutableTypeStatement {
-        var flow = this
-        val result = MutableTypeStatement(variable)
-        val variableUnderAlias = directAliasMap[variable]
-        if (variableUnderAlias == null) {
-            flow.approvedTypeStatements[variable]?.let {
-                result += it
-            }
-        } else {
-            result.exactType.addIfNotNull(variableUnderAlias.originalType)
-            flow.approvedTypeStatements[variableUnderAlias.variable]?.let { result += it }
-        }
-        return result
     }
 
     override fun addTypeStatement(flow: PersistentFlow, statement: TypeStatement) {
