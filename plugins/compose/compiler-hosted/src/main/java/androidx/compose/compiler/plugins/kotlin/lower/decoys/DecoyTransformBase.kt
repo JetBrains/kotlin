@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.remapTypeParameters
 
+@JvmDefaultWithCompatibility
 internal interface DecoyTransformBase {
     val context: IrPluginContext
     val signatureBuilder: IdSignatureSerializer
