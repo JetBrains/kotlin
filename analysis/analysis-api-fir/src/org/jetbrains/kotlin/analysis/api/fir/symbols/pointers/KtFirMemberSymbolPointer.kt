@@ -45,15 +45,17 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
 }
 
 context(KtAnalysisSession)
-internal fun KtSymbol.requireOwnerPointer(): KtSymbolPointer<KtSymbolWithMembers> {
+internal inline fun <reified T : KtSymbol> KtSymbol.requireOwnerPointer(): KtSymbolPointer<T> {
     val symbolWithMembers = getContainingSymbol()
     requireNotNull(symbolWithMembers) { "should present for member declaration" }
-    requireIsInstance<KtSymbolWithMembers>(symbolWithMembers)
+    requireIsInstance<T>(symbolWithMembers)
 
     @Suppress("UNCHECKED_CAST")
-    return symbolWithMembers.createPointer() as KtSymbolPointer<KtSymbolWithMembers>
+    return symbolWithMembers.createPointer() as KtSymbolPointer<T>
 }
 
-internal fun KtFirSymbol<*>.requireOwnerPointer(): KtSymbolPointer<KtSymbolWithMembers> = analyze(firResolveSession.useSiteKtModule) {
-    requireOwnerPointer()
+internal inline fun <reified T : KtSymbol> KtFirSymbol<*>.requireOwnerPointer(): KtSymbolPointer<T> {
+    return analyze(firResolveSession.useSiteKtModule) {
+        requireOwnerPointer<T>()
+    }
 }
