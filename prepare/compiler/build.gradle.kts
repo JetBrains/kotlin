@@ -99,7 +99,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
-    ":kotlin-scripting-js",
     ":js:js.engines",
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",

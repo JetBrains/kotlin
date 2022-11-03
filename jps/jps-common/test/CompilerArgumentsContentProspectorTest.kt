@@ -230,7 +230,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JSCompilerArguments::typedArrays,
             K2JSCompilerArguments::friendModulesDisabled,
             K2JSCompilerArguments::metadataOnly,
-            K2JSCompilerArguments::enableJsScripting,
             K2JSCompilerArguments::fakeOverrideValidator,
             K2JSCompilerArguments::wasm
         )
