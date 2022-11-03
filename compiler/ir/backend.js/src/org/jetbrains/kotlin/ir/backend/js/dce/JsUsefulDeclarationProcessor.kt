@@ -34,7 +34,12 @@ internal class JsUsefulDeclarationProcessor(
             if (expression.superQualifierSymbol != null) {
                 val currentFun = (data as? IrSimpleFunction)
                 val currentClass = currentFun?.parentClassOrNull
-                if (!context.es6mode || currentFun?.dispatchReceiverParameter == null || currentClass != null && (currentClass.isInner || currentClass.isLocal)) {
+
+                if (
+                    !context.es6mode ||
+                    currentFun?.dispatchReceiverParameter == null ||
+                    currentClass != null && (currentClass.isInner || currentClass.isLocal)
+                ) {
                     context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
                 }
             }

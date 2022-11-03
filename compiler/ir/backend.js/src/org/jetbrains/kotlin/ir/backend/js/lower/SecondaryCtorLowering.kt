@@ -150,7 +150,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
         }
     }
 
-    class ThisUsageReplaceTransformer(
+    private class ThisUsageReplaceTransformer(
         val constructor: IrConstructorSymbol,
         val function: IrFunctionSymbol,
         symbolMapping: Map<IrValueSymbol, IrValueSymbol>

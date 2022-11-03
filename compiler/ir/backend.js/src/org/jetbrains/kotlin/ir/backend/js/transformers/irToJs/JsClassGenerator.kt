@@ -73,11 +73,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                     if (es6mode) {
                         val (memberRef, function) = generateMemberFunction(declaration)
-                        function?.let { jsClass.members += it }
-
-                        if (function?.name?.toString() != declaration.getJsNameOrKotlinName().toString()) {
-                            declaration.generateAssignmentIfMangled(memberRef)
-                        }
+                        function?.let { jsClass.members += it.escapedIfNeed() }
+                        declaration.generateAssignmentIfMangled(memberRef)
                     } else {
                         val (memberRef, function) = generateMemberFunction(declaration)
                         function?.let { classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
@@ -200,13 +197,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
-        classModel.preDeclarationBlock.statements += generateSetMetadataCall()
-
-        context.staticContext.classModels[irClass.symbol] = classModel
-
         if (irClass.hasAnnotation(JsAnnotations.MetaClass)) {
             context.staticContext.metaClasses.add(irClass.symbol)
+        } else {
+            classModel.preDeclarationBlock.statements += generateSetMetadataCall()
         }
+
+        context.staticContext.classModels[irClass.symbol] = classModel
 
         return classBlock
     }
@@ -405,7 +402,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 }
 
-fun JsName.escaped(): JsName = JsName("\"${ident}\"", isTemporary)
+fun JsFunction.escapedIfNeed(): JsFunction {
+    if (name?.ident?.isValidES5Identifier() == false) {
+        name = JsName("'${name.ident}'", name.isTemporary)
+    }
+    return this
+
+}
 
 fun IrSimpleFunction?.shouldExportAccessor(context: JsIrBackendContext): Boolean {
     if (this == null) return false
