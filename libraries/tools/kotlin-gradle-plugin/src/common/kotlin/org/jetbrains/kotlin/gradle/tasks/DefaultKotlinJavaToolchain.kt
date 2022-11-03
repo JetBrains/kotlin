@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
@@ -26,36 +27,65 @@ import javax.inject.Inject
 internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     private val objects: ObjectFactory,
     projectLayout: ProjectLayout,
-    kotlinCompileTaskProvider: () -> KotlinCompile?
+    private val kotlinCompileTaskProvider: () -> KotlinCompile?
 ) : KotlinJavaToolchain {
 
     @get:Internal
-    internal val currentJvm: Provider<Jvm> = objects
+    internal val gradleJvm: Provider<Jvm> = objects
         .property(Jvm.current())
+        .chainedDisallowChanges()
         .chainedFinalizeValueOnRead()
 
     @get:Internal
     internal val providedJvm: Property<Jvm> = objects
-        .propertyWithConvention(currentJvm)
+        .property<Jvm>()
+        .chainedFinalizeValueOnRead()
+
+    @get:Internal
+    internal val buildJvm: Provider<Jvm> = objects
+        .property(providedJvm.orElse(gradleJvm))
+        .chainedDisallowChanges()
         .chainedFinalizeValueOnRead()
 
     final override val javaVersion: Provider<JavaVersion> = objects
         .property(
-            providedJvm.map { jvm ->
-                jvm.javaVersion
-                    ?: throw GradleException(
-                        "Kotlin could not get java version for the JDK installation: " +
-                                jvm.javaHome?.let { "'$it' " }.orEmpty()
-                    )
-            }
+            buildJvm
+                .map { jvm ->
+                    jvm.javaVersion
+                        ?: throw GradleException(
+                            "Kotlin could not get java version for the JDK installation: " +
+                                    jvm.javaHome?.let { "'$it' " }.orEmpty()
+                        )
+                }
         )
         .chainedFinalizeValueOnRead()
+
+    init {
+        wireJvmTargetToToolchain()
+    }
+
+    private fun wireJvmTargetToToolchain() {
+        kotlinCompileTaskProvider()?.let { task ->
+            task.compilerOptions.jvmTarget.convention(
+                providedJvm.map { jvm ->
+                    // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
+                    // that is not accepted by Kotlin compiler
+                    val normalizedVersion = when (jvm.javaVersion) {
+                        JavaVersion.VERSION_1_9 -> "9"
+                        JavaVersion.VERSION_1_10 -> "10"
+                        else -> jvm.javaVersion.toString()
+                    }
+                    JvmTarget.fromTarget(normalizedVersion)
+                }
+            )
+        }
+    }
 
     @get:Internal
     internal val javaExecutable: RegularFileProperty = objects
         .fileProperty()
         .value(
-            providedJvm.flatMap { jvm ->
+            buildJvm.flatMap { jvm ->
                 projectLayout.file(
                     objects.property<File>(
                         jvm.javaExecutable
@@ -91,12 +121,12 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     }
 
     @get:Internal
-    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(providedJvm, javaVersion)
+    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(buildJvm, javaVersion)
 
     @get:Internal
     internal val currentJvmJdkToolsJar: Provider<File?> = getToolsJarFromJvm(
-        currentJvm,
-        currentJvm.map {
+        gradleJvm,
+        gradleJvm.map {
             // Current JVM should always have java version
             it.javaVersion!!
         }
@@ -104,42 +134,16 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
     final override val jdk: KotlinJavaToolchain.JdkSetter = DefaultJdkSetter(
         providedJvm,
-        objects,
-        kotlinCompileTaskProvider
+        objects
     )
 
     final override val toolchain: KotlinJavaToolchain.JavaToolchainSetter =
-        DefaultJavaToolchainSetter(providedJvm, kotlinCompileTaskProvider)
+        DefaultJavaToolchainSetter(providedJvm)
 
-    private abstract class JvmTargetUpdater(
-        private val kotlinCompileTaskProvider: () -> KotlinCompile?
-    ) {
-        fun updateJvmTarget(
-            jdkVersion: Provider<JavaVersion>
-        ) {
-            kotlinCompileTaskProvider()?.let { task ->
-                task.compilerOptions.jvmTarget.convention(
-                    jdkVersion.map { version ->
-                        // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
-                        // that is not accepted by Kotlin compiler
-                        val normalizedVersion = when (version) {
-                            JavaVersion.VERSION_1_9 -> "9"
-                            JavaVersion.VERSION_1_10 -> "10"
-                            else -> version.toString()
-                        }
-                        JvmTarget.fromTarget(normalizedVersion)
-                    }
-                )
-            }
-        }
-    }
-
-    private inner class DefaultJdkSetter(
+    private class DefaultJdkSetter(
         private val providedJvm: Property<Jvm>,
         private val objects: ObjectFactory,
-        kotlinCompileTaskProvider: () -> KotlinCompile?
-    ) : JvmTargetUpdater(kotlinCompileTaskProvider),
-        KotlinJavaToolchain.JdkSetter {
+    ) : KotlinJavaToolchain.JdkSetter {
 
         override fun use(
             jdkHomeLocation: File,
@@ -152,7 +156,6 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 "Supplied jdkHomeLocation does not exist. You supplied: $jdkHomeLocation"
             }
 
-            updateJvmTarget(javaVersion)
             providedJvm.set(
                 objects.providerWithLazyConvention {
                     Jvm.discovered(jdkHomeLocation, null, jdkVersion)
@@ -161,18 +164,15 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         }
     }
 
-    private inner class DefaultJavaToolchainSetter(
-        private val providedJvm: Property<Jvm>,
-        kotlinCompileTaskProvider: () -> KotlinCompile?
-    ) : JvmTargetUpdater(kotlinCompileTaskProvider),
-        KotlinJavaToolchain.JavaToolchainSetter {
+    private class DefaultJavaToolchainSetter(
+        private val providedJvm: Property<Jvm>
+    ) : KotlinJavaToolchain.JavaToolchainSetter {
         override fun use(
             javaLauncher: Provider<JavaLauncher>
         ) {
-            updateJvmTarget(javaVersion)
             providedJvm.set(
-                javaLauncher.map {
-                    val metadata = javaLauncher.get().metadata
+                javaLauncher.map { launcher ->
+                    val metadata = launcher.metadata
                     val javaVersion = JavaVersion.toVersion(metadata.languageVersion.asInt())
                     Jvm.discovered(
                         metadata.installationPath.asFile,
