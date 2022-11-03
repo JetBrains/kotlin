@@ -61,9 +61,6 @@ class MemoizedInlineClassReplacements(
                     else
                         null
 
-                // Don't mangle custom box function
-                it.isBoxFunction(context.typeSystem) -> null
-
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
                     when {

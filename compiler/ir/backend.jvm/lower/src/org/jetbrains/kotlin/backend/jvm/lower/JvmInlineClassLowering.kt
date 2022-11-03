@@ -477,15 +477,18 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         valueClass.declarations += function
     }
 
-
-    val IrClass.hasCustomBoxing: Boolean
-        get() = companionObject()?.functions?.any { it.isBoxFunction(context.typeSystem) && it.isOperator } ?: false
-
+    val IrClass.companionObjectCustomBoxingFunction: IrFunction?
+        get() {
+            return companionObject()?.functions?.singleOrNull {
+                context.inlineClassReplacements.originalFunctionForMethodReplacement[it]?.isBoxFunction(context.typeSystem) ?: false
+            }
+        }
 
     fun buildBoxFunctions(valueClass: IrClass) {
-        if (valueClass.hasCustomBoxing) {
+        val customBoxFunction = valueClass.companionObjectCustomBoxingFunction
+        if (customBoxFunction != null) {
             buildDefaultBoxFunction(valueClass, withDefaultSuffix = true)
-            buildCustomBoxFunction(valueClass)
+            buildCustomBoxFunction(valueClass, customBoxFunction)
         } else {
             buildDefaultBoxFunction(valueClass, withDefaultSuffix = false)
         }
@@ -505,13 +508,12 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         valueClass.declarations += function
     }
 
-    private fun buildCustomBoxFunction(valueClass: IrClass) {
-        val customBox = valueClass.companionObject()?.functions?.single { it.isBoxFunction(context.typeSystem) && it.isOperator } ?: return
+    private fun buildCustomBoxFunction(valueClass: IrClass, companionObjectCustomBoxFunction: IrFunction) {
         val function = context.inlineClassReplacements.getBoxFunction(valueClass, withDefaultSuffix = false)
         with(context.createIrBuilder(function.symbol)) {
             val companionObject = valueClass.companionObject()!!
             function.body = irExprBody(
-                irCall(customBox.symbol).apply {
+                irCall(companionObjectCustomBoxFunction.symbol).apply {
                     dispatchReceiver = irGetObjectValue(companionObject.defaultType, companionObject.symbol)
                     putValueArgument(0, irGet(function.valueParameters[0]))
                 }
