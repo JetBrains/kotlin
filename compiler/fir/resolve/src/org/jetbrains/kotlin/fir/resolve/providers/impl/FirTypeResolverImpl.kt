@@ -477,6 +477,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
         val attributes = typeRef.annotations.computeTypeAttributes(
             session,
+            owningSymbol = owningSymbol,
             predefined = buildList {
                 if (typeRef.receiverTypeRef != null) {
                     add(CompilerConeAttributes.ExtensionFunctionType)
@@ -486,7 +487,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     add(CompilerConeAttributes.ContextFunctionTypeParams(typeRef.contextReceiverTypeRefs.size))
                 }
             },
-            owningSymbol = owningSymbol,
         )
         val symbol = resolveBuiltInQualified(classId, session)
         return ConeClassLikeTypeImpl(

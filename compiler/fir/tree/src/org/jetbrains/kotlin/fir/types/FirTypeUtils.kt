@@ -115,8 +115,8 @@ fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.cla
 
 fun List<FirAnnotation>.computeTypeAttributes(
     session: FirSession,
-    predefined: List<ConeAttribute<*>> = emptyList(),
     owningSymbol: FirBasedSymbol<*>?,
+    predefined: List<ConeAttribute<*>> = emptyList(),
 ): ConeAttributes {
     if (this.isEmpty()) {
         if (predefined.isEmpty()) return ConeAttributes.Empty
