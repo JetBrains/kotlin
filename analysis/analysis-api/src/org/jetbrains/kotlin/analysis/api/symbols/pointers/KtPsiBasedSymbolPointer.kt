@@ -56,13 +56,11 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(private v
 
         @TestOnly
         @Synchronized
-        public fun <T> withDisabledPsiBasedPointers(action: () -> T): T {
-            disablePsiPointer = true
-            return try {
-                action()
-            } finally {
-                disablePsiPointer = false
-            }
+        public fun <T> withDisabledPsiBasedPointers(disable: Boolean, action: () -> T): T = try {
+            disablePsiPointer = disable
+            action()
+        } finally {
+            disablePsiPointer = false
         }
 
         @Volatile
