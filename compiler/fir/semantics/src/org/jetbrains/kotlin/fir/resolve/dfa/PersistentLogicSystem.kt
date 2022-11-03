@@ -132,9 +132,11 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
 
     private fun foldFlow(flows: Collection<PersistentFlow>, statements: Collection<TypeStatement>): PersistentFlow {
-        val aliasedVariablesThatDontChangeAlias = computeAliasesThatDontChange(flows)
-
         val commonFlow = flows.reduce(::lowestCommonFlow)
+        // Aliases that have occurred before branching should already be in `commonFlow`,
+        // but it might be useful to also add aliases that happen in all branches, e.g.
+        // the aliasing of `y` to `a.x` after `if (p) { y = a.x } else { y = a.x }`.
+        val commonAliases = computeCommonAliases(flows)
 
         for (flow in flows) {
             for ((variable, index) in flow.assignmentIndex) {
@@ -150,27 +152,16 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             commonFlow.approvedTypeStatementsDiff += toReplace
         }
 
-        for ((alias, underlyingVariable) in aliasedVariablesThatDontChangeAlias) {
+        for ((alias, underlyingVariable) in commonAliases) {
             addLocalVariableAlias(commonFlow, alias, underlyingVariable)
         }
         return commonFlow
     }
 
-    private fun computeAliasesThatDontChange(flows: Collection<PersistentFlow>): MutableMap<RealVariable, RealVariableAndType> {
-        val flowsSize = flows.size
-        val aliasedVariablesThatDontChangeAlias = mutableMapOf<RealVariable, RealVariableAndType>()
-
-        flows.flatMapTo(mutableSetOf()) { it.directAliasMap.keys }.forEach { aliasedVariable ->
-            val originals = flows.map { it.directAliasMap[aliasedVariable] ?: return@forEach }
-            if (originals.size != flowsSize) return@forEach
-            val firstOriginal = originals.first()
-            if (originals.all { it == firstOriginal }) {
-                aliasedVariablesThatDontChangeAlias[aliasedVariable] = firstOriginal
-            }
+    private fun computeCommonAliases(flows: Collection<PersistentFlow>): MutableMap<RealVariable, RealVariableAndType> =
+        flows.first().directAliasMap.filterTo(mutableMapOf()) { (variable, alias) ->
+            flows.all { it.directAliasMap[variable] == alias }
         }
-
-        return aliasedVariablesThatDontChangeAlias
-    }
 
     override fun addLocalVariableAlias(flow: PersistentFlow, alias: RealVariable, underlyingVariable: RealVariableAndType) {
         removeLocalVariableAlias(flow, alias)
