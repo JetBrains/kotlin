@@ -29,12 +29,12 @@ class CodeConformanceTest : TestCase() {
                 "compiler/build",
                 "compiler/fir/lightTree/testData",
                 "compiler/testData/psi/kdoc",
-                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
                 "dependencies",
                 "dependencies/protobuf/protobuf-relocated/build",
                 "dist",
                 "idea/testData/codeInsight/renderingKDoc",
+                "intellij",
                 "js/js.tests/.gradle",
                 "js/js.tests/build",
                 "js/js.translator/qunit/qunit.js",
@@ -65,6 +65,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlinp/src",
                 "libraries/tools/new-project-wizard/new-project-wizard-cli/build",
                 "out",
+                "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "kotlin-native/build",
                 "kotlin-native/performance",
                 "kotlin-native/samples"
@@ -79,12 +80,12 @@ class CodeConformanceTest : TestCase() {
                 "buildSrc/prepare-deps/build",
                 "compiler/ir/serialization.js/build/fullRuntime",
                 "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
-                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "dependencies",
                 "dependencies/android-sdk/build",
                 "dependencies/protobuf/protobuf-relocated/build",
                 "dist",
                 "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
+                "intellij",
                 "js/js.tests/.gradle",
                 "js/js.tests/build",
                 "js/js.translator/testData/node_modules",
@@ -113,6 +114,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-source-map-loader/.gradle",
                 "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "out",
+                "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             )
         )
     }
