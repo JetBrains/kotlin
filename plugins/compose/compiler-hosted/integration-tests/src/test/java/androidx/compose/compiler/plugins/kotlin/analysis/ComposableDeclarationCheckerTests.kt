@@ -178,7 +178,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
             interface Bar {
                 @Composable
                 fun composableFunction(param: Boolean): Boolean
-                val composableProperty: Boolean @Composable get()
+                @get:Composable val composableProperty: Boolean
                 fun nonComposableFunction(param: Boolean): Boolean
                 val nonComposableProperty: Boolean
             }

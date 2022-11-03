@@ -16,15 +16,11 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
-import org.jetbrains.kotlin.checkers.DiagnosedRange
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import java.io.File
+import org.jetbrains.kotlin.checkers.DiagnosedRange
+import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 
 abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
 
@@ -40,16 +36,7 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
         val files = listOf(file)
 
         // Use the JVM version of the analyzer to allow using classes in .jar files
-        val moduleTrace = NoScopeRecordCliBindingTrace()
-        val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-            environment.project,
-            files,
-            moduleTrace,
-            environment.configuration.copy().apply {
-                this.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
-            },
-            environment::createPackagePartProvider
-        )
+        val result = JvmResolveUtil.analyze(environment, files)
 
         // Collect the errors
         val errors = result.bindingContext.diagnostics.all().toMutableList()
