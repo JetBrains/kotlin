@@ -33,10 +33,8 @@ import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -172,10 +170,7 @@ abstract class AbstractCompilerTest : TestCase() {
             try {
                 val environment = myEnvironment ?: error("Environment not initialized")
                 val files = myFiles ?: error("Files not initialized")
-                val generationState = GenerationUtils.compileFiles(
-                    files.psiFiles, environment, ClassBuilderFactories.TEST,
-                    NoScopeRecordCliBindingTrace()
-                )
+                val generationState = GenerationUtils.compileFiles(environment, files.psiFiles)
                 generationState.factory.also { classFileFactory = it }
             } catch (e: TestsCompilerError) {
                 if (reportProblems) {

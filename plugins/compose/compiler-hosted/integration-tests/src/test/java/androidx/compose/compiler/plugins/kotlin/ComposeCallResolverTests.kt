@@ -221,9 +221,9 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         val environment = myEnvironment ?: error("Environment not initialized")
 
         val ktFile = KtPsiFactory(environment.project).createFile(text)
-        val bindingContext = JvmResolveUtil.analyze(
-            ktFile,
-            environment
+        val bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(
+            environment,
+            listOf(ktFile)
         ).bindingContext
 
         carets.forEachIndexed { index, (offset, calltype) ->
