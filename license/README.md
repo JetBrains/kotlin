@@ -268,6 +268,8 @@ any distributions of the compiler, libraries or plugin:
 
 [aosp]: third_party/aosp_license.txt
 [asm]: third_party/asm_license.txt
+[asmble]: third_party/asmble_license.txt
+[assemblyscript]: third_party/assemblyscript_license.txt
 [boost]: third_party/boost_LICENSE.txt
 [closure-compiler]: third_party/closure-compiler_LICENSE.txt
 [dagger]: third_party/testdata/dagger_license.txt
@@ -279,9 +281,10 @@ any distributions of the compiler, libraries or plugin:
 [guava]: third_party/guava_license.txt
 [gwt]: third_party/gwt_license.txt
 [jquery]: third_party/jquery_license.txt
+[jspecify]: third_party/testdata/jspecify_license.txt
 [lombok]: third_party/testdata/lombok_license.txt
 [qunit]: third_party/qunit_license.txt
 [rhino]: third_party/rhino_LICENSE.txt
 [rxjava]: third_party/testdata/rxjava_license.txt
 [spring]: third_party/testdata/spring_license.txt
-[assemblyscript]: third_party/assemblyscript_license.txt
+[sun]: third_party/sun_license.txt
