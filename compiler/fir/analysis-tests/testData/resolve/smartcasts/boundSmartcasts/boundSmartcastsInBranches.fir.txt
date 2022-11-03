@@ -223,9 +223,10 @@ FILE: boundSmartcastsInBranches.kt
             }
         }
 
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
         when () {
             !=(R|<local>/a|, Null(null)) ->  {
-                R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/b|.R|kotlin/String.length|
             }
         }
 

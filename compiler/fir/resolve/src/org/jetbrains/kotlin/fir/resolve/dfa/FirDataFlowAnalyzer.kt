@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class DataFlowAnalyzerContext<FLOW : Flow>(
@@ -104,15 +103,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                             val symbol = variable.identifier.symbol
 
                             val index = receiverStack.getReceiverIndex(symbol) ?: return
-                            val info = flow.getTypeStatement(variable)
-
-                            val type = if (info == null) {
-                                receiverStack.getOriginalType(index)
-                            } else {
-                                val types = info.exactType.toMutableList().also {
-                                    it += receiverStack.getOriginalType(index)
-                                }
+                            val info = flow.getType(variable)
+                            val type = if (info.isNotEmpty()) {
+                                val types = info.toMutableList()
+                                types += receiverStack.getOriginalType(index)
                                 context.intersectTypesOrNull(types)!!
+                            } else {
+                                receiverStack.getOriginalType(index)
                             }
                             receiverStack.replaceReceiverType(index, type)
                         }
@@ -200,15 +197,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         expression: FirExpression
     ): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
         val flow = graphBuilder.lastNode.flow
-        var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, symbol, expression) ?: return null
-        val stability = variable.stability
-        val result = mutableListOf<ConeKotlinType>()
-        flow.directAliasMap[variable]?.let {
-            result.addIfNotNull(it.originalType)
-            variable = it.variable
-        }
-        flow.getTypeStatement(variable)?.exactType?.let { result += it }
-        return result.takeIf { it.isNotEmpty() }?.let { stability to it }
+        val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, symbol, expression) ?: return null
+        return flow.getType(variable)?.takeIf { it.isNotEmpty() }?.let { variable.stability to it.toMutableList() }
     }
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement> {
@@ -1251,11 +1241,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                     initializerVariable.isStable || (initializerVariable.hasLocalStability && initializer.isAccessToStableVariable())
 
                 if (!hasExplicitType && isInitializerStable && (propertyVariable.hasLocalStability || propertyVariable.isStable)) {
-                    logicSystem.addLocalVariableAlias(
-                        flow, propertyVariable,
-                        RealVariableAndType(initializerVariable, initializer.coneType)
-                    )
-                    // node.flow.addImplication((propertyVariable notEq null) implies (initializerVariable notEq null))
+                    logicSystem.addLocalVariableAlias(flow, propertyVariable, initializerVariable)
                 } else {
                     logicSystem.replaceVariableFromConditionInStatements(flow, initializerVariable, propertyVariable)
                 }

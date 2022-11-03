@@ -48,7 +48,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         shouldRemoveSynthetics: Boolean,
     ): FLOW
 
-    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariableAndType)
+    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
     abstract fun removeLocalVariableAlias(flow: FLOW, alias: RealVariable)
 
     abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
@@ -126,7 +126,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         op: (Collection<Set<ConeKotlinType>>) -> MutableSet<ConeKotlinType>
     ): MutableTypeStatement {
         require(statements.isNotEmpty())
-        statements.singleOrNull()?.let { return it as MutableTypeStatement }
+        statements.singleOrNull()?.let { return it.asMutableStatement() }
         val variable = statements.first().variable
         assert(statements.all { it.variable == variable })
         val exactType = op.invoke(statements.map { it.exactType })

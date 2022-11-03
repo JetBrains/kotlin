@@ -76,26 +76,6 @@ class RealVariable(
     }
 }
 
-class RealVariableAndType(val variable: RealVariable, val originalType: ConeKotlinType?) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as RealVariableAndType
-
-        if (variable != other.variable) return false
-        if (originalType != other.originalType) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = variable.hashCode()
-        result = 31 * result + originalType.hashCode()
-        return result
-    }
-}
-
 class SyntheticVariable(val fir: FirElement, variableIndexForDebug: Int) : DataFlowVariable(variableIndexForDebug) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
