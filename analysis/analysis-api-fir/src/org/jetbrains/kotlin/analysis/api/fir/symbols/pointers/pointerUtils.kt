@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 internal inline fun <reified D : FirDeclaration> FirScope.findDeclarationWithSignature(
     signature: IdSignature,
@@ -30,6 +33,17 @@ internal inline fun <reified D : FirDeclaration> FirScope.findDeclarationWithSig
             foundSymbol = declaration
         }
     }
+    return foundSymbol
+}
+
+internal inline fun <reified D : FirClassifierSymbol<*>> FirScope.findClassifier(name: Name): D? {
+    var foundSymbol: D? = null
+    processClassifiersByName(name) {
+        if (it is D) {
+            foundSymbol = it
+        }
+    }
+
     return foundSymbol
 }
 
