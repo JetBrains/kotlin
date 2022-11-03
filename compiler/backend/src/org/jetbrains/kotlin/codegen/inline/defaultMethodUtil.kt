@@ -112,6 +112,10 @@ fun expandMaskConditionsAndUpdateVariableNodes(
         (it.start in toDelete && it.end in toDelete) || validOffsets.contains(it.index)
     }
 
+    node.tryCatchBlocks.removeIf {
+        toDelete.contains(it.start) && toDelete.contains(it.end)
+    }
+
     node.remove(toDelete)
 
     return defaultLambdasInfo
