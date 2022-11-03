@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal fun interface KotlinCompilationAssociator {
-    fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>)
+    fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>)
 }
 
 internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator {
-    override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
+    override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
         val project = target.project
 
         /*
@@ -32,43 +32,43 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
           compilation itself (moreover, direct dependencies are not equivalent to transitive ones because of
           resolution order - e.g. in case of FQNs clash, so it's even harmful)
         */
-        project.dependencies.add(first.compileOnlyConfigurationName, project.files({ second.output.classesDirs }))
-        project.dependencies.add(first.runtimeOnlyConfigurationName, project.files({ second.output.allOutputs }))
+        project.dependencies.add(auxiliary.compileOnlyConfigurationName, project.files({ main.output.classesDirs }))
+        project.dependencies.add(auxiliary.runtimeOnlyConfigurationName, project.files({ main.output.allOutputs }))
 
-        first.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+        auxiliary.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
             project,
-            second.apiConfigurationName,
-            second.implementationConfigurationName,
-            second.compileOnlyConfigurationName
+            main.apiConfigurationName,
+            main.implementationConfigurationName,
+            main.compileOnlyConfigurationName
         )
 
-        first.runtimeDependencyConfigurationName?.addAllDependenciesFromOtherConfigurations(
+        auxiliary.runtimeDependencyConfigurationName?.addAllDependenciesFromOtherConfigurations(
             project,
-            second.apiConfigurationName,
-            second.implementationConfigurationName,
-            second.runtimeOnlyConfigurationName
+            main.apiConfigurationName,
+            main.implementationConfigurationName,
+            main.runtimeOnlyConfigurationName
         )
     }
 }
 
 internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator {
-    override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
+    override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
 
-        first.compileDependencyFiles +=
-            second.output.classesDirs + target.project.filesProvider { second.compileDependencyFiles }
+        auxiliary.compileDependencyFiles +=
+            main.output.classesDirs + target.project.filesProvider { main.compileDependencyFiles }
 
-        target.project.configurations.named(first.implementationConfigurationName).configure { configuration ->
-            configuration.extendsFrom(target.project.configurations.findByName(second.implementationConfigurationName))
+        target.project.configurations.named(auxiliary.implementationConfigurationName).configure { configuration ->
+            configuration.extendsFrom(target.project.configurations.findByName(main.implementationConfigurationName))
         }
     }
 }
 
 internal object KotlinJvmCompilationAssociator : KotlinCompilationAssociator {
-    override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
+    override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
         /* Main to Test association handled already by java plugin */
-        if (target is KotlinJvmTarget && target.withJavaEnabled && first.isMain() && second.isTest()) {
+        if (target is KotlinJvmTarget && target.withJavaEnabled && auxiliary.isTest() && main.isMain()) {
             return
-        } else DefaultKotlinCompilationAssociator.associate(target, first, second)
+        } else DefaultKotlinCompilationAssociator.associate(target, auxiliary, main)
     }
 }
 
@@ -82,12 +82,12 @@ internal object KotlinJvmCompilationAssociator : KotlinCompilationAssociator {
 * This helps, because the Android test classpath configurations extend from the Kotlin test compilations' directly.
 */
 internal object KotlinAndroidCompilationAssociator : KotlinCompilationAssociator {
-    override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
-        first.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+    override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
+        auxiliary.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
             target.project,
-            second.apiConfigurationName,
-            second.implementationConfigurationName,
-            second.compileOnlyConfigurationName
+            main.apiConfigurationName,
+            main.implementationConfigurationName,
+            main.compileOnlyConfigurationName
         )
     }
 }
