@@ -123,60 +123,60 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
             return coneKotlinTypes(functionCall, state, queue, rootMarkerStrategy)
         }
 
-        fun expectedResult(id: String): Any? {
-            val map = mapOf(
-                "string_1" to "42",
-                "string_2" to "42",
-                "dataFrame_1" to PluginDataFrameSchema(listOf(SimpleCol("i", TypeApproximationImpl("kotlin.Int", false)))),
-                "dataFrame_2" to PluginDataFrameSchema(emptyList()),
-                "dataFrame_3" to PluginDataFrameSchema(
-                    listOf(
-                        SimpleColumnGroup("person", listOf(SimpleCol("age", TypeApproximationImpl("kotlin.Number", true))), anyRow)
-                    )
-                ),
-                "type_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
-                "insert_1" to InsertClauseApproximation(
-                    PluginDataFrameSchema(columns = emptyList()),
-                    SimpleCol("b", TypeApproximationImpl("kotlin.Int", false))
-                ),
-                "enum_1" to Infer.Type,
-                "kproperty_1" to KPropertyApproximation("i", TypeApproximationImpl("kotlin.Int", false)),
-                "kproperty_2" to KPropertyApproximation("name", TypeApproximationImpl("kotlin.Int", false)),
-                "addExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
-                "addExpression_2" to TypeApproximationImpl("kotlin.Any", nullable = true),
-//                "add0_schema" to test0Schema,
-//                "add0" to test0After,
-                "varargKProperty_0" to listOf(
-                    KPropertyApproximation("col1", TypeApproximationImpl("kotlin.Int", false)),
-                    KPropertyApproximation("col2", TypeApproximationImpl("kotlin.Int", true))
-                ),
-//                "memberFunction_1" to Context(123),
-                "typeParameter_1" to TypeApproximationImpl("kotlin.Int", false),
-                "rowValueExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
-                "columnsSelector_1" to listOf(
-                    ColumnWithPathApproximation(
-                        ColumnPathApproximation(listOf("intField")),
-                        SimpleCol(name = "intField", type = TypeApproximationImpl(fqName = "kotlin.Int", nullable = false))
-                    )
-                ),
-                "columnsSelector_2" to listOf(
-                    ColumnWithPathApproximation(
-                        ColumnPathApproximation(listOf("group", "stringField")),
-                        SimpleCol(name = "stringField", type = TypeApproximationImpl(fqName = "kotlin.String", nullable = false))
-                    )
-                ),
-                "columnsSelector_3" to listOf(
-                    ColumnWithPathApproximation(
-                        ColumnPathApproximation(listOf("intField")),
-                        SimpleCol(name = "intField", type = TypeApproximationImpl(fqName = "kotlin.Int", nullable = false))
-                    ),
-                    ColumnWithPathApproximation(
-                        ColumnPathApproximation(listOf("group", "stringField")),
-                        SimpleCol(name = "stringField", type = TypeApproximationImpl(fqName = "kotlin.String", nullable = false))
-                    )
-                ),
-            )
-            return map[id]
-        }
+//        fun expectedResult(id: String): Any? {
+//            val map = mapOf(
+//                "string_1" to "42",
+//                "string_2" to "42",
+//                "dataFrame_1" to PluginDataFrameSchema(listOf(SimpleCol("i", TypeApproximationImpl("kotlin.Int", false)))),
+//                "dataFrame_2" to PluginDataFrameSchema(emptyList()),
+//                "dataFrame_3" to PluginDataFrameSchema(
+//                    listOf(
+//                        SimpleColumnGroup("person", listOf(SimpleCol("age", TypeApproximationImpl("kotlin.Number", true))), anyRow)
+//                    )
+//                ),
+//                "type_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
+//                "insert_1" to InsertClauseApproximation(
+//                    PluginDataFrameSchema(columns = emptyList()),
+//                    SimpleCol("b", TypeApproximationImpl("kotlin.Int", false))
+//                ),
+//                "enum_1" to Infer.Type,
+//                "kproperty_1" to KPropertyApproximation("i", TypeApproximationImpl("kotlin.Int", false)),
+//                "kproperty_2" to KPropertyApproximation("name", TypeApproximationImpl("kotlin.Int", false)),
+//                "addExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
+//                "addExpression_2" to TypeApproximationImpl("kotlin.Any", nullable = true),
+////                "add0_schema" to test0Schema,
+////                "add0" to test0After,
+//                "varargKProperty_0" to listOf(
+//                    KPropertyApproximation("col1", TypeApproximationImpl("kotlin.Int", false)),
+//                    KPropertyApproximation("col2", TypeApproximationImpl("kotlin.Int", true))
+//                ),
+////                "memberFunction_1" to Context(123),
+//                "typeParameter_1" to TypeApproximationImpl("kotlin.Int", false),
+//                "rowValueExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
+//                "columnsSelector_1" to listOf(
+//                    ColumnWithPathApproximation(
+//                        ColumnPathApproximation(listOf("intField")),
+//                        SimpleCol(name = "intField", type = TypeApproximationImpl(fqName = "kotlin.Int", nullable = false))
+//                    )
+//                ),
+//                "columnsSelector_2" to listOf(
+//                    ColumnWithPathApproximation(
+//                        ColumnPathApproximation(listOf("group", "stringField")),
+//                        SimpleCol(name = "stringField", type = TypeApproximationImpl(fqName = "kotlin.String", nullable = false))
+//                    )
+//                ),
+//                "columnsSelector_3" to listOf(
+//                    ColumnWithPathApproximation(
+//                        ColumnPathApproximation(listOf("intField")),
+//                        SimpleCol(name = "intField", type = TypeApproximationImpl(fqName = "kotlin.Int", nullable = false))
+//                    ),
+//                    ColumnWithPathApproximation(
+//                        ColumnPathApproximation(listOf("group", "stringField")),
+//                        SimpleCol(name = "stringField", type = TypeApproximationImpl(fqName = "kotlin.String", nullable = false))
+//                    )
+//                ),
+//            )
+//            return map[id]
+//        }
     }
 }

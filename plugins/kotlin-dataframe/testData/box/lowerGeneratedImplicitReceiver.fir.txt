@@ -1,221 +1,227 @@
 FILE: lowerGeneratedImplicitReceiver.kt
+    package org.jetbrains.kotlinx.dataframe.api
+
     public abstract interface Cars : R|kotlin/Any| {
     }
-    public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+    public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>|): R|kotlin/Unit| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token99>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_99|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/api/Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/api/Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/api/Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
             ^ Int(2022)
         }
         )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/Name is evaluated to age|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.age|
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/api/Name is evaluated to age|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Token99.age|
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
-    local final class 0 {
+    local final class Token0 {
     }
-    local final class 1 {
+    local final class Token1 {
     }
-    local final class 2 {
+    local final class Token2 {
     }
-    local final class 3 {
+    local final class Token3 {
     }
-    local final class 4 {
+    local final class Token4 {
     }
-    local final class 5 {
+    local final class Token5 {
     }
-    local final class 6 {
+    local final class Token6 {
     }
-    local final class 7 {
+    local final class Token7 {
     }
-    local final class 8 {
+    local final class Token8 {
     }
-    local final class 9 {
+    local final class Token9 {
     }
-    local final class 10 {
+    local final class Token10 {
     }
-    local final class 11 {
+    local final class Token11 {
     }
-    local final class 12 {
+    local final class Token12 {
     }
-    local final class 13 {
+    local final class Token13 {
     }
-    local final class 14 {
+    local final class Token14 {
     }
-    local final class 15 {
+    local final class Token15 {
     }
-    local final class 16 {
+    local final class Token16 {
     }
-    local final class 17 {
+    local final class Token17 {
     }
-    local final class 18 {
+    local final class Token18 {
     }
-    local final class 19 {
+    local final class Token19 {
     }
-    local final class 20 {
+    local final class Token20 {
     }
-    local final class 21 {
+    local final class Token21 {
     }
-    local final class 22 {
+    local final class Token22 {
     }
-    local final class 23 {
+    local final class Token23 {
     }
-    local final class 24 {
+    local final class Token24 {
     }
-    local final class 25 {
+    local final class Token25 {
     }
-    local final class 26 {
+    local final class Token26 {
     }
-    local final class 27 {
+    local final class Token27 {
     }
-    local final class 28 {
+    local final class Token28 {
     }
-    local final class 29 {
+    local final class Token29 {
     }
-    local final class 30 {
+    local final class Token30 {
     }
-    local final class 31 {
+    local final class Token31 {
     }
-    local final class 32 {
+    local final class Token32 {
     }
-    local final class 33 {
+    local final class Token33 {
     }
-    local final class 34 {
+    local final class Token34 {
     }
-    local final class 35 {
+    local final class Token35 {
     }
-    local final class 36 {
+    local final class Token36 {
     }
-    local final class 37 {
+    local final class Token37 {
     }
-    local final class 38 {
+    local final class Token38 {
     }
-    local final class 39 {
+    local final class Token39 {
     }
-    local final class 40 {
+    local final class Token40 {
     }
-    local final class 41 {
+    local final class Token41 {
     }
-    local final class 42 {
+    local final class Token42 {
     }
-    local final class 43 {
+    local final class Token43 {
     }
-    local final class 44 {
+    local final class Token44 {
     }
-    local final class 45 {
+    local final class Token45 {
     }
-    local final class 46 {
+    local final class Token46 {
     }
-    local final class 47 {
+    local final class Token47 {
     }
-    local final class 48 {
+    local final class Token48 {
     }
-    local final class 49 {
+    local final class Token49 {
     }
-    local final class 50 {
+    local final class Token50 {
     }
-    local final class 51 {
+    local final class Token51 {
     }
-    local final class 52 {
+    local final class Token52 {
     }
-    local final class 53 {
+    local final class Token53 {
     }
-    local final class 54 {
+    local final class Token54 {
     }
-    local final class 55 {
+    local final class Token55 {
     }
-    local final class 56 {
+    local final class Token56 {
     }
-    local final class 57 {
+    local final class Token57 {
     }
-    local final class 58 {
+    local final class Token58 {
     }
-    local final class 59 {
+    local final class Token59 {
     }
-    local final class 60 {
+    local final class Token60 {
     }
-    local final class 61 {
+    local final class Token61 {
     }
-    local final class 62 {
+    local final class Token62 {
     }
-    local final class 63 {
+    local final class Token63 {
     }
-    local final class 64 {
+    local final class Token64 {
     }
-    local final class 65 {
+    local final class Token65 {
     }
-    local final class 66 {
+    local final class Token66 {
     }
-    local final class 67 {
+    local final class Token67 {
     }
-    local final class 68 {
+    local final class Token68 {
     }
-    local final class 69 {
+    local final class Token69 {
     }
-    local final class 70 {
+    local final class Token70 {
     }
-    local final class 71 {
+    local final class Token71 {
     }
-    local final class 72 {
+    local final class Token72 {
     }
-    local final class 73 {
+    local final class Token73 {
     }
-    local final class 74 {
+    local final class Token74 {
     }
-    local final class 75 {
+    local final class Token75 {
     }
-    local final class 76 {
+    local final class Token76 {
     }
-    local final class 77 {
+    local final class Token77 {
     }
-    local final class 78 {
+    local final class Token78 {
     }
-    local final class 79 {
+    local final class Token79 {
     }
-    local final class 80 {
+    local final class Token80 {
     }
-    local final class 81 {
+    local final class Token81 {
     }
-    local final class 82 {
+    local final class Token82 {
     }
-    local final class 83 {
+    local final class Token83 {
     }
-    local final class 84 {
+    local final class Token84 {
     }
-    local final class 85 {
+    local final class Token85 {
     }
-    local final class 86 {
+    local final class Token86 {
     }
-    local final class 87 {
+    local final class Token87 {
     }
-    local final class 88 {
+    local final class Token88 {
     }
-    local final class 89 {
+    local final class Token89 {
     }
-    local final class 90 {
+    local final class Token90 {
     }
-    local final class 91 {
+    local final class Token91 {
     }
-    local final class 92 {
+    local final class Token92 {
     }
-    local final class 93 {
+    local final class Token93 {
     }
-    local final class 94 {
+    local final class Token94 {
     }
-    local final class 95 {
+    local final class Token95 {
     }
-    local final class 96 {
+    local final class Token96 {
     }
-    local final class 97 {
+    local final class Token97 {
     }
-    local final class 98 {
+    local final class Token98 {
     }
-    local final class 99 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.age: R|kotlin/Int|
+    local final class Token99 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token99>|.age: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token99>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/99|
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Token99|
 
     }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe.api
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/Add|))) @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add_1)) public final inline fun <reified R, T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_99(name: R|kotlin/String|, noinline expression: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/api/AddExpression<T, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token99>|
