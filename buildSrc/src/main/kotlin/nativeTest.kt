@@ -128,18 +128,22 @@ fun Project.nativeTest(
                 val customNativeHome = readFromGradle(KOTLIN_NATIVE_HOME)
 
                 val kotlinNativeCompilerEmbeddable = if (customNativeHome == null)
-                    configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable"))
-                        .also { dependsOn(it) }
+                    configurations.detachedConfiguration(
+                        dependencies.project(":kotlin-native-compiler-embeddable"),
+                        dependencies.module(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+                    ).also { dependsOn(it) }
                 else
                     null
 
                 customDependencies.forEach(::dependsOn)
 
                 lazyClassPath {
-                    if (customNativeHome == null)
+                    if (customNativeHome == null) {
                         addAll(kotlinNativeCompilerEmbeddable!!.files)
-                    else
+                    } else {
                         this += file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
+                        this += file(customNativeHome).resolve("konan/lib/trove4j.jar")
+                    }
 
                     customDependencies.flatMapTo(this) { it.files }
                 }
