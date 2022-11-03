@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -1315,3 +1316,20 @@ val IrFunction.isTypedEquals: Boolean
                 && (valueParameters[0].type.classFqName?.run { parentClass.hasEqualFqName(this) } ?: false)
                 && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && parentClass.isValue
     }
+
+val IrFunction.isIntrinsicInlineClassCreator: Boolean
+    get() = (parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+            && name == Name.identifier("createInlineClassInstance")
+            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+            && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
+
+fun IrFunction.isBoxFunction(typeSystem: IrTypeSystemContext): Boolean {
+    val companionClass = parent as? IrClass ?: return false
+    if (!companionClass.isCompanion) return false
+    val parentClass = companionClass.parent as? IrClass ?: return false
+    return name == OperatorNameConventions.BOX && returnType.isSubtypeOf(parentClass.defaultType, typeSystem)
+            && parentClass.isSingleFieldValueClass && valueParameters.size == 1
+            && valueParameters[0].type == parentClass.inlineClassRepresentation!!.underlyingType
+            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+}
+

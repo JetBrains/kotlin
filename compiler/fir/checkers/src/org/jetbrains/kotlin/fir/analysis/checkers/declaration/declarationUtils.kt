@@ -127,4 +127,3 @@ fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
                     && valueParameters[0].returnTypeRef.coneType.classId == this@run.classId
         }
     } ?: false
-

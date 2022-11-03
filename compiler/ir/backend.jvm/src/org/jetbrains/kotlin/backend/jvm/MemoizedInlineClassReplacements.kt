@@ -61,6 +61,9 @@ class MemoizedInlineClassReplacements(
                     else
                         null
 
+                // Don't mangle custom box function
+                it.isBoxFunction(context.typeSystem) -> null
+
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
                     when {
@@ -90,25 +93,28 @@ class MemoizedInlineClassReplacements(
 
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
-     * static function named "box-impl" which takes an unboxed value and returns
+     * static function named "box-impl" or "box-impl-default" which takes an unboxed value and returns
      * a boxed value.
      */
-    val getBoxFunction: (IrClass) -> IrSimpleFunction =
-        storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isSingleFieldValueClass)
-            irFactory.buildFun {
-                name = Name.identifier(KotlinTypeMapper.BOX_JVM_METHOD_NAME)
-                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
-                returnType = irClass.defaultType
-            }.apply {
-                parent = irClass
-                copyTypeParametersFrom(irClass)
-                addValueParameter {
-                    name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
-                    type = irClass.inlineClassRepresentation!!.underlyingType
-                }
-            }
+    fun getBoxFunction(irClass: IrClass, withDefaultSuffix: Boolean = false): IrFunction {
+        if (withDefaultSuffix) return createBoxFunction(irClass, defaultSuffix = true)
+        return boxFunctionsCache.computeIfAbsent(irClass) {
+            createBoxFunction(irClass, defaultSuffix = false)
         }
+    }
+
+    private fun createBoxFunction(irClass: IrClass, defaultSuffix: Boolean) = irFactory.buildFun {
+        name = Name.identifier(if (defaultSuffix) KotlinTypeMapper.DEFAULT_BOX_JVM__METHOD_NAME else KotlinTypeMapper.BOX_JVM_METHOD_NAME)
+        origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
+        returnType = irClass.defaultType
+    }.apply {
+        parent = irClass
+        copyTypeParametersFrom(irClass)
+        addValueParameter {
+            name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
+            type = irClass.inlineClassRepresentation!!.underlyingType
+        }
+    }
 
     /**
      * Get the unbox function for an inline class. Concretely, this is a synthetic
@@ -127,6 +133,7 @@ class MemoizedInlineClassReplacements(
             }
         }
 
+    private val boxFunctionsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
         require(irClass.isSingleFieldValueClass)
