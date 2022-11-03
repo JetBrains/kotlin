@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption
@@ -525,6 +526,48 @@ private class ElementsToShortenCollector(
         }
     }
 
+    private fun FirCallableSymbol<*>.hasSameSignatureWith(another: FirCallableSymbol<*>): Boolean {
+        if (resolvedReceiverTypeRef != another.resolvedReceiverTypeRef) return false
+
+        // Since we cannot determine whether a type parameter for a symbol is the same as the one of another, we just compare its number.
+        // For example, all type parameters of different foo() functions in the following code are different:
+        //     fun <T> foo() {}
+        //     class A { fun <T> foo() {} }
+        //     class B { fun <E> foo() {} }
+        if (typeParameterSymbols.size != another.typeParameterSymbols.size) return false
+
+        return when (this) {
+            is FirFunctionSymbol -> {
+                if (another !is FirFunctionSymbol) return false
+                if (valueParameterSymbols.size != another.valueParameterSymbols.size) return false
+                for ((valueParam, valueParamOfAnother) in valueParameterSymbols.zip(another.valueParameterSymbols)) {
+                    val typeOfValueParam = valueParam.resolvedReturnType
+                    val typeOfAnotherValueParam = valueParamOfAnother.resolvedReturnType
+
+                    if (typeOfValueParam is ConeTypeParameterType) {
+                        // Case 1. Both have type parameter types: same
+                        if (typeOfAnotherValueParam is ConeTypeParameterType) continue
+                        // Case 2. Only one has type parameter types: not same
+                        return false
+                    }
+                    // Case 2. Only one has type parameter types: not same
+                    if (typeOfAnotherValueParam is ConeTypeParameterType) return false
+
+                    // Case 3. Both have normal types: same if types are same
+                    if (typeOfValueParam != typeOfAnotherValueParam) return false
+                }
+                true
+            }
+
+            is FirVariableSymbol -> {
+                if (another !is FirVariableSymbol) return false
+                true
+            }
+
+            else -> false
+        }
+    }
+
     private fun processCallableQualifiedAccess(
         calledSymbol: FirCallableSymbol<*>,
         qualifiedCallExpression: KtDotQualifiedExpression,
@@ -554,8 +597,14 @@ private class ElementsToShortenCollector(
         //    class C { object G }
         if (calledSymbol.resolvedReceiverTypeRef != null) return
 
+        val needReturnTypeCheck = analyze(qualifiedCallExpression) { qualifiedCallExpression.isUsedAsExpression() }
+        val callableSymbolReturnType = if (needReturnTypeCheck) calledSymbol.resolvedReturnType else null
+
         val scopes = shorteningContext.findScopesAtPosition(expressionToGetScope, namesToImport, towerContextProvider) ?: return
-        val availableCallables = findCallableInScopes(scopes, calledSymbol.name)
+        val availableCallables = findCallableInScopes(scopes, calledSymbol.name).filter {
+            if (needReturnTypeCheck && callableSymbolReturnType != it.symbol.resolvedReturnType) return@filter false
+            it.symbol.hasSameSignatureWith(calledSymbol)
+        }
 
         val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
 
