@@ -27,10 +27,10 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
     final override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
         require(analysisSession is KtFirAnalysisSession)
         val ownerSymbol = with(analysisSession) {
-            ownerPointer.restoreSymbol() as? KtClassOrObjectSymbol ?: return null
+            ownerPointer.restoreSymbol()
         }
 
-        val owner = ownerSymbol.firSymbol as? FirClassSymbol ?: return null
+        val owner = ownerSymbol?.firSymbol as? FirClassSymbol ?: return null
         val firSession = analysisSession.useSiteSession
         val scope = owner.unsubstitutedScope(
             firSession,
