@@ -91,6 +91,8 @@ class MemoizedInlineClassReplacements(
             }
         }
 
+    private val boxFunctionsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
+
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
      * static function named "box-impl" or "box-impl-default" which takes an unboxed value and returns
@@ -133,7 +135,6 @@ class MemoizedInlineClassReplacements(
             }
         }
 
-    private val boxFunctionsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
         require(irClass.isSingleFieldValueClass)
