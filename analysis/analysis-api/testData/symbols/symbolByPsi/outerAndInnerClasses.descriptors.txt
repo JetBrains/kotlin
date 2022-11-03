@@ -430,7 +430,7 @@ KtFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): X.U.X<T, T4, T3, T>
+  getDispatchReceiver(): X<T>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
