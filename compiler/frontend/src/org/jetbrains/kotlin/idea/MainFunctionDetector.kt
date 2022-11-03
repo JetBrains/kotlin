@@ -34,8 +34,9 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class MainFunctionDetector {
+    private val languageVersionSettings: LanguageVersionSettings by lazy { getLanguageVersionSettings() }
     private val getFunctionDescriptor: (KtNamedFunction) -> FunctionDescriptor?
-    private val languageVersionSettings: LanguageVersionSettings
+    private val getLanguageVersionSettings: () -> LanguageVersionSettings
 
     /** Assumes that the function declaration is already resolved and the descriptor can be found in the `bindingContext`.  */
     constructor(bindingContext: BindingContext, languageVersionSettings: LanguageVersionSettings) {
@@ -44,13 +45,21 @@ class MainFunctionDetector {
                 ?: throw throw KotlinExceptionWithAttachments("No descriptor resolved for $function")
                     .withPsiAttachment("function.text", function)
         }
-        this.languageVersionSettings = languageVersionSettings
+        this.getLanguageVersionSettings = { languageVersionSettings }
     }
 
-    constructor(languageVersionSettings: LanguageVersionSettings, functionResolver: (KtNamedFunction) -> FunctionDescriptor?) {
+    constructor(
+        languageVersionSettingsProvider: () -> LanguageVersionSettings,
+        functionResolver: (KtNamedFunction) -> FunctionDescriptor?
+    ) {
+        this.getLanguageVersionSettings = languageVersionSettingsProvider
         this.getFunctionDescriptor = functionResolver
-        this.languageVersionSettings = languageVersionSettings
     }
+
+    constructor(
+        languageVersionSettings: LanguageVersionSettings,
+        functionResolver: (KtNamedFunction) -> FunctionDescriptor?
+    ) : this({ languageVersionSettings }, functionResolver)
 
     @JvmOverloads
     fun isMain(
