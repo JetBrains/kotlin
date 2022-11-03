@@ -63,19 +63,16 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
             override fun visitClass(declaration: IrClass) {
                 declaration.acceptChildrenVoid(this)
-                declaration.transformDeclarationsFlat(::tryTransformSuspendFunction)
+                if (declaration.origin != DECLARATION_ORIGIN_COROUTINE_IMPL)
+                    declaration.transformDeclarationsFlat(::tryTransformSuspendFunction)
             }
         })
     }
 
-
-    // Suppress since it is used in native
-    @Suppress("MemberVisibilityCanBePrivate")
     protected fun IrCall.isReturnIfSuspendedCall() =
-        symbol.signature == context.ir.symbols.returnIfSuspended.signature
+        symbol == context.ir.symbols.returnIfSuspended
 
     private fun tryTransformSuspendFunction(element: IrElement) =
-
         if (element is IrSimpleFunction && element.isSuspend && element.modality != Modality.ABSTRACT)
             transformSuspendFunction(element, suspendLambdas[element])
         else null
@@ -123,102 +120,51 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         })
     }
 
-    private sealed class SuspendFunctionKind {
-        object NO_SUSPEND_CALLS : SuspendFunctionKind()
-        class DELEGATING(val delegatingCall: IrCall) : SuspendFunctionKind()
-        object NEEDS_STATE_MACHINE : SuspendFunctionKind()
+    private fun transformSuspendFunction(irFunction: IrSimpleFunction, functionReference: IrFunctionReference?): List<IrDeclaration>? {
+        val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, irFunction)
+        return when {
+            irFunction in suspendLambdas -> {
+                // Suspend lambdas always need coroutine implementation.
+                // They are called through factory method <create>, thus we can eliminate original body.
+                listOf(buildCoroutine(irFunction, functionReference))
+            }
+
+            // TODO: May be optimize tail suspend calls even in case of a state machine?
+            hasNotTailSuspendCalls -> listOf<IrDeclaration>(buildCoroutine(irFunction, functionReference), irFunction)
+
+            else -> {
+                // Otherwise, no suspend calls at all or all of them are tail calls - no need in a state machine.
+                // Have to simplify them though (convert them to proper return statements).
+                simplifyTailSuspendCalls(irFunction, tailSuspendCalls)
+                null
+            }
+        }
     }
 
-    private fun transformSuspendFunction(irFunction: IrSimpleFunction, functionReference: IrFunctionReference?) =
-        when (val suspendFunctionKind = getSuspendFunctionKind(irFunction)) {
-            is SuspendFunctionKind.NO_SUSPEND_CALLS -> {
-                null                                                            // No suspend function calls - just an ordinary function.
-            }
+    private fun simplifyTailSuspendCalls(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) {
+        if (tailSuspendCalls.isEmpty()) return
 
-            is SuspendFunctionKind.DELEGATING -> {                              // Calls another suspend function at the end.
-                removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction, suspendFunctionKind.delegatingCall)
-                null                                                            // No need in state machine.
-            }
+        val irBuilder = context.createIrBuilder(irFunction.symbol)
+        irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                val shortCut = if (expression.isReturnIfSuspendedCall())
+                    expression.getValueArgument(0)!!
+                else expression
 
-            is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
-                val coroutine = buildCoroutine(irFunction, functionReference)   // Coroutine implementation.
-                if (irFunction in suspendLambdas)             // Suspend lambdas are called through factory method <create>,
-                    listOf(coroutine)                                           // thus we can eliminate original body.
-                else
-                    listOf<IrDeclaration>(coroutine, irFunction)
-            }
-        }
+                shortCut.transformChildrenVoid(this)
 
-    private fun getSuspendFunctionKind(irFunction: IrSimpleFunction): SuspendFunctionKind {
-        if (irFunction in suspendLambdas)
-            return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
-
-        val body = irFunction.body ?: return SuspendFunctionKind.NO_SUSPEND_CALLS
-
-        var numberOfSuspendCalls = 0
-        body.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitCall(expression: IrCall) {
-                expression.acceptChildrenVoid(this)
-                if (expression.isSuspend)
-                    ++numberOfSuspendCalls
+                return if (!expression.isSuspend)
+                    shortCut
+                else irBuilder.at(expression).irReturn(
+                    irBuilder.generateDelegatedCall(irFunction.returnType, shortCut)
+                )
             }
         })
-        // It is important to optimize the case where there is only one suspend call and it is the last statement
-        // because we don't need to build a fat coroutine class in that case.
-        // This happens a lot in practise because of suspend functions with default arguments.
-        // TODO: use TailRecursionCallsCollector.
-        val lastCall = when (val lastStatement = (body as IrBlockBody).statements.lastOrNull()) {
-            is IrCall -> lastStatement
-            is IrReturn -> {
-                var value: IrElement = lastStatement
-                /*
-                 * Check if matches this pattern:
-                 * block/return {
-                 *     block/return {
-                 *         .. suspendCall()
-                 *     }
-                 * }
-                 */
-                loop@ while (true) {
-                    value = when {
-                        value is IrBlock && value.statements.size == 1 -> value.statements.first()
-                        value is IrReturn -> value.value
-                        else -> break@loop
-                    }
-                }
-                value as? IrCall
-            }
-            else -> null
-        }
-        val suspendCallAtEnd = lastCall != null && lastCall.isSuspend    // Suspend call.
-        return when {
-            numberOfSuspendCalls == 0 -> SuspendFunctionKind.NO_SUSPEND_CALLS
-            numberOfSuspendCalls == 1
-                    && suspendCallAtEnd -> SuspendFunctionKind.DELEGATING(lastCall!!)
-            else -> SuspendFunctionKind.NEEDS_STATE_MACHINE
-        }
     }
 
     private val symbols = context.ir.symbols
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
-
-    private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
-        val returnValue =
-            if (delegatingCall.isReturnIfSuspendedCall())
-                delegatingCall.getValueArgument(0)!!
-            else delegatingCall
-        context.createIrBuilder(irFunction.symbol).run {
-            val statements = (irFunction.body as IrBlockBody).statements
-            val lastStatement = statements.last()
-            assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
-            statements[statements.lastIndex] = irReturn(generateDelegatedCall(irFunction.returnType, returnValue))
-        }
-    }
 
     private fun buildCoroutine(irFunction: IrSimpleFunction, functionReference: IrFunctionReference?): IrClass {
         val coroutine = CoroutineBuilder(irFunction, functionReference).build()
