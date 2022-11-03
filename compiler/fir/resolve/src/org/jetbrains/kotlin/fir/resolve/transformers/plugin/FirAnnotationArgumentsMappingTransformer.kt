@@ -10,28 +10,29 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 
 open class FirAnnotationArgumentsMappingTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
     outerBodyResolveContext: BodyResolveContext? = null
-) : FirBodyResolveTransformer(
+) : FirAbstractBodyResolveTransformerDispatcher(
     session,
     resolvePhase,
     implicitTypeOnly = false,
     scopeSession,
     outerBodyResolveContext = outerBodyResolveContext
 ) {
-    override val declarationsTransformer: FirDeclarationsResolveTransformer =
+    final override val expressionsTransformer: FirExpressionsResolveTransformer =
+        FirExpressionsResolveTransformer(this)
+
+    final override val declarationsTransformer: FirDeclarationsResolveTransformer =
         FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(this)
 }
 
 private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
-    transformer: FirBodyResolveTransformer
+    transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirDeclarationsResolveTransformer(transformer) {
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
         regularClass.transformAnnotations(this, data)
