@@ -441,7 +441,41 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("build")
+            build("build") {
+                assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: ${getJdk11Path().replace("\\\\", "\\")}")
+            }
+        }
+    }
+
+    @DisplayName("Setting toolchain via java extension should update jvm-target argument on eager task creation")
+    @GradleTest
+    internal fun settingToolchainViaJavaUpdateJvmTarget(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            //language=groovy
+            buildGradle.append(
+                """
+                tasks.named("compileKotlin").get() // Trigger task eager creation
+                
+                java {
+                    toolchain {
+                        languageVersion.set(JavaLanguageVersion.of(11))
+                    }
+                }
+                
+                """.trimIndent()
+            )
+
+            build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                val compilerArgs = output.lineSequence()
+                    .filter { it.contains(":compileKotlin Kotlin compiler args:") }
+                    .first()
+                assert(compilerArgs.contains("-jvm-target 11")) {
+                    "Kotlin compilation jvm-target argument is ${output.substringAfter("-jvm-target ").substringBefore(" ")}"
+                }
+            }
         }
     }
 
