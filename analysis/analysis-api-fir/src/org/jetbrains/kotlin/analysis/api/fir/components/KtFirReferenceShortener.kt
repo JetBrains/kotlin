@@ -434,12 +434,9 @@ private class ElementsToShortenCollector(
      *   inner class Inner // Inner has an implicit type parameter `T`.
      * }
      */
-    private fun FirClassLikeSymbol<*>.hasTypeParameterFromParent(): Boolean {
-        val psi = findPsi() ?: return false
-        return typeParameterSymbols?.any {
-            it.findPsi()?.getNonStrictParentOfType<KtClass>() != psi
-        } == true
-    }
+    private fun FirClassLikeSymbol<*>.hasTypeParameterFromParent(): Boolean = typeParameterSymbols?.any {
+        it.containingDeclarationSymbol != this
+    } == true
 
     private inline fun <E> findClassifierElementsToShorten(
         positionScopes: List<FirScope>,
