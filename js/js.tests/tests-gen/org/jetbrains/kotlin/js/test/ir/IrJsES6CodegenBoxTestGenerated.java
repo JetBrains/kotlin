@@ -1596,6 +1596,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("methodWithDefaultParameter.kt")
+        public void testMethodWithDefaultParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/methodWithDefaultParameter.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClassTypeParameters.kt")
         public void testNestedClassTypeParameters() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/nestedClassTypeParameters.kt");
@@ -3465,6 +3471,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         @TestMetadata("kt53677.kt")
         public void testKt53677() throws Exception {
             runTest("compiler/testData/codegen/box/casts/kt53677.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54707.kt")
+        public void testKt54707() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/kt54707.kt");
         }
 
         @Test
