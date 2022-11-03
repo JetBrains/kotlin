@@ -1,0 +1,11 @@
+enum class MyEnumClass {
+  FirstEntry,
+  SecondEntry,
+  ThirdEntry;
+
+  abstract fun foo()
+
+  fun foo(i: kotlin.Int)
+
+  val i: kotlin.Int
+}

@@ -1,0 +1,404 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: a
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass.FirstEntry
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: true
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass.FirstEntry
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtEnumEntrySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /MyEnumClass.FirstEntry
+  containingEnumClassIdIfNonLocal: MyEnumClass
+  contextReceivers: []
+  isExtension: false
+  name: FirstEntry
+  origin: SOURCE
+  receiverType: null
+  returnType: MyEnumClass
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: true
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass.SecondEntry
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: true
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getDispatchReceiver(): MyEnumClass.SecondEntry
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: true
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: i
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass.SecondEntry
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getI
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtEnumEntrySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /MyEnumClass.SecondEntry
+  containingEnumClassIdIfNonLocal: MyEnumClass
+  contextReceivers: []
+  isExtension: false
+  name: SecondEntry
+  origin: SOURCE
+  receiverType: null
+  returnType: MyEnumClass
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: true
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass.ThirdEntry
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: true
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: i
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass.ThirdEntry
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtEnumEntrySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /MyEnumClass.ThirdEntry
+  containingEnumClassIdIfNonLocal: MyEnumClass
+  contextReceivers: []
+  isExtension: false
+  name: ThirdEntry
+  origin: SOURCE
+  receiverType: null
+  returnType: MyEnumClass
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /MyEnumClass.foo
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: foo
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /MyEnumClass.foo
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: foo
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: i
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /MyEnumClass.i
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: OPEN
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getDispatchReceiver(): MyEnumClass
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KtConstantInitializerValue(1)
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: OPEN
+  name: i
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): MyEnumClass
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getI
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: MyEnumClass
+  classKind: ENUM_CLASS
+  companionObject: null
+  contextReceivers: []
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: MyEnumClass
+  origin: SOURCE
+  superTypes: [
+    kotlin/Enum<MyEnumClass>
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
