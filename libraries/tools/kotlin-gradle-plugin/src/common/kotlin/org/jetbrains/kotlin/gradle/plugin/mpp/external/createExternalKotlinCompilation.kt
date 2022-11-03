@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationAssociator
@@ -16,12 +14,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationS
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory.KotlinCompilationTaskNamesContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.decoratedInstance
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilation.Delegate
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalDecoratedKotlinCompilation.Delegate
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 
 @ExternalKotlinTargetApi
-fun <T : ExternalKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
+fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
     descriptor: ExternalKotlinCompilationDescriptor<T>
 ): T {
     val compilationImplFactory = KotlinCompilationImplFactory(
@@ -44,7 +41,7 @@ fun <T : ExternalKotlinCompilation> DecoratedExternalKotlinTarget.createCompilat
         compilationAssociator = descriptor.compilationAssociator?.let { declaredAssociator ->
             @Suppress("unchecked_cast")
             KotlinCompilationAssociator { _, first, second ->
-                declaredAssociator.associate(first.decoratedInstance as T, second.decoratedInstance as ExternalKotlinCompilation)
+                declaredAssociator.associate(first.decoratedInstance as T, second.decoratedInstance as ExternalDecoratedKotlinCompilation)
             }
         } ?: DefaultKotlinCompilationAssociator,
         compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
@@ -65,25 +62,40 @@ fun <T : ExternalKotlinCompilation> DecoratedExternalKotlinTarget.createCompilat
     descriptor.configure?.invoke(decoratedCompilation)
     this.delegate.compilations.add(decoratedCompilation)
 
-
-    val tasksProvider = KotlinTasksProvider()
-    val compilationInfo = KotlinCompilationInfo(decoratedCompilation)
-
-    val config = KotlinCompileConfig(compilationInfo)
-    config.configureTask { task ->
-        task.useModuleDetection.value(true).disallowChanges()
-        task.destinationDirectory.set(project.layout.buildDirectory.dir("tmp/kotlin-classes/debug"))
-    }
-
-    Kotlin2JvmSourceSetProcessor(tasksProvider, compilationInfo).run()
-    project.logger.quiet("Registered: ${compilationInfo.compileKotlinTaskName}")
+    setupCompileTask(decoratedCompilation)
 
     return decoratedCompilation
 }
 
 @ExternalKotlinTargetApi
-fun <T : ExternalKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
+fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
     descriptor: ExternalKotlinCompilationDescriptorBuilder<T>.() -> Unit
 ): T {
     return createCompilation(ExternalKotlinCompilationDescriptor(descriptor))
+}
+
+
+@OptIn(ExternalKotlinTargetApi::class)
+private fun DecoratedExternalKotlinTarget.setupCompileTask(
+    compilation: ExternalDecoratedKotlinCompilation
+) {
+    val tasksProvider = KotlinTasksProvider()
+    val compilationInfo = KotlinCompilationInfo(compilation)
+
+    val sourceSetProcessor = when (platformType) {
+        KotlinPlatformType.common ->
+            KotlinCommonSourceSetProcessor(compilationInfo, tasksProvider)
+
+        KotlinPlatformType.jvm, KotlinPlatformType.androidJvm ->
+            Kotlin2JvmSourceSetProcessor(tasksProvider, compilationInfo)
+
+        KotlinPlatformType.js ->
+            KotlinJsIrSourceSetProcessor(tasksProvider, compilationInfo)
+
+        else -> throw UnsupportedOperationException("KotlinPlatformType.$platformType is not supported")
+    }
+
+    sourceSetProcessor.run()
+
+    logger.info("Created compile task: ${sourceSetProcessor.kotlinTask.name}")
 }
