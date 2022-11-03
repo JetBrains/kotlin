@@ -281,6 +281,7 @@ any distributions of the compiler, libraries or plugin:
 [guava]: third_party/guava_license.txt
 [gwt]: third_party/gwt_license.txt
 [jquery]: third_party/jquery_license.txt
+[jspecify]: third_party/testdata/jspecify_license.txt
 [lombok]: third_party/testdata/lombok_license.txt
 [qunit]: third_party/qunit_license.txt
 [rhino]: third_party/rhino_LICENSE.txt
