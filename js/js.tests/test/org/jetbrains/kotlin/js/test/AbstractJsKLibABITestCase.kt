@@ -203,8 +203,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             PhaseConfig(jsPhases),
             IrFactoryImplForJsIC(WholeWorldStageController()),
             exportedDeclarations = setOf(BOX_FUN_FQN),
-            granularity = JsGenerationGranularity.PER_MODULE,
-            icCompatibleIr2Js = true
+            granularity = JsGenerationGranularity.PER_MODULE
         )
 
         val transformer = IrModuleToJsTransformerTmp(

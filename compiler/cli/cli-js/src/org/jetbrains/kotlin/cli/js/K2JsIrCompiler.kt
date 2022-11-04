@@ -94,14 +94,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     arguments.irDceRuntimeDiagnostic,
                     messageCollector
                 ),
-                baseClassIntoMetadata = arguments.irBaseClassInMetadata,
                 safeExternalBoolean = arguments.irSafeExternalBoolean,
                 safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(
                     arguments.irSafeExternalBooleanDiagnostic,
                     messageCollector
                 ),
-                granularity = arguments.granularity,
-                icCompatibleIr2Js = true,
+                granularity = arguments.granularity
             )
         }
 

@@ -143,11 +143,9 @@ class JsIrBackendFacade(
             keep = keep,
             dceRuntimeDiagnostic = null,
             es6mode = false,
-            baseClassIntoMetadata = false,
             safeExternalBoolean = JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN in module.directives,
             safeExternalBooleanDiagnostic = module.directives[JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC].singleOrNull(),
             granularity = granularity,
-            icCompatibleIr2Js = true,
         )
 
         return loweredIr2JsArtifact(module, loweredIr, granularity)

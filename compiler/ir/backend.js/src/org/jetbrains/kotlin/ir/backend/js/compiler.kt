@@ -54,12 +54,10 @@ fun compile(
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
     verifySignatures: Boolean = true,
-    baseClassIntoMetadata: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
-    icCompatibleIr2Js: Boolean = false,
 ): LoweredIr {
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
@@ -79,11 +77,9 @@ fun compile(
         keep,
         dceRuntimeDiagnostic,
         es6mode,
-        baseClassIntoMetadata,
         safeExternalBoolean,
         safeExternalBooleanDiagnostic,
         granularity,
-        icCompatibleIr2Js,
     )
 }
 
@@ -101,11 +97,9 @@ fun compileIr(
     keep: Set<String>,
     dceRuntimeDiagnostic: RuntimeDiagnostic?,
     es6mode: Boolean,
-    baseClassIntoMetadata: Boolean,
     safeExternalBoolean: Boolean,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
     granularity: JsGenerationGranularity,
-    icCompatibleIr2Js: Boolean,
 ): LoweredIr {
     val moduleDescriptor = moduleFragment.descriptor
     val irFactory = symbolTable.irFactory
@@ -126,11 +120,10 @@ fun compileIr(
         configuration,
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
-        baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
         granularity = granularity,
-        icCompatibleIr2Js = if (icCompatibleIr2Js) IcCompatibleIr2Js.COMPATIBLE else IcCompatibleIr2Js.DISABLED,
+        incrementalCacheEnabled = false
     )
 
     // Load declarations referenced during `context` initialization
