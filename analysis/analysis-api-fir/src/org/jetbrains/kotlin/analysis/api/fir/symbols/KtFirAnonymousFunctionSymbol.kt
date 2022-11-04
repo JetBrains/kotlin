@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -53,8 +54,8 @@ internal class KtFirAnonymousFunctionSymbol(
 
 
     override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        error("Could not create a pointer for anonymous function from library")
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
+            ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
