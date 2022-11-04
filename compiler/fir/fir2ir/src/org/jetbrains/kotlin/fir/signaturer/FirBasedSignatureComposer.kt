@@ -84,23 +84,27 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
     override fun composeSignature(
         declaration: FirDeclaration,
         containingClass: ConeClassLikeLookupTag?,
-        forceTopLevelPrivate: Boolean
+        forceTopLevelPrivate: Boolean,
+        allowLocalClasses: Boolean,
     ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableDeclaration) {
             if (declaration.visibility == Visibilities.Local) return null
-            if (declaration.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
+            if (!allowLocalClasses && (declaration.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true)) return null
         }
+
         val declarationWithParentId = FirDeclarationWithParentId(declaration, containingClass?.classId)
         val publicSignature = signatureCache.getOrPut(declarationWithParentId) {
             calculatePublicSignature(declarationWithParentId)
         }
+
         val resultSignature: IdSignature = if (isTopLevelPrivate(declaration) || forceTopLevelPrivate) {
             val fileSig = fileSignature ?: declaration.fakeFileSignature(publicSignature)
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
             publicSignature
+
         return resultSignature
     }
 
