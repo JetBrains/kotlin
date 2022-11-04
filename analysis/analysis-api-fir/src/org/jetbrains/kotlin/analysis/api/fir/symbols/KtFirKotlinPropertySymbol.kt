@@ -135,7 +135,7 @@ internal class KtFirKotlinPropertySymbol(
                 KtFirMemberPropertySymbolPointer(
                     requireOwnerPointer(),
                     firSymbol.name,
-                    firSymbol.createSignature()
+                    firSymbol.createSignature(),
                 )
 
             else -> throw UnsupportedSymbolKind(this::class, kind)

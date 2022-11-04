@@ -29,10 +29,11 @@ internal inline fun <reified D : FirDeclaration> FirScope.findDeclarationWithSig
     var foundSymbol: D? = null
     processor { symbol ->
         val declaration = symbol.fir
-        if (declaration is D && signatureComposer.composeSignature(declaration) == signature) {
+        if (declaration is D && signatureComposer.composeSignature(declaration, allowLocalClasses = true) == signature) {
             foundSymbol = declaration
         }
     }
+
     return foundSymbol
 }
 
@@ -66,7 +67,7 @@ internal fun FirBasedSymbol<*>.createSignature(): IdSignature =
 
 internal fun FirDeclaration.createSignature(): IdSignature {
     val signatureComposer = moduleData.session.ideSessionComponents.signatureComposer
-    return signatureComposer.composeSignature(this)
+    return signatureComposer.composeSignature(this, allowLocalClasses = true)
         ?: error("Could not compose signature for ${this.renderWithType()}, looks like it is private or local")
 }
 
