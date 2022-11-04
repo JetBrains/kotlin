@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.isBoxFunction
+import org.jetbrains.kotlin.backend.jvm.ir.isBoxOperator
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.ApiVersion
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
@@ -482,7 +481,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     val IrClass.companionObjectCustomBoxingFunction: IrFunction?
         get() {
             return companionObject()?.functions?.singleOrNull {
-                context.inlineClassReplacements.originalFunctionForMethodReplacement[it]?.isBoxFunction(context.typeSystem) ?: false
+                context.inlineClassReplacements.originalFunctionForMethodReplacement[it]?.isBoxOperator ?: false
             }
         }
 

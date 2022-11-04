@@ -19,10 +19,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions.BOX
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -174,14 +173,9 @@ val IrTypeParameter.representativeUpperBound: IrType
         } ?: superTypes.first()
     }
 
-fun IrFunction.isBoxFunction(typeSystem: IrTypeSystemContext): Boolean {
-    if (this !is IrSimpleFunction) return false
-    val companionClass = parent as? IrClass ?: return false
-    if (!companionClass.isCompanion) return false
-    val parentClass = companionClass.parent as? IrClass ?: return false
-    return name == OperatorNameConventions.BOX
-            && (returnType.classOrNull?.defaultType?.isSubtypeOf(parentClass.defaultType, typeSystem) ?: false)
-            && parentClass.isSingleFieldValueClass && valueParameters.size == 1
-            && parentClass.inlineClassRepresentation!!.underlyingType.isSubtypeOf(valueParameters[0].type, typeSystem)
-            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && isOperator
-}
+val IrFunction.isBoxOperator: Boolean
+    get() {
+        if (this !is IrSimpleFunction) return false
+        return name == BOX && isOperator
+    }
+
