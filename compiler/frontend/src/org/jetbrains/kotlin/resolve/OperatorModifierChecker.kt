@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions.REM_TO_MOD_OPE
 import org.jetbrains.kotlin.util.CheckResult
 import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions.BOX
 
 object OperatorModifierChecker {
     fun check(
@@ -54,6 +55,9 @@ object OperatorModifierChecker {
 
                 functionDescriptor.isTypedEqualsInInlineClass() ->
                     checkSupportsFeature(LanguageFeature.CustomEqualsInInlineClasses, languageVersionSettings, diagnosticHolder, modifier)
+
+                functionDescriptor.name == BOX ->
+                    checkSupportsFeature(LanguageFeature.CustomBoxingInInlineClasses, languageVersionSettings, diagnosticHolder, modifier)
             }
 
             if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values &&

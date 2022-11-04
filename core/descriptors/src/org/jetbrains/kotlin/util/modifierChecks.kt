@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
@@ -33,6 +30,7 @@ import org.jetbrains.kotlin.util.MemberKindCheck.Member
 import org.jetbrains.kotlin.util.MemberKindCheck.MemberOrExtension
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
+import org.jetbrains.kotlin.util.OperatorNameConventions.BOX
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPONENT_REGEX
 import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
@@ -218,7 +216,19 @@ object OperatorChecks : AbstractModifierChecks() {
             }
         },
         Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
-        Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
+        Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters),
+        Checks(BOX, Member, SingleValueParameter, NoDefaultAndVarargsCheck) {
+            if (!containingDeclaration.isCompanionObject() || containingDeclaration.containingDeclaration?.isInlineClass() != true) {
+                return@Checks "custom box operator must be a function in companion object of inline class"
+            }
+            val inlineClassDescriptor = containingDeclaration.containingDeclaration as ClassDescriptor
+            if (inlineClassDescriptor.declaredTypeParameters.isNotEmpty()) return@Checks "generic inline class can not have custom box operator"
+            if (returnType?.isSubtypeOf(inlineClassDescriptor.defaultType) != true) return@Checks "custom box operator must return a subtype of enclosing inline class"
+            if (!inlineClassDescriptor.inlineClassRepresentation!!.underlyingType.isSubtypeOf(valueParameters[0].type)) {
+                return@Checks "underlying type of inline class must be a subtype of the parameter of custom box operator"
+            }
+            return@Checks null
+        }
     )
 
     /**

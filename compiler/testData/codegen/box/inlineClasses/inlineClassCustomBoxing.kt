@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
+// LANGUAGE: +ValueClasses, +CustomBoxingInInlineClasses
 // TARGET_BACKEND: JVM_IR
 
 OPTIONAL_JVM_INLINE_ANNOTATION

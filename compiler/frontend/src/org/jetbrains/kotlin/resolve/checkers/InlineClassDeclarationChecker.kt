@@ -227,7 +227,6 @@ class InnerClassInsideInlineClass : DeclarationChecker {
 class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
 
     companion object {
-        private val boxAndUnboxNames = setOf("box", "unbox")
         private val equalsAndHashCodeNames = setOf("equals", "hashCode")
     }
 
@@ -241,7 +240,8 @@ class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
             is SimpleFunctionDescriptor -> {
                 val ktFunction = declaration as? KtFunction ?: return
                 val functionName = descriptor.name.asString()
-                if (functionName in boxAndUnboxNames
+                if (functionName == "unbox"
+                    || (functionName == "box" && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomBoxingInInlineClasses))
                     || (functionName in equalsAndHashCodeNames
                             && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
                 ) {
