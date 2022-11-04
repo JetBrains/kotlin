@@ -2713,6 +2713,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("callableReferencesToCompanionMembers.kt")
+            public void testCallableReferencesToCompanionMembers() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/callableReferencesToCompanionMembers.kt");
+            }
+
+            @Test
             @TestMetadata("classVsPackage.kt")
             public void testClassVsPackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
@@ -2746,6 +2752,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("correctInfoAfterArrayLikeCall.kt")
             public void testCorrectInfoAfterArrayLikeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/correctInfoAfterArrayLikeCall.kt");
+            }
+
+            @Test
+            @TestMetadata("deprecateTopLevelReferenceWithCompanionLHS.kt")
+            public void testDeprecateTopLevelReferenceWithCompanionLHS() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/deprecateTopLevelReferenceWithCompanionLHS.kt");
             }
 
             @Test

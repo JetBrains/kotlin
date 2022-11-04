@@ -460,6 +460,11 @@ public class DefaultErrorMessages {
 
         MAP.put(PARENTHESIZED_COMPANION_LHS_DEPRECATION, "Access to companion object through parenthesized class name is deprecated. Please, add explicit Companion qualifier.");
 
+        MAP.put(
+                INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS,
+                "Callable reference to the companion's member is incorrectly resolved as unbound. Please, add explicit Companion qualifier to the left-hand-side. See https://youtrack.jetbrains.com/issue/KT-54316 for details"
+        );
+
 
         MAP.put(RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS, "The private constructor of a sealed class will become inaccessible here in future. See https://youtrack.jetbrains.com/issue/KT-44866 for details");
         MAP.put(

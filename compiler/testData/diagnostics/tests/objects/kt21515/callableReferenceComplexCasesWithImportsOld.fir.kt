@@ -1,18 +1,23 @@
 // !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
+import A.Base.Companion.FromABaseCompanion
+import B.Base.Companion.FromBBaseCompanion
+import C.Base.Companion.FromCBaseCompanion
+import D.Base.Companion.FromDBaseCompanion
+
 // ===== Case 1: LHS is a class
 //
 object A {
     open class Base {
         companion object {
-            class FromBaseCompanion {
+            class FromABaseCompanion {
                 fun foo() = 42
             }
         }
     }
 
     class Derived : Base() {
-        val a = <!DEPRECATED_ACCESS_BY_SHORT_NAME!>FromBaseCompanion<!>::foo
+        val a = FromABaseCompanion::foo
     }
 }
 
@@ -21,7 +26,7 @@ object A {
 object B {
     open class Base {
         companion object {
-            class FromBaseCompanion {
+            class FromBBaseCompanion {
                 fun foo() = 42
 
                 companion object {}
@@ -30,7 +35,7 @@ object B {
     }
 
     class Derived : Base() {
-        val a = <!DEPRECATED_ACCESS_BY_SHORT_NAME!>FromBaseCompanion<!>::foo
+        val a = FromBBaseCompanion::foo
     }
 }
 
@@ -39,7 +44,7 @@ object B {
 object C {
     open class Base {
         companion object {
-            class FromBaseCompanion {
+            class FromCBaseCompanion {
                 companion object {
                     fun foo() = 42
                 }
@@ -48,7 +53,7 @@ object C {
     }
 
     class Derived : Base() {
-        val a = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!><!DEPRECATED_ACCESS_BY_SHORT_NAME!>FromBaseCompanion<!>::foo<!>
+        val a = FromCBaseCompanion::foo
     }
 }
 
@@ -57,13 +62,13 @@ object C {
 object D {
     open class Base {
         companion object {
-            object FromBaseCompanion {
+            object FromDBaseCompanion {
                 fun foo() = 42
             }
         }
     }
 
     class Derived : Base() {
-        val a = <!DEPRECATED_ACCESS_BY_SHORT_NAME!>FromBaseCompanion<!>::foo
+        val a = FromDBaseCompanion::foo
     }
 }

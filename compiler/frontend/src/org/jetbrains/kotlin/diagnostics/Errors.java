@@ -889,6 +889,7 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtParenthesizedExpression> PARENTHESIZED_COMPANION_LHS_DEPRECATION = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS = DiagnosticFactory0.create(WARNING);
 
