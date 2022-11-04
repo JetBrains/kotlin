@@ -719,6 +719,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("superTypeCallEntryResolveToCallInfo.kt")
+    public void testSuperTypeCallEntryResolveToCallInfo() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/superTypeCallEntryResolveToCallInfo.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvableOperator_elvis_1.kt")
     public void testUnresolvableOperator_elvis_1() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvableOperator_elvis_1.kt");

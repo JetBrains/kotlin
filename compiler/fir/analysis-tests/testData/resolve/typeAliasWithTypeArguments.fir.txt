@@ -12,6 +12,10 @@ FILE: typeAliasWithTypeArguments.kt
 
     }
     public abstract interface Inv<K, T> : R|kotlin/Any| {
+        public constructor<K, T>(): R|Inv<K, T>| {
+            super<R|kotlin/Any|>()
+        }
+
         public abstract fun k(): R|K|
 
         public abstract fun t(): R|T|

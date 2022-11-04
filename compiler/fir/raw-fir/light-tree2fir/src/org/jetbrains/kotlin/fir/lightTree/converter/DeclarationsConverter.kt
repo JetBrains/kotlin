@@ -861,7 +861,7 @@ class DeclarationsConverter(
         if (primaryConstructor == null &&
             (containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS && classKind != ClassKind.ENUM_ENTRY)
         ) return null
-        if (classWrapper.isInterface()) return null
+        if (primaryConstructor == null && classWrapper.isInterface()) return null
 
         var modifiers = Modifier()
         val valueParameters = mutableListOf<ValueParameter>()
