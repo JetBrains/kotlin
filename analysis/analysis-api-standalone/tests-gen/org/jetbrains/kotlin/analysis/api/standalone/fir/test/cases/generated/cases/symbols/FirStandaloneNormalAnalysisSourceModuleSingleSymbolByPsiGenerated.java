@@ -95,6 +95,118 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Contracts {
+        @Test
+        public void testAllFilesPresentInContracts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("booleanConstReferenceInImplies.kt")
+        public void testBooleanConstReferenceInImplies() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanConstReferenceInImplies.kt");
+        }
+
+        @Test
+        @TestMetadata("booleanExprContract.kt")
+        public void testBooleanExprContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanExprContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceAtLeastOnceContract.kt")
+        public void testCallsInPlaceAtLeastOnceContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceAtLeastOnceContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceAtMostOnceContract.kt")
+        public void testCallsInPlaceAtMostOnceContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceAtMostOnceContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceExactlyOnceContract.kt")
+        public void testCallsInPlaceExactlyOnceContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceExactlyOnceContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceUnknownContract.kt")
+        public void testCallsInPlaceUnknownContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceUnknownContract.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidContractParameterPassedToReturns.kt")
+        public void testInvalidContractParameterPassedToReturns() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/invalidContractParameterPassedToReturns.kt");
+        }
+
+        @Test
+        @TestMetadata("isInstancePredicateContract.kt")
+        public void testIsInstancePredicateContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/isInstancePredicateContract.kt");
+        }
+
+        @Test
+        @TestMetadata("logicalNotContract.kt")
+        public void testLogicalNotContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/logicalNotContract.kt");
+        }
+
+        @Test
+        @TestMetadata("referenceBooleanReceiverInContract.kt")
+        public void testReferenceBooleanReceiverInContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceBooleanReceiverInContract.kt");
+        }
+
+        @Test
+        @TestMetadata("referenceReceiverInContract.kt")
+        public void testReferenceReceiverInContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceReceiverInContract.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsContract.kt")
+        public void testReturnsContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsContract.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsFalseContract.kt")
+        public void testReturnsFalseContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsFalseContract.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsNotNullContract.kt")
+        public void testReturnsNotNullContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsNotNullContract.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsNullContract.kt")
+        public void testReturnsNullContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsNullContract.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsTrueContract.kt")
+        public void testReturnsTrueContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsTrueContract.kt");
+        }
+
+        @Test
+        @TestMetadata("twoContracts.kt")
+        public void testTwoContracts() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/twoContracts.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors")
     @TestDataPath("$PROJECT_ROOT")
     public class Errors {

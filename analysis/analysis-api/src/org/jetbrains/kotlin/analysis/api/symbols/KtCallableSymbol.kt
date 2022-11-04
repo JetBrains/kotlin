@@ -32,7 +32,7 @@ public val KtCallableSymbol.receiverType: KtType?
  * Symbol for a receiver parameter of a function or property. For example, consider code `fun String.foo() {...}`, the declaration of
  * `String` receiver parameter is such a symbol.
  */
-public abstract class KtReceiverParameterSymbol : KtAnnotatedSymbol {
+public abstract class KtReceiverParameterSymbol : KtAnnotatedSymbol, KtParameterSymbol {
     public abstract val type: KtType
 
     /**
