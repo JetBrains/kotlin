@@ -30,6 +30,19 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 
+val String.safeModuleName: String
+    get() {
+        var result = this
+
+        if (result.startsWith('<')) result = result.substring(1)
+        if (result.endsWith('>')) result = result.substring(0, result.length - 1)
+
+        return sanitizeName("kotlin_$result", false)
+    }
+
+val IrModuleFragment.safeName: String
+    get() = name.asString().safeModuleName
+
 enum class TranslationMode(
     val dce: Boolean,
     val perModule: Boolean,
