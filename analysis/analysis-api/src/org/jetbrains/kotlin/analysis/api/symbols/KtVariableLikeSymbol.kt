@@ -176,7 +176,10 @@ public abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKi
     abstract override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol>
 }
 
-public abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtSymbolWithKind, KtAnnotatedSymbol {
+// TODO design common ancestor of parameter and receiver KTIJ-23745
+public sealed interface KtParameterSymbol : KtAnnotatedSymbol
+
+public abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtParameterSymbol, KtSymbolWithKind, KtAnnotatedSymbol {
     final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.LOCAL }
     final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }

@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.contracts.effectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescFunctionLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.CallableId
@@ -37,6 +41,12 @@ internal class KtFe10DescFunctionSymbol private constructor(
 ) : KtFunctionSymbol(), KtFe10DescMemberSymbol<FunctionDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
+
+    override val contractEffects: List<KtContractEffectDeclaration> by cached {
+        descriptor.getUserData(ContractProviderKey)?.getContractDescription()?.effects
+            ?.map { it.effectDeclarationToAnalysisApi(analysisContext) }
+            .orEmpty()
+    }
 
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion { descriptor.ktSymbolKind }

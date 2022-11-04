@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -58,6 +59,7 @@ public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     public abstract val isOverride: Boolean
     public abstract val isInfix: Boolean
     public abstract val isStatic: Boolean
+    public abstract val contractEffects: List<KtContractEffectDeclaration>
 
     /**
      * Whether this symbol is the `invoke` method defined on the Kotlin builtin functional type.

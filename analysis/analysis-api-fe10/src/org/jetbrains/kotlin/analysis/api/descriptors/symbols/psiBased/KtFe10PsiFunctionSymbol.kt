@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
+import org.jetbrains.kotlin.analysis.api.descriptors.contracts.effectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.*
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.ValidityAwareCachedValue
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -25,6 +28,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.contracts.description.ContractProviderKey
+import org.jetbrains.kotlin.contracts.description.EffectDeclaration
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -35,6 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import kotlin.reflect.KProperty
 
 internal class KtFe10PsiFunctionSymbol(
     override val psi: KtNamedFunction,
@@ -43,6 +49,12 @@ internal class KtFe10PsiFunctionSymbol(
     override val descriptor: FunctionDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.FUNCTION, psi]
+    }
+
+    override val contractEffects: List<KtContractEffectDeclaration> by cached {
+        descriptor?.getUserData(ContractProviderKey)?.getContractDescription()?.effects
+            ?.map { it.effectDeclarationToAnalysisApi(analysisContext) }
+            .orEmpty()
     }
 
     override val isSuspend: Boolean
