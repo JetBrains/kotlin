@@ -30,6 +30,10 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
             is KtDestructuringDeclaration -> false
             is KtPropertyAccessor -> false
             is KtParameter -> !this.isFunctionTypeParameter && this.parent !is KtParameterList
+            is KtFunctionLiteral -> "contract" != (parent as? KtLambdaExpression) // workaround. Drop when KTIJ-21012 is fixed
+                ?.let { it.parent as? KtLambdaArgument }
+                ?.let { it.parent as? KtCallExpression }
+                ?.calleeExpression?.text
             else -> true
         }
 }

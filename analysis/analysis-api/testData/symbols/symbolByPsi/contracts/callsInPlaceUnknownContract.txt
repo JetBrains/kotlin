@@ -1,0 +1,55 @@
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /unknownContract
+  contextReceivers: []
+  contractEffects: [
+    KtCallsEffectDeclaration:
+      valueParameterReference:
+        KtValueParameterReference:
+          name: block
+      kind: UNKNOWN
+  ]
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: unknownContract
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: block
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Function0<kotlin/Unit>
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

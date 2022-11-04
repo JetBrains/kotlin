@@ -309,6 +309,70 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/contracts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Contracts {
+        @Test
+        public void testAllFilesPresentInContracts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("booleanExprContract.kt")
+        public void testBooleanExprContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/booleanExprContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceAtLeastOnceContract.kt")
+        public void testCallsInPlaceAtLeastOnceContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/callsInPlaceAtLeastOnceContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceAtMostOnceContract.kt")
+        public void testCallsInPlaceAtMostOnceContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/callsInPlaceAtMostOnceContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceExactlyOnceContract.kt")
+        public void testCallsInPlaceExactlyOnceContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/callsInPlaceExactlyOnceContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceUnknownContract.kt")
+        public void testCallsInPlaceUnknownContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/callsInPlaceUnknownContract.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsContract.kt")
+        public void testReturnsContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/returnsContract.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsNotNullContract.kt")
+        public void testReturnsNotNullContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/returnsNotNullContract.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsTrueContract.kt")
+        public void testReturnsTrueContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/returnsTrueContract.kt");
+        }
+
+        @Test
+        @TestMetadata("twoContracts.kt")
+        public void testTwoContracts() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contracts/twoContracts.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters")
     @TestDataPath("$PROJECT_ROOT")
     public class ValueParameters {
