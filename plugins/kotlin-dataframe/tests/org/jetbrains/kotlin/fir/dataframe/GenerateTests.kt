@@ -22,13 +22,13 @@ fun main() {
             testClass<AbstractDataFrameBlackBoxCodegenTest> {
                 model("box")
             }
-            testClass<AbstractDataFrameInterpretationTests> {
-                model("interpretation")
-            }
-
-            testClass<AbstractResearchTest> {
-                model("research")
-            }
+//            testClass<AbstractDataFrameInterpretationTests> {
+//                model("interpretation")
+//            }
+//
+//            testClass<AbstractResearchTest> {
+//                model("research")
+//            }
         }
     }
 }

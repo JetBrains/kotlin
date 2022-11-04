@@ -1,0 +1,1052 @@
+FILE: Schema.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Schema : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>().R|org/jetbrains/kotlinx/dataframe/api/refined_99|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            ^ Int(42)
+        }
+        )
+        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Token499.wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Token499.a|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        lval b: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>| = R|<local>/res|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/Token499|, R|kotlin/Int|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
+            ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Token499.a|
+        }
+        ).R|org/jetbrains/kotlinx/dataframe/api/refined_98|<R|org/jetbrains/kotlinx/dataframe/Token499|, R|kotlin/Int|, R|kotlin/String|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|kotlin/Int|): R|kotlin/String| <inline=NoInline, kind=UNKNOWN>  {
+            ^ R|<local>/it|.R|kotlin/Int.toString|()
+        }
+        )
+        R|<local>/b|.<Ambiguity: a, [org/jetbrains/kotlinx/dataframe/Token499.a, org/jetbrains/kotlinx/dataframe/Token499.a]>#
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Schema>|.a: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Schema>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    local final class Token0 {
+    }
+    local final class Token1 {
+    }
+    local final class Token2 {
+    }
+    local final class Token3 {
+    }
+    local final class Token4 {
+    }
+    local final class Token5 {
+    }
+    local final class Token6 {
+    }
+    local final class Token7 {
+    }
+    local final class Token8 {
+    }
+    local final class Token9 {
+    }
+    local final class Token10 {
+    }
+    local final class Token11 {
+    }
+    local final class Token12 {
+    }
+    local final class Token13 {
+    }
+    local final class Token14 {
+    }
+    local final class Token15 {
+    }
+    local final class Token16 {
+    }
+    local final class Token17 {
+    }
+    local final class Token18 {
+    }
+    local final class Token19 {
+    }
+    local final class Token20 {
+    }
+    local final class Token21 {
+    }
+    local final class Token22 {
+    }
+    local final class Token23 {
+    }
+    local final class Token24 {
+    }
+    local final class Token25 {
+    }
+    local final class Token26 {
+    }
+    local final class Token27 {
+    }
+    local final class Token28 {
+    }
+    local final class Token29 {
+    }
+    local final class Token30 {
+    }
+    local final class Token31 {
+    }
+    local final class Token32 {
+    }
+    local final class Token33 {
+    }
+    local final class Token34 {
+    }
+    local final class Token35 {
+    }
+    local final class Token36 {
+    }
+    local final class Token37 {
+    }
+    local final class Token38 {
+    }
+    local final class Token39 {
+    }
+    local final class Token40 {
+    }
+    local final class Token41 {
+    }
+    local final class Token42 {
+    }
+    local final class Token43 {
+    }
+    local final class Token44 {
+    }
+    local final class Token45 {
+    }
+    local final class Token46 {
+    }
+    local final class Token47 {
+    }
+    local final class Token48 {
+    }
+    local final class Token49 {
+    }
+    local final class Token50 {
+    }
+    local final class Token51 {
+    }
+    local final class Token52 {
+    }
+    local final class Token53 {
+    }
+    local final class Token54 {
+    }
+    local final class Token55 {
+    }
+    local final class Token56 {
+    }
+    local final class Token57 {
+    }
+    local final class Token58 {
+    }
+    local final class Token59 {
+    }
+    local final class Token60 {
+    }
+    local final class Token61 {
+    }
+    local final class Token62 {
+    }
+    local final class Token63 {
+    }
+    local final class Token64 {
+    }
+    local final class Token65 {
+    }
+    local final class Token66 {
+    }
+    local final class Token67 {
+    }
+    local final class Token68 {
+    }
+    local final class Token69 {
+    }
+    local final class Token70 {
+    }
+    local final class Token71 {
+    }
+    local final class Token72 {
+    }
+    local final class Token73 {
+    }
+    local final class Token74 {
+    }
+    local final class Token75 {
+    }
+    local final class Token76 {
+    }
+    local final class Token77 {
+    }
+    local final class Token78 {
+    }
+    local final class Token79 {
+    }
+    local final class Token80 {
+    }
+    local final class Token81 {
+    }
+    local final class Token82 {
+    }
+    local final class Token83 {
+    }
+    local final class Token84 {
+    }
+    local final class Token85 {
+    }
+    local final class Token86 {
+    }
+    local final class Token87 {
+    }
+    local final class Token88 {
+    }
+    local final class Token89 {
+    }
+    local final class Token90 {
+    }
+    local final class Token91 {
+    }
+    local final class Token92 {
+    }
+    local final class Token93 {
+    }
+    local final class Token94 {
+    }
+    local final class Token95 {
+    }
+    local final class Token96 {
+    }
+    local final class Token97 {
+    }
+    local final class Token98 {
+    }
+    local final class Token99 {
+    }
+    local final class Token100 {
+    }
+    local final class Token101 {
+    }
+    local final class Token102 {
+    }
+    local final class Token103 {
+    }
+    local final class Token104 {
+    }
+    local final class Token105 {
+    }
+    local final class Token106 {
+    }
+    local final class Token107 {
+    }
+    local final class Token108 {
+    }
+    local final class Token109 {
+    }
+    local final class Token110 {
+    }
+    local final class Token111 {
+    }
+    local final class Token112 {
+    }
+    local final class Token113 {
+    }
+    local final class Token114 {
+    }
+    local final class Token115 {
+    }
+    local final class Token116 {
+    }
+    local final class Token117 {
+    }
+    local final class Token118 {
+    }
+    local final class Token119 {
+    }
+    local final class Token120 {
+    }
+    local final class Token121 {
+    }
+    local final class Token122 {
+    }
+    local final class Token123 {
+    }
+    local final class Token124 {
+    }
+    local final class Token125 {
+    }
+    local final class Token126 {
+    }
+    local final class Token127 {
+    }
+    local final class Token128 {
+    }
+    local final class Token129 {
+    }
+    local final class Token130 {
+    }
+    local final class Token131 {
+    }
+    local final class Token132 {
+    }
+    local final class Token133 {
+    }
+    local final class Token134 {
+    }
+    local final class Token135 {
+    }
+    local final class Token136 {
+    }
+    local final class Token137 {
+    }
+    local final class Token138 {
+    }
+    local final class Token139 {
+    }
+    local final class Token140 {
+    }
+    local final class Token141 {
+    }
+    local final class Token142 {
+    }
+    local final class Token143 {
+    }
+    local final class Token144 {
+    }
+    local final class Token145 {
+    }
+    local final class Token146 {
+    }
+    local final class Token147 {
+    }
+    local final class Token148 {
+    }
+    local final class Token149 {
+    }
+    local final class Token150 {
+    }
+    local final class Token151 {
+    }
+    local final class Token152 {
+    }
+    local final class Token153 {
+    }
+    local final class Token154 {
+    }
+    local final class Token155 {
+    }
+    local final class Token156 {
+    }
+    local final class Token157 {
+    }
+    local final class Token158 {
+    }
+    local final class Token159 {
+    }
+    local final class Token160 {
+    }
+    local final class Token161 {
+    }
+    local final class Token162 {
+    }
+    local final class Token163 {
+    }
+    local final class Token164 {
+    }
+    local final class Token165 {
+    }
+    local final class Token166 {
+    }
+    local final class Token167 {
+    }
+    local final class Token168 {
+    }
+    local final class Token169 {
+    }
+    local final class Token170 {
+    }
+    local final class Token171 {
+    }
+    local final class Token172 {
+    }
+    local final class Token173 {
+    }
+    local final class Token174 {
+    }
+    local final class Token175 {
+    }
+    local final class Token176 {
+    }
+    local final class Token177 {
+    }
+    local final class Token178 {
+    }
+    local final class Token179 {
+    }
+    local final class Token180 {
+    }
+    local final class Token181 {
+    }
+    local final class Token182 {
+    }
+    local final class Token183 {
+    }
+    local final class Token184 {
+    }
+    local final class Token185 {
+    }
+    local final class Token186 {
+    }
+    local final class Token187 {
+    }
+    local final class Token188 {
+    }
+    local final class Token189 {
+    }
+    local final class Token190 {
+    }
+    local final class Token191 {
+    }
+    local final class Token192 {
+    }
+    local final class Token193 {
+    }
+    local final class Token194 {
+    }
+    local final class Token195 {
+    }
+    local final class Token196 {
+    }
+    local final class Token197 {
+    }
+    local final class Token198 {
+    }
+    local final class Token199 {
+    }
+    local final class Token200 {
+    }
+    local final class Token201 {
+    }
+    local final class Token202 {
+    }
+    local final class Token203 {
+    }
+    local final class Token204 {
+    }
+    local final class Token205 {
+    }
+    local final class Token206 {
+    }
+    local final class Token207 {
+    }
+    local final class Token208 {
+    }
+    local final class Token209 {
+    }
+    local final class Token210 {
+    }
+    local final class Token211 {
+    }
+    local final class Token212 {
+    }
+    local final class Token213 {
+    }
+    local final class Token214 {
+    }
+    local final class Token215 {
+    }
+    local final class Token216 {
+    }
+    local final class Token217 {
+    }
+    local final class Token218 {
+    }
+    local final class Token219 {
+    }
+    local final class Token220 {
+    }
+    local final class Token221 {
+    }
+    local final class Token222 {
+    }
+    local final class Token223 {
+    }
+    local final class Token224 {
+    }
+    local final class Token225 {
+    }
+    local final class Token226 {
+    }
+    local final class Token227 {
+    }
+    local final class Token228 {
+    }
+    local final class Token229 {
+    }
+    local final class Token230 {
+    }
+    local final class Token231 {
+    }
+    local final class Token232 {
+    }
+    local final class Token233 {
+    }
+    local final class Token234 {
+    }
+    local final class Token235 {
+    }
+    local final class Token236 {
+    }
+    local final class Token237 {
+    }
+    local final class Token238 {
+    }
+    local final class Token239 {
+    }
+    local final class Token240 {
+    }
+    local final class Token241 {
+    }
+    local final class Token242 {
+    }
+    local final class Token243 {
+    }
+    local final class Token244 {
+    }
+    local final class Token245 {
+    }
+    local final class Token246 {
+    }
+    local final class Token247 {
+    }
+    local final class Token248 {
+    }
+    local final class Token249 {
+    }
+    local final class Token250 {
+    }
+    local final class Token251 {
+    }
+    local final class Token252 {
+    }
+    local final class Token253 {
+    }
+    local final class Token254 {
+    }
+    local final class Token255 {
+    }
+    local final class Token256 {
+    }
+    local final class Token257 {
+    }
+    local final class Token258 {
+    }
+    local final class Token259 {
+    }
+    local final class Token260 {
+    }
+    local final class Token261 {
+    }
+    local final class Token262 {
+    }
+    local final class Token263 {
+    }
+    local final class Token264 {
+    }
+    local final class Token265 {
+    }
+    local final class Token266 {
+    }
+    local final class Token267 {
+    }
+    local final class Token268 {
+    }
+    local final class Token269 {
+    }
+    local final class Token270 {
+    }
+    local final class Token271 {
+    }
+    local final class Token272 {
+    }
+    local final class Token273 {
+    }
+    local final class Token274 {
+    }
+    local final class Token275 {
+    }
+    local final class Token276 {
+    }
+    local final class Token277 {
+    }
+    local final class Token278 {
+    }
+    local final class Token279 {
+    }
+    local final class Token280 {
+    }
+    local final class Token281 {
+    }
+    local final class Token282 {
+    }
+    local final class Token283 {
+    }
+    local final class Token284 {
+    }
+    local final class Token285 {
+    }
+    local final class Token286 {
+    }
+    local final class Token287 {
+    }
+    local final class Token288 {
+    }
+    local final class Token289 {
+    }
+    local final class Token290 {
+    }
+    local final class Token291 {
+    }
+    local final class Token292 {
+    }
+    local final class Token293 {
+    }
+    local final class Token294 {
+    }
+    local final class Token295 {
+    }
+    local final class Token296 {
+    }
+    local final class Token297 {
+    }
+    local final class Token298 {
+    }
+    local final class Token299 {
+    }
+    local final class Token300 {
+    }
+    local final class Token301 {
+    }
+    local final class Token302 {
+    }
+    local final class Token303 {
+    }
+    local final class Token304 {
+    }
+    local final class Token305 {
+    }
+    local final class Token306 {
+    }
+    local final class Token307 {
+    }
+    local final class Token308 {
+    }
+    local final class Token309 {
+    }
+    local final class Token310 {
+    }
+    local final class Token311 {
+    }
+    local final class Token312 {
+    }
+    local final class Token313 {
+    }
+    local final class Token314 {
+    }
+    local final class Token315 {
+    }
+    local final class Token316 {
+    }
+    local final class Token317 {
+    }
+    local final class Token318 {
+    }
+    local final class Token319 {
+    }
+    local final class Token320 {
+    }
+    local final class Token321 {
+    }
+    local final class Token322 {
+    }
+    local final class Token323 {
+    }
+    local final class Token324 {
+    }
+    local final class Token325 {
+    }
+    local final class Token326 {
+    }
+    local final class Token327 {
+    }
+    local final class Token328 {
+    }
+    local final class Token329 {
+    }
+    local final class Token330 {
+    }
+    local final class Token331 {
+    }
+    local final class Token332 {
+    }
+    local final class Token333 {
+    }
+    local final class Token334 {
+    }
+    local final class Token335 {
+    }
+    local final class Token336 {
+    }
+    local final class Token337 {
+    }
+    local final class Token338 {
+    }
+    local final class Token339 {
+    }
+    local final class Token340 {
+    }
+    local final class Token341 {
+    }
+    local final class Token342 {
+    }
+    local final class Token343 {
+    }
+    local final class Token344 {
+    }
+    local final class Token345 {
+    }
+    local final class Token346 {
+    }
+    local final class Token347 {
+    }
+    local final class Token348 {
+    }
+    local final class Token349 {
+    }
+    local final class Token350 {
+    }
+    local final class Token351 {
+    }
+    local final class Token352 {
+    }
+    local final class Token353 {
+    }
+    local final class Token354 {
+    }
+    local final class Token355 {
+    }
+    local final class Token356 {
+    }
+    local final class Token357 {
+    }
+    local final class Token358 {
+    }
+    local final class Token359 {
+    }
+    local final class Token360 {
+    }
+    local final class Token361 {
+    }
+    local final class Token362 {
+    }
+    local final class Token363 {
+    }
+    local final class Token364 {
+    }
+    local final class Token365 {
+    }
+    local final class Token366 {
+    }
+    local final class Token367 {
+    }
+    local final class Token368 {
+    }
+    local final class Token369 {
+    }
+    local final class Token370 {
+    }
+    local final class Token371 {
+    }
+    local final class Token372 {
+    }
+    local final class Token373 {
+    }
+    local final class Token374 {
+    }
+    local final class Token375 {
+    }
+    local final class Token376 {
+    }
+    local final class Token377 {
+    }
+    local final class Token378 {
+    }
+    local final class Token379 {
+    }
+    local final class Token380 {
+    }
+    local final class Token381 {
+    }
+    local final class Token382 {
+    }
+    local final class Token383 {
+    }
+    local final class Token384 {
+    }
+    local final class Token385 {
+    }
+    local final class Token386 {
+    }
+    local final class Token387 {
+    }
+    local final class Token388 {
+    }
+    local final class Token389 {
+    }
+    local final class Token390 {
+    }
+    local final class Token391 {
+    }
+    local final class Token392 {
+    }
+    local final class Token393 {
+    }
+    local final class Token394 {
+    }
+    local final class Token395 {
+    }
+    local final class Token396 {
+    }
+    local final class Token397 {
+    }
+    local final class Token398 {
+    }
+    local final class Token399 {
+    }
+    local final class Token400 {
+    }
+    local final class Token401 {
+    }
+    local final class Token402 {
+    }
+    local final class Token403 {
+    }
+    local final class Token404 {
+    }
+    local final class Token405 {
+    }
+    local final class Token406 {
+    }
+    local final class Token407 {
+    }
+    local final class Token408 {
+    }
+    local final class Token409 {
+    }
+    local final class Token410 {
+    }
+    local final class Token411 {
+    }
+    local final class Token412 {
+    }
+    local final class Token413 {
+    }
+    local final class Token414 {
+    }
+    local final class Token415 {
+    }
+    local final class Token416 {
+    }
+    local final class Token417 {
+    }
+    local final class Token418 {
+    }
+    local final class Token419 {
+    }
+    local final class Token420 {
+    }
+    local final class Token421 {
+    }
+    local final class Token422 {
+    }
+    local final class Token423 {
+    }
+    local final class Token424 {
+    }
+    local final class Token425 {
+    }
+    local final class Token426 {
+    }
+    local final class Token427 {
+    }
+    local final class Token428 {
+    }
+    local final class Token429 {
+    }
+    local final class Token430 {
+    }
+    local final class Token431 {
+    }
+    local final class Token432 {
+    }
+    local final class Token433 {
+    }
+    local final class Token434 {
+    }
+    local final class Token435 {
+    }
+    local final class Token436 {
+    }
+    local final class Token437 {
+    }
+    local final class Token438 {
+    }
+    local final class Token439 {
+    }
+    local final class Token440 {
+    }
+    local final class Token441 {
+    }
+    local final class Token442 {
+    }
+    local final class Token443 {
+    }
+    local final class Token444 {
+    }
+    local final class Token445 {
+    }
+    local final class Token446 {
+    }
+    local final class Token447 {
+    }
+    local final class Token448 {
+    }
+    local final class Token449 {
+    }
+    local final class Token450 {
+    }
+    local final class Token451 {
+    }
+    local final class Token452 {
+    }
+    local final class Token453 {
+    }
+    local final class Token454 {
+    }
+    local final class Token455 {
+    }
+    local final class Token456 {
+    }
+    local final class Token457 {
+    }
+    local final class Token458 {
+    }
+    local final class Token459 {
+    }
+    local final class Token460 {
+    }
+    local final class Token461 {
+    }
+    local final class Token462 {
+    }
+    local final class Token463 {
+    }
+    local final class Token464 {
+    }
+    local final class Token465 {
+    }
+    local final class Token466 {
+    }
+    local final class Token467 {
+    }
+    local final class Token468 {
+    }
+    local final class Token469 {
+    }
+    local final class Token470 {
+    }
+    local final class Token471 {
+    }
+    local final class Token472 {
+    }
+    local final class Token473 {
+    }
+    local final class Token474 {
+    }
+    local final class Token475 {
+    }
+    local final class Token476 {
+    }
+    local final class Token477 {
+    }
+    local final class Token478 {
+    }
+    local final class Token479 {
+    }
+    local final class Token480 {
+    }
+    local final class Token481 {
+    }
+    local final class Token482 {
+    }
+    local final class Token483 {
+    }
+    local final class Token484 {
+    }
+    local final class Token485 {
+    }
+    local final class Token486 {
+    }
+    local final class Token487 {
+    }
+    local final class Token488 {
+    }
+    local final class Token489 {
+    }
+    local final class Token490 {
+    }
+    local final class Token491 {
+    }
+    local final class Token492 {
+    }
+    local final class Token493 {
+    }
+    local final class Token494 {
+    }
+    local final class Token495 {
+    }
+    local final class Token496 {
+    }
+    local final class Token497 {
+    }
+    local final class Token498 {
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Token498|
+
+    }
+    local final class Token499 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Token499|
+
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe.api
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(with_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/With0|))) public final inline fun <T, C, reified R> R|org/jetbrains/kotlinx/dataframe/api/Convert<T, C>|.refined_98(noinline rowConverter: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/RowValueExpression<T, C, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/Add|))) @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add_1)) public final inline fun <reified R, T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_99(name: R|kotlin/String|, noinline expression: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/api/AddExpression<T, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|
