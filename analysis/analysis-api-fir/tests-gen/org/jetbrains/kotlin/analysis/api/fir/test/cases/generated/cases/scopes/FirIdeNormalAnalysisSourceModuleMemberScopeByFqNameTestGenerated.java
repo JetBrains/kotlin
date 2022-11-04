@@ -65,6 +65,12 @@ public class FirIdeNormalAnalysisSourceModuleMemberScopeByFqNameTestGenerated ex
     }
 
     @Test
+    @TestMetadata("javaFieldClash.kt")
+    public void testJavaFieldClash() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/javaFieldClash.kt");
+    }
+
+    @Test
     @TestMetadata("java.lang.String.kt")
     public void testJava_lang_String() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/java.lang.String.kt");
