@@ -14,15 +14,13 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.buildAdhocComponentsFromKotlinVariants
 
-@ExternalKotlinTargetApi
-class ExternalKotlinTarget internal constructor(
+internal class ExternalKotlinTargetImpl internal constructor(
     override val project: Project,
     override val targetName: String,
     override val platformType: KotlinPlatformType,
@@ -35,7 +33,7 @@ class ExternalKotlinTarget internal constructor(
 ) : KotlinTarget {
 
     fun interface ArtifactsTaskLocator {
-        fun locate(target: ExternalKotlinTarget): TaskProvider<out Task>
+        fun locate(target: ExternalKotlinTargetImpl): TaskProvider<out Task>
     }
 
     val kotlin = project.multiplatformExtension
