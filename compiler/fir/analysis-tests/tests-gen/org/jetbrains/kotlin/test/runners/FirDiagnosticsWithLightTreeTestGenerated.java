@@ -363,6 +363,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("kt54220.kt")
+        public void testKt54220() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/kt54220.kt");
+        }
+
+        @Test
         @TestMetadata("labelAndReceiverForInfix.kt")
         public void testLabelAndReceiverForInfix() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");
@@ -4662,6 +4668,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("kotlinComparatorAlias.kt")
         public void testKotlinComparatorAlias() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/kotlinComparatorAlias.kt");
+        }
+
+        @Test
+        @TestMetadata("kt54220.kt")
+        public void testKt54220() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/kt54220.kt");
         }
 
         @Test

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.isLong
 import org.jetbrains.kotlin.fir.isULong
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -38,6 +40,7 @@ class ConeIntegerLiteralConstantTypeImpl(
         fun create(
             value: Long,
             isUnsigned: Boolean,
+            isTypePresent: (ConeClassLikeType) -> Boolean,
             nullability: ConeNullability = ConeNullability.NOT_NULL
         ): ConeSimpleKotlinType {
             val possibleTypes = mutableListOf<ConeClassLikeType>()
@@ -64,6 +67,9 @@ class ConeIntegerLiteralConstantTypeImpl(
 
             if (isUnsigned) {
                 addUnsignedPossibleType()
+                if (possibleTypes.any { !isTypePresent(it) }) {
+                    return ConeErrorType(ConeSimpleDiagnostic("Unsigned integers need stdlib", DiagnosticKind.UnsignedNumbersAreNotPresent))
+                }
             } else {
                 addSignedPossibleTypes()
             }

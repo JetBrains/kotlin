@@ -1010,11 +1010,15 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
                 val expressionType = ConeIntegerLiteralConstantTypeImpl.create(
                     constExpression.value as Long,
+                    isTypePresent = { it.lookupTag.toSymbol(session) != null },
                     isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral
                 )
                 val expectedTypeRef = data.expectedType
                 @Suppress("UNCHECKED_CAST")
                 when {
+                    expressionType is ConeErrorType -> {
+                        expressionType
+                    }
                     expressionType is ConeClassLikeType -> {
                         constExpression.replaceKind(expressionType.toConstKind() as ConstantValueKind<T>)
                         expressionType
@@ -1040,7 +1044,16 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         dataFlowAnalyzer.exitConstExpression(constExpression as FirConstExpression<*>)
         constExpression.resultType = constExpression.resultType.resolvedTypeFromPrototype(type)
-        return constExpression
+
+        return when (val resolvedType = constExpression.resultType.coneType) {
+            is ConeErrorType -> buildErrorExpression {
+                expression = constExpression
+                diagnostic = resolvedType.diagnostic
+                source = constExpression.source
+            }
+
+            else -> constExpression
+        }
     }
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
