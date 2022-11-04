@@ -20,11 +20,11 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     val defaultConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "default"))
     val apiElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "apiElements"))
     val runtimeElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "runtimeElements"))
-    val artifactsTaskLocator = ExternalKotlinTarget.ArtifactsTaskLocator { target ->
+    val artifactsTaskLocator = ExternalKotlinTargetImpl.ArtifactsTaskLocator { target ->
         target.project.locateOrRegisterTask<Jar>(lowerCamelCaseName(descriptor.targetName, "jar"))
     }
 
-    val target = ExternalKotlinTarget(
+    val target = ExternalKotlinTargetImpl(
         project = project,
         targetName = descriptor.targetName,
         platformType = descriptor.platformType,
@@ -36,7 +36,7 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         artifactsTaskLocator = artifactsTaskLocator
     )
 
-    val decorated = descriptor.decoratedExternalTargetFactory.create(target)
+    val decorated = descriptor.targetFactory.create(DecoratedExternalKotlinTarget.Delegate(target))
     target.onCreated()
     descriptor.configure?.invoke(decorated)
     targets.add(decorated)

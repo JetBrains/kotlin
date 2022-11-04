@@ -9,19 +9,18 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTarget
 
 data class PrototypeAndroidDsl(
     var compileSdk: Int
 )
 
 class PrototypeAndroidTarget(
-    private val target: ExternalKotlinTarget,
+    delegate: Delegate,
     val androidDsl: PrototypeAndroidDsl
-) : DecoratedExternalKotlinTarget(target) {
-    internal val kotlin = target.project.extensions.getByType<KotlinMultiplatformExtension>()
+) : DecoratedExternalKotlinTarget(delegate) {
+    internal val kotlin = super.project.extensions.getByType<KotlinMultiplatformExtension>()
 
     @Suppress("unchecked_cast")
     override val compilations: NamedDomainObjectContainer<PrototypeAndroidCompilation>
-        get() = target.compilations as NamedDomainObjectContainer<PrototypeAndroidCompilation>
+        get() = super.compilations as NamedDomainObjectContainer<PrototypeAndroidCompilation>
 }
