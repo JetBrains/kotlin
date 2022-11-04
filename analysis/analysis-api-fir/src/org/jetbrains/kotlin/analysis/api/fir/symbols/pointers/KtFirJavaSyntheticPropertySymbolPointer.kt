@@ -17,17 +17,16 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirJavaSyntheticPropertySymbolPointer(
     ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
-    private val propertyName: Name
+    private val propertyName: Name,
 ) : KtFirMemberSymbolPointer<KtSyntheticJavaPropertySymbol>(ownerPointer) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
-        firSession: FirSession
+        firSession: FirSession,
     ): KtSyntheticJavaPropertySymbol? {
-        val syntheticProperty =
-            candidates.getProperties(propertyName)
-                .mapNotNull { it.fir as? FirSyntheticProperty }
-                .singleOrNull()
-                ?: return null
+        val syntheticProperty = candidates.getProperties(propertyName)
+            .mapNotNull { it.fir as? FirSyntheticProperty }
+            .singleOrNull()
+            ?: return null
 
         return firSymbolBuilder.variableLikeBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty.symbol)
     }
