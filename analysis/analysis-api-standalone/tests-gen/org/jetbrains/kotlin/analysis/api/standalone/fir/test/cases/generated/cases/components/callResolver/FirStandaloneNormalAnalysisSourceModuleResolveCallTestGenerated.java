@@ -521,6 +521,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("javaClassReference.kt")
+    public void testJavaClassReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/javaClassReference.kt");
+    }
+
+    @Test
     @TestMetadata("javaFunctionCall.kt")
     public void testJavaFunctionCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/javaFunctionCall.kt");

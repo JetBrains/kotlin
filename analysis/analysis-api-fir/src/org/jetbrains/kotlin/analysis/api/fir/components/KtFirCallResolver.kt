@@ -222,7 +222,7 @@ internal class KtFirCallResolver(
     }
 
     /**
-     * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo` and `test.Foo<Bar>::foo`.
+     * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo`, `test.Foo<Bar>::foo` and class literals like `Foo<Bar>`::class.java.
      *
      * We have a separate [KtGenericTypeQualifier] type of [KtCall].
      */
@@ -233,7 +233,7 @@ internal class KtFirCallResolver(
         val call = psiElement.getPossiblyQualifiedCallExpression() ?: return null
         if (call.typeArgumentList == null || call.valueArgumentList != null) return null
 
-        val parentReferenceExpression = psiElement.parent as? KtCallableReferenceExpression ?: return null
+        val parentReferenceExpression = psiElement.parent as? KtDoubleColonExpression ?: return null
         if (parentReferenceExpression.lhs != psiElement) return null
 
         return KtSuccessCallInfo(KtGenericTypeQualifier(token, psiElement))
