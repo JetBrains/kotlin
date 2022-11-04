@@ -47,7 +47,7 @@ value class IC5<T>(val x: T) {
 @JvmInline
 value class IC6(val x: Int) {
     companion object MyCompanion {
-        operator fun box(y: Number) = IC6(y.toInt())
+        <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun box(y: Number) = IC6(y.toInt())
     }
 }
 

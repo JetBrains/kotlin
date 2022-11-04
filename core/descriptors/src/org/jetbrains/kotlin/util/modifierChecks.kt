@@ -224,8 +224,8 @@ object OperatorChecks : AbstractModifierChecks() {
             val inlineClassDescriptor = containingDeclaration.containingDeclaration as ClassDescriptor
             if (inlineClassDescriptor.declaredTypeParameters.isNotEmpty()) return@Checks "generic inline class can not have custom box operator"
             if (returnType?.isSubtypeOf(inlineClassDescriptor.defaultType) != true) return@Checks "custom box operator must return a subtype of enclosing inline class"
-            if (!inlineClassDescriptor.inlineClassRepresentation!!.underlyingType.isSubtypeOf(valueParameters[0].type)) {
-                return@Checks "underlying type of inline class must be a subtype of the parameter of custom box operator"
+            if (inlineClassDescriptor.inlineClassRepresentation!!.underlyingType != valueParameters[0].type) {
+                return@Checks "parameter of box operator must have same type as underlying type of inline class"
             }
             return@Checks null
         }

@@ -242,8 +242,8 @@ private object OperatorFunctionChecks {
                         return "custom box operator must return a subtype of enclosing inline class"
                     }
                     val underlyingType = inlineClass.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnType
-                    if (!underlyingType.isSubtypeOf(function.valueParameters[0].returnTypeRef.coneType, context.session)) {
-                        return "underlying type of inline class must be a subtype of the parameter of custom box operator"
+                    if (underlyingType != function.valueParameters[0].returnTypeRef.coneType) {
+                        return "parameter of box operator must have same type as underlying type of inline class"
                     }
                     return null
                 }
