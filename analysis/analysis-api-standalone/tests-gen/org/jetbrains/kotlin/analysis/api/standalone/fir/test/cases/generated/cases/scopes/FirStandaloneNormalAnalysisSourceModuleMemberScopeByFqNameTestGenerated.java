@@ -65,9 +65,21 @@ public class FirStandaloneNormalAnalysisSourceModuleMemberScopeByFqNameTestGener
     }
 
     @Test
+    @TestMetadata("javaField.kt")
+    public void testJavaField() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/javaField.kt");
+    }
+
+    @Test
     @TestMetadata("javaFieldClash.kt")
     public void testJavaFieldClash() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/javaFieldClash.kt");
+    }
+
+    @Test
+    @TestMetadata("javaMethods.kt")
+    public void testJavaMethods() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/javaMethods.kt");
     }
 
     @Test
