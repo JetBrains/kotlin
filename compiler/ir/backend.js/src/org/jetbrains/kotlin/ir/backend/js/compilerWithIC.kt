@@ -45,7 +45,7 @@ class JsIrCompilerWithIC(
             configuration = configuration,
             es6mode = es6mode,
             granularity = granularity,
-            icCompatibleIr2Js = IcCompatibleIr2Js.IC_MODE,
+            incrementalCacheEnabled = true
         )
     }
 

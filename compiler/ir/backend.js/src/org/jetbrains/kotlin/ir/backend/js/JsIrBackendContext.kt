@@ -53,12 +53,6 @@ import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-enum class IcCompatibleIr2Js(val isCompatible: Boolean, val incrementalCacheEnabled: Boolean) {
-    DISABLED(false, false),
-    COMPATIBLE(true, false),
-    IC_MODE(true, true)
-}
-
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrBackendContext(
     val module: ModuleDescriptor,
@@ -68,16 +62,16 @@ class JsIrBackendContext(
     val additionalExportedDeclarationNames: Set<FqName>,
     keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
-    override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    val baseClassIntoMetadata: Boolean = false,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     override val mapping: JsMapping = JsMapping(),
     val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
-    val icCompatibleIr2Js: IcCompatibleIr2Js = IcCompatibleIr2Js.DISABLED,
+    val incrementalCacheEnabled: Boolean = false
 ) : JsCommonBackendContext {
+    override val scriptMode: Boolean get() = false
+
     val polyfills = JsPolyfills()
     val fieldToInitializer: MutableMap<IrField, IrExpression> = mutableMapOf()
 

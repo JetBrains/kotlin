@@ -210,6 +210,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var irModuleName: String? by NullableStringFreezableVar(null)
 
+    // TODO: REMOVE IT
     @Argument(value = "-Xir-base-class-in-metadata", description = "Write base class into metadata")
     var irBaseClassInMetadata: Boolean by FreezableVar(false)
 
@@ -235,6 +236,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-per-file", description = "Splits generated .js per-file")
     var irPerFile: Boolean by FreezableVar(false)
 
+    // TODO: REMOVE IT
     @Argument(value = "-Xir-new-ir2js", description = "New fragment-based ir2js")
     var irNewIr2Js: Boolean by FreezableVar(true)
 
