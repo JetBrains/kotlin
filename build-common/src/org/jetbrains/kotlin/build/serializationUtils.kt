@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.build
 
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.collectProperties
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
@@ -77,7 +76,15 @@ fun <T : Any> transformClassToPropertiesMap(classToTransform: T, excludedPropert
         .filter { property -> property.name !in excludedProperties }
         .associateBy(
             keySelector = { property -> property.name },
-            valueTransform = { property -> property.get(classToTransform).toString() })
+            valueTransform = { property ->
+                property.get(classToTransform).let { value ->
+                    if (value is Array<*>) {
+                        (property.get(classToTransform) as Array<*>).joinToString(",")
+                    } else {
+                        property.get(classToTransform).toString()
+                    }
+                }
+            })
 
 fun List<String>.joinToReadableString(): String = when {
     size > 5 -> take(5).joinToString() + " and ${size - 5} more"
