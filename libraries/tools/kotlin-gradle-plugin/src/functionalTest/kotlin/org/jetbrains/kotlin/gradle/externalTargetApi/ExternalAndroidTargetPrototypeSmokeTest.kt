@@ -9,13 +9,20 @@ package org.jetbrains.kotlin.gradle.externalTargetApi
 
 import org.jetbrains.kotlin.gradle.android.androidTargetPrototype
 import org.jetbrains.kotlin.gradle.androidApplication
+import org.jetbrains.kotlin.gradle.assumeAndroidSdkAvailable
 import org.jetbrains.kotlin.gradle.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
 import org.junit.Test
+import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
 class ExternalAndroidTargetPrototypeSmokeTest {
+
+    @BeforeTest
+    fun checkSdk() {
+        assumeAndroidSdkAvailable()
+    }
 
     @Test
     fun `apply prototype - evaluate - compilations exist`() {
