@@ -21,7 +21,7 @@ internal class KtFirConstructorSymbolPointer(
 ) : KtFirMemberSymbolPointer<KtConstructorSymbol>(ownerPointer) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
-        firSession: FirSession
+        firSession: FirSession,
     ): KtConstructorSymbol? {
         val firConstructor = candidates.findDeclarationWithSignature<FirConstructor>(signature, firSession) {
             processDeclaredConstructors(it)
