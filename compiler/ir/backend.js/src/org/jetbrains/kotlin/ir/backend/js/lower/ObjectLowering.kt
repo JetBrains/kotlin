@@ -14,16 +14,13 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -89,19 +86,19 @@ class ObjectUsageLowering(
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val functionContainer = when {
-            context.es6mode && container is IrSimpleFunction && container.origin == ES6_CONSTRUCTOR_REPLACEMENT -> container
+            context.es6mode && container is IrSimpleFunction && container.isSyntheticEs6Constructor -> container
             !context.es6mode && container is IrConstructor && container.isPrimary -> container
             else -> null
         }
 
         val irClass = functionContainer?.parentAsClass
 
-        irClass?.instanceField?.let { instanceField ->
+        irClass?.instanceField?.let {
             val receiver = if (context.es6mode) functionContainer.dispatchReceiverParameter else irClass.thisReceiver
+            val receiverExpr = JsIrBuilder.buildGetValue(receiver!!.symbol)
+
             // Initialize instance field in the beginning of the constructor because it can be used inside the constructor later
-            val initInstanceField = context.createIrBuilder(container.symbol).buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                irSetField(null, instanceField, irGet(receiver!!))
-            }
+            val initInstanceField = JsIrBuilder.buildSetField(it.symbol, null, receiverExpr, context.irBuiltIns.unitType)
 
             (irBody as IrBlockBody).statements.add(0, initInstanceField)
         }

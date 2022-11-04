@@ -199,14 +199,7 @@ fun translateCall(
             Pair(function, superQualifier.owner)
         }
 
-        if (
-            currentDispatchReceiver != null &&
-            function.origin != IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION &&
-            context.staticContext.backendContext.es6mode &&
-            !klass.isInterface &&
-            !currentDispatchReceiver.isInner &&
-            !currentDispatchReceiver.isLocal
-        ) {
+        if (currentDispatchReceiver.canUseSuperRef(function, context, klass)) {
             return JsInvocation(JsNameRef(context.getNameForMemberFunction(target), JsSuperRef()), arguments)
         }
 
@@ -651,3 +644,10 @@ private val nameMappingOriginAllowList = setOf(
     BOUND_VALUE_PARAMETER,
     JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER,
 )
+
+private fun IrClass?.canUseSuperRef(function: IrFunction, context: JsGenerationContext, superClass: IrClass): Boolean {
+    return this != null &&
+            function.origin != IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION &&
+            context.staticContext.backendContext.es6mode &&
+            !superClass.isInterface && !isInner && !isLocal
+}

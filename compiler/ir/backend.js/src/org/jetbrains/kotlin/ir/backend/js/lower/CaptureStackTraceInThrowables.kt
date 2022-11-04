@@ -40,15 +40,15 @@ class CaptureStackTraceInThrowables(val context: JsIrBackendContext) : BodyLower
         val delegatingConstructorCallIndex = statements.indexOfLast { it is IrDelegatingConstructorCall }
 
         statements.add(delegatingConstructorCallIndex + 1, JsIrBuilder.buildCall(context.intrinsics.captureStack).also { call ->
+            val self = klass.thisReceiver!!.symbol
+
             val constructorRef = if (context.es6mode) {
-                JsIrBuilder.buildGetField(
-                    klass.addThrowableConstructorSlot().symbol,
-                    JsIrBuilder.buildGetValue(klass.thisReceiver!!.symbol)
-                )
+                JsIrBuilder.buildGetField(klass.addThrowableConstructorSlot().symbol, JsIrBuilder.buildGetValue(self))
             } else {
-                IrRawFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.anyType, container.symbol)
+                JsIrBuilder.buildRawReference(container.symbol, context.irBuiltIns.anyType)
             }
-            call.putValueArgument(0, JsIrBuilder.buildGetValue(klass.thisReceiver!!.symbol))
+
+            call.putValueArgument(0, JsIrBuilder.buildGetValue(self))
             call.putValueArgument(1, constructorRef)
         })
     }
@@ -65,8 +65,7 @@ class CaptureStackTraceInThrowables(val context: JsIrBackendContext) : BodyLower
             origin = ES6_THROWABLE_CONSTRUCTOR_SLOT
         }.apply {
             parent = this@addThrowableConstructorSlot
-        }.also {
-            declarations.add(it)
+            declarations.add(this)
         }
     }
 }

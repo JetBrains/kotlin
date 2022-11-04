@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 
-object ES6_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_CONSTRUCTOR_REPLACEMENT")
+private object ES6_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_CONSTRUCTOR_REPLACEMENT")
+
+val IrFunction.isSyntheticEs6Constructor: Boolean
+    get() = origin == ES6_CONSTRUCTOR_REPLACEMENT
 
 class ES6ConstructorUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private var IrConstructor.initFunction by context.mapping.constructorToInitFunction
