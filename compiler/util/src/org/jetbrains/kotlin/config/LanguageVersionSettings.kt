@@ -280,6 +280,7 @@ enum class LanguageFeature(
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
     ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
     CustomEqualsInInlineClasses(KOTLIN_1_9), // KT-24874
+    CustomBoxingInInlineClasses(KOTLIN_1_9), // KT-28301
     EnhanceNullabilityOfPrimitiveArrays(KOTLIN_1_9, kind = BUG_FIX), // KT-54521
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
 

@@ -18,16 +18,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.isKProperty
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.member
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.memberOrExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.noDefaultAndVarargs
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
-import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.getContainingClassLookupTag
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -222,9 +223,31 @@ private object OperatorFunctionChecks {
         checkFor(
             BOX,
             member,
-            Checks.full("must have inline class boxing function signature") { _, _ ->
-                true // TODO check signature
-            })
+            ValueParametersCount.single,
+            object : Check {
+                override fun check(context: CheckerContext, function: FirSimpleFunction): String? {
+                    if (!context.languageVersionSettings.supportsFeature(LanguageFeature.CustomBoxingInInlineClasses)) {
+                        return "custom boxing is supported since language version 1.9"
+                    }
+                    val companionObjInInlineClassErrorMsg = "custom box operator must be a function in companion object of inline class"
+                    val companionObject =
+                        function.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)?.takeIf { it.isCompanion }
+                            ?: return companionObjInInlineClassErrorMsg
+                    val inlineClass =
+                        companionObject.getContainingClassLookupTag()?.toFirRegularClassSymbol(context.session)?.takeIf { it.isInline }
+                            ?: return companionObjInInlineClassErrorMsg
+                    if (inlineClass.typeParameterSymbols.isNotEmpty()) return "generic inline class can not have custom box operator"
+                    if (!function.returnTypeRef.coneType.isSubtypeOf(inlineClass.defaultType(), context.session)) {
+                        return "custom box operator must return a subtype of enclosing inline class"
+                    }
+                    val underlyingType = inlineClass.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnType
+                    if (!underlyingType.isSubtypeOf(function.valueParameters[0].returnTypeRef.coneType, context.session)) {
+                        return "underlying type of inline class must be a subtype of the parameter of custom box operator"
+                    }
+                    return null
+                }
+            }
+        )
     }
 
     val regexChecks: List<Pair<Regex, List<Check>>> = buildList {

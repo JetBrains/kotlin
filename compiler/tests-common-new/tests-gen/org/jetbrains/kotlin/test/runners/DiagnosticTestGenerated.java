@@ -17885,6 +17885,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("incorrectCustomBoxDefinition.kt")
+            public void testIncorrectCustomBoxDefinition() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/incorrectCustomBoxDefinition.kt");
+            }
+
+            @Test
             @TestMetadata("inefficientEqualsOverridingInInlineClass.kt")
             public void testInefficientEqualsOverridingInInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inefficientEqualsOverridingInInlineClass.kt");
