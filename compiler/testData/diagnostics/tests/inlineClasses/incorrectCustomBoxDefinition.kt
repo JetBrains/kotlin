@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
+// !DIAGNOSTICS: -EXTENSION_SHADOWED_BY_MEMBER
 // LANGUAGE: +CustomBoxingInInlineClasses
 
 @JvmInline
@@ -54,5 +55,12 @@ value class IC6(val x: Int) {
 value class IC7(val x: String) {
     companion object {
         operator fun box(y: String): Nothing = TODO()
+    }
+}
+
+@JvmInline
+value class IC8(val x: Int) {
+    companion object {
+        <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun box(y : Int = 5) = IC8(y)
     }
 }

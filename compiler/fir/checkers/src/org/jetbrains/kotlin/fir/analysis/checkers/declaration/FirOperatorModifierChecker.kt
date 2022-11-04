@@ -224,6 +224,7 @@ private object OperatorFunctionChecks {
             BOX,
             member,
             ValueParametersCount.single,
+            noDefaultAndVarargs,
             object : Check {
                 override fun check(context: CheckerContext, function: FirSimpleFunction): String? {
                     if (!context.languageVersionSettings.supportsFeature(LanguageFeature.CustomBoxingInInlineClasses)) {
