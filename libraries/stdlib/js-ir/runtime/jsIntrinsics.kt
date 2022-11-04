@@ -185,6 +185,9 @@ internal fun <T> sharedBoxRead(box: dynamic): T?
 internal fun <T> sharedBoxWrite(box: dynamic, nv: T?)
 
 @JsIntrinsic
+internal fun <T> DefaultType(): T
+
+@JsIntrinsic
 internal fun jsBind(receiver: Any?, target: Any?): Any?
 
 @JsIntrinsic
