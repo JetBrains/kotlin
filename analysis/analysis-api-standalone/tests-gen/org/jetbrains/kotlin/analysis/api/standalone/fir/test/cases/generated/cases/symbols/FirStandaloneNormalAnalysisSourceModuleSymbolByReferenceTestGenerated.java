@@ -89,6 +89,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     }
 
     @Test
+    @TestMetadata("javaField.kt")
+    public void testJavaField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaField.kt");
+    }
+
+    @Test
     @TestMetadata("propertyReceiverParameter.kt")
     public void testPropertyReceiverParameter() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/propertyReceiverParameter.kt");
