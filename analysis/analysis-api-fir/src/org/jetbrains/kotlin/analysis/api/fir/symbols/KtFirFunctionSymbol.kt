@@ -7,14 +7,18 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
@@ -22,13 +26,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPoin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.WrongSymbolForSamConstructor
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -47,6 +51,13 @@ internal class KtFirFunctionSymbol(
 
     override val isBuiltinFunctionInvoke: Boolean
         get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
+
+    override val contractEffect: List<KtEffectDeclaration> by cached {
+        firSymbol.resolvedContractDescription?.effects
+            ?.map(FirEffectDeclaration::effect)
+            ?.map(ConeEffectDeclaration::coneEffectDeclarationToAnalysisApi)
+            .orEmpty()
+    }
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverType: KtType? get() = withValidityAssertion { firSymbol.receiverType(builder) }

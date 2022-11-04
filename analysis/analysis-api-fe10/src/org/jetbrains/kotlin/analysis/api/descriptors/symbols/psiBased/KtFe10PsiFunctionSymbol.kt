@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.contracts.effectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.createContextReceivers
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -24,6 +26,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.contracts.description.ContractProviderKey
+import org.jetbrains.kotlin.contracts.description.EffectDeclaration
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -42,6 +46,12 @@ internal class KtFe10PsiFunctionSymbol(
     override val descriptor: FunctionDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.FUNCTION, psi]
+    }
+
+    override val contractEffect: List<KtEffectDeclaration> by cached {
+        descriptor?.getUserData(ContractProviderKey)?.getContractDescription()?.effects
+            ?.map(EffectDeclaration::effectDeclarationToAnalysisApi)
+            .orEmpty()
     }
 
     override val isSuspend: Boolean
