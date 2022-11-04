@@ -31,6 +31,10 @@ internal class KtFirSymbolContainingDeclarationProvider(
     override val token: KtLifetimeToken
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
     override fun getContainingDeclaration(symbol: KtSymbol): KtDeclarationSymbol? {
+        if (symbol is KtReceiverParameterSymbol) {
+            return symbol.owningCallableSymbol
+        }
+
         if (symbol !is KtDeclarationSymbol) return null
         if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) return null
         fun getParentSymbolByPsi() = getContainingPsi(symbol).let { with(analysisSession) { it.getSymbol() } }
