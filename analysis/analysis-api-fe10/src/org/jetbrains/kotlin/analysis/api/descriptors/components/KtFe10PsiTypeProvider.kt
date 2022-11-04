@@ -85,9 +85,8 @@ internal class KtFe10PsiTypeProvider(
         val canonicalSignature = signatureWriter.toString()
         require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
 
-        if (canonicalSignature.contains("L<error>")) {
-            return null
-        }
+        if (canonicalSignature.contains("L<error>")) return null
+        if (canonicalSignature.contains(SpecialNames.NO_NAME_PROVIDED.asString())) return null
 
         val signature = StringCharacterIterator(canonicalSignature)
         val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)

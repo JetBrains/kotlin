@@ -47,6 +47,18 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiExpressionPsiTypeProv
     }
 
     @Test
+    @TestMetadata("class_object_call.kt")
+    public void testClass_object_call() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_call.kt");
+    }
+
+    @Test
+    @TestMetadata("class_object_constructor.kt")
+    public void testClass_object_constructor() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_constructor.kt");
+    }
+
+    @Test
     @TestMetadata("typeParamFlexibleUpperBound.kt")
     public void testTypeParamFlexibleUpperBound() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/typeParamFlexibleUpperBound.kt");
