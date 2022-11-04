@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.DecoratedExternalTargetFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 import kotlin.properties.Delegates
 
 @ExternalKotlinTargetApi
 interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
 
-    fun interface DecoratedExternalTargetFactory<T : DecoratedExternalKotlinTarget> {
-        fun create(target: ExternalKotlinTarget): T
+    fun interface TargetFactory<T : DecoratedExternalKotlinTarget> {
+        fun create(target: DecoratedExternalKotlinTarget.Delegate): T
     }
 
     val targetName: String
     val platformType: KotlinPlatformType
-    val decoratedExternalTargetFactory: DecoratedExternalTargetFactory<T>
+    val targetFactory: TargetFactory<T>
     val configure: ((T) -> Unit)?
 }
 
@@ -27,7 +27,7 @@ interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
 interface ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> {
     var targetName: String
     var platformType: KotlinPlatformType
-    var decoratedExternalTargetFactory: DecoratedExternalTargetFactory<T>
+    var targetFactory: TargetFactory<T>
     var configure: ((T) -> Unit)?
     fun configure(action: (T) -> Unit) = apply {
         val configure = this.configure
@@ -47,13 +47,13 @@ fun <T : DecoratedExternalKotlinTarget> ExternalKotlinTargetDescriptor(
 private class ExternalKotlinTargetDescriptorBuilderImpl<T : DecoratedExternalKotlinTarget> : ExternalKotlinTargetDescriptorBuilder<T> {
     override var targetName: String by Delegates.notNull()
     override var platformType: KotlinPlatformType by Delegates.notNull()
-    override var decoratedExternalTargetFactory: DecoratedExternalTargetFactory<T> by Delegates.notNull()
+    override var targetFactory: TargetFactory<T> by Delegates.notNull()
     override var configure: ((T) -> Unit)? = null
 
     fun build(): ExternalKotlinTargetDescriptorImpl<T> = ExternalKotlinTargetDescriptorImpl(
         targetName = targetName,
         platformType = platformType,
-        decoratedExternalTargetFactory = decoratedExternalTargetFactory,
+        targetFactory = targetFactory,
         configure = configure
     )
 }
@@ -62,7 +62,7 @@ private class ExternalKotlinTargetDescriptorBuilderImpl<T : DecoratedExternalKot
 private data class ExternalKotlinTargetDescriptorImpl<T : DecoratedExternalKotlinTarget>(
     override val targetName: String,
     override val platformType: KotlinPlatformType,
-    override val decoratedExternalTargetFactory: DecoratedExternalTargetFactory<T>,
+    override val targetFactory: TargetFactory<T>,
     override val configure: ((T) -> Unit)?
 ) : ExternalKotlinTargetDescriptor<T>
 

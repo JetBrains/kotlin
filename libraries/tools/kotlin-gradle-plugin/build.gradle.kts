@@ -27,6 +27,7 @@ kotlin.sourceSets.all {
     languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AdvancedKotlinGradlePluginApi")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
     languageSettings.optIn("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }
 

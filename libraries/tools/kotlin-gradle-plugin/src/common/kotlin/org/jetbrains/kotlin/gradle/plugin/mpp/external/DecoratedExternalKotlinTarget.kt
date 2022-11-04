@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 @ExternalKotlinTargetApi
-abstract class DecoratedExternalKotlinTarget(
-    internal val delegate: ExternalKotlinTarget
+abstract class DecoratedExternalKotlinTarget internal constructor(
+    internal val delegate: ExternalKotlinTargetImpl
 ) : KotlinTarget by delegate {
-    internal val logger: Logger = Logging.getLogger("${ExternalKotlinTarget::class.qualifiedName}: $name")
+    constructor(delegate: Delegate) : this(delegate.impl)
+
+    class Delegate internal constructor(internal val impl: ExternalKotlinTargetImpl)
+
+    internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
 }

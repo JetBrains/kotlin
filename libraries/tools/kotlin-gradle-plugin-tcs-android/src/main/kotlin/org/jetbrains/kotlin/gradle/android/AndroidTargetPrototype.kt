@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.DecoratedExternalTargetFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 
 @OptIn(ExternalVariantApi::class)
 fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarget {
@@ -46,8 +46,8 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
     val androidTarget = createExternalKotlinTarget<PrototypeAndroidTarget> {
         targetName = "android"
         platformType = KotlinPlatformType.jvm
-        decoratedExternalTargetFactory = DecoratedExternalTargetFactory { externalTarget ->
-            PrototypeAndroidTarget(externalTarget, PrototypeAndroidDsl(31))
+        targetFactory = TargetFactory { delegate ->
+            PrototypeAndroidTarget(delegate, PrototypeAndroidDsl(31))
         }
     }
 
