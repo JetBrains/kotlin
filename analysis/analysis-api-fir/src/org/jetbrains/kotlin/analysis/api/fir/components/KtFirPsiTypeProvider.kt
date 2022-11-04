@@ -191,10 +191,10 @@ internal fun ConeKotlinType.asPsiType(
     session.jvmTypeMapper.mapType(correctedType, mode, signatureWriter)
 
     val canonicalSignature = signatureWriter.toString()
+    require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
 
     if (canonicalSignature.contains("L<error>")) return null
-
-    require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
+    if (canonicalSignature.contains(SpecialNames.NO_NAME_PROVIDED.asString())) return null
 
     val signature = StringCharacterIterator(canonicalSignature)
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
