@@ -5,16 +5,9 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.dataframe.extensions.TestBodyFiller
-import org.jetbrains.kotlin.fir.dataframe.extensions.TestGenerator
-import org.jetbrains.kotlin.fir.dataframe.extensions.TestInjector
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
+import org.jetbrains.kotlin.fir.dataframe.services.classpathFromClassloader
 import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
@@ -28,8 +21,9 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
+import java.io.File
 
 open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWithTargetBackendForTestGeneratorMarker*/ {
 
@@ -38,7 +32,6 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWith
             targetBackend = TargetBackend.JVM_IR
         }
         commonFirWithPluginFrontendConfiguration()
-        useConfigurators(::TestExtensionRegistrarConfigurator)
         firHandlersStep {
             useHandlers(::NoFirCompilationErrorsHandler)
         }
@@ -53,26 +46,13 @@ open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner()/*, RunnerWith
         jvmArtifactsHandlersStep {
             useHandlers(::JvmBoxRunner)
         }
+        useCustomRuntimeClasspathProviders(::MyClasspathProvider)
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
     }
 
-    /**
-     * @see org.jetbrains.kotlin.fir.dataframe.DataFrameBlackBoxCodegenTestGenerated.testLowerManualImplicitReceiver
-     */
-    class TestExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-        override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
-            module: TestModule,
-            configuration: CompilerConfiguration
-        ) {
-            FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar())
-            IrGenerationExtension.registerExtension(TestBodyFiller())
-        }
-    }
-
-    class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
-        override fun ExtensionRegistrarContext.configurePlugin() {
-            +::TestGenerator
-            +::TestInjector
+    class MyClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
+        override fun runtimeClassPaths(module: TestModule): List<File> {
+            return (classpathFromClassloader(javaClass.classLoader) ?: error("no classpath"))
         }
     }
 }

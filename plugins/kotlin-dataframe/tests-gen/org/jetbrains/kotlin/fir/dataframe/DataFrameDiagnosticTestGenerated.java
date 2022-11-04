@@ -17,26 +17,20 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosticTest {
     @Test
-    @TestMetadata("A.kt")
-    public void testA() throws Exception {
-        runTest("testData/diagnostics/A.kt");
+    public void testAllFilesPresentInDiagnostics() throws Exception {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    @TestMetadata("dataSchemaCodegen.kt")
+    public void testDataSchemaCodegen() throws Exception {
+        runTest("testData/diagnostics/dataSchemaCodegen.kt");
     }
 
     @Test
     @TestMetadata("dfIde.kt")
     public void testDfIde() throws Exception {
         runTest("testData/diagnostics/dfIde.kt");
-    }
-
-    @Test
-    @TestMetadata("helloWorld.kt")
-    public void testHelloWorld() throws Exception {
-        runTest("testData/diagnostics/helloWorld.kt");
     }
 
     @Test
@@ -61,6 +55,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     @TestMetadata("OuterClass.kt")
     public void testOuterClass() throws Exception {
         runTest("testData/diagnostics/OuterClass.kt");
+    }
+
+    @Test
+    @TestMetadata("Schema.kt")
+    public void testSchema() throws Exception {
+        runTest("testData/diagnostics/Schema.kt");
     }
 
     @Nested

@@ -39,7 +39,7 @@ import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
 class FirDataFrameExtensionsGenerator(
     session: FirSession,
-    private val ids: Set<ClassId>,
+    private val scopes: Set<ClassId>,
     private val state: Map<ClassId, SchemaContext>,
     val callables: List<CallableId>,
     val callableState: MutableMap<Name, FirSimpleFunction>
@@ -229,11 +229,11 @@ class FirDataFrameExtensionsGenerator(
 
 
     override fun getTopLevelClassIds(): Set<ClassId> {
-        return ids
+        return scopes
     }
 
     override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (classId !in ids) return null
+        if (classId !in scopes) return null
         val klass = buildRegularClass {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE

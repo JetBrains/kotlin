@@ -13,8 +13,6 @@ interface Schema {
     val fff: String
 }
 
-//val DataFrame<Schema>.
-
 fun main(args: Array<String>) {
     val df = dataFrameOf("i")(1, 2, 3).cast<Schema>()
     println(df.i)
