@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -83,12 +83,11 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }
 
-            KtFakeSourceElementKind.ImplicitConstructor ->
-                return source.psi as KtDeclaration
-
+            KtFakeSourceElementKind.ImplicitConstructor -> return source.psi as KtDeclaration
             KtFakeSourceElementKind.PropertyFromParameter -> return source.psi?.parentOfType<KtPrimaryConstructor>()!!
             KtFakeSourceElementKind.DefaultAccessor -> return source.psi as KtProperty
             KtFakeSourceElementKind.ItLambdaParameter -> return source.psi as KtFunctionLiteral
+            KtFakeSourceElementKind.EnumInitializer -> return source.psi as KtEnumEntry
             KtRealSourceElementKind -> source.psi!!
             else ->
                 buildErrorWithAttachment("errorWithAttachment FirSourceElement: kind=${source.kind} element=${source.psi!!::class.simpleName}") {

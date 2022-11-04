@@ -24,8 +24,10 @@ internal class KtFirMemberPropertySymbolPointer(
         candidates: FirScope,
         firSession: FirSession
     ): KtKotlinPropertySymbol? {
-        val firProperty = candidates.findDeclarationWithSignature<FirProperty>(signature, firSession) { processPropertiesByName(name, it) }
-            ?: return null
+        val firProperty = candidates.findDeclarationWithSignature<FirProperty>(signature, firSession) {
+            processPropertiesByName(name, it)
+        } ?: return null
+
         return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty.symbol) as? KtKotlinPropertySymbol
     }
 }
