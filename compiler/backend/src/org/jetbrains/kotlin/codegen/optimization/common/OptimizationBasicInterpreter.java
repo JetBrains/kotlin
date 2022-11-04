@@ -204,7 +204,7 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             case DREM:
                 return StrictBasicValue.DOUBLE_VALUE;
             case AALOAD:
-                return StrictBasicValue.NULL_VALUE;
+                return StrictBasicValue.REFERENCE_VALUE;
             case LCMP:
             case FCMPL:
             case FCMPG:
