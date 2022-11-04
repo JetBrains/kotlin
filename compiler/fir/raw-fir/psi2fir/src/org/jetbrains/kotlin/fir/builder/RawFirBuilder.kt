@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -873,10 +872,10 @@ open class RawFirBuilder(
             // TODO: in case we have no primary constructor,
             // it may be not possible to determine delegated super type right here
             delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef
-            val shouldNotGenerateImplicitPrimaryConstructor = hasExplicitPrimaryConstructor() || hasSecondaryConstructors() ||
-                    (containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS)
+            val shouldGenerateImplicitPrimaryConstructor =
+                !hasExplicitPrimaryConstructor() && !hasSecondaryConstructors() && !(containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS)
 
-            if ((this !is KtClass || !this.isInterface()) && (primaryConstructor != null || !shouldNotGenerateImplicitPrimaryConstructor)) {
+            if (primaryConstructor != null || (this !is KtClass || !this.isInterface()) && shouldGenerateImplicitPrimaryConstructor) {
                 val firPrimaryConstructor = primaryConstructor.toFirConstructor(
                     superTypeCallEntry,
                     delegatedSuperTypeRef!!,

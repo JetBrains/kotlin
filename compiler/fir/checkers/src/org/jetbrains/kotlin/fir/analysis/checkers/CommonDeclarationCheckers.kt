@@ -98,7 +98,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirAnnotationClassDeclarationChecker,
             FirOptInAnnotationClassChecker,
             FirCommonConstructorDelegationIssuesChecker,
-            FirConstructorInInterfaceChecker,
             FirDelegationSuperCallInEnumConstructorChecker,
             FirDelegationInInterfaceSyntaxChecker,
             FirEnumClassSimpleChecker,
