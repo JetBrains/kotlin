@@ -32,12 +32,12 @@ class SchemaContext(val properties: List<SchemaProperty>)
 
 class FirDataFrameReceiverInjector(
     session: FirSession,
-    private val state: MutableMap<ClassId, SchemaContext>,
-    private val ids: ArrayDeque<ClassId>
+    private val scopeState: MutableMap<ClassId, SchemaContext>,
+    private val scopeIds: ArrayDeque<ClassId>
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-        return coneKotlinTypes(functionCall, state, ids, id)
+        return coneKotlinTypes(functionCall, scopeState, scopeIds, id)
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()
@@ -57,8 +57,8 @@ val any: RootMarkerStrategy = {
 
 fun KotlinTypeFacade.coneKotlinTypes(
     functionCall: FirFunctionCall,
-    state: MutableMap<ClassId, SchemaContext>,
-    ids: ArrayDeque<ClassId>,
+    scopeState: MutableMap<ClassId, SchemaContext>,
+    scopeIds: ArrayDeque<ClassId>,
     getRootMarker: KotlinTypeFacade.(FirFunctionCall) -> ConeTypeProjection,
     reporter: InterpretationErrorReporter = InterpretationErrorReporter { _, _ -> }
 ): List<ConeKotlinType> {
@@ -74,7 +74,7 @@ fun KotlinTypeFacade.coneKotlinTypes(
     // TODO: generate a new marker for each call when there is an API to cast functionCall result to this type
     val rootMarker = getRootMarker(functionCall)
     fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
-        val id = ids.removeLast()
+        val id = scopeIds.removeLast()
         val marker = rootMarker ?: ConeClassLikeLookupTagImpl(id)
             .constructClassType(emptyArray(), isNullable = false)
         val properties = columns().map {
@@ -126,7 +126,7 @@ fun KotlinTypeFacade.coneKotlinTypes(
                 else -> TODO("shouldn't happen")
             }
         }
-        state[id] = SchemaContext(properties)
+        scopeState[id] = SchemaContext(properties)
         types += ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false)
         return marker
     }
