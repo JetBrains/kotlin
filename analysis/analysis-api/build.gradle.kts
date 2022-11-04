@@ -12,7 +12,6 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     compileOnly(project(":compiler:psi"))
-    compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
     implementation(project(":analysis:analysis-internal-utils"))
