@@ -368,6 +368,7 @@ internal object FirCompileTimeConstantEvaluator {
             ConstantValueKind.UnsignedShort -> value.toLong().toUShort()
             ConstantValueKind.UnsignedInt -> value.toLong().toUInt()
             ConstantValueKind.UnsignedLong -> value.toLong().toULong()
+            ConstantValueKind.UnsignedIntegerLiteral -> value.toLong().toULong()
             else -> null
         }
     }

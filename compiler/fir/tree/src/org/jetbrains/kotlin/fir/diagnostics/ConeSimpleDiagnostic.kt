@@ -87,6 +87,7 @@ enum class DiagnosticKind {
     IntLiteralOutOfRange,
     FloatLiteralOutOfRange,
     WrongLongSuffix,
+    UnsignedNumbersAreNotPresent,
 
     IsEnumEntry,
     EnumEntryAsType,
