@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import kotlin.reflect.KClass
 
 public class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(identifier: String) :
-    IllegalStateException("Could not create a symbol pointer for local symbol $identifier")
+    IllegalStateException("Could not create a symbol pointer for local symbol $identifier") {
+    public constructor(klass: KClass<*>) : this(klass.java.simpleName)
+}
 
 public class UnsupportedSymbolKind(identifier: String, kind: KtSymbolKind) : IllegalStateException(
     "For symbol with kind = KtSymbolKind.${kind.name} was $identifier"

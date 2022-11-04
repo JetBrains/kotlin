@@ -43,7 +43,7 @@ internal class KtFirAnonymousObjectSymbol(
             return KtFirEnumEntryInitializerSymbolPointer(requireOwnerPointer())
         }
 
-        throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("Cannot create pointer for KtFirAnonymousObjectSymbol")
+        throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
