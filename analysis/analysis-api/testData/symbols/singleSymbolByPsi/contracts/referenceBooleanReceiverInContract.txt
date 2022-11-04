@@ -1,0 +1,49 @@
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /referenceReceiverInContract
+  contextReceivers: []
+  contractEffects: [
+    KtContractConditionalContractEffectDeclaration:
+      effect:
+        KtContractReturnsSuccessfullyEffectDeclaration:
+      condition:
+        KtContractBooleanValueParameterExpression:
+          parameterSymbol:
+            KtReceiverParameterSymbol:
+              annotationsList: []
+              origin: SOURCE
+              owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
+              type: kotlin/Boolean
+              getContainingModule: KtSourceModule "Sources of main"
+              deprecationStatus: null
+  ]
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: true
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: referenceReceiverInContract
+  origin: SOURCE
+  receiverParameter: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
+    type: kotlin/Boolean
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  returnType: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

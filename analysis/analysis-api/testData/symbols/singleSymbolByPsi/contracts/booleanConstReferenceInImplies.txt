@@ -1,0 +1,39 @@
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /booleanConstReferenceInImplies
+  contextReceivers: []
+  contractEffects: [
+    KtContractConditionalContractEffectDeclaration:
+      effect:
+        KtContractReturnsSpecificValueEffectDeclaration:
+          value:
+            KtContractConstantValue:
+              constantType: TRUE
+      condition:
+        KtContractBooleanConstantExpression:
+          booleanConstant: true
+  ]
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: booleanConstReferenceInImplies
+  origin: SOURCE
+  receiverParameter: null
+  returnType: kotlin/Boolean
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
