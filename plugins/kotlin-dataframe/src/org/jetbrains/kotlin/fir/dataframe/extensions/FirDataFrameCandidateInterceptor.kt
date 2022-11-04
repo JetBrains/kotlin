@@ -63,6 +63,7 @@ class FirDataFrameCandidateInterceptor(
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Plugin(Key)
             source = null
+            containerSource = null
             val substitutorMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
             typeParameters.replaceAll {
                 val originalSymbol = it.symbol

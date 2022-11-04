@@ -3,12 +3,22 @@ FILE: lowerGeneratedImplicitReceiver.kt
 
     public abstract interface Cars : R|kotlin/Any| {
     }
-    public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>|): R|kotlin/Unit| {
+    public final fun box(): R|kotlin/String| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/api/Cars|>()
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token99>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_99|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/api/Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/api/Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/api/Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
             ^ Int(2022)
         }
         )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/api/Name is evaluated to age|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Token99.age|
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|org/jetbrains/kotlinx/dataframe/api/box|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Token99.age|
+        ^box when () {
+            ==(R|<local>/col|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/Int|>|(Int(0)), Int(2022)) ->  {
+                String(OK)
+            }
+            else ->  {
+                R|<local>/col|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/Int|>|(Int(0)).R|kotlin/Int.toString|()
+            }
+        }
+
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
