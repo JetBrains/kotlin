@@ -201,6 +201,11 @@ internal class WrongLongSuffixImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.WrongLongSuffix(), KtAbstractFirDiagnostic<KtElement>
 
+internal class UnsignedLiteralsNotPresentImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.UnsignedLiteralsNotPresent(), KtAbstractFirDiagnostic<KtElement>
+
 internal class DivisionByZeroImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

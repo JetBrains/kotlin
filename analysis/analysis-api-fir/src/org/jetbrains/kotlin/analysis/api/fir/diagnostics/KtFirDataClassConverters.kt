@@ -203,6 +203,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNSIGNED_LITERALS_NOT_PRESENT) { firDiagnostic ->
+        UnsignedLiteralsNotPresentImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DIVISION_BY_ZERO) { firDiagnostic ->
         DivisionByZeroImpl(
             firDiagnostic as KtPsiDiagnostic,

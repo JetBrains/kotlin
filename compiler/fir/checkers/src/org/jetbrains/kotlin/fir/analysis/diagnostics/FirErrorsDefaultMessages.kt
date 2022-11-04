@@ -532,6 +532,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_INFIX_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERALS_NOT_PRESENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
@@ -633,6 +634,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WRONG_LONG_SUFFIX, "Use 'L' instead of 'l'")
         map.put(EMPTY_CHARACTER_LITERAL, "Empty character literal")
         map.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range")
+        map.put(UNSIGNED_LITERALS_NOT_PRESENT, "The standard library is required when using unsigned integers")
         map.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal")
         map.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal")
         map.put(ILLEGAL_ESCAPE, "Illegal escape")

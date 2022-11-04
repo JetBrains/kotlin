@@ -179,6 +179,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = WrongLongSuffix::class
     }
 
+    abstract class UnsignedLiteralsNotPresent : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = UnsignedLiteralsNotPresent::class
+    }
+
     abstract class DivisionByZero : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = DivisionByZero::class
     }
