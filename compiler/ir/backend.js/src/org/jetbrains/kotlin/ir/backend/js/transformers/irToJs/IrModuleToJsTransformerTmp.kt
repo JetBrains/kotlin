@@ -89,7 +89,6 @@ class JsCodeGenerator(
             program,
             sourceMapsInfo,
             relativeRequirePath,
-            false,
             outJsProgram
         )
     }
@@ -388,7 +387,6 @@ private fun generateWrappedModuleBody(
     program: JsIrProgram,
     sourceMapsInfo: SourceMapsInfo?,
     relativeRequirePath: Boolean,
-    generateScriptModule: Boolean,
     outJsProgram: Boolean
 ): CompilationOutputs {
     if (multiModule) {
@@ -402,7 +400,6 @@ private fun generateWrappedModuleBody(
                 moduleKind,
                 main.fragments,
                 sourceMapsInfo,
-                generateScriptModule,
                 generateCallToMain = true,
                 mainRef,
                 outJsProgram
@@ -418,7 +415,6 @@ private fun generateWrappedModuleBody(
                         moduleKind,
                         module.fragments,
                         sourceMapsInfo,
-                        generateScriptModule,
                         generateCallToMain = false,
                         moduleRef,
                         outJsProgram
@@ -435,7 +431,6 @@ private fun generateWrappedModuleBody(
             moduleKind,
             program.asFragments(),
             sourceMapsInfo,
-            generateScriptModule,
             generateCallToMain = true,
             outJsProgram = outJsProgram
         )
@@ -447,7 +442,6 @@ fun generateSingleWrappedModuleBody(
     moduleKind: ModuleKind,
     fragments: List<JsIrProgramFragment>,
     sourceMapsInfo: SourceMapsInfo?,
-    generateScriptModule: Boolean,
     generateCallToMain: Boolean,
     crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty(moduleKind),
     outJsProgram: Boolean = true
@@ -457,7 +451,6 @@ fun generateSingleWrappedModuleBody(
         moduleKind,
         fragments,
         crossModuleReferences,
-        generateScriptModule,
         generateRegionComments = true,
         generateCallToMain,
     ).merge()

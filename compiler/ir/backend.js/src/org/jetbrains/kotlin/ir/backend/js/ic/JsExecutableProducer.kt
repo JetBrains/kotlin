@@ -30,7 +30,6 @@ class JsExecutableProducer(
             moduleKind = moduleKind,
             fragments = modules.flatMap { it.fragments },
             sourceMapsInfo = sourceMapsInfo,
-            generateScriptModule = false,
             generateCallToMain = true,
             outJsProgram = outJsProgram
         )
@@ -64,7 +63,6 @@ class JsExecutableProducer(
                 moduleKind = moduleKind,
                 associatedModule.fragments,
                 sourceMapsInfo = sourceMapsInfo,
-                generateScriptModule = false,
                 generateCallToMain = generateCallToMain,
                 crossModuleReferences = crossRef,
                 outJsProgram = outJsProgram
