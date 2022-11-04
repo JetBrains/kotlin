@@ -94,7 +94,7 @@ class JsCodeGenerator(
     }
 }
 
-class IrModuleToJsTransformerTmp(
+class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     private val mainArguments: List<String>?,
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),

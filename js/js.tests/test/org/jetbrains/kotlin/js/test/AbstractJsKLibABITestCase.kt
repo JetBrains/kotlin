@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
@@ -206,7 +206,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             granularity = JsGenerationGranularity.PER_MODULE
         )
 
-        val transformer = IrModuleToJsTransformerTmp(
+        val transformer = IrModuleToJsTransformer(
             backendContext = ir.context,
             mainArguments = emptyList()
         )

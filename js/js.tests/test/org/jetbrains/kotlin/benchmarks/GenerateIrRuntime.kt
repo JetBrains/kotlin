@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -609,7 +609,7 @@ class GenerateIrRuntime {
 
         jsPhases.invokeToplevel(phaseConfig, context, listOf(module))
 
-        val transformer = IrModuleToJsTransformerTmp(context, null)
+        val transformer = IrModuleToJsTransformer(context, null)
 
         return transformer.generateModule(listOf(module), setOf(TranslationMode.PER_MODULE), false)
     }
