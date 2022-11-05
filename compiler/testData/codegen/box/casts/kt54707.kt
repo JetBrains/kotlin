@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
-
 fun box(): String =
     g(arrayOf("O"))
 
@@ -12,4 +9,3 @@ inline fun <T> Array<out T>.f(lambda: (T) -> T): T =
 
 inline fun <reified T> Array<out T>?.orEmpty0(): Array<out T> =
     this ?: (arrayOfNulls<T>(0) as Array<T>)
-
