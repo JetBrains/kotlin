@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization.common;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Handle;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -152,13 +153,6 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             @NotNull BasicValue value1,
             @NotNull BasicValue value2
     ) throws AnalyzerException {
-        if (insn.getOpcode() == Opcodes.AALOAD) {
-            Type arrayType = value1.getType();
-            if (arrayType != null && arrayType.getSort() == Type.ARRAY) {
-                return new StrictBasicValue(AsmUtil.correctElementType(arrayType));
-            }
-        }
-
         switch (insn.getOpcode()) {
             case IALOAD:
             case BALOAD:
@@ -204,7 +198,13 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             case DREM:
                 return StrictBasicValue.DOUBLE_VALUE;
             case AALOAD:
-                return StrictBasicValue.NULL_VALUE;
+                Type arrayType = value1.getType();
+                if (arrayType != null && arrayType.getSort() == Type.ARRAY) {
+                    return new StrictBasicValue(AsmUtil.correctElementType(arrayType));
+                }
+                else {
+                    return StrictBasicValue.NULL_VALUE;
+                }
             case LCMP:
             case FCMPL:
             case FCMPG:
@@ -365,7 +365,7 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             if (v == NULL_VALUE) return newValue(w.getType());
             if (w == NULL_VALUE) return newValue(v.getType());
 
-            return StrictBasicValue.REFERENCE_VALUE;
+            return mergeReferenceTypes(w.getType(), v.getType());
         }
 
         // if merge of something can be stored in int var (int, char, boolean, byte, character)
@@ -380,4 +380,20 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
     private static boolean isReference(@NotNull BasicValue v) {
         return v.getType().getSort() == Type.OBJECT || v.getType().getSort() == Type.ARRAY;
     }
+
+    private BasicValue mergeReferenceTypes(@NotNull Type a, @NotNull Type b) {
+        int arrayDimensions = 0;
+        while (a.getSort() == Type.ARRAY && b.getSort() == Type.ARRAY) {
+            a = AsmUtil.correctElementType(a);
+            b = AsmUtil.correctElementType(b);
+            arrayDimensions++;
+        }
+        if (arrayDimensions == 0) return REFERENCE_VALUE;
+
+        StringBuilder result = new StringBuilder();
+        while (arrayDimensions-- > 0) result.append("[");
+        result.append(AsmTypes.OBJECT_TYPE.getDescriptor());
+        return newValue(Type.getType(result.toString()));
+    }
+
 }
