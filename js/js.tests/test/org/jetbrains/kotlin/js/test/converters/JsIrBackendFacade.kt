@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsTransformationExtension
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
@@ -173,6 +174,9 @@ class JsIrBackendFacade(
 
         val outputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL) + module.kind.extension)
 
+        val project = testServices.compilerConfigurationProvider.getProject(module)
+        val irToJsTransformationExtensions = IrToJsTransformationExtension.getInstances(project)
+
         if (runNewIr2Js) {
             val transformer = IrModuleToJsTransformerTmp(
                 loweredIr.context,
@@ -180,7 +184,8 @@ class JsIrBackendFacade(
                 moduleToName = JsIrModuleToPath(
                     testServices,
                     isEsModules && granularity != JsGenerationGranularity.WHOLE_PROGRAM
-                )
+                ),
+                irToJsTransformationExtensions = irToJsTransformationExtensions
             )
                 // If runIrDce then include DCE results
                 // If perModuleOnly then skip whole program

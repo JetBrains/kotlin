@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsTransformationExtension
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -112,7 +113,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         private fun makeJsCodeGeneratorAndDts(): Pair<JsCodeGenerator, String> {
             val ir = lowerIr()
-            val transformer = IrModuleToJsTransformerTmp(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
+            val transformer = IrModuleToJsTransformerTmp(
+                ir.context,
+                mainCallArguments,
+                ir.moduleFragmentToUniqueName,
+                irToJsTransformationExtensions = IrToJsTransformationExtension.getInstances(module.project)
+            )
 
             val mode = TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule, arguments.irMinimizedMemberNames)
             return transformer.makeJsCodeGeneratorAndDts(ir.allModules, mode)
