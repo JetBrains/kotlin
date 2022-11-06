@@ -32,6 +32,9 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
                         interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.jsGenerationExtension"
+                        interface="org.jetbrains.kotlin.ir.backend.js.extensions.JsGenerationExtension"
+                        area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
                         area="IDEA_PROJECT" dynamic="true"/>

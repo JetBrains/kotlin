@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsTransformationExtension
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -19,6 +20,8 @@ class Merger(
     private val generateScriptModule: Boolean,
     private val generateRegionComments: Boolean,
     private val generateCallToMain: Boolean,
+    private val moduleOrigin: JsModuleOrigin,
+    private val irToJsTransformationExtensions: List<IrToJsTransformationExtension>,
 ) {
 
     private val isEsModules = moduleKind == ModuleKind.ES
@@ -279,6 +282,13 @@ class Merger(
                 program,
                 kind = moduleKind
             )
+        }
+
+        // postprocess program by extensions
+        if (irToJsTransformationExtensions.isNotEmpty()) {
+            for (ext in irToJsTransformationExtensions) {
+                ext.postprocessJsAst(program, moduleKind, moduleOrigin, importedJsModules)
+            }
         }
 
         return program
