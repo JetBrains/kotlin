@@ -121,12 +121,15 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         val variables = flows.flatMapTo(mutableSetOf()) { it.approvedTypeStatements.keys + it.directAliasMap.keys } - commonAliases.keys
         val statements = variables.mapNotNull { variable ->
             val statement = if (allExecute) {
-                // All input flows execute in some order. If none of them reassign the variable, then
-                // *all* sets of statements are true; otherwise the assignments might have happened in
-                // an arbitrary order, so only one set of statements is true depending on which assignment
-                // happened last (and the flows that don't reassign may or may not have executed after that).
-                val byAssignment = flows.groupByTo(mutableMapOf()) { it.assignmentIndex[variable] ?: -1 }.values
-                or(byAssignment.map { flowSubset -> and(flowSubset.map { it.getTypeStatement(variable) }) })
+                // All input flows execute in some order. If none of the flows reassign, i.e. the only key
+                // in `byAssignment` is `commonFlow`'s assignment index, then all statements are true.
+                // Otherwise, one of the assignments executed last, but we don't know which, and the flows
+                // that don't reassign should be ignored because they may have executed before or after that.
+                val byAssignment = flows.groupByTo(mutableMapOf()) { it.assignmentIndex[variable] ?: -1 }
+                if (byAssignment.size > 1) {
+                    byAssignment.remove(commonFlow.assignmentIndex[variable] ?: -1)
+                }
+                or(byAssignment.values.map { flowSubset -> and(flowSubset.map { it.getTypeStatement(variable) }) })
             } else {
                 // One input flow executes - one set of statements is true, others might be false.
                 or(flows.map { it.getTypeStatement(variable) })
