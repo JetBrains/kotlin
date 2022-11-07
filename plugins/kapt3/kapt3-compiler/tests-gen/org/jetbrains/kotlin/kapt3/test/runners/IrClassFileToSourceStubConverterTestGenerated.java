@@ -152,6 +152,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("delegatedProperties.kt")
+    public void testDelegatedProperties() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/delegatedProperties.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/deprecated.kt");
