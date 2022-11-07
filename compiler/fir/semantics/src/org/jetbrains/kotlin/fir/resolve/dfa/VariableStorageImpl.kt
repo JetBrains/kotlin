@@ -108,8 +108,23 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         }
 
         val receiverVariable = receiver?.let { getOrCreateVariable(flow, it) }
-        return RealVariable(identifier, isThisReference, receiverVariable, counter++, stability).also {
-            (receiverVariable as? RealVariable)?.dependentVariables?.add(it)
+        return RealVariable(identifier, isThisReference, receiverVariable, counter++, stability)
+    }
+
+    fun copyRealVariableWithRemapping(variable: RealVariable, from: RealVariable, to: RealVariable): RealVariable {
+        val newIdentifier = with(variable.identifier) {
+            copy(
+                dispatchReceiver = if (dispatchReceiver == from) to else dispatchReceiver,
+                extensionReceiver = if (extensionReceiver == from) to else extensionReceiver,
+            )
+        }
+        return _realVariables.getOrPut(newIdentifier) {
+            with(variable) {
+                RealVariable(
+                    newIdentifier, isThisReference, if (explicitReceiverVariable == from) to else explicitReceiverVariable,
+                    counter++, stability
+                )
+            }
         }
     }
 
