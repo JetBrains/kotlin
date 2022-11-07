@@ -57,7 +57,7 @@ object InlineTestUtil {
         val binaryClasses = hashMapOf<String, KotlinJvmBinaryClass>()
         for (file in files) {
             val binaryClass = loadBinaryClass(file)
-            val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(binaryClass.classHeader).map { it.jvmMethodSignature }.toSet()
+            val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(binaryClass.classHeader)
 
             val classVisitor = object : ClassVisitorWithName() {
                 override fun visitMethod(
@@ -81,7 +81,7 @@ object InlineTestUtil {
         var doLambdaInliningCheck = true
         for (file in files) {
             val binaryClass = loadBinaryClass(file)
-            val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(binaryClass.classHeader).map { it.jvmMethodSignature }.toSet()
+            val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(binaryClass.classHeader)
 
             //if inline function creates anonymous object then do not try to check that all lambdas are inlined
             val classVisitor = object : ClassVisitorWithName() {
