@@ -1905,6 +1905,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("savedInstanceInConstructor.kt")
+        public void testSavedInstanceInConstructor() throws Exception {
+            runTest("js/js.translator/testData/box/es6classes/savedInstanceInConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("typeCorrectness.kt")
         public void testTypeCorrectness() throws Exception {
             runTest("js/js.translator/testData/box/es6classes/typeCorrectness.kt");
