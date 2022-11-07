@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
@@ -50,7 +53,47 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
         doRegisterTask(project, compilationInfo.compileKotlinTaskName).also { task ->
-            compilationInfo.classesDirs.from(task.flatMap { it.destinationDirectory })
+            // Workaround for case when 'compilationInfo.classesDirs' is actually Java 'SourceSet.output.classesDir'
+            // Gradle from 7.3 started to realize 'FileCollection's registered for 'BuildOutputCleanupRegistry'
+            // at the end of the configuration phase. One of this 'FileCollection' is 'SourceSetOutput'
+            // which causes 'KotlinCompile' tasks to be eagerly realized.
+            // Related commit into Gradle: https://github.com/gradle/gradle/commit/758adc5b0c5a5d27e2797a9fa8fd2690530c5de9
+            // Proper workaround is peeked from here:
+            // https://github.com/gradle/gradle/blob/16cbc3a678771b08418d086eb67e9934c9282dfb/subprojects/plugins/src/main/java/org/gradle/api/plugins/internal/JvmPluginsHelper.java#L142-L148
+            if (compilationInfo.tcsOrNull?.compilation is KotlinWithJavaCompilation<*, *>) {
+                val kotlinSourceDirectorySet = compilationInfo.tcs.compilation.defaultSourceSet.kotlin
+                kotlinSourceDirectorySet.destinationDirectory.value(defaultKotlinDestinationDir)
+                task.configure {
+                    if (it is Kotlin2JsCompile) {
+                        it.defaultDestinationDirectory.convention(kotlinSourceDirectorySet.destinationDirectory)
+                    } else {
+                        it.destinationDirectory.convention(kotlinSourceDirectorySet.destinationDirectory)
+                    }
+                }
+                compilationInfo.classesDirs.from(kotlinSourceDirectorySet.destinationDirectory).builtBy(task)
+                if (compilationInfo.tcs.compilation.platformType == KotlinPlatformType.js) {
+                    @Suppress("UNCHECKED_CAST")
+                    kotlinSourceDirectorySet.compiledBy(
+                        task as TaskProvider<Kotlin2JsCompile>,
+                        Kotlin2JsCompile::defaultDestinationDirectory
+                    )
+                    (kotlinSourceDirectorySet.classesDirectory as Property<Directory>).set(task.flatMap { it.destinationDirectory })
+                } else {
+                    kotlinSourceDirectorySet.compiledBy(task, AbstractKotlinCompile<*>::destinationDirectory)
+                }
+                if (compilationInfo.isMain) {
+                    project.tasks.named(
+                        compilationInfo.tcs.compilation.target.artifactsTaskName,
+                        Jar::class.java
+                    ) {
+                        it.from(kotlinSourceDirectorySet.classesDirectory)
+                    }
+                }
+            } else {
+                compilationInfo.classesDirs.from(
+                    task.flatMap { it.destinationDirectory }
+                )
+            }
         }
 
     override fun run() {

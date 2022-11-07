@@ -34,6 +34,16 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
         */
         project.dependencies.add(auxiliary.compileOnlyConfigurationName, project.files({ main.output.classesDirs }))
         project.dependencies.add(auxiliary.runtimeOnlyConfigurationName, project.files({ main.output.allOutputs }))
+        // Adding classes that could be produced into non-default destination for JVM target
+        // Check KotlinSourceSetProcessor for details
+        project.dependencies.add(
+            auxiliary.implementationConfigurationName,
+            project.objects.fileCollection().from(
+                {
+                    main.defaultSourceSet.kotlin.classesDirectory.orNull?.asFile
+                }
+            )
+        )
 
         auxiliary.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
             project,

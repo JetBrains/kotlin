@@ -6,15 +6,17 @@ import java.util.ArrayList
 
 class KotlinGreetingJoiner(val greeter : Greeter) {
 
-    val names = ArrayList<String?>()
+    private val names = ArrayList<String?>()
 
     fun addName(name : String?): Unit{
         names.add(name)
     }
 
-  fun getJoinedGreeting() : String? {
-    val joiner = Joiner.on(" and ").skipNulls();
-    return "${greeter.getGreeting()} ${joiner.join(names)}"
-  }
+    fun getJoinedGreeting() : String? {
+        val joiner = Joiner.on(" and ").skipNulls();
+        return "${greeter.getGreeting()} ${joiner.join(names)}"
+    }
+
+    internal fun getNames(): List<String?> = names.toList()
 }
 

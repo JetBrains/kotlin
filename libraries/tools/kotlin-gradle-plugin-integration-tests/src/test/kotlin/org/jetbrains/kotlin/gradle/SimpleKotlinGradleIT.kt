@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
+import java.util.zip.ZipFile
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
@@ -202,7 +203,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Should be compatible with project isolation")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1, maxVersion = TestVersions.Gradle.G_7_1)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1)
     fun testProjectIsolation(gradleVersion: GradleVersion) {
         project(
             projectName = "instantExecution",
@@ -271,6 +272,51 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             build("assemble")
             resourceKts.appendText("kajhgfkh invalid something")
             build("assemble")
+        }
+    }
+
+    @DisplayName("Changing compile task destination directory does not break test compilation")
+    @GradleTest
+    internal fun customDestinationDir(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            //language=Groovy
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class).configureEach {
+                |    if (it.name == "compileKotlin") {
+                |        it.destinationDirectory.set(project.layout.buildDirectory.dir("banana"))
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build("build") {
+                assertFileInProjectExists("build/banana/demo/KotlinGreetingJoiner.class")
+                assertFileInProjectExists("build/libs/simpleProject.jar")
+                ZipFile(projectPath.resolve("build/libs/simpleProject.jar").toFile()).use { jar ->
+                    assert(jar.entries().asSequence().count { it.name == "demo/KotlinGreetingJoiner.class" } == 1) {
+                        "The jar should contain one entry `demo/KotlinGreetingJoiner.class` with no duplicates\n" +
+                                jar.entries().asSequence().map { it.name }.joinToString()
+                    }
+                }
+            }
+        }
+    }
+
+    @DisplayName("Default jar content should not contain duplicates")
+    @GradleTest
+    internal fun defaultJarContent(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("build") {
+                assertFileInProjectExists("build/libs/simpleProject.jar")
+                ZipFile(projectPath.resolve("build/libs/simpleProject.jar").toFile()).use { jar ->
+                    assert(jar.entries().asSequence().count { it.name == "demo/KotlinGreetingJoiner.class" } == 1) {
+                        "The jar should contain one entry `demo/KotlinGreetingJoiner.class` with no duplicates\n" +
+                                jar.entries().asSequence().map { it.name }.joinToString()
+                    }
+                }
+            }
         }
     }
 }

@@ -43,6 +43,7 @@ dependencies {
 
 task integrationTestJar(type: Jar) {
     from sourceSets.integrationTest.output
+    from sourceSets.integrationTest.kotlin.classesDirectory
     classifier = 'inttests'
 }
 

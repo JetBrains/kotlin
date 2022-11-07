@@ -164,6 +164,9 @@ internal val KotlinCompilationInfo.tcsOrNull: KotlinCompilationInfo.TCS?
         is KotlinCompilationInfo.TCS -> this
     }
 
+internal val KotlinCompilationInfo.tcs: KotlinCompilationInfo.TCS
+    get() = this as KotlinCompilationInfo.TCS
+
 internal val KotlinCompilationInfo.kpmOrNull: KotlinCompilationInfo.KPM?
     get() = when (this) {
         is KotlinCompilationInfo.KPM -> this
