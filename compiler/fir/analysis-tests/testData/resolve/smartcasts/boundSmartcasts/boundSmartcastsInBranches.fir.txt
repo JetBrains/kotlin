@@ -211,3 +211,22 @@ FILE: boundSmartcastsInBranches.kt
         }
 
     }
+    public final fun test_9(): R|kotlin/Unit| {
+        lvar a: R|kotlin/String?| = Null(null)
+        lval b: R|kotlin/String?|
+        when () {
+            !=(R|<local>/a|, Null(null)) ->  {
+                R|<local>/b| = R|<local>/a|
+            }
+            else ->  {
+                R|<local>/b| = R|<local>/a|
+            }
+        }
+
+        when () {
+            !=(R|<local>/a|, Null(null)) ->  {
+                R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+            }
+        }
+
+    }
