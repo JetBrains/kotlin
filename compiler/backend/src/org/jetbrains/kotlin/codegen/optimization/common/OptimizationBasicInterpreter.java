@@ -381,6 +381,7 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
 
     // Merge reference types, keeping track of array dimensions.
     // See also org.jetbrains.org.objectweb.asm.Frame.merge.
+    // It's assumed that types a and b are not equal when calling this method.
     private BasicValue mergeReferenceTypes(@NotNull Type a, @NotNull Type b) {
         // Find out the minimal array dimension of both types.
         int arrayDimensions = 0;
