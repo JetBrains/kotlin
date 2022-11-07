@@ -23,7 +23,7 @@ class GeneratedNames {
         val name = Name.identifier("Scope$it")
         ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
     }.toSet()
-    val callables = List(100) {
+    val callables = List(500) {
         CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("refined_$it"))
     }
     val tokens = List(500) {
