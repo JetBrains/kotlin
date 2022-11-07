@@ -96,12 +96,11 @@ internal class KtFirFunctionSymbol(
 
         return when (val kind = symbolKind) {
             KtSymbolKind.TOP_LEVEL -> KtFirTopLevelFunctionSymbolPointer(firSymbol.callableId, firSymbol.createSignature())
-            KtSymbolKind.CLASS_MEMBER ->
-                KtFirMemberFunctionSymbolPointer(
-                    requireOwnerPointer(),
-                    firSymbol.name,
-                    firSymbol.createSignature()
-                )
+            KtSymbolKind.CLASS_MEMBER -> KtFirMemberFunctionSymbolPointer(
+                requireOwnerPointer(),
+                firSymbol.name,
+                firSymbol.createSignature(),
+            )
 
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
                 callableIdIfNonLocal?.toString() ?: name.asString()
