@@ -73,5 +73,5 @@ fun test5() {
     c = C(null)
     x.length // ok
     c.x<!UNSAFE_CALL!>.<!>length // bad
-    d.x<!UNSAFE_CALL!>.<!>length // ok
+    d.x.length // ok
 }

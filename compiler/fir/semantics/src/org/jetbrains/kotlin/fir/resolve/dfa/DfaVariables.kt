@@ -74,6 +74,12 @@ class RealVariable(
     override fun hashCode(): Int {
         return _hashCode
     }
+
+    init {
+        if (explicitReceiverVariable is RealVariable) {
+            explicitReceiverVariable.dependentVariables.add(this)
+        }
+    }
 }
 
 class SyntheticVariable(val fir: FirElement, variableIndexForDebug: Int) : DataFlowVariable(variableIndexForDebug) {

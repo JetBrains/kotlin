@@ -48,6 +48,9 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         if (effects.isNullOrEmpty()) return
 
         val logicSystem = object : PersistentLogicSystem(context.session.typeContext) {
+            override val variableStorage: VariableStorageImpl
+                get() = dataFlowInfo.variableStorage as VariableStorageImpl
+
             override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) =
                 throw IllegalStateException("Receiver variable update is not possible for this logic system")
 
