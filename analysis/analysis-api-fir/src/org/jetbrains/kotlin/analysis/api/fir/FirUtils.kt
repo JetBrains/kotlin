@@ -20,13 +20,10 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * Returns `true` if the symbol is for a function named `invoke`.
@@ -75,5 +72,14 @@ internal fun FirAnnotation.toKtAnnotationApplication(useSiteSession: FirSession)
             mapAnnotationParameters(this, useSiteSession),
             useSiteSession,
         )
+    )
+}
+
+internal fun getKtAnnotationApplicationForExtensionFunctionType(): KtAnnotationApplication {
+    return KtAnnotationApplication(
+        StandardClassIds.Annotations.ExtensionFunctionType,
+        psi = null,
+        useSiteTarget = null,
+        arguments = emptyList()
     )
 }

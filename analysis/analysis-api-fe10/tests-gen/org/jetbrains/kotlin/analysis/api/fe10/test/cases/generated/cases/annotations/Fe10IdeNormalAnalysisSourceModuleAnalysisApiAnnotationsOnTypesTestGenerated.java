@@ -87,4 +87,10 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnTypesTestG
     public void testAnnotaionWithLiteralArgumentOnTypeArgument() throws Exception {
         runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithLiteralArgumentOnTypeArgument.kt");
     }
+
+    @Test
+    @TestMetadata("extensionFunctionType.kt")
+    public void testExtensionFunctionType() throws Exception {
+        runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/extensionFunctionType.kt");
+    }
 }
