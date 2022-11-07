@@ -13,7 +13,8 @@ import java.io.FileWriter
 
 class GradleErrorMessageCollector(
     private val delegate: MessageCollector? = null,
-    private val acceptableMessageSeverity: List<CompilerMessageSeverity> = listOf(CompilerMessageSeverity.EXCEPTION)
+    private val acceptableMessageSeverity: List<CompilerMessageSeverity> = listOf(CompilerMessageSeverity.EXCEPTION),
+    private val kotlinPluginVersion: String? = null
 ) : MessageCollector {
 
     private val errors = ArrayList<String>()
@@ -48,6 +49,7 @@ class GradleErrorMessageCollector(
         file.createNewFile()
         println("Errors were stored into ${file.absolutePath}")
         FileWriter(file).use {
+            kotlinPluginVersion?.also { version -> it.append("kotlin version: $version\n") }
             for (error in errors) {
                 it.append("error message: $error\n\n")
             }

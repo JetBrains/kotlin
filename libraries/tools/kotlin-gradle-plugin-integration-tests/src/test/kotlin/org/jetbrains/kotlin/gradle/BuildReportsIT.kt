@@ -169,6 +169,8 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    private val kotlinErrorPath = ".gradle/kotlin/errors"
+
     @DisplayName("Error file is created")
     @GradleTest
     fun testErrorsFileSmokeTest(gradleVersion: GradleVersion) {
@@ -183,14 +185,25 @@ class BuildReportsIT : KGPBaseTest() {
                 }
             """.trimIndent())
             build("compileKotlin") {
-                assertTrue { projectPath.resolve(".gradle/build_errors").listDirectoryEntries().isEmpty() }
+                assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
             buildAndFail("compileKotlin") {
-                val buildErrorDir = projectPath.resolve(".gradle/build_errors").toFile()
+                val buildErrorDir = projectPath.resolve(kotlinErrorPath).toFile()
                 val files = buildErrorDir.listFiles()
                 assertTrue { files?.first()?.exists() ?: false }
+                files?.first()?.bufferedReader().use { reader ->
+                    val kotlinVersion = reader?.readLine()
+                    assertTrue("kotlin version should be in the error file") {
+                        kotlinVersion != null && kotlinVersion.trim().equals("kotlin version: ${buildOptions.kotlinVersion}")
+                    }
+                    val errorMessage = reader?.readLine()
+                    assertTrue("Error message should start with 'error message: ' to parse it on IDEA side") {
+                        errorMessage != null && errorMessage.trim().startsWith("error message:")
+                    }
+                }
+
             }
         }
     }
@@ -200,12 +213,12 @@ class BuildReportsIT : KGPBaseTest() {
     fun testErrorsFileWithCompilationError(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("compileKotlin") {
-                assertTrue { projectPath.resolve(".gradle/build_errors").listDirectoryEntries().isEmpty() }
+                assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
             buildAndFail("compileKotlin") {
-                assertTrue { projectPath.resolve(".gradle/build_errors").listDirectoryEntries().isEmpty() }
+                assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
             }
         }
     }

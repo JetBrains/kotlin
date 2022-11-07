@@ -238,7 +238,7 @@ abstract class GradleCompileTaskProvider @Inject constructor(
     @get:Internal
     val errorsFile: Provider<File?> = objectFactory
         .property(
-            gradle.rootProject.rootDir.resolve(".gradle/build_errors/").also { it.mkdirs() }
+            gradle.rootProject.rootDir.resolve(".gradle/kotlin/errors/").also { it.mkdirs() }
                 .resolve("errors-${System.currentTimeMillis()}.log"))
 }
 
@@ -734,7 +734,7 @@ abstract class KotlinCompile @Inject constructor(
 
         val scriptSources = scriptSources.asFileTree.files
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors,)
-        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
+        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
@@ -1160,7 +1160,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
-        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
+        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
