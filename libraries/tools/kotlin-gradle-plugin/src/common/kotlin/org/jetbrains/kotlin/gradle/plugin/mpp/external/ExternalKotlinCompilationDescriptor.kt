@@ -23,7 +23,7 @@ interface ExternalKotlinCompilationDescriptor<T : ExternalDecoratedKotlinCompila
     }
 
     fun interface CompilationAssociator<T : ExternalDecoratedKotlinCompilation> {
-        fun associate(compilation: T, main: ExternalDecoratedKotlinCompilation)
+        fun associate(auxiliary: T, main: ExternalDecoratedKotlinCompilation)
     }
 
     val compilationName: String
