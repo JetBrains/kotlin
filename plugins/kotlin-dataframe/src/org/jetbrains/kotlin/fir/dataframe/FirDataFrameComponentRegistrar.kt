@@ -28,21 +28,24 @@ class GeneratedNames {
     }
     val tokens = List(500) {
         ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
-    }
+    }.toSet()
     val scopeIds = ArrayDeque(scopes)
     val tokenIds = ArrayDeque(tokens)
     val callableNames = ArrayDeque(callables)
+
+    val scopeState = mutableMapOf<ClassId, SchemaContext>()
+    val tokenState = mutableMapOf<ClassId, SchemaContext>()
+    val callableState = mutableMapOf<Name, FirSimpleFunction>()
 }
 
 class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
-        val scopeState = mutableMapOf<ClassId, SchemaContext>()
-        val callableState = mutableMapOf<Name, FirSimpleFunction>()
         with(GeneratedNames()) {
             +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, scopes, scopeState, callables, callableState) }
-            +{ it: FirSession -> FirDataFrameReceiverInjector(it, scopeState, scopeIds) }
-            +::FirDataFrameAdditionalCheckers
+            +{ it: FirSession -> FirDataFrameReceiverInjector(it, scopeState, scopeIds, tokenState, tokenIds) }
+            +{ it: FirSession -> FirDataFrameAdditionalCheckers(it, tokenState) }
             +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, tokenIds, callableState) }
+            +{ it: FirSession -> FirDataFrameTokenGenerator(it, tokens, tokenState) }
         }
     }
 }

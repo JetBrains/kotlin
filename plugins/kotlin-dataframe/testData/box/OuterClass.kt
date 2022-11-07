@@ -26,3 +26,7 @@ val DataRow<Hello>.row2: Hello.InnerClass get() = `test name`
 val DataRow<Hello>.row3: Int? get() = nullableProperty
 val DataRow<Hello>.row4: () -> Unit get() = a
 val DataRow<Hello>.row5: List<List<*>> get() = d
+
+fun box(): String {
+    return "OK"
+}

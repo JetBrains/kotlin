@@ -1,9 +1,8 @@
 package foo
 
-import org.jetbrains.dataframe.annotations.DataSchema
-import org.jetbrains.dataframe.DataFrameBase
+import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
-@org.jetbrains.dataframe.annotations.DataSchema
+@DataSchema
 interface Schema {
     val a: Int
     val b: String

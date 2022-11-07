@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.dataframe.extensions.Arguments
 import org.jetbrains.kotlin.fir.dataframe.extensions.RefinedArgument
+import org.jetbrains.kotlin.fir.dataframe.extensions.SchemaContext
+import org.jetbrains.kotlin.fir.dataframe.extensions.SchemaProperty
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
@@ -36,6 +39,7 @@ fun <T> KotlinTypeFacade.interpret(
     functionCall: FirFunctionCall,
     processor: Interpreter<T>,
     additionalArguments: Map<String, Interpreter.Success<Any?>> = emptyMap(),
+    tokenState: MutableMap<ClassId, SchemaContext>,
     reporter: InterpretationErrorReporter,
 ): Interpreter.Success<T>? {
 
@@ -89,7 +93,7 @@ fun <T> KotlinTypeFacade.interpret(
                     is FirFunctionCall -> {
                         val interpreter = expression.loadInterpreter()
                             ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
-                        interpret(expression, interpreter, emptyMap(), reporter)
+                        interpret(expression, interpreter, emptyMap(), tokenState, reporter)
                     }
 
                     is FirPropertyAccessExpression -> {
@@ -125,7 +129,7 @@ fun <T> KotlinTypeFacade.interpret(
                                     is FirFunctionCall -> {
                                         val interpreter = result.loadInterpreter() ?: TODO("")
                                         @Suppress("UNCHECKED_CAST")
-                                        interpret(result, interpreter, reporter = reporter)?.value as List<ColumnWithPathApproximation>
+                                        interpret(result, interpreter, tokenState = tokenState, reporter = reporter)?.value as List<ColumnWithPathApproximation>
                                     }
 
                                     else -> TODO(result::class.toString())
@@ -157,6 +161,7 @@ fun <T> KotlinTypeFacade.interpret(
                                 call,
                                 schemaProcessor,
                                 mapOf("dsl" to Interpreter.Success(receiver)),
+                                tokenState,
                                 reporter
                             )
                         }
@@ -174,11 +179,18 @@ fun <T> KotlinTypeFacade.interpret(
                 if (schemaTypeArg.isStarProjection) {
                     PluginDataFrameSchema(emptyList())
                 } else {
-                    val declarationSymbols =
-                        ((schemaTypeArg.type as ConeClassLikeType).toSymbol(session) as FirRegularClassSymbol).declarationSymbols
-                    val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
-                        columnOf(propertySymbol)
+                    val schemaFromState = schemaTypeArg.type?.classId?.let { tokenState[it] }
+                    val columns: List<SimpleCol> = if (schemaFromState != null) {
+                        schemaFromState.properties.map { columnOf(it, tokenState) }
+                    } else {
+                        val declarationSymbols =
+                            ((schemaTypeArg.type as ConeClassLikeType).toSymbol(session) as FirRegularClassSymbol)
+                                .declarationSymbols
+                        declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
+                            columnOf(propertySymbol)
+                        }
                     }
+
                     PluginDataFrameSchema(columns)
                 }.let { Interpreter.Success(it) }
             }
@@ -236,6 +248,29 @@ private fun KotlinTypeFacade.extracted(result: FirPropertyAccessExpression): Lis
     }
 }
 
+private fun KotlinTypeFacade.columnOf(it: SchemaProperty, state: Map<ClassId, SchemaContext>): SimpleCol {
+    return when (it.dataRowReturnType.classId) {
+        Names.DF_CLASS_ID -> {
+            val nestedColumns = it.dataRowReturnType.typeArguments[0].type?.classId
+                ?.let { state[it] }
+                ?.properties
+                ?.map { columnOf(it, state) }
+                ?: emptyList()
+
+            SimpleFrameColumn(it.name, nestedColumns, false, anyDataFrame)
+        }
+        Names.DATA_ROW_CLASS_ID -> {
+            val nestedColumns = it.dataRowReturnType.typeArguments[0].type?.classId
+                ?.let { state[it] }
+                ?.properties
+                ?.map { columnOf(it, state) }
+                ?: emptyList()
+
+            SimpleColumnGroup(it.name, nestedColumns, anyRow)
+        }
+        else -> SimpleCol(it.name, TypeApproximation(it.dataRowReturnType))
+    }
+}
 
 private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
     when (it.resolvedReturnType.classId) {
