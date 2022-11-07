@@ -163,6 +163,11 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // list[0] -> list.get(0) where name reference will have a fake source element
     object ArrayAccessNameReference : KtFakeSourceElementKind()
 
+    // a[b]++
+    // b -> val <index0> = b where b will have fake property
+    object ArrayIndexExpressionReference : KtFakeSourceElementKind()
+
+
     // super.foo() --> super<Supertype>.foo()
     // where `Supertype` has a fake source
     object SuperCallImplicitType : KtFakeSourceElementKind()

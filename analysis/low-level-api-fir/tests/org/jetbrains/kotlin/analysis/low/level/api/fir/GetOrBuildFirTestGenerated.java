@@ -256,6 +256,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("arrayIndexExpressionWithInc.kt")
+        public void testArrayIndexExpressionWithInc() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/arrayIndexExpressionWithInc.kt");
+        }
+
+        @Test
         @TestMetadata("asExpression.kt")
         public void testAsExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/asExpression.kt");
@@ -313,6 +319,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("ifExpression.kt")
         public void testIfExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/ifExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("incExpression.kt")
+        public void testIncExpression() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/incExpression.kt");
         }
 
         @Test

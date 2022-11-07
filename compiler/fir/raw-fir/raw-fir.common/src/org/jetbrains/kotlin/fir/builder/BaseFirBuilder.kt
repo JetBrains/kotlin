@@ -810,7 +810,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val indexVariables = indices.mapIndexed { i, index ->
                 generateTemporaryVariable(
                     baseModuleData,
-                    index.toFirSourceElement(),
+                    index.toFirSourceElement(KtFakeSourceElementKind.ArrayIndexExpressionReference),
                     name = SpecialNames.subscribeOperatorIndex(i),
                     index.convert()
                 ).also { statements += it }
