@@ -25,6 +25,21 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("actualSafeExternalEnum")
+    public void testActualSafeExternalEnum() throws Exception {
+        runTest("compiler/testData/multiplatform/actualSafeExternalEnum/");
+    }
+
+    @TestMetadata("actualSafeExternalEnumWithExplicitSuper")
+    public void testActualSafeExternalEnumWithExplicitSuper() throws Exception {
+        runTest("compiler/testData/multiplatform/actualSafeExternalEnumWithExplicitSuper/");
+    }
+
+    @TestMetadata("actualUnsafeExternalEnum")
+    public void testActualUnsafeExternalEnum() throws Exception {
+        runTest("compiler/testData/multiplatform/actualUnsafeExternalEnum/");
+    }
+
     public void testAllFilesPresentInMultiplatform() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
@@ -137,6 +152,45 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     @TestMetadata("weakIncompatibilityWithoutActualModifier")
     public void testWeakIncompatibilityWithoutActualModifier() throws Exception {
         runTest("compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/");
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/actualSafeExternalEnum")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ActualSafeExternalEnum extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInActualSafeExternalEnum() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/actualSafeExternalEnum"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/actualSafeExternalEnumWithExplicitSuper")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ActualSafeExternalEnumWithExplicitSuper extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInActualSafeExternalEnumWithExplicitSuper() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/actualSafeExternalEnumWithExplicitSuper"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/actualUnsafeExternalEnum")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ActualUnsafeExternalEnum extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInActualUnsafeExternalEnum() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/actualUnsafeExternalEnum"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
     }
 
     @TestMetadata("compiler/testData/multiplatform/classScopes")

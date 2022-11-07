@@ -1,0 +1,25 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JS --
+Exit code: OK
+Output:
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+SafeExternalEnums
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+warning: following manually enabled features will force generation of pre-release binaries: SafeExternalEnums
+warning: ==========
+This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
+
+Please migrate your project to the new IR-based compiler (https://kotl.in/jsir).
+Because your build tool will not support the new Kotlin/JS compiler, you will also need to migrate to Gradle.
+
+You can continue to use the deprecated legacy compiler in the current version of the toolchain by providing the compiler option -Xuse-deprecated-legacy-compiler.
+==========
