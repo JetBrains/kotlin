@@ -62,6 +62,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirAssignmentOperatorCallChecker,
             FirNamedVarargChecker,
             FirUnderscoredTypeArgumentSyntaxChecker,
+            FirInlineClassIntrinsicCreatorChecker
         )
 
     override val tryExpressionCheckers: Set<FirTryExpressionChecker>

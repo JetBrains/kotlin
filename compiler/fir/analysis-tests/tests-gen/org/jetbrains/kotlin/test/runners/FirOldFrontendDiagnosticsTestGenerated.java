@@ -17879,9 +17879,15 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
-            @TestMetadata("incorrectCustomBoxDefinition.kt")
-            public void testIncorrectCustomBoxDefinition() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inlineClasses/incorrectCustomBoxDefinition.kt");
+            @TestMetadata("illegalInlineClassIntrinsicCreatorCall.kt")
+            public void testIllegalInlineClassIntrinsicCreatorCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/illegalInlineClassIntrinsicCreatorCall.kt");
+            }
+
+            @Test
+            @TestMetadata("incorrectCustomBoxDeclaration.kt")
+            public void testIncorrectCustomBoxDeclaration() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/incorrectCustomBoxDeclaration.kt");
             }
 
             @Test
