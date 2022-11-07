@@ -52,7 +52,7 @@ internal class KtFirFunctionSymbol(
     override val isBuiltinFunctionInvoke: Boolean
         get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
 
-    override val contractEffect: List<KtEffectDeclaration> by cached {
+    override val contractEffects: List<KtEffectDeclaration> by cached {
         firSymbol.resolvedContractDescription?.effects
             ?.map(FirEffectDeclaration::effect)
             ?.map(ConeEffectDeclaration::coneEffectDeclarationToAnalysisApi)

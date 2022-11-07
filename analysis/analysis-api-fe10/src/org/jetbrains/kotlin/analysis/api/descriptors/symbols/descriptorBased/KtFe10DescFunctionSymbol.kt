@@ -39,7 +39,7 @@ internal class KtFe10DescFunctionSymbol private constructor(
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 
-    override val contractEffect: List<KtEffectDeclaration> by cached {
+    override val contractEffects: List<KtEffectDeclaration> by cached {
         descriptor.getUserData(ContractProviderKey)?.getContractDescription()?.effects
             ?.map(EffectDeclaration::effectDeclarationToAnalysisApi)
             .orEmpty()

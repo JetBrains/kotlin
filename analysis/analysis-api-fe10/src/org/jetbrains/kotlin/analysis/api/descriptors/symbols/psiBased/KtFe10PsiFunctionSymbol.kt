@@ -48,7 +48,7 @@ internal class KtFe10PsiFunctionSymbol(
         bindingContext[BindingContext.FUNCTION, psi]
     }
 
-    override val contractEffect: List<KtEffectDeclaration> by cached {
+    override val contractEffects: List<KtEffectDeclaration> by cached {
         descriptor?.getUserData(ContractProviderKey)?.getContractDescription()?.effects
             ?.map(EffectDeclaration::effectDeclarationToAnalysisApi)
             .orEmpty()
