@@ -44,6 +44,12 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.packageFragmentProviderExtension"
                         interface="org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.analyzeApiExtension"
+                        interface="org.jetbrains.kotlin.cli.common.fir.StandaloneAnalysisApiExtension"
+                        area="IDEA_PROJECT" dynamic="true"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.quickFixContributor"
+                        interface="org.jetbrains.kotlin.idea.quickfix.QuickFixContributor"
+                        dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.storageComponentContainerContributor"
                         interface="org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
                         area="IDEA_PROJECT" dynamic="true"/>
