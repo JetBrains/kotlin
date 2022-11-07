@@ -1,5 +1,6 @@
-// ES6_MODE
+// TARGET_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1359
+
 open class A(val x: Int) {
     constructor(): this(100)
 }

@@ -1,5 +1,6 @@
-// ES6_MODE
+// TARGET_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1343
+
 abstract class A {
     abstract fun foo(): String
 

@@ -1,5 +1,6 @@
-// ES6_MODE
+// TARGET_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1358
+
 open class A(var value: Int)
 
 open class B : A {

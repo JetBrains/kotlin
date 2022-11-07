@@ -1,5 +1,4 @@
-// ES6_MODE
-// IGNORE_BACKEND: JS
+// TARGET_BACKEND: JS_IR_ES6
 
 open external class E(x: Int, y: Int) {
     val t: Int = definedExternally

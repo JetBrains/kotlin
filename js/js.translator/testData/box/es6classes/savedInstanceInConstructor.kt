@@ -1,4 +1,4 @@
-// ES6_MODE
+// TARGET_BACKEND: JS_IR_ES6
 
 @JsName("Set")
 external class JsSet<T> {
