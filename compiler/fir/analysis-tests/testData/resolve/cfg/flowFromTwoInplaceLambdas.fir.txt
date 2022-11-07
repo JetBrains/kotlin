@@ -61,8 +61,8 @@ FILE: flowFromTwoInplaceLambdas.kt
             ^ Int(123)
         }
         )
-        R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
-        R|<local>/p|?.{ $subj$.R|kotlin/String.length| }
+        R|<local>/p|.<Unresolved name: length>#
+        R|<local>/p|?.{ $subj$.<Unresolved name: length># }
     }
     public final fun test3(x: R|kotlin/Any?|): R|kotlin/Unit| {
         lvar p: R|kotlin/Any?| = R|<local>/x|
@@ -105,4 +105,19 @@ FILE: flowFromTwoInplaceLambdas.kt
         )
         R|<local>/x|.R|/I1.x|
         R|<local>/x|.R|/I2.y|
+    }
+    public final fun test5(x: R|kotlin/Any?|, q: R|kotlin/String?|): R|kotlin/Unit| {
+        lvar p: R|kotlin/Any?| = R|<local>/x|
+        R|<local>/p|.<Unresolved name: length>#
+        R|/run2|<R|kotlin/Int?|>(run2@fun <anonymous>(): R|kotlin/Int?| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            (R|<local>/p| as R|kotlin/Int|)
+            ^ Int(123)
+        }
+        , run2@fun <anonymous>(): R|kotlin/Int?| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            R|<local>/p| = R|<local>/q|
+            ^ R|/n|<R|kotlin/Int?|>()
+        }
+        )
+        R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+        R|<local>/p|?.{ $subj$.R|kotlin/String.length| }
     }
