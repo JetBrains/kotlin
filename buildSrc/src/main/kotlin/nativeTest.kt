@@ -172,10 +172,8 @@ fun Project.nativeTest(
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
 
-        tag?.let {
-            useJUnitPlatform {
-                includeTags(it)
-            }
+        useJUnitPlatform {
+            tag?.let { includeTags(it) }
         }
 
         doFirst {
