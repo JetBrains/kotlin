@@ -78,19 +78,14 @@ class PersistentFlow : Flow {
         assignmentIndex = persistentMapOf()
     }
 
-    override fun unwrapVariable(variable: RealVariable): RealVariable {
-        return directAliasMap[variable] ?: variable
-    }
+    override fun unwrapVariable(variable: RealVariable): RealVariable =
+        directAliasMap[variable] ?: variable
 
-    fun getTypeStatement(variable: RealVariable): TypeStatement {
-        val result = MutableTypeStatement(variable)
-        approvedTypeStatements[unwrapVariable(variable)]?.let { result += it }
-        return result
-    }
+    fun getTypeStatement(variable: RealVariable): TypeStatement =
+        approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable) ?: MutableTypeStatement(variable)
 
-    override fun getType(variable: RealVariable): Set<ConeKotlinType>? {
-        return approvedTypeStatements[unwrapVariable(variable)]?.exactType
-    }
+    override fun getType(variable: RealVariable): Set<ConeKotlinType>? =
+        approvedTypeStatements[unwrapVariable(variable)]?.exactType
 }
 
 abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSystem<PersistentFlow>(context) {
@@ -104,40 +99,40 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         return PersistentFlow(flow)
     }
 
-    override fun joinFlow(flows: Collection<PersistentFlow>): PersistentFlow {
-        // One input flow executes - one set of statements is true, others might be false.
-        return foldFlow(flows) { variable -> or(flows.map { it.getTypeStatement(variable) }) }
-    }
+    override fun joinFlow(flows: Collection<PersistentFlow>): PersistentFlow =
+        foldFlow(flows, allExecute = false)
 
-    override fun unionFlow(flows: Collection<PersistentFlow>): PersistentFlow {
-        // All input flows execute in some order. If none of them reassign the variable, then
-        // *all* sets of statements are true; otherwise the assignments might have happened in
-        // an arbitrary order, so only one set of statements is true depending on which assignment
-        // happened last (and the flows that don't reassign may or may not have executed after that).
-        return foldFlow(flows) { variable ->
-            or(flows.groupBy { it.assignmentIndex[variable] ?: -1 }.values.map { flowSubset ->
-                and(flowSubset.map { it.getTypeStatement(variable) })
-            })
-        }
-    }
+    override fun unionFlow(flows: Collection<PersistentFlow>): PersistentFlow =
+        foldFlow(flows, allExecute = true)
 
-    private inline fun foldFlow(flows: Collection<PersistentFlow>, mergeOperation: (RealVariable) -> TypeStatement): PersistentFlow =
+    private fun foldFlow(flows: Collection<PersistentFlow>, allExecute: Boolean): PersistentFlow {
         when (flows.size) {
-            0 -> createEmptyFlow()
-            1 -> flows.first()
-            else -> foldFlow(
-                flows,
-                // TODO: filter out variables which will stay aliased
-                flows.flatMapTo(mutableSetOf()) { it.approvedTypeStatements.keys + it.directAliasMap.keys }.map(mergeOperation)
-            )
+            0 -> return createEmptyFlow()
+            1 -> return flows.first()
         }
 
-    private fun foldFlow(flows: Collection<PersistentFlow>, statements: Collection<TypeStatement>): PersistentFlow {
         val commonFlow = flows.reduce(::lowestCommonFlow)
         // Aliases that have occurred before branching should already be in `commonFlow`,
         // but it might be useful to also add aliases that happen in all branches, e.g.
         // the aliasing of `y` to `a.x` after `if (p) { y = a.x } else { y = a.x }`.
         val commonAliases = computeCommonAliases(flows)
+        // Computing the statements for these aliases is redundant as the result is equal
+        // to the statements for whatever they are aliasing.
+        val variables = flows.flatMapTo(mutableSetOf()) { it.approvedTypeStatements.keys + it.directAliasMap.keys } - commonAliases.keys
+        val statements = variables.mapNotNull { variable ->
+            val statement = if (allExecute) {
+                // All input flows execute in some order. If none of them reassign the variable, then
+                // *all* sets of statements are true; otherwise the assignments might have happened in
+                // an arbitrary order, so only one set of statements is true depending on which assignment
+                // happened last (and the flows that don't reassign may or may not have executed after that).
+                val byAssignment = flows.groupByTo(mutableMapOf()) { it.assignmentIndex[variable] ?: -1 }.values
+                or(byAssignment.map { flowSubset -> and(flowSubset.map { it.getTypeStatement(variable) }) })
+            } else {
+                // One input flow executes - one set of statements is true, others might be false.
+                or(flows.map { it.getTypeStatement(variable) })
+            }
+            if (statement.isNotEmpty) variable to statement.toPersistent() else null
+        }
 
         // If a variable was reassigned in one branch, it was reassigned at the join point.
         val reassignedVariables = mutableMapOf<RealVariable, Int>()
@@ -154,10 +149,9 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             recordNewAssignment(commonFlow, variable, index)
         }
 
-        val toReplace = statements.filter { it.isNotEmpty && it.variable !in commonAliases }.map { it.variable to it.toPersistent() }
-        commonFlow.approvedTypeStatements += toReplace
+        commonFlow.approvedTypeStatements += statements
         if (commonFlow.previousFlow != null) {
-            commonFlow.approvedTypeStatementsDiff += toReplace
+            commonFlow.approvedTypeStatementsDiff += statements
         }
 
         for ((alias, underlyingVariable) in commonAliases) {
