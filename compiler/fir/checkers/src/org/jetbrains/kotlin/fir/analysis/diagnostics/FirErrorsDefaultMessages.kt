@@ -141,6 +141,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_WITHOUT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DECLARATION_CANT_BE_INLINED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTRINSIC_BOXING_CALL_ILLEGAL_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_IN_INTERFACE
@@ -2008,6 +2011,24 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
             "Overriding ''equals'' from ''Any'' in inline class alongside with lack of ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
             STRING
+        )
+
+        map.put(
+            INTRINSIC_BOXING_CALL_ILLEGAL_TYPE_ARGUMENT,
+            "Boxing call must be parametrized with a non-generic inline class"
+        )
+
+        map.put(
+            INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT,
+            "Boxing call inferred type argument must be a non-generic inline class"
+        )
+
+        map.put(
+            INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH,
+            "Boxing argument type mismatch: actual type is {0} but underlying type of {1} is {2}",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            RENDER_TYPE
         )
 
         //imports

@@ -3883,6 +3883,27 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INTRINSIC_BOXING_CALL_ILLEGAL_TYPE_ARGUMENT) { firDiagnostic ->
+        IntrinsicBoxingCallIllegalTypeArgumentImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT) { firDiagnostic ->
+        IntrinsicBoxingCallBadInferredTypeArgumentImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH) { firDiagnostic ->
+        IntrinsicBoxingCallArgumentTypeMismatchImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON) { firDiagnostic ->
         CannotAllUnderImportFromSingletonImpl(
             firDiagnostic.a,

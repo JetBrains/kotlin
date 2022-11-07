@@ -3267,6 +3267,24 @@ internal class InefficientEqualsOverridingInInlineClassImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InefficientEqualsOverridingInInlineClass(), KtAbstractFirDiagnostic<KtNamedFunction>
 
+internal class IntrinsicBoxingCallIllegalTypeArgumentImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.IntrinsicBoxingCallIllegalTypeArgument(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class IntrinsicBoxingCallBadInferredTypeArgumentImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.IntrinsicBoxingCallBadInferredTypeArgument(), KtAbstractFirDiagnostic<KtCallExpression>
+
+internal class IntrinsicBoxingCallArgumentTypeMismatchImpl(
+    override val actualType: KtType,
+    override val inlineClass: KtType,
+    override val underlyingType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.IntrinsicBoxingCallArgumentTypeMismatch(), KtAbstractFirDiagnostic<KtExpression>
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     override val firDiagnostic: KtPsiDiagnostic,

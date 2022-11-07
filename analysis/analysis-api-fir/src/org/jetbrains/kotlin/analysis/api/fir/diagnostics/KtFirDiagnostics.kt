@@ -2709,6 +2709,21 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val className: String
     }
 
+    abstract class IntrinsicBoxingCallIllegalTypeArgument : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = IntrinsicBoxingCallIllegalTypeArgument::class
+    }
+
+    abstract class IntrinsicBoxingCallBadInferredTypeArgument : KtFirDiagnostic<KtCallExpression>() {
+        override val diagnosticClass get() = IntrinsicBoxingCallBadInferredTypeArgument::class
+    }
+
+    abstract class IntrinsicBoxingCallArgumentTypeMismatch : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = IntrinsicBoxingCallArgumentTypeMismatch::class
+        abstract val actualType: KtType
+        abstract val inlineClass: KtType
+        abstract val underlyingType: KtType
+    }
+
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         abstract val objectName: Name

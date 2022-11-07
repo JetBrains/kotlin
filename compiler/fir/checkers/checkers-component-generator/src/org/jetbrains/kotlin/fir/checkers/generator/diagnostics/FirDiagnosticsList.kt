@@ -1401,6 +1401,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("className")
         }
+
+        val INTRINSIC_BOXING_CALL_ILLEGAL_TYPE_ARGUMENT by error<PsiElement>()
+
+        val INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT by error<KtCallExpression>()
+
+        val INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH by error<KtExpression>() {
+            parameter<ConeKotlinType>("actualType")
+            parameter<ConeKotlinType>("inlineClass")
+            parameter<ConeKotlinType>("underlyingType")
+        }
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {

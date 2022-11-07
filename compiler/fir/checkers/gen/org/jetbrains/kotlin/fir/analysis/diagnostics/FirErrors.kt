@@ -724,6 +724,9 @@ object FirErrors {
     val INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED by error0<KtParameter>()
     val REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE by warning0<KtElement>(SourceElementPositioningStrategies.SUSPEND_MODIFIER)
     val INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS by warning1<KtNamedFunction, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val INTRINSIC_BOXING_CALL_ILLEGAL_TYPE_ARGUMENT by error0<PsiElement>()
+    val INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT by error0<KtCallExpression>()
+    val INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH by error3<KtExpression, ConeKotlinType, ConeKotlinType, ConeKotlinType>()
 
     // Imports
     val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
