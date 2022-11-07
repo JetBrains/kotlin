@@ -99,6 +99,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
                 override val logicSystem: PersistentLogicSystem =
                     object : PersistentLogicSystem(components.session.typeContext) {
+                        override val variableStorage: VariableStorageImpl
+                            get() = dataFlowAnalyzerContext.variableStorage
+
                         override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) {
                             val symbol = variable.identifier.symbol
 

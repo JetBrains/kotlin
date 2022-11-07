@@ -94,6 +94,8 @@ class PersistentFlow : Flow {
 }
 
 abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSystem<PersistentFlow>(context) {
+    abstract val variableStorage: VariableStorageImpl
+
     override fun createEmptyFlow(): PersistentFlow {
         return PersistentFlow()
     }
@@ -174,45 +176,50 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun removeAllAboutVariable(flow: PersistentFlow, variable: RealVariable) {
-        val original = flow.directAliasMap[variable]
+        flow.replaceVariable(variable, null)
+    }
+
+    private fun PersistentFlow.replaceVariable(variable: RealVariable, replacement: RealVariable?) {
+        val original = directAliasMap[variable]
         if (original != null) {
-            // All statements should've been made about whatever variable this is an alias to. There is nothing to remove.
+            // All statements should've been made about whatever variable this is an alias to. There is nothing to replace.
             if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
-                assert(variable !in flow.backwardsAliasMap)
-                assert(variable !in flow.logicStatements)
-                assert(variable !in flow.approvedTypeStatements)
-                assert(variable !in flow.approvedTypeStatementsDiff)
+                assert(variable !in backwardsAliasMap)
+                assert(variable !in logicStatements)
+                assert(variable !in approvedTypeStatements)
+                assert(variable !in approvedTypeStatementsDiff)
             }
             // `variable.dependentVariables` is not separated by flow, so it may be non-empty if aliasing of this variable
             // was broken in another flow. However, in *this* flow dependent variables should have no information attached to them.
 
-            val siblings = flow.backwardsAliasMap.getValue(original).remove(variable)
-            flow.directAliasMap -= variable
-            flow.backwardsAliasMap = if (siblings.isNotEmpty()) {
-                flow.backwardsAliasMap.put(original, siblings)
+            val siblings = backwardsAliasMap.getValue(original).remove(variable)
+            directAliasMap -= variable
+            backwardsAliasMap = if (siblings.isNotEmpty()) {
+                backwardsAliasMap.put(original, siblings)
             } else {
-                flow.backwardsAliasMap.remove(original)
+                backwardsAliasMap.remove(original)
+            }
+            if (replacement != null) {
+                addLocalVariableAlias(this, replacement, original)
             }
         } else {
-            val aliases = flow.backwardsAliasMap[variable]
-            val replacement = aliases?.first()
+            val aliases = backwardsAliasMap[variable]
+            // If asked to remove the variable but there are aliases, replace with a new representative for the alias group instead.
+            val replacementOrNext = replacement ?: aliases?.first()
             for (dependent in variable.dependentVariables) {
-                // TODO: replace the identifier in dependent variables instead (need to somehow interface with VariableStorage for that)
-                //   var x = something
-                //   val y = x
-                //   if (x.stableProperty !is A) return
-                //   y.stableProperty // A
-                //   x = somethingElse
-                //   y.stableProperty // still A
-                removeAllAboutVariable(flow, dependent)
+                replaceVariable(dependent, replacementOrNext?.let {
+                    variableStorage.copyRealVariableWithRemapping(dependent, variable, it)
+                })
             }
-            flow.logicStatements = flow.logicStatements.replaceVariable(variable, replacement)
-            flow.approvedTypeStatements = flow.approvedTypeStatements.replaceVariable(variable, replacement)
-            flow.approvedTypeStatementsDiff = flow.approvedTypeStatementsDiff.replaceVariable(variable, replacement)
-            if (replacement != null) {
-                flow.directAliasMap -= replacement
-                flow.backwardsAliasMap -= variable
-                flow.addAliases(aliases, replacement)
+            logicStatements = logicStatements.replaceVariable(variable, replacementOrNext)
+            approvedTypeStatements = approvedTypeStatements.replaceVariable(variable, replacementOrNext)
+            approvedTypeStatementsDiff = approvedTypeStatementsDiff.replaceVariable(variable, replacementOrNext)
+            if (aliases != null) {
+                backwardsAliasMap -= variable
+                if (replacementOrNext != null) {
+                    directAliasMap -= replacementOrNext
+                    addAliases(aliases, replacementOrNext)
+                }
             }
         }
     }
