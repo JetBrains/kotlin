@@ -109,7 +109,7 @@ fun makeIncrementally(
                     classpathChanges = ClasspathSnapshotDisabled
                 )
         //TODO set properly
-        compiler.compile(sourceFiles, args, messageCollector, changedFiles = null)
+        compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
 }
 
@@ -388,7 +388,9 @@ open class IncrementalJvmCompilerRunner(
         super.performWorkBeforeCompilation(compilationMode, args)
 
         if (compilationMode is CompilationMode.Incremental) {
-            args.classpathAsList = listOf(args.destinationAsFile) + args.classpathAsList
+            val destinationDir = args.destinationAsFile
+            destinationDir.mkdirs()
+            args.classpathAsList = listOf(destinationDir) + args.classpathAsList
         }
     }
 

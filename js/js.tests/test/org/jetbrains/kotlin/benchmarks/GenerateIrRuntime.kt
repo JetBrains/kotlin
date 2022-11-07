@@ -67,6 +67,7 @@ import org.junit.Test
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
+import kotlin.io.path.createTempFile
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 @OptIn(ExperimentalPathApi::class)
@@ -324,7 +325,7 @@ class GenerateIrRuntime {
                 buildHistoryFile = buildHistoryFile,
                 modulesApiHistory = EmptyModulesApiHistory
             )
-            compiler.compile(allFiles, args, MessageCollector.NONE, changedFiles = null)
+            compiler.compile(allFiles, args, MessageCollector.NONE, providedChangedFiles = null)
         }
 
         val cleanBuildTime = System.nanoTime() - cleanBuildStart
