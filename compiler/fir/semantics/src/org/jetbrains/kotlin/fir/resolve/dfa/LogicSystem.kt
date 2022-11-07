@@ -22,15 +22,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     abstract fun addImplication(flow: FLOW, implication: Implication)
 
-    fun removeAllAboutVariable(flow: FLOW, variable: RealVariable) {
-        removeAliasInformationAboutVariable(flow, variable)
-        removeTypeStatementsAboutVariable(flow, variable)
-        removeLogicStatementsAboutVariable(flow, variable)
-    }
-
-    abstract fun removeTypeStatementsAboutVariable(flow: FLOW, variable: RealVariable)
-    abstract fun removeLogicStatementsAboutVariable(flow: FLOW, variable: RealVariable)
-    abstract fun removeAliasInformationAboutVariable(flow: FLOW, variable: RealVariable)
+    abstract fun removeAllAboutVariable(flow: FLOW, variable: RealVariable)
 
     abstract fun translateVariableFromConditionInStatements(
         flow: FLOW,
@@ -49,7 +41,6 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     ): FLOW
 
     abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
-    abstract fun removeLocalVariableAlias(flow: FLOW, alias: RealVariable)
 
     abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
 

@@ -104,7 +104,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
                             val index = receiverStack.getReceiverIndex(symbol) ?: return
                             val info = flow.getType(variable)
-                            val type = if (info.isNotEmpty()) {
+                            val type = if (info?.isNotEmpty() == true) {
                                 val types = info.toMutableList()
                                 types += receiverStack.getOriginalType(index)
                                 context.intersectTypesOrNull(types)!!
@@ -1261,7 +1261,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         if (isAssignment) {
-            flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
+            // `propertyVariable` can be an alias to `initializerVariable`, in which case this will add
+            // a redundant type statement which is fine...probably. TODO: store initial type within the variable?
+            flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.typeRef.coneType)
         }
     }
 
