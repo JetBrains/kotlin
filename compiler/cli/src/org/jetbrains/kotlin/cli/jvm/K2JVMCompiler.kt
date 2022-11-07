@@ -165,7 +165,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return COMPILATION_ERROR
                 }
 
-                KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
+                KotlinToJVMBytecodeCompiler.compileModules(environment, rootDisposable, buildFile, chunk)
             }
             return OK
         } catch (e: CompilationException) {
