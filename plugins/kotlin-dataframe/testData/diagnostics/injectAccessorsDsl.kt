@@ -3,8 +3,8 @@ import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
 
 fun `Dsl is evaluated to `(df: DataFrame<*>) {
-    df.add {
+    val df1 = df.add {
         "col1" from { 5 }
     }
-    df.col1
+    df1.col1
 }

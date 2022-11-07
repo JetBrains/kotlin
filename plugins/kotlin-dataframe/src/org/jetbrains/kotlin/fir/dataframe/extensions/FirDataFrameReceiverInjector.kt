@@ -33,11 +33,13 @@ class SchemaContext(val properties: List<SchemaProperty>)
 class FirDataFrameReceiverInjector(
     session: FirSession,
     private val scopeState: MutableMap<ClassId, SchemaContext>,
-    private val scopeIds: ArrayDeque<ClassId>
+    private val scopeIds: ArrayDeque<ClassId>,
+    val tokenState: MutableMap<ClassId, SchemaContext>,
+    val tokenIds: ArrayDeque<ClassId>
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-        return coneKotlinTypes(functionCall, scopeState, scopeIds, id)
+        return coneKotlinTypes(functionCall, scopeState, scopeIds, tokenIds, tokenState, id)
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()
@@ -59,6 +61,8 @@ fun KotlinTypeFacade.coneKotlinTypes(
     functionCall: FirFunctionCall,
     scopeState: MutableMap<ClassId, SchemaContext>,
     scopeIds: ArrayDeque<ClassId>,
+    tokenIds: ArrayDeque<ClassId>,
+    tokenState: MutableMap<ClassId, SchemaContext>,
     getRootMarker: KotlinTypeFacade.(FirFunctionCall) -> ConeTypeProjection,
     reporter: InterpretationErrorReporter = InterpretationErrorReporter { _, _ -> }
 ): List<ConeKotlinType> {
@@ -67,15 +71,29 @@ fun KotlinTypeFacade.coneKotlinTypes(
     val processor = functionCall.loadInterpreter(session) ?: return emptyList()
 
     val dataFrameSchema =
-        interpret(functionCall, processor, reporter = reporter)?.let { it.value as PluginDataFrameSchema } ?: return emptyList()
+        interpret(functionCall, processor, reporter = reporter, tokenState = tokenState)
+            ?.let {
+                val value = it.value
+                if (value !is PluginDataFrameSchema) {
+                    reporter.reportInterpretationError(functionCall, "${processor::class} must return ${PluginDataFrameSchema::class}, but was ${value}")
+                    return emptyList()
+                }
+                value
+            }
+
+    dataFrameSchema ?: return emptyList()
 
     val types: MutableList<ConeClassLikeType> = mutableListOf()
 
     // TODO: generate a new marker for each call when there is an API to cast functionCall result to this type
     val rootMarker = getRootMarker(functionCall)
     fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
-        val id = scopeIds.removeLast()
-        val marker = rootMarker ?: ConeClassLikeLookupTagImpl(id)
+        val scopeId = scopeIds.removeLast()
+        var tokenId = rootMarker?.type?.classId
+        if (tokenId == null) {
+            tokenId = tokenIds.removeLast()
+        }
+        val marker = rootMarker ?: ConeClassLikeLookupTagImpl(tokenId)
             .constructClassType(emptyArray(), isNullable = false)
         val properties = columns().map {
             @Suppress("USELESS_IS_CHECK")
@@ -126,8 +144,9 @@ fun KotlinTypeFacade.coneKotlinTypes(
                 else -> TODO("shouldn't happen")
             }
         }
-        scopeState[id] = SchemaContext(properties)
-        types += ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false)
+        scopeState[scopeId] = SchemaContext(properties)
+        tokenState[tokenId] = SchemaContext(properties)
+        types += ConeClassLikeLookupTagImpl(scopeId).constructClassType(emptyArray(), isNullable = false)
         return marker
     }
 

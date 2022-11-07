@@ -15,23 +15,24 @@ import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.interpret
 import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacadeImpl
 
-class FirDataFrameAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
+class FirDataFrameAdditionalCheckers(session: FirSession, val tokenState: MutableMap<ClassId, SchemaContext>) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(Checker())
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(Checker(tokenState))
     }
 }
 
-class Checker : FirFunctionCallChecker() {
+class Checker(val tokenState: MutableMap<ClassId, SchemaContext>) : FirFunctionCallChecker() {
     companion object {
         val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
     }
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         with(KotlinTypeFacadeImpl(context.session)) {
             val processor = expression.loadInterpreter(session) ?: return
-            interpret(expression, processor, reporter = InterpretationErrorReporter { call, message ->
+            interpret(expression, processor, tokenState = tokenState, reporter = InterpretationErrorReporter { call, message ->
                 reporter.reportOn(call.source, ERROR, message, context)
             })
         }

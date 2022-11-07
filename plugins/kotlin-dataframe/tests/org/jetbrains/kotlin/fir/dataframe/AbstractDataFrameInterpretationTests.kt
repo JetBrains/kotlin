@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.extensions.*
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
@@ -63,15 +61,12 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
             module: TestModule,
             configuration: CompilerConfiguration
         ) {
-            val scopeState = mutableMapOf<ClassId, SchemaContext>()
-            val callableState = mutableMapOf<Name, FirSimpleFunction>()
-
             FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     with(GeneratedNames()) {
                         +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, scopes, scopeState, callables, callableState) }
-                        +{ it: FirSession -> InterpretersRunner(it, scopeIds, scopeState, getTestFilePath) }
-                        +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
+                        +{ it: FirSession -> InterpretersRunner(it, scopeIds, scopeState, tokenIds, tokenState, getTestFilePath) }
+                        +{ it: FirSession -> FirDataFrameAdditionalCheckers(it, tokenState) }
                     }
                 }
             })
@@ -82,6 +77,8 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
         session: FirSession,
         val queue: ArrayDeque<ClassId>,
         val state: MutableMap<ClassId, SchemaContext>,
+        val tokenIds: ArrayDeque<ClassId>,
+        val tokenState: MutableMap<ClassId, SchemaContext>,
         val getTestFilePath: () -> String
     ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
@@ -91,7 +88,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
 
-                    val result = interpret(call, interpreter, reporter = { _, _ -> })?.value ?: return emptyList()
+                    val result = interpret(call, interpreter, tokenState = tokenState, reporter = { _, _ -> })?.value ?: return emptyList()
 
 //                    withClue(id) {
 //                        result shouldBe expectedResult(id)
@@ -103,7 +100,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                 file.contains("convert") -> any
                 else -> id
             }
-            return coneKotlinTypes(functionCall, state, queue, rootMarkerStrategy)
+            return coneKotlinTypes(functionCall, state, queue, tokenIds, tokenState, rootMarkerStrategy)
         }
 
 //        fun expectedResult(id: String): Any? {
