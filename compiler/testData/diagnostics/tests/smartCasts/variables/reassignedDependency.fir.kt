@@ -61,3 +61,17 @@ fun test4(p: Boolean, q: Boolean) {
     x.length // ok
     c.x<!UNSAFE_CALL!>.<!>length // bad
 }
+
+fun test5() {
+    var c = C("...")
+    val d = c
+    val x = d.x
+    if (x == null) return
+    x.length // ok
+    c.x.length // ok
+    d.x.length // ok
+    c = C(null)
+    x.length // ok
+    c.x<!UNSAFE_CALL!>.<!>length // bad
+    d.x<!UNSAFE_CALL!>.<!>length // ok
+}
