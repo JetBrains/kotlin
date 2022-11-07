@@ -4,7 +4,17 @@ FILE: EnumWithToString.kt
             super<R|kotlin/Enum<Some>|>()
         }
 
-        public final static enum entry ENTRY: R|Some| = LAZY_EXPRESSION
+        public final static enum entry ENTRY: R|Some| = object : R|Some| {
+            private constructor(): R|<anonymous>| {
+                super<R|Some|>()
+            }
+
+            public final override fun toString(): R|kotlin/String| {
+                ^toString String(Entry)
+            }
+
+        }
+
         public open override fun toString(): R|kotlin/String| {
             ^toString String(Some)
         }

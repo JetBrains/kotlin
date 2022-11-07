@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.psi.*
 internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesInside(designation: FirDeclarationDesignation, contractableOnly: Boolean = false) {
         designation.declaration.transform<FirElement, PersistentList<FirDeclaration>>(
-            FirLazyBodiesCalculatorTransformer(contractableOnly),
-            designation.toSequence(includeTarget = false).toList().toPersistentList()
+            FirLazyBodiesCalculatorTransformer(contractableOnly), designation.toSequence(includeTarget = false).toList().toPersistentList()
         )
     }
 
@@ -36,6 +35,9 @@ internal object FirLazyBodiesCalculator {
     }
 
     private fun replaceAnnotations(annotations: List<FirAnnotation>, newAnnotations: List<FirAnnotation>) {
+        if (!needCalculatingForAnnotations(annotations)) {
+            return
+        }
         require(annotations.size == newAnnotations.size)
         for ((annotation, newAnnotation) in annotations.zip(newAnnotations)) {
             if (annotation is FirAnnotationCall && newAnnotation is FirAnnotationCall) {
@@ -72,7 +74,7 @@ internal object FirLazyBodiesCalculator {
 
     fun calculateLazyBodyForAnonymousInitializer(designation: FirDeclarationDesignation) {
         val initializer = designation.declaration as FirAnonymousInitializer
-        if (initializer.body !is FirLazyBlock) return
+        if (initializer.body !is FirLazyBlock && !needCalculatingForAnnotations(initializer.annotations)) return
         val newFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = initializer.moduleData.session,
             scopeProvider = initializer.moduleData.session.kotlinScopeProvider,
@@ -87,7 +89,7 @@ internal object FirLazyBodiesCalculator {
 
     fun calculateLazyInitializerForEnumEntry(designation: FirDeclarationDesignation) {
         val enumEntry = designation.declaration as FirEnumEntry
-        if (enumEntry.initializer !is FirLazyExpression) return
+        if (enumEntry.initializer !is FirLazyExpression && !needCalculatingForAnnotations(enumEntry.annotations)) return
         val newEntry = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = enumEntry.moduleData.session,
             scopeProvider = enumEntry.moduleData.session.kotlinScopeProvider,
@@ -200,7 +202,7 @@ internal object FirLazyBodiesCalculator {
 
     fun calculateAnnotationsForClassLike(designation: FirDeclarationDesignation) {
         val classLike = designation.declaration as FirClassLikeDeclaration
-        if (classLike.annotations.isEmpty()) return
+        if (!needCalculatingForAnnotations(classLike.annotations)) return
         val newAnnotations = RawFirNonLocalAnnotationsBuilder.build(
             session = classLike.moduleData.session,
             scopeProvider = classLike.moduleData.session.kotlinScopeProvider,
@@ -246,6 +248,12 @@ internal object FirLazyBodiesCalculator {
         return false
     }
 
+    fun needCalculatingForAnnotations(property: FirProperty): Boolean {
+        return needCalculatingForAnnotations(property.annotations)
+                || needCalculatingForAnnotations(property.getter?.annotations)
+                || needCalculatingForAnnotations(property.setter?.annotations)
+    }
+
     fun needCalculatingForAnnotations(annotations: List<FirAnnotation>?): Boolean {
         if (annotations == null) return false
         for (annotation in annotations) {
@@ -272,7 +280,7 @@ private class FirLazyBodiesCalculatorTransformer(val contractableOnly: Boolean =
             }
             element.transformChildren(this, newList)
         }
-        if (element is FirClassLikeDeclaration && element.annotations.isNotEmpty()) {
+        if (element is FirClassLikeDeclaration && FirLazyBodiesCalculator.needCalculatingForAnnotations(element.annotations)) {
             val designation = FirDeclarationDesignation(data, element)
             FirLazyBodiesCalculator.calculateAnnotationsForClassLike(designation)
         }
@@ -280,8 +288,7 @@ private class FirLazyBodiesCalculatorTransformer(val contractableOnly: Boolean =
     }
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
-        data: PersistentList<FirDeclaration>
+        simpleFunction: FirSimpleFunction, data: PersistentList<FirDeclaration>
     ): FirSimpleFunction {
         if (FirLazyBodiesCalculator.needCalculatingForFunction(simpleFunction)) {
             val designation = FirDeclarationDesignation(data, simpleFunction)
@@ -291,10 +298,11 @@ private class FirLazyBodiesCalculatorTransformer(val contractableOnly: Boolean =
     }
 
     override fun transformConstructor(
-        constructor: FirConstructor,
-        data: PersistentList<FirDeclaration>
+        constructor: FirConstructor, data: PersistentList<FirDeclaration>
     ): FirConstructor {
-        if (!contractableOnly && FirLazyBodiesCalculator.needCalculatingForConstructor(constructor)) {
+        if (!contractableOnly && FirLazyBodiesCalculator.needCalculatingForConstructor(constructor)
+            || FirLazyBodiesCalculator.needCalculatingForAnnotations(constructor.annotations)
+        ) {
             val designation = FirDeclarationDesignation(data, constructor)
             if (constructor is FirPrimaryConstructor) {
                 FirLazyBodiesCalculator.calculateLazyBodyForPrimaryConstructor(designation)
@@ -306,10 +314,12 @@ private class FirLazyBodiesCalculatorTransformer(val contractableOnly: Boolean =
     }
 
     override fun transformAnonymousInitializer(
-        anonymousInitializer: FirAnonymousInitializer,
-        data: PersistentList<FirDeclaration>
+        anonymousInitializer: FirAnonymousInitializer, data: PersistentList<FirDeclaration>
     ): FirAnonymousInitializer {
-        if (!contractableOnly && anonymousInitializer.body is FirLazyBlock) {
+        if (!contractableOnly && anonymousInitializer.body is FirLazyBlock || FirLazyBodiesCalculator.needCalculatingForAnnotations(
+                anonymousInitializer.annotations
+            )
+        ) {
             val designation = FirDeclarationDesignation(data, anonymousInitializer)
             FirLazyBodiesCalculator.calculateLazyBodyForAnonymousInitializer(designation)
         }
@@ -317,9 +327,9 @@ private class FirLazyBodiesCalculatorTransformer(val contractableOnly: Boolean =
     }
 
     override fun transformProperty(property: FirProperty, data: PersistentList<FirDeclaration>): FirProperty {
-        if ((!contractableOnly || property.getter != null || property.setter != null) && FirLazyBodiesCalculator.needCalculatingLazyBodyForProperty(
-                property
-            )
+        if ((!contractableOnly || property.setter != null || property.getter != null)
+            && FirLazyBodiesCalculator.needCalculatingLazyBodyForProperty(property)
+            || FirLazyBodiesCalculator.needCalculatingForAnnotations(property)
         ) {
             val designation = FirDeclarationDesignation(data, property)
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(designation)
@@ -328,7 +338,10 @@ private class FirLazyBodiesCalculatorTransformer(val contractableOnly: Boolean =
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
-        if (!contractableOnly && enumEntry.initializer is FirLazyExpression) {
+        if (!contractableOnly && enumEntry.initializer is FirLazyExpression || FirLazyBodiesCalculator.needCalculatingForAnnotations(
+                enumEntry.annotations
+            )
+        ) {
             val designation = FirDeclarationDesignation(data, enumEntry)
             FirLazyBodiesCalculator.calculateLazyInitializerForEnumEntry(designation)
         }

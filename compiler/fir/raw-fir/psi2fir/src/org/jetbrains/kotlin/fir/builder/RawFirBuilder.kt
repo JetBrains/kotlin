@@ -54,26 +54,31 @@ open class RawFirBuilder(
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
 
-    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = runOnStabs { target.bind(function) }
+    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
 
     var mode: BodyBuildingMode = bodyBuildingMode
         private set
 
-    private fun <T> runOnStabs(body: () -> T): T {
+    private fun <T> disableLazyBodies(body: () -> T): T {
         return when (mode) {
             BodyBuildingMode.NORMAL -> body()
             BodyBuildingMode.LAZY_BODIES -> {
-                AstLoadingFilter.disallowTreeLoading<T, Nothing> { body() }
+                try {
+                    mode = BodyBuildingMode.NORMAL
+                    body()
+                } finally {
+                    mode = BodyBuildingMode.LAZY_BODIES
+                }
             }
         }
     }
 
     fun buildFirFile(file: KtFile): FirFile {
-        return runOnStabs { file.accept(Visitor(), Unit) as FirFile }
+        return file.accept(Visitor(), Unit) as FirFile
     }
 
     fun buildTypeReference(reference: KtTypeReference): FirTypeRef {
-        return runOnStabs { reference.accept(Visitor(), Unit) as FirTypeRef }
+        return reference.accept(Visitor(), Unit) as FirTypeRef
     }
 
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
@@ -1011,7 +1016,7 @@ open class RawFirBuilder(
                     source = file.packageDirective?.toKtPsiSourceElement()
                 }
                 for (annotationEntry in file.annotationEntries) {
-                    annotations += annotationEntry.convert<FirAnnotation>()
+                    disableLazyBodies { annotations += annotationEntry.convert<FirAnnotation>() }
                 }
                 for (importDirective in file.importDirectives) {
                     imports += buildImport {
