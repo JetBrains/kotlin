@@ -478,15 +478,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         valueClass.declarations += function
     }
 
-    val IrClass.companionObjectCustomBoxingFunction: IrFunction?
-        get() {
-            return companionObject()?.functions?.singleOrNull {
-                context.inlineClassReplacements.originalFunctionForMethodReplacement[it]?.isBoxOperator ?: false
-            }
-        }
-
     fun buildBoxFunctions(valueClass: IrClass) {
-        val customBoxFunction = valueClass.companionObjectCustomBoxingFunction
+        val customBoxFunction = valueClass.companionObject()?.functions?.singleOrNull {
+            context.inlineClassReplacements.originalFunctionForMethodReplacement[it]?.isBoxOperator ?: false
+        }
         if (customBoxFunction != null) {
             buildDefaultBoxFunction(valueClass, withDefaultSuffix = true)
             buildCustomBoxFunction(valueClass, customBoxFunction)
