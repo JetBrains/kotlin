@@ -15,11 +15,6 @@ dependencies {
     testArtifacts project(':kotlin-stdlib-jdk7')
     testArtifacts project(':kotlin-stdlib-jdk8')
     testArtifacts project(':kotlin-reflect')
-    testArtifacts project(':kotlin-gradle-plugin-idea')
-    testArtifacts project(path: ":kotlin-gradle-plugin-idea-proto", configuration: "binaryValidationApiElements")
-    testArtifacts project(':kotlin-tooling-core')
-    testArtifacts project(':kotlin-gradle-plugin-api')
-    testArtifacts project(':kotlin-gradle-plugin-annotations')
 }
 
 pill {

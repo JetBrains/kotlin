@@ -4,6 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     kotlin("jvm")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 kotlin {
@@ -46,17 +47,21 @@ runtimeJar(tasks.register<ShadowJar>("embeddable")) {
 
 /* Setup configuration for binary compatibility tests */
 run {
-    val binaryValidationApiElements by configurations.creating {
-        isCanBeResolved = false
-        isCanBeConsumed = true
-    }
-
     val binaryValidationApiJar = tasks.register<Jar>("binaryValidationApiJar") {
         this.archiveBaseName.set(project.name + "-api")
         from(mainSourceSet.output)
     }
 
-    artifacts.add(binaryValidationApiElements.name, binaryValidationApiJar)
+    apiValidation {
+        ignoredPackages += "org.jetbrains.kotlin.gradle.idea.proto.generated"
+        nonPublicMarkers += "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi"
+    }
+
+    tasks {
+        apiBuild {
+            inputJar.value(binaryValidationApiJar.flatMap { it.archiveFile })
+        }
+    }
 }
 
 /* Setup protoc */

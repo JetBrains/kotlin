@@ -3,11 +3,11 @@
 Lightweight module defining the API surface of the Kotlin Gradle Plugin. 
 
 ### Binary Compatibility Validation
-This module is tested for Binary Compatibility Validation by the :tools:binary-compatibility-validator module. 
-Please see [ReadMe.md](../binary-compatibility-validator/ReadMe.md)
 
-You can execute binary compatibility validation by a shared run-configuration in the IDE
-`/Tests/Test: binary compatibility` 
+The public API surface of this module is checked for stability
+using the [binary compatibility validator](https://github.com/Kotlin/binary-compatibility-validator/) plugin
+to prevent accidental public API changes.
 
-In order to check in changes you can launch 
-`Test/Test: binary compatibility [overwrite]`
+You can execute public API validation by running `apiCheck` task (also executed when `check` task runs).
+
+In order to overwrite the reference API snapshot, you can launch `apiDump` task. 

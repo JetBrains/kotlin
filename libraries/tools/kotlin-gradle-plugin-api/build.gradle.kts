@@ -1,6 +1,7 @@
 plugins {
     id("gradle-plugin-dependency-configuration")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 dependencies {
@@ -20,4 +21,14 @@ dependencies {
     }
 
     embedded(project(":kotlin-gradle-compiler-types")) { isTransitive = false }
+}
+
+apiValidation {
+    nonPublicMarkers += "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi"
+}
+
+tasks {
+    apiBuild {
+        inputJar.value(jar.flatMap { it.archiveFile })
+    }
 }

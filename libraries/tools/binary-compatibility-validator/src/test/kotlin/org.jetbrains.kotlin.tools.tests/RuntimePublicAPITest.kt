@@ -35,40 +35,6 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }
 
-    @Test fun kotlinGradlePluginAnnotations() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-annotations/build/libs", "kotlin-gradle-plugin-annotations(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinGradlePluginApi() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-api/build/libs", "kotlin-gradle-plugin-api(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinGradlePluginIdea() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinGradlePluginIdeaProto() {
-        snapshotAPIAndCompare(
-            basePath = "../kotlin-gradle-plugin-idea-proto/build/libs",
-            jarPattern = "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
-            nonPublicPackages = listOf("org/jetbrains/kotlin/gradle/idea/proto/generated"),
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinToolingCore() {
-        snapshotAPIAndCompare("../kotlin-tooling-core/build/libs", "kotlin-tooling-core(?!-[-a-z]+)")
-    }
-
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,
