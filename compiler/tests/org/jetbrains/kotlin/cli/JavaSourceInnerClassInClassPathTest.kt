@@ -30,7 +30,7 @@ class JavaSourceInnerClassInClassPathTest : TestCaseWithTmpdir() {
         assert(exit == ExitCode.OK) { output }
         val (output2, exit2) = AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(aJava.path, bJava.path, cKt.path, "-cp", tmpdir.path)
+            listOf(aJava.path, bJava.path, cKt.path, "-cp", tmpdir.path, "-d", tmpdir.path)
         )
         assert(exit2 == ExitCode.OK) { output2 }
     }
