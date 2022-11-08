@@ -49,7 +49,7 @@ inline fun <reified T : CharSequence>case_3(x: Any?) {
 // TESTCASE NUMBER: 4
 inline fun <reified T : CharSequence>case_4(x: Any?) {
     (x as? T)!!
-    if (x is T?) {
+    if (<!USELESS_IS_CHECK!>x is T?<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.length
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.get(0)

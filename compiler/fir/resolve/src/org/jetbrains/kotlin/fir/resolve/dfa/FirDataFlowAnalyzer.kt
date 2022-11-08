@@ -678,30 +678,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (node, unionNode) = graphBuilder.exitCheckNotNullCall(checkNotNullCall, callCompleted)
         node.mergeIncomingFlow()
 
-        checkNotNullCall.argument.propagateNotNullInfo(node)
+        val argumentVariable = variableStorage.getOrCreateVariable(node.previousFlow, checkNotNullCall.argument)
+        node.flow.assumeNotNull(argumentVariable, shouldForkFlow = false, shouldRemoveSynthetics = false)
 
         unionNode?.let { unionFlowFromArguments(it) }
     }
 
-    private fun FirExpression.propagateNotNullInfo(node: CFGNode<*>) {
-        val symbol = this.symbol
-        if (symbol != null) {
-            variableStorage.getOrCreateRealVariable(node.previousFlow, symbol, this)?.let { operandVariable ->
-                node.flow.assumeNotNull(operandVariable, shouldForkFlow = false, shouldRemoveSynthetics = true)
-            }
-        }
-        when (this) {
-            is FirSafeCallExpression -> receiver.propagateNotNullInfo(node)
-            is FirTypeOperatorCall -> {
-                if (operation == FirOperation.AS || operation == FirOperation.SAFE_AS) {
-                    argument.propagateNotNullInfo(node)
-                }
-            }
-        }
-    }
-
     private fun FLOW.assumeNotNull(variable: DataFlowVariable, shouldForkFlow: Boolean, shouldRemoveSynthetics: Boolean): FLOW =
-        logicSystem.approveStatementsInsideFlow(this, variable notEq null, shouldForkFlow, shouldRemoveSynthetics,).also {
+        logicSystem.approveStatementsInsideFlow(this, variable notEq null, shouldForkFlow, shouldRemoveSynthetics).also {
             if (variable is RealVariable) {
                 it.addTypeStatement(variable typeEq any andTypeNotEq nullableNothing)
             }
@@ -1380,7 +1364,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         node.mergeIncomingFlow()
         mergePostponedLambdaExitsNode?.mergeIncomingFlow()
         if (isLhsNotNull) {
-            elvisExpression.lhs.propagateNotNullInfo(node)
+            val lhsVariable = variableStorage.getOrCreateVariable(node.previousFlow, elvisExpression.lhs)
+            node.flow.assumeNotNull(lhsVariable, shouldForkFlow = false, shouldRemoveSynthetics = true)
         }
 
         if (!components.session.languageVersionSettings.supportsFeature(LanguageFeature.BooleanElvisBoundSmartCasts)) return
@@ -1396,7 +1381,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             val lhsVariable = variableStorage.getOrCreateVariable(flow, lhs)
 
             val value = rhs.value as Boolean
-            flow.addImplication(elvisVariable.eq(!value) implies (lhsVariable.notEq(null)))
+            flow.addImplication((elvisVariable eq !value) implies (lhsVariable notEq null))
         }
     }
 
