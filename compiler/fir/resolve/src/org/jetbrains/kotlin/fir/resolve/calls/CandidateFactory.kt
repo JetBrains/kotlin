@@ -49,6 +49,7 @@ class CandidateFactory private constructor(
         explicitReceiverKind: ExplicitReceiverKind,
         scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
+        importedQualifierForStatic: FirExpression? = null,
         givenExtensionReceiverOptions: List<ReceiverValue> = emptyList(),
         objectsByName: Boolean = false
     ): Candidate {
@@ -56,10 +57,15 @@ class CandidateFactory private constructor(
         val symbol = symbol.unwrapIntegerOperatorSymbolIfNeeded(callInfo)
 
         val result = Candidate(
-            symbol, dispatchReceiverValue, givenExtensionReceiverOptions,
-            explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
+            symbol,
+            dispatchReceiverValue,
+            givenExtensionReceiverOptions,
+            explicitReceiverKind,
+            context.inferenceComponents.constraintSystemFactory,
+            baseSystem,
             callInfo,
             scope,
+            importedQualifierForStatic,
             isFromCompanionObjectTypeScope = when (explicitReceiverKind) {
                 ExplicitReceiverKind.EXTENSION_RECEIVER ->
                     givenExtensionReceiverOptions.singleOrNull().isCandidateFromCompanionObjectTypeScope()

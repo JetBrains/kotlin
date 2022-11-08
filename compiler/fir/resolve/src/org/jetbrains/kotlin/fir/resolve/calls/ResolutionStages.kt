@@ -540,7 +540,10 @@ internal object CheckVisibility : CheckerStage() {
                     sink.yieldDiagnostic(VisibilityError)
                 }
 
-                if (!visibilityChecker.isVisible(declaration, candidate.callInfo, dispatchReceiverValue = null)) {
+                if (!visibilityChecker.isVisible(
+                        declaration, candidate.callInfo, dispatchReceiverValue = null, importedQualifierForStatic = null
+                    )
+                ) {
                     sink.yieldDiagnostic(VisibilityError)
                 }
             }

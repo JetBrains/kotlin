@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -227,26 +228,24 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     isDelegate: Boolean = false,
     isReference: Boolean = false
 ): IrSymbol? {
-    val dispatchReceiverType = when (dispatchReceiver) {
+    val fakeOverrideOwnerLookupTag = fir.importedFromObjectOrStaticData.takeIf { isStatic }?.let {
+        ConeClassLikeLookupTagImpl(it.objectClassId)
+    } ?: when (dispatchReceiver) {
         is FirNoReceiverExpression -> {
             val containingClass = containingClassLookupTag()
             if (containingClass != null && containingClass.classId != StandardClassIds.Any) {
                 // Make sure that symbol is not extension and is not from inline class
-                ((explicitReceiver as? FirResolvedQualifier)?.symbol as? FirClassSymbol)?.defaultType()
+                ((explicitReceiver as? FirResolvedQualifier)?.symbol as? FirClassSymbol)?.toLookupTag()
             } else {
                 null
             }
         }
 
-        is FirResolvedQualifier -> {
-            if (isStatic) (dispatchReceiver.symbol as? FirClassSymbol)?.defaultType() else dispatchReceiver.typeRef.coneType
-        }
-
         else -> {
-            dispatchReceiver.typeRef.coneType
+            if (isStatic && dispatchReceiver is FirResolvedQualifier) (dispatchReceiver.symbol as? FirClassSymbol)?.toLookupTag()
+            else dispatchReceiver.typeRef.coneType.let { it.findClassRepresentation(it, declarationStorage.session) }
         }
     }
-    val dispatchReceiverLookupTag = dispatchReceiverType?.findClassRepresentation(dispatchReceiverType, declarationStorage.session)
 
     return when (this) {
         is FirSimpleSyntheticPropertySymbol -> {
@@ -255,7 +254,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
             } else {
                 (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
                     if (isReference) {
-                        declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
+                        declarationStorage.getIrPropertySymbol(this, fakeOverrideOwnerLookupTag)
                     } else {
                         val delegateSymbol = if (preferGetter) {
                             syntheticProperty.getter.delegate.symbol
@@ -270,8 +269,8 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
             }
         }
 
-        is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, dispatchReceiverLookupTag)
-        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
+        is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, fakeOverrideOwnerLookupTag)
+        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, fakeOverrideOwnerLookupTag)
         is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
         is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
         is FirDelegateFieldSymbol -> declarationStorage.getIrDelegateFieldSymbol(this)
