@@ -98,6 +98,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Test
+    @TestMetadata("deprecatedConstantPropertyInterfaceCompanion.kt")
+    public void testDeprecatedConstantPropertyInterfaceCompanion() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/deprecatedConstantPropertyInterfaceCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("deserializeLambdaMethod.kt")
     public void testDeserializeLambdaMethod() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/deserializeLambdaMethod.kt");
