@@ -328,13 +328,13 @@ fun Test.setUpBoxTests() {
     systemProperty("overwrite.output", project.providers.gradleProperty("overwrite.output")
         .forUseAtConfigurationTime().orNull ?: "false")
 
-    val localProperties = Properties().apply {
-        project.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
+    val rootLocalProperties = Properties().apply {
+        rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
             load(it)
         }
     }
 
-    val allProperties = localProperties + properties
+    val allProperties = properties + rootLocalProperties
 
     val prefixForPropertiesToForward = "fd."
     for ((key, value) in allProperties) {
