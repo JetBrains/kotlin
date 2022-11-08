@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -262,7 +261,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             return false
         }
 
-        fixVariable(this, topLevelType, variableWithConstraints, postponedArguments)
+        fixVariable(this, variableWithConstraints)
 
         return true
     }
@@ -388,12 +387,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
     private fun fixVariable(
         c: ConstraintSystemCompletionContext,
-        topLevelType: KotlinTypeMarker,
-        variableWithConstraints: VariableWithConstraints,
-        postponedResolveKtPrimitives: List<PostponedResolvedAtom>
+        variableWithConstraints: VariableWithConstraints
     ) {
-        val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
-        val resultType = inferenceComponents.resultTypeResolver.findResultType(c, variableWithConstraints, direction)
+        val resultType = inferenceComponents.resultTypeResolver.findResultType(
+            c,
+            variableWithConstraints,
+            TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+        )
         val variable = variableWithConstraints.typeVariable
         c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable)) // TODO: obtain atom for diagnostics
     }
