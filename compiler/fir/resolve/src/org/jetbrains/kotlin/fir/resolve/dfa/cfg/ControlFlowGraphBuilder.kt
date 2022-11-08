@@ -182,7 +182,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Regular function -----------------------------------
 
-    fun enterFunction(function: FirFunction): Triple<FunctionEnterNode, LocalFunctionDeclarationNode?, CFGNode<*>?> {
+    fun enterFunction(function: FirFunction): Pair<FunctionEnterNode, LocalFunctionDeclarationNode?> {
         require(function !is FirAnonymousFunction)
         val name = when (function) {
             is FirSimpleFunction -> function.name.asString()
@@ -226,7 +226,7 @@ class ControlFlowGraphBuilder {
             exitTargetsForTry.push(it)
         }
 
-        return Triple(enterNode, localFunctionNode, previousNode)
+        return Pair(enterNode, localFunctionNode)
     }
 
     fun exitFunction(function: FirFunction): Pair<FunctionExitNode, ControlFlowGraph> {
