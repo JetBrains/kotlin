@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-internal val prepareForBytecodeInlining = makeIrModulePhase(
-    ::BytecodeInliningPreparationLowering,
-    name = "BytecodeInliningPreparation",
+internal val uniqueLoopLabelsPhase = makeIrFilePhase(
+    ::UniqueLoopLabelsLowering,
+    name = "UniqueLoopLabels",
     description = "Label all loops for non-local break/continue"
 )
 
-private class BytecodeInliningPreparationLowering(val context: JvmBackendContext) : FileLoweringPass {
+private class UniqueLoopLabelsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(object : IrElementVisitor<Unit, String> {
             // This counter is intentionally not local to every declaration because their names might clash.

@@ -6128,6 +6128,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 public void testAllFilesPresentInInlinedBreakContinue() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
                 }
+
+                @Test
+                @TestMetadata("initializerBlock.kt")
+                public void testInitializerBlock() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/initializerBlock.kt");
+                }
             }
         }
 
