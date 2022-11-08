@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-sealed class Statement<T : Statement<T>> {
-    abstract fun invert(): T
+sealed class Statement {
     abstract val variable: DataFlowVariable
 }
 
@@ -19,8 +18,8 @@ sealed class Statement<T : Statement<T>> {
  * d == True
  * d == False
  */
-data class OperationStatement(override val variable: DataFlowVariable, val operation: Operation) : Statement<OperationStatement>() {
-    override fun invert(): OperationStatement {
+data class OperationStatement(override val variable: DataFlowVariable, val operation: Operation) : Statement() {
+    fun invert(): OperationStatement {
         return OperationStatement(variable, operation.invert())
     }
 
@@ -29,7 +28,7 @@ data class OperationStatement(override val variable: DataFlowVariable, val opera
     }
 }
 
-abstract class TypeStatement : Statement<TypeStatement>() {
+sealed class TypeStatement : Statement() {
     abstract override val variable: RealVariable
     abstract val exactType: Set<ConeKotlinType>
     abstract val exactNotType: Set<ConeKotlinType>
@@ -47,7 +46,7 @@ abstract class TypeStatement : Statement<TypeStatement>() {
 
 class Implication(
     val condition: OperationStatement,
-    val effect: Statement<*>
+    val effect: Statement
 ) {
     override fun toString(): String {
         return "$condition -> $effect"

@@ -17,14 +17,6 @@ class MutableTypeStatement(
     override val exactType: MutableSet<ConeKotlinType> = linkedSetOf(),
     override val exactNotType: MutableSet<ConeKotlinType> = linkedSetOf()
 ) : TypeStatement() {
-    override fun invert(): MutableTypeStatement {
-        return MutableTypeStatement(
-            variable,
-            LinkedHashSet(exactNotType),
-            LinkedHashSet(exactType)
-        )
-    }
-
     fun copy(): MutableTypeStatement = MutableTypeStatement(variable, LinkedHashSet(exactType), LinkedHashSet(exactNotType))
 }
 
@@ -33,7 +25,6 @@ fun Implication.invertCondition(): Implication = Implication(condition.invert(),
 // --------------------------------------- Aliases ---------------------------------------
 
 typealias TypeStatements = Map<RealVariable, TypeStatement>
-typealias MutableTypeStatements = MutableMap<RealVariable, MutableTypeStatement>
 
 // --------------------------------------- DSL ---------------------------------------
 
@@ -55,7 +46,7 @@ infix fun DataFlowVariable.notEq(constant: Boolean?): OperationStatement {
     return OperationStatement(this, condition)
 }
 
-infix fun OperationStatement.implies(effect: Statement<*>): Implication = Implication(this, effect)
+infix fun OperationStatement.implies(effect: Statement): Implication = Implication(this, effect)
 
 infix fun RealVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this) andTypeEq type

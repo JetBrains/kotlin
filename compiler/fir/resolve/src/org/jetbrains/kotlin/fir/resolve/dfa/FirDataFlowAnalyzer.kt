@@ -541,8 +541,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                             (expressionVariable eq isEq) implies (it.effect)
                         }
                         Operation.EqTrue, Operation.EqFalse -> {
-                            if (shouldInvert) (it.condition.invert()) implies (it.effect)
-                            else it
+                            if (shouldInvert) it.invertCondition() else it
                         }
                     }
                 }
@@ -937,6 +936,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             is RealVariable -> variable.explicitReceiverVariable ?: return
             is SyntheticVariable -> variableStorage.getOrCreateVariable(flow, safeCall.receiver)
         }
+        // TODO? if the callee has non-null return type, then (variable eq null) implies (receiverVariable eq null)
+        //   if (x?.toString() == null) { /* x == null */ }
         flow.addImplication((variable notEq null) implies (receiverVariable notEq null))
     }
 

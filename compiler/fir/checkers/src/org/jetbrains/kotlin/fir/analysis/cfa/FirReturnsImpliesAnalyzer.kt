@@ -143,8 +143,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         val variable = statement.variable
         if (!variable.isReal()) return newTypeStatements
         val extraStatement = when (statement.operation) {
-            Operation.NotEqNull -> simpleTypeStatement(variable, true, builtinTypes.anyType.type)
-            Operation.EqNull -> simpleTypeStatement(variable, false, builtinTypes.anyType.type)
+            Operation.NotEqNull -> variable.nullabilityStatement(builtinTypes, isNull = false)
+            Operation.EqNull -> variable.nullabilityStatement(builtinTypes, isNull = true)
             else -> return newTypeStatements
         }
         return andForTypeStatements(newTypeStatements, mapOf(variable to extraStatement))
@@ -157,38 +157,49 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         flow: Flow,
         context: CheckerContext
     ): TypeStatements? {
-        fun buildTypeStatements(arg: ConeValueParameterReference, exactType: Boolean, type: ConeKotlinType): MutableTypeStatements? {
+        fun getOrCreateRealVariable(arg: ConeValueParameterReference): RealVariable? {
             val parameterSymbol = function.getParameterSymbol(arg.parameterIndex, context)
 
             @OptIn(SymbolInternals::class)
             val parameter = parameterSymbol.fir
-            val realVar = variableStorage.getOrCreateRealVariable(flow, parameterSymbol, parameter)
-                ?.takeIf {
-                    it.stability == PropertyStability.STABLE_VALUE ||
-                            // TODO: consider removing the part below
-                            it.stability == PropertyStability.LOCAL_VAR
-                }
-            return realVar?.to(simpleTypeStatement(realVar, exactType, type))?.let { mutableMapOf(it) }
-        }
-        return when (this) {
-            is ConeBinaryLogicExpression -> {
-                val left = left.buildTypeStatements(function, logicSystem, variableStorage, flow, context)
-                val right = right.buildTypeStatements(function, logicSystem, variableStorage, flow, context)
-                if (left != null && right != null) {
-                    if (kind == LogicOperationKind.AND)
-                        logicSystem.andForTypeStatements(left, right)
-                    else
-                        logicSystem.orForTypeStatements(left, right)
-                } else (left ?: right)
+            return variableStorage.getOrCreateRealVariable(flow, parameterSymbol, parameter)?.takeIf {
+                it.stability == PropertyStability.STABLE_VALUE ||
+                        // TODO: consider removing the part below
+                        it.stability == PropertyStability.LOCAL_VAR
             }
-            is ConeIsInstancePredicate -> buildTypeStatements(arg, !isNegated, type)
-            is ConeIsNullPredicate -> buildTypeStatements(arg, isNegated, context.session.builtinTypes.anyType.type)
-            is ConeLogicalNot -> arg.buildTypeStatements(function, logicSystem, variableStorage, flow, context)
-                ?.mapValuesTo(mutableMapOf()) { (_, value) -> value.invert() }
+        }
 
+        fun ConeBooleanExpression.toTypeStatements(inverted: Boolean): TypeStatements? = when (this) {
+            is ConeBinaryLogicExpression -> {
+                val left = left.toTypeStatements(inverted)
+                val right = right.toTypeStatements(inverted)
+                when {
+                    left == null -> right
+                    right == null -> left
+                    (kind == LogicOperationKind.AND) == !inverted -> logicSystem.andForTypeStatements(left, right)
+                    else -> logicSystem.orForTypeStatements(left, right)
+                }
+            }
+            is ConeIsInstancePredicate ->
+                getOrCreateRealVariable(arg)?.let {
+                    if (isNegated == inverted) it typeEq type else it typeNotEq type
+                }?.singleton()
+            is ConeIsNullPredicate ->
+                getOrCreateRealVariable(arg)?.nullabilityStatement(context.session.builtinTypes, isNull = isNegated == inverted)
+                    ?.singleton()
+            is ConeLogicalNot -> arg.toTypeStatements(!inverted)
             else -> null
         }
+
+        return toTypeStatements(inverted = false)
     }
+
+    private fun RealVariable.nullabilityStatement(builtinTypes: BuiltinTypes, isNull: Boolean) =
+        // TODO: opposite for builtinTypes.nullableNothingType.type
+        if (isNull) this typeNotEq builtinTypes.anyType.type else this typeEq builtinTypes.anyType.type
+
+    private fun TypeStatement.singleton(): TypeStatements =
+        mapOf(variable to this)
 
     private fun ConeKotlinType.isInapplicableWith(operation: Operation, session: FirSession): Boolean {
         return (operation == Operation.EqFalse || operation == Operation.EqTrue)
@@ -201,14 +212,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         kind == ConstantValueKind.Boolean && operation == Operation.EqTrue -> (value as Boolean)
         kind == ConstantValueKind.Boolean && operation == Operation.EqFalse -> !(value as Boolean)
         else -> true
-    }
-
-    private fun simpleTypeStatement(realVar: RealVariable, exactType: Boolean, type: ConeKotlinType): MutableTypeStatement {
-        return MutableTypeStatement(
-            realVar,
-            if (exactType) linkedSetOf(type) else linkedSetOf(),
-            if (!exactType) linkedSetOf(type) else linkedSetOf()
-        )
     }
 
     private fun CFGNode<*>.collectBranchExits(nodes: MutableList<CFGNode<*>> = mutableListOf()): List<CFGNode<*>> {
