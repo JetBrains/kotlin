@@ -118,7 +118,6 @@ class TraceInformationTest : AbstractIrTransformTest() {
             fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<A()>,<Wrappe...>,<A()>:Test.kt")
-              val tmp0_marker = %composer.currentMarker
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
@@ -134,7 +133,6 @@ class TraceInformationTest : AbstractIrTransformTest() {
                   if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
                     A(%composer, 0)
                     if (!condition) {
-                      %composer.endToMarker(tmp0_marker)
                       if (isTraceInProgress()) {
                         traceEventEnd()
                       }
