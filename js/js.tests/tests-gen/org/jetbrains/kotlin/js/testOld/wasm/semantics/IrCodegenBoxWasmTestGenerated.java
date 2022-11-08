@@ -5450,6 +5450,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
                 }
 
+                @TestMetadata("initializerBlock.kt")
+                public void testInitializerBlock() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/initializerBlock.kt");
+                }
+
                 @TestMetadata("inlineFunctionWithMultipleParameters.kt")
                 public void testInlineFunctionWithMultipleParameters() throws Exception {
                     runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/inlineFunctionWithMultipleParameters.kt");
