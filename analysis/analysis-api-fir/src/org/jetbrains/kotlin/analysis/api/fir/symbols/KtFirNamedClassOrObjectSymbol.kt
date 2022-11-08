@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberClassOrObjectSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelClassOrObjectSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -109,10 +107,9 @@ internal class KtFirNamedClassOrObjectSymbol(
 
         when (val symbolKind = symbolKind) {
             KtSymbolKind.LOCAL ->
-                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString().orEmpty())
+                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
 
-            KtSymbolKind.CLASS_MEMBER -> KtFirMemberClassOrObjectSymbolPointer(requireOwnerPointer(), name)
-            KtSymbolKind.TOP_LEVEL -> KtFirTopLevelClassOrObjectSymbolPointer(classIdIfNonLocal!!)
+            KtSymbolKind.CLASS_MEMBER, KtSymbolKind.TOP_LEVEL -> KtFirClassLikeSymbolPointer(classIdIfNonLocal!!) { it as? KtNamedClassOrObjectSymbol }
             else -> throw UnsupportedSymbolKind(this::class, symbolKind)
         }
     }
