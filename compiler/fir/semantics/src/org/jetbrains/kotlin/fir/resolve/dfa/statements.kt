@@ -34,9 +34,11 @@ abstract class TypeStatement : Statement<TypeStatement>() {
     abstract val exactType: Set<ConeKotlinType>
     abstract val exactNotType: Set<ConeKotlinType>
 
-    abstract operator fun plus(other: TypeStatement): TypeStatement
-    abstract val isEmpty: Boolean
-    val isNotEmpty: Boolean get() = !isEmpty
+    val isEmpty: Boolean
+        get() = exactType.isEmpty() && exactNotType.isEmpty()
+
+    val isNotEmpty: Boolean
+        get() = !isEmpty
 
     override fun toString(): String {
         return "$variable: $exactType, $exactNotType"

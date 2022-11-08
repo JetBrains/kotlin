@@ -12,33 +12,17 @@ import kotlin.contracts.contract
 
 // --------------------------------------- Facts ---------------------------------------
 
-operator fun TypeStatement.plus(other: TypeStatement?): TypeStatement = other?.let { this + other } ?: this
-
 class MutableTypeStatement(
     override val variable: RealVariable,
     override val exactType: MutableSet<ConeKotlinType> = linkedSetOf(),
     override val exactNotType: MutableSet<ConeKotlinType> = linkedSetOf()
 ) : TypeStatement() {
-    override fun plus(other: TypeStatement): MutableTypeStatement = MutableTypeStatement(
-        variable,
-        LinkedHashSet(exactType).apply { addAll(other.exactType) },
-        LinkedHashSet(exactNotType).apply { addAll(other.exactNotType) }
-    )
-
-    override val isEmpty: Boolean
-        get() = exactType.isEmpty() && exactType.isEmpty()
-
     override fun invert(): MutableTypeStatement {
         return MutableTypeStatement(
             variable,
             LinkedHashSet(exactNotType),
             LinkedHashSet(exactType)
         )
-    }
-
-    operator fun plusAssign(info: TypeStatement) {
-        exactType += info.exactType
-        exactNotType += info.exactNotType
     }
 
     fun copy(): MutableTypeStatement = MutableTypeStatement(variable, LinkedHashSet(exactType), LinkedHashSet(exactNotType))
@@ -51,17 +35,8 @@ fun Implication.invertCondition(): Implication = Implication(condition.invert(),
 typealias TypeStatements = Map<RealVariable, TypeStatement>
 typealias MutableTypeStatements = MutableMap<RealVariable, MutableTypeStatement>
 
-typealias MutableOperationStatements = MutableMap<RealVariable, MutableTypeStatement>
-
-fun MutableTypeStatements.addStatement(variable: RealVariable, statement: TypeStatement) {
-    put(variable, statement.asMutableStatement()) { it.apply { this += statement } }
-}
-
-fun MutableTypeStatements.mergeTypeStatements(other: TypeStatements) {
-    other.forEach { (variable, info) ->
-        addStatement(variable, info)
-    }
-}
+fun TypeStatements.asMutableStatements(): MutableTypeStatements =
+    mapValuesTo(mutableMapOf()) { it.value.asMutableStatement() }
 
 // --------------------------------------- DSL ---------------------------------------
 

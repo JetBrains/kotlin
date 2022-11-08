@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.types.ConeInferenceContext
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.canBeNull
-import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
+import org.jetbrains.kotlin.fir.types.*
 
 abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceContext) {
     // ------------------------------- Flow operations -------------------------------
@@ -85,11 +82,8 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         return approveOperationStatement(flow, approvedStatement, statements).values
     }
 
-    fun orForTypeStatements(
-        left: TypeStatements,
-        right: TypeStatements,
-    ): MutableTypeStatements {
-        if (left.isNullOrEmpty() || right.isNullOrEmpty()) return mutableMapOf()
+    fun orForTypeStatements(left: TypeStatements, right: TypeStatements): MutableTypeStatements {
+        if (left.isEmpty() || right.isEmpty()) return mutableMapOf()
         val map = mutableMapOf<RealVariable, MutableTypeStatement>()
         for (variable in left.keys.intersect(right.keys)) {
             val leftStatement = left.getValue(variable)
@@ -99,63 +93,55 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         return map
     }
 
-    // ------------------------------- Util functions -------------------------------
-
-    // TODO
-    protected fun <E> Collection<Collection<E>>.intersectSets(): Set<E> {
-        if (isEmpty()) return emptySet()
-        val iterator = iterator()
-        val result = LinkedHashSet<E>(iterator.next())
-        while (iterator.hasNext()) {
-            result.retainAll(iterator.next())
+    fun andForTypeStatements(left: TypeStatements, right: TypeStatements): MutableTypeStatements {
+        if (left.isEmpty() && right.isEmpty()) return mutableMapOf()
+        val map = left.asMutableStatements()
+        for ((variable, rightStatement) in right) {
+            map[variable] = and(listOfNotNull(map[variable], rightStatement))
         }
-        return result
+        return map
     }
 
-    private inline fun manipulateTypeStatements(
-        statements: Collection<TypeStatement>,
-        op: (Collection<Set<ConeKotlinType>>) -> MutableSet<ConeKotlinType>
-    ): MutableTypeStatement {
+    // ------------------------------- Util functions -------------------------------
+
+    private fun foldStatements(statements: Collection<TypeStatement>, all: Boolean): MutableTypeStatement {
         require(statements.isNotEmpty())
         statements.singleOrNull()?.let { return it.asMutableStatement() }
         val variable = statements.first().variable
         assert(statements.all { it.variable == variable })
-        val exactType = op.invoke(statements.map { it.exactType })
-        val exactNotType = op.invoke(statements.map { it.exactNotType })
-        return MutableTypeStatement(variable, exactType, exactNotType)
+        // TypeStatement(variable, exactType, exactNotType) =
+        //   variable is intersect(exactType) && variable !is intersect(exactNotType)
+        // So `and` of two type statements computes `and` of exactType and `or` of `exactNotType`,
+        // while `or` is the opposite.
+        return if (all) {
+            val exactType = statements.flatMapTo(mutableSetOf()) { it.exactType }
+            // variable !is a && variable !is b =/=> variable !is commonSuperType(a, b)
+            // So in this case we can only take the union if either type is a subtype of the other.
+            val exactNotType = unifyTypes(statements.map { it.exactNotType }, onlyInputTypes = true)
+            MutableTypeStatement(variable, exactType, exactNotType?.let { mutableSetOf(it) } ?: mutableSetOf())
+        } else {
+            val exactType = unifyTypes(statements.map { it.exactType }, onlyInputTypes = false)
+            val exactNotType = statements.flatMapTo(mutableSetOf()) { it.exactNotType }
+            MutableTypeStatement(variable, exactType?.let { mutableSetOf(it) } ?: mutableSetOf(), exactNotType)
+        }
     }
 
-    protected fun or(statements: Collection<TypeStatement>): MutableTypeStatement =
-        manipulateTypeStatements(statements, ::orForTypes)
-
-    private fun orForTypes(types: Collection<Set<ConeKotlinType>>): MutableSet<ConeKotlinType> {
-        if (types.any { it.isEmpty() }) return mutableSetOf()
-        val intersectedTypes = types.map {
-            if (it.size > 1) {
-                context.intersectTypes(it.toList())
-            } else {
-                assert(it.size == 1) { "We've already checked each set of types is not empty." }
-                it.single()
-            }
-        }
-        val result = mutableSetOf<ConeKotlinType>()
-        context.commonSuperTypeOrNull(intersectedTypes)?.let {
-            if (it.isAcceptableForSmartcast()) {
-                result.add(it)
-            } else if (!it.canBeNull) {
-                result.add(context.anyType())
-            }
-            Unit
-        }
-        return result
+    private fun unifyTypes(types: Collection<Set<ConeKotlinType>>, onlyInputTypes: Boolean): ConeKotlinType? {
+        if (types.any { it.isEmpty() }) return null
+        val intersected = types.map { ConeTypeIntersector.intersectTypes(context, it.toList()) }
+        val unified = context.commonSuperTypeOrNull(intersected) ?: return null
+        return when {
+            unified.isAcceptableForSmartcast() -> unified
+            unified.canBeNull -> null
+            else -> context.anyType()
+        }.takeIf { !onlyInputTypes || it in intersected }
     }
 
     protected fun and(statements: Collection<TypeStatement>): MutableTypeStatement =
-        manipulateTypeStatements(statements, ::andForTypes)
+        foldStatements(statements, all = true)
 
-    private fun andForTypes(types: Collection<Set<ConeKotlinType>>): MutableSet<ConeKotlinType> {
-        return types.flatMapTo(mutableSetOf()) { it }
-    }
+    protected fun or(statements: Collection<TypeStatement>): MutableTypeStatement =
+        foldStatements(statements, all = false)
 }
 
 fun <FLOW : Flow> LogicSystem<FLOW>.approveOperationStatement(

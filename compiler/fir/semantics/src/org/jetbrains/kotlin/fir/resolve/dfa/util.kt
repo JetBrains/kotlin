@@ -26,13 +26,14 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunction: (existing: V) -> V) {
+internal inline fun <K, V> MutableMap<K, V>.put(key: K, valueProducer: () -> V, remappingFunction: (existing: V) -> V) {
     contract {
         callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(valueProducer, InvocationKind.AT_MOST_ONCE)
     }
     val existing = this[key]
     if (existing == null) {
-        put(key, value)
+        put(key, valueProducer())
     } else {
         put(key, remappingFunction(existing))
     }
