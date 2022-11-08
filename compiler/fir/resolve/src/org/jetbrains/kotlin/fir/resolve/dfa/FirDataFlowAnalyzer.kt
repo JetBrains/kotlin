@@ -433,7 +433,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                         val expressionVariable = variableStorage.createSyntheticVariable(typeOperatorCall)
                         if (operandVariable.isReal()) {
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
-                            flow.addImplication((expressionVariable notEq isType) implies (operandVariable typeNotEq type))
                         }
                         if (!type.canBeNull) {
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable notEq null))
@@ -459,9 +458,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
                 if (operandVariable.isReal()) {
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEq type))
-                    if (!type.canBeNull) {
-                        flow.addImplication((expressionVariable eq null) implies (operandVariable typeNotEq type))
-                    }
                 }
             }
 
@@ -614,12 +610,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         if (leftOperandVariable.isReal()) {
             flow.addImplication((expressionVariable eq isEq) implies (leftOperandVariable typeEq rightOperandType))
-            flow.addImplication((expressionVariable notEq isEq) implies (leftOperandVariable typeNotEq rightOperandType))
         }
 
         if (rightOperandVariable.isReal()) {
             flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq leftOperandType))
-            flow.addImplication((expressionVariable notEq isEq) implies (rightOperandVariable typeNotEq leftOperandType))
         }
     }
 
@@ -686,7 +680,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private fun FLOW.assumeNotNull(variable: DataFlowVariable, shouldForkFlow: Boolean, shouldRemoveSynthetics: Boolean): FLOW =
         logicSystem.approveStatementsInsideFlow(this, variable notEq null, shouldForkFlow, shouldRemoveSynthetics).also {
             if (variable is RealVariable) {
-                it.addTypeStatement(variable typeEq any andTypeNotEq nullableNothing)
+                it.addTypeStatement(variable typeEq any)
             }
         }
 
@@ -1446,8 +1440,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             val variable = effect.variable
             if (variable.isReal()) {
                 when (effect.operation) {
-                    Operation.EqNull -> variable typeEq nullableNothing andTypeNotEq any
-                    Operation.NotEqNull -> variable typeEq any andTypeNotEq nullableNothing
+                    Operation.EqNull -> variable typeEq nullableNothing
+                    Operation.NotEqNull -> variable typeEq any
                     else -> null
                 }?.let { logicSystem.addImplication(this, statement.condition implies it) }
             }

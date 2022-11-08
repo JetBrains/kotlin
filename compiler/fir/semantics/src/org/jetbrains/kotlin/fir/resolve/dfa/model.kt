@@ -15,9 +15,8 @@ import kotlin.contracts.contract
 class MutableTypeStatement(
     override val variable: RealVariable,
     override val exactType: MutableSet<ConeKotlinType> = linkedSetOf(),
-    override val exactNotType: MutableSet<ConeKotlinType> = linkedSetOf()
 ) : TypeStatement() {
-    fun copy(): MutableTypeStatement = MutableTypeStatement(variable, LinkedHashSet(exactType), LinkedHashSet(exactNotType))
+    fun copy(): MutableTypeStatement = MutableTypeStatement(variable, LinkedHashSet(exactType))
 }
 
 fun Implication.invertCondition(): Implication = Implication(condition.invert(), effect)
@@ -49,25 +48,7 @@ infix fun DataFlowVariable.notEq(constant: Boolean?): OperationStatement {
 infix fun OperationStatement.implies(effect: Statement): Implication = Implication(this, effect)
 
 infix fun RealVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
-    MutableTypeStatement(this) andTypeEq type
-
-infix fun RealVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
-    MutableTypeStatement(this) andTypeNotEq type
-
-infix fun MutableTypeStatement.andTypeEq(type: ConeKotlinType): MutableTypeStatement =
-    this.apply {
-        if (type !is ConeErrorType) {
-            exactType += type
-        }
-    }
-
-infix fun MutableTypeStatement.andTypeNotEq(type: ConeKotlinType): MutableTypeStatement =
-    this.apply {
-        require(exactNotType.isEmpty()) { "statement $this already has a negation; use `logicSystem.and`" }
-        if (type !is ConeErrorType) {
-            exactNotType += type
-        }
-    }
+    MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type))
 
 // --------------------------------------- Utils ---------------------------------------
 

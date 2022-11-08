@@ -16,7 +16,6 @@ import kotlin.math.max
 data class PersistentTypeStatement(
     override val variable: RealVariable,
     override val exactType: PersistentSet<ConeKotlinType>,
-    override val exactNotType: PersistentSet<ConeKotlinType>
 ) : TypeStatement()
 
 typealias PersistentApprovedTypeStatements = PersistentMap<RealVariable, PersistentTypeStatement>
@@ -391,7 +390,7 @@ private fun lowestCommonFlow(left: PersistentFlow, right: PersistentFlow): Persi
 
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
     is PersistentTypeStatement -> this
-    else -> PersistentTypeStatement(variable, exactType.toPersistentSet(), exactNotType.toPersistentSet())
+    else -> PersistentTypeStatement(variable, exactType.toPersistentSet())
 }
 
 @JvmName("replaceVariableInStatements")
@@ -436,5 +435,5 @@ private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Sta
     if (variable != from) this else when (this) {
         is OperationStatement -> copy(variable = to)
         is PersistentTypeStatement -> copy(variable = to)
-        is MutableTypeStatement -> MutableTypeStatement(to, exactType, exactNotType)
+        is MutableTypeStatement -> MutableTypeStatement(to, exactType)
     }

@@ -181,9 +181,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
                 }
             }
             is ConeIsInstancePredicate ->
-                getOrCreateRealVariable(arg)?.let {
-                    if (isNegated == inverted) it typeEq type else it typeNotEq type
-                }?.singleton()
+                if (isNegated == inverted) getOrCreateRealVariable(arg)?.let { it typeEq type }?.singleton() else mapOf()
             is ConeIsNullPredicate ->
                 getOrCreateRealVariable(arg)?.nullabilityStatement(context.session.builtinTypes, isNull = isNegated == inverted)
                     ?.singleton()
@@ -195,10 +193,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     }
 
     private fun RealVariable.nullabilityStatement(builtinTypes: BuiltinTypes, isNull: Boolean) =
-        if (isNull)
-            this typeEq builtinTypes.nullableNothingType.type andTypeNotEq builtinTypes.anyType.type
-        else
-            this typeEq builtinTypes.anyType.type andTypeNotEq builtinTypes.nullableNothingType.type
+        this typeEq (if (isNull) builtinTypes.nullableNothingType.type else builtinTypes.anyType.type)
 
     private fun TypeStatement.singleton(): TypeStatements =
         mapOf(variable to this)

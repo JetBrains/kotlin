@@ -91,31 +91,18 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         }
     }
 
-    // ------------------------------- Util functions -------------------------------
-
-    private fun foldStatements(statements: Collection<TypeStatement>, all: Boolean): TypeStatement {
-        require(statements.isNotEmpty())
-        statements.singleOrNull()?.let { return it }
-        val variable = statements.first().variable
-        assert(statements.all { it.variable == variable })
-        // TypeStatement(variable, exactType, exactNotType) =
-        //   variable is intersect(exactType) && variable !is intersect(exactNotType)
-        // So `and` of two type statements computes `and` of exactType and `or` of `exactNotType`,
-        // while `or` is the opposite.
-        return if (all) {
-            val exactType = statements.flatMapTo(mutableSetOf()) { it.exactType }
-            // variable !is a && variable !is b =/=> variable !is commonSuperType(a, b)
-            // So in this case we can only take the union if either type is a subtype of the other.
-            val exactNotType = unifyTypes(statements.map { it.exactNotType }, onlyInputTypes = true)
-            MutableTypeStatement(variable, exactType, exactNotType?.let { mutableSetOf(it) } ?: mutableSetOf())
-        } else {
-            val exactType = unifyTypes(statements.map { it.exactType }, onlyInputTypes = false)
-            val exactNotType = statements.flatMapTo(mutableSetOf()) { it.exactNotType }
-            MutableTypeStatement(variable, exactType?.let { mutableSetOf(it) } ?: mutableSetOf(), exactNotType)
+    private inline fun Collection<TypeStatement>.singleOrNew(exactType: () -> MutableSet<ConeKotlinType>): TypeStatement =
+        when (size) {
+            0 -> throw AssertionError("need at least one statement")
+            1 -> first()
+            else -> {
+                val variable = first().variable
+                assert(all { it.variable == variable }) { "folding statements for different variables" }
+                MutableTypeStatement(variable, exactType())
+            }
         }
-    }
 
-    private fun unifyTypes(types: Collection<Set<ConeKotlinType>>, onlyInputTypes: Boolean): ConeKotlinType? {
+    private fun unifyTypes(types: Collection<Set<ConeKotlinType>>): ConeKotlinType? {
         if (types.any { it.isEmpty() }) return null
         val intersected = types.map { ConeTypeIntersector.intersectTypes(context, it.toList()) }
         val unified = context.commonSuperTypeOrNull(intersected) ?: return null
@@ -123,14 +110,14 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
             unified.isAcceptableForSmartcast() -> unified
             unified.canBeNull -> null
             else -> context.anyType()
-        }.takeIf { !onlyInputTypes || it in intersected }
+        }
     }
 
     protected fun and(statements: Collection<TypeStatement>): TypeStatement =
-        foldStatements(statements, all = true)
+        statements.singleOrNew { statements.flatMapTo(mutableSetOf()) { it.exactType } }
 
     protected fun or(statements: Collection<TypeStatement>): TypeStatement =
-        foldStatements(statements, all = false)
+        statements.singleOrNew { unifyTypes(statements.map { it.exactType })?.let { mutableSetOf(it) } ?: mutableSetOf() }
 }
 
 /*
