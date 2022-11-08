@@ -79,7 +79,7 @@ class Fir2IrVisitor(
 
     override fun visitField(field: FirField, data: Any?): IrField {
         if (field.isSynthetic) {
-            return declarationStorage.getCachedIrField(field)!!.apply {
+            return declarationStorage.getCachedIrDelegateOrBackingField(field)!!.apply {
                 // If this is a property backing field, then it has no separate initializer,
                 // so we shouldn't convert it
                 if (correspondingPropertySymbol == null) {

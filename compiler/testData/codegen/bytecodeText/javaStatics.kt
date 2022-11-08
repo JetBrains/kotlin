@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
 // FILE: Child.java
 
 class Child extends Parent {

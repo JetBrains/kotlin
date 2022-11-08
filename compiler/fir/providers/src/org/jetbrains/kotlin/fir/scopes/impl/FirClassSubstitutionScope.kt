@@ -310,7 +310,9 @@ class FirClassSubstitutionScope(
         // TODO: do we have fields with implicit type?
         val newReturnType = returnType?.substitute() ?: return original
 
-        return FirFakeOverrideGenerator.createSubstitutionOverrideField(session, member, original, newReturnType, newOwnerClassId)
+        return FirFakeOverrideGenerator.createSubstitutionOverrideField(
+            session, member, original, newReturnType, newOwnerClassId, withInitializer = false
+        )
     }
 
     fun createSubstitutionOverrideSyntheticProperty(original: FirSyntheticPropertySymbol): FirSyntheticPropertySymbol {
