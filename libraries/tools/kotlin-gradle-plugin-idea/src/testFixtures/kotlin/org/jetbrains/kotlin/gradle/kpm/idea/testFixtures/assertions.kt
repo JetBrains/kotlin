@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
+import org.jetbrains.kotlin.gradle.idea.kpm.*
 import org.jetbrains.kotlin.gradle.kpm.idea.*
 import kotlin.test.fail
 

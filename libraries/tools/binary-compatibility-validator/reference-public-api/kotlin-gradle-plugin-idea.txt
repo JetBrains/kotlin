@@ -233,15 +233,15 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmExtrasS
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmExtrasSerializer {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmExtrasSerializer$Companion;
-	public abstract fun deserialize (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;[B)Ljava/lang/Object;
-	public abstract fun serialize (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;Ljava/lang/Object;)[B
+	public abstract fun deserialize (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaSerializationContext;[B)Ljava/lang/Object;
+	public abstract fun serialize (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaSerializationContext;Ljava/lang/Object;)[B
 }
 
 public final class org/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmExtrasSerializer$Companion {
 	public final fun javaIoSerializable (Lkotlin/reflect/KClass;)Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmExtrasSerializer;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext {
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaSerializationContext {
 	public abstract fun getExtrasSerializationExtension ()Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmExtrasSerializationExtension;
 	public abstract fun getLogger ()Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationLogger;
 }

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
 import org.jetbrains.kotlin.tooling.core.Extras
@@ -16,7 +18,7 @@ internal class IdeMultiplatformImportImpl(
     private val extension: KotlinMultiplatformExtension
 ) : IdeMultiplatformImport {
 
-    override fun resolveDependencies(sourceSet: KotlinSourceSet): Set<IdeDependency> {
+    override fun resolveDependencies(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         return createDependencyResolver().resolve(sourceSet)
     }
 
@@ -45,7 +47,7 @@ internal class IdeMultiplatformImportImpl(
     private val registeredDependencyResolvers = mutableListOf<RegisteredDependencyResolver>()
     private val registeredDependencyTransformers = mutableListOf<RegisteredDependencyTransformer>()
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
-    private val registeredExtrasSerializationExtensions = mutableListOf<IdeExtrasSerializationExtension>()
+    private val registeredExtrasSerializationExtensions = mutableListOf<IdeaExtrasSerializationExtension>()
 
     @ExternalKotlinTargetApi
     override fun registerDependencyResolver(
@@ -78,7 +80,7 @@ internal class IdeMultiplatformImportImpl(
     }
 
     @ExternalKotlinTargetApi
-    override fun registerExtrasSerializationExtension(extension: IdeExtrasSerializationExtension) {
+    override fun registerExtrasSerializationExtension(extension: IdeaExtrasSerializationExtension) {
         registeredExtrasSerializationExtensions.add(extension)
     }
 

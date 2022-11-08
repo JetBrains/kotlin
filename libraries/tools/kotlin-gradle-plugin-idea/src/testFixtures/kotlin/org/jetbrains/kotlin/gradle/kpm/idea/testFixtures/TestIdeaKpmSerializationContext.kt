@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
 
-class TestIdeaKpmSerializationContext : IdeaKpmSerializationContext {
-    override val logger = TestIdeaKpmSerializationLogger()
+class TestIdeaSerializationContext : IdeaSerializationContext {
+    override val logger = TestIdeaSerializationLogger()
     override val extrasSerializationExtension = TestIdeaKpmExtrasSerializationExtension
 }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.*
+import org.jetbrains.kotlin.gradle.idea.kpm.*
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals

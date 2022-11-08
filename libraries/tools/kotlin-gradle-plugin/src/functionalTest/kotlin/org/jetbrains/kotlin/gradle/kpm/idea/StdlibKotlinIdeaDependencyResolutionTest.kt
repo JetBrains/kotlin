@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmBinaryDependencyMatcher
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertIsNotEmpty

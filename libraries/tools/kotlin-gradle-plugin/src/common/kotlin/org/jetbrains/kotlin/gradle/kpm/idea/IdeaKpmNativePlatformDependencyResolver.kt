@@ -9,6 +9,10 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependencyImpl
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantInternal

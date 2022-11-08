@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmVariant
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmVariant
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmInstances
 import kotlin.test.Test
 

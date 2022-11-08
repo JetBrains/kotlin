@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryCoordinatesImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmResolvedBinaryDependencyImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependencyImpl
 import org.jetbrains.kotlin.tooling.core.emptyExtras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.extrasOf
 import org.jetbrains.kotlin.tooling.core.withValue
 import java.io.File
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class ResolvedBinaryDependencyTest : AbstractSerializationTest<IdeaKpmResolvedBinaryDependency>() {
 

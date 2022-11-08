@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmInstances
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmSerializationLogger
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaSerializationLogger
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class ContainerTest : IdeaKpmSerializationContext {
-    override val logger = TestIdeaKpmSerializationLogger()
+class ContainerTest : IdeaSerializationContext {
+    override val logger = TestIdeaSerializationLogger()
     override val extrasSerializationExtension = TestIdeaKpmExtrasSerializationExtension
 
     @Test
