@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
@@ -111,4 +112,9 @@ fun Project.enableDefaultStdlibDependency(enabled: Boolean = true) {
 
 fun Project.setMultiplatformAndroidSourceSetLayoutVersion(version: Int) {
     project.propertiesExtension.set(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION, version.toString())
+}
+
+fun Project.enableDependencyVerification(enabled: Boolean = true) {
+    gradle.startParameter.dependencyVerificationMode = if (enabled) DependencyVerificationMode.STRICT
+    else DependencyVerificationMode.OFF
 }

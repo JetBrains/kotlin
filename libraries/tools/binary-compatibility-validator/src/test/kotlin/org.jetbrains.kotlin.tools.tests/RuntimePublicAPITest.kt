@@ -19,51 +19,66 @@ class RuntimePublicAPITest {
     @[Rule JvmField]
     val testName = TestName()
 
-    @Test fun kotlinStdlibRuntimeMerged() {
+    @Test
+    fun kotlinStdlibRuntimeMerged() {
         snapshotAPIAndCompare("../../stdlib/jvm/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
     }
 
-    @Test fun kotlinStdlibJdk7() {
+    @Test
+    fun kotlinStdlibJdk7() {
         snapshotAPIAndCompare("../../stdlib/jdk7/build/libs", "kotlin-stdlib-jdk7")
     }
 
-    @Test fun kotlinStdlibJdk8() {
+    @Test
+    fun kotlinStdlibJdk8() {
         snapshotAPIAndCompare("../../stdlib/jdk8/build/libs", "kotlin-stdlib-jdk8")
     }
 
-    @Test fun kotlinReflect() {
-        snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
+    @Test
+    fun kotlinReflect() {
+        snapshotAPIAndCompare(
+            "../../reflect/api/build/libs",
+            "kotlin-reflect-api(?!-[-a-z]+)",
+            nonPublicPackages = listOf("kotlin.reflect.jvm.internal")
+        )
     }
 
-    @Test fun kotlinGradlePluginAnnotations() {
+    @Test
+    fun kotlinGradlePluginAnnotations() {
         snapshotAPIAndCompare(
             "../kotlin-gradle-plugin-annotations/build/libs", "kotlin-gradle-plugin-annotations(?!-[-a-z]+)",
             nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
         )
     }
 
-    @Test fun kotlinGradlePluginApi() {
+    @Test
+    fun kotlinGradlePluginApi() {
         snapshotAPIAndCompare(
             "../kotlin-gradle-plugin-api/build/libs", "kotlin-gradle-plugin-api(?!-[-a-z]+)",
             nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
         )
     }
 
-    @Test fun kotlinGradlePluginIdea() {
+    @Test
+    fun kotlinGradlePluginIdea() {
         snapshotAPIAndCompare(
             "../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)",
             nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
         )
     }
 
-    @Test fun kotlinGradlePluginIdeaProto() {
+    @Test
+    fun kotlinGradlePluginIdeaProto() {
         snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea-proto/build/libs", "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
+            basePath = "../kotlin-gradle-plugin-idea-proto/build/libs",
+            jarPattern = "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
+            nonPublicPackages = listOf("org/jetbrains/kotlin/gradle/idea/proto/generated"),
             nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
         )
     }
 
-    @Test fun kotlinToolingCore() {
+    @Test
+    fun kotlinToolingCore() {
         snapshotAPIAndCompare("../kotlin-tooling-core/build/libs", "kotlin-tooling-core(?!-[-a-z]+)")
     }
 
@@ -95,10 +110,13 @@ class RuntimePublicAPITest {
         val versionPattern = kotlinVersion?.let { "-" + Regex.escape(it) } ?: ".+"
         val regex = Regex(jarPattern + versionPattern + "\\.jar")
         val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
-            .filter { it.name.let {
+            .filter {
+                it.name.let {
                     it matches regex
                             && !it.endsWith("-sources.jar")
-                            && !it.endsWith("-javadoc.jar") } }
+                            && !it.endsWith("-javadoc.jar")
+                }
+            }
 
         return files.singleOrNull() ?: throw Exception("No single file matching $regex in $base:\n${files.joinToString("\n")}")
     }

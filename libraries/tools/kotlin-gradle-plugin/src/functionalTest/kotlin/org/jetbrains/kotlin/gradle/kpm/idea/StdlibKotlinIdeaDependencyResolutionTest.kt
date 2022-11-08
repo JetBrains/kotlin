@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmBinaryDependencyMatcher
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertIsNotEmpty
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertResolvedBinaryDependencies
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmBinaryDependencyMatcher
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertContainsFragment
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertIsNotEmpty
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertResolvedBinaryDependencies
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosArm64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant

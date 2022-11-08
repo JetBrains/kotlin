@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.testUtils
 
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationLogger
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmClassLoaderProjectSerializer
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmClassLoaderProjectSerializer
 import java.io.File
 import java.net.URLClassLoader
 import kotlin.test.assertEquals

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.tcs
 
-import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import java.io.File
 
 sealed class IdeaKotlinBinaryDependency : IdeaKotlinDependency {
@@ -15,12 +15,12 @@ sealed class IdeaKotlinBinaryDependency : IdeaKotlinDependency {
 data class IdeaKotlinResolvedBinaryDependency(
     val binaryType: String,
     val binaryFile: File,
-    override val extras: Extras,
+    override val extras: MutableExtras,
     override val coordinates: IdeaKotlinBinaryCoordinates?
 ) : IdeaKotlinBinaryDependency()
 
 data class IdeaKotlinUnresolvedBinaryDependency(
     val cause: String?,
     override val coordinates: IdeaKotlinBinaryCoordinates?,
-    override val extras: Extras
+    override val extras: MutableExtras
 ) : IdeaKotlinBinaryDependency()

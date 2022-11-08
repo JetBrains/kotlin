@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.idea.kpm
 
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.*
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmInstances
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertContainsFragment
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertContainsModule
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.copy
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.createProxyInstance
 import org.jetbrains.kotlin.gradle.idea.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
 import org.junit.Test
 import kotlin.test.assertEquals

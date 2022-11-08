@@ -9,8 +9,8 @@ package org.jetbrains.kotlin.gradle.ide
 
 import org.jetbrains.kotlin.gradle.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.ide.testFixtures.assertMatches
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import kotlin.test.Test
 
