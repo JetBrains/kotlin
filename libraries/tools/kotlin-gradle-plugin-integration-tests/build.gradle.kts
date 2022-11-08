@@ -12,6 +12,10 @@ pill {
 
 testsJar()
 
+kotlin.sourceSets.all {
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+}
+
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
