@@ -47,6 +47,12 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
     }
 
     @Test
+    @TestMetadata("anonymousFunction.kt")
+    public void testAnonymousFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/anonymousFunction.kt");
+    }
+
+    @Test
     @TestMetadata("arrayElement_arrayOfNulls.kt")
     public void testArrayElement_arrayOfNulls() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElement_arrayOfNulls.kt");

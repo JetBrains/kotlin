@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.getReferencedElementType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -31,6 +29,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal class KtFirExpressionTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -96,18 +96,31 @@ internal class KtFirExpressionTypeProvider(
     }
 
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
-        val firDeclaration = when {
-            declaration is KtNamedFunction && declaration.name == null ->
-                declaration.getOrBuildFirOfType<FirAnonymousFunctionExpression>(firResolveSession).anonymousFunction
-            else ->
-                declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveSession)
-        }
+        val firDeclaration = if (isAnonymousFunction(declaration))
+            declaration.toFirAnonymousFunction()
+        else
+            declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveSession)
         return firDeclaration.returnTypeRef.coneType.asKtType()
     }
 
     override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType {
-        val firFunction = declaration.getOrBuildFirOfType<FirFunction>(firResolveSession)
+        val firFunction = if (isAnonymousFunction(declaration))
+            declaration.toFirAnonymousFunction()
+        else
+            declaration.getOrBuildFirOfType<FirFunction>(firResolveSession)
         return firFunction.constructFunctionalType(firFunction.isSuspend).asKtType()
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun isAnonymousFunction(ktDeclaration: KtDeclaration): Boolean {
+        contract {
+            returns(true) implies (ktDeclaration is KtNamedFunction)
+        }
+        return ktDeclaration is KtFunction && ktDeclaration.name == null
+    }
+
+    private fun KtFunction.toFirAnonymousFunction(): FirAnonymousFunction {
+        return getOrBuildFirOfType<FirAnonymousFunctionExpression>(firResolveSession).anonymousFunction
     }
 
     override fun getExpectedType(expression: PsiElement): KtType? {
