@@ -444,6 +444,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         configureSpecificCompilerArguments(arguments, sourceRoots);
 
         try {
+            args.removeAll(Collections.singleton(null));
             compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);
         }
         catch (IllegalArgumentException e) {
