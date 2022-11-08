@@ -1232,51 +1232,41 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
          * TODO: Here we should handle case when one of arguments is dead (e.g. in cases `false && expr` or `true || expr`)
          *  But since conditions with const are rare it can be delayed
          */
-
         val leftVariable = variableStorage.getOrCreateVariable(flow, binaryLogicExpression.leftOperand)
         val rightVariable = variableStorage.getOrCreateVariable(flow, binaryLogicExpression.rightOperand)
         val operatorVariable = variableStorage.getOrCreateVariable(flow, binaryLogicExpression)
 
         if (!node.leftOperandNode.isDead && node.rightOperandNode.isDead) {
-            /*
-             * If there was a jump from right argument then we know that we well exit from
-             *   boolean operator only if right operand was not executed
-             *
-             *   a && return => a == false
-             *   a || return => a == true
-             */
+            // If the right operand does not terminate, then we know that the value of the entire expression
+            // has to be `onlyLeftEvaluated`, and it has to be produced by the left operand.
             logicSystem.approveStatementsInsideFlow(
                 flow,
-                leftVariable eq !isAnd,
+                leftVariable eq onlyLeftEvaluated,
                 shouldForkFlow = false,
                 shouldRemoveSynthetics = true
             )
         } else {
-            val (conditionalFromLeft, conditionalFromRight, approvedFromRight) = logicSystem.collectInfoForBooleanOperator(
-                flowFromLeft,
-                leftVariable,
-                flowFromRight,
-                rightVariable
-            )
+            val (conditionalFromLeft, conditionalFromRight, approvedFromRight) =
+                logicSystem.collectInfoForBooleanOperator(flowFromLeft, leftVariable, flowFromRight, rightVariable)
 
-            // left && right == True
-            // left || right == False
-            val approvedIfTrue: MutableTypeStatements = mutableMapOf()
-            logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, leftVariable eq bothEvaluated, conditionalFromLeft)
-            logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, rightVariable eq bothEvaluated, conditionalFromRight)
-            logicSystem.andForTypeStatements(approvedIfTrue, approvedFromRight).values.forEach {
-                flow.addImplication((operatorVariable eq bothEvaluated) implies it)
+            // If `left && right` is true, then both are true (and evaluated).
+            // If `left || right` is false, then both are false.
+            arrayOf(
+                approvedFromRight,
+                logicSystem.approveOperationStatement(flowFromRight, leftVariable eq bothEvaluated, conditionalFromLeft),
+                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq bothEvaluated, conditionalFromRight),
+            ).forEach { statements ->
+                statements.values.forEach { flow.addImplication((operatorVariable eq bothEvaluated) implies it) }
             }
 
-            // left && right == False
-            // left || right == True
-            val approvedIfFalse: MutableTypeStatements = mutableMapOf()
-            val leftIsFalse = logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated, conditionalFromLeft)
-            val rightIsFalse =
-                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated, conditionalFromRight)
-            logicSystem.andForTypeStatements(approvedIfFalse, logicSystem.orForTypeStatements(leftIsFalse, rightIsFalse)).values.forEach {
-                flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies it)
-            }
+            // If `left && right` is false, then either `left` is false, or both were evaluated and `right` is false.
+            // If `left || right` is true, then either `left` is true, or both were evaluated and `right` is true.
+            logicSystem.orForTypeStatements(
+                logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated, conditionalFromLeft),
+                // TODO: and(approvedFromRight, ...)? FE1.0 doesn't seem to handle that correctly either.
+                //   if (x is A || whatever(x as B)) { /* x is (A | B) */ }
+                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated, conditionalFromRight),
+            ).values.forEach { flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies it) }
         }
 
         logicSystem.updateAllReceivers(flow)

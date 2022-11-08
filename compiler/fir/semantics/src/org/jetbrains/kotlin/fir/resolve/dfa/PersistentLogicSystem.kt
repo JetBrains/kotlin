@@ -339,18 +339,13 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
-    override fun approveStatementsTo(
-        destination: MutableTypeStatements,
+    override fun approveOperationStatement(
         flow: PersistentFlow,
         approvedStatement: OperationStatement,
-        statements: Collection<Implication>
-    ) {
-        val approveOperationStatements =
-            approveOperationStatementsInternal(flow, approvedStatement, statements, shouldRemoveSynthetics = false)
-        approveOperationStatements.asMap().forEach { (variable, infos) ->
-            destination.put(variable, { and(infos) }, { and(listOf(it) + infos) })
-        }
-    }
+        statementsForVariable: Collection<Implication>?
+    ): TypeStatements =
+        approveOperationStatementsInternal(flow, approvedStatement, statementsForVariable, shouldRemoveSynthetics = false)
+            .asMap().mapValues { and(it.value) }
 
     override fun collectInfoForBooleanOperator(
         leftFlow: PersistentFlow,
