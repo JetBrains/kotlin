@@ -428,6 +428,9 @@ public interface Errors {
     DiagnosticFactory0<KtContextReceiverList> INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtNamedFunction, String> INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS =
             DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
+    DiagnosticFactory0<PsiElement> INTRINSIC_BOXING_CALL_ILLEGAL_TYPE_ARGUMENT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory3<PsiElement, KotlinType, KotlinType, KotlinType> INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
 
     // Result class
 

@@ -29,8 +29,8 @@ object FirInlineClassIntrinsicCreatorChecker : FirFunctionCallChecker() {
             return
         }
         if (expression.typeArguments.size != 1) return
-        val type = expression.typeArguments[0].toConeTypeProjection()
-        if (type !is ConeClassLikeType || type.typeArguments.isNotEmpty() || !type.isInlineClass(context.session)) {
+        val typeArgument = expression.typeArguments[0].toConeTypeProjection()
+        if (typeArgument !is ConeClassLikeType || typeArgument.typeArguments.isNotEmpty() || !typeArgument.isInlineClass(context.session)) {
             if (expression.typeArguments[0].source == null) {
                 reporter.reportOn(expression.source, FirErrors.INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT, context)
             } else {
@@ -40,14 +40,14 @@ object FirInlineClassIntrinsicCreatorChecker : FirFunctionCallChecker() {
         }
         if (expression.argumentList.arguments.size != 1) return
         val argumentType = expression.argument.typeRef.coneType
-        val inlineClassUnderlyingType = type.toRegularClassSymbol(context.session)
+        val inlineClassUnderlyingType = typeArgument.toRegularClassSymbol(context.session)
             ?.primaryConstructorSymbol()?.valueParameterSymbols?.singleOrNull()?.resolvedReturnType ?: return
         if (!argumentType.isSubtypeOf(inlineClassUnderlyingType, context.session)) {
             reporter.reportOn(
                 expression.argument.source,
                 FirErrors.INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH,
                 argumentType,
-                type,
+                typeArgument,
                 inlineClassUnderlyingType,
                 context
             )

@@ -27,5 +27,4 @@ fun foo() {
     val z : IC2 = createInlineClassInstance(<!INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH!>"str"<!>)
     func(<!INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT!>createInlineClassInstance("aba")<!>)
     createInlineClassInstance<IC3>(0)
-    <!INAPPLICABLE_CANDIDATE!>createInlineClassInstance<!><<!CANNOT_INFER_PARAMETER_TYPE!>IC2<!>, IC2>(1)
 }

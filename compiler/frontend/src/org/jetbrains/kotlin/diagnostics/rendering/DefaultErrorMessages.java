@@ -799,6 +799,11 @@ public class DefaultErrorMessages {
         MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
                 "Overriding ''equals'' from ''Any'' in inline class alongside with lack of ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
                 STRING);
+        MAP.put(INTRINSIC_BOXING_CALL_ILLEGAL_TYPE_ARGUMENT, "Boxing call must be parametrized with a non-generic inline class");
+        MAP.put(INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT, "Boxing call inferred type argument must be a non-generic inline class");
+        MAP.put(INTRINSIC_BOXING_CALL_ARGUMENT_TYPE_MISMATCH,
+                "Boxing argument type mismatch: actual type is {0} but underlying type of {1} is {2}",
+                RENDER_TYPE, RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(RESULT_CLASS_IN_RETURN_TYPE, "'kotlin.Result' cannot be used as a return type");
         MAP.put(RESULT_CLASS_WITH_NULLABLE_OPERATOR, "Expression of type ''kotlin.Result'' cannot be used as a left operand of ''{0}''", STRING);

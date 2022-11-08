@@ -1,0 +1,29 @@
+package
+
+public inline fun </*0*/ reified T> bar(): T
+public fun </*0*/ T> bar2(): T
+public fun foo(): kotlin.Unit
+public fun func(/*0*/ x: IC1<kotlin.String>): kotlin.Unit
+
+@kotlin.jvm.JvmInline public final value class IC1</*0*/ T> {
+    public constructor IC1</*0*/ T>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmInline public final value class IC2 {
+    public constructor IC2(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmInline public final value class IC3 {
+    public constructor IC3()
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
