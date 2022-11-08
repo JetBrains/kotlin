@@ -30,16 +30,13 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         transform: (Implication) -> Implication? = { it },
     )
 
-    abstract fun approveStatementsInsideFlow(
-        flow: FLOW,
-        approvedStatement: OperationStatement,
-        shouldForkFlow: Boolean,
-        shouldRemoveSynthetics: Boolean,
-    ): FLOW
+    abstract fun commitOperationStatement(flow: FLOW, statement: OperationStatement, shouldRemoveSynthetics: Boolean)
 
     abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
 
     abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
+
+    abstract fun copyAllInformation(from: FLOW, to: FLOW)
 
     protected abstract fun getImplicationsWithVariable(flow: FLOW, variable: DataFlowVariable): Collection<Implication>
 

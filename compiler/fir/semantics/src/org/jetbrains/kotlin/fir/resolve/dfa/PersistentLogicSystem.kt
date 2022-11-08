@@ -26,7 +26,6 @@ class PersistentFlow : Flow {
     var approvedTypeStatements: PersistentApprovedTypeStatements
     var logicStatements: PersistentImplications
     val level: Int
-    var approvedTypeStatementsDiff: PersistentApprovedTypeStatements = persistentHashMapOf()
 
     /*
      * val x = a
@@ -75,12 +74,18 @@ class PersistentFlow : Flow {
 abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSystem<PersistentFlow>(context) {
     abstract val variableStorage: VariableStorageImpl
 
-    override fun createEmptyFlow(): PersistentFlow {
-        return PersistentFlow()
-    }
+    override fun createEmptyFlow(): PersistentFlow =
+        PersistentFlow()
 
-    override fun forkFlow(flow: PersistentFlow): PersistentFlow {
-        return PersistentFlow(flow)
+    override fun forkFlow(flow: PersistentFlow): PersistentFlow =
+        PersistentFlow(flow)
+
+    override fun copyAllInformation(from: PersistentFlow, to: PersistentFlow) {
+        to.approvedTypeStatements = from.approvedTypeStatements
+        to.logicStatements = from.logicStatements
+        to.directAliasMap = from.directAliasMap
+        to.backwardsAliasMap = from.backwardsAliasMap
+        to.assignmentIndex = from.assignmentIndex
     }
 
     override fun joinFlow(flows: Collection<PersistentFlow>): PersistentFlow =
@@ -92,10 +97,10 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     private fun foldFlow(flows: Collection<PersistentFlow>, allExecute: Boolean): PersistentFlow {
         when (flows.size) {
             0 -> return createEmptyFlow()
-            1 -> return flows.first()
+            1 -> return forkFlow(flows.first())
         }
 
-        val commonFlow = flows.reduce(::lowestCommonFlow)
+        val commonFlow = forkFlow(flows.reduce(::lowestCommonFlow))
         // Aliases that have occurred before branching should already be in `commonFlow`,
         // but it might be useful to also add aliases that happen in all branches, e.g.
         // the aliasing of `y` to `a.x` after `if (p) { y = a.x } else { y = a.x }`.
@@ -137,9 +142,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
 
         commonFlow.approvedTypeStatements += statements
-        if (commonFlow.previousFlow != null) {
-            commonFlow.approvedTypeStatementsDiff += statements
-        }
 
         for ((alias, underlyingVariable) in commonAliases) {
             addLocalVariableAlias(commonFlow, alias, underlyingVariable)
@@ -168,7 +170,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                 assert(variable !in backwardsAliasMap)
                 assert(variable !in logicStatements)
                 assert(variable !in approvedTypeStatements)
-                assert(variable !in approvedTypeStatementsDiff)
             }
             // `variable.dependentVariables` is not separated by flow, so it may be non-empty if aliasing of this variable
             // was broken in another flow. However, in *this* flow dependent variables should have no information attached to them.
@@ -194,7 +195,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             }
             logicStatements = logicStatements.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements = approvedTypeStatements.replaceVariable(variable, replacementOrNext)
-            approvedTypeStatementsDiff = approvedTypeStatementsDiff.replaceVariable(variable, replacementOrNext)
             if (aliases != null) {
                 backwardsAliasMap -= variable
                 if (replacementOrNext != null) {
@@ -214,24 +214,23 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun addTypeStatement(flow: PersistentFlow, statement: TypeStatement) {
-        if (statement.isEmpty) return
-        with(flow) {
-            approvedTypeStatements = approvedTypeStatements.addTypeStatement(statement)
-            if (previousFlow != null) {
-                approvedTypeStatementsDiff = approvedTypeStatementsDiff.addTypeStatement(statement)
-            }
-            if (statement.variable.isThisReference) {
-                processUpdatedReceiverVariable(flow, statement.variable)
-            }
+        if (statement.exactType.isEmpty()) return
+        val variable = statement.variable
+        val oldExactType = flow.approvedTypeStatements[variable]?.exactType
+        val newExactType = oldExactType?.addAll(statement.exactType) ?: statement.exactType.toPersistentSet()
+        if (newExactType === oldExactType) return
+        flow.approvedTypeStatements = flow.approvedTypeStatements.put(variable, PersistentTypeStatement(variable, newExactType))
+        if (variable.isThisReference) {
+            processUpdatedReceiverVariable(flow, variable)
         }
     }
 
-    private fun PersistentApprovedTypeStatements.addTypeStatement(info: TypeStatement): PersistentApprovedTypeStatements =
-        put(info.variable, { info.toPersistent() }, { and(listOf(it, info)).toPersistent() })
-
     override fun addImplication(flow: PersistentFlow, implication: Implication) {
-        if ((implication.effect as? TypeStatement)?.isEmpty == true) return
-        if (implication.condition == implication.effect) return
+        val effect = implication.effect
+        if (effect == implication.condition) return
+        if (effect is TypeStatement && (effect.isEmpty ||
+                    flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true)
+        ) return
         val variable = implication.condition.variable
         flow.logicStatements = flow.logicStatements.put(variable, { persistentListOf(implication) }, { it + implication })
     }
@@ -257,35 +256,10 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
-    override fun approveStatementsInsideFlow(
-        flow: PersistentFlow,
-        approvedStatement: OperationStatement,
-        shouldForkFlow: Boolean,
-        shouldRemoveSynthetics: Boolean
-    ): PersistentFlow {
-        val approvedFacts = approveOperationStatementsInternal(
-            flow,
-            approvedStatement,
-            initialStatements = null,
-            shouldRemoveSynthetics
-        )
-
-        val resultFlow = if (shouldForkFlow) forkFlow(flow) else flow
-        if (approvedFacts.isEmpty) return resultFlow
-
-        val updatedReceivers = mutableSetOf<RealVariable>()
-        approvedFacts.asMap().forEach { (variable, infos) ->
-            if (variable.isThisReference) {
-                updatedReceivers += variable
-            }
-            addTypeStatement(resultFlow, and(infos))
+    override fun commitOperationStatement(flow: PersistentFlow, statement: OperationStatement, shouldRemoveSynthetics: Boolean) {
+        approveOperationStatementsInternal(flow, statement, initialStatements = null, shouldRemoveSynthetics).values.forEach {
+            addTypeStatement(flow, it)
         }
-
-        updatedReceivers.forEach {
-            processUpdatedReceiverVariable(resultFlow, it)
-        }
-
-        return resultFlow
     }
 
     private fun approveOperationStatementsInternal(
@@ -293,55 +267,40 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         approvedStatement: OperationStatement,
         initialStatements: Collection<Implication>?,
         shouldRemoveSynthetics: Boolean
-    ): ArrayListMultimap<RealVariable, TypeStatement> {
-        val approvedFacts: ArrayListMultimap<RealVariable, TypeStatement> = ArrayListMultimap.create()
-        val approvedStatements = LinkedList<OperationStatement>().apply { this += approvedStatement }
-        approveOperationStatementsInternal(flow, approvedStatements, initialStatements, shouldRemoveSynthetics, approvedFacts)
-        return approvedFacts
-    }
-
-    private fun approveOperationStatementsInternal(
-        flow: PersistentFlow,
-        approvedStatements: LinkedList<OperationStatement>,
-        initialStatements: Collection<Implication>?,
-        shouldRemoveSynthetics: Boolean,
-        approvedTypeStatements: ArrayListMultimap<RealVariable, TypeStatement>
-    ) {
-        if (approvedStatements.isEmpty()) return
-        val approvedOperationStatements = mutableSetOf<OperationStatement>()
+    ): TypeStatements {
+        val approvedTypeStatements: ArrayListMultimap<RealVariable, TypeStatement> = ArrayListMultimap.create()
+        val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
+        val approved = mutableSetOf<OperationStatement>()
         var firstIteration = true
-        while (approvedStatements.isNotEmpty()) {
-            @Suppress("NAME_SHADOWING")
-            val approvedStatement: OperationStatement = approvedStatements.removeFirst()
+        while (queue.isNotEmpty()) {
+            val next: OperationStatement = queue.removeFirst()
             // Defense from cycles in facts
-            if (!approvedOperationStatements.add(approvedStatement)) {
-                continue
-            }
+            if (!approved.add(next)) continue
+            val variable = next.variable
             val statements = initialStatements?.takeIf { firstIteration }
-                ?: flow.logicStatements[approvedStatement.variable]?.takeIf { it.isNotEmpty() }
+                ?: flow.logicStatements[variable]?.takeIf { it.isNotEmpty() }
                 ?: continue
-            if (shouldRemoveSynthetics && approvedStatement.variable.isSynthetic()) {
-                flow.logicStatements -= approvedStatement.variable
+            if (shouldRemoveSynthetics && variable.isSynthetic()) {
+                flow.logicStatements -= variable
             }
             for (statement in statements) {
-                if (statement.condition == approvedStatement) {
+                if (statement.condition == next) {
                     when (val effect = statement.effect) {
-                        is OperationStatement -> approvedStatements += effect
+                        is OperationStatement -> queue += effect
                         is TypeStatement -> approvedTypeStatements.put(effect.variable, effect)
                     }
                 }
             }
             firstIteration = false
         }
+        return approvedTypeStatements.asMap().mapValues { and(it.value) }
     }
 
     override fun approveOperationStatement(
         flow: PersistentFlow,
         approvedStatement: OperationStatement,
         statementsForVariable: Collection<Implication>?
-    ): TypeStatements =
-        approveOperationStatementsInternal(flow, approvedStatement, statementsForVariable, shouldRemoveSynthetics = false)
-            .asMap().mapValues { and(it.value) }
+    ): TypeStatements = approveOperationStatementsInternal(flow, approvedStatement, statementsForVariable, shouldRemoveSynthetics = false)
 
     override fun collectInfoForBooleanOperator(
         leftFlow: PersistentFlow,
@@ -352,7 +311,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         return InfoForBooleanOperator(
             leftFlow.logicStatements[leftVariable] ?: emptyList(),
             rightFlow.logicStatements[rightVariable] ?: emptyList(),
-            rightFlow.approvedTypeStatementsDiff
+            rightFlow.approvedTypeStatements
         )
     }
 
