@@ -31,16 +31,15 @@ data class OperationStatement(override val variable: DataFlowVariable, val opera
 sealed class TypeStatement : Statement() {
     abstract override val variable: RealVariable
     abstract val exactType: Set<ConeKotlinType>
-    abstract val exactNotType: Set<ConeKotlinType>
 
     val isEmpty: Boolean
-        get() = exactType.isEmpty() && exactNotType.isEmpty()
+        get() = exactType.isEmpty()
 
     val isNotEmpty: Boolean
         get() = !isEmpty
 
     override fun toString(): String {
-        return "$variable: $exactType, $exactNotType"
+        return "$variable: $exactType"
     }
 }
 
