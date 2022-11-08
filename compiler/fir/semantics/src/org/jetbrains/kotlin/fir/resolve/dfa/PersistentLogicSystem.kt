@@ -18,20 +18,8 @@ data class PersistentTypeStatement(
     override val exactType: PersistentSet<ConeKotlinType>,
     override val exactNotType: PersistentSet<ConeKotlinType>
 ) : TypeStatement() {
-    override operator fun plus(other: TypeStatement): PersistentTypeStatement {
-        return PersistentTypeStatement(
-            variable,
-            exactType + other.exactType,
-            exactNotType + other.exactNotType
-        )
-    }
-
-    override val isEmpty: Boolean
-        get() = exactType.isEmpty() && exactNotType.isEmpty()
-
-    override fun invert(): PersistentTypeStatement {
-        return PersistentTypeStatement(variable, exactNotType, exactType)
-    }
+    override fun invert(): PersistentTypeStatement =
+        PersistentTypeStatement(variable, exactNotType, exactType)
 }
 
 typealias PersistentApprovedTypeStatements = PersistentMap<RealVariable, PersistentTypeStatement>
@@ -242,6 +230,9 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
+    private fun PersistentApprovedTypeStatements.addTypeStatement(info: TypeStatement): PersistentApprovedTypeStatements =
+        put(info.variable, { info.toPersistent() }, { and(listOf(it, info)).toPersistent() })
+
     override fun addImplication(flow: PersistentFlow, implication: Implication) {
         if ((implication.effect as? TypeStatement)?.isEmpty == true) return
         if (implication.condition == implication.effect) return
@@ -288,14 +279,10 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
 
         val updatedReceivers = mutableSetOf<RealVariable>()
         approvedFacts.asMap().forEach { (variable, infos) ->
-            var resultInfo = PersistentTypeStatement(variable, persistentSetOf(), persistentSetOf())
-            for (info in infos) {
-                resultInfo += info
-            }
             if (variable.isThisReference) {
                 updatedReceivers += variable
             }
-            addTypeStatement(resultFlow, resultInfo)
+            addTypeStatement(resultFlow, and(infos))
         }
 
         updatedReceivers.forEach {
@@ -361,13 +348,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         val approveOperationStatements =
             approveOperationStatementsInternal(flow, approvedStatement, statements, shouldRemoveSynthetics = false)
         approveOperationStatements.asMap().forEach { (variable, infos) ->
-            for (info in infos) {
-                val mutableInfo = info.asMutableStatement()
-                destination.put(variable, mutableInfo) {
-                    it += mutableInfo
-                    it
-                }
-            }
+            destination.put(variable, { and(infos) }, { and(listOf(it) + infos) })
         }
     }
 
@@ -415,9 +396,6 @@ private fun lowestCommonFlow(left: PersistentFlow, right: PersistentFlow): Persi
     }
     return left
 }
-
-private fun PersistentApprovedTypeStatements.addTypeStatement(info: TypeStatement): PersistentApprovedTypeStatements =
-    put(info.variable, { info.toPersistent() }, { it + info })
 
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
     is PersistentTypeStatement -> this

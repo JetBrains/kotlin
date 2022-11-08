@@ -139,21 +139,17 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         statement: OperationStatement,
         builtinTypes: BuiltinTypes
     ): MutableTypeStatements {
-        val newTypeStatements: MutableTypeStatements = mutableMapOf()
-
+        val newTypeStatements = flow.approvedTypeStatements.asMutableStatements()
         approveStatementsTo(newTypeStatements, flow, statement, flow.logicStatements.flatMap { it.value })
-        newTypeStatements.mergeTypeStatements(flow.approvedTypeStatements)
 
         val variable = statement.variable
-        if (variable.isReal()) {
-            if (statement.operation == Operation.NotEqNull) {
-                newTypeStatements.addStatement(variable, simpleTypeStatement(variable, true, builtinTypes.anyType.type))
-            } else if (statement.operation == Operation.EqNull) {
-                newTypeStatements.addStatement(variable, simpleTypeStatement(variable, false, builtinTypes.anyType.type))
-            }
+        if (!variable.isReal()) return newTypeStatements
+        val extraStatement = when (statement.operation) {
+            Operation.NotEqNull -> simpleTypeStatement(variable, true, builtinTypes.anyType.type)
+            Operation.EqNull -> simpleTypeStatement(variable, false, builtinTypes.anyType.type)
+            else -> return newTypeStatements
         }
-
-        return newTypeStatements
+        return andForTypeStatements(newTypeStatements, mapOf(variable to extraStatement))
     }
 
     private fun ConeBooleanExpression.buildTypeStatements(
@@ -181,9 +177,10 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
                 val left = left.buildTypeStatements(function, logicSystem, variableStorage, flow, context)
                 val right = right.buildTypeStatements(function, logicSystem, variableStorage, flow, context)
                 if (left != null && right != null) {
-                    if (kind == LogicOperationKind.AND) {
-                        left.apply { mergeTypeStatements(right) }
-                    } else logicSystem.orForTypeStatements(left, right)
+                    if (kind == LogicOperationKind.AND)
+                        logicSystem.andForTypeStatements(left, right)
+                    else
+                        logicSystem.orForTypeStatements(left, right)
                 } else (left ?: right)
             }
             is ConeIsInstancePredicate -> buildTypeStatements(arg, !isNegated, type)

@@ -632,6 +632,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         // left == right && right not null -> left != null
         // [processEqNull] adds both implications: operator call could be true or false. We definitely need the matched case only.
+        // TODO: this is incomprehensible - the comments below say what the equivalent expression is
         fun shouldAddImplicationForStatement(operationStatement: OperationStatement): Boolean {
             if (!checkAddImplicationForStatement) return true
             // Only if operation statement is == True, i.e., left == right
@@ -639,17 +640,22 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             return !isEq && operationStatementOp == Operation.EqTrue || isEq && operationStatementOp == Operation.EqFalse
         }
 
-        logicSystem.approveOperationStatement(flow, predicate).forEach { effect ->
-            if (shouldAddImplicationForStatement(expressionVariable eq true)) {
+        // !checkAddImplicationForStatement || !isEq
+        if (shouldAddImplicationForStatement(expressionVariable eq true)) {
+            logicSystem.approveOperationStatement(flow, predicate).forEach { effect ->
                 flow.addImplication((expressionVariable eq true) implies effect)
-            }
-            if (shouldAddImplicationForStatement(expressionVariable eq false)) {
-                flow.addImplication((expressionVariable eq false) implies effect.invert())
             }
         }
 
-        val expressionVariableIsEq = shouldAddImplicationForStatement(expressionVariable eq isEq)
-        val expressionVariableIsNotEq = shouldAddImplicationForStatement(expressionVariable notEq isEq)
+        // !checkAddImplicationForStatement || isEq
+        if (shouldAddImplicationForStatement(expressionVariable eq false)) {
+            logicSystem.approveOperationStatement(flow, predicate.invert()).forEach { effect ->
+                flow.addImplication((expressionVariable eq false) implies effect)
+            }
+        }
+
+        val expressionVariableIsEq = shouldAddImplicationForStatement(expressionVariable eq isEq) // !checkAddImplicationForStatement
+        val expressionVariableIsNotEq = shouldAddImplicationForStatement(expressionVariable notEq isEq) // true
 
         if (expressionVariableIsEq) {
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
@@ -665,10 +671,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             if (expressionVariableIsNotEq) {
                 flow.addImplication((expressionVariable notEq isEq) implies (operandVariable typeEq any))
             }
-
+            // true
             if (shouldAddImplicationForStatement(expressionVariable eq !isEq)) {
                 flow.addImplication((expressionVariable eq !isEq) implies (operandVariable typeNotEq nullableNothing))
             }
+            // !checkAddImplicationForStatement
             if (shouldAddImplicationForStatement(expressionVariable notEq !isEq)) {
                 flow.addImplication((expressionVariable notEq !isEq) implies (operandVariable typeEq nullableNothing))
             }
@@ -1374,11 +1381,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             val approvedIfTrue: MutableTypeStatements = mutableMapOf()
             logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, leftVariable eq bothEvaluated, conditionalFromLeft)
             logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, rightVariable eq bothEvaluated, conditionalFromRight)
-            approvedFromRight.forEach { (variable, info) ->
-                approvedIfTrue.addStatement(variable, info)
-            }
-            approvedIfTrue.values.forEach { info ->
-                flow.addImplication((operatorVariable eq bothEvaluated) implies info)
+            logicSystem.andForTypeStatements(approvedIfTrue, approvedFromRight).values.forEach {
+                flow.addImplication((operatorVariable eq bothEvaluated) implies it)
             }
 
             // left && right == False
@@ -1387,9 +1391,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             val leftIsFalse = logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated, conditionalFromLeft)
             val rightIsFalse =
                 logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated, conditionalFromRight)
-            approvedIfFalse.mergeTypeStatements(logicSystem.orForTypeStatements(leftIsFalse, rightIsFalse))
-            approvedIfFalse.values.forEach { info ->
-                flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies info)
+            logicSystem.andForTypeStatements(approvedIfFalse, logicSystem.orForTypeStatements(leftIsFalse, rightIsFalse)).values.forEach {
+                flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies it)
             }
         }
 
