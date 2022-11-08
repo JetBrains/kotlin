@@ -60,18 +60,25 @@ infix fun DataFlowVariable.notEq(constant: Boolean?): OperationStatement {
 
 infix fun OperationStatement.implies(effect: Statement<*>): Implication = Implication(this, effect)
 
-infix fun RealVariable.typeEq(type: ConeKotlinType): TypeStatement =
-    if (type !is ConeErrorType) {
-        MutableTypeStatement(this, linkedSetOf<ConeKotlinType>().apply { this += type }, HashSet())
-    } else {
-        MutableTypeStatement(this)
+infix fun RealVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
+    MutableTypeStatement(this) andTypeEq type
+
+infix fun RealVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
+    MutableTypeStatement(this) andTypeNotEq type
+
+infix fun MutableTypeStatement.andTypeEq(type: ConeKotlinType): MutableTypeStatement =
+    this.apply {
+        if (type !is ConeErrorType) {
+            exactType += type
+        }
     }
 
-infix fun RealVariable.typeNotEq(type: ConeKotlinType): TypeStatement =
-    if (type !is ConeErrorType) {
-        MutableTypeStatement(this, linkedSetOf(), LinkedHashSet<ConeKotlinType>().apply { this += type })
-    } else {
-        MutableTypeStatement(this)
+infix fun MutableTypeStatement.andTypeNotEq(type: ConeKotlinType): MutableTypeStatement =
+    this.apply {
+        require(exactNotType.isEmpty()) { "statement $this already has a negation; use `logicSystem.and`" }
+        if (type !is ConeErrorType) {
+            exactNotType += type
+        }
     }
 
 // --------------------------------------- Utils ---------------------------------------

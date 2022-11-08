@@ -153,7 +153,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     protected abstract val logicSystem: LogicSystem<FLOW>
 
     private val graphBuilder get() = context.graphBuilder
-    protected val variableStorage get() = context.variableStorage
+    private val variableStorage get() = context.variableStorage
 
     private var contractDescriptionVisitingMode = false
 
@@ -423,30 +423,21 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         when (val operation = typeOperatorCall.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
-                val expressionVariable = variableStorage.createSyntheticVariable(typeOperatorCall)
-                val isNotNullCheck = !type.canBeNull
-                val isRegularIs = operation == FirOperation.IS
-                if (operandVariable.isReal()) {
-                    val hasTypeInfo = operandVariable typeEq type
-                    val hasNotTypeInfo = operandVariable typeNotEq type
-
-                    fun chooseInfo(trueBranch: Boolean) =
-                        if ((typeOperatorCall.operation == FirOperation.IS) == trueBranch) hasTypeInfo else hasNotTypeInfo
-
-                    flow.addImplication((expressionVariable eq true) implies chooseInfo(true))
-                    flow.addImplication((expressionVariable eq false) implies chooseInfo(false))
-
-                    if (operation == FirOperation.NOT_IS && type == nullableNothing) {
-                        flow.addTypeStatement(operandVariable typeEq any)
-                    }
-                    if (isNotNullCheck) {
-                        flow.addImplication((expressionVariable eq isRegularIs) implies (operandVariable typeEq any))
-                        flow.addImplication((expressionVariable eq isRegularIs) implies (operandVariable notEq null))
-                    }
-
-                } else {
-                    if (isNotNullCheck) {
-                        flow.addImplication((expressionVariable eq isRegularIs) implies (operandVariable notEq null))
+                val isType = operation == FirOperation.IS
+                when (type) {
+                    // x is Nothing? <=> x == null
+                    nullableNothing -> processEqNull(node, typeOperatorCall.argument, isType)
+                    // x is Any <=> x != null
+                    any -> processEqNull(node, typeOperatorCall.argument, !isType)
+                    else -> {
+                        val expressionVariable = variableStorage.createSyntheticVariable(typeOperatorCall)
+                        if (operandVariable.isReal()) {
+                            flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
+                            flow.addImplication((expressionVariable notEq isType) implies (operandVariable typeNotEq type))
+                        }
+                        if (!type.canBeNull) {
+                            flow.addImplication((expressionVariable eq isType) implies (operandVariable notEq null))
+                        }
                     }
                 }
             }
@@ -511,8 +502,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         when {
             leftConst != null && rightConst != null -> return
-            leftIsNull -> processEqNull(node, rightOperand, operation)
-            rightIsNull -> processEqNull(node, leftOperand, operation)
+            leftIsNull -> processEqNull(node, rightOperand, operation.isEq())
+            rightIsNull -> processEqNull(node, leftOperand, operation.isEq())
             leftConst != null -> processEqWithConst(node, rightOperand, leftConst, operation)
             rightConst != null -> processEqWithConst(node, leftOperand, rightConst, operation)
             else -> processEq(node, leftOperand, rightOperand, operation)
@@ -581,129 +572,49 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    private fun processEq(
-        node: EqualityOperatorCallNode, leftOperand: FirExpression, rightOperand: FirExpression, operation: FirOperation
-    ) {
-        val leftIsNullable = leftOperand.coneType.isMarkedNullable
-        val rightIsNullable = rightOperand.coneType.isMarkedNullable
-
-        if (leftIsNullable || rightIsNullable) {
-            if (leftIsNullable && rightIsNullable) return
-            processEqNull(
-                node,
-                if (leftIsNullable) leftOperand else rightOperand,
-                operation.invert(),
-                checkAddImplicationForStatement = true
-            )
-        }
-
-        processPossibleIdentity(node, leftOperand, rightOperand, operation)
-    }
-
-    /*
-     * Process x == null in general: add implications for both cases.
-     * E.g., say d1 is an eq operator call node, d2 represents `x`, the variable inside the operator call. So, d1: x == null
-     * This util adds: "d1 == True -> d2 == null" and "d1 == False -> d2 != null"
-     * so that both branches after the operator call can infer the type of x.
-     *
-     * However, users can specify what conditions are of interest.
-     * E.g., say left == right _and_ right != null, then we can conclude left != null.
-     * In this example, say d1 is an eq operator call (left == right), and d2 is left.
-     * Unlike general cases, we want to add: "d1 == True -> d2 != null", and nothing more because the counter part,
-     * "d1 == False -> d2 == null" doesn't hold. That is, left != right and right != null don't mean left == null. It just means, left is
-     * something different from right, including null. By filtering "d1 == True" condition only, all the remaining logic can be shared.
-     */
-    private fun processEqNull(
-        node: EqualityOperatorCallNode,
-        operand: FirExpression,
-        operation: FirOperation,
-        checkAddImplicationForStatement: Boolean = false
-    ) {
+    private fun processEqNull(node: CFGNode<*>, operand: FirExpression, isEq: Boolean) {
         val flow = node.flow
         val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
         val operandVariable = variableStorage.getOrCreateVariable(node.previousFlow, operand)
-
-        val isEq = operation.isEq()
-
-        val predicate = when (isEq) {
-            true -> operandVariable eq null
-            false -> operandVariable notEq null
-        }
-
-        // left == right && right not null -> left != null
-        // [processEqNull] adds both implications: operator call could be true or false. We definitely need the matched case only.
-        // TODO: this is incomprehensible - the comments below say what the equivalent expression is
-        fun shouldAddImplicationForStatement(operationStatement: OperationStatement): Boolean {
-            if (!checkAddImplicationForStatement) return true
-            // Only if operation statement is == True, i.e., left == right
-            val operationStatementOp = operationStatement.operation
-            return !isEq && operationStatementOp == Operation.EqTrue || isEq && operationStatementOp == Operation.EqFalse
-        }
-
-        // !checkAddImplicationForStatement || !isEq
-        if (shouldAddImplicationForStatement(expressionVariable eq true)) {
-            logicSystem.approveOperationStatement(flow, predicate).forEach { effect ->
-                flow.addImplication((expressionVariable eq true) implies effect)
-            }
-        }
-
-        // !checkAddImplicationForStatement || isEq
-        if (shouldAddImplicationForStatement(expressionVariable eq false)) {
-            logicSystem.approveOperationStatement(flow, predicate.invert()).forEach { effect ->
-                flow.addImplication((expressionVariable eq false) implies effect)
-            }
-        }
-
-        val expressionVariableIsEq = shouldAddImplicationForStatement(expressionVariable eq isEq) // !checkAddImplicationForStatement
-        val expressionVariableIsNotEq = shouldAddImplicationForStatement(expressionVariable notEq isEq) // true
-
-        if (expressionVariableIsEq) {
-            flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
-        }
-        if (expressionVariableIsNotEq) {
-            flow.addImplication((expressionVariable notEq isEq) implies (operandVariable notEq null))
-        }
-
-        if (operandVariable.isReal()) {
-            if (expressionVariableIsEq) {
-                flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeNotEq any))
-            }
-            if (expressionVariableIsNotEq) {
-                flow.addImplication((expressionVariable notEq isEq) implies (operandVariable typeEq any))
-            }
-            // true
-            if (shouldAddImplicationForStatement(expressionVariable eq !isEq)) {
-                flow.addImplication((expressionVariable eq !isEq) implies (operandVariable typeNotEq nullableNothing))
-            }
-            // !checkAddImplicationForStatement
-            if (shouldAddImplicationForStatement(expressionVariable notEq !isEq)) {
-                flow.addImplication((expressionVariable notEq !isEq) implies (operandVariable typeEq nullableNothing))
-            }
-        }
-
-        node.flow = flow
+        flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
+        flow.addImplication((expressionVariable notEq isEq) implies (operandVariable notEq null))
     }
 
-    private fun processPossibleIdentity(
+    private fun processEq(
         node: EqualityOperatorCallNode,
         leftOperand: FirExpression,
         rightOperand: FirExpression,
         operation: FirOperation,
     ) {
-        val flow = node.flow
-        val expressionVariable = variableStorage.getOrCreateVariable(node.previousFlow, node.fir)
-        val leftOperandVariable = variableStorage.getOrCreateVariable(node.previousFlow, leftOperand)
-        val rightOperandVariable = variableStorage.getOrCreateVariable(node.previousFlow, rightOperand)
+        val isEq = operation.isEq()
         val leftOperandType = leftOperand.coneType
         val rightOperandType = rightOperand.coneType
+        val leftIsNullable = leftOperandType.isMarkedNullable
+        val rightIsNullable = rightOperandType.isMarkedNullable
+
+        if (leftIsNullable && rightIsNullable) {
+            // The logic system is not complex enough to express a second level of implications this creates:
+            // if either `== null` then this creates the same implications as a constant null comparison,
+            // otherwise the same as if the corresponding `...IsNullable` is false.
+            return
+        }
+
+        val flow = node.flow
+        val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
+        val leftOperandVariable = variableStorage.getOrCreateVariable(node.previousFlow, leftOperand)
+        val rightOperandVariable = variableStorage.getOrCreateVariable(node.previousFlow, rightOperand)
+
+        if (leftIsNullable || rightIsNullable) {
+            // `a == b:Any` => `a != null`; the inverse is not true - we don't know when `a` *is* `null`
+            val nullableOperand = if (leftIsNullable) leftOperandVariable else rightOperandVariable
+            flow.addImplication((expressionVariable eq isEq) implies (nullableOperand notEq null))
+        }
 
         if (!leftOperandVariable.isReal() && !rightOperandVariable.isReal()) return
 
         if (operation == FirOperation.EQ || operation == FirOperation.NOT_EQ) {
             if (hasOverriddenEquals(leftOperandType)) return
         }
-
-        val isEq = operation.isEq()
 
         if (leftOperandVariable.isReal()) {
             flow.addImplication((expressionVariable eq isEq) implies (leftOperandVariable typeEq rightOperandType))
@@ -714,8 +625,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq leftOperandType))
             flow.addImplication((expressionVariable notEq isEq) implies (rightOperandVariable typeNotEq leftOperandType))
         }
-
-        node.flow = flow
     }
 
     private fun hasOverriddenEquals(type: ConeKotlinType): Boolean {
@@ -1051,9 +960,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             is RealVariable -> variable.explicitReceiverVariable ?: return
             is SyntheticVariable -> variableStorage.getOrCreateVariable(flow, safeCall.receiver)
         }
-        logicSystem.addImplication(flow, (variable notEq null) implies (receiverVariable notEq null))
+        flow.addImplication((variable notEq null) implies (receiverVariable notEq null))
         if (receiverVariable.isReal()) {
-            logicSystem.addImplication(flow, (variable notEq null) implies (receiverVariable typeEq any))
+            flow.addImplication((variable notEq null) implies (receiverVariable typeEq any))
         }
     }
 
@@ -1575,6 +1484,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun FLOW.addImplication(statement: Implication) {
+        val effect = statement.effect
+        if (effect is OperationStatement) {
+            val variable = effect.variable
+            if (variable.isReal()) {
+                when (effect.operation) {
+                    Operation.EqNull -> variable typeEq nullableNothing andTypeNotEq any
+                    Operation.NotEqNull -> variable typeEq any andTypeNotEq nullableNothing
+                    else -> null
+                }?.let { logicSystem.addImplication(this, statement.condition implies it) }
+            }
+        }
         logicSystem.addImplication(this, statement)
     }
 
