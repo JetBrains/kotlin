@@ -447,12 +447,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                     flow.addTypeStatement(operandVariable typeEq type)
                 }
                 if (!type.canBeNull) {
-                    logicSystem.approveStatementsInsideFlow(
-                        flow,
-                        operandVariable notEq null,
-                        shouldRemoveSynthetics = true,
-                        shouldForkFlow = false
-                    )
+                    flow.assumeNotNull(operandVariable, shouldForkFlow = false, shouldRemoveSynthetics = true)
                 } else {
                     val expressionVariable = variableStorage.createSyntheticVariable(typeOperatorCall)
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
@@ -525,9 +520,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val operandVariable = variableStorage.getOrCreateVariable(node.previousFlow, operand)
         // expression == const -> expression != null
         flow.addImplication((expressionVariable eq isEq) implies (operandVariable notEq null))
-        if (operandVariable.isReal()) {
-            flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeEq any))
-        }
 
         // propagating facts for (... == true) and (... == false)
         when (const.kind) {
@@ -691,17 +683,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         unionNode?.let { unionFlowFromArguments(it) }
     }
 
-    fun FirExpression.propagateNotNullInfo(node: CFGNode<*>) {
+    private fun FirExpression.propagateNotNullInfo(node: CFGNode<*>) {
         val symbol = this.symbol
         if (symbol != null) {
             variableStorage.getOrCreateRealVariable(node.previousFlow, symbol, this)?.let { operandVariable ->
-                node.flow.addTypeStatement(operandVariable typeEq any)
-                logicSystem.approveStatementsInsideFlow(
-                    node.flow,
-                    operandVariable notEq null,
-                    shouldRemoveSynthetics = true,
-                    shouldForkFlow = false
-                )
+                node.flow.assumeNotNull(operandVariable, shouldForkFlow = false, shouldRemoveSynthetics = true)
             }
         }
         when (this) {
@@ -713,6 +699,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             }
         }
     }
+
+    private fun FLOW.assumeNotNull(variable: DataFlowVariable, shouldForkFlow: Boolean, shouldRemoveSynthetics: Boolean): FLOW =
+        logicSystem.approveStatementsInsideFlow(this, variable notEq null, shouldForkFlow, shouldRemoveSynthetics,).also {
+            if (variable is RealVariable) {
+                it.addTypeStatement(variable typeEq any andTypeNotEq nullableNothing)
+            }
+        }
 
     // ----------------------------------- When -----------------------------------
 
@@ -943,12 +936,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 }
                 flow.addTypeStatement(variable typeEq type)
             }
-            flow = logicSystem.approveStatementsInsideFlow(
-                flow,
-                variable notEq null,
-                shouldFork,
-                shouldRemoveSynthetics = false
-            )
+            flow = flow.assumeNotNull(variable, shouldFork, shouldRemoveSynthetics = false)
         }
 
         node.flow = flow
@@ -966,9 +954,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             is SyntheticVariable -> variableStorage.getOrCreateVariable(flow, safeCall.receiver)
         }
         flow.addImplication((variable notEq null) implies (receiverVariable notEq null))
-        if (receiverVariable.isReal()) {
-            flow.addImplication((variable notEq null) implies (receiverVariable typeEq any))
-        }
     }
 
     fun exitResolvedQualifierNode(resolvedQualifier: FirResolvedQualifier) {
@@ -1379,16 +1364,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         lhsExitNode.mergeIncomingFlow()
         val flow = lhsExitNode.flow
         val lhsVariable = variableStorage.getOrCreateVariable(flow, elvisExpression.lhs)
-        lhsIsNotNullNode.flow = logicSystem.approveStatementsInsideFlow(
-            flow,
-            lhsVariable notEq null,
-            shouldForkFlow = true,
-            shouldRemoveSynthetics = false
-        ).also {
-            if (lhsVariable.isReal()) {
-                it.addTypeStatement(lhsVariable typeEq any)
-            }
-        }
+        lhsIsNotNullNode.flow = flow.assumeNotNull(lhsVariable, shouldForkFlow = true, shouldRemoveSynthetics = false)
         rhsEnterNode.flow = logicSystem.approveStatementsInsideFlow(
             flow,
             lhsVariable eq null,
