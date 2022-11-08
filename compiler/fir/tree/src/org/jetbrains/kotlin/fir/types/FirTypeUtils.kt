@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -113,11 +112,7 @@ fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.cla
     else -> null
 }
 
-fun List<FirAnnotation>.computeTypeAttributes(
-    session: FirSession,
-    owningSymbol: FirBasedSymbol<*>?,
-    predefined: List<ConeAttribute<*>> = emptyList(),
-): ConeAttributes {
+fun List<FirAnnotation>.computeTypeAttributes(session: FirSession, predefined: List<ConeAttribute<*>> = emptyList()): ConeAttributes {
     if (this.isEmpty()) {
         if (predefined.isEmpty()) return ConeAttributes.Empty
         return ConeAttributes.create(predefined)
@@ -150,7 +145,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
         }
     }
     if (customAnnotations.isNotEmpty()) {
-        attributes += CustomAnnotationTypeAttribute(customAnnotations, owningSymbol)
+        attributes += CustomAnnotationTypeAttribute(customAnnotations)
     }
     return ConeAttributes.create(attributes)
 }

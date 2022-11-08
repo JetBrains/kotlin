@@ -98,8 +98,8 @@ fun ConeKotlinType.withParameterNameAnnotation(valueParameter: FirValueParameter
                 buildConstExpression(fakeSource, ConstantValueKind.String, valueParameter.name.asString(), setType = true)
         }
     }
-    val attribute = CustomAnnotationTypeAttribute(listOf(parameterNameAnnotationCall), owningSymbol = valueParameter.symbol)
-    val attributesWithParameterNameAnnotation = ConeAttributes.create(listOf(attribute))
+    val attributesWithParameterNameAnnotation =
+        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(listOf(parameterNameAnnotationCall))))
     return withCombinedAttributesFrom(attributesWithParameterNameAnnotation)
 }
 

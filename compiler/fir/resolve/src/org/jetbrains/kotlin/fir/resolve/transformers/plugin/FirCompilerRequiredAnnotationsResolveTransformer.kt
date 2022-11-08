@@ -200,10 +200,9 @@ private class FirAnnotationResolveTransformer(
         val name = annotationTypeRef.qualifier.last().name
         if (name !in REQUIRED_ANNOTATION_NAMES && acceptableFqNames.none { it.shortName() == name }) return annotation
 
-        val owner = classDeclarationsStack.lastOrNull() ?: argumentsTransformer.context.file
         val transformedAnnotation = annotation.transformAnnotationTypeRef(
             typeResolverTransformer,
-            ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack, owner.symbol)
+            ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack)
         )
         // TODO: what if we have type alias here?
         if (transformedAnnotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == Deprecated) {

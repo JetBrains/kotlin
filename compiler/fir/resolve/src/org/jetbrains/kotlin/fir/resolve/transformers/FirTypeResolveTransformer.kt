@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
@@ -63,18 +61,6 @@ open class FirTypeResolveTransformer(
         scopes.addAll(initialScopes.asReversed())
     }
 
-    private var owningSymbol: FirBasedSymbol<*>? = classDeclarationsStack.lastOrNull()?.symbol ?: initialCurrentFile?.symbol
-
-    private inline fun <R> withOwningSymbol(symbol: FirBasedSymbol<*>, block: () -> R): R {
-        val oldOwningSymbol = owningSymbol
-        return try {
-            owningSymbol = symbol
-            block()
-        } finally {
-            owningSymbol = oldOwningSymbol
-        }
-    }
-
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
     private var currentFile: FirFile? = initialCurrentFile
 
@@ -82,34 +68,28 @@ open class FirTypeResolveTransformer(
         checkSessionConsistency(file)
         currentFile = file
         return withScopeCleanup {
-            withOwningSymbol(file.symbol) {
-                scopes.addAll(createImportingScopes(file, session, scopeSession))
-                super.transformFile(file, data)
-            }
+            scopes.addAll(createImportingScopes(file, session, scopeSession))
+            super.transformFile(file, data)
         }
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
-            withOwningSymbol(regularClass.symbol) {
-                withScopeCleanup {
-                    regularClass.addTypeParametersScope()
-                    regularClass.typeParameters.forEach {
-                        it.accept(this, data)
-                    }
-                    unboundCyclesInTypeParametersSupertypes(regularClass)
+            withScopeCleanup {
+                regularClass.addTypeParametersScope()
+                regularClass.typeParameters.forEach {
+                    it.accept(this, data)
                 }
-
-                return resolveClassContent(regularClass, data)
+                unboundCyclesInTypeParametersSupertypes(regularClass)
             }
+
+            return resolveClassContent(regularClass, data)
         }
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
         withClassDeclarationCleanup(classDeclarationsStack, anonymousObject) {
-            withOwningSymbol(anonymousObject.symbol) {
-                return resolveClassContent(anonymousObject, data)
-            }
+            return resolveClassContent(anonymousObject, data)
         }
     }
 
@@ -128,40 +108,36 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): FirEnumEntry {
-        withOwningSymbol(enumEntry.symbol) {
-            enumEntry.transformReturnTypeRef(this, data)
-            enumEntry.transformTypeParameters(this, data)
-            enumEntry.transformAnnotations(this, data)
-            return enumEntry
-        }
+        enumEntry.transformReturnTypeRef(this, data)
+        enumEntry.transformTypeParameters(this, data)
+        enumEntry.transformAnnotations(this, data)
+        return enumEntry
     }
 
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty {
-        return withOwningSymbol(property.symbol) {
-            withScopeCleanup {
-                property.addTypeParametersScope()
-                property.transformTypeParameters(this, data)
-                    .transformReturnTypeRef(this, data)
-                    .transformReceiverTypeRef(this, data)
-                    .transformContextReceivers(this, data)
-                    .transformGetter(this, data)
-                    .transformSetter(this, data)
-                    .transformBackingField(this, data)
-                    .transformAnnotations(this, data)
-                if (property.isFromVararg == true) {
-                    property.transformTypeToArrayType()
-                    property.backingField?.transformTypeToArrayType()
-                    setAccessorTypesByPropertyType(property)
-                }
-
-                if (property.returnTypeRef is FirResolvedTypeRef && property.delegate != null) {
-                    setAccessorTypesByPropertyType(property)
-                }
-
-                unboundCyclesInTypeParametersSupertypes(property)
-
-                property
+        return withScopeCleanup {
+            property.addTypeParametersScope()
+            property.transformTypeParameters(this, data)
+                .transformReturnTypeRef(this, data)
+                .transformReceiverTypeRef(this, data)
+                .transformContextReceivers(this, data)
+                .transformGetter(this, data)
+                .transformSetter(this, data)
+                .transformBackingField(this, data)
+                .transformAnnotations(this, data)
+            if (property.isFromVararg == true) {
+                property.transformTypeToArrayType()
+                property.backingField?.transformTypeToArrayType()
+                setAccessorTypesByPropertyType(property)
             }
+
+            if (property.returnTypeRef is FirResolvedTypeRef && property.delegate != null) {
+                setAccessorTypesByPropertyType(property)
+            }
+
+            unboundCyclesInTypeParametersSupertypes(property)
+
+            property
         }
     }
 
@@ -171,11 +147,9 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformField(field: FirField, data: Any?): FirField {
-        return withOwningSymbol(field.symbol) {
-            withScopeCleanup {
-                field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
-                field
-            }
+        return withScopeCleanup {
+            field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
+            field
         }
     }
 
@@ -186,12 +160,6 @@ open class FirTypeResolveTransformer(
                 unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
             }
         } as FirSimpleFunction
-    }
-
-    override fun transformDeclaration(declaration: FirDeclaration, data: Any?): FirDeclaration {
-        return withOwningSymbol(declaration.symbol) {
-            super.transformDeclaration(declaration, data)
-        }
     }
 
     private fun unboundCyclesInTypeParametersSupertypes(typeParametersOwner: FirTypeParameterRefsOwner) {
@@ -229,29 +197,18 @@ open class FirTypeResolveTransformer(
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeResolverTransformer.withFile(currentFile) {
-            if (owningSymbol == null) {
-                val hasAnnotationsWithUnresolvedArguments = typeRef.annotations.filterIsInstance<FirAnnotationCall>()
-                    .any { it.argumentList !is FirResolvedArgumentList }
-
-                if (hasAnnotationsWithUnresolvedArguments) {
-                    error("$typeRef has annotations with unresolved arguments mapping, but no symbol responsible for their resolution")
-                }
-            }
-
             typeRef.transform(
                 typeResolverTransformer,
-                ScopeClassDeclaration(towerScope, classDeclarationsStack, owningSymbol)
+                ScopeClassDeclaration(towerScope, classDeclarationsStack)
             )
         }
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement {
-        withOwningSymbol(valueParameter.symbol) {
-            valueParameter.transformReturnTypeRef(this, data)
-            valueParameter.transformAnnotations(this, data)
-            valueParameter.transformVarargTypeToArrayType()
-            return valueParameter
-        }
+        valueParameter.transformReturnTypeRef(this, data)
+        valueParameter.transformAnnotations(this, data)
+        valueParameter.transformVarargTypeToArrayType()
+        return valueParameter
     }
 
     override fun transformBlock(block: FirBlock, data: Any?): FirStatement {

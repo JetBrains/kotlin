@@ -7,20 +7,16 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import kotlin.reflect.KClass
 
-class CustomAnnotationTypeAttribute(
-    val annotations: List<FirAnnotation>,
-    val owningSymbol: FirBasedSymbol<*>?,
-) : ConeAttribute<CustomAnnotationTypeAttribute>() {
+class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : ConeAttribute<CustomAnnotationTypeAttribute>() {
     override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun add(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute {
         if (other == null || other === this) return this
-        return CustomAnnotationTypeAttribute(annotations + other.annotations, owningSymbol)
+        return CustomAnnotationTypeAttribute(annotations + other.annotations)
     }
 
     override fun isSubtypeOf(other: CustomAnnotationTypeAttribute?): Boolean = true

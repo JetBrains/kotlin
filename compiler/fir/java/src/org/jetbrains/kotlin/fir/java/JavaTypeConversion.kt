@@ -99,7 +99,7 @@ private fun JavaType?.toConeTypeProjection(
             }
         }
 
-        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertedAnnotations, owningSymbol = null)))
+        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertedAnnotations)))
     } else {
         ConeAttributes.Empty
     }

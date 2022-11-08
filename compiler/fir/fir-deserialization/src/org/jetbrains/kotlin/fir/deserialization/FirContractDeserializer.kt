@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.fir.contracts.toFirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
-import org.jetbrains.kotlin.fir.resolve.dfa.DfaInternals
-import org.jetbrains.kotlin.fir.resolve.dfa.symbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isBoolean
@@ -96,7 +93,6 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
-    @OptIn(DfaInternals::class)
     private fun extractPrimitiveExpression(proto: ProtoBuf.Expression, primitiveType: PrimitiveExpressionType?, owner: FirContractDescriptionOwner): ConeBooleanExpression? {
         val isInverted = Flags.IS_NEGATED.get(proto.flags)
 
@@ -110,7 +106,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
 
             PrimitiveExpressionType.INSTANCE_CHECK -> {
                 val variable = extractVariable(proto, owner) ?: return null
-                val type = extractType(proto, owner.symbol) ?: return null
+                val type = extractType(proto) ?: return null
                 ConeIsInstancePredicate(variable, type, isInverted)
             }
 
@@ -155,8 +151,8 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
         ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE -> EventOccurrencesRange.AT_LEAST_ONCE
     }
 
-    private fun extractType(proto: ProtoBuf.Expression, owningSymbol: FirBasedSymbol<*>?): ConeKotlinType? {
-        return c.typeDeserializer.type(proto.isInstanceType(c.typeTable) ?: return null, owningSymbol)
+    private fun extractType(proto: ProtoBuf.Expression): ConeKotlinType? {
+        return c.typeDeserializer.type(proto.isInstanceType(c.typeTable) ?: return null)
     }
 
     private fun loadConstant(value: ProtoBuf.Expression.ConstantValue): ConeConstantReference? = when (value) {

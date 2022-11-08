@@ -124,7 +124,7 @@ fun deserializeClassToSymbol(
         val classDeserializer = context.memberDeserializer
 
         val superTypesDeserialized = classProto.supertypes(context.typeTable).map { supertypeProto ->
-            typeDeserializer.simpleType(supertypeProto, ConeAttributes.Empty, symbol)
+            typeDeserializer.simpleType(supertypeProto, ConeAttributes.Empty)
         }
 
         superTypesDeserialized.mapNotNullTo(superTypeRefs) {
@@ -209,7 +209,7 @@ fun deserializeClassToSymbol(
         })
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
-        contextReceivers.addAll(classDeserializer.createContextReceiversForClass(classProto, symbol))
+        contextReceivers.addAll(classDeserializer.createContextReceiversForClass(classProto))
     }.also {
         if (isSealed) {
             val inheritors = classProto.sealedSubclassFqNameList.map { nameIndex ->
