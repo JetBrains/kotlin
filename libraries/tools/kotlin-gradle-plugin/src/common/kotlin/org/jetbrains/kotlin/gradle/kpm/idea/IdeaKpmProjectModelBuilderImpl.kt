@@ -11,12 +11,12 @@ import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectContainer
+import org.jetbrains.kotlin.gradle.idea.proto.kpm.toByteArray
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
-import org.jetbrains.kotlin.kpm.idea.proto.toByteArray
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods instead") constructor(

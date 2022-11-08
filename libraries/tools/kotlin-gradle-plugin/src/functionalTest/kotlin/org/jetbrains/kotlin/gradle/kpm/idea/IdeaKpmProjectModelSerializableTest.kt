@@ -11,8 +11,8 @@ import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.kpm.AbstractKpmExtensionTest
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.deserialize
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.serialize
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.deserialize
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.serialize
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMacosX64Variant

@@ -9,21 +9,29 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtensionBuilder
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Default
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.tooling.core.Extras
 
 interface IdeMultiplatformImport {
 
+    fun resolveDependencies(sourceSetName: String): Set<IdeaKotlinDependency>
+
     fun resolveDependencies(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency>
+
+    fun resolveDependenciesSerialized(sourceSetName: String): List<ByteArray>
+
+    fun serialize(dependencies: Iterable<IdeaKotlinDependency>): List<ByteArray>
 
     fun <T : Any> serialize(key: Extras.Key<T>, value: T): ByteArray?
 

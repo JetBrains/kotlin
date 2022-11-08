@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.proto.tcs.toByteArray
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
 import org.jetbrains.kotlin.tooling.core.Extras
@@ -18,12 +21,26 @@ internal class IdeMultiplatformImportImpl(
     private val extension: KotlinMultiplatformExtension
 ) : IdeMultiplatformImport {
 
+    override fun resolveDependencies(sourceSetName: String): Set<IdeaKotlinDependency> {
+        return resolveDependencies(extension.sourceSets.getByName(sourceSetName))
+    }
+
     override fun resolveDependencies(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         return createDependencyResolver().resolve(sourceSet)
     }
 
+    override fun resolveDependenciesSerialized(sourceSetName: String): List<ByteArray> {
+        return serialize(resolveDependencies(sourceSetName))
+    }
+
+    override fun serialize(dependencies: Iterable<IdeaKotlinDependency>): List<ByteArray> {
+        val context = createSerializationContext()
+        return dependencies.map { dependency -> dependency.toByteArray(context) }
+    }
+
     override fun <T : Any> serialize(key: Extras.Key<T>, value: T): ByteArray? {
-        return null
+        val context = createSerializationContext()
+        return context.extrasSerializationExtension.serializer(key)?.serialize(context, value)
     }
 
     private data class RegisteredDependencyResolver(
@@ -130,5 +147,12 @@ internal class IdeMultiplatformImportImpl(
         registeredDependencyEffects
             .filter { it.constraint(sourceSet) }
             .forEach { it.effect(sourceSet, dependencies) }
+    }
+
+    private fun createSerializationContext(): IdeaSerializationContext {
+        return IdeaSerializationContext(
+            logger = extension.project.logger,
+            extrasSerializationExtensions = registeredExtrasSerializationExtensions.toList()
+        )
     }
 }

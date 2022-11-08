@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.kpm
 
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmInstances
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmInstances
 import kotlin.test.*
 
 class IdeaKpmProjectContainerTest {

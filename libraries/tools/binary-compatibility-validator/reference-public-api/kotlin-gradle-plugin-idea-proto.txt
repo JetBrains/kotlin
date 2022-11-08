@@ -1,8 +1,13 @@
-public final class org/jetbrains/kotlin/kpm/idea/proto/KpmIdeaProto {
-	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaSerializationContext;Ljava/io/InputStream;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;
-	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaSerializationContext;Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;
-	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaSerializationContext;[B)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;
-	public static final fun toByteArray (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaSerializationContext;)[B
-	public static final fun writeTo (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;Ljava/io/OutputStream;Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaSerializationContext;)V
+public final class org/jetbrains/kotlin/gradle/idea/proto/kpm/KpmIdeaProto {
+	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;Ljava/io/InputStream;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
+	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
+	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;[B)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
+	public static final fun toByteArray (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;)[B
+	public static final fun writeTo (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;Ljava/io/OutputStream;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/proto/tcs/IdeaKotlinDependencyKt {
+	public static final fun IdeaKotlinDependency (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;[B)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;
+	public static final fun toByteArray (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;)[B
 }
 

@@ -10,14 +10,14 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
-import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmBinaryDependencyMatcher
+import org.jetbrains.kotlin.gradle.enableDependencyVerification
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmBinaryDependencyMatcher
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -33,7 +33,7 @@ abstract class AbstractLightweightIdeaDependencyResolutionTest {
 
     fun buildProject(builder: ProjectBuilder.() -> Unit = {}): ProjectInternal {
         return (ProjectBuilder.builder().also(builder).build()).also { project ->
-            project.gradle.startParameter.dependencyVerificationMode = DependencyVerificationMode.OFF
+            project.enableDependencyVerification(false)
             project.enableDefaultStdlibDependency(false)
             project.repositories.mavenLocal()
             project.repositories.mavenCentralCacheRedirector()

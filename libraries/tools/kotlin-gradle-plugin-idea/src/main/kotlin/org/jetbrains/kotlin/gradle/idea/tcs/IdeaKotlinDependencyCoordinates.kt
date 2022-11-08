@@ -12,11 +12,19 @@ data class IdeaKotlinBinaryCoordinates(
     val module: String,
     val version: String?,
     val sourceSetName: String?
-) : IdeaKotlinDependencyCoordinates
+) : IdeaKotlinDependencyCoordinates {
+    override fun toString(): String {
+        return "$group:$module:$version${sourceSetName?.let { ":$it" }.orEmpty()}"
+    }
+}
 
 data class IdeaKotlinSourceCoordinates(
     val buildId: String,
     val projectPath: String,
     val projectName: String,
     val sourceSetName: String
-) : IdeaKotlinDependencyCoordinates
+) : IdeaKotlinDependencyCoordinates {
+    override fun toString(): String {
+        return "${buildId.takeIf { it != ":" }.orEmpty()}$projectPath/$sourceSetName"
+    }
+}

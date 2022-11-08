@@ -20,8 +20,8 @@ val embedded by configurations.getting {
 
 dependencies {
     api(project(":kotlin-gradle-plugin-idea"))
-    embedded("com.google.protobuf:protobuf-java:3.19.4")
-    embedded("com.google.protobuf:protobuf-kotlin:3.19.4")
+    embedded("com.google.protobuf:protobuf-java:3.21.9")
+    embedded("com.google.protobuf:protobuf-kotlin:3.21.9")
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
 }
@@ -40,7 +40,7 @@ sourcesJar()
 runtimeJar(tasks.register<ShadowJar>("embeddable")) {
     from(mainSourceSet.output)
     exclude("**/*.proto")
-    relocate("com.google.protobuf", "org.jetbrains.kotlin.kpm.idea.proto.com.google.protobuf")
+    relocate("com.google.protobuf", "org.jetbrains.kotlin.gradle.idea.proto.com.google.protobuf")
 }
 
 /* Setup configuration for binary compatibility tests */
@@ -86,20 +86,4 @@ tasks.register<Exec>("protoc") {
             .filter { it.extension == "proto" }
             .map { it.path },
     )
-
-    doLast {
-        kotlinOutput.walkTopDown()
-            .filter { it.extension == "kt" }
-            .forEach { file -> file.writeText(file.readText().replace("public", "internal")) }
-
-        javaOutput.walkTopDown()
-            .filter { it.extension == "java" }
-            .forEach { file ->
-                file.writeText(
-                    file.readText()
-                        .replace("public final class", "final class")
-                        .replace("public interface", "interface")
-                )
-            }
-    }
 }
