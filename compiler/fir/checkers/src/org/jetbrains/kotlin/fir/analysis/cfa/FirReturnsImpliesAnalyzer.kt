@@ -138,10 +138,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         flow: PersistentFlow,
         statement: OperationStatement,
         builtinTypes: BuiltinTypes
-    ): MutableTypeStatements {
-        val newTypeStatements = flow.approvedTypeStatements.asMutableStatements()
-        approveStatementsTo(newTypeStatements, flow, statement, flow.logicStatements.flatMap { it.value })
-
+    ): TypeStatements {
+        val newTypeStatements = andForTypeStatements(flow.approvedTypeStatements, approveOperationStatement(flow, statement, null))
         val variable = statement.variable
         if (!variable.isReal()) return newTypeStatements
         val extraStatement = when (statement.operation) {
@@ -158,7 +156,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         variableStorage: VariableStorageImpl,
         flow: Flow,
         context: CheckerContext
-    ): MutableTypeStatements? {
+    ): TypeStatements? {
         fun buildTypeStatements(arg: ConeValueParameterReference, exactType: Boolean, type: ConeKotlinType): MutableTypeStatements? {
             val parameterSymbol = function.getParameterSymbol(arg.parameterIndex, context)
 

@@ -35,9 +35,6 @@ fun Implication.invertCondition(): Implication = Implication(condition.invert(),
 typealias TypeStatements = Map<RealVariable, TypeStatement>
 typealias MutableTypeStatements = MutableMap<RealVariable, MutableTypeStatement>
 
-fun TypeStatements.asMutableStatements(): MutableTypeStatements =
-    mapValuesTo(mutableMapOf()) { it.value.asMutableStatement() }
-
 // --------------------------------------- DSL ---------------------------------------
 
 infix fun DataFlowVariable.eq(constant: Boolean?): OperationStatement {

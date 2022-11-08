@@ -65,38 +65,37 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         rightVariable: DataFlowVariable,
     ): InfoForBooleanOperator
 
-    abstract fun approveStatementsTo(
-        destination: MutableTypeStatements,
+    abstract fun approveOperationStatement(
         flow: FLOW,
         approvedStatement: OperationStatement,
-        statements: Collection<Implication>,
-    )
+        statementsForVariable: Collection<Implication>?
+    ): TypeStatements
 
-    fun orForTypeStatements(left: TypeStatements, right: TypeStatements): MutableTypeStatements {
-        if (left.isEmpty() || right.isEmpty()) return mutableMapOf()
-        val map = mutableMapOf<RealVariable, MutableTypeStatement>()
-        for (variable in left.keys.intersect(right.keys)) {
-            val leftStatement = left.getValue(variable)
-            val rightStatement = right.getValue(variable)
-            map[variable] = or(listOf(leftStatement, rightStatement))
+    fun orForTypeStatements(left: TypeStatements, right: TypeStatements): TypeStatements = when {
+        left.isEmpty() -> left
+        right.isEmpty() -> right
+        else -> buildMap {
+            for ((variable, leftStatement) in left) {
+                put(variable, or(listOf(leftStatement, right[variable] ?: continue)))
+            }
         }
-        return map
     }
 
-    fun andForTypeStatements(left: TypeStatements, right: TypeStatements): MutableTypeStatements {
-        if (left.isEmpty() && right.isEmpty()) return mutableMapOf()
-        val map = left.asMutableStatements()
-        for ((variable, rightStatement) in right) {
-            map[variable] = and(listOfNotNull(map[variable], rightStatement))
+    fun andForTypeStatements(left: TypeStatements, right: TypeStatements): TypeStatements = when {
+        left.isEmpty() -> right
+        right.isEmpty() -> left
+        else -> left.toMutableMap().apply {
+            for ((variable, rightStatement) in right) {
+                put(variable, { rightStatement }, { and(listOf(it, rightStatement)) })
+            }
         }
-        return map
     }
 
     // ------------------------------- Util functions -------------------------------
 
-    private fun foldStatements(statements: Collection<TypeStatement>, all: Boolean): MutableTypeStatement {
+    private fun foldStatements(statements: Collection<TypeStatement>, all: Boolean): TypeStatement {
         require(statements.isNotEmpty())
-        statements.singleOrNull()?.let { return it.asMutableStatement() }
+        statements.singleOrNull()?.let { return it }
         val variable = statements.first().variable
         assert(statements.all { it.variable == variable })
         // TypeStatement(variable, exactType, exactNotType) =
@@ -127,21 +126,11 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         }.takeIf { !onlyInputTypes || it in intersected }
     }
 
-    protected fun and(statements: Collection<TypeStatement>): MutableTypeStatement =
+    protected fun and(statements: Collection<TypeStatement>): TypeStatement =
         foldStatements(statements, all = true)
 
-    protected fun or(statements: Collection<TypeStatement>): MutableTypeStatement =
+    protected fun or(statements: Collection<TypeStatement>): TypeStatement =
         foldStatements(statements, all = false)
-}
-
-fun <FLOW : Flow> LogicSystem<FLOW>.approveOperationStatement(
-    flow: FLOW,
-    approvedStatement: OperationStatement,
-    statements: Collection<Implication>,
-): MutableTypeStatements {
-    return mutableMapOf<RealVariable, MutableTypeStatement>().apply {
-        approveStatementsTo(this, flow, approvedStatement, statements)
-    }
 }
 
 /*
