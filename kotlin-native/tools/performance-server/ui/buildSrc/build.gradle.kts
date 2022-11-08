@@ -2,8 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 import java.io.FileReader
 
-extra["versions.native-platform"] = "0.14"
-
 buildscript {
     java.util.Properties().also {
         it.load(java.io.FileReader(project.file("../../../../../gradle.properties")))
