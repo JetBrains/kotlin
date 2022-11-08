@@ -195,8 +195,10 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     }
 
     private fun RealVariable.nullabilityStatement(builtinTypes: BuiltinTypes, isNull: Boolean) =
-        // TODO: opposite for builtinTypes.nullableNothingType.type
-        if (isNull) this typeNotEq builtinTypes.anyType.type else this typeEq builtinTypes.anyType.type
+        if (isNull)
+            this typeEq builtinTypes.nullableNothingType.type andTypeNotEq builtinTypes.anyType.type
+        else
+            this typeEq builtinTypes.anyType.type andTypeNotEq builtinTypes.nullableNothingType.type
 
     private fun TypeStatement.singleton(): TypeStatements =
         mapOf(variable to this)
