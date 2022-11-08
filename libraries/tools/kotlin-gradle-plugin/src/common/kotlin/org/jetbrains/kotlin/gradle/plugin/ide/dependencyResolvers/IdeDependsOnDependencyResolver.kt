@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.tooling.core.emptyExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal object IdeDependsOnDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
@@ -25,7 +25,7 @@ internal object IdeDependsOnDependencyResolver : IdeDependencyResolver {
                     projectName = dependsOnSourceSet.internal.project.name,
                     sourceSetName = dependsOnSourceSet.name
                 ),
-                extras = emptyExtras()
+                extras = mutableExtrasOf()
             )
         }.toSet()
     }

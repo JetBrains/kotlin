@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.idea.kpm.name
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertIsNotEmpty
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertFragmentDependencies
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertContainsFragment
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertIsNotEmpty
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertFragmentDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.junit.Test
 

@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.gradle.idea.kpm
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.create
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmExtra
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmExtrasSerializationExtension.anySerializableKey
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.copy
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.createProxyInstance
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.unwrapProxyInstance
+import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmExtra
+import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaExtrasSerializationExtension.anySerializableKey
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.copy
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.createProxyInstance
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.unwrapProxyInstance
 import org.jetbrains.kotlin.gradle.idea.testUtils.buildIdeaKpmProject
 import org.jetbrains.kotlin.gradle.idea.testUtils.createKpmProject
 import org.jetbrains.kotlin.gradle.idea.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses

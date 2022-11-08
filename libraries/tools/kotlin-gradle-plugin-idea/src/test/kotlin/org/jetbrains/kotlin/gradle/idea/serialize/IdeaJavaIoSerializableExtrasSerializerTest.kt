@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.serialize
 
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaSerializationContext
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import org.junit.Test
 import java.io.Serializable

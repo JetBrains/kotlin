@@ -58,7 +58,9 @@ class RuntimePublicAPITest {
 
     @Test fun kotlinGradlePluginIdeaProto() {
         snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea-proto/build/libs", "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
+            basePath = "../kotlin-gradle-plugin-idea-proto/build/libs",
+            jarPattern = "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
+            nonPublicPackages = listOf("org/jetbrains/kotlin/gradle/idea/proto/generated"),
             nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
         )
     }

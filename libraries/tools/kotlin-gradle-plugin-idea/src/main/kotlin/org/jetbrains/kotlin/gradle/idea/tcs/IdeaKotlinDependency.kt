@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.idea.tcs
 
-import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.MutableExtras
+import java.io.Serializable
 
-sealed interface IdeaKotlinDependency {
+sealed interface IdeaKotlinDependency : Serializable {
     val coordinates: IdeaKotlinDependencyCoordinates?
-    val extras: Extras
+    val extras: MutableExtras
 
     companion object {
         const val CLASSPATH_BINARY_TYPE = "org.jetbrains.kotlin.gradle.idea.tcs.IdeDependency.classpathBinaryType"
