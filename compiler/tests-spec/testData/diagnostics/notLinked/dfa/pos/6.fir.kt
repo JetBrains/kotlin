@@ -840,8 +840,8 @@ fun case_46(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>, y: TypealiasNu
         if (y === nullableNothingProperty) {
             if (z != nullableStringProperty) {
                 if (z === t || <!SENSELESS_COMPARISON!>t == nullableNothingProperty<!>) {
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString? & kotlin.Nothing?")!>x<!>
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString? & kotlin.Nothing?")!>x<!>.hashCode()
+                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString?")!>x<!>
+                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString?")!>x<!>.hashCode()
                 }
             }
         }

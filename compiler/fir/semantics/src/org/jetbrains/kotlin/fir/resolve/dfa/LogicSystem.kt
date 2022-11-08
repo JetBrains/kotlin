@@ -72,16 +72,6 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         statements: Collection<Implication>,
     )
 
-    /**
-     * Recursively collects all TypeStatements approved by [approvedStatement] and all predicates
-     *   that has been implied by it
-     *   TODO: or not recursively?
-     */
-    fun approveOperationStatement(flow: FLOW, approvedStatement: OperationStatement): Collection<TypeStatement> {
-        val statements = getImplicationsWithVariable(flow, approvedStatement.variable)
-        return approveOperationStatement(flow, approvedStatement, statements).values
-    }
-
     fun orForTypeStatements(left: TypeStatements, right: TypeStatements): MutableTypeStatements {
         if (left.isEmpty() || right.isEmpty()) return mutableMapOf()
         val map = mutableMapOf<RealVariable, MutableTypeStatement>()

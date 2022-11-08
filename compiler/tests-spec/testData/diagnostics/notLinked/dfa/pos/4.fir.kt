@@ -102,7 +102,7 @@ fun case_11(x: TypealiasString, y: TypealiasString) {
         if (<!SENSELESS_COMPARISON!>y == null<!>) {
             if (<!SENSELESS_COMPARISON!>stringProperty != null<!>) {
                 if (false || false || false || <!SENSELESS_COMPARISON!>z == null<!> || false) {
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
+                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>
                 }
             }
         }
