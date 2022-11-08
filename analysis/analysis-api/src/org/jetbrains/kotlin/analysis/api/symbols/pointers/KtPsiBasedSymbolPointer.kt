@@ -36,7 +36,9 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(private v
 
     public companion object {
         public fun <S : KtSymbol> createForSymbolFromSource(symbol: S): KtPsiBasedSymbolPointer<S>? {
-            if (disablePsiPointer || symbol.origin != KtSymbolOrigin.SOURCE) return null
+            ifDisabled { return null }
+
+            if (symbol.origin != KtSymbolOrigin.SOURCE) return null
 
             val psi = when (val psi = symbol.psi) {
                 is KtDeclaration -> psi
@@ -49,19 +51,28 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(private v
         }
 
         public fun <S : KtSymbol> createForSymbolFromPsi(ktElement: KtElement): KtPsiBasedSymbolPointer<S>? {
-            if (disablePsiPointer) return null
+            ifDisabled { return null }
 
             return KtPsiBasedSymbolPointer(ktElement.createSmartPointer())
         }
 
         @TestOnly
-        @Synchronized
         public fun <T> withDisabledPsiBasedPointers(disable: Boolean, action: () -> T): T = try {
-            disablePsiPointer = disable
+            disablePsiPointer = true
+            disablePsiPointerFlag.set(disable)
             action()
         } finally {
-            disablePsiPointer = false
+            disablePsiPointerFlag.remove()
         }
+
+        private inline fun ifDisabled(action: () -> Unit) {
+            if (!disablePsiPointer) return
+            if (disablePsiPointerFlag.get()) {
+                action()
+            }
+        }
+
+        private val disablePsiPointerFlag: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
         @Volatile
         private var disablePsiPointer: Boolean = false
