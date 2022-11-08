@@ -9,25 +9,26 @@
 package org.jetbrains.kotlin.kpm.idea.proto
 
 import com.google.protobuf.InvalidProtocolBufferException
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProject
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.ByteBuffer
 
-fun IdeaKpmSerializationContext.IdeaKpmProject(data: ByteArray): IdeaKpmProject? {
+
+fun IdeaSerializationContext.IdeaKpmProject(data: ByteArray): IdeaKpmProject? {
     return IdeaKpmProject(data) { IdeaKpmContainerProto.parseFrom(data) }
 }
 
-fun IdeaKpmSerializationContext.IdeaKpmProject(data: ByteBuffer): IdeaKpmProject? {
+fun IdeaSerializationContext.IdeaKpmProject(data: ByteBuffer): IdeaKpmProject? {
     return IdeaKpmProject(data) { IdeaKpmContainerProto.parseFrom(data) }
 }
 
-fun IdeaKpmSerializationContext.IdeaKpmProject(stream: InputStream): IdeaKpmProject? {
+fun IdeaSerializationContext.IdeaKpmProject(stream: InputStream): IdeaKpmProject? {
     return IdeaKpmProject(stream) { IdeaKpmContainerProto.parseFrom(stream) }
 }
 
-internal fun <T> IdeaKpmSerializationContext.IdeaKpmProject(data: T, proto: (T) -> IdeaKpmContainerProto): IdeaKpmProject? {
+internal fun <T> IdeaSerializationContext.IdeaKpmProject(data: T, proto: (T) -> IdeaKpmContainerProto): IdeaKpmProject? {
     val container = try {
         proto(data)
     } catch (e: InvalidProtocolBufferException) {
@@ -38,15 +39,15 @@ internal fun <T> IdeaKpmSerializationContext.IdeaKpmProject(data: T, proto: (T) 
     return IdeaKpmProject(container)
 }
 
-fun IdeaKpmProject.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
+fun IdeaKpmProject.toByteArray(context: IdeaSerializationContext): ByteArray {
     return context.IdeaKpmContainerProto(this).toByteArray()
 }
 
-fun IdeaKpmProject.writeTo(output: OutputStream, context: IdeaKpmSerializationContext) {
+fun IdeaKpmProject.writeTo(output: OutputStream, context: IdeaSerializationContext) {
     context.IdeaKpmContainerProto(this).writeDelimitedTo(output)
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmContainerProto(project: IdeaKpmProject): IdeaKpmContainerProto {
+internal fun IdeaSerializationContext.IdeaKpmContainerProto(project: IdeaKpmProject): IdeaKpmContainerProto {
     return ideaKpmContainerProto {
         schemaVersionMajor = IdeaKpmProtoSchema.versionMajor
         schemaVersionMinor = IdeaKpmProtoSchema.versionMinor
@@ -56,7 +57,7 @@ internal fun IdeaKpmSerializationContext.IdeaKpmContainerProto(project: IdeaKpmP
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmProject(proto: IdeaKpmContainerProto): IdeaKpmProject? {
+internal fun IdeaSerializationContext.IdeaKpmProject(proto: IdeaKpmContainerProto): IdeaKpmProject? {
     if (!proto.hasSchemaVersionMajor()) {
         logger.error("Missing 'schema_version_major'", Throwable())
         return null

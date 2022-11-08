@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.idea.kpm.name
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment

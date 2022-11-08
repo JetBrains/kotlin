@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProject
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectImpl
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
 import java.io.File
 
-internal fun IdeaKpmSerializationContext.IdeaKpmProjectProto(project: IdeaKpmProject): IdeaKpmProjectProto {
+internal fun IdeaSerializationContext.IdeaKpmProjectProto(project: IdeaKpmProject): IdeaKpmProjectProto {
     return ideaKpmProjectProto {
         gradlePluginVersion = project.gradlePluginVersion
         coreLibrariesVersion = project.coreLibrariesVersion
@@ -20,7 +20,7 @@ internal fun IdeaKpmSerializationContext.IdeaKpmProjectProto(project: IdeaKpmPro
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmProject(proto: IdeaKpmProjectProto): IdeaKpmProject {
+internal fun IdeaSerializationContext.IdeaKpmProject(proto: IdeaKpmProjectProto): IdeaKpmProject {
     return IdeaKpmProjectImpl(
         gradlePluginVersion = proto.gradlePluginVersion,
         coreLibrariesVersion = proto.coreLibrariesVersion,

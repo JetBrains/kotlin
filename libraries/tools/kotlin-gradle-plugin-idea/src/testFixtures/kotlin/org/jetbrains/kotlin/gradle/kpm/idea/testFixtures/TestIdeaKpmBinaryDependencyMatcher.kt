@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryCoordinates
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependency
 import java.io.File
 
 fun buildIdeaKpmBinaryDependencyMatchers(notation: Any?): List<TestIdeaKpmBinaryDependencyMatcher> {

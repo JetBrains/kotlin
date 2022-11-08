@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragmentCoordinatesImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragmentDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragmentDependencyImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmModuleCoordinatesImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragmentCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragmentDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragmentDependencyImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmModuleCoordinatesImpl
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.extrasOf
 import org.jetbrains.kotlin.tooling.core.withValue
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class FragmentDependencyTest : AbstractSerializationTest<IdeaKpmFragmentDependency>() {
 

@@ -9,7 +9,8 @@ package org.jetbrains.kotlin.gradle.ide
 
 import org.jetbrains.kotlin.gradle.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeSourceDependency
+import org.jetbrains.kotlin.gradle.ide.testFixtures.assertMatches
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import kotlin.test.Test
 
@@ -28,12 +29,12 @@ class IdeMultiplatformResolveDependsOnDependenciesTest {
 
 
         project.kotlinIdeMultiplatformImport.resolveDependencies(jvmMain)
-            .filterIsInstance<IdeSourceDependency>()
+            .filterIsInstance<IdeaKotlinSourceDependency>()
             .assertMatches(dependsOnDependency(commonMain))
 
 
         project.kotlinIdeMultiplatformImport.resolveDependencies(jvmTest)
-            .filterIsInstance<IdeSourceDependency>()
+            .filterIsInstance<IdeaKotlinSourceDependency>()
             .assertMatches(dependsOnDependency(commonTest))
     }
 
@@ -50,14 +51,14 @@ class IdeMultiplatformResolveDependsOnDependenciesTest {
         customMain.dependsOn(commonMain)
 
         project.kotlinIdeMultiplatformImport.resolveDependencies(jvmMain)
-            .filterIsInstance<IdeSourceDependency>()
+            .filterIsInstance<IdeaKotlinSourceDependency>()
             .assertMatches(
                 dependsOnDependency(commonMain),
                 dependsOnDependency(customMain)
             )
 
         project.kotlinIdeMultiplatformImport.resolveDependencies(customMain)
-            .filterIsInstance<IdeSourceDependency>()
+            .filterIsInstance<IdeaKotlinSourceDependency>()
             .assertMatches(dependsOnDependency(commonMain))
     }
 }

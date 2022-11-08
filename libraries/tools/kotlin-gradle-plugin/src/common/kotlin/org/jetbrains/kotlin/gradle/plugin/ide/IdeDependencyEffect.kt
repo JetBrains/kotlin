@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 /**
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
  * that the dependency resolution result is final.
  */
 fun interface IdeDependencyEffect {
-    operator fun invoke(sourceSet: KotlinSourceSet, dependencies: Set<IdeDependency>)
+    operator fun invoke(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>)
 }
 
 fun IdeDependencyResolver.withEffect(effect: IdeDependencyEffect) = IdeDependencyResolver { sourceSet ->

@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmResolvedBinaryDependencyImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependencyImpl
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
 import java.io.File
 
-internal fun IdeaKpmSerializationContext.IdeaKpmResolvedBinaryDependencyProto(
+internal fun IdeaSerializationContext.IdeaKpmResolvedBinaryDependencyProto(
     dependency: IdeaKpmResolvedBinaryDependency
 ): IdeaKpmResolvedBinaryDependencyProto {
     return ideaKpmResolvedBinaryDependencyProto {
@@ -21,7 +21,7 @@ internal fun IdeaKpmSerializationContext.IdeaKpmResolvedBinaryDependencyProto(
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmResolvedBinaryDependency(
+internal fun IdeaSerializationContext.IdeaKpmResolvedBinaryDependency(
     proto: IdeaKpmResolvedBinaryDependencyProto
 ): IdeaKpmResolvedBinaryDependency {
     return IdeaKpmResolvedBinaryDependencyImpl(
@@ -32,10 +32,10 @@ internal fun IdeaKpmSerializationContext.IdeaKpmResolvedBinaryDependency(
     )
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmResolvedBinaryDependency(data: ByteArray): IdeaKpmResolvedBinaryDependency {
+internal fun IdeaSerializationContext.IdeaKpmResolvedBinaryDependency(data: ByteArray): IdeaKpmResolvedBinaryDependency {
     return IdeaKpmResolvedBinaryDependency(IdeaKpmResolvedBinaryDependencyProto.parseFrom(data))
 }
 
-internal fun IdeaKpmResolvedBinaryDependency.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
+internal fun IdeaKpmResolvedBinaryDependency.toByteArray(context: IdeaSerializationContext): ByteArray {
     return context.IdeaKpmResolvedBinaryDependencyProto(this).toByteArray()
 }

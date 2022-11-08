@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryCoordinates
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinatesImpl
 import org.junit.Test
 
 class BinaryCoordinatesTest : AbstractSerializationTest<IdeaKpmBinaryCoordinates>() {

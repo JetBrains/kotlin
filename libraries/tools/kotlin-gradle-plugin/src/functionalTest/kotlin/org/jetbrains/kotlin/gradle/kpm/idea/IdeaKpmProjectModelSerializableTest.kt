@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.kotlin.dsl.create
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.kpm.AbstractKpmExtensionTest
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.deserialize

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmContentRoot
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmContentRootImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmContentRoot
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmContentRootImpl
 import org.jetbrains.kotlin.tooling.core.emptyExtras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.extrasOf

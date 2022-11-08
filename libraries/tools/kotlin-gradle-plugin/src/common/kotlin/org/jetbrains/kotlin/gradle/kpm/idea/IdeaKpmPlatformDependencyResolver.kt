@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
+import org.jetbrains.kotlin.gradle.idea.kpm.*
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmPlatformDependencyResolver.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationAttributesSetup

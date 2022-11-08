@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryCoordinates
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryCoordinatesImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragment
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragment
 
 fun parseIdeaKpmBinaryCoordinates(coordinates: String): IdeaKpmBinaryCoordinates {
     val parts = coordinates.split(":")

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmModuleCoordinates
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmModuleCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmModuleCoordinates
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmModuleCoordinatesImpl
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmInstances
 import kotlin.test.Test
 

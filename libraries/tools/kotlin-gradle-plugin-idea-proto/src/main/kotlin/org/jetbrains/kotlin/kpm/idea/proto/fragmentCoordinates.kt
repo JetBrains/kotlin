@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragmentCoordinates
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragmentCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragmentCoordinates
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragmentCoordinatesImpl
 
 internal fun IdeaKpmFragmentCoordinatesProto(coordinates: IdeaKpmFragmentCoordinates): IdeaKpmFragmentCoordinatesProto {
     return ideaKpmFragmentCoordinatesProto {
