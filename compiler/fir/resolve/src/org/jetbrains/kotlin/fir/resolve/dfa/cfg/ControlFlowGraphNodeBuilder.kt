@@ -241,6 +241,12 @@ fun ControlFlowGraphBuilder.createAnonymousObjectExitNode(fir: FirAnonymousObjec
 fun ControlFlowGraphBuilder.createAnonymousObjectExpressionExitNode(fir: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode =
     AnonymousObjectExpressionExitNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createScriptEnterNode(fir: FirScript): ScriptEnterNode =
+    ScriptEnterNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createScriptExitNode(fir: FirScript): ScriptExitNode =
+    ScriptExitNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createUnionFunctionCallArgumentsNode(fir: FirElement): UnionFunctionCallArgumentsNode =
     UnionFunctionCallArgumentsNode(currentGraph, fir, levelCounter, createId())
 

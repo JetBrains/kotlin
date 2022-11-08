@@ -115,6 +115,9 @@ fun CFGNode<*>.render(): String =
                 is AnonymousObjectExitNode -> "Exit anonymous object"
                 is AnonymousObjectExpressionExitNode -> "Exit anonymous object expression"
 
+                is ScriptEnterNode -> "Enter class ${fir.name}"
+                is ScriptExitNode -> "Exit class ${fir.name}"
+
                 is ContractDescriptionEnterNode -> "Enter contract description"
 
                 is EnterDefaultArgumentsNode -> "Enter default value of ${fir.name}"

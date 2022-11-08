@@ -83,7 +83,7 @@ abstract class KotlinCompileDaemonBase {
             ?.findResource("META-INF/MANIFEST.MF")
             ?.let {
                 try {
-                    return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: null
+                    return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version")
                 }
                 catch (e: IOException) {}
             }

@@ -492,6 +492,37 @@ class BodyResolveContext(
         }
     }
 
+    fun <T> withScopesForScript(
+        owner: FirScript,
+        holder: SessionHolder,
+        f: () -> T
+    ): T {
+        val towerElementsForScript = holder.collectTowerDataElementsForScript(owner)
+
+        val base = towerDataContext.addNonLocalTowerDataElements(emptyList())
+        val statics = base
+            .addNonLocalScopeIfNotNull(towerElementsForScript.staticScope)
+
+        val forMembersResolution =
+            statics
+                .addContextReceiverGroup(towerElementsForScript.implicitReceivers)
+
+        val newContexts = FirRegularTowerDataContexts(
+            regular = forMembersResolution,
+            forClassHeaderAnnotations = base,
+            forNestedClasses = forMembersResolution,
+            forCompanionObject = statics,
+            forConstructorHeaders = null,
+            forEnumEntries = forMembersResolution,
+            primaryConstructorPureParametersScope = null,
+            primaryConstructorAllParametersScope = null
+        )
+
+        return withTowerDataContexts(newContexts) {
+            f()
+        }
+    }
+
     @OptIn(PrivateForInline::class)
     inline fun <T> withWhenSubjectType(
         subjectType: ConeKotlinType?,

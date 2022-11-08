@@ -977,13 +977,39 @@ open class RawFirBuilder(
                 }
                 for (declaration in file.declarations) {
                     declarations += when (declaration) {
-                        // TODO: scripts aren't supported yet
-                        is KtScript -> continue
+                        is KtScript -> {
+                            require(file.declarations.size == 1) { "Expect the script to be the only declaration in the file $name" }
+                            convertScript(declaration, this)
+                        }
                         is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
                         else -> declaration.convert()
                     }
                 }
             }
+        }
+
+        private fun convertScript(script: KtScript, containingFile: FirFileBuilder,): FirScript {
+            return buildScript {
+                source = script.toFirSourceElement()
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                name = Name.special("<script-${containingFile.name}>")
+                symbol = FirScriptSymbol(context.packageFqName.child(name))
+                for (declaration in script.declarations) {
+                    when (declaration) {
+                        is KtScriptInitializer -> {
+                            declaration.body?.let { statements.add(it.toFirStatement()) }
+                        }
+                        else -> {
+                            statements.add(declaration.toFirStatement())
+                        }
+                    }
+                }
+            }
+        }
+
+        override fun visitScript(script: KtScript, data: Unit?): FirElement {
+            error("should not be here")
         }
 
         private fun KtEnumEntry.toFirEnumEntry(

@@ -10,6 +10,8 @@ import java.io.File
 
 private const val FIR_KT = ".fir.kt"
 private const val KT = ".kt"
+private const val FIR_KTS = ".fir.kts"
+private const val KTS = ".kts"
 
 val File.isFirTestData: Boolean
     get() = name.endsWith(FIR_KT)
@@ -25,7 +27,10 @@ val File.firTestDataFile: File
     get() = if (isFirTestData) {
         this
     } else {
-        parentFile.resolve("${name.removeSuffix(KT)}$FIR_KT")
+        val firTestDataFileName =
+            if (name.endsWith(KTS)) "${name.removeSuffix(KTS)}$FIR_KTS"
+            else "${name.removeSuffix(KT)}$FIR_KT"
+        parentFile.resolve(firTestDataFileName)
     }
 
 fun File.withExtension(extension: String): File {
