@@ -303,6 +303,20 @@ class AnonymousObjectExpressionExitNode(owner: ControlFlowGraph, override val fi
     }
 }
 
+// ----------------------------------- Scripts ------------------------------------------
+
+class ScriptEnterNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitScriptEnterNode(this, data)
+    }
+}
+
+class ScriptExitNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitScriptExitNode(this, data)
+    }
+}
+
 // ----------------------------------- Initialization -----------------------------------
 
 class PartOfClassInitializationNode(owner: ControlFlowGraph, override val fir: FirControlFlowGraphOwner, level: Int, id: Int) : CFGNodeWithCfgOwner<FirControlFlowGraphOwner>(owner, level, id) {

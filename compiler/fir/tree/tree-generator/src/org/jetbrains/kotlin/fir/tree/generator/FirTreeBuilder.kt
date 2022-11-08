@@ -60,6 +60,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val backingField by element(Declaration, variable, typeParametersOwner, statement)
     val constructor by element(Declaration, function, typeParameterRefsOwner)
     val file by element(Declaration, declaration)
+    val script by element(Declaration, declaration)
     val packageDirective by element(Other)
 
     val anonymousFunction by element(Declaration, function, typeParametersOwner)

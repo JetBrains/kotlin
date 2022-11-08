@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -221,6 +222,9 @@ sealed class ContextReceiverValue<S : FirBasedSymbol<*>>(
     boundSymbol, type, useSiteSession, scopeSession, mutable, contextReceiverNumber,
 ) {
     abstract override fun createSnapshot(): ContextReceiverValue<S>
+
+    override val isContextReceiver: Boolean
+        get() = true
 }
 
 class ContextReceiverValueForCallable(
@@ -236,9 +240,6 @@ class ContextReceiverValueForCallable(
 ) {
     override fun createSnapshot(): ContextReceiverValue<FirCallableSymbol<*>> =
         ContextReceiverValueForCallable(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
-
-    override val isContextReceiver: Boolean
-        get() = true
 }
 
 class ContextReceiverValueForClass(
@@ -254,7 +255,20 @@ class ContextReceiverValueForClass(
 ) {
     override fun createSnapshot(): ContextReceiverValue<FirClassSymbol<*>> =
         ContextReceiverValueForClass(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
-
-    override val isContextReceiver: Boolean
-        get() = true
 }
+
+class ImplicitReceiverValueForScript(
+    boundSymbol: FirScriptSymbol,
+    type: ConeKotlinType,
+    labelName: Name?,
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    mutable: Boolean = true,
+    contextReceiverNumber: Int,
+) : ContextReceiverValue<FirScriptSymbol>(
+    boundSymbol, type, labelName, useSiteSession, scopeSession, mutable, contextReceiverNumber
+) {
+    override fun createSnapshot(): ContextReceiverValue<FirScriptSymbol> =
+        ImplicitReceiverValueForScript(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
+}
+

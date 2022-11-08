@@ -515,6 +515,22 @@ class ControlFlowGraphBuilder {
         }
     }
 
+    fun enterScript(script: FirScript): ScriptEnterNode {
+        pushGraph(
+            ControlFlowGraph(null, "SCRIPT_GRAPH", ControlFlowGraph.Kind.Function),
+            mode = Mode.Body
+        )
+        val enterNode = createScriptEnterNode(script)
+        lastNodes.push(enterNode)
+        return enterNode
+    }
+
+    fun exitScript(script: FirScript): ScriptExitNode {
+        return createScriptExitNode(script).also {
+            addNewSimpleNodeIfPossible(it)
+        }
+    }
+
     private fun visitLocalClassFunctions(klass: FirClass, node: CFGNodeWithSubgraphs<*>) {
         klass.declarations.filterIsInstance<FirFunction>().forEach { function ->
             val functionGraph = function.controlFlowGraphReference?.controlFlowGraph

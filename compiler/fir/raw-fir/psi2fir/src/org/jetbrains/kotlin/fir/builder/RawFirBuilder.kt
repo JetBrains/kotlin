@@ -992,13 +992,39 @@ open class RawFirBuilder(
                 }
                 for (declaration in file.declarations) {
                     declarations += when (declaration) {
-                        // TODO: scripts aren't supported yet
-                        is KtScript -> continue
+                        is KtScript -> {
+                            require(file.declarations.size == 1) { "Expect the script to be the only declaration in the file $name" }
+                            convertScript(declaration, this)
+                        }
                         is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
                         else -> declaration.convert()
                     }
                 }
             }
+        }
+
+        private fun convertScript(script: KtScript, containingFile: FirFileBuilder,): FirScript {
+            return buildScript {
+                source = script.toFirSourceElement()
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                name = Name.special("<script-${containingFile.name}>")
+                symbol = FirScriptSymbol(context.packageFqName.child(name))
+                for (declaration in script.declarations) {
+                    when (declaration) {
+                        is KtScriptInitializer -> {
+                            declaration.body?.let { statements.add(it.toFirStatement()) }
+                        }
+                        else -> {
+                            statements.add(declaration.toFirStatement())
+                        }
+                    }
+                }
+            }
+        }
+
+        override fun visitScript(script: KtScript, data: Unit?): FirElement {
+            error("should not be here")
         }
 
         protected fun KtEnumEntry.toFirEnumEntry(
@@ -2145,6 +2171,7 @@ open class RawFirBuilder(
                         return (parent.parent as? KtExpression)?.usedAsExpression ?: true
                     }
                 }
+                if (parent is KtScriptInitializer) return false
                 // Here we check that when used is a single statement of a loop
                 if (parent !is KtContainerNodeForControlStructureBody) return true
                 val type = parent.parent.elementType

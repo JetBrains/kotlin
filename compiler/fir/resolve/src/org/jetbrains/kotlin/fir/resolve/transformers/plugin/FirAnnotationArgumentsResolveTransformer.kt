@@ -132,6 +132,10 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
         typeAlias.transformAnnotations(transformer, data)
         return typeAlias
     }
+
+    override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
+        return script
+    }
 }
 
 private class FirExpressionsResolveTransformerForSpecificAnnotations(
