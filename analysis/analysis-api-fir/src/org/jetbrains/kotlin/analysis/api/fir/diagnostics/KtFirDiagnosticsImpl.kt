@@ -1224,6 +1224,12 @@ internal class TypeMismatchImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.TypeMismatch(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class TypeInferenceOnlyInputTypesErrorImpl(
+    override val typeParameter: KtTypeParameterSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.TypeInferenceOnlyInputTypesError(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ThrowableTypeMismatchImpl(
     override val actualType: KtType,
     override val isMismatchDueToNullability: Boolean,

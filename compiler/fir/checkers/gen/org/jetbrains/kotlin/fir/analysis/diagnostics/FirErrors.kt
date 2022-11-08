@@ -330,6 +330,7 @@ object FirErrors {
     val NONE_APPLICABLE by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val INAPPLICABLE_CANDIDATE by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val TYPE_MISMATCH by error3<PsiElement, ConeKotlinType, ConeKotlinType, Boolean>()
+    val TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR by error1<PsiElement, FirTypeParameterSymbol>()
     val THROWABLE_TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, Boolean>()
     val CONDITION_TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, Boolean>()
     val ARGUMENT_TYPE_MISMATCH by error3<PsiElement, ConeKotlinType, ConeKotlinType, Boolean>()

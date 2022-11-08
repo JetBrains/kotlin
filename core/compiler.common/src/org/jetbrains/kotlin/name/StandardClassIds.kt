@@ -163,6 +163,8 @@ object StandardClassIds {
         val FlexibleNullability = "FlexibleNullability".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
 
+        val OnlyInputTypes = "OnlyInputTypes".internalId()
+
         val RestrictsSuspension = "RestrictsSuspension".coroutinesId()
 
         val WasExperimental = "WasExperimental".baseId()

@@ -19,7 +19,7 @@ open class Case1<K : Number> {
                     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.get(0)
                     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.size
                     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.isEmpty()
-                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>[null]
+                    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>[null]<!>
                 }
             }
         }

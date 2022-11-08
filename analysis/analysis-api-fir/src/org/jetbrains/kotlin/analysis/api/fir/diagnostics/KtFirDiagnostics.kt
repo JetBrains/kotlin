@@ -1021,6 +1021,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val isMismatchDueToNullability: Boolean
     }
 
+    abstract class TypeInferenceOnlyInputTypesError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeInferenceOnlyInputTypesError::class
+        abstract val typeParameter: KtTypeParameterSymbol
+    }
+
     abstract class ThrowableTypeMismatch : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ThrowableTypeMismatch::class
         abstract val actualType: KtType

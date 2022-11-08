@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -251,7 +254,7 @@ fun Candidate.resolvePlainArgumentType(
     isDispatch: Boolean,
     useNullableArgumentType: Boolean = false
 ) {
-    val position = SimpleConstraintSystemConstraintPosition //TODO
+    val position = if (isReceiver) ConeReceiverConstraintPosition(argument) else ConeArgumentConstraintPosition(argument)
 
     val session = context.session
     val capturedType = prepareCapturedType(argumentType, context)
@@ -348,7 +351,7 @@ private fun checkApplicabilityForArgumentType(
     argument: FirExpression,
     argumentTypeBeforeCapturing: ConeKotlinType,
     expectedType: ConeKotlinType?,
-    position: SimpleConstraintSystemConstraintPosition,
+    position: ConstraintPosition,
     isReceiver: Boolean,
     isDispatch: Boolean,
     sink: CheckerSink,

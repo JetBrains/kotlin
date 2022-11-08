@@ -43,11 +43,11 @@ fun testOK(first: First, bound: Bound, second: Second) {
 }
 
 fun testFail(first: First, bound: Bound, second: Second) {
-    strictSelect(InvB(first), InvB(bound))
-    strictSelect(Inv(first), Inv(bound))
-    strictSelect(Out(first), Out(second))
-    strictSelect(In(first), In(second))
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>strictSelect<!>(InvB(first), InvB(bound))
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>strictSelect<!>(Inv(first), Inv(bound))
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>strictSelect<!>(Out(first), Out(second))
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>strictSelect<!>(In(first), In(second))
     strictSelect(InB(first), InB(second))
-    strictSelect(Out(Inv(first)), Out(Inv(second)))
-    strictSelect(In(Inv(first)), In(Inv(second)))
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>strictSelect<!>(Out(Inv(first)), Out(Inv(second)))
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>strictSelect<!>(In(Inv(first)), In(Inv(second)))
 }

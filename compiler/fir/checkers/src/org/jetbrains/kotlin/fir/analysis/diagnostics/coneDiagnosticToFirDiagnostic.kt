@@ -442,6 +442,13 @@ private fun ConstraintSystemError.toDiagnostic(
             )
         }
 
+        is OnlyInputTypesDiagnostic -> {
+            FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR.createOn(
+                source,
+                (typeVariable as ConeTypeParameterBasedTypeVariable).typeParameterSymbol
+            )
+        }
+
         else -> null
     }
 }

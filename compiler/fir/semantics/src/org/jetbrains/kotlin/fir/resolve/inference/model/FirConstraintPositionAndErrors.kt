@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference.model
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -32,3 +33,5 @@ class ConeLambdaArgumentConstraintPosition(
 
 class ConeBuilderInferenceSubstitutionConstraintPosition(initialConstraint: InitialConstraint) :
     BuilderInferenceSubstitutionConstraintPosition<Nothing?, InitialConstraint>(null, initialConstraint) // TODO
+
+class ConeReceiverConstraintPosition(receiver: FirExpression) : ReceiverConstraintPosition<FirExpression>(receiver)
