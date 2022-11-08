@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.*
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.kpm.*
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
 
-internal fun IdeaKpmSerializationContext.IdeaKpmPlatformProto(platform: IdeaKpmPlatform): IdeaKpmPlatformProto {
+internal fun IdeaSerializationContext.IdeaKpmPlatformProto(platform: IdeaKpmPlatform): IdeaKpmPlatformProto {
     return ideaKpmPlatformProto {
         when (platform) {
             is IdeaKpmJsPlatformImpl -> js = IdeaKpmJsPlatformProto(platform)
@@ -20,7 +20,7 @@ internal fun IdeaKpmSerializationContext.IdeaKpmPlatformProto(platform: IdeaKpmP
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmPlatform(proto: IdeaKpmPlatformProto): IdeaKpmPlatform {
+internal fun IdeaSerializationContext.IdeaKpmPlatform(proto: IdeaKpmPlatformProto): IdeaKpmPlatform {
     return when (proto.platformCase) {
         IdeaKpmPlatformProto.PlatformCase.JVM -> IdeaKpmJvmPlatform(proto.jvm)
         IdeaKpmPlatformProto.PlatformCase.NATIVE -> IdeaKpmNativePlatform(proto.native)
@@ -33,116 +33,116 @@ internal fun IdeaKpmSerializationContext.IdeaKpmPlatform(proto: IdeaKpmPlatformP
 
 /* Jvm */
 
-internal fun IdeaKpmSerializationContext.IdeaKpmJvmPlatformProto(platform: IdeaKpmJvmPlatform): IdeaKpmJvmPlatformProto {
+internal fun IdeaSerializationContext.IdeaKpmJvmPlatformProto(platform: IdeaKpmJvmPlatform): IdeaKpmJvmPlatformProto {
     return ideaKpmJvmPlatformProto {
         if (platform.extras.isNotEmpty()) extras = IdeaKpmExtrasProto(platform.extras)
         jvmTarget = platform.jvmTarget
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmJvmPlatform(proto: IdeaKpmJvmPlatformProto): IdeaKpmJvmPlatform {
+internal fun IdeaSerializationContext.IdeaKpmJvmPlatform(proto: IdeaKpmJvmPlatformProto): IdeaKpmJvmPlatform {
     return IdeaKpmJvmPlatformImpl(
         jvmTarget = proto.jvmTarget,
         extras = Extras(proto.extras)
     )
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmJvmPlatform(data: ByteArray): IdeaKpmJvmPlatform {
+internal fun IdeaSerializationContext.IdeaKpmJvmPlatform(data: ByteArray): IdeaKpmJvmPlatform {
     return IdeaKpmJvmPlatform(IdeaKpmJvmPlatformProto.parseFrom(data))
 }
 
-internal fun IdeaKpmJvmPlatform.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
+internal fun IdeaKpmJvmPlatform.toByteArray(context: IdeaSerializationContext): ByteArray {
     return context.IdeaKpmJvmPlatformProto(this).toByteArray()
 }
 
 /* Native */
 
-internal fun IdeaKpmSerializationContext.IdeaKpmNativePlatformProto(platform: IdeaKpmNativePlatform): IdeaKpmNativePlatformProto {
+internal fun IdeaSerializationContext.IdeaKpmNativePlatformProto(platform: IdeaKpmNativePlatform): IdeaKpmNativePlatformProto {
     return ideaKpmNativePlatformProto {
         if (platform.extras.isNotEmpty()) extras = IdeaKpmExtrasProto(platform.extras)
         konanTarget = platform.konanTarget
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmNativePlatform(proto: IdeaKpmNativePlatformProto): IdeaKpmNativePlatform {
+internal fun IdeaSerializationContext.IdeaKpmNativePlatform(proto: IdeaKpmNativePlatformProto): IdeaKpmNativePlatform {
     return IdeaKpmNativePlatformImpl(
         konanTarget = proto.konanTarget,
         extras = Extras(proto.extras)
     )
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmNativePlatform(data: ByteArray): IdeaKpmNativePlatform {
+internal fun IdeaSerializationContext.IdeaKpmNativePlatform(data: ByteArray): IdeaKpmNativePlatform {
     return IdeaKpmNativePlatform(IdeaKpmNativePlatformProto.parseFrom(data))
 }
 
-internal fun IdeaKpmNativePlatform.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
+internal fun IdeaKpmNativePlatform.toByteArray(context: IdeaSerializationContext): ByteArray {
     return context.IdeaKpmNativePlatformProto(this).toByteArray()
 }
 
 /* Js */
 
-internal fun IdeaKpmSerializationContext.IdeaKpmJsPlatformProto(platform: IdeaKpmJsPlatform): IdeaKpmJsPlatformProto {
+internal fun IdeaSerializationContext.IdeaKpmJsPlatformProto(platform: IdeaKpmJsPlatform): IdeaKpmJsPlatformProto {
     return ideaKpmJsPlatformProto {
         if (platform.extras.isNotEmpty()) extras = IdeaKpmExtrasProto(platform.extras)
         isIr = platform.isIr
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmJsPlatform(proto: IdeaKpmJsPlatformProto): IdeaKpmJsPlatform {
+internal fun IdeaSerializationContext.IdeaKpmJsPlatform(proto: IdeaKpmJsPlatformProto): IdeaKpmJsPlatform {
     return IdeaKpmJsPlatformImpl(
         isIr = proto.isIr,
         extras = Extras(proto.extras)
     )
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmJsPlatform(data: ByteArray): IdeaKpmJsPlatform {
+internal fun IdeaSerializationContext.IdeaKpmJsPlatform(data: ByteArray): IdeaKpmJsPlatform {
     return IdeaKpmJsPlatform(IdeaKpmJsPlatformProto.parseFrom(data))
 }
 
-internal fun IdeaKpmJsPlatform.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
+internal fun IdeaKpmJsPlatform.toByteArray(context: IdeaSerializationContext): ByteArray {
     return context.IdeaKpmJsPlatformProto(this).toByteArray()
 }
 
 /* Wasm */
 
-internal fun IdeaKpmSerializationContext.IdeaKpmWasmPlatformProto(platform: IdeaKpmWasmPlatform): IdeaKpmWasmPlatformProto {
+internal fun IdeaSerializationContext.IdeaKpmWasmPlatformProto(platform: IdeaKpmWasmPlatform): IdeaKpmWasmPlatformProto {
     return ideaKpmWasmPlatformProto {
         if (platform.extras.isNotEmpty()) extras = IdeaKpmExtrasProto(platform.extras)
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmWasmPlatform(proto: IdeaKpmWasmPlatformProto): IdeaKpmWasmPlatform {
+internal fun IdeaSerializationContext.IdeaKpmWasmPlatform(proto: IdeaKpmWasmPlatformProto): IdeaKpmWasmPlatform {
     return IdeaKpmWasmPlatformImpl(
         extras = Extras(proto.extras)
     )
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmWasmPlatform(data: ByteArray): IdeaKpmWasmPlatform {
+internal fun IdeaSerializationContext.IdeaKpmWasmPlatform(data: ByteArray): IdeaKpmWasmPlatform {
     return IdeaKpmWasmPlatform(IdeaKpmWasmPlatformProto.parseFrom(data))
 }
 
-internal fun IdeaKpmWasmPlatform.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
+internal fun IdeaKpmWasmPlatform.toByteArray(context: IdeaSerializationContext): ByteArray {
     return context.IdeaKpmWasmPlatformProto(this).toByteArray()
 }
 
 /* Unknown */
 
-internal fun IdeaKpmSerializationContext.IdeaKpmUnknownPlatformProto(platform: IdeaKpmUnknownPlatform): IdeaKpmUnknownPlatformProto {
+internal fun IdeaSerializationContext.IdeaKpmUnknownPlatformProto(platform: IdeaKpmUnknownPlatform): IdeaKpmUnknownPlatformProto {
     return ideaKpmUnknownPlatformProto {
         if (platform.extras.isNotEmpty()) extras = IdeaKpmExtrasProto(platform.extras)
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmUnknownPlatform(proto: IdeaKpmUnknownPlatformProto): IdeaKpmUnknownPlatform {
+internal fun IdeaSerializationContext.IdeaKpmUnknownPlatform(proto: IdeaKpmUnknownPlatformProto): IdeaKpmUnknownPlatform {
     return IdeaKpmUnknownPlatformImpl(
         extras = Extras(proto.extras)
     )
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmUnknownPlatform(data: ByteArray): IdeaKpmUnknownPlatform {
+internal fun IdeaSerializationContext.IdeaKpmUnknownPlatform(data: ByteArray): IdeaKpmUnknownPlatform {
     return IdeaKpmUnknownPlatform(IdeaKpmUnknownPlatformProto.parseFrom(data))
 }
 
-internal fun IdeaKpmUnknownPlatform.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
+internal fun IdeaKpmUnknownPlatform.toByteArray(context: IdeaSerializationContext): ByteArray {
     return context.IdeaKpmUnknownPlatformProto(this).toByteArray()
 }

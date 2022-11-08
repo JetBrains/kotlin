@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProject
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
 import org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmProject
 import org.jetbrains.kotlin.kpm.idea.proto.toByteArray
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
@@ -41,12 +41,12 @@ fun TestIdeaKpmClassLoaderProjectSerializer(classLoader: ClassLoader): TestIdeaK
 
 /**
  * Test Util to serialize / deserialize [IdeaKpmProject] within a dedicated ClassLoader.
- * The serialization context used will be [TestIdeaKpmSerializationContext]. Note, that this context
+ * The serialization context used will be [TestIdeaSerializationContext]. Note, that this context
  * might also depend on the version shipped by the specified [ClassLoader].
  */
 interface TestIdeaKpmClassLoaderProjectSerializer {
     val classLoader: ClassLoader
-    val reports: List<TestIdeaKpmSerializationLogger.Report>
+    val reports: List<TestIdeaSerializationLogger.Report>
     fun serialize(project: Any): ByteArray
     fun deserialize(data: ByteArray): Any?
 }
@@ -55,9 +55,9 @@ interface TestIdeaKpmClassLoaderProjectSerializer {
 internal class TestIdeaKpmProtoClassLoaderProjectSerializer(
     override val classLoader: ClassLoader
 ) : TestIdeaKpmClassLoaderProjectSerializer {
-    private val context = TestIdeaKpmSerializationContext()
+    private val context = TestIdeaSerializationContext()
 
-    override val reports: List<TestIdeaKpmSerializationLogger.Report>
+    override val reports: List<TestIdeaSerializationLogger.Report>
         get() = context.logger.reports
 
     override fun serialize(project: Any): ByteArray {

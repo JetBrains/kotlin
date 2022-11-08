@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmLanguageSettings
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmLanguageSettingsImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmLanguageSettings
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmLanguageSettingsImpl
 import java.io.File
 import kotlin.test.Test
 

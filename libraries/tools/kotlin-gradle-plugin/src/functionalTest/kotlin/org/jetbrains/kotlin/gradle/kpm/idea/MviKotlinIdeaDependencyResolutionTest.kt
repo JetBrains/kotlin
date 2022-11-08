@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.android.androidPrototype
 import org.jetbrains.kotlin.gradle.assumeAndroidSdkAvailable
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsModule
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertIsNotEmpty

@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragmentDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragmentDependency
 
 fun buildIdeaKpmFragmentDependencyMatchers(notation: Any?): List<TestIdeaKpmFragmentDependencyMatcher> {
     return when (notation) {

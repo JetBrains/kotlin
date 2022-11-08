@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency
 
 interface TestIdeaKpmDependencyMatcher<in T : IdeaKpmDependency> {
     val description: String

@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmVariant
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmVariantImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmVariant
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmVariantImpl
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
 
 
-internal fun IdeaKpmSerializationContext.IdeaKpmVariantProto(variant: IdeaKpmVariant): IdeaKpmVariantProto {
+internal fun IdeaSerializationContext.IdeaKpmVariantProto(variant: IdeaKpmVariant): IdeaKpmVariantProto {
     return ideaKpmVariantProto {
         fragment = IdeaKpmFragmentProto(variant)
         variantAttributes.putAll(variant.variantAttributes)
@@ -19,7 +19,7 @@ internal fun IdeaKpmSerializationContext.IdeaKpmVariantProto(variant: IdeaKpmVar
     }
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmVariant(proto: IdeaKpmVariantProto): IdeaKpmVariant {
+internal fun IdeaSerializationContext.IdeaKpmVariant(proto: IdeaKpmVariantProto): IdeaKpmVariant {
     return IdeaKpmVariantImpl(
         fragment = IdeaKpmFragment(proto.fragment),
         platform = IdeaKpmPlatform(proto.platform),
@@ -28,10 +28,10 @@ internal fun IdeaKpmSerializationContext.IdeaKpmVariant(proto: IdeaKpmVariantPro
     )
 }
 
-internal fun IdeaKpmSerializationContext.IdeaKpmVariant(data: ByteArray): IdeaKpmVariant {
+internal fun IdeaSerializationContext.IdeaKpmVariant(data: ByteArray): IdeaKpmVariant {
     return IdeaKpmVariant(IdeaKpmVariantProto.parseFrom(data))
 }
 
-internal fun IdeaKpmVariant.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
+internal fun IdeaKpmVariant.toByteArray(context: IdeaSerializationContext): ByteArray {
     return context.IdeaKpmVariantProto(this).toByteArray()
 }

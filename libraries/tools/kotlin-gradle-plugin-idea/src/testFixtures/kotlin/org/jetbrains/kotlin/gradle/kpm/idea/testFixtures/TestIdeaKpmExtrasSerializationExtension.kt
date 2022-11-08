@@ -5,23 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializer
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.extrasTypeOf
 
 @Suppress("UNCHECKED_CAST")
-object TestIdeaKpmExtrasSerializationExtension : IdeaKpmExtrasSerializationExtension {
+object TestIdeaKpmExtrasSerializationExtension : IdeaExtrasSerializationExtension {
 
     val ignoredStringKey = extrasKeyOf<String>("ignored")
     val anySerializableKey = extrasKeyOf<Any>("serializable")
 
-    override fun <T : Any> serializer(key: Extras.Key<T>): IdeaKpmExtrasSerializer<T>? = when {
+    override fun <T : Any> serializer(key: Extras.Key<T>): IdeaExtrasSerializer<T>? = when {
         key == ignoredStringKey -> null
-        key == anySerializableKey -> IdeaKpmExtrasSerializer.javaIoSerializable<Any>()
-        key.type == extrasTypeOf<String>() -> TestIdeaKpmStringExtrasSerializer
-        key.type == extrasTypeOf<Int>() -> TestIdeaKpmIntExtrasSerializer
+        key == anySerializableKey -> IdeaExtrasSerializer.javaIoSerializable<Any>()
+        key.type == extrasTypeOf<String>() -> TestIdeaStringExtrasSerializer
+        key.type == extrasTypeOf<Int>() -> TestIdeaIntExtrasSerializer
         else -> null
-    } as? IdeaKpmExtrasSerializer<T>
+    } as? IdeaExtrasSerializer<T>
 }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.*
+import org.jetbrains.kotlin.gradle.idea.kpm.*
 import org.jetbrains.kotlin.tooling.core.emptyExtras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.extrasOf

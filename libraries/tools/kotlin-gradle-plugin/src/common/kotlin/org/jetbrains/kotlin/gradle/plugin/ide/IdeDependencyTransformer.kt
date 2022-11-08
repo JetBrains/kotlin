@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 /**
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
  * Transformations can be scheduled in different phases see: [IdeMultiplatformImport.DependencyTransformationPhase]
  */
 fun interface IdeDependencyTransformer {
-    fun transform(sourceSet: KotlinSourceSet, dependencies: Set<IdeDependency>): Set<IdeDependency>
+    fun transform(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>): Set<IdeaKotlinDependency>
 }
 
 fun IdeDependencyResolver.withTransformer(transformer: IdeDependencyTransformer) = IdeDependencyResolver { sourceSet ->
@@ -52,8 +53,8 @@ private class IdeCompositeDependencyTransformer(
     val transformers: List<IdeDependencyTransformer>
 ) : IdeDependencyTransformer {
     override fun transform(
-        sourceSet: KotlinSourceSet, dependencies: Set<IdeDependency>
-    ): Set<IdeDependency> {
+        sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>
+    ): Set<IdeaKotlinDependency> {
         return transformers.fold(dependencies) { currentDependencies, transformer -> transformer.transform(sourceSet, currentDependencies) }
     }
 }
