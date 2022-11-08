@@ -17,10 +17,7 @@ data class PersistentTypeStatement(
     override val variable: RealVariable,
     override val exactType: PersistentSet<ConeKotlinType>,
     override val exactNotType: PersistentSet<ConeKotlinType>
-) : TypeStatement() {
-    override fun invert(): PersistentTypeStatement =
-        PersistentTypeStatement(variable, exactNotType, exactType)
-}
+) : TypeStatement()
 
 typealias PersistentApprovedTypeStatements = PersistentMap<RealVariable, PersistentTypeStatement>
 typealias PersistentImplications = PersistentMap<DataFlowVariable, PersistentList<Implication>>
@@ -397,11 +394,6 @@ private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) 
     else -> PersistentTypeStatement(variable, exactType.toPersistentSet(), exactNotType.toPersistentSet())
 }
 
-fun TypeStatement.asMutableStatement(): MutableTypeStatement = when (this) {
-    is MutableTypeStatement -> this
-    else -> MutableTypeStatement(variable, exactType.toMutableSet(), exactNotType.toMutableSet())
-}
-
 @JvmName("replaceVariableInStatements")
 private fun PersistentApprovedTypeStatements.replaceVariable(from: RealVariable, to: RealVariable?): PersistentApprovedTypeStatements {
     val existing = this[from] ?: return this
@@ -440,10 +432,9 @@ private fun Implication.replaceVariable(from: RealVariable, to: RealVariable): I
     else -> this
 }
 
-private fun Statement<*>.replaceVariable(from: RealVariable, to: RealVariable): Statement<*> =
+private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Statement =
     if (variable != from) this else when (this) {
         is OperationStatement -> copy(variable = to)
         is PersistentTypeStatement -> copy(variable = to)
         is MutableTypeStatement -> MutableTypeStatement(to, exactType, exactNotType)
-        else -> throw IllegalArgumentException("unknown type of statement $this")
     }
