@@ -359,6 +359,7 @@ private val jvmFilePhases = listOf(
     objectClassPhase,
     readResolveForDataObjectsPhase,
     staticInitializersPhase,
+    uniqueLoopLabelsPhase,
     initializersPhase,
     initializersCleanupPhase,
     functionNVarargBridgePhase,
@@ -409,8 +410,6 @@ private fun buildJvmLoweringPhases(
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then
                 resolveInlineCallsPhase then
-                // should be last transformation
-                prepareForBytecodeInlining then
                 validateIrAfterLowering
     )
 }
