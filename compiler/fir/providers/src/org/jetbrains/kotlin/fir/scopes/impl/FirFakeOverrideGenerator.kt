@@ -294,14 +294,14 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         symbolForSubstitutionOverride: FirPropertySymbol,
         baseProperty: FirProperty,
+        derivedClass: ConeClassLikeLookupTag,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType? = null,
         newContextReceiverTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
         isExpect: Boolean = baseProperty.isExpect,
-        fakeOverrideSubstitution: FakeOverrideSubstitution? = null,
-        derivedClass: ConeClassLikeLookupTag
+        fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirPropertySymbol {
         createCopyForFirProperty(
             symbolForSubstitutionOverride, baseProperty, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
