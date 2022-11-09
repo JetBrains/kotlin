@@ -135,7 +135,7 @@
 /compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Compiler Core"
 /compiler/testData/compileKotlinAgainstJava/ "Kotlin Compiler Core" "Kotlin JVM"
 /compiler/testData/compiler/smoke/ "Kotlin Compiler Core"
-/compiler/testData/debug/ "Kotlin Compiler Core" "Kotlin JVM"
+/compiler/testData/debug/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS"
 /compiler/testData/diagnostics/ "Kotlin Compiler Core"
 /compiler/testData/friendPaths/ "Kotlin Compiler Core"
 # UNKNOWN: /compiler/testData/integration/
