@@ -45,7 +45,7 @@ object FirFakeOverrideGenerator {
         newTypeParameters: List<FirTypeParameter>? = null,
         isExpect: Boolean = baseFunction.isExpect,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null,
-        derivedClass: ConeClassLikeLookupTag? = null
+        derivedClass: ConeClassLikeLookupTag?
     ): FirNamedFunctionSymbol {
         createSubstitutionOverrideFunction(
             symbolForSubstitutionOverride, session, baseFunction, newDispatchReceiverType, newReceiverType, newContextReceiverTypes,
@@ -112,7 +112,7 @@ object FirFakeOverrideGenerator {
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null,
-        derivedClass: ConeClassLikeLookupTag? = null
+        derivedClass: ConeClassLikeLookupTag?
     ): FirSimpleFunction {
         return buildSimpleFunction {
             source = baseFunction.source

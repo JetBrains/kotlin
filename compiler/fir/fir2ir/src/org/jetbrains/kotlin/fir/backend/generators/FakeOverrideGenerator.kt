@@ -295,7 +295,8 @@ class FakeOverrideGenerator(
             FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                 session, callableSymbol, firFunction,
                 newDispatchReceiverType = klass.defaultType(),
-                isExpect = (klass as? FirRegularClass)?.isExpect == true
+                isExpect = (klass as? FirRegularClass)?.isExpect == true,
+                derivedClass = klass.symbol.toLookupTag()
             )
         },
         computeDirectOverridden = FirTypeScope::getDirectOverriddenFunctions,
