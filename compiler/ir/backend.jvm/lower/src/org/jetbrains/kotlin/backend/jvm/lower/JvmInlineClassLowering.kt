@@ -492,7 +492,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     fun buildDefaultBoxFunction(valueClass: IrClass, withDefaultSuffix: Boolean) {
         val function = context.inlineClassReplacements.getBoxFunction(valueClass, withDefaultSuffix)
-            .also { if (withDefaultSuffix) it.name = Name.identifier(KotlinTypeMapper.DEFAULT_BOX_JVM__METHOD_NAME) }
+            .also { if (withDefaultSuffix) it.name = Name.identifier(KotlinTypeMapper.BOX_DEFAULT_JVM__METHOD_NAME) }
         with(context.createIrBuilder(function.symbol)) {
             function.body = irExprBody(
                 irCall(valueClass.primaryConstructor!!.symbol).apply {

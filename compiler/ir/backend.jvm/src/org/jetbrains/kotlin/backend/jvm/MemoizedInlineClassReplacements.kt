@@ -103,7 +103,7 @@ class MemoizedInlineClassReplacements(
     }
 
     private fun createBoxFunction(irClass: IrClass, defaultSuffix: Boolean) = irFactory.buildFun {
-        name = Name.identifier(if (defaultSuffix) KotlinTypeMapper.DEFAULT_BOX_JVM__METHOD_NAME else KotlinTypeMapper.BOX_JVM_METHOD_NAME)
+        name = Name.identifier(if (defaultSuffix) KotlinTypeMapper.BOX_DEFAULT_JVM__METHOD_NAME else KotlinTypeMapper.BOX_JVM_METHOD_NAME)
         origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
         returnType = irClass.defaultType
     }.apply {

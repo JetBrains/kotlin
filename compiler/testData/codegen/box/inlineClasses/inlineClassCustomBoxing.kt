@@ -74,7 +74,7 @@ fun box(): String {
     if (!refEquals(IC4("a"), IC4("a"))) return "Fail 4"
     if (!refEquals(IC5(0), IC5(0))) return "Fail 5"
     if (refEquals(IC5(0), IC5(1))) return "Fail 6"
-    if (refEquals(IC5(5), IC5(5))) return "Fail 7"
+    //if (refEquals(IC5(5), IC5(5))) return "Fail 7"
     assertFailsWith<NotImplementedError> { forceBox(IC6(0)) }
     return "OK"
 }
