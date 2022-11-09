@@ -8,18 +8,19 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceContext) {
-    // ------------------------------- Flow operations -------------------------------
-
+    // --------------------------- Flow graph constructors ---------------------------
     abstract fun createEmptyFlow(): FLOW
     abstract fun forkFlow(flow: FLOW): FLOW
     abstract fun joinFlow(flows: Collection<FLOW>): FLOW
     abstract fun unionFlow(flows: Collection<FLOW>): FLOW
 
+    // -------------------------------- Flow mutators --------------------------------
     abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement)
-
     abstract fun addImplication(flow: FLOW, implication: Implication)
-
+    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
+    abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
     abstract fun removeAllAboutVariable(flow: FLOW, variable: RealVariable)
+    abstract fun copyAllInformation(from: FLOW, to: FLOW)
 
     abstract fun translateVariableFromConditionInStatements(
         flow: FLOW,
@@ -30,26 +31,16 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         transform: (Implication) -> Implication? = { it },
     )
 
-    abstract fun commitOperationStatement(flow: FLOW, statement: OperationStatement, shouldRemoveSynthetics: Boolean)
-
-    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
-
-    abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
-
-    abstract fun copyAllInformation(from: FLOW, to: FLOW)
-
-    protected abstract fun getImplicationsWithVariable(flow: FLOW, variable: DataFlowVariable): Collection<Implication>
+    // This does *not* commit the results to the flow (but it does mutate the flow if shouldRemoveSynthetics=true)
+    abstract fun approveOperationStatement(
+        flow: FLOW,
+        approvedStatement: OperationStatement,
+        shouldRemoveSynthetics: Boolean = false
+    ): TypeStatements
 
     protected abstract fun ConeKotlinType.isAcceptableForSmartcast(): Boolean
 
-    // ------------------------------- Callbacks for updating implicit receiver stack -------------------------------
-
-    abstract fun processUpdatedReceiverVariable(flow: FLOW, variable: RealVariable)
-    abstract fun updateAllReceivers(flow: FLOW)
-
     // ------------------------------- Public TypeStatement util functions -------------------------------
-
-    abstract fun approveOperationStatement(flow: FLOW, approvedStatement: OperationStatement): TypeStatements
 
     fun orForTypeStatements(left: TypeStatements, right: TypeStatements): TypeStatements = when {
         left.isEmpty() -> left

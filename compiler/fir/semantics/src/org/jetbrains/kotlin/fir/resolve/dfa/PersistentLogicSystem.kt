@@ -220,9 +220,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         val newExactType = oldExactType?.addAll(statement.exactType) ?: statement.exactType.toPersistentSet()
         if (newExactType === oldExactType) return
         flow.approvedTypeStatements = flow.approvedTypeStatements.put(variable, PersistentTypeStatement(variable, newExactType))
-        if (variable.isThisReference) {
-            processUpdatedReceiverVariable(flow, variable)
-        }
     }
 
     override fun addImplication(flow: PersistentFlow, implication: Implication) {
@@ -256,16 +253,10 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
-    override fun commitOperationStatement(flow: PersistentFlow, statement: OperationStatement, shouldRemoveSynthetics: Boolean) {
-        approveOperationStatementsInternal(flow, statement, shouldRemoveSynthetics).values.forEach {
-            addTypeStatement(flow, it)
-        }
-    }
-
-    private fun approveOperationStatementsInternal(
+    override fun approveOperationStatement(
         flow: PersistentFlow,
         approvedStatement: OperationStatement,
-        shouldRemoveSynthetics: Boolean
+        shouldRemoveSynthetics: Boolean,
     ): TypeStatements {
         val approvedTypeStatements: ArrayListMultimap<RealVariable, TypeStatement> = ArrayListMultimap.create()
         val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
@@ -289,15 +280,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             }
         }
         return approvedTypeStatements.asMap().mapValues { and(it.value) }
-    }
-
-    override fun approveOperationStatement(
-        flow: PersistentFlow,
-        approvedStatement: OperationStatement,
-    ): TypeStatements = approveOperationStatementsInternal(flow, approvedStatement, shouldRemoveSynthetics = false)
-
-    override fun getImplicationsWithVariable(flow: PersistentFlow, variable: DataFlowVariable): Collection<Implication> {
-        return flow.logicStatements[variable] ?: emptyList()
     }
 
     override fun recordNewAssignment(flow: PersistentFlow, variable: RealVariable, index: Int) {

@@ -9,10 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
-import org.jetbrains.kotlin.fir.resolve.dfa.LogicSystem
-import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
-import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
@@ -53,6 +51,12 @@ internal open class StubBodyResolveTransformerComponents(
         get() = object : FirDataFlowAnalyzer<PersistentFlow>(this@StubBodyResolveTransformerComponents, context.dataFlowAnalyzerContext) {
             override val logicSystem: LogicSystem<PersistentFlow>
                 get() = error("Should not be called")
+
+            override val receiverStack: Iterable<ImplicitReceiverValue<*>>
+                get() = error("Should not be called")
+
+            override fun receiverUpdated(symbol: FirBasedSymbol<*>, types: Set<ConeKotlinType>?) =
+                error("Should not be called")
 
             override fun getTypeUsingSmartcastInfo(
                 symbol: FirBasedSymbol<*>,

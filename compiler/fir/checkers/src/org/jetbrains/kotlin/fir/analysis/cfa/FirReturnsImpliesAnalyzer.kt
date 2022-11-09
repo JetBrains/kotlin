@@ -51,12 +51,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             override val variableStorage: VariableStorageImpl
                 get() = dataFlowInfo.variableStorage as VariableStorageImpl
 
-            override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) =
-                throw IllegalStateException("Receiver variable update is not possible for this logic system")
-
-            override fun updateAllReceivers(flow: PersistentFlow) =
-                throw IllegalStateException("Update of all receivers is not possible for this logic system")
-
             override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
                 return !isNullableNothing
             }
