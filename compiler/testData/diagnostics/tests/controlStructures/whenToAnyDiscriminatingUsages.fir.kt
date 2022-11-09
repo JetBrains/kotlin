@@ -24,7 +24,7 @@ fun testResultOfLambda2() =
             }
         }
 
-fun testReturn1() =
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
             return <!RETURN_TYPE_MISMATCH!>when {
                 true -> 42
@@ -32,7 +32,7 @@ fun testReturn1() =
             }<!>
         }
 
-fun testReturn2() =
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
             return <!RETURN_TYPE_MISMATCH!>when {
                 true -> 42

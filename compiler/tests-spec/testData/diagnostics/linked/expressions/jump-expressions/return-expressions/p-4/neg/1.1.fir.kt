@@ -4,8 +4,8 @@
 // TESTCASE NUMBER: 1
 // UNEXPECTED BEHAVIOUR
 // ISSUES : KT-35545
-fun case1(a: Boolean) = run { println("d"); return <!RETURN_TYPE_MISMATCH!>true<!> }
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>case1<!>(a: Boolean) = run { println("d"); return <!RETURN_TYPE_MISMATCH!>true<!> }
 
 // TESTCASE NUMBER: 2
-val case2
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>case2<!>
 get() = run { println("d"); return <!RETURN_TYPE_MISMATCH!>true<!> }

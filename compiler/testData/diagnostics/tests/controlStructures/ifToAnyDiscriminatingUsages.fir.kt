@@ -30,13 +30,13 @@ fun testReturnFromAnonFun() =
             return <!RETURN_TYPE_MISMATCH!>if (true) 42 else println()<!>
         })
 
-fun testReturn1() =
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
             return <!RETURN_TYPE_MISMATCH!>if (true) 42
                    else println()<!>
         }
 
-fun testReturn2() =
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
             return <!RETURN_TYPE_MISMATCH!>if (true) 42
                    else if (true) 42

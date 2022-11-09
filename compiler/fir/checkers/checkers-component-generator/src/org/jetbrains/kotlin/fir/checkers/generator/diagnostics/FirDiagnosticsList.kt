@@ -653,6 +653,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
+        val IMPLICIT_NOTHING_RETURN_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
+        val IMPLICIT_NOTHING_PROPERTY_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
+
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
 
         val DEPRECATED_TYPE_PARAMETER_SYNTAX by error<KtDeclaration>(PositioningStrategy.TYPE_PARAMETERS_LIST)

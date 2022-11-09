@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.types.replaceArgumentsWithStarProjections
@@ -130,3 +131,8 @@ fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
         }
     } ?: false
 
+val FirCallableSymbol<*>.hasExplicitReturnType: Boolean
+    get() {
+        val returnTypeRef = resolvedReturnTypeRef
+        return returnTypeRef.delegatedTypeRef != null || returnTypeRef is FirImplicitUnitTypeRef
+    }

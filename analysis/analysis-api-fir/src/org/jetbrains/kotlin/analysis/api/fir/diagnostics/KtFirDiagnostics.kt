@@ -1371,6 +1371,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val isMismatchDueToNullability: Boolean
     }
 
+    abstract class ImplicitNothingReturnType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ImplicitNothingReturnType::class
+    }
+
+    abstract class ImplicitNothingPropertyType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ImplicitNothingPropertyType::class
+    }
+
     abstract class CyclicGenericUpperBound : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = CyclicGenericUpperBound::class
     }

@@ -1648,6 +1648,16 @@ internal class ReturnTypeMismatchImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ReturnTypeMismatch(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class ImplicitNothingReturnTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ImplicitNothingReturnType(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class ImplicitNothingPropertyTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ImplicitNothingPropertyType(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class CyclicGenericUpperBoundImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

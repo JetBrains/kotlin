@@ -1,10 +1,10 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_PARAMETER -RETURN_NOT_ALLOWED
 
-fun test1() = run {
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>test1<!>() = run {
     return <!RETURN_TYPE_MISMATCH!>"OK"<!>
 }
 
-fun test2() = run {
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>test2<!>() = run {
     fun local(): String {
         return ""
     }

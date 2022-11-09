@@ -1927,6 +1927,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.IMPLICIT_NOTHING_RETURN_TYPE) { firDiagnostic ->
+        ImplicitNothingReturnTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE) { firDiagnostic ->
+        ImplicitNothingPropertyTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CYCLIC_GENERIC_UPPER_BOUND) { firDiagnostic ->
         CyclicGenericUpperBoundImpl(
             firDiagnostic as KtPsiDiagnostic,
