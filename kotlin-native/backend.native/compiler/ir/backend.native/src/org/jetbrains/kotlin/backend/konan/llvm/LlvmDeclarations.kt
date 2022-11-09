@@ -43,16 +43,16 @@ internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDe
             }
 
     fun forFunctionOrNull(function: IrFunction): LlvmCallable? =
-            (function.metadata as? CodegenFunctionMetadata)?.llvm
+            (function.metadata as? KonanMetadata.Function)?.llvm
 
-    fun forClass(irClass: IrClass) = (irClass.metadata as? CodegenClassMetadata)?.llvm ?:
-            error(irClass.descriptor.toString())
+    fun forClass(irClass: IrClass) =
+            (irClass.metadata as? KonanMetadata.Class)?.llvm ?: error(irClass.render())
 
-    fun forField(field: IrField) = (field.metadata as? CodegenInstanceFieldMetadata)?.llvm ?:
-            error(field.descriptor.toString())
+    fun forField(field: IrField) =
+            (field.metadata as? KonanMetadata.InstanceField)?.llvm ?: error(field.render())
 
-    fun forStaticField(field: IrField) = (field.metadata as? CodegenStaticFieldMetadata)?.llvm ?:
-            error(field.descriptor.toString())
+    fun forStaticField(field: IrField) =
+            (field.metadata as? KonanMetadata.StaticField)?.llvm ?: error(field.render())
 
     fun forUnique(kind: UniqueKind) = unique[kind] ?: error("No unique $kind")
 
@@ -184,9 +184,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     override fun visitClass(declaration: IrClass) {
         if (declaration.requiresRtti()) {
             val classLlvmDeclarations = createClassDeclarations(declaration)
-            val metadata = declaration.metadata as? CodegenClassMetadata
-                    ?: CodegenClassMetadata(declaration).also { declaration.metadata = it }
-            metadata.llvm = classLlvmDeclarations
+            declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
         }
         super.visitClass(declaration)
     }
@@ -324,12 +322,11 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val containingClass = declaration.parent as? IrClass
         if (containingClass != null && !declaration.isStatic) {
             if (!containingClass.requiresRtti()) return
-            val classDeclarations = (containingClass.metadata as? CodegenClassMetadata)?.llvm
-                    ?: error(containingClass.descriptor.toString())
+            val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
+                    ?: error(containingClass.render())
             val index = classDeclarations.fieldIndices[declaration.symbol]!!
-            declaration.metadata = CodegenInstanceFieldMetadata(
-                    declaration.metadata?.name,
-                    containingClass.konanLibrary,
+            declaration.metadata = KonanMetadata.InstanceField(
+                    declaration,
                     FieldLlvmDeclarations(
                             index,
                             classDeclarations.bodyType,
@@ -346,11 +343,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
             }
 
-            declaration.metadata = CodegenStaticFieldMetadata(
-                    declaration.metadata?.name,
-                    declaration.konanLibrary,
-                    StaticFieldLlvmDeclarations(storage, alignmnet)
-            )
+            declaration.metadata = KonanMetadata.StaticField(declaration, StaticFieldLlvmDeclarations(storage, alignmnet))
         }
     }
 
@@ -404,35 +397,21 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             LlvmCallable(llvmFunction, proto)
         }
 
-        declaration.metadata = CodegenFunctionMetadata(
-                declaration.metadata?.name,
-                declaration.konanLibrary,
-                llvmFunction
-        )
+        declaration.metadata = KonanMetadata.Function(declaration, llvmFunction)
     }
 }
 
-internal open class KonanMetadata(override val name: Name?, val konanLibrary: KotlinLibrary?) : MetadataSource
+internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: KotlinLibrary?) : MetadataSource {
+    sealed class Declaration<T>(declaration: T)
+        : KonanMetadata(declaration.metadata?.name, declaration.konanLibrary) where T : IrDeclaration, T : IrMetadataSourceOwner
 
-internal class CodegenClassMetadata(irClass: IrClass)
-    : KonanMetadata(irClass.metadata?.name, irClass.konanLibrary), MetadataSource.Class {
-    var layoutBuilder: ClassLayoutBuilder? = null
-    var llvm: ClassLlvmDeclarations? = null
-    override var serializedIr: ByteArray? = null
-}
+    class Class(irClass: IrClass, val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass)
 
-private class CodegenFunctionMetadata(
-        name: Name?,
-        konanLibrary: KotlinLibrary?,
-        val llvm: LlvmCallable
-) : KonanMetadata(name, konanLibrary), MetadataSource.Function
+    class Function(irFunction: IrFunction, val llvm: LlvmCallable) : Declaration<IrFunction>(irFunction)
 
-private class CodegenInstanceFieldMetadata(
-        name: Name?,
-        konanLibrary: KotlinLibrary?,
-        val llvm: FieldLlvmDeclarations
-) : KonanMetadata(name, konanLibrary), MetadataSource.Property {
-    override val isConst = false
+    class InstanceField(irField: IrField, val llvm: FieldLlvmDeclarations) : Declaration<IrField>(irField)
+
+    class StaticField(irField: IrField, val llvm: StaticFieldLlvmDeclarations) : Declaration<IrField>(irField)
 }
 
 private class CodegenStaticFieldMetadata(
