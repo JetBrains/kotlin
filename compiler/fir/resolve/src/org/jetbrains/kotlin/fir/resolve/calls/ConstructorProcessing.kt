@@ -212,7 +212,7 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
         newDispatchReceiverType = null,
         newReceiverType = null,
         newContextReceiverTypes,
-        newReturnType, newParameterTypes, typeParameters
+        newReturnType, newParameterTypes, typeParameters,
     ).fir
 }
 
