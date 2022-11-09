@@ -41,7 +41,7 @@ class GeneratedNames {
 class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         with(GeneratedNames()) {
-            +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, scopes, scopeState, callables, callableState) }
+            +::FirDataFrameExtensionsGenerator
             +{ it: FirSession -> FirDataFrameReceiverInjector(it, scopeState, scopeIds, tokenState, tokenIds) }
             +{ it: FirSession -> FirDataFrameAdditionalCheckers(it, tokenState) }
             +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, tokenIds, callableState) }

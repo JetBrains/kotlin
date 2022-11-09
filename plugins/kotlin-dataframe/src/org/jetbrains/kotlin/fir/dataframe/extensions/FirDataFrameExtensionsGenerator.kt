@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.dataframe.GeneratedNames
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.*
@@ -37,10 +38,14 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
+fun GeneratedNames.FirDataFrameExtensionsGenerator(session: FirSession): FirDeclarationGenerationExtension {
+    return FirDataFrameExtensionsGenerator(session, scopes, scopeState, callables, callableState)
+}
+
 class FirDataFrameExtensionsGenerator(
     session: FirSession,
     private val scopes: Set<ClassId>,
-    private val state: Map<ClassId, SchemaContext>,
+    private val scopeState: Map<ClassId, SchemaContext>,
     val callables: List<CallableId>,
     val callableState: MutableMap<Name, FirSimpleFunction>
 ) :
@@ -118,7 +123,7 @@ class FirDataFrameExtensionsGenerator(
                 listOf(rowExtension.symbol, columnsContainerExtension.symbol)
             }
 
-            else -> state
+            else -> scopeState
                 .flatMap { (classId, schemaContext) ->
                     schemaContext.properties.filter { CallableId(classId, Name.identifier(it.name)) == callableId }
                 }
@@ -249,7 +254,7 @@ class FirDataFrameExtensionsGenerator(
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
         val names = mutableSetOf<Name>()
-        state[classSymbol.classId]?.let {
+        scopeState[classSymbol.classId]?.let {
             it.properties.mapTo(names) { Name.identifier(it.name) }
             names.add(SpecialNames.INIT)
         }
