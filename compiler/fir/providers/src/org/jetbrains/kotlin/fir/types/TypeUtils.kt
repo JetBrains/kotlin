@@ -385,7 +385,7 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
     session: FirSession,
     isInlineFunction: Boolean = false
 ): FirTypeRef {
-    if (this !is FirResolvedTypeRef || !shouldHideLocalType(containingCallableVisibility, isInlineFunction)) return this
+    if (this !is FirResolvedTypeRef || !shouldApproximateLocalTypesOfNonLocalDeclaration(containingCallableVisibility, isInlineFunction)) return this
     return withReplacedConeType(type.approximateToOnlySupertype(session))
 }
 
@@ -425,7 +425,7 @@ private fun ConeKotlinType.approximateToOnlySupertype(session: FirSession): Cone
     return result
 }
 
-fun shouldHideLocalType(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
+fun shouldApproximateLocalTypesOfNonLocalDeclaration(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
     if (containingCallableVisibility == null) {
         return false
     }

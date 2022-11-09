@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.shouldHideLocalType
+import org.jetbrains.kotlin.fir.types.shouldApproximateLocalTypesOfNonLocalDeclaration
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.visibilityForApproximation
 
@@ -23,7 +23,7 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
         require(declaration is FirCallableDeclaration)
         if (context.containingDeclarations.any { it.isLocalMember || it is FirAnonymousObject }) return
 
-        if (!shouldHideLocalType(
+        if (!shouldApproximateLocalTypesOfNonLocalDeclaration(
                 declaration.visibilityForApproximation(context.containingDeclarations.lastOrNull()),
                 declaration.isInline
             )
