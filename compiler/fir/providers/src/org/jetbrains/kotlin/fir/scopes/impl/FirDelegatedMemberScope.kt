@@ -162,11 +162,11 @@ class FirDelegatedMemberScope(
                         propertySymbol.callableId
                     ),
                     original,
+                    derivedClass = null,
                     session,
                     FirDeclarationOrigin.Delegated,
-                    newModality = Modality.OPEN,
                     newDispatchReceiverType = dispatchReceiverType,
-                    derivedClass = null
+                    newModality = Modality.OPEN
                 ).apply {
                     delegatedWrapperData = DelegatedWrapperData(propertySymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
                 }.symbol

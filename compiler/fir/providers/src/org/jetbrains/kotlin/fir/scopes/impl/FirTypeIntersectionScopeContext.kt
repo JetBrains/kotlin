@@ -388,17 +388,17 @@ class FirTypeIntersectionScopeContext(
         )
         val newSymbol = FirIntersectionOverridePropertySymbol(callableId, overrides)
         FirFakeOverrideGenerator.createCopyForFirProperty(
-            newSymbol, keyFir, session, FirDeclarationOrigin.IntersectionOverride,
-            newModality = newModality,
-            newVisibility = newVisibility,
+            newSymbol, keyFir, derivedClass = null, session,
+            FirDeclarationOrigin.IntersectionOverride,
             newDispatchReceiverType = dispatchReceiverType,
-            // If any of the properties are vars and the types are not equal, these declarations are conflicting
-            // anyway and their uses should result in an overload resolution error.
             newReturnType = if (!forClassUseSiteScope && !mostSpecific.any { (it as FirPropertySymbol).fir.isVar })
                 intersectReturnTypes(mostSpecific)
             else
                 null,
-            derivedClass = null
+            // If any of the properties are vars and the types are not equal, these declarations are conflicting
+            // anyway and their uses should result in an overload resolution error.
+            newModality = newModality,
+            newVisibility = newVisibility
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }

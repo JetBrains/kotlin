@@ -304,10 +304,10 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirPropertySymbol {
         createCopyForFirProperty(
-            symbolForSubstitutionOverride, baseProperty, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
-            newDispatchReceiverType, newTypeParameters, newReceiverType, newContextReceiverTypes, newReturnType,
-            fakeOverrideSubstitution = fakeOverrideSubstitution,
-            derivedClass = derivedClass
+            symbolForSubstitutionOverride, baseProperty, derivedClass = derivedClass, session, FirDeclarationOrigin.SubstitutionOverride,
+            isExpect, newDispatchReceiverType, newTypeParameters, newReceiverType, newContextReceiverTypes,
+            newReturnType,
+            fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
         }
@@ -325,6 +325,7 @@ object FirFakeOverrideGenerator {
     fun createCopyForFirProperty(
         newSymbol: FirPropertySymbol,
         baseProperty: FirProperty,
+        derivedClass: ConeClassLikeLookupTag?,
         session: FirSession,
         origin: FirDeclarationOrigin,
         isExpect: Boolean = baseProperty.isExpect,
@@ -335,8 +336,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
-        fakeOverrideSubstitution: FakeOverrideSubstitution? = null,
-        derivedClass: ConeClassLikeLookupTag?
+        fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirProperty {
         return buildProperty {
             source = baseProperty.source
