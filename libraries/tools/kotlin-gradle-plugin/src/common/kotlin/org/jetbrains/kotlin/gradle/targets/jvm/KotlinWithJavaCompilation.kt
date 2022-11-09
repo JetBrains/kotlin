@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
@@ -42,5 +43,10 @@ open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO
                 }
             }
         }
+    }
+
+    init {
+        compilation.compileDependencyFiles += compilation.project.filesProvider { javaSourceSet.compileClasspath }
+        compilation.runtimeDependencyFiles = compilation.project.filesProvider { javaSourceSet.runtimeClasspath }
     }
 }
