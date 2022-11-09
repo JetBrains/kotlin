@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.utils
 import com.android.build.gradle.*
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Project
+import org.gradle.api.internal.DefaultDomainObjectSet
+import org.jetbrains.kotlin.gradle.targets.android.internal.AndroidDependencyResolver.getMethodOrNull
 
 internal fun Project.forAllAndroidVariants(action: (BaseVariant) -> Unit) {
     val androidExtension = this.extensions.getByName("android")
@@ -16,7 +18,9 @@ internal fun Project.forAllAndroidVariants(action: (BaseVariant) -> Unit) {
         is LibraryExtension -> {
             androidExtension.libraryVariants.all(action)
             if (androidExtension is FeatureExtension) {
-                androidExtension.featureVariants.all(action)
+                val getFeature = androidExtension::class.java.getMethodOrNull("getFeatureVariants")
+                val featureVariants = getFeature?.invoke(androidExtension) as? DefaultDomainObjectSet<BaseVariant>
+                featureVariants?.all(action)
             }
         }
 

@@ -117,7 +117,7 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
             )
             kotlinCompilation.compileKotlinTaskProvider.configure {
                 it.androidLayoutResourceFiles.from(
-                    sourceSet.res.sourceDirectoryTrees.layoutDirectories
+                    sourceSet.res.getSourceDirectoryTrees().layoutDirectories
                 )
             }
         }
@@ -189,7 +189,7 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
 
         fun addSourceSetAsVariant(name: String) {
             val sourceSet = androidExtension.sourceSets.findByName(name) ?: return
-            val srcDirs = sourceSet.res.sourceDirectoryTrees
+            val srcDirs = sourceSet.res.getSourceDirectoryTrees()
             if (srcDirs.isNotEmpty()) {
                 addVariant(sourceSet.name, srcDirs)
             }

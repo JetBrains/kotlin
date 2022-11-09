@@ -60,7 +60,8 @@ object AndroidDependencyResolver {
                 AndroidSdkHandler::class.java.getMethodOrNull("getInstance", androidLocationsProvider, Path::class.java) ?: return null
             getInstance(null, androidLocationBuildService, androidExtension.sdkDirectory.toPath()) as AndroidSdkHandler
         } else {
-            AndroidSdkHandler.getInstance(androidExtension.sdkDirectory)
+            val getInstance = AndroidSdkHandler::class.java.getMethodOrNull("getInstance", File::class.java) ?: return null
+            getInstance(null, androidExtension.sdkDirectory) as AndroidSdkHandler
         }
         val logger = LoggerProgressIndicatorWrapper(LoggerWrapper(project.logger))
         val androidTarget =
@@ -73,8 +74,9 @@ object AndroidDependencyResolver {
             jar = (getPath(androidTarget, IAndroidTarget.ANDROID_JAR) as Path).toFile()
             sources = (getPath(androidTarget, IAndroidTarget.SOURCES) as Path).toFile()
         } else {
-            jar = File(androidTarget.getPath(IAndroidTarget.ANDROID_JAR))
-            sources = File(androidTarget.getPath(IAndroidTarget.SOURCES))
+            val getPath = IAndroidTarget::class.java.getMethodOrNull("getPath", Int::class.java) ?: return null
+            jar = File(getPath(androidTarget, IAndroidTarget.ANDROID_JAR) as String)
+            sources = File(getPath(androidTarget, IAndroidTarget.SOURCES) as String)
         }
         return AndroidDependency(
             androidTarget.fullName,
@@ -104,7 +106,7 @@ object AndroidDependencyResolver {
             null
         }
 
-    private fun Class<*>.getMethodOrNull(name: String, vararg parameterTypes: Class<*>) =
+    fun Class<*>.getMethodOrNull(name: String, vararg parameterTypes: Class<*>) =
         try {
             getMethod(name, *parameterTypes)
         } catch (e: Exception) {
