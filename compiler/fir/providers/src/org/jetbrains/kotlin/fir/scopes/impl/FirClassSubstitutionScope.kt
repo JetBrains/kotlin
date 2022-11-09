@@ -325,7 +325,7 @@ class FirClassSubstitutionScope(
         // TODO: do we have fields with implicit type?
         val newReturnType = returnType?.substitute() ?: return original
 
-        return FirFakeOverrideGenerator.createSubstitutionOverrideField(session, member, newReturnType, derivedClass)
+        return FirFakeOverrideGenerator.createSubstitutionOverrideField(session, member, derivedClass, newReturnType)
     }
 
     fun createSubstitutionOverrideSyntheticProperty(original: FirSyntheticPropertySymbol): FirSyntheticPropertySymbol {
@@ -360,14 +360,14 @@ class FirClassSubstitutionScope(
         return FirFakeOverrideGenerator.createSubstitutionOverrideSyntheticProperty(
             session,
             member,
+            derivedClass,
             original,
             substitutor.substituteOrSelf(dispatchReceiverTypeForSubstitutedMembers) as ConeSimpleKotlinType?,
             newContextReceiverTypes,
             newReturnType,
             newGetterParameterTypes,
             newSetterParameterTypes,
-            fakeOverrideSubstitution,
-            derivedClass
+            fakeOverrideSubstitution
         )
     }
 

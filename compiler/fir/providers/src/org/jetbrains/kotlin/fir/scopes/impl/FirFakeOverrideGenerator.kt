@@ -471,8 +471,8 @@ object FirFakeOverrideGenerator {
     fun createSubstitutionOverrideField(
         session: FirSession,
         baseField: FirField,
-        newReturnType: ConeKotlinType?,
-        derivedClass: ConeClassLikeLookupTag
+        derivedClass: ConeClassLikeLookupTag,
+        newReturnType: ConeKotlinType?
     ): FirFieldSymbol {
         val symbol = FirFieldSymbol(CallableId(derivedClass.classId, baseField.name))
         buildField {
@@ -500,14 +500,14 @@ object FirFakeOverrideGenerator {
     fun createSubstitutionOverrideSyntheticProperty(
         session: FirSession,
         baseProperty: FirSyntheticProperty,
+        derivedClass: ConeClassLikeLookupTag,
         baseSymbol: FirSyntheticPropertySymbol,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         newGetterParameterTypes: List<ConeKotlinType?>?,
         newSetterParameterTypes: List<ConeKotlinType?>?,
-        fakeOverrideSubstitution: FakeOverrideSubstitution?,
-        derivedClass: ConeClassLikeLookupTag
+        fakeOverrideSubstitution: FakeOverrideSubstitution?
     ): FirSyntheticPropertySymbol {
         val getterSymbol = FirNamedFunctionSymbol(baseSymbol.getterId)
         val getter = createSubstitutionOverrideFunction(
