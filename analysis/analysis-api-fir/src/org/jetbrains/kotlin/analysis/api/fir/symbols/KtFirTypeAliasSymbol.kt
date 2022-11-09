@@ -64,7 +64,7 @@ internal class KtFirTypeAliasSymbol(
             KtSymbolKind.LOCAL ->
                 throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
 
-            KtSymbolKind.CLASS_MEMBER, KtSymbolKind.TOP_LEVEL -> KtFirClassLikeSymbolPointer(classIdIfNonLocal!!) { it as? KtTypeAliasSymbol }
+            KtSymbolKind.CLASS_MEMBER, KtSymbolKind.TOP_LEVEL -> KtFirClassLikeSymbolPointer(classIdIfNonLocal!!, KtTypeAliasSymbol::class)
             else -> throw UnsupportedSymbolKind(this::class, symbolKind)
         }
     }

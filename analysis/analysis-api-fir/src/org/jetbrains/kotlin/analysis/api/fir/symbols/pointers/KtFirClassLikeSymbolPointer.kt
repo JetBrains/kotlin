@@ -10,15 +10,19 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
+import kotlin.reflect.KClass
 
 internal class KtFirClassLikeSymbolPointer<T : KtClassLikeSymbol>(
     private val classId: ClassId,
-    private val castAction: (KtClassLikeSymbol) -> T?,
+    private val expectedClass: KClass<T>,
 ) : KtSymbolPointer<T>() {
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): T? {
         require(analysisSession is KtFirAnalysisSession)
         val classLikeSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByClassId(classId) ?: return null
-        return castAction(classLikeSymbol)
+        if (!expectedClass.isInstance(classLikeSymbol)) return null
+
+        @Suppress("UNCHECKED_CAST")
+        return classLikeSymbol as T
     }
 }

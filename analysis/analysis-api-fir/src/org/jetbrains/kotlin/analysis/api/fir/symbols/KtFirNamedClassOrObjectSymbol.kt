@@ -109,7 +109,9 @@ internal class KtFirNamedClassOrObjectSymbol(
             KtSymbolKind.LOCAL ->
                 throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
 
-            KtSymbolKind.CLASS_MEMBER, KtSymbolKind.TOP_LEVEL -> KtFirClassLikeSymbolPointer(classIdIfNonLocal!!) { it as? KtNamedClassOrObjectSymbol }
+            KtSymbolKind.CLASS_MEMBER, KtSymbolKind.TOP_LEVEL ->
+                KtFirClassLikeSymbolPointer(classIdIfNonLocal!!, KtNamedClassOrObjectSymbol::class)
+
             else -> throw UnsupportedSymbolKind(this::class, symbolKind)
         }
     }
