@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.resolve.isEquals
+import org.jetbrains.kotlin.fir.symbols.impl.isEquals
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 
