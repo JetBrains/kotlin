@@ -20,6 +20,6 @@ public class Foo {
 
 fun test(e: <!UNRESOLVED_REFERENCE!>ErrorType<!>) {
     Foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {
-        Sam.Result.create(<!ARGUMENT_TYPE_MISMATCH!>e<!>)
+        Sam.Result.create(e)
     }
 }

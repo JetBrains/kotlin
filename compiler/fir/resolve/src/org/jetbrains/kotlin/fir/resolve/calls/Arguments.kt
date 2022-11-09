@@ -362,18 +362,19 @@ private fun checkApplicabilityForArgumentType(
     // todo run this approximation only once for call
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, context.session)
 
-    fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
+    fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic? {
         if (argument.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
             return NullForNotNullType(argument)
         }
 
-        fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType {
+        fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType? {
+            if (type is ConeErrorType) return null
             if (type is ConeTypeVariableType) {
                 val lookupTag = type.lookupTag
 
-                val constraints = (csBuilder as VariableFixationFinder.Context).notFixedTypeVariables[lookupTag]?.constraints
+                val constraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]?.constraints
                 val constraintTypes = constraints?.mapNotNull { it.type as? ConeKotlinType }
-                if (constraintTypes != null && constraintTypes.isNotEmpty()) {
+                if (!constraintTypes.isNullOrEmpty()) {
                     return ConeTypeIntersector.intersectTypes(context.session.typeContext, constraintTypes)
                 }
 
@@ -389,9 +390,11 @@ private fun checkApplicabilityForArgumentType(
             return type
         }
 
+        val preparedExpectedType = tryGetConeTypeThatCompatibleWithKtType(actualExpectedType) ?: return null
+        val preparedActualType = tryGetConeTypeThatCompatibleWithKtType(argumentType) ?: return null
         return ArgumentTypeMismatch(
-            tryGetConeTypeThatCompatibleWithKtType(actualExpectedType),
-            tryGetConeTypeThatCompatibleWithKtType(argumentType),
+            preparedExpectedType,
+            preparedActualType,
             argument,
             // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
             // relation with nullable expected type.
