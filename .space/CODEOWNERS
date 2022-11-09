@@ -240,6 +240,9 @@
 /jps/ "Kotlin Build Tools"
 
 /js/ "Kotlin JS"
+/js/js.tests/test/org/jetbrains/kotlin/js/testOld/BasicWasmBoxTest.kt "Kotlin Wasm"
+/js/js.tests/test/org/jetbrains/kotlin/js/testOld/wasm/ "Kotlin Wasm"
+/js/js.tests/tests-gen/org/jetbrains/kotlin/js/testOld/wasm/ "Kotlin Wasm"
 
 /kotlin-js-store/ "Kotlin JS"
 
