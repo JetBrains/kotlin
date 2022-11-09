@@ -121,6 +121,17 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
         if (skipCheckForContainingClassVisibility) return true
 
+        if (staticQualifierClassForCallable != null) {
+            return isSpecificDeclarationVisible(
+                staticQualifierClassForCallable,
+                session,
+                useSiteFile,
+                containingDeclarations,
+                dispatchReceiver = null,
+                isCallToPropertySetter,
+                supertypeSupplier
+            )
+        }
         val parentClass = declaration.containingNonLocalClass(
             session,
             dispatchReceiver,
@@ -128,14 +139,8 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             supertypeSupplier
         ) ?: return true
         return generateSequence(parentClass) { it.containingNonLocalClass(session) }.all { parent ->
-            val classLikeToCheck =
-                if (staticQualifierClassForCallable?.isSubClass(parent.symbol.toLookupTag(), session, supertypeSupplier) == true) {
-                    staticQualifierClassForCallable
-                } else {
-                    parent
-                }
             isSpecificDeclarationVisible(
-                classLikeToCheck,
+                parent,
                 session,
                 useSiteFile,
                 containingDeclarations,
