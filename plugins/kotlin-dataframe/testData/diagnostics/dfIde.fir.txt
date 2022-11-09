@@ -44,1003 +44,1003 @@ FILE: __GENERATED DECLARATIONS__.kt
         public get(): R|kotlin/String|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Schema>|.fff: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-    local final class Scope0 {
+    internal final class Scope0 {
     }
-    local final class Scope1 {
+    internal final class Scope1 {
     }
-    local final class Scope2 {
+    internal final class Scope2 {
     }
-    local final class Scope3 {
+    internal final class Scope3 {
     }
-    local final class Scope4 {
+    internal final class Scope4 {
     }
-    local final class Scope5 {
+    internal final class Scope5 {
     }
-    local final class Scope6 {
+    internal final class Scope6 {
     }
-    local final class Scope7 {
+    internal final class Scope7 {
     }
-    local final class Scope8 {
+    internal final class Scope8 {
     }
-    local final class Scope9 {
+    internal final class Scope9 {
     }
-    local final class Scope10 {
+    internal final class Scope10 {
     }
-    local final class Scope11 {
+    internal final class Scope11 {
     }
-    local final class Scope12 {
+    internal final class Scope12 {
     }
-    local final class Scope13 {
+    internal final class Scope13 {
     }
-    local final class Scope14 {
+    internal final class Scope14 {
     }
-    local final class Scope15 {
+    internal final class Scope15 {
     }
-    local final class Scope16 {
+    internal final class Scope16 {
     }
-    local final class Scope17 {
+    internal final class Scope17 {
     }
-    local final class Scope18 {
+    internal final class Scope18 {
     }
-    local final class Scope19 {
+    internal final class Scope19 {
     }
-    local final class Scope20 {
+    internal final class Scope20 {
     }
-    local final class Scope21 {
+    internal final class Scope21 {
     }
-    local final class Scope22 {
+    internal final class Scope22 {
     }
-    local final class Scope23 {
+    internal final class Scope23 {
     }
-    local final class Scope24 {
+    internal final class Scope24 {
     }
-    local final class Scope25 {
+    internal final class Scope25 {
     }
-    local final class Scope26 {
+    internal final class Scope26 {
     }
-    local final class Scope27 {
+    internal final class Scope27 {
     }
-    local final class Scope28 {
+    internal final class Scope28 {
     }
-    local final class Scope29 {
+    internal final class Scope29 {
     }
-    local final class Scope30 {
+    internal final class Scope30 {
     }
-    local final class Scope31 {
+    internal final class Scope31 {
     }
-    local final class Scope32 {
+    internal final class Scope32 {
     }
-    local final class Scope33 {
+    internal final class Scope33 {
     }
-    local final class Scope34 {
+    internal final class Scope34 {
     }
-    local final class Scope35 {
+    internal final class Scope35 {
     }
-    local final class Scope36 {
+    internal final class Scope36 {
     }
-    local final class Scope37 {
+    internal final class Scope37 {
     }
-    local final class Scope38 {
+    internal final class Scope38 {
     }
-    local final class Scope39 {
+    internal final class Scope39 {
     }
-    local final class Scope40 {
+    internal final class Scope40 {
     }
-    local final class Scope41 {
+    internal final class Scope41 {
     }
-    local final class Scope42 {
+    internal final class Scope42 {
     }
-    local final class Scope43 {
+    internal final class Scope43 {
     }
-    local final class Scope44 {
+    internal final class Scope44 {
     }
-    local final class Scope45 {
+    internal final class Scope45 {
     }
-    local final class Scope46 {
+    internal final class Scope46 {
     }
-    local final class Scope47 {
+    internal final class Scope47 {
     }
-    local final class Scope48 {
+    internal final class Scope48 {
     }
-    local final class Scope49 {
+    internal final class Scope49 {
     }
-    local final class Scope50 {
+    internal final class Scope50 {
     }
-    local final class Scope51 {
+    internal final class Scope51 {
     }
-    local final class Scope52 {
+    internal final class Scope52 {
     }
-    local final class Scope53 {
+    internal final class Scope53 {
     }
-    local final class Scope54 {
+    internal final class Scope54 {
     }
-    local final class Scope55 {
+    internal final class Scope55 {
     }
-    local final class Scope56 {
+    internal final class Scope56 {
     }
-    local final class Scope57 {
+    internal final class Scope57 {
     }
-    local final class Scope58 {
+    internal final class Scope58 {
     }
-    local final class Scope59 {
+    internal final class Scope59 {
     }
-    local final class Scope60 {
+    internal final class Scope60 {
     }
-    local final class Scope61 {
+    internal final class Scope61 {
     }
-    local final class Scope62 {
+    internal final class Scope62 {
     }
-    local final class Scope63 {
+    internal final class Scope63 {
     }
-    local final class Scope64 {
+    internal final class Scope64 {
     }
-    local final class Scope65 {
+    internal final class Scope65 {
     }
-    local final class Scope66 {
+    internal final class Scope66 {
     }
-    local final class Scope67 {
+    internal final class Scope67 {
     }
-    local final class Scope68 {
+    internal final class Scope68 {
     }
-    local final class Scope69 {
+    internal final class Scope69 {
     }
-    local final class Scope70 {
+    internal final class Scope70 {
     }
-    local final class Scope71 {
+    internal final class Scope71 {
     }
-    local final class Scope72 {
+    internal final class Scope72 {
     }
-    local final class Scope73 {
+    internal final class Scope73 {
     }
-    local final class Scope74 {
+    internal final class Scope74 {
     }
-    local final class Scope75 {
+    internal final class Scope75 {
     }
-    local final class Scope76 {
+    internal final class Scope76 {
     }
-    local final class Scope77 {
+    internal final class Scope77 {
     }
-    local final class Scope78 {
+    internal final class Scope78 {
     }
-    local final class Scope79 {
+    internal final class Scope79 {
     }
-    local final class Scope80 {
+    internal final class Scope80 {
     }
-    local final class Scope81 {
+    internal final class Scope81 {
     }
-    local final class Scope82 {
+    internal final class Scope82 {
     }
-    local final class Scope83 {
+    internal final class Scope83 {
     }
-    local final class Scope84 {
+    internal final class Scope84 {
     }
-    local final class Scope85 {
+    internal final class Scope85 {
     }
-    local final class Scope86 {
+    internal final class Scope86 {
     }
-    local final class Scope87 {
+    internal final class Scope87 {
     }
-    local final class Scope88 {
+    internal final class Scope88 {
     }
-    local final class Scope89 {
+    internal final class Scope89 {
     }
-    local final class Scope90 {
+    internal final class Scope90 {
     }
-    local final class Scope91 {
+    internal final class Scope91 {
     }
-    local final class Scope92 {
+    internal final class Scope92 {
     }
-    local final class Scope93 {
+    internal final class Scope93 {
     }
-    local final class Scope94 {
+    internal final class Scope94 {
     }
-    local final class Scope95 {
+    internal final class Scope95 {
     }
-    local final class Scope96 {
+    internal final class Scope96 {
     }
-    local final class Scope97 {
+    internal final class Scope97 {
     }
-    local final class Scope98 {
+    internal final class Scope98 {
     }
-    local final class Scope99 {
+    internal final class Scope99 {
     }
-    local final class Scope100 {
+    internal final class Scope100 {
     }
-    local final class Scope101 {
+    internal final class Scope101 {
     }
-    local final class Scope102 {
+    internal final class Scope102 {
     }
-    local final class Scope103 {
+    internal final class Scope103 {
     }
-    local final class Scope104 {
+    internal final class Scope104 {
     }
-    local final class Scope105 {
+    internal final class Scope105 {
     }
-    local final class Scope106 {
+    internal final class Scope106 {
     }
-    local final class Scope107 {
+    internal final class Scope107 {
     }
-    local final class Scope108 {
+    internal final class Scope108 {
     }
-    local final class Scope109 {
+    internal final class Scope109 {
     }
-    local final class Scope110 {
+    internal final class Scope110 {
     }
-    local final class Scope111 {
+    internal final class Scope111 {
     }
-    local final class Scope112 {
+    internal final class Scope112 {
     }
-    local final class Scope113 {
+    internal final class Scope113 {
     }
-    local final class Scope114 {
+    internal final class Scope114 {
     }
-    local final class Scope115 {
+    internal final class Scope115 {
     }
-    local final class Scope116 {
+    internal final class Scope116 {
     }
-    local final class Scope117 {
+    internal final class Scope117 {
     }
-    local final class Scope118 {
+    internal final class Scope118 {
     }
-    local final class Scope119 {
+    internal final class Scope119 {
     }
-    local final class Scope120 {
+    internal final class Scope120 {
     }
-    local final class Scope121 {
+    internal final class Scope121 {
     }
-    local final class Scope122 {
+    internal final class Scope122 {
     }
-    local final class Scope123 {
+    internal final class Scope123 {
     }
-    local final class Scope124 {
+    internal final class Scope124 {
     }
-    local final class Scope125 {
+    internal final class Scope125 {
     }
-    local final class Scope126 {
+    internal final class Scope126 {
     }
-    local final class Scope127 {
+    internal final class Scope127 {
     }
-    local final class Scope128 {
+    internal final class Scope128 {
     }
-    local final class Scope129 {
+    internal final class Scope129 {
     }
-    local final class Scope130 {
+    internal final class Scope130 {
     }
-    local final class Scope131 {
+    internal final class Scope131 {
     }
-    local final class Scope132 {
+    internal final class Scope132 {
     }
-    local final class Scope133 {
+    internal final class Scope133 {
     }
-    local final class Scope134 {
+    internal final class Scope134 {
     }
-    local final class Scope135 {
+    internal final class Scope135 {
     }
-    local final class Scope136 {
+    internal final class Scope136 {
     }
-    local final class Scope137 {
+    internal final class Scope137 {
     }
-    local final class Scope138 {
+    internal final class Scope138 {
     }
-    local final class Scope139 {
+    internal final class Scope139 {
     }
-    local final class Scope140 {
+    internal final class Scope140 {
     }
-    local final class Scope141 {
+    internal final class Scope141 {
     }
-    local final class Scope142 {
+    internal final class Scope142 {
     }
-    local final class Scope143 {
+    internal final class Scope143 {
     }
-    local final class Scope144 {
+    internal final class Scope144 {
     }
-    local final class Scope145 {
+    internal final class Scope145 {
     }
-    local final class Scope146 {
+    internal final class Scope146 {
     }
-    local final class Scope147 {
+    internal final class Scope147 {
     }
-    local final class Scope148 {
+    internal final class Scope148 {
     }
-    local final class Scope149 {
+    internal final class Scope149 {
     }
-    local final class Scope150 {
+    internal final class Scope150 {
     }
-    local final class Scope151 {
+    internal final class Scope151 {
     }
-    local final class Scope152 {
+    internal final class Scope152 {
     }
-    local final class Scope153 {
+    internal final class Scope153 {
     }
-    local final class Scope154 {
+    internal final class Scope154 {
     }
-    local final class Scope155 {
+    internal final class Scope155 {
     }
-    local final class Scope156 {
+    internal final class Scope156 {
     }
-    local final class Scope157 {
+    internal final class Scope157 {
     }
-    local final class Scope158 {
+    internal final class Scope158 {
     }
-    local final class Scope159 {
+    internal final class Scope159 {
     }
-    local final class Scope160 {
+    internal final class Scope160 {
     }
-    local final class Scope161 {
+    internal final class Scope161 {
     }
-    local final class Scope162 {
+    internal final class Scope162 {
     }
-    local final class Scope163 {
+    internal final class Scope163 {
     }
-    local final class Scope164 {
+    internal final class Scope164 {
     }
-    local final class Scope165 {
+    internal final class Scope165 {
     }
-    local final class Scope166 {
+    internal final class Scope166 {
     }
-    local final class Scope167 {
+    internal final class Scope167 {
     }
-    local final class Scope168 {
+    internal final class Scope168 {
     }
-    local final class Scope169 {
+    internal final class Scope169 {
     }
-    local final class Scope170 {
+    internal final class Scope170 {
     }
-    local final class Scope171 {
+    internal final class Scope171 {
     }
-    local final class Scope172 {
+    internal final class Scope172 {
     }
-    local final class Scope173 {
+    internal final class Scope173 {
     }
-    local final class Scope174 {
+    internal final class Scope174 {
     }
-    local final class Scope175 {
+    internal final class Scope175 {
     }
-    local final class Scope176 {
+    internal final class Scope176 {
     }
-    local final class Scope177 {
+    internal final class Scope177 {
     }
-    local final class Scope178 {
+    internal final class Scope178 {
     }
-    local final class Scope179 {
+    internal final class Scope179 {
     }
-    local final class Scope180 {
+    internal final class Scope180 {
     }
-    local final class Scope181 {
+    internal final class Scope181 {
     }
-    local final class Scope182 {
+    internal final class Scope182 {
     }
-    local final class Scope183 {
+    internal final class Scope183 {
     }
-    local final class Scope184 {
+    internal final class Scope184 {
     }
-    local final class Scope185 {
+    internal final class Scope185 {
     }
-    local final class Scope186 {
+    internal final class Scope186 {
     }
-    local final class Scope187 {
+    internal final class Scope187 {
     }
-    local final class Scope188 {
+    internal final class Scope188 {
     }
-    local final class Scope189 {
+    internal final class Scope189 {
     }
-    local final class Scope190 {
+    internal final class Scope190 {
     }
-    local final class Scope191 {
+    internal final class Scope191 {
     }
-    local final class Scope192 {
+    internal final class Scope192 {
     }
-    local final class Scope193 {
+    internal final class Scope193 {
     }
-    local final class Scope194 {
+    internal final class Scope194 {
     }
-    local final class Scope195 {
+    internal final class Scope195 {
     }
-    local final class Scope196 {
+    internal final class Scope196 {
     }
-    local final class Scope197 {
+    internal final class Scope197 {
     }
-    local final class Scope198 {
+    internal final class Scope198 {
     }
-    local final class Scope199 {
+    internal final class Scope199 {
     }
-    local final class Scope200 {
+    internal final class Scope200 {
     }
-    local final class Scope201 {
+    internal final class Scope201 {
     }
-    local final class Scope202 {
+    internal final class Scope202 {
     }
-    local final class Scope203 {
+    internal final class Scope203 {
     }
-    local final class Scope204 {
+    internal final class Scope204 {
     }
-    local final class Scope205 {
+    internal final class Scope205 {
     }
-    local final class Scope206 {
+    internal final class Scope206 {
     }
-    local final class Scope207 {
+    internal final class Scope207 {
     }
-    local final class Scope208 {
+    internal final class Scope208 {
     }
-    local final class Scope209 {
+    internal final class Scope209 {
     }
-    local final class Scope210 {
+    internal final class Scope210 {
     }
-    local final class Scope211 {
+    internal final class Scope211 {
     }
-    local final class Scope212 {
+    internal final class Scope212 {
     }
-    local final class Scope213 {
+    internal final class Scope213 {
     }
-    local final class Scope214 {
+    internal final class Scope214 {
     }
-    local final class Scope215 {
+    internal final class Scope215 {
     }
-    local final class Scope216 {
+    internal final class Scope216 {
     }
-    local final class Scope217 {
+    internal final class Scope217 {
     }
-    local final class Scope218 {
+    internal final class Scope218 {
     }
-    local final class Scope219 {
+    internal final class Scope219 {
     }
-    local final class Scope220 {
+    internal final class Scope220 {
     }
-    local final class Scope221 {
+    internal final class Scope221 {
     }
-    local final class Scope222 {
+    internal final class Scope222 {
     }
-    local final class Scope223 {
+    internal final class Scope223 {
     }
-    local final class Scope224 {
+    internal final class Scope224 {
     }
-    local final class Scope225 {
+    internal final class Scope225 {
     }
-    local final class Scope226 {
+    internal final class Scope226 {
     }
-    local final class Scope227 {
+    internal final class Scope227 {
     }
-    local final class Scope228 {
+    internal final class Scope228 {
     }
-    local final class Scope229 {
+    internal final class Scope229 {
     }
-    local final class Scope230 {
+    internal final class Scope230 {
     }
-    local final class Scope231 {
+    internal final class Scope231 {
     }
-    local final class Scope232 {
+    internal final class Scope232 {
     }
-    local final class Scope233 {
+    internal final class Scope233 {
     }
-    local final class Scope234 {
+    internal final class Scope234 {
     }
-    local final class Scope235 {
+    internal final class Scope235 {
     }
-    local final class Scope236 {
+    internal final class Scope236 {
     }
-    local final class Scope237 {
+    internal final class Scope237 {
     }
-    local final class Scope238 {
+    internal final class Scope238 {
     }
-    local final class Scope239 {
+    internal final class Scope239 {
     }
-    local final class Scope240 {
+    internal final class Scope240 {
     }
-    local final class Scope241 {
+    internal final class Scope241 {
     }
-    local final class Scope242 {
+    internal final class Scope242 {
     }
-    local final class Scope243 {
+    internal final class Scope243 {
     }
-    local final class Scope244 {
+    internal final class Scope244 {
     }
-    local final class Scope245 {
+    internal final class Scope245 {
     }
-    local final class Scope246 {
+    internal final class Scope246 {
     }
-    local final class Scope247 {
+    internal final class Scope247 {
     }
-    local final class Scope248 {
+    internal final class Scope248 {
     }
-    local final class Scope249 {
+    internal final class Scope249 {
     }
-    local final class Scope250 {
+    internal final class Scope250 {
     }
-    local final class Scope251 {
+    internal final class Scope251 {
     }
-    local final class Scope252 {
+    internal final class Scope252 {
     }
-    local final class Scope253 {
+    internal final class Scope253 {
     }
-    local final class Scope254 {
+    internal final class Scope254 {
     }
-    local final class Scope255 {
+    internal final class Scope255 {
     }
-    local final class Scope256 {
+    internal final class Scope256 {
     }
-    local final class Scope257 {
+    internal final class Scope257 {
     }
-    local final class Scope258 {
+    internal final class Scope258 {
     }
-    local final class Scope259 {
+    internal final class Scope259 {
     }
-    local final class Scope260 {
+    internal final class Scope260 {
     }
-    local final class Scope261 {
+    internal final class Scope261 {
     }
-    local final class Scope262 {
+    internal final class Scope262 {
     }
-    local final class Scope263 {
+    internal final class Scope263 {
     }
-    local final class Scope264 {
+    internal final class Scope264 {
     }
-    local final class Scope265 {
+    internal final class Scope265 {
     }
-    local final class Scope266 {
+    internal final class Scope266 {
     }
-    local final class Scope267 {
+    internal final class Scope267 {
     }
-    local final class Scope268 {
+    internal final class Scope268 {
     }
-    local final class Scope269 {
+    internal final class Scope269 {
     }
-    local final class Scope270 {
+    internal final class Scope270 {
     }
-    local final class Scope271 {
+    internal final class Scope271 {
     }
-    local final class Scope272 {
+    internal final class Scope272 {
     }
-    local final class Scope273 {
+    internal final class Scope273 {
     }
-    local final class Scope274 {
+    internal final class Scope274 {
     }
-    local final class Scope275 {
+    internal final class Scope275 {
     }
-    local final class Scope276 {
+    internal final class Scope276 {
     }
-    local final class Scope277 {
+    internal final class Scope277 {
     }
-    local final class Scope278 {
+    internal final class Scope278 {
     }
-    local final class Scope279 {
+    internal final class Scope279 {
     }
-    local final class Scope280 {
+    internal final class Scope280 {
     }
-    local final class Scope281 {
+    internal final class Scope281 {
     }
-    local final class Scope282 {
+    internal final class Scope282 {
     }
-    local final class Scope283 {
+    internal final class Scope283 {
     }
-    local final class Scope284 {
+    internal final class Scope284 {
     }
-    local final class Scope285 {
+    internal final class Scope285 {
     }
-    local final class Scope286 {
+    internal final class Scope286 {
     }
-    local final class Scope287 {
+    internal final class Scope287 {
     }
-    local final class Scope288 {
+    internal final class Scope288 {
     }
-    local final class Scope289 {
+    internal final class Scope289 {
     }
-    local final class Scope290 {
+    internal final class Scope290 {
     }
-    local final class Scope291 {
+    internal final class Scope291 {
     }
-    local final class Scope292 {
+    internal final class Scope292 {
     }
-    local final class Scope293 {
+    internal final class Scope293 {
     }
-    local final class Scope294 {
+    internal final class Scope294 {
     }
-    local final class Scope295 {
+    internal final class Scope295 {
     }
-    local final class Scope296 {
+    internal final class Scope296 {
     }
-    local final class Scope297 {
+    internal final class Scope297 {
     }
-    local final class Scope298 {
+    internal final class Scope298 {
     }
-    local final class Scope299 {
+    internal final class Scope299 {
     }
-    local final class Scope300 {
+    internal final class Scope300 {
     }
-    local final class Scope301 {
+    internal final class Scope301 {
     }
-    local final class Scope302 {
+    internal final class Scope302 {
     }
-    local final class Scope303 {
+    internal final class Scope303 {
     }
-    local final class Scope304 {
+    internal final class Scope304 {
     }
-    local final class Scope305 {
+    internal final class Scope305 {
     }
-    local final class Scope306 {
+    internal final class Scope306 {
     }
-    local final class Scope307 {
+    internal final class Scope307 {
     }
-    local final class Scope308 {
+    internal final class Scope308 {
     }
-    local final class Scope309 {
+    internal final class Scope309 {
     }
-    local final class Scope310 {
+    internal final class Scope310 {
     }
-    local final class Scope311 {
+    internal final class Scope311 {
     }
-    local final class Scope312 {
+    internal final class Scope312 {
     }
-    local final class Scope313 {
+    internal final class Scope313 {
     }
-    local final class Scope314 {
+    internal final class Scope314 {
     }
-    local final class Scope315 {
+    internal final class Scope315 {
     }
-    local final class Scope316 {
+    internal final class Scope316 {
     }
-    local final class Scope317 {
+    internal final class Scope317 {
     }
-    local final class Scope318 {
+    internal final class Scope318 {
     }
-    local final class Scope319 {
+    internal final class Scope319 {
     }
-    local final class Scope320 {
+    internal final class Scope320 {
     }
-    local final class Scope321 {
+    internal final class Scope321 {
     }
-    local final class Scope322 {
+    internal final class Scope322 {
     }
-    local final class Scope323 {
+    internal final class Scope323 {
     }
-    local final class Scope324 {
+    internal final class Scope324 {
     }
-    local final class Scope325 {
+    internal final class Scope325 {
     }
-    local final class Scope326 {
+    internal final class Scope326 {
     }
-    local final class Scope327 {
+    internal final class Scope327 {
     }
-    local final class Scope328 {
+    internal final class Scope328 {
     }
-    local final class Scope329 {
+    internal final class Scope329 {
     }
-    local final class Scope330 {
+    internal final class Scope330 {
     }
-    local final class Scope331 {
+    internal final class Scope331 {
     }
-    local final class Scope332 {
+    internal final class Scope332 {
     }
-    local final class Scope333 {
+    internal final class Scope333 {
     }
-    local final class Scope334 {
+    internal final class Scope334 {
     }
-    local final class Scope335 {
+    internal final class Scope335 {
     }
-    local final class Scope336 {
+    internal final class Scope336 {
     }
-    local final class Scope337 {
+    internal final class Scope337 {
     }
-    local final class Scope338 {
+    internal final class Scope338 {
     }
-    local final class Scope339 {
+    internal final class Scope339 {
     }
-    local final class Scope340 {
+    internal final class Scope340 {
     }
-    local final class Scope341 {
+    internal final class Scope341 {
     }
-    local final class Scope342 {
+    internal final class Scope342 {
     }
-    local final class Scope343 {
+    internal final class Scope343 {
     }
-    local final class Scope344 {
+    internal final class Scope344 {
     }
-    local final class Scope345 {
+    internal final class Scope345 {
     }
-    local final class Scope346 {
+    internal final class Scope346 {
     }
-    local final class Scope347 {
+    internal final class Scope347 {
     }
-    local final class Scope348 {
+    internal final class Scope348 {
     }
-    local final class Scope349 {
+    internal final class Scope349 {
     }
-    local final class Scope350 {
+    internal final class Scope350 {
     }
-    local final class Scope351 {
+    internal final class Scope351 {
     }
-    local final class Scope352 {
+    internal final class Scope352 {
     }
-    local final class Scope353 {
+    internal final class Scope353 {
     }
-    local final class Scope354 {
+    internal final class Scope354 {
     }
-    local final class Scope355 {
+    internal final class Scope355 {
     }
-    local final class Scope356 {
+    internal final class Scope356 {
     }
-    local final class Scope357 {
+    internal final class Scope357 {
     }
-    local final class Scope358 {
+    internal final class Scope358 {
     }
-    local final class Scope359 {
+    internal final class Scope359 {
     }
-    local final class Scope360 {
+    internal final class Scope360 {
     }
-    local final class Scope361 {
+    internal final class Scope361 {
     }
-    local final class Scope362 {
+    internal final class Scope362 {
     }
-    local final class Scope363 {
+    internal final class Scope363 {
     }
-    local final class Scope364 {
+    internal final class Scope364 {
     }
-    local final class Scope365 {
+    internal final class Scope365 {
     }
-    local final class Scope366 {
+    internal final class Scope366 {
     }
-    local final class Scope367 {
+    internal final class Scope367 {
     }
-    local final class Scope368 {
+    internal final class Scope368 {
     }
-    local final class Scope369 {
+    internal final class Scope369 {
     }
-    local final class Scope370 {
+    internal final class Scope370 {
     }
-    local final class Scope371 {
+    internal final class Scope371 {
     }
-    local final class Scope372 {
+    internal final class Scope372 {
     }
-    local final class Scope373 {
+    internal final class Scope373 {
     }
-    local final class Scope374 {
+    internal final class Scope374 {
     }
-    local final class Scope375 {
+    internal final class Scope375 {
     }
-    local final class Scope376 {
+    internal final class Scope376 {
     }
-    local final class Scope377 {
+    internal final class Scope377 {
     }
-    local final class Scope378 {
+    internal final class Scope378 {
     }
-    local final class Scope379 {
+    internal final class Scope379 {
     }
-    local final class Scope380 {
+    internal final class Scope380 {
     }
-    local final class Scope381 {
+    internal final class Scope381 {
     }
-    local final class Scope382 {
+    internal final class Scope382 {
     }
-    local final class Scope383 {
+    internal final class Scope383 {
     }
-    local final class Scope384 {
+    internal final class Scope384 {
     }
-    local final class Scope385 {
+    internal final class Scope385 {
     }
-    local final class Scope386 {
+    internal final class Scope386 {
     }
-    local final class Scope387 {
+    internal final class Scope387 {
     }
-    local final class Scope388 {
+    internal final class Scope388 {
     }
-    local final class Scope389 {
+    internal final class Scope389 {
     }
-    local final class Scope390 {
+    internal final class Scope390 {
     }
-    local final class Scope391 {
+    internal final class Scope391 {
     }
-    local final class Scope392 {
+    internal final class Scope392 {
     }
-    local final class Scope393 {
+    internal final class Scope393 {
     }
-    local final class Scope394 {
+    internal final class Scope394 {
     }
-    local final class Scope395 {
+    internal final class Scope395 {
     }
-    local final class Scope396 {
+    internal final class Scope396 {
     }
-    local final class Scope397 {
+    internal final class Scope397 {
     }
-    local final class Scope398 {
+    internal final class Scope398 {
     }
-    local final class Scope399 {
+    internal final class Scope399 {
     }
-    local final class Scope400 {
+    internal final class Scope400 {
     }
-    local final class Scope401 {
+    internal final class Scope401 {
     }
-    local final class Scope402 {
+    internal final class Scope402 {
     }
-    local final class Scope403 {
+    internal final class Scope403 {
     }
-    local final class Scope404 {
+    internal final class Scope404 {
     }
-    local final class Scope405 {
+    internal final class Scope405 {
     }
-    local final class Scope406 {
+    internal final class Scope406 {
     }
-    local final class Scope407 {
+    internal final class Scope407 {
     }
-    local final class Scope408 {
+    internal final class Scope408 {
     }
-    local final class Scope409 {
+    internal final class Scope409 {
     }
-    local final class Scope410 {
+    internal final class Scope410 {
     }
-    local final class Scope411 {
+    internal final class Scope411 {
     }
-    local final class Scope412 {
+    internal final class Scope412 {
     }
-    local final class Scope413 {
+    internal final class Scope413 {
     }
-    local final class Scope414 {
+    internal final class Scope414 {
     }
-    local final class Scope415 {
+    internal final class Scope415 {
     }
-    local final class Scope416 {
+    internal final class Scope416 {
     }
-    local final class Scope417 {
+    internal final class Scope417 {
     }
-    local final class Scope418 {
+    internal final class Scope418 {
     }
-    local final class Scope419 {
+    internal final class Scope419 {
     }
-    local final class Scope420 {
+    internal final class Scope420 {
     }
-    local final class Scope421 {
+    internal final class Scope421 {
     }
-    local final class Scope422 {
+    internal final class Scope422 {
     }
-    local final class Scope423 {
+    internal final class Scope423 {
     }
-    local final class Scope424 {
+    internal final class Scope424 {
     }
-    local final class Scope425 {
+    internal final class Scope425 {
     }
-    local final class Scope426 {
+    internal final class Scope426 {
     }
-    local final class Scope427 {
+    internal final class Scope427 {
     }
-    local final class Scope428 {
+    internal final class Scope428 {
     }
-    local final class Scope429 {
+    internal final class Scope429 {
     }
-    local final class Scope430 {
+    internal final class Scope430 {
     }
-    local final class Scope431 {
+    internal final class Scope431 {
     }
-    local final class Scope432 {
+    internal final class Scope432 {
     }
-    local final class Scope433 {
+    internal final class Scope433 {
     }
-    local final class Scope434 {
+    internal final class Scope434 {
     }
-    local final class Scope435 {
+    internal final class Scope435 {
     }
-    local final class Scope436 {
+    internal final class Scope436 {
     }
-    local final class Scope437 {
+    internal final class Scope437 {
     }
-    local final class Scope438 {
+    internal final class Scope438 {
     }
-    local final class Scope439 {
+    internal final class Scope439 {
     }
-    local final class Scope440 {
+    internal final class Scope440 {
     }
-    local final class Scope441 {
+    internal final class Scope441 {
     }
-    local final class Scope442 {
+    internal final class Scope442 {
     }
-    local final class Scope443 {
+    internal final class Scope443 {
     }
-    local final class Scope444 {
+    internal final class Scope444 {
     }
-    local final class Scope445 {
+    internal final class Scope445 {
     }
-    local final class Scope446 {
+    internal final class Scope446 {
     }
-    local final class Scope447 {
+    internal final class Scope447 {
     }
-    local final class Scope448 {
+    internal final class Scope448 {
     }
-    local final class Scope449 {
+    internal final class Scope449 {
     }
-    local final class Scope450 {
+    internal final class Scope450 {
     }
-    local final class Scope451 {
+    internal final class Scope451 {
     }
-    local final class Scope452 {
+    internal final class Scope452 {
     }
-    local final class Scope453 {
+    internal final class Scope453 {
     }
-    local final class Scope454 {
+    internal final class Scope454 {
     }
-    local final class Scope455 {
+    internal final class Scope455 {
     }
-    local final class Scope456 {
+    internal final class Scope456 {
     }
-    local final class Scope457 {
+    internal final class Scope457 {
     }
-    local final class Scope458 {
+    internal final class Scope458 {
     }
-    local final class Scope459 {
+    internal final class Scope459 {
     }
-    local final class Scope460 {
+    internal final class Scope460 {
     }
-    local final class Scope461 {
+    internal final class Scope461 {
     }
-    local final class Scope462 {
+    internal final class Scope462 {
     }
-    local final class Scope463 {
+    internal final class Scope463 {
     }
-    local final class Scope464 {
+    internal final class Scope464 {
     }
-    local final class Scope465 {
+    internal final class Scope465 {
     }
-    local final class Scope466 {
+    internal final class Scope466 {
     }
-    local final class Scope467 {
+    internal final class Scope467 {
     }
-    local final class Scope468 {
+    internal final class Scope468 {
     }
-    local final class Scope469 {
+    internal final class Scope469 {
     }
-    local final class Scope470 {
+    internal final class Scope470 {
     }
-    local final class Scope471 {
+    internal final class Scope471 {
     }
-    local final class Scope472 {
+    internal final class Scope472 {
     }
-    local final class Scope473 {
+    internal final class Scope473 {
     }
-    local final class Scope474 {
+    internal final class Scope474 {
     }
-    local final class Scope475 {
+    internal final class Scope475 {
     }
-    local final class Scope476 {
+    internal final class Scope476 {
     }
-    local final class Scope477 {
+    internal final class Scope477 {
     }
-    local final class Scope478 {
+    internal final class Scope478 {
     }
-    local final class Scope479 {
+    internal final class Scope479 {
     }
-    local final class Scope480 {
+    internal final class Scope480 {
     }
-    local final class Scope481 {
+    internal final class Scope481 {
     }
-    local final class Scope482 {
+    internal final class Scope482 {
     }
-    local final class Scope483 {
+    internal final class Scope483 {
     }
-    local final class Scope484 {
+    internal final class Scope484 {
     }
-    local final class Scope485 {
+    internal final class Scope485 {
     }
-    local final class Scope486 {
+    internal final class Scope486 {
     }
-    local final class Scope487 {
+    internal final class Scope487 {
     }
-    local final class Scope488 {
+    internal final class Scope488 {
     }
-    local final class Scope489 {
+    internal final class Scope489 {
     }
-    local final class Scope490 {
+    internal final class Scope490 {
     }
-    local final class Scope491 {
+    internal final class Scope491 {
     }
-    local final class Scope492 {
+    internal final class Scope492 {
     }
-    local final class Scope493 {
+    internal final class Scope493 {
     }
-    local final class Scope494 {
+    internal final class Scope494 {
     }
-    local final class Scope495 {
+    internal final class Scope495 {
     }
-    local final class Scope496 {
+    internal final class Scope496 {
     }
-    local final class Scope497 {
+    internal final class Scope497 {
     }
-    local final class Scope498 {
+    internal final class Scope498 {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.age: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -1050,7 +1050,7 @@ FILE: __GENERATED DECLARATIONS__.kt
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
 
     }
-    local final class Scope499 {
+    internal final class Scope499 {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.i: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -1072,1005 +1072,1005 @@ FILE: __GENERATED DECLARATIONS__.kt
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
 
     }
-    local final interface Token0 {
+    internal final interface Token0 {
     }
-    local final interface Token1 {
+    internal final interface Token1 {
     }
-    local final interface Token2 {
+    internal final interface Token2 {
     }
-    local final interface Token3 {
+    internal final interface Token3 {
     }
-    local final interface Token4 {
+    internal final interface Token4 {
     }
-    local final interface Token5 {
+    internal final interface Token5 {
     }
-    local final interface Token6 {
+    internal final interface Token6 {
     }
-    local final interface Token7 {
+    internal final interface Token7 {
     }
-    local final interface Token8 {
+    internal final interface Token8 {
     }
-    local final interface Token9 {
+    internal final interface Token9 {
     }
-    local final interface Token10 {
+    internal final interface Token10 {
     }
-    local final interface Token11 {
+    internal final interface Token11 {
     }
-    local final interface Token12 {
+    internal final interface Token12 {
     }
-    local final interface Token13 {
+    internal final interface Token13 {
     }
-    local final interface Token14 {
+    internal final interface Token14 {
     }
-    local final interface Token15 {
+    internal final interface Token15 {
     }
-    local final interface Token16 {
+    internal final interface Token16 {
     }
-    local final interface Token17 {
+    internal final interface Token17 {
     }
-    local final interface Token18 {
+    internal final interface Token18 {
     }
-    local final interface Token19 {
+    internal final interface Token19 {
     }
-    local final interface Token20 {
+    internal final interface Token20 {
     }
-    local final interface Token21 {
+    internal final interface Token21 {
     }
-    local final interface Token22 {
+    internal final interface Token22 {
     }
-    local final interface Token23 {
+    internal final interface Token23 {
     }
-    local final interface Token24 {
+    internal final interface Token24 {
     }
-    local final interface Token25 {
+    internal final interface Token25 {
     }
-    local final interface Token26 {
+    internal final interface Token26 {
     }
-    local final interface Token27 {
+    internal final interface Token27 {
     }
-    local final interface Token28 {
+    internal final interface Token28 {
     }
-    local final interface Token29 {
+    internal final interface Token29 {
     }
-    local final interface Token30 {
+    internal final interface Token30 {
     }
-    local final interface Token31 {
+    internal final interface Token31 {
     }
-    local final interface Token32 {
+    internal final interface Token32 {
     }
-    local final interface Token33 {
+    internal final interface Token33 {
     }
-    local final interface Token34 {
+    internal final interface Token34 {
     }
-    local final interface Token35 {
+    internal final interface Token35 {
     }
-    local final interface Token36 {
+    internal final interface Token36 {
     }
-    local final interface Token37 {
+    internal final interface Token37 {
     }
-    local final interface Token38 {
+    internal final interface Token38 {
     }
-    local final interface Token39 {
+    internal final interface Token39 {
     }
-    local final interface Token40 {
+    internal final interface Token40 {
     }
-    local final interface Token41 {
+    internal final interface Token41 {
     }
-    local final interface Token42 {
+    internal final interface Token42 {
     }
-    local final interface Token43 {
+    internal final interface Token43 {
     }
-    local final interface Token44 {
+    internal final interface Token44 {
     }
-    local final interface Token45 {
+    internal final interface Token45 {
     }
-    local final interface Token46 {
+    internal final interface Token46 {
     }
-    local final interface Token47 {
+    internal final interface Token47 {
     }
-    local final interface Token48 {
+    internal final interface Token48 {
     }
-    local final interface Token49 {
+    internal final interface Token49 {
     }
-    local final interface Token50 {
+    internal final interface Token50 {
     }
-    local final interface Token51 {
+    internal final interface Token51 {
     }
-    local final interface Token52 {
+    internal final interface Token52 {
     }
-    local final interface Token53 {
+    internal final interface Token53 {
     }
-    local final interface Token54 {
+    internal final interface Token54 {
     }
-    local final interface Token55 {
+    internal final interface Token55 {
     }
-    local final interface Token56 {
+    internal final interface Token56 {
     }
-    local final interface Token57 {
+    internal final interface Token57 {
     }
-    local final interface Token58 {
+    internal final interface Token58 {
     }
-    local final interface Token59 {
+    internal final interface Token59 {
     }
-    local final interface Token60 {
+    internal final interface Token60 {
     }
-    local final interface Token61 {
+    internal final interface Token61 {
     }
-    local final interface Token62 {
+    internal final interface Token62 {
     }
-    local final interface Token63 {
+    internal final interface Token63 {
     }
-    local final interface Token64 {
+    internal final interface Token64 {
     }
-    local final interface Token65 {
+    internal final interface Token65 {
     }
-    local final interface Token66 {
+    internal final interface Token66 {
     }
-    local final interface Token67 {
+    internal final interface Token67 {
     }
-    local final interface Token68 {
+    internal final interface Token68 {
     }
-    local final interface Token69 {
+    internal final interface Token69 {
     }
-    local final interface Token70 {
+    internal final interface Token70 {
     }
-    local final interface Token71 {
+    internal final interface Token71 {
     }
-    local final interface Token72 {
+    internal final interface Token72 {
     }
-    local final interface Token73 {
+    internal final interface Token73 {
     }
-    local final interface Token74 {
+    internal final interface Token74 {
     }
-    local final interface Token75 {
+    internal final interface Token75 {
     }
-    local final interface Token76 {
+    internal final interface Token76 {
     }
-    local final interface Token77 {
+    internal final interface Token77 {
     }
-    local final interface Token78 {
+    internal final interface Token78 {
     }
-    local final interface Token79 {
+    internal final interface Token79 {
     }
-    local final interface Token80 {
+    internal final interface Token80 {
     }
-    local final interface Token81 {
+    internal final interface Token81 {
     }
-    local final interface Token82 {
+    internal final interface Token82 {
     }
-    local final interface Token83 {
+    internal final interface Token83 {
     }
-    local final interface Token84 {
+    internal final interface Token84 {
     }
-    local final interface Token85 {
+    internal final interface Token85 {
     }
-    local final interface Token86 {
+    internal final interface Token86 {
     }
-    local final interface Token87 {
+    internal final interface Token87 {
     }
-    local final interface Token88 {
+    internal final interface Token88 {
     }
-    local final interface Token89 {
+    internal final interface Token89 {
     }
-    local final interface Token90 {
+    internal final interface Token90 {
     }
-    local final interface Token91 {
+    internal final interface Token91 {
     }
-    local final interface Token92 {
+    internal final interface Token92 {
     }
-    local final interface Token93 {
+    internal final interface Token93 {
     }
-    local final interface Token94 {
+    internal final interface Token94 {
     }
-    local final interface Token95 {
+    internal final interface Token95 {
     }
-    local final interface Token96 {
+    internal final interface Token96 {
     }
-    local final interface Token97 {
+    internal final interface Token97 {
     }
-    local final interface Token98 {
+    internal final interface Token98 {
     }
-    local final interface Token99 {
+    internal final interface Token99 {
     }
-    local final interface Token100 {
+    internal final interface Token100 {
     }
-    local final interface Token101 {
+    internal final interface Token101 {
     }
-    local final interface Token102 {
+    internal final interface Token102 {
     }
-    local final interface Token103 {
+    internal final interface Token103 {
     }
-    local final interface Token104 {
+    internal final interface Token104 {
     }
-    local final interface Token105 {
+    internal final interface Token105 {
     }
-    local final interface Token106 {
+    internal final interface Token106 {
     }
-    local final interface Token107 {
+    internal final interface Token107 {
     }
-    local final interface Token108 {
+    internal final interface Token108 {
     }
-    local final interface Token109 {
+    internal final interface Token109 {
     }
-    local final interface Token110 {
+    internal final interface Token110 {
     }
-    local final interface Token111 {
+    internal final interface Token111 {
     }
-    local final interface Token112 {
+    internal final interface Token112 {
     }
-    local final interface Token113 {
+    internal final interface Token113 {
     }
-    local final interface Token114 {
+    internal final interface Token114 {
     }
-    local final interface Token115 {
+    internal final interface Token115 {
     }
-    local final interface Token116 {
+    internal final interface Token116 {
     }
-    local final interface Token117 {
+    internal final interface Token117 {
     }
-    local final interface Token118 {
+    internal final interface Token118 {
     }
-    local final interface Token119 {
+    internal final interface Token119 {
     }
-    local final interface Token120 {
+    internal final interface Token120 {
     }
-    local final interface Token121 {
+    internal final interface Token121 {
     }
-    local final interface Token122 {
+    internal final interface Token122 {
     }
-    local final interface Token123 {
+    internal final interface Token123 {
     }
-    local final interface Token124 {
+    internal final interface Token124 {
     }
-    local final interface Token125 {
+    internal final interface Token125 {
     }
-    local final interface Token126 {
+    internal final interface Token126 {
     }
-    local final interface Token127 {
+    internal final interface Token127 {
     }
-    local final interface Token128 {
+    internal final interface Token128 {
     }
-    local final interface Token129 {
+    internal final interface Token129 {
     }
-    local final interface Token130 {
+    internal final interface Token130 {
     }
-    local final interface Token131 {
+    internal final interface Token131 {
     }
-    local final interface Token132 {
+    internal final interface Token132 {
     }
-    local final interface Token133 {
+    internal final interface Token133 {
     }
-    local final interface Token134 {
+    internal final interface Token134 {
     }
-    local final interface Token135 {
+    internal final interface Token135 {
     }
-    local final interface Token136 {
+    internal final interface Token136 {
     }
-    local final interface Token137 {
+    internal final interface Token137 {
     }
-    local final interface Token138 {
+    internal final interface Token138 {
     }
-    local final interface Token139 {
+    internal final interface Token139 {
     }
-    local final interface Token140 {
+    internal final interface Token140 {
     }
-    local final interface Token141 {
+    internal final interface Token141 {
     }
-    local final interface Token142 {
+    internal final interface Token142 {
     }
-    local final interface Token143 {
+    internal final interface Token143 {
     }
-    local final interface Token144 {
+    internal final interface Token144 {
     }
-    local final interface Token145 {
+    internal final interface Token145 {
     }
-    local final interface Token146 {
+    internal final interface Token146 {
     }
-    local final interface Token147 {
+    internal final interface Token147 {
     }
-    local final interface Token148 {
+    internal final interface Token148 {
     }
-    local final interface Token149 {
+    internal final interface Token149 {
     }
-    local final interface Token150 {
+    internal final interface Token150 {
     }
-    local final interface Token151 {
+    internal final interface Token151 {
     }
-    local final interface Token152 {
+    internal final interface Token152 {
     }
-    local final interface Token153 {
+    internal final interface Token153 {
     }
-    local final interface Token154 {
+    internal final interface Token154 {
     }
-    local final interface Token155 {
+    internal final interface Token155 {
     }
-    local final interface Token156 {
+    internal final interface Token156 {
     }
-    local final interface Token157 {
+    internal final interface Token157 {
     }
-    local final interface Token158 {
+    internal final interface Token158 {
     }
-    local final interface Token159 {
+    internal final interface Token159 {
     }
-    local final interface Token160 {
+    internal final interface Token160 {
     }
-    local final interface Token161 {
+    internal final interface Token161 {
     }
-    local final interface Token162 {
+    internal final interface Token162 {
     }
-    local final interface Token163 {
+    internal final interface Token163 {
     }
-    local final interface Token164 {
+    internal final interface Token164 {
     }
-    local final interface Token165 {
+    internal final interface Token165 {
     }
-    local final interface Token166 {
+    internal final interface Token166 {
     }
-    local final interface Token167 {
+    internal final interface Token167 {
     }
-    local final interface Token168 {
+    internal final interface Token168 {
     }
-    local final interface Token169 {
+    internal final interface Token169 {
     }
-    local final interface Token170 {
+    internal final interface Token170 {
     }
-    local final interface Token171 {
+    internal final interface Token171 {
     }
-    local final interface Token172 {
+    internal final interface Token172 {
     }
-    local final interface Token173 {
+    internal final interface Token173 {
     }
-    local final interface Token174 {
+    internal final interface Token174 {
     }
-    local final interface Token175 {
+    internal final interface Token175 {
     }
-    local final interface Token176 {
+    internal final interface Token176 {
     }
-    local final interface Token177 {
+    internal final interface Token177 {
     }
-    local final interface Token178 {
+    internal final interface Token178 {
     }
-    local final interface Token179 {
+    internal final interface Token179 {
     }
-    local final interface Token180 {
+    internal final interface Token180 {
     }
-    local final interface Token181 {
+    internal final interface Token181 {
     }
-    local final interface Token182 {
+    internal final interface Token182 {
     }
-    local final interface Token183 {
+    internal final interface Token183 {
     }
-    local final interface Token184 {
+    internal final interface Token184 {
     }
-    local final interface Token185 {
+    internal final interface Token185 {
     }
-    local final interface Token186 {
+    internal final interface Token186 {
     }
-    local final interface Token187 {
+    internal final interface Token187 {
     }
-    local final interface Token188 {
+    internal final interface Token188 {
     }
-    local final interface Token189 {
+    internal final interface Token189 {
     }
-    local final interface Token190 {
+    internal final interface Token190 {
     }
-    local final interface Token191 {
+    internal final interface Token191 {
     }
-    local final interface Token192 {
+    internal final interface Token192 {
     }
-    local final interface Token193 {
+    internal final interface Token193 {
     }
-    local final interface Token194 {
+    internal final interface Token194 {
     }
-    local final interface Token195 {
+    internal final interface Token195 {
     }
-    local final interface Token196 {
+    internal final interface Token196 {
     }
-    local final interface Token197 {
+    internal final interface Token197 {
     }
-    local final interface Token198 {
+    internal final interface Token198 {
     }
-    local final interface Token199 {
+    internal final interface Token199 {
     }
-    local final interface Token200 {
+    internal final interface Token200 {
     }
-    local final interface Token201 {
+    internal final interface Token201 {
     }
-    local final interface Token202 {
+    internal final interface Token202 {
     }
-    local final interface Token203 {
+    internal final interface Token203 {
     }
-    local final interface Token204 {
+    internal final interface Token204 {
     }
-    local final interface Token205 {
+    internal final interface Token205 {
     }
-    local final interface Token206 {
+    internal final interface Token206 {
     }
-    local final interface Token207 {
+    internal final interface Token207 {
     }
-    local final interface Token208 {
+    internal final interface Token208 {
     }
-    local final interface Token209 {
+    internal final interface Token209 {
     }
-    local final interface Token210 {
+    internal final interface Token210 {
     }
-    local final interface Token211 {
+    internal final interface Token211 {
     }
-    local final interface Token212 {
+    internal final interface Token212 {
     }
-    local final interface Token213 {
+    internal final interface Token213 {
     }
-    local final interface Token214 {
+    internal final interface Token214 {
     }
-    local final interface Token215 {
+    internal final interface Token215 {
     }
-    local final interface Token216 {
+    internal final interface Token216 {
     }
-    local final interface Token217 {
+    internal final interface Token217 {
     }
-    local final interface Token218 {
+    internal final interface Token218 {
     }
-    local final interface Token219 {
+    internal final interface Token219 {
     }
-    local final interface Token220 {
+    internal final interface Token220 {
     }
-    local final interface Token221 {
+    internal final interface Token221 {
     }
-    local final interface Token222 {
+    internal final interface Token222 {
     }
-    local final interface Token223 {
+    internal final interface Token223 {
     }
-    local final interface Token224 {
+    internal final interface Token224 {
     }
-    local final interface Token225 {
+    internal final interface Token225 {
     }
-    local final interface Token226 {
+    internal final interface Token226 {
     }
-    local final interface Token227 {
+    internal final interface Token227 {
     }
-    local final interface Token228 {
+    internal final interface Token228 {
     }
-    local final interface Token229 {
+    internal final interface Token229 {
     }
-    local final interface Token230 {
+    internal final interface Token230 {
     }
-    local final interface Token231 {
+    internal final interface Token231 {
     }
-    local final interface Token232 {
+    internal final interface Token232 {
     }
-    local final interface Token233 {
+    internal final interface Token233 {
     }
-    local final interface Token234 {
+    internal final interface Token234 {
     }
-    local final interface Token235 {
+    internal final interface Token235 {
     }
-    local final interface Token236 {
+    internal final interface Token236 {
     }
-    local final interface Token237 {
+    internal final interface Token237 {
     }
-    local final interface Token238 {
+    internal final interface Token238 {
     }
-    local final interface Token239 {
+    internal final interface Token239 {
     }
-    local final interface Token240 {
+    internal final interface Token240 {
     }
-    local final interface Token241 {
+    internal final interface Token241 {
     }
-    local final interface Token242 {
+    internal final interface Token242 {
     }
-    local final interface Token243 {
+    internal final interface Token243 {
     }
-    local final interface Token244 {
+    internal final interface Token244 {
     }
-    local final interface Token245 {
+    internal final interface Token245 {
     }
-    local final interface Token246 {
+    internal final interface Token246 {
     }
-    local final interface Token247 {
+    internal final interface Token247 {
     }
-    local final interface Token248 {
+    internal final interface Token248 {
     }
-    local final interface Token249 {
+    internal final interface Token249 {
     }
-    local final interface Token250 {
+    internal final interface Token250 {
     }
-    local final interface Token251 {
+    internal final interface Token251 {
     }
-    local final interface Token252 {
+    internal final interface Token252 {
     }
-    local final interface Token253 {
+    internal final interface Token253 {
     }
-    local final interface Token254 {
+    internal final interface Token254 {
     }
-    local final interface Token255 {
+    internal final interface Token255 {
     }
-    local final interface Token256 {
+    internal final interface Token256 {
     }
-    local final interface Token257 {
+    internal final interface Token257 {
     }
-    local final interface Token258 {
+    internal final interface Token258 {
     }
-    local final interface Token259 {
+    internal final interface Token259 {
     }
-    local final interface Token260 {
+    internal final interface Token260 {
     }
-    local final interface Token261 {
+    internal final interface Token261 {
     }
-    local final interface Token262 {
+    internal final interface Token262 {
     }
-    local final interface Token263 {
+    internal final interface Token263 {
     }
-    local final interface Token264 {
+    internal final interface Token264 {
     }
-    local final interface Token265 {
+    internal final interface Token265 {
     }
-    local final interface Token266 {
+    internal final interface Token266 {
     }
-    local final interface Token267 {
+    internal final interface Token267 {
     }
-    local final interface Token268 {
+    internal final interface Token268 {
     }
-    local final interface Token269 {
+    internal final interface Token269 {
     }
-    local final interface Token270 {
+    internal final interface Token270 {
     }
-    local final interface Token271 {
+    internal final interface Token271 {
     }
-    local final interface Token272 {
+    internal final interface Token272 {
     }
-    local final interface Token273 {
+    internal final interface Token273 {
     }
-    local final interface Token274 {
+    internal final interface Token274 {
     }
-    local final interface Token275 {
+    internal final interface Token275 {
     }
-    local final interface Token276 {
+    internal final interface Token276 {
     }
-    local final interface Token277 {
+    internal final interface Token277 {
     }
-    local final interface Token278 {
+    internal final interface Token278 {
     }
-    local final interface Token279 {
+    internal final interface Token279 {
     }
-    local final interface Token280 {
+    internal final interface Token280 {
     }
-    local final interface Token281 {
+    internal final interface Token281 {
     }
-    local final interface Token282 {
+    internal final interface Token282 {
     }
-    local final interface Token283 {
+    internal final interface Token283 {
     }
-    local final interface Token284 {
+    internal final interface Token284 {
     }
-    local final interface Token285 {
+    internal final interface Token285 {
     }
-    local final interface Token286 {
+    internal final interface Token286 {
     }
-    local final interface Token287 {
+    internal final interface Token287 {
     }
-    local final interface Token288 {
+    internal final interface Token288 {
     }
-    local final interface Token289 {
+    internal final interface Token289 {
     }
-    local final interface Token290 {
+    internal final interface Token290 {
     }
-    local final interface Token291 {
+    internal final interface Token291 {
     }
-    local final interface Token292 {
+    internal final interface Token292 {
     }
-    local final interface Token293 {
+    internal final interface Token293 {
     }
-    local final interface Token294 {
+    internal final interface Token294 {
     }
-    local final interface Token295 {
+    internal final interface Token295 {
     }
-    local final interface Token296 {
+    internal final interface Token296 {
     }
-    local final interface Token297 {
+    internal final interface Token297 {
     }
-    local final interface Token298 {
+    internal final interface Token298 {
     }
-    local final interface Token299 {
+    internal final interface Token299 {
     }
-    local final interface Token300 {
+    internal final interface Token300 {
     }
-    local final interface Token301 {
+    internal final interface Token301 {
     }
-    local final interface Token302 {
+    internal final interface Token302 {
     }
-    local final interface Token303 {
+    internal final interface Token303 {
     }
-    local final interface Token304 {
+    internal final interface Token304 {
     }
-    local final interface Token305 {
+    internal final interface Token305 {
     }
-    local final interface Token306 {
+    internal final interface Token306 {
     }
-    local final interface Token307 {
+    internal final interface Token307 {
     }
-    local final interface Token308 {
+    internal final interface Token308 {
     }
-    local final interface Token309 {
+    internal final interface Token309 {
     }
-    local final interface Token310 {
+    internal final interface Token310 {
     }
-    local final interface Token311 {
+    internal final interface Token311 {
     }
-    local final interface Token312 {
+    internal final interface Token312 {
     }
-    local final interface Token313 {
+    internal final interface Token313 {
     }
-    local final interface Token314 {
+    internal final interface Token314 {
     }
-    local final interface Token315 {
+    internal final interface Token315 {
     }
-    local final interface Token316 {
+    internal final interface Token316 {
     }
-    local final interface Token317 {
+    internal final interface Token317 {
     }
-    local final interface Token318 {
+    internal final interface Token318 {
     }
-    local final interface Token319 {
+    internal final interface Token319 {
     }
-    local final interface Token320 {
+    internal final interface Token320 {
     }
-    local final interface Token321 {
+    internal final interface Token321 {
     }
-    local final interface Token322 {
+    internal final interface Token322 {
     }
-    local final interface Token323 {
+    internal final interface Token323 {
     }
-    local final interface Token324 {
+    internal final interface Token324 {
     }
-    local final interface Token325 {
+    internal final interface Token325 {
     }
-    local final interface Token326 {
+    internal final interface Token326 {
     }
-    local final interface Token327 {
+    internal final interface Token327 {
     }
-    local final interface Token328 {
+    internal final interface Token328 {
     }
-    local final interface Token329 {
+    internal final interface Token329 {
     }
-    local final interface Token330 {
+    internal final interface Token330 {
     }
-    local final interface Token331 {
+    internal final interface Token331 {
     }
-    local final interface Token332 {
+    internal final interface Token332 {
     }
-    local final interface Token333 {
+    internal final interface Token333 {
     }
-    local final interface Token334 {
+    internal final interface Token334 {
     }
-    local final interface Token335 {
+    internal final interface Token335 {
     }
-    local final interface Token336 {
+    internal final interface Token336 {
     }
-    local final interface Token337 {
+    internal final interface Token337 {
     }
-    local final interface Token338 {
+    internal final interface Token338 {
     }
-    local final interface Token339 {
+    internal final interface Token339 {
     }
-    local final interface Token340 {
+    internal final interface Token340 {
     }
-    local final interface Token341 {
+    internal final interface Token341 {
     }
-    local final interface Token342 {
+    internal final interface Token342 {
     }
-    local final interface Token343 {
+    internal final interface Token343 {
     }
-    local final interface Token344 {
+    internal final interface Token344 {
     }
-    local final interface Token345 {
+    internal final interface Token345 {
     }
-    local final interface Token346 {
+    internal final interface Token346 {
     }
-    local final interface Token347 {
+    internal final interface Token347 {
     }
-    local final interface Token348 {
+    internal final interface Token348 {
     }
-    local final interface Token349 {
+    internal final interface Token349 {
     }
-    local final interface Token350 {
+    internal final interface Token350 {
     }
-    local final interface Token351 {
+    internal final interface Token351 {
     }
-    local final interface Token352 {
+    internal final interface Token352 {
     }
-    local final interface Token353 {
+    internal final interface Token353 {
     }
-    local final interface Token354 {
+    internal final interface Token354 {
     }
-    local final interface Token355 {
+    internal final interface Token355 {
     }
-    local final interface Token356 {
+    internal final interface Token356 {
     }
-    local final interface Token357 {
+    internal final interface Token357 {
     }
-    local final interface Token358 {
+    internal final interface Token358 {
     }
-    local final interface Token359 {
+    internal final interface Token359 {
     }
-    local final interface Token360 {
+    internal final interface Token360 {
     }
-    local final interface Token361 {
+    internal final interface Token361 {
     }
-    local final interface Token362 {
+    internal final interface Token362 {
     }
-    local final interface Token363 {
+    internal final interface Token363 {
     }
-    local final interface Token364 {
+    internal final interface Token364 {
     }
-    local final interface Token365 {
+    internal final interface Token365 {
     }
-    local final interface Token366 {
+    internal final interface Token366 {
     }
-    local final interface Token367 {
+    internal final interface Token367 {
     }
-    local final interface Token368 {
+    internal final interface Token368 {
     }
-    local final interface Token369 {
+    internal final interface Token369 {
     }
-    local final interface Token370 {
+    internal final interface Token370 {
     }
-    local final interface Token371 {
+    internal final interface Token371 {
     }
-    local final interface Token372 {
+    internal final interface Token372 {
     }
-    local final interface Token373 {
+    internal final interface Token373 {
     }
-    local final interface Token374 {
+    internal final interface Token374 {
     }
-    local final interface Token375 {
+    internal final interface Token375 {
     }
-    local final interface Token376 {
+    internal final interface Token376 {
     }
-    local final interface Token377 {
+    internal final interface Token377 {
     }
-    local final interface Token378 {
+    internal final interface Token378 {
     }
-    local final interface Token379 {
+    internal final interface Token379 {
     }
-    local final interface Token380 {
+    internal final interface Token380 {
     }
-    local final interface Token381 {
+    internal final interface Token381 {
     }
-    local final interface Token382 {
+    internal final interface Token382 {
     }
-    local final interface Token383 {
+    internal final interface Token383 {
     }
-    local final interface Token384 {
+    internal final interface Token384 {
     }
-    local final interface Token385 {
+    internal final interface Token385 {
     }
-    local final interface Token386 {
+    internal final interface Token386 {
     }
-    local final interface Token387 {
+    internal final interface Token387 {
     }
-    local final interface Token388 {
+    internal final interface Token388 {
     }
-    local final interface Token389 {
+    internal final interface Token389 {
     }
-    local final interface Token390 {
+    internal final interface Token390 {
     }
-    local final interface Token391 {
+    internal final interface Token391 {
     }
-    local final interface Token392 {
+    internal final interface Token392 {
     }
-    local final interface Token393 {
+    internal final interface Token393 {
     }
-    local final interface Token394 {
+    internal final interface Token394 {
     }
-    local final interface Token395 {
+    internal final interface Token395 {
     }
-    local final interface Token396 {
+    internal final interface Token396 {
     }
-    local final interface Token397 {
+    internal final interface Token397 {
     }
-    local final interface Token398 {
+    internal final interface Token398 {
     }
-    local final interface Token399 {
+    internal final interface Token399 {
     }
-    local final interface Token400 {
+    internal final interface Token400 {
     }
-    local final interface Token401 {
+    internal final interface Token401 {
     }
-    local final interface Token402 {
+    internal final interface Token402 {
     }
-    local final interface Token403 {
+    internal final interface Token403 {
     }
-    local final interface Token404 {
+    internal final interface Token404 {
     }
-    local final interface Token405 {
+    internal final interface Token405 {
     }
-    local final interface Token406 {
+    internal final interface Token406 {
     }
-    local final interface Token407 {
+    internal final interface Token407 {
     }
-    local final interface Token408 {
+    internal final interface Token408 {
     }
-    local final interface Token409 {
+    internal final interface Token409 {
     }
-    local final interface Token410 {
+    internal final interface Token410 {
     }
-    local final interface Token411 {
+    internal final interface Token411 {
     }
-    local final interface Token412 {
+    internal final interface Token412 {
     }
-    local final interface Token413 {
+    internal final interface Token413 {
     }
-    local final interface Token414 {
+    internal final interface Token414 {
     }
-    local final interface Token415 {
+    internal final interface Token415 {
     }
-    local final interface Token416 {
+    internal final interface Token416 {
     }
-    local final interface Token417 {
+    internal final interface Token417 {
     }
-    local final interface Token418 {
+    internal final interface Token418 {
     }
-    local final interface Token419 {
+    internal final interface Token419 {
     }
-    local final interface Token420 {
+    internal final interface Token420 {
     }
-    local final interface Token421 {
+    internal final interface Token421 {
     }
-    local final interface Token422 {
+    internal final interface Token422 {
     }
-    local final interface Token423 {
+    internal final interface Token423 {
     }
-    local final interface Token424 {
+    internal final interface Token424 {
     }
-    local final interface Token425 {
+    internal final interface Token425 {
     }
-    local final interface Token426 {
+    internal final interface Token426 {
     }
-    local final interface Token427 {
+    internal final interface Token427 {
     }
-    local final interface Token428 {
+    internal final interface Token428 {
     }
-    local final interface Token429 {
+    internal final interface Token429 {
     }
-    local final interface Token430 {
+    internal final interface Token430 {
     }
-    local final interface Token431 {
+    internal final interface Token431 {
     }
-    local final interface Token432 {
+    internal final interface Token432 {
     }
-    local final interface Token433 {
+    internal final interface Token433 {
     }
-    local final interface Token434 {
+    internal final interface Token434 {
     }
-    local final interface Token435 {
+    internal final interface Token435 {
     }
-    local final interface Token436 {
+    internal final interface Token436 {
     }
-    local final interface Token437 {
+    internal final interface Token437 {
     }
-    local final interface Token438 {
+    internal final interface Token438 {
     }
-    local final interface Token439 {
+    internal final interface Token439 {
     }
-    local final interface Token440 {
+    internal final interface Token440 {
     }
-    local final interface Token441 {
+    internal final interface Token441 {
     }
-    local final interface Token442 {
+    internal final interface Token442 {
     }
-    local final interface Token443 {
+    internal final interface Token443 {
     }
-    local final interface Token444 {
+    internal final interface Token444 {
     }
-    local final interface Token445 {
+    internal final interface Token445 {
     }
-    local final interface Token446 {
+    internal final interface Token446 {
     }
-    local final interface Token447 {
+    internal final interface Token447 {
     }
-    local final interface Token448 {
+    internal final interface Token448 {
     }
-    local final interface Token449 {
+    internal final interface Token449 {
     }
-    local final interface Token450 {
+    internal final interface Token450 {
     }
-    local final interface Token451 {
+    internal final interface Token451 {
     }
-    local final interface Token452 {
+    internal final interface Token452 {
     }
-    local final interface Token453 {
+    internal final interface Token453 {
     }
-    local final interface Token454 {
+    internal final interface Token454 {
     }
-    local final interface Token455 {
+    internal final interface Token455 {
     }
-    local final interface Token456 {
+    internal final interface Token456 {
     }
-    local final interface Token457 {
+    internal final interface Token457 {
     }
-    local final interface Token458 {
+    internal final interface Token458 {
     }
-    local final interface Token459 {
+    internal final interface Token459 {
     }
-    local final interface Token460 {
+    internal final interface Token460 {
     }
-    local final interface Token461 {
+    internal final interface Token461 {
     }
-    local final interface Token462 {
+    internal final interface Token462 {
     }
-    local final interface Token463 {
+    internal final interface Token463 {
     }
-    local final interface Token464 {
+    internal final interface Token464 {
     }
-    local final interface Token465 {
+    internal final interface Token465 {
     }
-    local final interface Token466 {
+    internal final interface Token466 {
     }
-    local final interface Token467 {
+    internal final interface Token467 {
     }
-    local final interface Token468 {
+    internal final interface Token468 {
     }
-    local final interface Token469 {
+    internal final interface Token469 {
     }
-    local final interface Token470 {
+    internal final interface Token470 {
     }
-    local final interface Token471 {
+    internal final interface Token471 {
     }
-    local final interface Token472 {
+    internal final interface Token472 {
     }
-    local final interface Token473 {
+    internal final interface Token473 {
     }
-    local final interface Token474 {
+    internal final interface Token474 {
     }
-    local final interface Token475 {
+    internal final interface Token475 {
     }
-    local final interface Token476 {
+    internal final interface Token476 {
     }
-    local final interface Token477 {
+    internal final interface Token477 {
     }
-    local final interface Token478 {
+    internal final interface Token478 {
     }
-    local final interface Token479 {
+    internal final interface Token479 {
     }
-    local final interface Token480 {
+    internal final interface Token480 {
     }
-    local final interface Token481 {
+    internal final interface Token481 {
     }
-    local final interface Token482 {
+    internal final interface Token482 {
     }
-    local final interface Token483 {
+    internal final interface Token483 {
     }
-    local final interface Token484 {
+    internal final interface Token484 {
     }
-    local final interface Token485 {
+    internal final interface Token485 {
     }
-    local final interface Token486 {
+    internal final interface Token486 {
     }
-    local final interface Token487 {
+    internal final interface Token487 {
     }
-    local final interface Token488 {
+    internal final interface Token488 {
     }
-    local final interface Token489 {
+    internal final interface Token489 {
     }
-    local final interface Token490 {
+    internal final interface Token490 {
     }
-    local final interface Token491 {
+    internal final interface Token491 {
     }
-    local final interface Token492 {
+    internal final interface Token492 {
     }
-    local final interface Token493 {
+    internal final interface Token493 {
     }
-    local final interface Token494 {
+    internal final interface Token494 {
     }
-    local final interface Token495 {
+    internal final interface Token495 {
     }
-    local final interface Token496 {
+    internal final interface Token496 {
     }
-    local final interface Token497 {
+    internal final interface Token497 {
     }
-    local final interface Token498 {
+    internal final interface Token498 {
     }
-    local final interface Token499 {
+    internal final interface Token499 {
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe.api

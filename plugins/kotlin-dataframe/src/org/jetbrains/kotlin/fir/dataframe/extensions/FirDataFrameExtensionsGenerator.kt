@@ -238,7 +238,7 @@ class FirDataFrameExtensionsGenerator(
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(FirDataFrameReceiverInjector.DataFramePluginKey)
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Internal, Modality.FINAL, EffectiveVisibility.Internal)
             classKind = ClassKind.CLASS
             scopeProvider = FirKotlinScopeProvider()
             name = classId.shortClassName

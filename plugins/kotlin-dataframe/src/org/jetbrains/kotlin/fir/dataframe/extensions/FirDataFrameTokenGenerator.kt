@@ -30,7 +30,7 @@ class FirDataFrameTokenGenerator(session: FirSession, val tokens: Set<ClassId>, 
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(FirDataFrameReceiverInjector.DataFramePluginKey)
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Internal, Modality.FINAL, EffectiveVisibility.Internal)
             classKind = ClassKind.INTERFACE
             scopeProvider = FirKotlinScopeProvider()
             name = classId.shortClassName
