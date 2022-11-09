@@ -74,7 +74,7 @@ object FirFakeOverrideGenerator {
         newParameterTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameter>?,
         isExpect: Boolean = baseFunction.isExpect,
-        fakeOverrideSubstitution: FakeOverrideSubstitution?
+        fakeOverrideSubstitution: FakeOverrideSubstitution?,
     ): FirSimpleFunction {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
@@ -304,9 +304,8 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirPropertySymbol {
         createCopyForFirProperty(
-            symbolForSubstitutionOverride, baseProperty, derivedClass = derivedClass, session, FirDeclarationOrigin.SubstitutionOverride,
-            isExpect, newDispatchReceiverType, newTypeParameters, newReceiverType, newContextReceiverTypes,
-            newReturnType,
+            symbolForSubstitutionOverride, baseProperty, derivedClass, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
+            newDispatchReceiverType, newTypeParameters, newReceiverType, newContextReceiverTypes, newReturnType,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
@@ -514,7 +513,7 @@ object FirFakeOverrideGenerator {
             getterSymbol,
             session,
             baseProperty.getter.delegate,
-            derivedClass = derivedClass,
+            derivedClass,
             newDispatchReceiverType,
             newReceiverType = null,
             newContextReceiverTypes,
@@ -523,14 +522,13 @@ object FirFakeOverrideGenerator {
             newTypeParameters = null,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         )
-
         val setterSymbol = FirNamedFunctionSymbol(baseSymbol.getterId)
         val baseSetter = baseProperty.setter
         val setter = if (baseSetter == null) null else createSubstitutionOverrideFunction(
             setterSymbol,
             session,
             baseSetter.delegate,
-            derivedClass = derivedClass,
+            derivedClass,
             newDispatchReceiverType,
             newReceiverType = null,
             newContextReceiverTypes,
@@ -539,7 +537,6 @@ object FirFakeOverrideGenerator {
             newTypeParameters = null,
             fakeOverrideSubstitution = fakeOverrideSubstitution
         )
-
         return buildSyntheticProperty {
             moduleData = session.moduleData
             name = baseProperty.name

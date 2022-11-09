@@ -155,7 +155,7 @@ class FirClassSubstitutionScope(
                     member,
                     derivedClass = derivedClass,
                     newDispatchReceiverType ?: dispatchReceiverTypeForSubstitutedMembers,
-                    isExpect = makeExpect
+                    isExpect = makeExpect,
                 )
             }
             return original
@@ -255,7 +255,7 @@ class FirClassSubstitutionScope(
                     member,
                     derivedClass = derivedClass,
                     newDispatchReceiverType ?: dispatchReceiverTypeForSubstitutedMembers,
-                    isExpect = makeExpect
+                    isExpect = makeExpect,
                 )
             }
             return original
