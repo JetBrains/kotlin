@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.VariantWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 internal interface KotlinAndroidSourceSetConfigurator {
@@ -23,7 +24,7 @@ internal interface KotlinAndroidSourceSetConfigurator {
      * Called every time, when a given [KotlinSourceSet] participates in a given Android variant.
      */
     fun configureWithVariant(
-        target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant
+        target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: VariantWrapper
     ) = Unit
 }
 
@@ -42,7 +43,7 @@ private class KotlinAndroidSourceSetConfigurationWithCondition(
         if (condition(target)) underlying.configure(target, kotlinSourceSet, androidSourceSet)
     }
 
-    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant) {
+    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: VariantWrapper) {
         if (condition(target)) underlying.configureWithVariant(target, kotlinSourceSet, variant)
     }
 }
@@ -69,7 +70,7 @@ private class CompositeKotlinAndroidSourceSetConfigurator(
         }
     }
 
-    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant) {
+    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: VariantWrapper) {
         configurators.forEach { configurator ->
             configurator.configureWithVariant(target, kotlinSourceSet, variant)
         }

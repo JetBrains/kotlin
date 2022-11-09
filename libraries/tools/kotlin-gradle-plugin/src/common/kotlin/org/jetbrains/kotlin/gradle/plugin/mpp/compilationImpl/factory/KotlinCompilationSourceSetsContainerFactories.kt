@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.VariantWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
@@ -43,7 +44,7 @@ internal class DefaultKotlinCompilationSourceSetsContainerFactory(
 }
 
 internal class AndroidCompilationSourceSetsContainerFactory(
-    private val target: KotlinAndroidTarget, private val variant: BaseVariant
+    private val target: KotlinAndroidTarget, private val variant: VariantWrapper
 ) : KotlinCompilationImplFactory.KotlinCompilationSourceSetsContainerFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationSourceSetsContainer {
         val sourceSetName = target.project.kotlinAndroidSourceSetLayout.naming.defaultKotlinSourceSetName(this.target, variant)

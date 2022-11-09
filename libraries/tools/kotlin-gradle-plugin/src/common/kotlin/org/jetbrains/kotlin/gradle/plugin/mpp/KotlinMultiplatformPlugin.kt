@@ -294,7 +294,7 @@ internal fun Project.setupGeneralKotlinExtensionParameters() {
                 // kotlin main compilation
                 it.isMain()
                         // android compilation which is NOT in tested variant
-                        || (it as? KotlinJvmAndroidCompilation)?.let { getTestedVariantData(it.androidVariant) == null } == true
+                        || (it as? KotlinJvmAndroidCompilation)?.let { it.androidVariant.getTestedVariantData() == null } == true
             }
         }
     }

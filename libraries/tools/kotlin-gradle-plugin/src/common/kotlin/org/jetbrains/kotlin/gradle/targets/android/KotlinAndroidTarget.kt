@@ -68,7 +68,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         fun AndroidProjectHandler.getLibraryVariantNames() =
             mutableSetOf<String>().apply {
                 project.forAllAndroidVariants {
-                    if (getLibraryOutputTask(it) != null)
+                    if (it.getLibraryOutputTask() != null)
                         add(getVariantName(it))
                 }
             }
@@ -93,25 +93,25 @@ abstract class KotlinAndroidTarget @Inject constructor(
         KotlinAndroidPlugin.androidTargetHandler().doCreateComponents()
     }
 
-    private fun isVariantPublished(variant: BaseVariant): Boolean {
+    private fun isVariantPublished(variant: VariantWrapper): Boolean {
         return publishLibraryVariants?.contains(getVariantName(variant)) ?: true
     }
 
     private fun AndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
 
-        val publishableVariants = mutableListOf<BaseVariant>()
+        val publishableVariants = mutableListOf<VariantWrapper>()
             .apply { project.forAllAndroidVariants { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
-            .filter { getLibraryOutputTask(it) != null }
+            .filter { it.getLibraryOutputTask() != null }
 
         val publishableVariantGroups = publishableVariants.groupBy { variant ->
-            val flavorNames = getFlavorNames(variant)
+            val flavorNames = variant.getFlavorNames()
             if (publishLibraryVariantsGroupedByFlavor) {
                 // For each flavor, we group its variants (which differ only in the build type) in a single component in order to publish
                 // all of the build types of the flavor as a single module with the build type as the classifier of the artifacts
                 flavorNames
             } else {
-                flavorNames + getBuildTypeName(variant)
+                flavorNames + variant.buildTypeName
             }
         }
 
@@ -120,8 +120,8 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 val androidVariantName = getVariantName(androidVariant)
                 val compilation = compilations.getByName(androidVariantName)
 
-                val flavorNames = getFlavorNames(androidVariant)
-                val buildTypeName = getBuildTypeName(androidVariant)
+                val flavorNames = androidVariant.getFlavorNames()
+                val buildTypeName = androidVariant.buildTypeName
 
                 val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
 
@@ -132,7 +132,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
                         androidVariant,
                         compilation,
                         artifactClassifier,
-                        publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1
+                        publishableVariants.filter(::isVariantPublished).map { it.buildTypeName }.distinct().size == 1
                     )
                 ).apply {
                     publishable = isVariantPublished(androidVariant)
@@ -151,7 +151,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
                     if (!publishLibraryVariantsGroupedByFlavor) {
                         defaultArtifactIdSuffix =
                             dashSeparatedName(
-                                (getFlavorNames(androidVariant) + getBuildTypeName(androidVariant).takeIf { it != "release" })
+                                (androidVariant.getFlavorNames() + androidVariant.buildTypeName.takeIf { it != "release" })
                                     .map { it?.toLowerCase() }
                             ).takeIf { it.isNotEmpty() }
                     }
@@ -172,13 +172,13 @@ abstract class KotlinAndroidTarget @Inject constructor(
     }
 
     private fun AndroidProjectHandler.createAndroidUsageContexts(
-        variant: BaseVariant,
+        variant: VariantWrapper,
         compilation: KotlinCompilation<*>,
         artifactClassifier: String?,
         isSingleBuildType: Boolean
     ): Set<DefaultKotlinUsageContext> {
         val variantName = getVariantName(variant)
-        val outputTaskOrProvider = getLibraryOutputTask(variant) ?: return emptySet()
+        val outputTaskOrProvider = variant.getLibraryOutputTask() ?: return emptySet()
         val artifact = run {
             val archivesConfigurationName = lowerCamelCaseName(targetName, variantName, "archives")
             project.configurations.maybeCreate(archivesConfigurationName).apply {

@@ -212,7 +212,7 @@ internal class AndroidProjectHandler(
     }
 
     private fun preprocessVariant(
-        variantData: BaseVariant,
+        variantData: VariantWrapper,
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
         tasksProvider: KotlinTasksProvider
@@ -247,14 +247,14 @@ internal class AndroidProjectHandler(
     }
 
     private fun postprocessVariant(
-        variantData: BaseVariant,
+        variantData: VariantWrapper,
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
         androidExt: BaseExtension,
         androidPlugin: BasePlugin
     ) {
 
-        getTestedVariantData(variantData)?.let { testedVariant ->
+        variantData.getTestedVariantData()?.let { testedVariant ->
             val testedVariantName = getVariantName(testedVariant)
             val testedCompilation = compilation.target.compilations.getByName(testedVariantName)
             compilation.associateWith(testedCompilation)
@@ -276,7 +276,7 @@ internal class AndroidProjectHandler(
         compilation: KotlinJvmAndroidCompilation,
         androidPlugin: BasePlugin,
         androidExt: BaseExtension,
-        variantData: BaseVariant,
+        variantData: VariantWrapper,
         javaTask: TaskProvider<out AbstractCompile>,
         kotlinTask: TaskProvider<out KotlinCompile>
     ) {
@@ -302,7 +302,7 @@ internal class AndroidProjectHandler(
 
         // Find the classpath entries that come from the tested variant and register them as the friend paths, lazily
         val originalArtifactCollection = variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
-        val testedVariantDataIsNotNull = getTestedVariantData(variantData) != null
+        val testedVariantDataIsNotNull = variantData.getTestedVariantData() != null
         val projectPath = project.path
         compilation.testedVariantArtifacts.set(
             originalArtifactCollection.artifactFiles.filter(
@@ -326,19 +326,9 @@ internal class AndroidProjectHandler(
 
     // TODO the return type is actually `AbstractArchiveTask | TaskProvider<out AbstractArchiveTask>`;
     //      change the signature once the Android Gradle plugin versions that don't support task providers are dropped
-    fun getLibraryOutputTask(variant: BaseVariant): Any? {
-        val getPackageLibraryProvider = variant.javaClass.methods
-            .find { it.name == "getPackageLibraryProvider" && it.parameterCount == 0 }
 
-        return if (getPackageLibraryProvider != null) {
-            @Suppress("UNCHECKED_CAST")
-            getPackageLibraryProvider(variant) as TaskProvider<out AbstractArchiveTask>
-        } else {
-            (variant as? LibraryVariant)?.packageLibrary
-        }
-    }
 
-    fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
+    fun setUpDependencyResolution(variant: VariantWrapper, compilation: KotlinJvmAndroidCompilation) {
         val project = compilation.target.project
 
         compilation.compileDependencyFiles = variant.compileConfiguration.apply {
@@ -351,7 +341,7 @@ internal class AndroidProjectHandler(
             project.addExtendsFromRelation(name, compilation.runtimeDependencyConfigurationName)
         }
 
-        val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, variant.buildType.name)
+        val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, variant.buildTypeName)
         listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach {
             project.configurations.findByName(it)?.attributes?.attribute(Attribute.of(BuildTypeAttr::class.java), buildTypeAttrValue)
         }
@@ -379,13 +369,9 @@ internal class AndroidProjectHandler(
     }
 }
 
-internal fun getTestedVariantData(variantData: BaseVariant): BaseVariant? = when (variantData) {
-    is TestVariant -> variantData.testedVariant
-    is UnitTestVariant -> variantData.testedVariant as? BaseVariant
-    else -> null
-}
 
-internal fun getVariantName(variant: BaseVariant): String = variant.name
+
+internal fun getVariantName(variant: VariantWrapper): String = variant.name
 
 @Suppress("UNCHECKED_CAST")
 internal fun BaseVariant.getJavaTaskProvider(): TaskProvider<out JavaCompile> =
@@ -432,21 +418,21 @@ class AndroidTestedVariantArtifactsFilter(
     }
 }
 
-internal inline fun BaseVariant.forEachKotlinSourceSet(
+internal inline fun VariantWrapper.forEachKotlinSourceSet(
     project: Project, action: (KotlinSourceSet) -> Unit
 ) {
     sourceSets
         .forEach { provider -> action(project.findKotlinSourceSet(provider) ?: return@forEach) }
 }
 
-internal inline fun BaseVariant.forEachKotlinSourceDirectorySet(
+internal inline fun VariantWrapper.forEachKotlinSourceDirectorySet(
     project: Project, action: (SourceDirectorySet) -> Unit
 ) {
     sourceSets
         .forEach { androidSourceSet -> action(project.findKotlinSourceSet(androidSourceSet)?.kotlin ?: return@forEach) }
 }
 
-internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {
+internal inline fun VariantWrapper.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {
     getSourceFolders(SourceKind.JAVA).forEach(action)
 }
 

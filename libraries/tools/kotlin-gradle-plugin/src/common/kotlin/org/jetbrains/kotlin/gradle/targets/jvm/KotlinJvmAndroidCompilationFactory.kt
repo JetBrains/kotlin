@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
+import org.jetbrains.kotlin.gradle.plugin.VariantWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinAndroidCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationSourceSetsContainerFactory
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmC
 
 class KotlinJvmAndroidCompilationFactory internal constructor(
     override val target: KotlinAndroidTarget,
-    private val variant: BaseVariant
+    private val variant: VariantWrapper
 ) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {
 
     override val itemClass: Class<KotlinJvmAndroidCompilation>

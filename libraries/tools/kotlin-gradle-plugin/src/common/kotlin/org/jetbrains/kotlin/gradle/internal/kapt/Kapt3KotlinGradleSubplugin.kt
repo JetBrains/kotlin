@@ -258,7 +258,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
         }
 
-        val androidVariantData: BaseVariant? = (kotlinCompilation as? KotlinJvmAndroidCompilation)?.androidVariant
+        val androidVariantData: VariantWrapper? = (kotlinCompilation as? KotlinJvmAndroidCompilation)?.androidVariant
 
         val sourceSetName = if (androidVariantData != null) {
             for (provider in androidVariantData.sourceSets) {

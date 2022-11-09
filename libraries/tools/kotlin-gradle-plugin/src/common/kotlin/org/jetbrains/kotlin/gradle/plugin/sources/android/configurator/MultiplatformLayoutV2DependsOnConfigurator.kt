@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
+import org.jetbrains.kotlin.gradle.plugin.VariantWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
-import org.jetbrains.kotlin.gradle.plugin.sources.android.type
 import org.jetbrains.kotlin.gradle.plugin.sources.android.variantType
 
 internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSourceSetConfigurator {
@@ -23,7 +23,7 @@ internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSource
         setDefaultDependsOn(target, kotlinSourceSet, androidBaseSourceSetName.variantType)
     }
 
-    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant) {
+    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: VariantWrapper) {
         setDefaultDependsOn(target, kotlinSourceSet, variant.type)
     }
 

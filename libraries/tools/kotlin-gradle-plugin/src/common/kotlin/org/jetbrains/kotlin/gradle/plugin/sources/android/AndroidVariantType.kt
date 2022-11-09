@@ -7,14 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android
 
 import com.android.build.gradle.api.*
 
-internal val BaseVariant.type: AndroidVariantType
-    get() = when (this) {
-        is UnitTestVariant -> AndroidVariantType.UnitTest
-        is TestVariant -> AndroidVariantType.InstrumentedTest
-        is ApplicationVariant, is LibraryVariant -> AndroidVariantType.Main
-        else -> AndroidVariantType.Unknown
-    }
-
 internal val AndroidBaseSourceSetName.variantType: AndroidVariantType
     get() = when (this) {
         AndroidBaseSourceSetName.Main -> AndroidVariantType.Main
