@@ -175,7 +175,7 @@
 /compiler/testData/resolvedCalls/ "Kotlin Compiler Core"
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Compiler Core"
 /compiler/testData/serialization/js/ "Kotlin JS"
-/compiler/testData/serialization/nonStableParameterNames/ "Kotlin Native"
+/compiler/testData/serialization/nonStableParameterNames/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 /compiler/testData/type/ "Kotlin Compiler Core"
 /compiler/testData/typeQualifierNickname/ "Kotlin Compiler Core"
 /compiler/testData/versionRequirement/ "Kotlin JVM"
