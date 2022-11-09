@@ -31,7 +31,7 @@ object InlineClassIntrinsicCreatorChecker : CallChecker {
         if (resolvedCall.typeArguments.size != 1) return
         val typeArgument = resolvedCall.typeArguments.values.singleOrNull() ?: return
         if (typeArgument.arguments.isNotEmpty() || !typeArgument.isInlineClassType()) {
-            if (callExpression.typeArguments.size == 0) {
+            if (callExpression.typeArguments.size != 1) {
                 context.trace.report(Errors.INTRINSIC_BOXING_CALL_BAD_INFERRED_TYPE_ARGUMENT.on(callExpression))
             } else {
                 context.trace.report(Errors.INTRINSIC_BOXING_CALL_ILLEGAL_TYPE_ARGUMENT.on(callExpression.typeArguments[0]))
