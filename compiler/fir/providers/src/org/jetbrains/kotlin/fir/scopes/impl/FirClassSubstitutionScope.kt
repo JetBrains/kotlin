@@ -214,6 +214,7 @@ class FirClassSubstitutionScope(
             symbolForOverride,
             session,
             constructor,
+            derivedClass,
             FirDeclarationOrigin.SubstitutionOverride,
             newDispatchReceiverType,
             // Constructors' return types are expected to be non-flexible (i.e., non raw)
@@ -222,8 +223,7 @@ class FirClassSubstitutionScope(
             newContextReceiverTypes,
             newTypeParameters,
             makeExpect,
-            fakeOverrideSubstitution,
-            derivedClass
+            fakeOverrideSubstitution
         ).symbol
     }
 
