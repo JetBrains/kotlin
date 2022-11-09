@@ -123,14 +123,7 @@ fun deserializeClassToSymbol(
         val typeDeserializer = context.typeDeserializer
         val classDeserializer = context.memberDeserializer
 
-        val superTypesDeserialized = classProto.supertypes(context.typeTable).map { supertypeProto ->
-            typeDeserializer.simpleType(supertypeProto, ConeAttributes.Empty)
-        }
-
-        superTypesDeserialized.mapNotNullTo(superTypeRefs) {
-            if (it == null) return@mapNotNullTo null
-            buildResolvedTypeRef { type = it }
-        }
+        classProto.supertypes(context.typeTable).mapTo(superTypeRefs, typeDeserializer::typeRef)
 
         addDeclarations(
             classProto.functionList.map {
