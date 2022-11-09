@@ -107,6 +107,7 @@
 - [`KT-52985`](https://youtrack.jetbrains.com/issue/KT-52985) Native: a function with type `T?` returned a `kotlin.Unit` instead of `null`
 - [`KT-52020`](https://youtrack.jetbrains.com/issue/KT-52020) FIR warning message includes internal rendering
 - [`KT-50835`](https://youtrack.jetbrains.com/issue/KT-50835) Inline functions with suspend lambdas break the tail-call optimization
+- [`KT-54802`](https://youtrack.jetbrains.com/issue/KT-54802) "VerifyError: Bad type on operand stack" for inline functions on arrays
 
 ### IDE
 
