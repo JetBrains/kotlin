@@ -32335,6 +32335,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("considerAnonymousObjectsForSuperclassNotAccessibleFromInterface.kt")
+            public void testConsiderAnonymousObjectsForSuperclassNotAccessibleFromInterface() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/thisAndSuper/considerAnonymousObjectsForSuperclassNotAccessibleFromInterface.kt");
+            }
+
+            @Test
             @TestMetadata("genericQualifiedSuperOverridden.kt")
             public void testGenericQualifiedSuperOverridden() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/thisAndSuper/genericQualifiedSuperOverridden.kt");
