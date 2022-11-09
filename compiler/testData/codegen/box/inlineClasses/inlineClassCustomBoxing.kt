@@ -49,7 +49,7 @@ value class IC5(val x: Int) {
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC6(val x: Int) {
     companion object {
-        operator fun box(x: Int) = TODO()
+        operator fun box(x: Int): Nothing = TODO()
     }
 }
 
