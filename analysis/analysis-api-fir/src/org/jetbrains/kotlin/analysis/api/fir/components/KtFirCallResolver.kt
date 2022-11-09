@@ -949,7 +949,7 @@ internal class KtFirCallResolver(
             ?: return emptyList()
 
         val candidates = AllCandidatesResolver(analysisSession.useSiteSession)
-            .getAllCandidatesForDelegatedConstructor(analysisSession.firResolveSession, this, derivedClass, psi)
+            .getAllCandidatesForDelegatedConstructor(analysisSession.firResolveSession, this, derivedClass.symbol.toLookupTag(), psi)
 
         return candidates.mapNotNull {
             convertToKtCallCandidateInfo(
