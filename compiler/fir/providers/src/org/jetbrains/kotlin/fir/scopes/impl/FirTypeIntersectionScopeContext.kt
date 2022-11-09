@@ -361,12 +361,13 @@ class FirTypeIntersectionScopeContext(
         )
         val newSymbol = FirIntersectionOverrideFunctionSymbol(callableId, overrides)
         FirFakeOverrideGenerator.createCopyForFirFunction(
-            newSymbol, keyFir, session, FirDeclarationOrigin.IntersectionOverride, keyFir.isExpect,
+            newSymbol, keyFir,
+            derivedClass = null,
+            session, FirDeclarationOrigin.IntersectionOverride, keyFir.isExpect,
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
             newReturnType = if (!forClassUseSiteScope) intersectReturnTypes(mostSpecific) else null,
-            derivedClass = null
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
