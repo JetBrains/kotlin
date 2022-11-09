@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 
-class KtFirClassLikeSymbolPointer<T : KtClassLikeSymbol>(
+internal class KtFirClassLikeSymbolPointer<T : KtClassLikeSymbol>(
     private val classId: ClassId,
     private val castAction: (KtClassLikeSymbol) -> T?,
 ) : KtSymbolPointer<T>() {
