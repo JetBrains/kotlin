@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
@@ -220,31 +222,36 @@ fun FirReference.toSymbolForCall(
     }
 }
 
+private fun FirResolvedQualifier.toLookupTag(): ConeClassLikeLookupTag? = (symbol as? FirClassSymbol)?.toLookupTag()
+
 context(Fir2IrComponents)
 private fun FirCallableSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression,
     preferGetter: Boolean,
+    // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false,
     isReference: Boolean = false
 ): IrSymbol? {
-    val fakeOverrideOwnerLookupTag = fir.importedFromObjectOrStaticData.takeIf { isStatic }?.let {
-        ConeClassLikeLookupTagImpl(it.objectClassId)
-    } ?: when (dispatchReceiver) {
-        is FirNoReceiverExpression -> {
-            val containingClass = containingClassLookupTag()
-            if (containingClass != null && containingClass.classId != StandardClassIds.Any) {
-                // Make sure that symbol is not extension and is not from inline class
-                ((explicitReceiver as? FirResolvedQualifier)?.symbol as? FirClassSymbol)?.toLookupTag()
-            } else {
-                null
+    val fakeOverrideOwnerLookupTag = when {
+        // Static fake overrides
+        isStatic -> {
+            fir.importedFromObjectOrStaticData?.let {
+                ConeClassLikeLookupTagImpl(it.objectClassId)
+            } ?: (explicitReceiver as? FirResolvedQualifier)?.toLookupTag()
+        }
+        // Member fake override or bound callable reference
+        dispatchReceiver !is FirNoReceiverExpression -> {
+            dispatchReceiver.typeRef.coneType.let { it.findClassRepresentation(it, declarationStorage.session) }
+        }
+        // Unbound callable reference to member (non-extension)
+        isReference && fir.receiverTypeRef == null -> {
+            // TODO: remove runIf with StandardClassIds.Any comparison after fixing ValueClass::equals case (KT-54887)
+            runIf(containingClassLookupTag()?.classId != StandardClassIds.Any) {
+                (explicitReceiver as? FirResolvedQualifier)?.toLookupTag()
             }
         }
-
-        else -> {
-            if (isStatic && dispatchReceiver is FirResolvedQualifier) (dispatchReceiver.symbol as? FirClassSymbol)?.toLookupTag()
-            else dispatchReceiver.typeRef.coneType.let { it.findClassRepresentation(it, declarationStorage.session) }
-        }
+        else -> null
     }
 
     return when (this) {
