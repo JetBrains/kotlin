@@ -48,8 +48,8 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirNamedFunctionSymbol {
         createSubstitutionOverrideFunction(
-            symbolForSubstitutionOverride, session, baseFunction, newDispatchReceiverType, newReceiverType, newContextReceiverTypes,
-            newReturnType, newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution, derivedClass
+            symbolForSubstitutionOverride, session, baseFunction, derivedClass, newDispatchReceiverType, newReceiverType,
+            newContextReceiverTypes, newReturnType, newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution
         )
         return symbolForSubstitutionOverride
     }
@@ -66,6 +66,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSymbol: FirNamedFunctionSymbol,
         session: FirSession,
         baseFunction: FirSimpleFunction,
+        derivedClass: ConeClassLikeLookupTag?,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType?,
         newContextReceiverTypes: List<ConeKotlinType?>?,
@@ -73,8 +74,7 @@ object FirFakeOverrideGenerator {
         newParameterTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameter>?,
         isExpect: Boolean = baseFunction.isExpect,
-        fakeOverrideSubstitution: FakeOverrideSubstitution?,
-        derivedClass: ConeClassLikeLookupTag?
+        fakeOverrideSubstitution: FakeOverrideSubstitution?
     ): FirSimpleFunction {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
@@ -514,14 +514,14 @@ object FirFakeOverrideGenerator {
             getterSymbol,
             session,
             baseProperty.getter.delegate,
+            derivedClass = derivedClass,
             newDispatchReceiverType,
             newReceiverType = null,
             newContextReceiverTypes,
             newReturnType,
             newGetterParameterTypes,
             newTypeParameters = null,
-            fakeOverrideSubstitution = fakeOverrideSubstitution,
-            derivedClass = derivedClass
+            fakeOverrideSubstitution = fakeOverrideSubstitution
         )
 
         val setterSymbol = FirNamedFunctionSymbol(baseSymbol.getterId)
@@ -530,14 +530,14 @@ object FirFakeOverrideGenerator {
             setterSymbol,
             session,
             baseSetter.delegate,
+            derivedClass = derivedClass,
             newDispatchReceiverType,
             newReceiverType = null,
             newContextReceiverTypes,
             StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
             newSetterParameterTypes,
             newTypeParameters = null,
-            fakeOverrideSubstitution = fakeOverrideSubstitution,
-            derivedClass = derivedClass
+            fakeOverrideSubstitution = fakeOverrideSubstitution
         )
 
         return buildSyntheticProperty {
