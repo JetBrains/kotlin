@@ -125,6 +125,7 @@ class JvmMappedScope(
                 newSymbol,
                 session,
                 oldConstructor,
+                derivedClass = firKotlinClass.symbol.toLookupTag(),
                 symbol.fir.origin,
                 newDispatchReceiverType = null,
                 newReturnType = substitutor.substituteOrSelf(oldConstructor.returnTypeRef.coneType),
@@ -132,8 +133,7 @@ class JvmMappedScope(
                 newTypeParameters = null,
                 newContextReceiverTypes = emptyList(),
                 isExpect = false,
-                fakeOverrideSubstitution = null,
-                derivedClass = firKotlinClass.symbol.toLookupTag()
+                fakeOverrideSubstitution = null
             )
             newSymbol
         }

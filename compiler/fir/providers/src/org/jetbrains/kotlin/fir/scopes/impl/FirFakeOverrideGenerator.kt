@@ -139,6 +139,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSymbol: FirConstructorSymbol,
         session: FirSession,
         baseConstructor: FirConstructor,
+        derivedClass: ConeClassLikeLookupTag?,
         origin: FirDeclarationOrigin,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReturnType: ConeKotlinType?,
@@ -146,8 +147,7 @@ object FirFakeOverrideGenerator {
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameterRef>?,
         isExpect: Boolean,
-        fakeOverrideSubstitution: FakeOverrideSubstitution?,
-        derivedClass: ConeClassLikeLookupTag?
+        fakeOverrideSubstitution: FakeOverrideSubstitution?
     ): FirConstructor {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
