@@ -624,7 +624,10 @@ open class SerializerIrGenerator(
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()
-            irClass.origin = SERIALIZATION_PLUGIN_ORIGIN
+            if (irClass.isFromPlugin(context.afterK2)) {
+                // replace origin only for plugin generated serializers
+                irClass.origin = SERIALIZATION_PLUGIN_ORIGIN
+            }
             irClass.addDefaultConstructorIfAbsent(context)
             irClass.patchDeclarationParents(irClass.parent)
         }
