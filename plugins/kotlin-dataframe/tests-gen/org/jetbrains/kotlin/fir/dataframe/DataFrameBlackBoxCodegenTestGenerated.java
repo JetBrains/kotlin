@@ -22,6 +22,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("duplicatedSignature.kt")
+    public void testDuplicatedSignature() throws Exception {
+        runTest("testData/box/duplicatedSignature.kt");
+    }
+
+    @Test
+    @TestMetadata("flexibleReturnType.kt")
+    public void testFlexibleReturnType() throws Exception {
+        runTest("testData/box/flexibleReturnType.kt");
+    }
+
+    @Test
     @TestMetadata("lowerGeneratedImplicitReceiver.kt")
     public void testLowerGeneratedImplicitReceiver() throws Exception {
         runTest("testData/box/lowerGeneratedImplicitReceiver.kt");
