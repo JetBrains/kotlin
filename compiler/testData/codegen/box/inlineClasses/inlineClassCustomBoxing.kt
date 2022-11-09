@@ -6,14 +6,14 @@
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC(val x: Int) {
     companion object {
-        operator fun box(x: Int) = createInlineClassInstance<IC>(42)
+        operator fun box(x: Int) = boxByDefault<IC>(42)
     }
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC2(val x: IC) {
     companion object {
-        operator fun box(x: IC) = createInlineClassInstance<IC2>(x)
+        operator fun box(x: IC) = boxByDefault<IC2>(x)
     }
 }
 
@@ -27,7 +27,7 @@ value class IC4(val x: String) {
         private val cache = mutableMapOf<String, IC4>()
 
         operator fun box(x: String): IC4 {
-            if (!cache.containsKey(x)) cache[x] = createInlineClassInstance(x)
+            if (!cache.containsKey(x)) cache[x] = boxByDefault(x)
             return cache[x]!!
         }
     }
@@ -37,12 +37,12 @@ OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC5(val x: Int) {
     companion object {
         private val storage = mapOf<Int, IC5>(
-            0 to createInlineClassInstance(0),
-            1 to createInlineClassInstance(1),
-            2 to createInlineClassInstance(2)
+            0 to boxByDefault(0),
+            1 to boxByDefault(1),
+            2 to boxByDefault(2)
         )
 
-        operator fun box(x: Int) = storage.getOrElse(x) { createInlineClassInstance(x) }
+        operator fun box(x: Int) = storage.getOrElse(x) { boxByDefault(x) }
     }
 }
 

@@ -7,7 +7,7 @@ OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC5(val x: Int) {
     companion object {
         private val storage = mapOf<Int, IC5>()
-        operator fun box(x: Int) = storage.get(x) ?: createInlineClassInstance(x)
+        operator fun box(x: Int) = storage.get(x) ?: boxByDefault(x)
     }
 }
 

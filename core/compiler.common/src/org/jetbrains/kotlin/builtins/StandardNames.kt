@@ -36,7 +36,7 @@ object StandardNames {
 
     @JvmField val CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME = Name.identifier("count")
 
-    @JvmField val INTRINSIC_DEFAULT_BOXING_NAME = Name.identifier("createInlineClassInstance")
+    @JvmField val INTRINSIC_DEFAULT_BOXING_NAME = Name.identifier("boxByDefault")
 
     @JvmField val DYNAMIC_FQ_NAME = FqName("<dynamic>")
 
