@@ -1319,6 +1319,6 @@ val IrFunction.isTypedEquals: Boolean
 
 val IrFunction.isIntrinsicInlineClassCreator: Boolean
     get() = (parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-            && name == Name.identifier("createInlineClassInstance")
+            && name == StandardNames.INTRINSIC_DEFAULT_BOXING_NAME
             && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
             && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()

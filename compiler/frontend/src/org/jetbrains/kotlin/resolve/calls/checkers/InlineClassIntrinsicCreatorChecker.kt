@@ -25,7 +25,7 @@ object InlineClassIntrinsicCreatorChecker : CallChecker {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.CustomBoxingInInlineClasses)) return
         val callExpression = reportOn.getStrictParentOfType<KtCallExpression>() ?: return
         val calleeDescriptor = resolvedCall.resultingDescriptor
-        if (calleeDescriptor.name != Name.identifier("createInlineClassInstance") || calleeDescriptor.containingPackage() != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+        if (calleeDescriptor.name != StandardNames.INTRINSIC_DEFAULT_BOXING_NAME || calleeDescriptor.containingPackage() != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
             return
         }
         if (resolvedCall.typeArguments.size != 1) return

@@ -25,7 +25,7 @@ object FirInlineClassIntrinsicCreatorChecker : FirFunctionCallChecker() {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.CustomBoxingInInlineClasses)) return
         val callable = expression.calleeReference.toResolvedCallableSymbol() ?: return
         val callableId = (callable as? FirNamedFunctionSymbol)?.callableId ?: return
-        if (callableId.callableName != Name.identifier("createInlineClassInstance") || callableId.packageName != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+        if (callableId.callableName != StandardNames.INTRINSIC_DEFAULT_BOXING_NAME || callableId.packageName != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
             return
         }
         if (expression.typeArguments.size != 1) return
