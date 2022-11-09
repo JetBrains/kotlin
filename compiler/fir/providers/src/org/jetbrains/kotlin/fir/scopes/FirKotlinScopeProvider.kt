@@ -108,13 +108,14 @@ fun FirClass.scopeForClass(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
+    derivedClass: ConeClassLikeLookupTag?
 ): FirTypeScope = scopeForClassImpl(
     substitutor, useSiteSession, scopeSession,
     skipPrivateMembers = false,
     classFirDispatchReceiver = this,
     // TODO: why it's always false?
     isFromExpectClass = false,
-    derivedClass = null
+    derivedClass = derivedClass
 )
 
 fun ConeKotlinType.scopeForSupertype(

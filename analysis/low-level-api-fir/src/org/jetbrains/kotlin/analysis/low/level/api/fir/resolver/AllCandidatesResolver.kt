@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -72,7 +73,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     fun getAllCandidatesForDelegatedConstructor(
         firResolveSession: LLFirResolveSession,
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        derivedClass: FirClass,
+        derivedClass: ConeClassLikeLookupTag,
         element: KtElement
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(firResolveSession, element)

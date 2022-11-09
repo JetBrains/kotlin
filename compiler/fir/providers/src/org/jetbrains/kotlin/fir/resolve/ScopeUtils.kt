@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithFakeOverrideTypeCalculat
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.impl.dynamicMembersStorage
 import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -43,6 +44,14 @@ fun FirSmartCastExpression.smartcastScope(
     return FirUnstableSmartcastTypeScope(smartcastScope, originalScope)
 }
 
+fun ConeClassLikeType.delegatingConstructorScope(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    derivedClass: ConeClassLikeLookupTag?
+): FirTypeScope? {
+    return classScope(useSiteSession, scopeSession, FirResolvePhase.DECLARATIONS, derivedClass)
+}
+
 fun ConeKotlinType.scope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
@@ -56,23 +65,7 @@ fun ConeKotlinType.scope(
 private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession, requiredPhase: FirResolvePhase): FirTypeScope? {
     return when (this) {
         is ConeErrorType -> null
-        is ConeClassLikeType -> {
-            val fullyExpandedType = fullyExpandedType(useSiteSession)
-            val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
-
-            fir.symbol.lazyResolveToPhase(requiredPhase)
-
-            val substitutor = when {
-                attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
-                else -> substitutorByMap(
-                    createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession),
-                    useSiteSession,
-                )
-            }
-
-            fir.scopeForClass(substitutor, useSiteSession, scopeSession)
-        }
-
+        is ConeClassLikeType -> classScope(useSiteSession, scopeSession, requiredPhase, derivedClass = null)
         is ConeTypeParameterType -> {
             val symbol = lookupTag.symbol
             scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
@@ -101,6 +94,28 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
         is ConeIntegerLiteralConstantType -> error("ILT should not be in receiver position")
         else -> null
     }
+}
+
+private fun ConeClassLikeType.classScope(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    requiredPhase: FirResolvePhase,
+    derivedClass: ConeClassLikeLookupTag?
+): FirTypeScope? {
+    val fullyExpandedType = fullyExpandedType(useSiteSession)
+    val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
+
+    fir.symbol.lazyResolveToPhase(requiredPhase)
+
+    val substitutor = when {
+        attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
+        else -> substitutorByMap(
+            createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession),
+            useSiteSession,
+        )
+    }
+
+    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, derivedClass)
 }
 
 private fun ConeClassLikeType.obtainFirOfClass(useSiteSession: FirSession, requiredPhase: FirResolvePhase): FirClass? {

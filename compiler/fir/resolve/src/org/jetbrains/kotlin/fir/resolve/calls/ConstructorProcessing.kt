@@ -261,10 +261,10 @@ private fun processConstructors(
                 }
                 is FirClassSymbol -> {
                     val firClass = matchedSymbol.fir as FirClass
-                    if (firClass.classKind == ClassKind.INTERFACE) null
-                    else firClass.scopeForClass(
-                        substitutor, session, bodyResolveComponents.scopeSession
-                    )
+                    when (firClass.classKind) {
+                        ClassKind.INTERFACE -> null
+                        else -> firClass.scopeForClass(substitutor, session, bodyResolveComponents.scopeSession, derivedClass = null)
+                    }
                 }
             }
 
