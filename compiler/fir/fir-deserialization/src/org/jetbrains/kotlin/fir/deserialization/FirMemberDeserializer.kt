@@ -635,11 +635,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }.toList()
     }
 
-    private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirTypeRef {
-        return buildResolvedTypeRef {
-            annotations += context.annotationDeserializer.loadTypeAnnotations(this@toTypeRef, context.nameResolver)
-            val attributes = annotations.computeTypeAttributes(context.session)
-            type = context.typeDeserializer.type(this@toTypeRef, attributes)
-        }
-    }
+    private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirTypeRef =
+        context.typeDeserializer.typeRef(this)
 }

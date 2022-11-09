@@ -106,13 +106,27 @@ class FirTypeDeserializer(
         }
     }
 
-    fun type(proto: ProtoBuf.Type): ConeKotlinType {
-        val annotations = annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-        val attributes = annotations.computeTypeAttributes(moduleData.session)
-        return type(proto, attributes)
+    fun typeRef(proto: ProtoBuf.Type): FirTypeRef {
+        return buildResolvedTypeRef {
+            annotations += annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
+            type = type(proto, annotations.computeTypeAttributes(moduleData.session))
+        }
     }
 
-    fun type(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeKotlinType {
+    private fun attributesFromAnnotations(proto: ProtoBuf.Type) =
+        annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
+            .computeTypeAttributes(moduleData.session)
+
+    fun type(proto: ProtoBuf.Type): ConeKotlinType {
+        return type(proto, attributesFromAnnotations(proto))
+    }
+
+    fun simpleType(proto: ProtoBuf.Type): ConeSimpleKotlinType {
+        return simpleType(proto, attributesFromAnnotations(proto))
+            ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+    }
+
+    private fun type(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeKotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
             val lowerBound = simpleType(proto, attributes)
             val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!, attributes)
@@ -145,7 +159,7 @@ class FirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeSimpleKotlinType? {
+    private fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeSimpleKotlinType? {
         val constructor = typeSymbol(proto) ?: return null
         if (constructor is ConeTypeParameterLookupTag) {
             return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable).let {
