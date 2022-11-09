@@ -66,7 +66,7 @@ internal object JsKotlinCompilationDependencyConfigurationsFactory :
 internal class JvmWithJavaCompilationDependencyConfigurationsFactory(private val target: KotlinWithJavaTarget<*, *>) :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
-        val javaSourceSet = this.target.javaSourceSets.maybeCreate(compilationName)
+        val javaSourceSet = this.target.project.javaSourceSets.maybeCreate(compilationName)
         return KotlinCompilationDependencyConfigurationsContainer(
             target = target, compilationName = compilationName, withRuntime = true,
             apiConfigurationName = javaSourceSet.apiConfigurationName,
