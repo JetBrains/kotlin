@@ -11,16 +11,15 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.getReferencedElementType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementErrorWithExceptions
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -68,17 +67,17 @@ internal class KtFirExpressionTypeProvider(
             is FirExpression -> fir.typeRef.coneType.asKtType()
             is FirNamedReference -> fir.getReferencedElementType().asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
-            is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel -> null
-            // For invalid code like the following,
-            // ```
-            // when {
-            //   true, false -> {}
-            // }
-            // ```
-            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
-            // case, we simply report null since FIR does not know about it.
-            is FirWhenBranch -> null
-            else -> error("Unexpected ${fir?.let { it::class }} for ${expression::class} with text `${expression.text}`")
+            else -> throwUnexpectedFirElementErrorWithExceptions(
+                fir,
+                expression,
+                exceptionalFirClasses = listOf(
+                    FirImport::class,
+                    FirLabel::class,
+                    FirPackageDirective::class,
+                    FirTypeRef::class,
+                    FirWhenBranch::class
+                )
+            )
         }
     }
 

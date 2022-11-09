@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementErrorWithExceptions
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -47,16 +48,14 @@ internal class KtFirCompileTimeConstantProvider(
                     KtConstantValue.KtErrorConstantValue(e.localizedMessage, sourcePsi)
                 }
             }
-            // For invalid code like the following,
-            // ```
-            // when {
-            //   true, false -> {}
-            // }
-            // ```
-            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
-            // case, we simply report null since FIR does not know about it.
-            is FirWhenBranch -> null
-            else -> throwUnexpectedFirElementError(fir, sourcePsi)
+            else -> throwUnexpectedFirElementErrorWithExceptions(
+                fir,
+                sourcePsi,
+                exceptionalFirClasses = listOf(
+                    FirClass::class,
+                    FirWhenBranch::class,
+                )
+            )
         }
     }
 

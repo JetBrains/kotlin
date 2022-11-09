@@ -242,9 +242,21 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
         }
 
         @Test
+        @TestMetadata("commaInWhenCondition.kt")
+        public void testCommaInWhenCondition() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/commaInWhenCondition.kt");
+        }
+
+        @Test
         @TestMetadata("incompleteRange.kt")
         public void testIncompleteRange() throws Exception {
             runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/incompleteRange.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidLPARinPropertyName.kt")
+        public void testInvalidLPARinPropertyName() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/invalidLPARinPropertyName.kt");
         }
 
         @Test

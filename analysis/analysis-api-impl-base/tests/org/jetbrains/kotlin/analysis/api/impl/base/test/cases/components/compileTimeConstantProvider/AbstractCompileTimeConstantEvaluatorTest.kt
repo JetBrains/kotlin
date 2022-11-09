@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadI
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtWhenConditionWithExpression
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -22,6 +23,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiSin
         val expression = when (element) {
             is KtExpression -> element
             is KtValueArgument -> element.getArgumentExpression()
+            is KtWhenConditionWithExpression -> element.expression
             else -> null
         } ?: testServices.assertions.fail { "Unsupported expression: $element" }
         val constantValue = executeOnPooledThreadInReadAction {

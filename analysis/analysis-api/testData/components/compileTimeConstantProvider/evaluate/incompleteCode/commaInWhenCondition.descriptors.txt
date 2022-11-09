@@ -1,0 +1,9 @@
+expression: false
+
+CONSTANT_EXPRESSION_EVALUATION
+constant: false
+constantValueKind: Boolean
+
+CONSTANT_LIKE_EXPRESSION_EVALUATION
+constantLike: false
+constantLikeValueKind: Boolean

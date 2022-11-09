@@ -277,4 +277,26 @@ public class Fe10IdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exte
             runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/readArrayElement.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/incompleteCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class IncompleteCode {
+        @Test
+        public void testAllFilesPresentInIncompleteCode() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/incompleteCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("commaInWhenCondition.kt")
+        public void testCommaInWhenCondition() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/incompleteCode/commaInWhenCondition.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidLPARinPropertyName.kt")
+        public void testInvalidLPARinPropertyName() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/incompleteCode/invalidLPARinPropertyName.kt");
+        }
+    }
 }

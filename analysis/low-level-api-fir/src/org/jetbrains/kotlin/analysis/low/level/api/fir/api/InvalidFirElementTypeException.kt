@@ -52,11 +52,38 @@ class InvalidFirElementTypeException(
     }
 }
 
-
 fun throwUnexpectedFirElementError(
     firElement: Any?,
     ktElement: KtElement? = null,
     vararg expectedFirClasses: KClass<*>
 ): Nothing {
     throw InvalidFirElementTypeException(firElement, ktElement, expectedFirClasses.toList())
+}
+
+fun throwUnexpectedFirElementErrorWithExceptions(
+    firElement: Any?,
+    ktElement: KtElement? = null,
+    exceptionalFirClasses: List<KClass<*>> = emptyList(),
+    expectedFirClasses: List<KClass<*>> = emptyList(),
+): Nothing? {
+    // For invalid code, the closest element is returned, e.g.,
+    // ```
+    // when {
+    //   true, false -> {}
+    // }
+    // ```
+    // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned.
+    //
+    // ```
+    // class InitOrderDemo(name: String) {
+    //   val (firstProperty = "First property"
+    // }
+    // ```
+    // "First Property" is mapped to its containing `FirRegularClass`.
+    //
+    // In these cases, some providers can simply report null since FIR does not know about it.
+    exceptionalFirClasses.forEach { exceptional ->
+        if (exceptional.isInstance(firElement)) return null
+    }
+    throw InvalidFirElementTypeException(firElement, ktElement, expectedFirClasses)
 }
