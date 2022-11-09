@@ -23,7 +23,7 @@ typealias PersistentImplications = PersistentMap<DataFlowVariable, PersistentLis
 
 class PersistentFlow : Flow {
     val previousFlow: PersistentFlow?
-    var approvedTypeStatements: PersistentApprovedTypeStatements
+    override var approvedTypeStatements: PersistentApprovedTypeStatements
     var logicStatements: PersistentImplications
     val level: Int
 
@@ -257,7 +257,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun commitOperationStatement(flow: PersistentFlow, statement: OperationStatement, shouldRemoveSynthetics: Boolean) {
-        approveOperationStatementsInternal(flow, statement, initialStatements = null, shouldRemoveSynthetics).values.forEach {
+        approveOperationStatementsInternal(flow, statement, shouldRemoveSynthetics).values.forEach {
             addTypeStatement(flow, it)
         }
     }
@@ -265,21 +265,17 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     private fun approveOperationStatementsInternal(
         flow: PersistentFlow,
         approvedStatement: OperationStatement,
-        initialStatements: Collection<Implication>?,
         shouldRemoveSynthetics: Boolean
     ): TypeStatements {
         val approvedTypeStatements: ArrayListMultimap<RealVariable, TypeStatement> = ArrayListMultimap.create()
         val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
         val approved = mutableSetOf<OperationStatement>()
-        var firstIteration = true
         while (queue.isNotEmpty()) {
             val next: OperationStatement = queue.removeFirst()
             // Defense from cycles in facts
             if (!approved.add(next)) continue
             val variable = next.variable
-            val statements = initialStatements?.takeIf { firstIteration }
-                ?: flow.logicStatements[variable]?.takeIf { it.isNotEmpty() }
-                ?: continue
+            val statements = flow.logicStatements[variable]?.takeIf { it.isNotEmpty() } ?: continue
             if (shouldRemoveSynthetics && variable.isSynthetic()) {
                 flow.logicStatements -= variable
             }
@@ -291,7 +287,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                     }
                 }
             }
-            firstIteration = false
         }
         return approvedTypeStatements.asMap().mapValues { and(it.value) }
     }
@@ -299,21 +294,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     override fun approveOperationStatement(
         flow: PersistentFlow,
         approvedStatement: OperationStatement,
-        statementsForVariable: Collection<Implication>?
-    ): TypeStatements = approveOperationStatementsInternal(flow, approvedStatement, statementsForVariable, shouldRemoveSynthetics = false)
-
-    override fun collectInfoForBooleanOperator(
-        leftFlow: PersistentFlow,
-        leftVariable: DataFlowVariable,
-        rightFlow: PersistentFlow,
-        rightVariable: DataFlowVariable
-    ): InfoForBooleanOperator {
-        return InfoForBooleanOperator(
-            leftFlow.logicStatements[leftVariable] ?: emptyList(),
-            rightFlow.logicStatements[rightVariable] ?: emptyList(),
-            rightFlow.approvedTypeStatements
-        )
-    }
+    ): TypeStatements = approveOperationStatementsInternal(flow, approvedStatement, shouldRemoveSynthetics = false)
 
     override fun getImplicationsWithVariable(flow: PersistentFlow, variable: DataFlowVariable): Collection<Implication> {
         return flow.logicStatements[variable] ?: emptyList()

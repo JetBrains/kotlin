@@ -1176,15 +1176,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             // has to be `onlyLeftEvaluated`, and it has to be produced by the left operand.
             logicSystem.commitOperationStatement(flow, leftVariable eq onlyLeftEvaluated, shouldRemoveSynthetics = true)
         } else {
-            val (conditionalFromLeft, conditionalFromRight, approvedFromRight) =
-                logicSystem.collectInfoForBooleanOperator(flowFromLeft, leftVariable, flowFromRight, rightVariable)
-
             // If `left && right` is true, then both are true (and evaluated).
             // If `left || right` is false, then both are false.
             arrayOf(
-                approvedFromRight,
-                logicSystem.approveOperationStatement(flowFromRight, leftVariable eq bothEvaluated, conditionalFromLeft),
-                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq bothEvaluated, conditionalFromRight),
+                flowFromRight.approvedTypeStatements,
+                // `leftVariable eq bothEvaluated` already approved in flowFromRight.
+                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq bothEvaluated),
             ).forEach { statements ->
                 statements.values.forEach { flow.addImplication((operatorVariable eq bothEvaluated) implies it) }
             }
@@ -1192,10 +1189,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             // If `left && right` is false, then either `left` is false, or both were evaluated and `right` is false.
             // If `left || right` is true, then either `left` is true, or both were evaluated and `right` is true.
             logicSystem.orForTypeStatements(
-                logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated, conditionalFromLeft),
-                // TODO: and(approvedFromRight, ...)? FE1.0 doesn't seem to handle that correctly either.
+                logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated),
+                // TODO: and(approved from right, ...)? FE1.0 doesn't seem to handle that correctly either.
                 //   if (x is A || whatever(x as B)) { /* x is (A | B) */ }
-                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated, conditionalFromRight),
+                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated),
             ).values.forEach { flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies it) }
         }
 
