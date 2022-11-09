@@ -276,9 +276,9 @@ internal fun FirTypeRef.approximated(
     toSuper: Boolean
 ): FirTypeRef {
     val approximatedType = if (toSuper)
-        approximator.approximateToSuperType(coneType, TypeApproximatorConfiguration.PublicDeclaration)
+        approximator.approximateToSuperType(coneType, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
     else
-        approximator.approximateToSubType(coneType, TypeApproximatorConfiguration.PublicDeclaration)
+        approximator.approximateToSubType(coneType, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
     return withReplacedConeType(approximatedType as? ConeKotlinType).apply { coneType.collectTypeParameters(typeParameterSet) }
 }
 

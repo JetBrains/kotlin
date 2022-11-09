@@ -340,9 +340,9 @@ fun FirTypeRef.approximated(
         return withReplacedConeType(alternativeType)
     }
     val approximatedType = if (toSuper)
-        typeApproximator.approximateToSuperType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration)
+        typeApproximator.approximateToSuperType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
     else
-        typeApproximator.approximateToSubType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration)
+        typeApproximator.approximateToSubType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
     return withReplacedConeType(approximatedType)
 }
 

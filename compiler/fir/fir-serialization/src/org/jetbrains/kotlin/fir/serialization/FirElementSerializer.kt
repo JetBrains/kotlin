@@ -702,9 +702,9 @@ class FirElementSerializer private constructor(
             }
             is ConeIntersectionType -> {
                 val approximatedType = if (toSuper) {
-                    typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration)
+                    typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
                 } else {
-                    typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration)
+                    typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
                 }
                 assert(approximatedType != type && approximatedType is ConeKotlinType) {
                     "Approximation failed: ${type.renderForDebugging()}"

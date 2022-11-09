@@ -52,12 +52,15 @@ open class TypeApproximatorConfiguration {
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
-    object PublicDeclaration : AllFlexibleSameValue() {
+    open class PublicDeclaration(override val localTypes: Boolean, override val anonymous: Boolean) : AllFlexibleSameValue() {
         override val allFlexible: Boolean get() = true
         override val errorType: Boolean get() = true
         override val definitelyNotNullType: Boolean get() = false
         override val integerLiteralConstantType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
+
+        object SaveAnonymousTypes : PublicDeclaration(localTypes = false, anonymous = false)
+        object ApproximateAnonymousTypes : PublicDeclaration(localTypes = false, anonymous = true)
     }
 
     sealed class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus?) :

@@ -139,7 +139,7 @@ class ResultTypeResolver(
     }
 
     private fun KotlinTypeMarker.toPublicType(): KotlinTypeMarker =
-        typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.PublicDeclaration) ?: this
+        typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes) ?: this
 
     private fun Context.isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
         val filteredConstraints = variableWithConstraints.constraints.filter { isProperTypeForFixation(it.type) }
