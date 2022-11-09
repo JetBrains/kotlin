@@ -244,7 +244,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
         if (function.isIntrinsicInlineClassCreator) {
             expression.transformChildrenVoid()
-            val inlineClass = expression.getTypeArgument(0)!!.getClass()!! // TODO check if it is a class
+            val inlineClass = expression.getTypeArgument(0)!!.getClass()!!
             val constructorBridge = replacements.getReplacementFunction(inlineClass.primaryConstructor!!)!!
             val boxFunction = context.inlineClassReplacements.getBoxFunction(inlineClass, withDefaultSuffix = true)
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
