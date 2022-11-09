@@ -40573,6 +40573,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("nestedTypeRemapping.kt")
+            public void testNestedTypeRemapping() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/nestedTypeRemapping.kt");
+            }
+
+            @Test
             @TestMetadata("objectInLambdaCapturesAnotherObject.kt")
             public void testObjectInLambdaCapturesAnotherObject() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/objectInLambdaCapturesAnotherObject.kt");

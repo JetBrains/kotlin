@@ -28,6 +28,7 @@ class InlineResult private constructor() {
 
     fun merge(child: InlineResult) {
         classesToRemove.addAll(child.calcClassesToRemove())
+        changedTypes.putAll(child.changedTypes)
     }
 
     fun mergeWithNotChangeInfo(child: InlineResult) {
