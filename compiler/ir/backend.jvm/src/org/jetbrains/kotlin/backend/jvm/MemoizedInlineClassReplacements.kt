@@ -94,6 +94,8 @@ class MemoizedInlineClassReplacements(
      * Get the box function for an inline class. Concretely, this is a synthetic
      * static function named "box-impl" or "box-impl-default" which takes an unboxed value and returns
      * a boxed value.
+     *
+     * Note that we don't cache "box-impl-default" as we don't access it twice
      */
     fun getBoxFunction(irClass: IrClass, withDefaultSuffix: Boolean = false): IrFunction {
         if (withDefaultSuffix) return createBoxFunction(irClass, defaultSuffix = true)

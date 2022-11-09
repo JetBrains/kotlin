@@ -478,6 +478,12 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         valueClass.declarations += function
     }
 
+    /**
+     * If inline class declares custom boxing, two boxing functions will be created, namely
+     * "box-impl" which does custom boxing and "box-impl-default" which does default one.
+     * The latter plays role of accessor for inline class private constructor.
+     * If inline class doesn't declare custom boxing, the only function "box-impl" will be created.
+     */
     fun buildBoxFunctions(valueClass: IrClass) {
         val customBoxFunction = valueClass.companionObject()?.functions?.singleOrNull {
             context.inlineClassReplacements.originalFunctionForMethodReplacement[it]?.isBoxOperator ?: false
