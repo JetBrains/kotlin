@@ -69,6 +69,9 @@ FILE: OuterClass.kt
         public get(): R|kotlin/collections/List<kotlin/collections/List<*>>| {
             ^ this@R|/row5|.R|/d|
         }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 

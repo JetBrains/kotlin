@@ -237,7 +237,7 @@ private fun KotlinTypeFacade.extracted(result: FirPropertyAccessExpression): Lis
             }
 
             it.classId == Names.COLUM_GROUP_CLASS_ID -> TODO()
-            else -> TODO()
+            else -> return emptyList()
         }
         listOf(
             ColumnWithPathApproximation(

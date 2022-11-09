@@ -52,15 +52,15 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     }
 
     @Test
-    @TestMetadata("OuterClass.kt")
-    public void testOuterClass() throws Exception {
-        runTest("testData/diagnostics/OuterClass.kt");
-    }
-
-    @Test
     @TestMetadata("Schema.kt")
     public void testSchema() throws Exception {
         runTest("testData/diagnostics/Schema.kt");
+    }
+
+    @Test
+    @TestMetadata("selectDuringTyping.kt")
+    public void testSelectDuringTyping() throws Exception {
+        runTest("testData/diagnostics/selectDuringTyping.kt");
     }
 
     @Nested
