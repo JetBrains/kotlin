@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilati
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationTaskNamesContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> internal constructor(
     override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
@@ -26,13 +27,13 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
 
     @Suppress("UNCHECKED_CAST")
     override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType, CO> {
-        val javaSourceSet = target.javaSourceSets.findByName(name) ?: run {
+        val javaSourceSet = project.javaSourceSets.findByName(name) ?: run {
             /*
             Creating the java SourceSet first here:
             After the javaSourceSet is created, another .all hook will call into this factory creating the KotlinCompilation.
             This call will just return this instance instead eagerly
              */
-            target.javaSourceSets.create(name)
+            project.javaSourceSets.create(name)
             return target.compilations.getByName(name)
         }
 
@@ -44,10 +45,16 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
             },
             compilationAssociator = KotlinJvmCompilationAssociator,
             compilationOutputFactory = { _, compilationName ->
-                KotlinWithJavaCompilationOutput(target.javaSourceSets.maybeCreate(compilationName))
+                KotlinWithJavaCompilationOutput(project.javaSourceSets.maybeCreate(compilationName))
             },
             compilationDependencyConfigurationsFactory = JvmWithJavaCompilationDependencyConfigurationsFactory(target),
             compilationTaskNamesContainerFactory = JvmWithJavaCompilationTaskNamesContainerFactory(javaSourceSet),
+
+            /* Use compile & runtime classpath from javaSourceSet by default */
+            preConfigureAction = { compilation ->
+                compilation.compileDependencyFiles = project.filesProvider { javaSourceSet.compileClasspath }
+                compilation.runtimeDependencyFiles = project.filesProvider { javaSourceSet.runtimeClasspath }
+            }
         )
 
         return project.objects.newInstance(
