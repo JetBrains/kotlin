@@ -1277,8 +1277,8 @@ class Fir2IrDeclarationStorage(
                 createIrFunction(fir, irParent, predefinedOrigin = declarationOrigin).symbol
             }
             is FirSimpleFunction -> {
-                val unmatchedReceiver = fakeOverrideOwnerLookupTag != firFunctionSymbol.containingClassLookupTag()
-                if (unmatchedReceiver) {
+                val unmatchedOwner = fakeOverrideOwnerLookupTag != firFunctionSymbol.containingClassLookupTag()
+                if (unmatchedOwner) {
                     generateLazyFakeOverrides(fir.name, fakeOverrideOwnerLookupTag)
                 }
                 val originalSymbol = getIrCallableSymbol(
@@ -1298,7 +1298,7 @@ class Fir2IrDeclarationStorage(
                     },
                     forceTopLevelPrivate = forceTopLevelPrivate
                 ) as IrFunctionSymbol
-                if (unmatchedReceiver && fakeOverrideOwnerLookupTag is ConeClassLookupTagWithFixedSymbol) {
+                if (unmatchedOwner && fakeOverrideOwnerLookupTag is ConeClassLookupTagWithFixedSymbol) {
                     val originalFunction = originalSymbol.owner as IrSimpleFunction
                     fakeOverrideOwnerLookupTag.findIrFakeOverride(fir.name, originalFunction) as IrFunctionSymbol? ?: originalSymbol
                 } else {
@@ -1346,8 +1346,8 @@ class Fir2IrDeclarationStorage(
             return localStorage.getDelegatedProperty(fir)?.symbol ?: getIrVariableSymbol(fir)
         }
         val containingClassLookupTag = firPropertySymbol.containingClassLookupTag()
-        val unmatchedReceiver = fakeOverrideOwnerLookupTag != containingClassLookupTag
-        if (unmatchedReceiver) {
+        val unmatchedOwner = fakeOverrideOwnerLookupTag != containingClassLookupTag
+        if (unmatchedOwner) {
             generateLazyFakeOverrides(fir.name, fakeOverrideOwnerLookupTag)
         }
 
@@ -1387,7 +1387,7 @@ class Fir2IrDeclarationStorage(
             return containingClassLookupTag.getIrCallableSymbol()
         }
 
-        return if (unmatchedReceiver && fakeOverrideOwnerLookupTag is ConeClassLookupTagWithFixedSymbol) {
+        return if (unmatchedOwner && fakeOverrideOwnerLookupTag is ConeClassLookupTagWithFixedSymbol) {
             fakeOverrideOwnerLookupTag.findIrFakeOverride(fir.name, originalProperty) as IrPropertySymbol
         } else {
             originalSymbol
