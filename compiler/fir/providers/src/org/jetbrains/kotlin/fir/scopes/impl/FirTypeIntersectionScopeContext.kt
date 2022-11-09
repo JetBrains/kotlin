@@ -390,6 +390,8 @@ class FirTypeIntersectionScopeContext(
         FirFakeOverrideGenerator.createCopyForFirProperty(
             newSymbol, keyFir, derivedClass = null, session,
             FirDeclarationOrigin.IntersectionOverride,
+            newModality = newModality,
+            newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
             // If any of the properties are vars and the types are not equal, these declarations are conflicting
             // anyway and their uses should result in an overload resolution error.

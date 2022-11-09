@@ -172,7 +172,7 @@ private fun FirClass.scopeForClassImpl(
             key, substitutor,
             substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()).lowerBoundIfFlexible() as ConeClassLikeType,
             skipPrivateMembers,
-            isFromExpectClass,
+            makeExpect = isFromExpectClass,
             derivedClass ?: classFirDispatchReceiver.symbol.toLookupTag()
         )
     }
