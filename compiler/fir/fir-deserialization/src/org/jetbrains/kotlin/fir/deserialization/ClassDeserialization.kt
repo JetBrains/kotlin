@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
 
 fun deserializeClassToSymbol(
     classId: ClassId,
@@ -203,27 +204,31 @@ fun deserializeClassToSymbol(
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
         contextReceivers.addAll(classDeserializer.createContextReceiversForClass(classProto))
-    }.also {
+    }.apply {
         if (isSealed) {
             val inheritors = classProto.sealedSubclassFqNameList.map { nameIndex ->
                 ClassId.fromString(nameResolver.getQualifiedClassName(nameIndex))
             }
-            it.setSealedClassInheritors(inheritors)
+            setSealedClassInheritors(inheritors)
         }
 
-        it.valueClassRepresentation = computeValueClassRepresentation(it, session)
+        valueClassRepresentation =
+            classProto.loadValueClassRepresentation(context.nameResolver, context.typeTable, context.typeDeserializer::simpleType) { name ->
+                val member = declarations.singleOrNull { it is FirProperty && it.receiverTypeRef == null && it.name == name }
+                (member as FirProperty?)?.returnTypeRef?.coneTypeSafe()
+            } ?: computeValueClassRepresentation(this, session)
 
-        (it.annotations as MutableList<FirAnnotation>) +=
+        (annotations as MutableList<FirAnnotation>) +=
             context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
-        it.versionRequirementsTable = context.versionRequirementTable
+        versionRequirementsTable = context.versionRequirementTable
 
-        it.sourceElement = containerSource
+        sourceElement = containerSource
 
-        it.replaceDeprecationsProvider(it.getDeprecationsProvider(session.firCachesFactory))
+        replaceDeprecationsProvider(getDeprecationsProvider(session.firCachesFactory))
 
         classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let { idx ->
-            it.moduleName = nameResolver.getString(idx)
+            moduleName = nameResolver.getString(idx)
         }
     }
 }

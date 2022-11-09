@@ -113,12 +113,17 @@ class FirTypeDeserializer(
         }
     }
 
-    private fun attributesFromAnnotations(proto: ProtoBuf.Type) =
+    private fun attributesFromAnnotations(proto: ProtoBuf.Type): ConeAttributes =
         annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
             .computeTypeAttributes(moduleData.session)
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
         return type(proto, attributesFromAnnotations(proto))
+    }
+
+    fun simpleType(proto: ProtoBuf.Type): ConeSimpleKotlinType {
+        return simpleType(proto, attributesFromAnnotations(proto))
+            ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
     }
 
     private fun type(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeKotlinType {
