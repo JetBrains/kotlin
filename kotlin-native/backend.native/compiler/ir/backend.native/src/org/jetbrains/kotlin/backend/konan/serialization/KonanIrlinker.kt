@@ -811,7 +811,9 @@ internal class KonanIrLinker(
             }
         }
 
-        fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilder.FieldInfo?): List<ClassLayoutBuilder.FieldInfo> {
+        private val lock = Any()
+
+        fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilder.FieldInfo?): List<ClassLayoutBuilder.FieldInfo> = synchronized(lock) {
             irClass.getPackageFragment() as? IrExternalPackageFragment
                     ?: error("Expected an external package fragment for ${irClass.render()}")
             val signature = irClass.symbol.signature
