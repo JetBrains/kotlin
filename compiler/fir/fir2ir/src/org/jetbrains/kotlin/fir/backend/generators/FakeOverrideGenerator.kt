@@ -143,9 +143,9 @@ class FakeOverrideGenerator(
                     val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                         session, symbolForOverride, firProperty,
+                        derivedClass = firClass.symbol.toLookupTag(),
                         newDispatchReceiverType = firClass.defaultType(),
-                        isExpect = (firClass as? FirRegularClass)?.isExpect == true,
-                        derivedClass = firClass.symbol.toLookupTag()
+                        isExpect = (firClass as? FirRegularClass)?.isExpect == true
                     )
                 },
                 basePropertySymbols,
@@ -313,9 +313,9 @@ class FakeOverrideGenerator(
         createFakeOverrideSymbol = { firProperty, callableSymbol ->
             FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                 session, callableSymbol, firProperty,
+                derivedClass = klass.symbol.toLookupTag(),
                 newDispatchReceiverType = klass.defaultType(),
-                isExpect = (klass as? FirRegularClass)?.isExpect == true,
-                derivedClass = klass.symbol.toLookupTag()
+                isExpect = (klass as? FirRegularClass)?.isExpect == true
             )
         },
         computeDirectOverridden = FirTypeScope::getDirectOverriddenProperties,
