@@ -53,6 +53,12 @@ internal val Project.kotlinExtensionOrNull: KotlinProjectExtension?
 val Project.kotlinExtension: KotlinProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
+internal val Project.kotlinJvmExtensionOrNull: KotlinJvmProjectExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
+
+internal val Project.kotlinJvmExtension: KotlinJvmProjectExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
+
 internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
     get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
 
