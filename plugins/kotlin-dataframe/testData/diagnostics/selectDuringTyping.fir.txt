@@ -1,77 +1,24 @@
-FILE: OuterClass.kt
-    public final class OuterClass : R|kotlin/Any| {
-        public constructor(): R|OuterClass| {
-            super<R|kotlin/Any|>()
-        }
+FILE: selectDuringTyping.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface ExplodeSchema : R|kotlin/Any| {
+        public abstract val timestamps: R|kotlin/collections/List<kotlin/Int>|
+            public get(): R|kotlin/collections/List<kotlin/Int>|
 
     }
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|(isOpen = Boolean(false)) public abstract interface Hello : R|kotlin/Any| {
-        public abstract val name: R|kotlin/String|
-            public get(): R|kotlin/String|
-
-        public abstract val test name: R|Hello.InnerClass|
-            public get(): R|Hello.InnerClass|
-
-        public abstract val nullableProperty: R|kotlin/Int?|
-            public get(): R|kotlin/Int?|
-
-        public abstract val a: R|() -> kotlin/Unit|
-            public get(): R|() -> kotlin/Unit|
-
-        public abstract val d: R|kotlin/collections/List<kotlin/collections/List<*>>|
-            public get(): R|kotlin/collections/List<kotlin/collections/List<*>>|
-
-        public final class InnerClass : R|kotlin/Any| {
-            public constructor(): R|Hello.InnerClass| {
-                super<R|kotlin/Any|>()
-            }
-
+    public final fun explode(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|kotlin/Unit| {
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/refined_499|<R|org/jetbrains/kotlinx/dataframe/ExplodeSchema|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<*>| <inline=NoInline>  {
+            ^ <Unresolved name: timestamp>#
         }
-
+        )
     }
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
-            ^ this@R|/col1|.R|/name|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.col2: R|org/jetbrains/kotlinx/dataframe/DataColumn<Hello.InnerClass>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<Hello.InnerClass>| {
-            ^ this@R|/col2|.R|/test name|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.col3: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>| {
-            ^ this@R|/col3|.R|/nullableProperty|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.col4: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Function0<kotlin/Unit>>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Function0<kotlin/Unit>>| {
-            ^ this@R|/col4|.R|/a|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.col5: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/collections/List<*>>>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/collections/List<*>>>| {
-            ^ this@R|/col5|.R|/d|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.row1: R|kotlin/String|
-        public get(): R|kotlin/String| {
-            ^ this@R|/row1|.R|/name|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.row2: R|Hello.InnerClass|
-        public get(): R|Hello.InnerClass| {
-            ^ this@R|/row2|.R|/test name|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.row3: R|kotlin/Int?|
-        public get(): R|kotlin/Int?| {
-            ^ this@R|/row3|.R|/nullableProperty|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.row4: R|() -> kotlin/Unit|
-        public get(): R|() -> kotlin/Unit| {
-            ^ this@R|/row4|.R|/a|
-        }
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.row5: R|kotlin/collections/List<kotlin/collections/List<*>>|
-        public get(): R|kotlin/collections/List<kotlin/collections/List<*>>| {
-            ^ this@R|/row5|.R|/d|
-        }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
+        public get(): R|kotlin/collections/List<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
     internal final class Scope0 {
     }
     internal final class Scope1 {
@@ -1071,6 +1018,14 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final class Scope498 {
     }
     internal final class Scope499 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
+            public get(): R|kotlin/collections/List<kotlin/Int>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token499>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope499|
+
     }
     internal final interface Token0 {
     }
@@ -2073,25 +2028,6 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token499 {
     }
 FILE: __GENERATED DECLARATIONS__.kt
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.name: R|kotlin/String|
-        public get(): R|kotlin/String|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.test name: R|Hello.InnerClass|
-        public get(): R|Hello.InnerClass|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.test name: R|org/jetbrains/kotlinx/dataframe/DataColumn<Hello.InnerClass>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<Hello.InnerClass>|
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.nullableProperty: R|kotlin/Int?|
-        public get(): R|kotlin/Int?|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.nullableProperty: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.a: R|() -> kotlin/Unit|
-        public get(): R|() -> kotlin/Unit|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Function0<kotlin/Unit>>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Function0<kotlin/Unit>>|
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Hello>|.d: R|kotlin/collections/List<kotlin/collections/List<*>>|
-        public get(): R|kotlin/collections/List<kotlin/collections/List<*>>|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Hello>|.d: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/collections/List<*>>>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/collections/List<*>>>|
-FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe.api
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(explode_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/Explode0|))) public final fun <T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_499(selector: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/ColumnsSelector<T, *>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|
