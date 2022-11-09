@@ -32,7 +32,7 @@ class MultiplatformSpecification extends BaseKonanSpecification {
                   url = '$KOTLIN_REPO'
                 }
                 maven {
-                   url = 'https://cache-redirector.jetbrains.com/jcenter'
+                   url = 'https://cache-redirector.jetbrains.com/maven-central'
                 }
             }
             dependencies {
@@ -47,7 +47,7 @@ class MultiplatformSpecification extends BaseKonanSpecification {
                url = '$KOTLIN_REPO'
             }
             maven {
-               url = 'https://cache-redirector.jetbrains.com/jcenter'
+               url = 'https://cache-redirector.jetbrains.com/maven-central'
             }
         }
 

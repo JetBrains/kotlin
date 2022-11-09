@@ -22,9 +22,7 @@ buildscript {
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/jcenter'
-        }
+        mavenCentral()
         maven {
             url project.bootstrapKotlinRepo
         }
@@ -38,9 +36,7 @@ buildscript {
 apply plugin: 'kotlin-multiplatform'
 
 repositories {
-    maven {
-        url 'https://cache-redirector.jetbrains.com/jcenter'
-    }
+    mavenCentral()
     maven {
         url project.bootstrapKotlinRepo
     }
