@@ -8,17 +8,14 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultOrNullableType
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -45,9 +42,9 @@ private fun KonanSymbols.getTypeConversionImpl(
 
 internal object DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION : IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
 
-internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.lazyMapMember { inlinedClass ->
+internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = mapping.boxFunctions.getOrPut(inlinedClass) {
     require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf<IrClass>(inlinedClass)
+    val classes = mutableListOf(inlinedClass)
     var parent = inlinedClass.parent
     while (parent is IrClass) {
         classes.add(parent)
@@ -55,58 +52,31 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
     }
     require(parent is IrFile || parent is IrExternalPackageFragment) { "Local inline classes are not supported" }
 
-    val symbols = ir.symbols
-
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = symbols.any.owner.defaultOrNullableType(isNullable)
+    val boxedType = ir.symbols.any.owner.defaultOrNullableType(isNullable)
 
-    val parameterType = unboxedType
-    val returnType = boxedType
-
-    val startOffset = inlinedClass.startOffset
-    val endOffset = inlinedClass.endOffset
-
-    IrFunctionImpl(
-            startOffset, endOffset,
-            DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
-            IrSimpleFunctionSymbolImpl(),
-            Name.special("<${classes.reversed().joinToString(".") { it.name.asString() }}-box>"),
-            DescriptorVisibilities.PUBLIC,
-            Modality.FINAL,
-            returnType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = false,
-            isExpect = false,
-            isFakeOverride = false,
-            isOperator = false,
-            isInfix = false
-    ).also { function ->
-        function.valueParameters = listOf(
-            IrValueParameterImpl(
-                    startOffset, endOffset,
-                    IrDeclarationOrigin.DEFINED,
-                    IrValueParameterSymbolImpl(),
-                    Name.identifier("value"),
-                    index = 0,
-                    varargElementType = null,
-                    isCrossinline = false,
-                    type = parameterType,
-                    isNoinline = false,
-                    isHidden = false,
-                    isAssignable = false
-            ).also {
-                it.parent = function
-            })
+    irFactory.buildFun {
+        startOffset = inlinedClass.startOffset
+        endOffset = inlinedClass.endOffset
+        origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() }}-box>")
+        returnType = boxedType
+    }.also { function ->
         function.parent = parent
+
+        function.addValueParameter {
+            startOffset = inlinedClass.startOffset
+            endOffset = inlinedClass.endOffset
+            name = Name.identifier("value")
+            type = unboxedType
+        }
     }
 }
 
-internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.lazyMapMember { inlinedClass ->
+internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = mapping.unboxFunctions.getOrPut(inlinedClass) {
     require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf<IrClass>(inlinedClass)
+    val classes = mutableListOf(inlinedClass)
     var parent = inlinedClass.parent
     while (parent is IrClass) {
         classes.add(parent)
@@ -120,46 +90,21 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = symbols.any.owner.defaultOrNullableType(isNullable)
 
-    val parameterType = boxedType
-    val returnType = unboxedType
-
-    val startOffset = inlinedClass.startOffset
-    val endOffset = inlinedClass.endOffset
-
-    IrFunctionImpl(
-            startOffset, endOffset,
-            DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
-            IrSimpleFunctionSymbolImpl(),
-            Name.special("<${classes.reversed().joinToString(".") { it.name.asString() } }-unbox>"),
-            DescriptorVisibilities.PUBLIC,
-            Modality.FINAL,
-            returnType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = false,
-            isExpect = false,
-            isFakeOverride = false,
-            isOperator = false,
-            isInfix = false
-    ).also { function ->
-        function.valueParameters = listOf(
-            IrValueParameterImpl(
-                    startOffset, endOffset,
-                    IrDeclarationOrigin.DEFINED,
-                    IrValueParameterSymbolImpl(),
-                    Name.identifier("value"),
-                    index = 0,
-                    varargElementType = null,
-                    isCrossinline = false,
-                    type = parameterType,
-                    isNoinline = false,
-                    isHidden = false,
-                    isAssignable = false
-            ).also {
-                it.parent = function
-            })
+    irFactory.buildFun {
+        startOffset = inlinedClass.startOffset
+        endOffset = inlinedClass.endOffset
+        origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() } }-unbox>")
+        returnType = unboxedType
+    }.also { function ->
         function.parent = parent
+
+        function.addValueParameter {
+            startOffset = inlinedClass.startOffset
+            endOffset = inlinedClass.endOffset
+            name = Name.identifier("value")
+            type = boxedType
+        }
     }
 }
 

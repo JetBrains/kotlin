@@ -76,11 +76,6 @@ internal fun konanUnitPhase(
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
-/**
- * Valid from [createSymbolTablePhase] until [destroySymbolTablePhase].
- */
-private var Context.symbolTable: SymbolTable? by Context.nullValue()
-
 internal val createSymbolTablePhase = konanUnitPhase(
         op = {
             this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
