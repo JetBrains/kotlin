@@ -49,24 +49,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     // ------------------------------- Public TypeStatement util functions -------------------------------
 
-    data class InfoForBooleanOperator(
-        val conditionalFromLeft: Collection<Implication>,
-        val conditionalFromRight: Collection<Implication>,
-        val knownFromRight: TypeStatements,
-    )
-
-    abstract fun collectInfoForBooleanOperator(
-        leftFlow: FLOW,
-        leftVariable: DataFlowVariable,
-        rightFlow: FLOW,
-        rightVariable: DataFlowVariable,
-    ): InfoForBooleanOperator
-
-    abstract fun approveOperationStatement(
-        flow: FLOW,
-        approvedStatement: OperationStatement,
-        statementsForVariable: Collection<Implication>?
-    ): TypeStatements
+    abstract fun approveOperationStatement(flow: FLOW, approvedStatement: OperationStatement): TypeStatements
 
     fun orForTypeStatements(left: TypeStatements, right: TypeStatements): TypeStatements = when {
         left.isEmpty() -> left

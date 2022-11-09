@@ -139,7 +139,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         statement: OperationStatement,
         builtinTypes: BuiltinTypes
     ): TypeStatements {
-        val newTypeStatements = andForTypeStatements(flow.approvedTypeStatements, approveOperationStatement(flow, statement, null))
+        val newTypeStatements = andForTypeStatements(flow.approvedTypeStatements, approveOperationStatement(flow, statement))
         val variable = statement.variable
         if (!variable.isReal()) return newTypeStatements
         val extraStatement = when (statement.operation) {
