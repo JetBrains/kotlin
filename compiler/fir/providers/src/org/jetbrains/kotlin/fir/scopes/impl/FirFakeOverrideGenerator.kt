@@ -81,6 +81,7 @@ object FirFakeOverrideGenerator {
         return createCopyForFirFunction(
             fakeOverrideSymbol,
             baseFunction,
+            derivedClass = derivedClass,
             session,
             FirDeclarationOrigin.SubstitutionOverride,
             isExpect,
@@ -90,8 +91,7 @@ object FirFakeOverrideGenerator {
             newReceiverType,
             newContextReceiverTypes,
             newReturnType,
-            fakeOverrideSubstitution = fakeOverrideSubstitution,
-            derivedClass = derivedClass
+            fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
             originalForSubstitutionOverrideAttr = baseFunction
         }
@@ -100,6 +100,7 @@ object FirFakeOverrideGenerator {
     fun createCopyForFirFunction(
         newSymbol: FirNamedFunctionSymbol,
         baseFunction: FirSimpleFunction,
+        derivedClass: ConeClassLikeLookupTag?,
         session: FirSession,
         origin: FirDeclarationOrigin,
         isExpect: Boolean = baseFunction.isExpect,
@@ -111,8 +112,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
-        fakeOverrideSubstitution: FakeOverrideSubstitution? = null,
-        derivedClass: ConeClassLikeLookupTag?
+        fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirSimpleFunction {
         return buildSimpleFunction {
             source = baseFunction.source
