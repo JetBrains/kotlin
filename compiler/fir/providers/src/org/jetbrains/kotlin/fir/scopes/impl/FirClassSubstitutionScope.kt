@@ -153,9 +153,9 @@ class FirClassSubstitutionScope(
                     session,
                     symbolForOverride,
                     member,
+                    derivedClass = derivedClass,
                     newDispatchReceiverType ?: dispatchReceiverTypeForSubstitutedMembers,
-                    isExpect = makeExpect,
-                    derivedClass = derivedClass
+                    isExpect = makeExpect
                 )
             }
             return original
@@ -170,6 +170,7 @@ class FirClassSubstitutionScope(
             session,
             symbolForOverride,
             member,
+            derivedClass,
             newDispatchReceiverType ?: dispatchReceiverTypeForSubstitutedMembers,
             newReceiverType,
             newContextReceiverTypes,
@@ -177,8 +178,7 @@ class FirClassSubstitutionScope(
             newParameterTypes,
             newTypeParameters as List<FirTypeParameter>,
             makeExpect,
-            fakeOverrideSubstitution,
-            derivedClass
+            fakeOverrideSubstitution
         )
     }
 

@@ -118,9 +118,9 @@ class FakeOverrideGenerator(
                     val symbol = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                         session, symbol, firFunction,
+                        derivedClass = firClass.symbol.toLookupTag(),
                         newDispatchReceiverType = firClass.defaultType(),
-                        isExpect = (firClass as? FirRegularClass)?.isExpect == true,
-                        derivedClass = firClass.symbol.toLookupTag()
+                        isExpect = (firClass as? FirRegularClass)?.isExpect == true
                     )
                 },
                 baseFunctionSymbols,
@@ -294,9 +294,9 @@ class FakeOverrideGenerator(
         createFakeOverrideSymbol = { firFunction, callableSymbol ->
             FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                 session, callableSymbol, firFunction,
+                derivedClass = klass.symbol.toLookupTag(),
                 newDispatchReceiverType = klass.defaultType(),
-                isExpect = (klass as? FirRegularClass)?.isExpect == true,
-                derivedClass = klass.symbol.toLookupTag()
+                isExpect = (klass as? FirRegularClass)?.isExpect == true
             )
         },
         computeDirectOverridden = FirTypeScope::getDirectOverriddenFunctions,

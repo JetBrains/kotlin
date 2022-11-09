@@ -37,6 +37,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         symbolForSubstitutionOverride: FirNamedFunctionSymbol,
         baseFunction: FirSimpleFunction,
+        derivedClass: ConeClassLikeLookupTag?,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType? = null,
         newContextReceiverTypes: List<ConeKotlinType?>? = null,
@@ -44,8 +45,7 @@ object FirFakeOverrideGenerator {
         newParameterTypes: List<ConeKotlinType?>? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
         isExpect: Boolean = baseFunction.isExpect,
-        fakeOverrideSubstitution: FakeOverrideSubstitution? = null,
-        derivedClass: ConeClassLikeLookupTag?
+        fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirNamedFunctionSymbol {
         createSubstitutionOverrideFunction(
             symbolForSubstitutionOverride, session, baseFunction, newDispatchReceiverType, newReceiverType, newContextReceiverTypes,
