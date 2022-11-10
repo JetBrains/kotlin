@@ -214,67 +214,68 @@ public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmVari
 public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmWasmPlatform : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform {
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializationExtension {
-	public abstract fun serializer (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializer;
+public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension {
+	public abstract fun serializer (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer;
 }
 
-public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializationExtension$Empty : org/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializationExtension {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializationExtension$Empty;
-	public fun serializer (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializer;
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension$Empty : org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension$Empty;
+	public fun serializer (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializationExtensionBuilder {
-	public abstract fun register (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializer;)V
+public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtensionBuilder {
+	public abstract fun register (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializationExtensionKt {
-	public static final fun IdeaExtrasSerializationExtension (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializationExtension;
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtensionKt {
+	public static final fun IdeaKotlinExtrasSerializationExtension (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializer {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializer$Companion;
-	public abstract fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;[B)Ljava/lang/Object;
-	public abstract fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext;Ljava/lang/Object;)[B
+public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer$Companion;
+	public abstract fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Ljava/lang/Object;
+	public abstract fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/lang/Object;)[B
 }
 
-public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializer$Companion {
-	public final fun javaIoSerializable (Lkotlin/reflect/KClass;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializer;
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer$Companion {
+	public final fun javaIoSerializable (Lkotlin/reflect/KClass;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationContext {
-	public abstract fun getExtrasSerializationExtension ()Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaExtrasSerializationExtension;
-	public abstract fun getLogger ()Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger;
+public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext {
+	public abstract fun getExtrasSerializationExtension ()Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension;
+	public abstract fun getLogger ()Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger {
+public abstract interface class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger {
 	public abstract fun error (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public abstract fun report (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$Severity;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public abstract fun report (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public abstract fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$DefaultImpls {
-	public static fun error (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger;Ljava/lang/String;Ljava/lang/Throwable;)V
-	public static synthetic fun error$default (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
-	public static synthetic fun report$default (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$Severity;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
-	public static fun warn (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger;Ljava/lang/String;Ljava/lang/Throwable;)V
-	public static synthetic fun warn$default (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$DefaultImpls {
+	public static fun error (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun error$default (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public static synthetic fun report$default (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public static fun warn (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun warn$default (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$None : org/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$None;
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$None : org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$None;
 	public fun error (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public fun report (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$Severity;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun report (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$Severity : java/lang/Enum {
-	public static final field ERROR Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$Severity;
-	public static final field WARNING Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$Severity;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$Severity;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaSerializationLogger$Severity;
+public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity : java/lang/Enum {
+	public static final field ERROR Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
+	public static final field WARNING Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates : org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates {
+	public static final field serialVersionUID J
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -310,10 +311,11 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency$Com
 	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates {
+public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates : java/io/Serializable {
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinResolvedBinaryDependency : org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency {
+	public static final field serialVersionUID J
 	public fun <init> (Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/tooling/core/MutableExtras;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/io/File;
@@ -332,6 +334,7 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinResolvedBinary
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordinates : org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates {
+	public static final field serialVersionUID J
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -349,6 +352,7 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordina
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency : org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency {
+	public static final field serialVersionUID J
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordinates;Lorg/jetbrains/kotlin/tooling/core/MutableExtras;)V
 	public final fun component1 ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordinates;
@@ -368,11 +372,13 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependen
 	public static final field DependsOn Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public static final field Friend Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public static final field Regular Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
+	public static final field serialVersionUID J
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinUnresolvedBinaryDependency : org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency {
+	public static final field serialVersionUID J
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;Lorg/jetbrains/kotlin/tooling/core/MutableExtras;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
