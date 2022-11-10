@@ -88,7 +88,7 @@ class SpaceCodeOwnersTest : TestCase() {
         owners: CodeOwners,
         val root: File
     ) {
-        private val fileWalkDepthLimit = 8
+        private val fileWalkDepthLimit = 13
 
         val matchers =
             owners.patterns
