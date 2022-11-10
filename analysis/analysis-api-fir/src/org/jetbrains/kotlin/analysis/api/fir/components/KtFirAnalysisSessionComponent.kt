@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.convertVariance
@@ -99,15 +98,16 @@ internal interface KtFirAnalysisSessionComponent {
     }
 
     fun FirQualifiedAccess.createConeSubstitutorFromTypeArguments(callableSymbol: FirCallableSymbol<*>): ConeSubstitutor {
-        val typeArgumentMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-        for (i in typeArguments.indices) {
-            val type = typeArguments[i].safeAs<FirTypeProjectionWithVariance>()?.typeRef?.coneType
-            if (type != null) {
-                typeArgumentMap[callableSymbol.typeParameterSymbols[i]] = type
+        val typeArgumentMap = buildMap {
+            // Type arguments are ignored defensively if `callableSymbol` can't provide enough type parameters (and vice versa). For
+            // example, when call candidates are collected, the candidate's `callableSymbol` might have fewer type parameters than the
+            // inferred call's type arguments.
+            typeArguments.zip(callableSymbol.typeParameterSymbols).forEach { (typeArgument, typeParameterSymbol) ->
+                val type = typeArgument.safeAs<FirTypeProjectionWithVariance>()?.typeRef?.coneType ?: return@forEach
+                put(typeParameterSymbol, type)
             }
         }
-        val coneSubstitutor = substitutorByMap(typeArgumentMap, rootModuleSession)
-        return coneSubstitutor
+        return substitutorByMap(typeArgumentMap, rootModuleSession)
     }
 
     fun ConeSubstitutor.toKtSubstitutor(): KtSubstitutor {
