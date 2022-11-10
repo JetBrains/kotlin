@@ -286,6 +286,12 @@ public class SymbolLightClassesForSourceTestGenerated extends AbstractSymbolLigh
         }
 
         @Test
+        @TestMetadata("FunctionWithoutName.kt")
+        public void testFunctionWithoutName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/FunctionWithoutName.kt");
+        }
+
+        @Test
         @TestMetadata("JvmPackageName.kt")
         public void testJvmPackageName() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/JvmPackageName.kt");
@@ -301,6 +307,12 @@ public class SymbolLightClassesForSourceTestGenerated extends AbstractSymbolLigh
         @TestMetadata("PrivateInTrait.kt")
         public void testPrivateInTrait() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/PrivateInTrait.kt");
+        }
+
+        @Test
+        @TestMetadata("PropertyWithoutName.kt")
+        public void testPropertyWithoutName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/PropertyWithoutName.kt");
         }
 
         @Test

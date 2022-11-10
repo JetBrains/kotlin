@@ -193,9 +193,8 @@ internal fun SymbolLightClassBase.createMethods(
         when (declaration) {
             is KtFunctionSymbol -> {
                 // TODO: check if it has expect modifier
-                if (declaration.hasReifiedParameters ||
-                    declaration.isHiddenOrSynthetic()
-                ) return
+                if (declaration.hasReifiedParameters || declaration.isHiddenOrSynthetic()) return
+                if (declaration.name.isSpecial) return
 
                 result.add(
                     SymbolLightSimpleMethod(
@@ -272,6 +271,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
 ) {
     if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
     if (declaration.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED) return
+    if (declaration.name.isSpecial) return
 
     if (declaration.visibility.isPrivateOrPrivateToThis() &&
         declaration.getter?.hasBody == false &&
