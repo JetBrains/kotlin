@@ -35,7 +35,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected abstract fun buildStateMachine(
         stateMachineFunction: IrFunction,
         transformingFunction: IrFunction,
-        argumentToPropertiesMap: Map<IrValueParameter, IrField>
+        argumentToPropertiesMap: Map<IrValueParameter, IrField>,
+        tailSuspendCalls: Set<IrCall>
     )
 
     protected abstract fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression)
@@ -126,11 +127,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             irFunction in suspendLambdas -> {
                 // Suspend lambdas always need coroutine implementation.
                 // They are called through factory method <create>, thus we can eliminate original body.
-                listOf(buildCoroutine(irFunction, functionReference))
+                // Tail call optimization for suspend lambdas isn't yet supported by stdlib.
+                listOf(buildCoroutine(irFunction, functionReference, emptySet()))
             }
 
-            // TODO: May be optimize tail suspend calls even in case of a state machine?
-            hasNotTailSuspendCalls -> listOf<IrDeclaration>(buildCoroutine(irFunction, functionReference), irFunction)
+            hasNotTailSuspendCalls ->
+                listOf<IrDeclaration>(buildCoroutine(irFunction, functionReference, tailSuspendCalls), irFunction)
 
             else -> {
                 // Otherwise, no suspend calls at all or all of them are tail calls - no need in a state machine.
@@ -153,7 +155,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                 shortCut.transformChildrenVoid(this)
 
-                return if (!expression.isSuspend)
+                return if (!expression.isSuspend || expression !in tailSuspendCalls)
                     shortCut
                 else irBuilder.at(expression).irReturn(
                     irBuilder.generateDelegatedCall(irFunction.returnType, shortCut)
@@ -166,8 +168,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
-    private fun buildCoroutine(irFunction: IrSimpleFunction, functionReference: IrFunctionReference?): IrClass {
-        val coroutine = CoroutineBuilder(irFunction, functionReference).build()
+    private fun buildCoroutine(irFunction: IrSimpleFunction, functionReference: IrFunctionReference?, tailSuspendCalls: Set<IrCall>): IrClass {
+        val coroutine = CoroutineBuilder(irFunction, functionReference, tailSuspendCalls).build()
         builtCoroutines[irFunction] = coroutine
 
         if (functionReference == null) {
@@ -204,7 +206,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         val stateMachineFunction: IrFunction
     )
 
-    private inner class CoroutineBuilder(val irFunction: IrFunction, val functionReference: IrFunctionReference?) {
+    private inner class CoroutineBuilder(
+        val irFunction: IrFunction,
+        val functionReference: IrFunctionReference?,
+        val tailSuspendCalls: Set<IrCall>
+    ) {
         private val functionParameters = irFunction.explicitParameters
         private val boundFunctionParameters = functionReference?.getArgumentsWithIr()?.map { it.first }
         private val unboundFunctionParameters = boundFunctionParameters?.let { functionParameters - it }
@@ -251,6 +257,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 suspendFunctionClassTypeArguments = unboundParameterTypes + irFunction.returnType
                 superTypes += suspendFunctionClass.typeWith(suspendFunctionClassTypeArguments)
             }
+            coroutineClass.superTypes = superTypes
 
             val coroutineConstructor = buildConstructor()
 
@@ -285,7 +292,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 )
             }
 
-            coroutineClass.superTypes += superTypes
             coroutineClass.addFakeOverrides(
                 context.typeSystem,
                 ignoredParentSymbols = ignoredParentSymbols
@@ -515,7 +521,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 overriddenSymbols += stateMachineFunction.symbol
             }
 
-            buildStateMachine(function, irFunction, argumentToPropertiesMap)
+            buildStateMachine(function, irFunction, argumentToPropertiesMap, tailSuspendCalls)
             return function
         }
     }
