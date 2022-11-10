@@ -8,6 +8,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
@@ -35,6 +36,26 @@ class NodeJsInspectorClient(val scriptPath: String, val args: List<String>) {
         val context = NodeJsInspectorClientContextImpl(this@NodeJsInspectorClient)
         try {
             runWithContext(context, block)
+        } catch (e: ClosedReceiveChannelException) {
+            val nodeExitCode = try {
+                context.nodeProcess.exitValue()
+            } catch (_: IllegalThreadStateException) {
+                throw e
+            }
+            throw IllegalStateException(buildString {
+                append("Node process exited with exit code ")
+                append(nodeExitCode)
+                when (nodeExitCode) {
+                    134 -> {
+                        append(" (out of memory). Consider increasing ")
+                        append((::V8_MAX_OLD_SPACE_SIZE_MB).name)
+                    }
+                    139 -> {
+                        append(" (segmentation fault). Probably a bug in Node (see https://github.com/nodejs/node/issues/45410)")
+                    }
+                }
+                append('.')
+            }, e)
         } finally {
             context.release()
         }
@@ -97,6 +118,8 @@ class NodeJsInspectorClient(val scriptPath: String, val args: List<String>) {
 
 private const val NODE_WS_DEBUG_URL_PREFIX = "Debugger listening on ws://"
 
+private const val V8_MAX_OLD_SPACE_SIZE_MB = 4096
+
 /**
  * The actual implementation of the Node.js inspector client.
  */
@@ -104,9 +127,10 @@ private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : 
 
     private val logger = Logger.getLogger(this::class.java.name)
 
-    private val nodeProcess = ProcessBuilder(
+    val nodeProcess: Process = ProcessBuilder(
         System.getProperty("javascript.engine.path.NodeJs"),
         "--inspect-brk=0",
+        "--max-old-space-size=$V8_MAX_OLD_SPACE_SIZE_MB",
         engine.scriptPath,
         *engine.args.toTypedArray()
     ).also {
