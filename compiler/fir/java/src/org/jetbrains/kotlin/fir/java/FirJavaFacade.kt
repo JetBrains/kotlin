@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
@@ -537,7 +536,11 @@ abstract class FirJavaFacade(
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
                 annotationBuilder = { javaField.convertAnnotationsToFir(session, javaTypeParameterStack) }
-                lazyInitializer = createLazyFieldInitializer(javaField)
+
+                lazyInitializer = lazy {
+                    // NB: null should be converted to null
+                    javaField.initializerValue?.createConstantIfAny(session)
+                }
 
                 if (!javaField.isStatic) {
                     dispatchReceiverType = dispatchReceiver
@@ -547,15 +550,6 @@ abstract class FirJavaFacade(
                     containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
                 }
             }
-        }
-    }
-
-    private fun createLazyFieldInitializer(javaField: JavaField): Lazy<FirExpression?> {
-        // Sic! This avoids capturing too much into a lazy lambda
-        val session = this.session
-        return lazy {
-            // NB: null should be converted to null
-            javaField.initializerValue?.createConstantIfAny(session)
         }
     }
 
