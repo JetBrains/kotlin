@@ -15,7 +15,7 @@ kotlin.sourceSets.configureEach {
 dependencies {
     api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-annotations"))
-    implementation(kotlinStdlib())
+    compileOnly(kotlinStdlib())
     testImplementation(gradleApi())
     testImplementation(gradleKotlinDsl())
     testImplementation(project(":kotlin-gradle-plugin"))
