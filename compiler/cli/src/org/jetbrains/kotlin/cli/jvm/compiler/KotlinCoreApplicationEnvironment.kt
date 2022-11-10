@@ -8,6 +8,7 @@ import com.intellij.DynamicBundle
 import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.JavaCoreApplicationEnvironment
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.lang.MetaLanguage
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -25,6 +26,10 @@ class KotlinCoreApplicationEnvironment private constructor(
     parentDisposable: Disposable, unitTestMode: Boolean
 ) :
     JavaCoreApplicationEnvironment(parentDisposable, unitTestMode) {
+
+    init {
+        registerFileType(JavaClassFileType.INSTANCE, "sig");
+    }
 
     override fun createJrtFileSystem(): VirtualFileSystem {
         return CoreJrtFileSystem()
