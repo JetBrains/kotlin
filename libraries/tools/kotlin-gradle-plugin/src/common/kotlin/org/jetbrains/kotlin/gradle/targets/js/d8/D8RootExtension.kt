@@ -27,7 +27,7 @@ open class D8RootExtension(@Transient val rootProject: Project) : ConfigurationP
     var downloadBaseUrl by Property("https://storage.googleapis.com/chromium-v8/official/canary/")
 
     // Latest version number could be found here https://storage.googleapis.com/chromium-v8/official/canary/v8-linux64-rel-latest.json
-    var version by Property("10.9.130")
+    var version by Property("10.9.194")
     var edition by Property("rel") // rel or dbg
 
     val setupTaskProvider: TaskProvider<out Copy>
