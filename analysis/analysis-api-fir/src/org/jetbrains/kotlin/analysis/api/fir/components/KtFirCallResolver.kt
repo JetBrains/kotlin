@@ -938,7 +938,7 @@ internal class KtFirCallResolver(
         resolveFragmentOfCall: Boolean
     ): List<KtCallCandidateInfo> {
         fun findDerivedClass(psi: KtElement): KtClassOrObject? = when (psi) {
-            is KtConstructorDelegationCall -> (psi.parent as? KtSecondaryConstructor)?.parent as? KtClassOrObject
+            is KtConstructorDelegationCall -> ((psi.parent as? KtSecondaryConstructor)?.parent as? KtClassBody)?.parent as? KtClassOrObject
             is KtSuperTypeCallEntry -> (psi.parent as? KtSuperTypeList)?.parent as? KtClassOrObject
             is KtConstructorCalleeExpression -> (psi.parent as? KtElement)?.let(::findDerivedClass)
             else -> null
