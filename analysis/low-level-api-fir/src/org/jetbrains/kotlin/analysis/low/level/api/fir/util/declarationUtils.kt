@@ -99,6 +99,10 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             containerClassFir.declarations.firstOrNull { it.psi === this }
         }
         this is KtTypeAlias -> findFir(provider)
+        this is KtDestructuringDeclaration -> {
+            val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
+            firFile.declarations.firstOrNull { it.psi == this }
+        }
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
