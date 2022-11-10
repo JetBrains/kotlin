@@ -6,8 +6,8 @@
 package kotlinx.metadata.klib.impl
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.*
-import kotlinx.metadata.impl.extensions.*
+import kotlinx.metadata.internal.*
+import kotlinx.metadata.internal.extensions.*
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf

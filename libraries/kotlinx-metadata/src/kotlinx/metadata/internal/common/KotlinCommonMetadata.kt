@@ -8,7 +8,7 @@ package kotlinx.metadata.internal.common
 
 import kotlinx.metadata.KmModuleFragment
 import kotlinx.metadata.KmModuleFragmentVisitor
-import kotlinx.metadata.impl.accept
+import kotlinx.metadata.internal.accept
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.readBuiltinsPackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl

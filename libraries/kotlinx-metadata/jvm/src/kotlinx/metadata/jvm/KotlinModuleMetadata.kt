@@ -8,7 +8,7 @@
 package kotlinx.metadata.jvm
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.accept
+import kotlinx.metadata.internal.accept
 import kotlinx.metadata.jvm.internal.IgnoreInApiDump
 import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlinx.metadata.impl
+package kotlinx.metadata.internal
 
 import kotlinx.metadata.ClassName
 import kotlinx.metadata.KmAnnotation

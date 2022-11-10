@@ -8,7 +8,7 @@
 package kotlinx.metadata.jvm
 
 import kotlinx.metadata.*
-import kotlinx.metadata.jvm.impl.jvm
+import kotlinx.metadata.jvm.internal.jvm
 
 /**
  * Metadata of local delegated properties used somewhere inside this class (but not in a nested class).

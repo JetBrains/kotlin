@@ -7,7 +7,7 @@
 package kotlinx.metadata.klib.impl
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.extensions.*
+import kotlinx.metadata.internal.extensions.*
 import kotlinx.metadata.klib.*
 
 internal val KmFunction.klibExtensions: KlibFunctionExtension

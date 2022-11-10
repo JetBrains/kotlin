@@ -8,8 +8,7 @@ package kotlinx.metadata.klib
 
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmModuleFragment
-import kotlinx.metadata.impl.WriteContext
-import kotlinx.metadata.impl.accept
+import kotlinx.metadata.internal.*
 import kotlinx.metadata.klib.impl.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment

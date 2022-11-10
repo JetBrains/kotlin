@@ -802,7 +802,7 @@ public final class kotlinx/metadata/KmType : kotlinx/metadata/KmTypeVisitor {
 	public fun visitArgument (ILkotlinx/metadata/KmVariance;)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitClass (Ljava/lang/String;)V
 	public synthetic fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmTypeExtensionVisitor;
-	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/impl/extensions/KmTypeExtension;
+	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/internal/extensions/KmTypeExtension;
 	public fun visitFlexibleTypeUpperBound (ILjava/lang/String;)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitOuterType (I)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitStarProjection ()V
@@ -1013,189 +1013,6 @@ public abstract class kotlinx/metadata/KmVersionRequirementVisitor {
 	public fun visit (Lkotlinx/metadata/KmVersionRequirementVersionKind;Lkotlinx/metadata/KmVersionRequirementLevel;Ljava/lang/Integer;Ljava/lang/String;)V
 	public fun visitEnd ()V
 	public fun visitVersion (III)V
-}
-
-public class kotlinx/metadata/impl/ClassWriter : kotlinx/metadata/KmClassVisitor {
-	public fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;Ljava/util/List;)V
-	public synthetic fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected final fun getC ()Lkotlinx/metadata/impl/WriteContext;
-	protected final fun getT ()Lkotlinx/metadata/internal/metadata/ProtoBuf$Class$Builder;
-	public fun visit (ILjava/lang/String;)V
-	public fun visitCompanionObject (Ljava/lang/String;)V
-	public fun visitConstructor (I)Lkotlinx/metadata/KmConstructorVisitor;
-	public fun visitContextReceiverType (I)Lkotlinx/metadata/KmTypeVisitor;
-	public fun visitEnd ()V
-	public fun visitEnumEntry (Ljava/lang/String;)V
-	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmClassExtensionVisitor;
-	public synthetic fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmDeclarationContainerExtensionVisitor;
-	public fun visitFunction (ILjava/lang/String;)Lkotlinx/metadata/KmFunctionVisitor;
-	public fun visitInlineClassUnderlyingPropertyName (Ljava/lang/String;)V
-	public fun visitInlineClassUnderlyingType (I)Lkotlinx/metadata/KmTypeVisitor;
-	public fun visitNestedClass (Ljava/lang/String;)V
-	public fun visitProperty (ILjava/lang/String;II)Lkotlinx/metadata/KmPropertyVisitor;
-	public fun visitSealedSubclass (Ljava/lang/String;)V
-	public fun visitSupertype (I)Lkotlinx/metadata/KmTypeVisitor;
-	public fun visitTypeAlias (ILjava/lang/String;)Lkotlinx/metadata/KmTypeAliasVisitor;
-	public fun visitTypeParameter (ILjava/lang/String;ILkotlinx/metadata/KmVariance;)Lkotlinx/metadata/KmTypeParameterVisitor;
-	public fun visitVersionRequirement ()Lkotlinx/metadata/KmVersionRequirementVisitor;
-}
-
-public class kotlinx/metadata/impl/LambdaWriter : kotlinx/metadata/KmLambdaVisitor {
-	public fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;)V
-	protected final fun getC ()Lkotlinx/metadata/impl/WriteContext;
-	protected final fun getT ()Lkotlinx/metadata/internal/metadata/ProtoBuf$Function$Builder;
-	protected final fun setT (Lkotlinx/metadata/internal/metadata/ProtoBuf$Function$Builder;)V
-	public fun visitFunction (ILjava/lang/String;)Lkotlinx/metadata/KmFunctionVisitor;
-}
-
-public class kotlinx/metadata/impl/ModuleFragmentWriter : kotlinx/metadata/KmModuleFragmentVisitor {
-	public fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;Ljava/util/List;)V
-	public synthetic fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected final fun getC ()Lkotlinx/metadata/impl/WriteContext;
-	protected final fun getT ()Lkotlinx/metadata/internal/metadata/ProtoBuf$PackageFragment$Builder;
-	public fun visitClass ()Lkotlinx/metadata/KmClassVisitor;
-	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmModuleFragmentExtensionVisitor;
-	public fun visitPackage ()Lkotlinx/metadata/KmPackageVisitor;
-}
-
-public class kotlinx/metadata/impl/PackageWriter : kotlinx/metadata/KmPackageVisitor {
-	public fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;Ljava/util/List;)V
-	public synthetic fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected final fun getC ()Lkotlinx/metadata/impl/WriteContext;
-	protected final fun getT ()Lkotlinx/metadata/internal/metadata/ProtoBuf$Package$Builder;
-	public fun visitEnd ()V
-	public synthetic fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmDeclarationContainerExtensionVisitor;
-	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmPackageExtensionVisitor;
-	public fun visitFunction (ILjava/lang/String;)Lkotlinx/metadata/KmFunctionVisitor;
-	public fun visitProperty (ILjava/lang/String;II)Lkotlinx/metadata/KmPropertyVisitor;
-	public fun visitTypeAlias (ILjava/lang/String;)Lkotlinx/metadata/KmTypeAliasVisitor;
-}
-
-public final class kotlinx/metadata/impl/ReadContext {
-	public fun <init> (Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;Lkotlinx/metadata/internal/metadata/deserialization/TypeTable;Lkotlinx/metadata/internal/metadata/deserialization/VersionRequirementTable;Lkotlinx/metadata/impl/ReadContext;Ljava/util/List;)V
-	public synthetic fun <init> (Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;Lkotlinx/metadata/internal/metadata/deserialization/TypeTable;Lkotlinx/metadata/internal/metadata/deserialization/VersionRequirementTable;Lkotlinx/metadata/impl/ReadContext;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun className (I)Ljava/lang/String;
-	public final fun get (I)Ljava/lang/String;
-	public final fun getContextExtensions ()Ljava/util/List;
-	public final fun getStrings ()Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;
-	public final fun getTypeParameterId (I)Ljava/lang/Integer;
-	public final fun getTypes ()Lkotlinx/metadata/internal/metadata/deserialization/TypeTable;
-	public final fun withTypeParameters (Ljava/util/List;)Lkotlinx/metadata/impl/ReadContext;
-}
-
-public abstract interface class kotlinx/metadata/impl/ReadContextExtension {
-}
-
-public final class kotlinx/metadata/impl/ReadUtilsKt {
-	public static final fun readAnnotation (Lkotlinx/metadata/internal/metadata/ProtoBuf$Annotation;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;)Lkotlinx/metadata/KmAnnotation;
-	public static final fun readAnnotationArgument (Lkotlinx/metadata/internal/metadata/ProtoBuf$Annotation$Argument$Value;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;)Lkotlinx/metadata/KmAnnotationArgument;
-}
-
-public final class kotlinx/metadata/impl/ReadersKt {
-	public static final fun accept (Lkotlinx/metadata/internal/metadata/ProtoBuf$Class;Lkotlinx/metadata/KmClassVisitor;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;Ljava/util/List;)V
-	public static final fun accept (Lkotlinx/metadata/internal/metadata/ProtoBuf$Function;Lkotlinx/metadata/KmLambdaVisitor;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;)V
-	public static final fun accept (Lkotlinx/metadata/internal/metadata/ProtoBuf$Package;Lkotlinx/metadata/KmPackageVisitor;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;Ljava/util/List;)V
-	public static final fun accept (Lkotlinx/metadata/internal/metadata/ProtoBuf$PackageFragment;Lkotlinx/metadata/KmModuleFragmentVisitor;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;Ljava/util/List;)V
-	public static final fun accept (Lkotlinx/metadata/internal/metadata/ProtoBuf$Property;Lkotlinx/metadata/KmPropertyVisitor;Lkotlinx/metadata/impl/ReadContext;)V
-	public static synthetic fun accept$default (Lkotlinx/metadata/internal/metadata/ProtoBuf$Class;Lkotlinx/metadata/KmClassVisitor;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;Ljava/util/List;ILjava/lang/Object;)V
-	public static synthetic fun accept$default (Lkotlinx/metadata/internal/metadata/ProtoBuf$Package;Lkotlinx/metadata/KmPackageVisitor;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;Ljava/util/List;ILjava/lang/Object;)V
-	public static synthetic fun accept$default (Lkotlinx/metadata/internal/metadata/ProtoBuf$PackageFragment;Lkotlinx/metadata/KmModuleFragmentVisitor;Lkotlinx/metadata/internal/metadata/deserialization/NameResolver;Ljava/util/List;ILjava/lang/Object;)V
-	public static final fun getPropertyGetterFlags (Lkotlinx/metadata/internal/metadata/ProtoBuf$Property;)I
-	public static final fun getPropertySetterFlags (Lkotlinx/metadata/internal/metadata/ProtoBuf$Property;)I
-}
-
-public class kotlinx/metadata/impl/WriteContext {
-	public fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;Ljava/util/List;)V
-	public synthetic fun <init> (Lkotlinx/metadata/internal/metadata/serialization/StringTable;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun get (Ljava/lang/String;)I
-	public final fun getClassName (Ljava/lang/String;)I
-	public final fun getContextExtensions ()Ljava/util/List;
-	public final fun getStrings ()Lkotlinx/metadata/internal/metadata/serialization/StringTable;
-	public final fun getVersionRequirements ()Lkotlinx/metadata/internal/metadata/serialization/MutableVersionRequirementTable;
-}
-
-public abstract interface class kotlinx/metadata/impl/WriteContextExtension {
-}
-
-public final class kotlinx/metadata/impl/WriteUtilsKt {
-	public static final fun writeAnnotation (Lkotlinx/metadata/KmAnnotation;Lkotlinx/metadata/internal/metadata/serialization/StringTable;)Lkotlinx/metadata/internal/metadata/ProtoBuf$Annotation$Builder;
-	public static final fun writeAnnotationArgument (Lkotlinx/metadata/KmAnnotationArgument;Lkotlinx/metadata/internal/metadata/serialization/StringTable;)Lkotlinx/metadata/internal/metadata/ProtoBuf$Annotation$Argument$Value$Builder;
-}
-
-public final class kotlinx/metadata/impl/WritersKt {
-	public static final fun writeProperty (Lkotlinx/metadata/impl/WriteContext;ILjava/lang/String;IILkotlin/jvm/functions/Function1;)Lkotlinx/metadata/KmPropertyVisitor;
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmClassExtension : kotlinx/metadata/KmClassExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmConstructorExtension : kotlinx/metadata/KmConstructorExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmExtension : kotlinx/metadata/KmExtensionVisitor {
-	public abstract fun accept (Lkotlinx/metadata/KmExtensionVisitor;)V
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmFunctionExtension : kotlinx/metadata/KmFunctionExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmModuleFragmentExtension : kotlinx/metadata/KmModuleFragmentExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmPackageExtension : kotlinx/metadata/KmPackageExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmPropertyExtension : kotlinx/metadata/KmPropertyExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmTypeAliasExtension : kotlinx/metadata/KmTypeAliasExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmTypeExtension : kotlinx/metadata/KmTypeExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmTypeParameterExtension : kotlinx/metadata/KmTypeParameterExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/KmValueParameterExtension : kotlinx/metadata/KmValueParameterExtensionVisitor, kotlinx/metadata/impl/extensions/KmExtension {
-}
-
-public abstract interface class kotlinx/metadata/impl/extensions/MetadataExtensions {
-	public static final field Companion Lkotlinx/metadata/impl/extensions/MetadataExtensions$Companion;
-	public abstract fun createClassExtension ()Lkotlinx/metadata/impl/extensions/KmClassExtension;
-	public abstract fun createConstructorExtension ()Lkotlinx/metadata/impl/extensions/KmConstructorExtension;
-	public abstract fun createFunctionExtension ()Lkotlinx/metadata/impl/extensions/KmFunctionExtension;
-	public abstract fun createModuleFragmentExtensions ()Lkotlinx/metadata/impl/extensions/KmModuleFragmentExtension;
-	public abstract fun createPackageExtension ()Lkotlinx/metadata/impl/extensions/KmPackageExtension;
-	public abstract fun createPropertyExtension ()Lkotlinx/metadata/impl/extensions/KmPropertyExtension;
-	public abstract fun createTypeAliasExtension ()Lkotlinx/metadata/impl/extensions/KmTypeAliasExtension;
-	public abstract fun createTypeExtension ()Lkotlinx/metadata/impl/extensions/KmTypeExtension;
-	public abstract fun createTypeParameterExtension ()Lkotlinx/metadata/impl/extensions/KmTypeParameterExtension;
-	public abstract fun createValueParameterExtension ()Lkotlinx/metadata/impl/extensions/KmValueParameterExtension;
-	public abstract fun readClassExtensions (Lkotlinx/metadata/KmClassVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$Class;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readConstructorExtensions (Lkotlinx/metadata/KmConstructorVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$Constructor;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readFunctionExtensions (Lkotlinx/metadata/KmFunctionVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$Function;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readModuleFragmentExtensions (Lkotlinx/metadata/KmModuleFragmentVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$PackageFragment;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readPackageExtensions (Lkotlinx/metadata/KmPackageVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$Package;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readPropertyExtensions (Lkotlinx/metadata/KmPropertyVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$Property;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readTypeAliasExtensions (Lkotlinx/metadata/KmTypeAliasVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$TypeAlias;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readTypeExtensions (Lkotlinx/metadata/KmTypeVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$Type;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readTypeParameterExtensions (Lkotlinx/metadata/KmTypeParameterVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$TypeParameter;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun readValueParameterExtensions (Lkotlinx/metadata/KmValueParameterVisitor;Lkotlinx/metadata/internal/metadata/ProtoBuf$ValueParameter;Lkotlinx/metadata/impl/ReadContext;)V
-	public abstract fun writeClassExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$Class$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmClassExtensionVisitor;
-	public abstract fun writeConstructorExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$Constructor$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmConstructorExtensionVisitor;
-	public abstract fun writeFunctionExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$Function$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmFunctionExtensionVisitor;
-	public abstract fun writeModuleFragmentExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$PackageFragment$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmModuleFragmentExtensionVisitor;
-	public abstract fun writePackageExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$Package$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmPackageExtensionVisitor;
-	public abstract fun writePropertyExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$Property$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmPropertyExtensionVisitor;
-	public abstract fun writeTypeAliasExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$TypeAlias$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmTypeAliasExtensionVisitor;
-	public abstract fun writeTypeExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$Type$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmTypeExtensionVisitor;
-	public abstract fun writeTypeParameterExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$TypeParameter$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmTypeParameterExtensionVisitor;
-	public abstract fun writeValueParameterExtensions (Lkotlinx/metadata/KmExtensionType;Lkotlinx/metadata/internal/metadata/ProtoBuf$ValueParameter$Builder;Lkotlinx/metadata/impl/WriteContext;)Lkotlinx/metadata/KmValueParameterExtensionVisitor;
-}
-
-public final class kotlinx/metadata/impl/extensions/MetadataExtensions$Companion {
-	public final fun getINSTANCES ()Ljava/util/List;
 }
 
 public class kotlinx/metadata/jvm/JvmClassExtensionVisitor : kotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor, kotlinx/metadata/KmClassExtensionVisitor {
@@ -1468,7 +1285,7 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class : kotlinx/meta
 	public final fun toKmClass ()Lkotlinx/metadata/KmClass;
 }
 
-public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class$Writer : kotlinx/metadata/impl/ClassWriter {
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class$Writer : kotlinx/metadata/internal/ClassWriter {
 	public fun <init> ()V
 	public final fun write ()Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
 	public final fun write ([I)Lkotlinx/metadata/jvm/KotlinClassMetadata$Class;
@@ -1497,7 +1314,7 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade : kotlinx
 	public final fun toKmPackage ()Lkotlinx/metadata/KmPackage;
 }
 
-public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade$Writer : kotlinx/metadata/impl/PackageWriter {
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade$Writer : kotlinx/metadata/internal/PackageWriter {
 	public fun <init> ()V
 	public final fun write ()Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
 	public final fun write ([I)Lkotlinx/metadata/jvm/KotlinClassMetadata$FileFacade;
@@ -1523,7 +1340,7 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart :
 	public final fun toKmPackage ()Lkotlinx/metadata/KmPackage;
 }
 
-public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart$Writer : kotlinx/metadata/impl/PackageWriter {
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart$Writer : kotlinx/metadata/internal/PackageWriter {
 	public fun <init> ()V
 	public final fun write (Ljava/lang/String;)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
 	public final fun write (Ljava/lang/String;[I)Lkotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart;
@@ -1537,7 +1354,7 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass : kot
 	public final fun toKmLambda ()Lkotlinx/metadata/KmLambda;
 }
 
-public final class kotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass$Writer : kotlinx/metadata/impl/LambdaWriter {
+public final class kotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass$Writer : kotlinx/metadata/internal/LambdaWriter {
 	public fun <init> ()V
 	public final fun write ()Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;
 	public final fun write ([I)Lkotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass;

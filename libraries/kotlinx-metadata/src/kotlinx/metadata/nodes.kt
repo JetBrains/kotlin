@@ -7,7 +7,7 @@
 
 package kotlinx.metadata
 
-import kotlinx.metadata.impl.extensions.*
+import kotlinx.metadata.internal.extensions.*
 import kotlin.contracts.ExperimentalContracts
 
 /**

@@ -5,7 +5,7 @@
 
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.impl.readAnnotation
+import kotlinx.metadata.internal.readAnnotation
 import kotlinx.metadata.klib.KlibHeader
 import kotlinx.metadata.klib.KlibSourceFile
 import kotlinx.metadata.klib.UniqId

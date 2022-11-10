@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:Suppress("DEPRECATION")
-package kotlinx.metadata.impl
+package kotlinx.metadata.internal
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.extensions.applySingleExtension
+import kotlinx.metadata.internal.extensions.applySingleExtension
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable

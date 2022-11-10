@@ -7,11 +7,8 @@
 package kotlinx.metadata.jvm
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.ClassWriter
-import kotlinx.metadata.impl.LambdaWriter
-import kotlinx.metadata.impl.PackageWriter
-import kotlinx.metadata.impl.accept
-import kotlinx.metadata.jvm.impl.writeProtoBufData
+import kotlinx.metadata.internal.*
+import kotlinx.metadata.jvm.internal.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
