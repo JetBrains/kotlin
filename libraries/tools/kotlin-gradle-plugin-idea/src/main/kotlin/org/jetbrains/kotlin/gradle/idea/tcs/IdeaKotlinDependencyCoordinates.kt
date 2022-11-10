@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.idea.tcs
 
-sealed interface IdeaKotlinDependencyCoordinates
+import java.io.Serializable
+
+sealed interface IdeaKotlinDependencyCoordinates : Serializable
 
 data class IdeaKotlinBinaryCoordinates(
     val group: String,
@@ -16,6 +18,11 @@ data class IdeaKotlinBinaryCoordinates(
     override fun toString(): String {
         return "$group:$module:$version${sourceSetName?.let { ":$it" }.orEmpty()}"
     }
+
+    internal companion object {
+        const val serialVersionUID = 0L
+    }
+
 }
 
 data class IdeaKotlinSourceCoordinates(
@@ -26,5 +33,9 @@ data class IdeaKotlinSourceCoordinates(
 ) : IdeaKotlinDependencyCoordinates {
     override fun toString(): String {
         return "${buildId.takeIf { it != ":" }.orEmpty()}$projectPath/$sourceSetName"
+    }
+
+    internal companion object {
+        const val serialVersionUID = 0L
     }
 }

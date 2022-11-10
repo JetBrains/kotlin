@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.IdeaKpmDependencyPro
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.IdeaKpmDependencyProto.DependencyCase
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.ideaKpmDependencyProto
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
-import org.jetbrains.kotlin.gradle.kpm.idea.*
 
 internal fun IdeaSerializationContext.IdeaKpmDependencyProto(dependency: IdeaKpmDependency): IdeaKpmDependencyProto {
     return ideaKpmDependencyProto {
