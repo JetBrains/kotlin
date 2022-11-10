@@ -473,6 +473,9 @@ internal fun KtSymbolWithMembers.createInnerClasses(
 context(KtAnalysisSession)
 internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
     if (this == superClassOrigin) return false
+    if (superClassOrigin is KtEnumEntry) {
+        return false // enum entry cannot have inheritors
+    }
     if (!superClassOrigin.canBeAnalysed()) {
         return false
     }
