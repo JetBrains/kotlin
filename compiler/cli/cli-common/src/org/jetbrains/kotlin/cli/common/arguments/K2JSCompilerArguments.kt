@@ -391,6 +391,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             if (isIrBackendEnabled()) {
                 this[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
             }
+            if (wasm) {
+                this[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
+            }
         }
     }
 }
