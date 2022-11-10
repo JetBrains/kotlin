@@ -352,7 +352,7 @@ class DelegatedMemberGenerator(
                     originalForSubstitutionOverride!!.isDefaultJavaMethod()
                 else -> {
                     // Check that we have a non-abstract method from Java interface
-                    origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
+                    isJavaOrEnhancement && modality == Modality.OPEN
                 }
             }
     }

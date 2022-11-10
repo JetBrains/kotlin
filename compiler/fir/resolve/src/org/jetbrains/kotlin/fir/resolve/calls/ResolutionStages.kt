@@ -463,7 +463,7 @@ internal object CheckArguments : CheckerStage() {
 
 private fun Candidate.isJavaApplicableCandidate(): Boolean {
     val symbol = symbol as? FirFunctionSymbol ?: return false
-    if (symbol.origin == FirDeclarationOrigin.Enhancement) return true
+    if (symbol.isJavaOrEnhancement) return true
     if (originScope !is FirTypeScope) return false
     // Note: constructor can also be Java applicable with enhancement origin, but it doesn't have overridden functions
     // See samConstructorVsFun.kt diagnostic test
@@ -472,7 +472,7 @@ private fun Candidate.isJavaApplicableCandidate(): Boolean {
     var result = false
 
     originScope.processOverriddenFunctions(symbol) {
-        if (it.origin == FirDeclarationOrigin.Enhancement) {
+        if (it.isJavaOrEnhancement) {
             result = true
             ProcessorAction.STOP
         } else {
