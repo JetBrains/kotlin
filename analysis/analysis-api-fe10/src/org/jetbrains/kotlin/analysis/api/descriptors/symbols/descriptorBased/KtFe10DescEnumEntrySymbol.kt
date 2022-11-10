@@ -50,7 +50,7 @@ internal class KtFe10DescEnumEntrySymbol(
         get() = withValidityAssertion { descriptor.name }
 
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {
-        val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
+        val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource<KtEnumEntrySymbol>(this)
         if (pointerByPsi != null) {
             return pointerByPsi
         }

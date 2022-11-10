@@ -111,7 +111,7 @@ internal class KtFe10DescKotlinPropertySymbol(
         get() = withValidityAssertion { descriptor.isDelegated }
 
     override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
-        return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtKotlinPropertySymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

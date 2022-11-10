@@ -49,7 +49,7 @@ internal class KtFe10DescTypeAliasSymbol(
         get() = withValidityAssertion { descriptor.classId }
 
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
-        return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeAliasSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

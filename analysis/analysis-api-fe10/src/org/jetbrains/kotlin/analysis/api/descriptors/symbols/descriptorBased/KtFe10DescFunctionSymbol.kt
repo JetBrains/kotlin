@@ -88,7 +88,7 @@ internal class KtFe10DescFunctionSymbol private constructor(
         get() = withValidityAssertion { descriptor.typeParameters.map { KtFe10DescTypeParameterSymbol(it, analysisContext) } }
 
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> = withValidityAssertion {
-        val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
+        val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFunctionSymbol>(this)
         if (pointerByPsi != null) {
             return pointerByPsi
         }

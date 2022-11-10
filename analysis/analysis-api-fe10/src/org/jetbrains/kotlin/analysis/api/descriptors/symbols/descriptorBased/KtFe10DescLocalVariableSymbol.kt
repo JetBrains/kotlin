@@ -37,7 +37,7 @@ internal class KtFe10DescLocalVariableSymbol(
         get() = withValidityAssertion { KtSymbolKind.LOCAL }
 
     override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> = withValidityAssertion {
-        return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtLocalVariableSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

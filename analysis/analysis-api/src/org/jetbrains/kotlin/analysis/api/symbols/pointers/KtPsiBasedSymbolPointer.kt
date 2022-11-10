@@ -15,15 +15,17 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import kotlin.reflect.KClass
 
-public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(private val psiPointer: SmartPsiElementPointer<out KtElement>) :
-    KtSymbolPointer<S>() {
+public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
+    private val psiPointer: SmartPsiElementPointer<out KtElement>,
+    private val expectedClass: KClass<S>,
+) : KtSymbolPointer<S>() {
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
         val psi = psiPointer.element ?: return null
 
-        @Suppress("UNCHECKED_CAST")
-        return with(analysisSession) {
+        val symbol: KtSymbol = with(analysisSession) {
             when (psi) {
                 is KtDeclaration -> psi.getSymbol()
                 is KtFile -> psi.getFileSymbol()
@@ -31,11 +33,22 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(private v
                     error("Unexpected declaration to restore: ${psi::class}, text:\n ${psi.text}")
                 }
             }
-        } as S?
+        }
+
+        if (!expectedClass.isInstance(symbol)) return null
+
+        @Suppress("UNCHECKED_CAST")
+        return symbol as S
     }
 
+    public constructor(psi: KtElement, expectedClass: KClass<S>) : this(psi.createSmartPointer(), expectedClass)
+
     public companion object {
-        public fun <S : KtSymbol> createForSymbolFromSource(symbol: S): KtPsiBasedSymbolPointer<S>? {
+        public inline fun <reified S : KtSymbol> createForSymbolFromSource(symbol: S): KtPsiBasedSymbolPointer<S>? {
+            return createForSymbolFromSource(symbol, S::class)
+        }
+
+        public fun <S : KtSymbol> createForSymbolFromSource(symbol: S, expectedClass: KClass<S>): KtPsiBasedSymbolPointer<S>? {
             ifDisabled { return null }
 
             if (symbol.origin != KtSymbolOrigin.SOURCE) return null
@@ -47,13 +60,18 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(private v
                 else -> return null
             }
 
-            return KtPsiBasedSymbolPointer(psi.createSmartPointer())
+            return KtPsiBasedSymbolPointer(psi, expectedClass)
         }
 
-        public fun <S : KtSymbol> createForSymbolFromPsi(ktElement: KtElement): KtPsiBasedSymbolPointer<S>? {
+
+        public fun <S : KtSymbol> createForSymbolFromPsi(ktElement: KtElement, expectedClass: KClass<S>): KtPsiBasedSymbolPointer<S>? {
             ifDisabled { return null }
 
-            return KtPsiBasedSymbolPointer(ktElement.createSmartPointer())
+            return KtPsiBasedSymbolPointer(ktElement, expectedClass)
+        }
+
+        public inline fun <reified S : KtSymbol> createForSymbolFromPsi(ktElement: KtElement): KtPsiBasedSymbolPointer<S>? {
+            return createForSymbolFromPsi(ktElement, S::class)
         }
 
         @TestOnly

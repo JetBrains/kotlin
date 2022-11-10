@@ -56,7 +56,7 @@ internal class KtFe10DescPropertySetterSymbol(
 
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> {
         withValidityAssertion {
-            return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+            return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertySetterSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
         }
     }
 

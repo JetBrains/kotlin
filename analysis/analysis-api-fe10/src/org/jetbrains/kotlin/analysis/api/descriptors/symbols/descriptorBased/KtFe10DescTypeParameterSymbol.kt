@@ -38,7 +38,7 @@ internal class KtFe10DescTypeParameterSymbol(
         get() = withValidityAssertion { descriptor.isReified }
 
     override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> = withValidityAssertion {
-        return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeParameterSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)
