@@ -42,7 +42,7 @@ internal class KtFe10DescJavaFieldSymbol(
         get() = withValidityAssertion { descriptor.returnType.toKtType(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> = withValidityAssertion {
-        return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtJavaFieldSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

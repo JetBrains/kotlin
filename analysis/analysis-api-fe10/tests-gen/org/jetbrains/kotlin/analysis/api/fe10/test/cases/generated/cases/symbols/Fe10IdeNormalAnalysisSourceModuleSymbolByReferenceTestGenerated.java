@@ -107,6 +107,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     }
 
     @Test
+    @TestMetadata("primaryConstructorValueParameterAsProperty.kt")
+    public void testPrimaryConstructorValueParameterAsProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/primaryConstructorValueParameterAsProperty.kt");
+    }
+
+    @Test
     @TestMetadata("propertyReceiverParameter.kt")
     public void testPropertyReceiverParameter() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/propertyReceiverParameter.kt");

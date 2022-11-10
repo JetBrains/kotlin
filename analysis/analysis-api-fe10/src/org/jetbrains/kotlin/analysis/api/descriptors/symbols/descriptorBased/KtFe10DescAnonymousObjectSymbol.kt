@@ -26,7 +26,7 @@ internal class KtFe10DescAnonymousObjectSymbol(
         get() = withValidityAssertion { descriptor.typeConstructor.supertypes.map { it.toKtType(analysisContext) } }
 
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = withValidityAssertion {
-        return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousObjectSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

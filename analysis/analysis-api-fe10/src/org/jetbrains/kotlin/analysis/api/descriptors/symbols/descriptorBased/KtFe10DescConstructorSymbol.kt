@@ -49,7 +49,7 @@ internal class KtFe10DescConstructorSymbol(
         }
 
     override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
-        val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
+        val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource<KtConstructorSymbol>(this)
         if (pointerByPsi != null) {
             return pointerByPsi
         }
