@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.analysis.api.symbols.pointers
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import kotlin.reflect.KClass
 
@@ -96,4 +92,41 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
         @Volatile
         private var disablePsiPointer: Boolean = false
     }
+}
+
+public fun KtElement.symbolPointer(): KtSymbolPointer<KtSymbol> = KtPsiBasedSymbolPointer(this, KtSymbol::class)
+public inline fun <reified S : KtSymbol> KtElement.symbolPointerOfType(): KtSymbolPointer<S> = KtPsiBasedSymbolPointer(this, S::class)
+
+public fun KtFile.symbolPointer(): KtSymbolPointer<KtFileSymbol> = KtPsiBasedSymbolPointer(this, KtFileSymbol::class)
+public fun KtParameter.symbolPointer(): KtSymbolPointer<KtVariableLikeSymbol> = KtPsiBasedSymbolPointer(this, KtVariableLikeSymbol::class)
+public fun KtTypeAlias.symbolPointer(): KtSymbolPointer<KtTypeAliasSymbol> = KtPsiBasedSymbolPointer(this, KtTypeAliasSymbol::class)
+public fun KtEnumEntry.symbolPointer(): KtSymbolPointer<KtEnumEntrySymbol> = KtPsiBasedSymbolPointer(this, KtEnumEntrySymbol::class)
+public fun KtProperty.symbolPointer(): KtSymbolPointer<KtVariableSymbol> = KtPsiBasedSymbolPointer(this, KtVariableSymbol::class)
+
+public fun KtNamedFunction.symbolPointer(): KtSymbolPointer<KtFunctionLikeSymbol> {
+    return KtPsiBasedSymbolPointer(this, KtFunctionLikeSymbol::class)
+}
+
+public fun KtConstructor<*>.symbolPointer(): KtSymbolPointer<KtConstructorSymbol> {
+    return KtPsiBasedSymbolPointer(this, KtConstructorSymbol::class)
+}
+
+public fun KtTypeParameter.symbolPointer(): KtSymbolPointer<KtTypeParameterSymbol> {
+    return KtPsiBasedSymbolPointer(this, KtTypeParameterSymbol::class)
+}
+
+public fun KtFunctionLiteral.symbolPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> {
+    return KtPsiBasedSymbolPointer(this, KtAnonymousFunctionSymbol::class)
+}
+
+public fun KtObjectLiteralExpression.symbolPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> {
+    return KtPsiBasedSymbolPointer(this, KtAnonymousObjectSymbol::class)
+}
+
+public fun KtClassOrObject.symbolPointer(): KtSymbolPointer<KtClassOrObjectSymbol> {
+    return KtPsiBasedSymbolPointer(this, KtClassOrObjectSymbol::class)
+}
+
+public fun KtPropertyAccessor.symbolPointer(): KtSymbolPointer<KtPropertyAccessorSymbol> {
+    return KtPsiBasedSymbolPointer(this, KtPropertyAccessorSymbol::class)
 }
