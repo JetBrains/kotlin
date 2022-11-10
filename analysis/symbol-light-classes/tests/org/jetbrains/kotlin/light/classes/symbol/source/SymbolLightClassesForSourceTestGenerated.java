@@ -151,6 +151,12 @@ public class SymbolLightClassesForSourceTestGenerated extends AbstractSymbolLigh
     }
 
     @Test
+    @TestMetadata("JavaBetween.kt")
+    public void testJavaBetween() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/JavaBetween.kt");
+    }
+
+    @Test
     @TestMetadata("JvmNameOnMember.kt")
     public void testJvmNameOnMember() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/JvmNameOnMember.kt");
