@@ -59,6 +59,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiExpressionPsiType
     }
 
     @Test
+    @TestMetadata("localClassWithUnresolvedSuperType.kt")
+    public void testLocalClassWithUnresolvedSuperType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/localClassWithUnresolvedSuperType.kt");
+    }
+
+    @Test
     @TestMetadata("typeParamFlexibleUpperBound.kt")
     public void testTypeParamFlexibleUpperBound() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/typeParamFlexibleUpperBound.kt");
