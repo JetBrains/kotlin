@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.testOld.engines.ExternalTool
-import org.jetbrains.kotlin.js.testOld.engines.SpiderMonkeyEngine
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -43,8 +42,6 @@ abstract class BasicWasmBoxTest(
     private val startUnitTests: Boolean = false
 ) : KotlinTestWithEnvironment() {
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
-
-    private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
     private val COMMON_FILES_NAME = "_common"
 
@@ -148,14 +145,14 @@ abstract class BasicWasmBoxTest(
                 generateWat = generateWat,
             )
 
-            val startUnitTests = if (startUnitTests) "exports.startUnitTests?.();\n" else ""
-
             val testJsQuiet = """
-                import exports from './index.mjs';
-        
-                let actualResult
+                let actualResult;
                 try {
-                    ${startUnitTests}actualResult = exports.box();
+                    // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
+                    let jsModule = await import('./index.mjs');
+                    let wasmExports = jsModule.default;
+                    ${if (startUnitTests) "wasmExports.startUnitTests();" else ""}
+                    actualResult = wasmExports.box();
                 } catch(e) {
                     console.log('Failed with exception!')
                     console.log('Message: ' + e.message)
@@ -163,6 +160,7 @@ abstract class BasicWasmBoxTest(
                     console.log('Stack:')
                     console.log(e.stack)
                 }
+
                 if (actualResult !== "OK")
                     throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
             """.trimIndent()
