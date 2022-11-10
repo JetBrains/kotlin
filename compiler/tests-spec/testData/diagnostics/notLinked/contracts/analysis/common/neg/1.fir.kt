@@ -66,7 +66,7 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
             println(value_2)
         }
         null -> {
-            println(value_3?.xor(true))
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3?.<!UNRESOLVED_REFERENCE!>xor<!>(true))
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
             println(value_1)
             println(value_2)

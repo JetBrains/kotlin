@@ -19,10 +19,6 @@ sealed class Statement {
  * d == False
  */
 data class OperationStatement(override val variable: DataFlowVariable, val operation: Operation) : Statement() {
-    fun invert(): OperationStatement {
-        return OperationStatement(variable, operation.invert())
-    }
-
     override fun toString(): String {
         return "$variable $operation"
     }
@@ -54,13 +50,6 @@ class Implication(
 
 enum class Operation {
     EqTrue, EqFalse, EqNull, NotEqNull;
-
-    fun invert(): Operation = when (this) {
-        EqTrue -> EqFalse
-        EqFalse -> EqTrue
-        EqNull -> NotEqNull
-        NotEqNull -> EqNull
-    }
 
     fun valueIfKnown(given: Operation): Boolean? = when (this) {
         EqTrue, EqFalse -> if (given == NotEqNull) null else given == this

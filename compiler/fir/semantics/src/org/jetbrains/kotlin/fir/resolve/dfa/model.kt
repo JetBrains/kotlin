@@ -19,31 +19,22 @@ class MutableTypeStatement(
     fun copy(): MutableTypeStatement = MutableTypeStatement(variable, LinkedHashSet(exactType))
 }
 
-fun Implication.invertCondition(): Implication = Implication(condition.invert(), effect)
-
 // --------------------------------------- Aliases ---------------------------------------
 
 typealias TypeStatements = Map<RealVariable, TypeStatement>
 
 // --------------------------------------- DSL ---------------------------------------
 
-infix fun DataFlowVariable.eq(constant: Boolean?): OperationStatement {
-    val condition = when (constant) {
-        true -> Operation.EqTrue
-        false -> Operation.EqFalse
-        null -> Operation.EqNull
-    }
-    return OperationStatement(this, condition)
-}
+infix fun DataFlowVariable.eq(constant: Boolean): OperationStatement =
+    OperationStatement(this, if (constant) Operation.EqTrue else Operation.EqFalse)
 
-infix fun DataFlowVariable.notEq(constant: Boolean?): OperationStatement {
-    val condition = when (constant) {
-        true -> Operation.EqFalse
-        false -> Operation.EqTrue
-        null -> Operation.NotEqNull
-    }
-    return OperationStatement(this, condition)
-}
+@Suppress("UNUSED_PARAMETER")
+infix fun DataFlowVariable.eq(constant: Nothing?): OperationStatement =
+    OperationStatement(this, Operation.EqNull)
+
+@Suppress("UNUSED_PARAMETER")
+infix fun DataFlowVariable.notEq(constant: Nothing?): OperationStatement =
+    OperationStatement(this, Operation.NotEqNull)
 
 infix fun OperationStatement.implies(effect: Statement): Implication = Implication(this, effect)
 
