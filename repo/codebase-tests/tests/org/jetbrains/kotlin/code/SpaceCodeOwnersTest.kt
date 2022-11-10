@@ -88,8 +88,6 @@ class SpaceCodeOwnersTest : TestCase() {
         owners: CodeOwners,
         val root: File
     ) {
-        private val fileWalkDepthLimit = 13
-
         val matchers =
             owners.patterns
                 .map { ItemUse(it, FastIgnoreRule(it.pattern)) }
@@ -153,7 +151,6 @@ class SpaceCodeOwnersTest : TestCase() {
         }
 
         fun visitDirectory(directory: File, parentMatch: ItemUse?, depth: Int) {
-            if (depth > fileWalkDepthLimit) return
             val path = directory.path.replace(File.separatorChar, '/')
 
             if (ignoreTracker.isIgnored(path, isDirectory = true)) return
