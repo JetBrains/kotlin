@@ -496,7 +496,7 @@ class Fir2IrDeclarationStorage(
             // It's necessary to understand that such methods do not belong to DefaultImpls but actually generated as default
             // See org.jetbrains.kotlin.backend.jvm.lower.InheritedDefaultMethodsOnClassesLoweringKt.isDefinitelyNotDefaultImplsMethod
             (irParent as? IrClass)?.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
-                    function.origin == FirDeclarationOrigin.Enhancement -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+                    function.isJavaOrEnhancement -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             else -> function.computeIrOrigin(predefinedOrigin)
         }
         // We don't generate signatures for local classes
@@ -1502,8 +1502,7 @@ class Fir2IrDeclarationStorage(
         parentOrigin: IrDeclarationOrigin
     ): IrDeclarationOrigin = when {
         symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride -> IrDeclarationOrigin.FAKE_OVERRIDE
-        parentOrigin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
-                (symbol.fir.origin is FirDeclarationOrigin.Enhancement || symbol.fir.origin is FirDeclarationOrigin.Java) -> {
+        parentOrigin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && symbol.isJavaOrEnhancement -> {
             IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         }
         symbol.origin is FirDeclarationOrigin.Plugin -> GeneratedByPlugin((symbol.origin as FirDeclarationOrigin.Plugin).key)

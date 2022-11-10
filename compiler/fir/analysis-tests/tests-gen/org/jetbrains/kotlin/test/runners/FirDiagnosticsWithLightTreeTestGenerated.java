@@ -6086,6 +6086,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("isAncestor.kt")
+            public void testIsAncestor() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/isAncestor.kt");
+            }
+
+            @Test
             @TestMetadata("KJKComplexHierarchyNestedLoop.kt")
             public void testKJKComplexHierarchyNestedLoop() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/KJKComplexHierarchyNestedLoop.kt");
