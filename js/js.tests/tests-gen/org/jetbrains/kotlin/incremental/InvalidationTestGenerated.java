@@ -190,6 +190,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParams/");
     }
 
+    @TestMetadata("interfaceWithDefaultParams")
+    public void testInterfaceWithDefaultParams() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/interfaceWithDefaultParams/");
+    }
+
     @TestMetadata("jsCode")
     public void testJsCode() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsCode/");

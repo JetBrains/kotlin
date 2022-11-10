@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -97,6 +98,13 @@ internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
     (owner as? IrTypeParametersContainer)?.let { typeParameters ->
         typeParameters.typeParameters.forEach { typeParameter ->
             it.update(typeParameter.symbol.toString())
+        }
+    }
+    (owner as? IrFunction)?.let { irFunction ->
+        irFunction.valueParameters.forEach { functionParam ->
+            // symbol rendering doesn't print default params information
+            // it is important to understand if default params were added or removed
+            it.update(functionParam.defaultValue?.let { "1" } ?: "0")
         }
     }
 }.finalize()
