@@ -110,7 +110,7 @@ fun case_5(value_1: Number?, value_2: String?) {
             println(value_1.toByte())
         }
         false -> {
-            println(value_2<!UNSAFE_CALL!>.<!>length)
+            println(value_2.length)
             println(value_1.inv())
         }
     }
@@ -129,10 +129,10 @@ fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
         }
         false -> {
             println(value_3.length)
-            println(value_2<!UNSAFE_CALL!>.<!>length)
+            println(value_2.length)
         }
         null -> {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+            println(value_1.inv())
         }
     }
 }

@@ -497,46 +497,24 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    // const != null
     private fun processEqWithConst(
         node: EqualityOperatorCallNode, operand: FirExpression, const: FirConstExpression<*>, operation: FirOperation
     ) {
         val isEq = operation.isEq()
-        val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
+        if (const.kind == ConstantValueKind.Null) {
+            return processEqNull(node, operand, isEq)
+        }
+
         val flow = node.flow
+        val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
         val operandVariable = variableStorage.getOrCreateVariable(node.previousFlow, operand)
-        // expression == const -> expression != null
+        // expression == non-null const -> expression != null
         flow.addImplication((expressionVariable eq isEq) implies (operandVariable notEq null))
-
-        // propagating facts for (... == true) and (... == false)
-        when (const.kind) {
-            ConstantValueKind.Boolean -> {
-                val constValue = const.value as Boolean
-                val shouldInvert = isEq xor constValue
-
-                logicSystem.translateVariableFromConditionInStatements(flow, operandVariable, expressionVariable) {
-                    when (it.condition.operation) {
-                        // Whatever the result is after comparing operandVariable with `true` or `false` cannot let you imply effects that apply
-                        // when the operandVariable is null. Hence we return null here.
-                        Operation.EqNull -> null
-                        Operation.NotEqNull -> (expressionVariable eq isEq) implies (it.effect)
-                        Operation.EqTrue, Operation.EqFalse -> if (shouldInvert) it.invertCondition() else it
-                    }
-                }
-            }
-            ConstantValueKind.Null -> {
-                logicSystem.translateVariableFromConditionInStatements(flow, operandVariable, expressionVariable) {
-                    when (it.condition.operation) {
-                        Operation.EqNull -> (expressionVariable eq isEq) implies (it.effect)
-                        Operation.NotEqNull -> (expressionVariable eq !isEq) implies (it.effect)
-                        // Whatever the result is after comparing operandVariable with `null` cannot let you imply effects that apply when the
-                        // operandVariable is true or false.
-                        Operation.EqTrue, Operation.EqFalse -> null
-                    }
-                }
-            }
-            else -> {
-                // Inconclusive if the user code compares with other constants.
+        if (const.kind == ConstantValueKind.Boolean) {
+            val expected = (const.value as Boolean)
+            flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq expected))
+            if (operand.coneType.isBoolean) {
+                flow.addImplication((expressionVariable eq !isEq) implies (operandVariable eq !expected))
             }
         }
     }
@@ -546,7 +524,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
         val operandVariable = variableStorage.getOrCreateVariable(node.previousFlow, operand)
         flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
-        flow.addImplication((expressionVariable notEq isEq) implies (operandVariable notEq null))
+        flow.addImplication((expressionVariable eq !isEq) implies (operandVariable notEq null))
     }
 
     private fun processEq(
@@ -961,24 +939,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                     lastNode.flow.commitOperationStatement(argumentVariable eq true)
                 }
 
-                is ConeBooleanConstantReference -> {
-                    logicSystem.translateVariableFromConditionInStatements(
-                        lastNode.flow,
-                        argumentVariable,
-                        functionCallVariable,
-                        shouldRemoveOriginalStatements = true,
-                        filter = { it.condition.operation == Operation.EqTrue },
-                        transform = {
-                            when (value) {
-                                ConeBooleanConstantReference.TRUE -> it
-                                ConeBooleanConstantReference.FALSE -> it.invertCondition()
-                                else -> throw IllegalStateException()
-                            }
-                        }
-                    )
-                }
-
-                ConeConstantReference.NOT_NULL, ConeConstantReference.NULL -> {
+                else -> {
                     logicSystem.translateVariableFromConditionInStatements(
                         lastNode.flow,
                         argumentVariable,
@@ -988,8 +949,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                         transform = { OperationStatement(it.condition.variable, value.toOperation()) implies it.effect }
                     )
                 }
-
-                else -> throw IllegalArgumentException("Unsupported constant reference: $value")
             }
         }
         graphBuilder.exitContract(qualifiedAccess).mergeIncomingFlow(updateReceivers = true)
@@ -1177,14 +1136,16 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private fun exitBooleanNot(functionCall: FirFunctionCall, node: FunctionCallNode) {
         val previousFlow = node.previousFlow
-        val booleanExpressionVariable = variableStorage.getOrCreateVariable(previousFlow, node.firstPreviousNode.fir)
-        val variable = variableStorage.getOrCreateVariable(previousFlow, functionCall)
-        logicSystem.translateVariableFromConditionInStatements(
-            node.flow,
-            booleanExpressionVariable,
-            variable,
-            transform = { it.invertCondition() }
-        )
+        val argumentVariable = variableStorage.getOrCreateVariable(previousFlow, node.firstPreviousNode.fir)
+        val expressionVariable = variableStorage.getOrCreateVariable(previousFlow, functionCall)
+        logicSystem.translateVariableFromConditionInStatements(node.flow, argumentVariable, expressionVariable) {
+            when (it.condition.operation) {
+                Operation.EqTrue -> expressionVariable eq false implies it.effect
+                Operation.EqFalse -> expressionVariable eq true implies it.effect
+                // `argumentVariable eq/notEq null` shouldn't exist since `argumentVariable` is presumably `Boolean`
+                else -> null
+            }
+        }
     }
 
     // ----------------------------------- Annotations -----------------------------------
