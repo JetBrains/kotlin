@@ -14,6 +14,6 @@ kotlin.sourceSets.configureEach {
 }
 
 dependencies {
-    implementation(kotlinStdlib())
+    compileOnly(kotlinStdlib())
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
 }
