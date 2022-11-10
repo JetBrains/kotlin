@@ -1,5 +1,5 @@
 // !LANGUAGE: +FunctionalTypeWithExtensionAsSupertype
-// IGNORE_BACKEND: JS, JS_IR, WASM
+// IGNORE_BACKEND: JS, JS_IR
 
 interface I: (String) -> String
 

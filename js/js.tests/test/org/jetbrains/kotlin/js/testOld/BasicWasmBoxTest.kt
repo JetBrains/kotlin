@@ -45,6 +45,10 @@ abstract class BasicWasmBoxTest(
 
     private val COMMON_FILES_NAME = "_common"
 
+    private val extraLanguageFeatures = mapOf(
+        LanguageFeature.JsAllowImplementingFunctionInterface to LanguageFeature.State.ENABLED,
+    )
+
     fun doTest(filePath: String) = doTestWithTransformer(filePath) { it }
     fun doTestWithTransformer(filePath: String, transformer: java.util.function.Function<String, String>) {
         val file = File(filePath)
@@ -241,7 +245,7 @@ abstract class BasicWasmBoxTest(
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, true)
         configuration.languageVersionSettings = languageVersionSettings
-            ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+            ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, specificFeatures = extraLanguageFeatures)
         return JsConfig(project, configuration, CompilerEnvironment, null, null)
     }
 
@@ -256,7 +260,7 @@ abstract class BasicWasmBoxTest(
                 }
             }
 
-            val languageVersionSettings = parseLanguageVersionSettings(directives)
+            val languageVersionSettings = parseLanguageVersionSettings(directives, extraLanguageFeatures)
 
             val temporaryFile = File(tmpDir, "WASM_TEST/$fileName")
             KtTestUtil.mkdirs(temporaryFile.parentFile)
