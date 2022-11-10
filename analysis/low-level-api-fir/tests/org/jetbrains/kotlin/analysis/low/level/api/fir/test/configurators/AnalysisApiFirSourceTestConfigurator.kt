@@ -29,6 +29,7 @@ class AnalysisApiFirSourceTestConfigurator(override val analyseInDependentSessio
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
+            useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
             configureOptionalTestCompilerPlugin()
         }
