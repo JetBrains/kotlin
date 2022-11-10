@@ -104,7 +104,7 @@ internal class FirElementBuilder(
 }
 
 // TODO: simplify
-internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtNamedDeclaration? {
+internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
     var container: PsiElement? = this
     while (container != null && container !is KtFile) {
         if (container is KtNamedDeclaration
@@ -117,12 +117,15 @@ internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate:
         ) {
             return container
         }
+        if (container is KtDestructuringDeclaration && container.parent is KtFile) {
+            return container
+        }
         container = container.parent
     }
     return null
 }
 
-fun PsiElement.getNonLocalContainingInBodyDeclarationWith(): KtNamedDeclaration? =
+fun PsiElement.getNonLocalContainingInBodyDeclarationWith(): KtDeclaration? =
     getNonLocalContainingOrThisDeclaration { declaration ->
         when (declaration) {
             is KtNamedFunction -> declaration.bodyExpression?.isAncestor(this) == true

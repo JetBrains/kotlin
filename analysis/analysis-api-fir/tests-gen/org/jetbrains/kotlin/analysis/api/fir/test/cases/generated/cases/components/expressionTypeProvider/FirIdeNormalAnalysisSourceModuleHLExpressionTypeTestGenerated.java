@@ -137,6 +137,12 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
     }
 
     @Test
+    @TestMetadata("nameReference.kt")
+    public void testNameReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference.kt");
+    }
+
+    @Test
     @TestMetadata("nonExpression.kt")
     public void testNonExpression() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nonExpression.kt");

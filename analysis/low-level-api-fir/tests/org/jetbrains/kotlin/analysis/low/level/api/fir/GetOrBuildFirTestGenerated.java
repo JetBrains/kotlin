@@ -216,6 +216,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("destructuring.kt")
+        public void testDestructuring() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/destructuring.kt");
+        }
+
+        @Test
         @TestMetadata("propertyDelegate.kt")
         public void testPropertyDelegate() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/propertyDelegate.kt");
