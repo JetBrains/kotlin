@@ -251,6 +251,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClassInObject.kt");
         }
 
+        @TestMetadata("FunctionWithoutName.kt")
+        public void testFunctionWithoutName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/FunctionWithoutName.kt");
+        }
+
         @TestMetadata("JvmPackageName.kt")
         public void testJvmPackageName() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/JvmPackageName.kt");
@@ -264,6 +269,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("PrivateInTrait.kt")
         public void testPrivateInTrait() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/PrivateInTrait.kt");
+        }
+
+        @TestMetadata("PropertyWithoutName.kt")
+        public void testPropertyWithoutName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/PropertyWithoutName.kt");
         }
 
         @TestMetadata("RepetableAnnotations.kt")
