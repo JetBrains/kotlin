@@ -5,9 +5,9 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectImpl
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtensionBuilder
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Overwrite
@@ -133,10 +133,10 @@ interface IdeaKpmProjectModelBuilder {
 
     @ExternalVariantApi
     fun registerExtrasSerializationExtension(
-        extension: IdeaExtrasSerializationExtension
+        extension: IdeaKotlinExtrasSerializationExtension
     )
 
-    fun buildSerializationContext(): IdeaSerializationContext
+    fun buildSerializationContext(): IdeaKotlinSerializationContext
 
     fun buildIdeaKpmProject(): IdeaKpmProject
 
@@ -171,7 +171,7 @@ operator fun FragmentConstraint.not() = FragmentConstraint { fragment ->
 
 @ExternalVariantApi
 fun IdeaKpmProjectModelBuilder.registerExtrasSerializationExtension(
-    builder: IdeaExtrasSerializationExtensionBuilder.() -> Unit
+    builder: IdeaKotlinExtrasSerializationExtensionBuilder.() -> Unit
 ) {
-    registerExtrasSerializationExtension(IdeaExtrasSerializationExtension(builder))
+    registerExtrasSerializationExtension(IdeaKotlinExtrasSerializationExtension(builder))
 }

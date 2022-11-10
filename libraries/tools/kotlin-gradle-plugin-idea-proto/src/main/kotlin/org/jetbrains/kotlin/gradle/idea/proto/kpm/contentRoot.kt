@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.idea.proto.Extras
 import org.jetbrains.kotlin.gradle.idea.proto.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.IdeaKpmContentRootProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.ideaKpmContentRootProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import java.io.File
 
-internal fun IdeaSerializationContext.IdeaKpmContentRootProto(sourceDirectory: IdeaKpmContentRoot): IdeaKpmContentRootProto {
+internal fun IdeaKotlinSerializationContext.IdeaKpmContentRootProto(sourceDirectory: IdeaKpmContentRoot): IdeaKpmContentRootProto {
     return ideaKpmContentRootProto {
         absolutePath = sourceDirectory.file.absolutePath
         type = sourceDirectory.type
@@ -22,7 +22,7 @@ internal fun IdeaSerializationContext.IdeaKpmContentRootProto(sourceDirectory: I
     }
 }
 
-internal fun IdeaSerializationContext.IdeaKpmContentRoot(proto: IdeaKpmContentRootProto): IdeaKpmContentRoot {
+internal fun IdeaKotlinSerializationContext.IdeaKpmContentRoot(proto: IdeaKpmContentRootProto): IdeaKpmContentRoot {
     return IdeaKpmContentRootImpl(
         file = File(proto.absolutePath),
         type = proto.type,
@@ -30,10 +30,10 @@ internal fun IdeaSerializationContext.IdeaKpmContentRoot(proto: IdeaKpmContentRo
     )
 }
 
-internal fun IdeaSerializationContext.IdeaKpmContentRoot(data: ByteArray): IdeaKpmContentRoot {
+internal fun IdeaKotlinSerializationContext.IdeaKpmContentRoot(data: ByteArray): IdeaKpmContentRoot {
     return IdeaKpmContentRoot(IdeaKpmContentRootProto.parseFrom(data))
 }
 
-internal fun IdeaKpmContentRoot.toByteArray(context: IdeaSerializationContext): ByteArray {
+internal fun IdeaKpmContentRoot.toByteArray(context: IdeaKotlinSerializationContext): ByteArray {
     return context.IdeaKpmContentRootProto(this).toByteArray()
 }

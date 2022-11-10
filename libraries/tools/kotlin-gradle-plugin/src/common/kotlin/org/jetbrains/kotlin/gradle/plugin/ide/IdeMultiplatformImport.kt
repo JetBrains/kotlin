@@ -9,8 +9,8 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtensionBuilder
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
@@ -58,7 +58,7 @@ interface IdeMultiplatformImport {
 
     @ExternalKotlinTargetApi
     fun registerExtrasSerializationExtension(
-        extension: IdeaExtrasSerializationExtension
+        extension: IdeaKotlinExtrasSerializationExtension
     )
 
     /**
@@ -156,7 +156,7 @@ internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport get() 
 
 @ExternalKotlinTargetApi
 fun IdeMultiplatformImport.registerExtrasSerializationExtension(
-    builder: IdeaExtrasSerializationExtensionBuilder.() -> Unit
+    builder: IdeaKotlinExtrasSerializationExtensionBuilder.() -> Unit
 ) {
-    registerExtrasSerializationExtension(IdeaExtrasSerializationExtension(builder))
+    registerExtrasSerializationExtension(IdeaKotlinExtrasSerializationExtension(builder))
 }

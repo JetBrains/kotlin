@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.gradle.idea.proto.Extras
 import org.jetbrains.kotlin.gradle.idea.proto.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.IdeaKpmFragmentDependencyProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.ideaKpmFragmentDependencyProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 
-internal fun IdeaSerializationContext.IdeaKpmFragmentDependencyProto(dependency: IdeaKpmFragmentDependency): IdeaKpmFragmentDependencyProto {
+internal fun IdeaKotlinSerializationContext.IdeaKpmFragmentDependencyProto(dependency: IdeaKpmFragmentDependency): IdeaKpmFragmentDependencyProto {
     return ideaKpmFragmentDependencyProto {
         type = when (dependency.type) {
             IdeaKpmFragmentDependency.Type.Regular -> IdeaKpmFragmentDependencyProto.Type.REGULAR
@@ -26,7 +26,7 @@ internal fun IdeaSerializationContext.IdeaKpmFragmentDependencyProto(dependency:
     }
 }
 
-internal fun IdeaSerializationContext.IdeaKpmFragmentDependency(proto: IdeaKpmFragmentDependencyProto): IdeaKpmFragmentDependency {
+internal fun IdeaKotlinSerializationContext.IdeaKpmFragmentDependency(proto: IdeaKpmFragmentDependencyProto): IdeaKpmFragmentDependency {
     return IdeaKpmFragmentDependencyImpl(
         type = when (proto.type) {
             IdeaKpmFragmentDependencyProto.Type.REGULAR -> IdeaKpmFragmentDependency.Type.Regular
@@ -39,10 +39,10 @@ internal fun IdeaSerializationContext.IdeaKpmFragmentDependency(proto: IdeaKpmFr
     )
 }
 
-internal fun IdeaSerializationContext.IdeaKpmFragmentDependency(data: ByteArray): IdeaKpmFragmentDependency {
+internal fun IdeaKotlinSerializationContext.IdeaKpmFragmentDependency(data: ByteArray): IdeaKpmFragmentDependency {
     return IdeaKpmFragmentDependency(IdeaKpmFragmentDependencyProto.parseFrom(data))
 }
 
-internal fun IdeaKpmFragmentDependency.toByteArray(context: IdeaSerializationContext): ByteArray {
+internal fun IdeaKpmFragmentDependency.toByteArray(context: IdeaKotlinSerializationContext): ByteArray {
     return context.IdeaKpmFragmentDependencyProto(this).toByteArray()
 }

@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.idea.proto
 
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaSerializationLogger
+import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaKotlinSerializationLogger
 import kotlin.test.assertEquals
 
-abstract class AbstractSerializationTest<T : Any> : IdeaSerializationContext {
+abstract class AbstractSerializationTest<T : Any> : IdeaKotlinSerializationContext {
 
-    final override val logger = TestIdeaSerializationLogger()
+    final override val logger = TestIdeaKotlinSerializationLogger()
     final override val extrasSerializationExtension = TestIdeaExtrasSerializationExtension
 
     abstract fun serialize(value: T): ByteArray

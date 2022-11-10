@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.idea.testFixtures.serialize
 
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationLogger
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationLogger.Severity
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger.Severity
 import java.io.Serializable
 
-class TestIdeaSerializationLogger : IdeaSerializationLogger {
+class TestIdeaKotlinSerializationLogger : IdeaKotlinSerializationLogger {
     data class Report(
         val severity: Severity,
         val message: String,

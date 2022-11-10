@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.idea.proto.tcs
 
 import org.jetbrains.kotlin.gradle.idea.proto.AbstractSerializationTest
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationLogger
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinInstances
 import kotlin.test.Test
@@ -40,7 +40,7 @@ class IdeaKotlinDependencySerializationTest : AbstractSerializationTest<IdeaKotl
         assertNull(IdeaKotlinDependency(byteArrayOf()))
         if (logger.reports.size != 1) fail("Expected exactly one report in logger. Found ${logger.reports}")
         val report = logger.reports.first()
-        assertEquals(IdeaSerializationLogger.Severity.ERROR, report.severity)
+        assertEquals(IdeaKotlinSerializationLogger.Severity.ERROR, report.severity)
         assertEquals("Dependency not set", report.message)
     }
 }

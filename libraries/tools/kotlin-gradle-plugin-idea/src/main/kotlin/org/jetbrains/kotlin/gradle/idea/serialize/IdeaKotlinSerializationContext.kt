@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.serialize
 
-interface IdeaSerializationContext {
-    val logger: IdeaSerializationLogger
-    val extrasSerializationExtension: IdeaExtrasSerializationExtension
+interface IdeaKotlinSerializationContext {
+    val logger: IdeaKotlinSerializationLogger
+    val extrasSerializationExtension: IdeaKotlinExtrasSerializationExtension
 }

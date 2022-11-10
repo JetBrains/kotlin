@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.gradle.android
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import org.gradle.kotlin.dsl.findByType
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.ideaKpmProjectModelBuilder
 import org.jetbrains.kotlin.gradle.kpm.external.project
@@ -34,6 +34,6 @@ fun KotlinPm20ProjectExtension.androidPrototype() {
     setupIdeaKpmFragmentDependencyResolver()
 
     ideaKpmProjectModelBuilder.registerExtrasSerializationExtension {
-        register(androidDslKey, IdeaExtrasSerializer.javaIoSerializable())
+        register(androidDslKey, IdeaKotlinExtrasSerializer.javaIoSerializable())
     }
 }

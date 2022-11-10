@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.IdeaKpmDependencyProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.IdeaKpmDependencyProto.DependencyCase
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.ideaKpmDependencyProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 
-internal fun IdeaSerializationContext.IdeaKpmDependencyProto(dependency: IdeaKpmDependency): IdeaKpmDependencyProto {
+internal fun IdeaKotlinSerializationContext.IdeaKpmDependencyProto(dependency: IdeaKpmDependency): IdeaKpmDependencyProto {
     return ideaKpmDependencyProto {
         when (dependency) {
             is IdeaKpmResolvedBinaryDependency -> resolvedBinaryDependency = IdeaKpmResolvedBinaryDependencyProto(dependency)
@@ -26,7 +26,7 @@ internal fun IdeaSerializationContext.IdeaKpmDependencyProto(dependency: IdeaKpm
     }
 }
 
-internal fun IdeaSerializationContext.IdeaKpmDependency(proto: IdeaKpmDependencyProto): IdeaKpmDependency? {
+internal fun IdeaKotlinSerializationContext.IdeaKpmDependency(proto: IdeaKpmDependencyProto): IdeaKpmDependency? {
     return when (proto.dependencyCase) {
         DependencyCase.UNRESOLVED_BINARY_DEPENDENCY -> IdeaKpmUnresolvedBinaryDependency(proto.unresolvedBinaryDependency)
         DependencyCase.RESOLVED_BINARY_DEPENDENCY -> IdeaKpmResolvedBinaryDependency(proto.resolvedBinaryDependency)
