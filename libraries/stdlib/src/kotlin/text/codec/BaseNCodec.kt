@@ -11,18 +11,18 @@ package kotlin.text.codec
  * Only codecs with base equal to a power of two are supported.
  */
 public open class BaseNCodec internal constructor(
-    private val encodeMap: ByteArray,
-    private val decodeMap: ByteArray
+    internal val encodeMap: ByteArray,
+    internal val decodeMap: ByteArray
 ) {
     private val base get() = encodeMap.size
 
-    private val bitsPerByte = 8
-    private val bitsPerSymbol = base.countTrailingZeroBits()
+    private val bitsPerByte = Byte.SIZE_BITS
+    internal val bitsPerSymbol = base.countTrailingZeroBits()
 
     private val bytesPerGroup: Int
     private val symbolsPerGroup: Int
 
-    private val paddingSymbol: Byte = 61 // '='
+    internal val paddingSymbol: Byte = 61 // '='
 
     init {
         require(base >= 2 && base and (base - 1) == 0) { "Only codecs with base equal to a power of two are supported." }
@@ -146,11 +146,10 @@ public open class BaseNCodec internal constructor(
         throw throw IllegalArgumentException("Invalid symbol '${symbol.toChar()}'(${symbol.toString(radix = 8)}) at index $index")
     }
 
-    private fun decodeSymbol(symbol: Byte, index: Int): Int {
-        val intSymbol = symbol.toInt() and 0xFF
-        val bits = decodeMap[intSymbol]
+    private fun decodeSymbol(symbol: Int, index: Int): Int {
+        val bits = decodeMap[symbol]
         if (bits < 0) {
-            throwIllegalSymbol(intSymbol, index)
+            throwIllegalSymbol(symbol, index)
         }
         return bits.toInt()
     }
@@ -167,7 +166,7 @@ public open class BaseNCodec internal constructor(
         var byteStart = -bitsPerByte
 
         for (sourceIndex in 0 until source.size - paddings) {
-            val symbol = source[sourceIndex]
+            val symbol = source[sourceIndex].toInt() and 0xFF
 
             payload = (payload shl bitsPerSymbol) or decodeSymbol(symbol, sourceIndex)
             byteStart += bitsPerSymbol
@@ -181,6 +180,7 @@ public open class BaseNCodec internal constructor(
         }
 
         check(payload == 0)
+//        check(byteStart == -bitsPerByte)
         check(resultIndex == result.size)
 
         return result
@@ -232,15 +232,17 @@ public open class BaseNCodec internal constructor(
         return result.size
     }
 
-    /**
-     * Returns `true` if the given [value] is a valid symbol in this codec.
-     */
-    public fun isInAlphabet(value: Byte): Boolean = value in decodeMap.indices
-            && value != paddingSymbol
-            && decodeMap[value.toInt()] > 0
+    private fun isInAlphabet(value: Int): Boolean = value in decodeMap.indices
+            && value != paddingSymbol.toInt()
+            && decodeMap[value] > 0
 
     /**
      * Returns `true` if the given [value] is a valid symbol in this codec.
      */
-    public fun isInAlphabet(value: Char): Boolean = isInAlphabet(value.code.toByte())
+    public fun isInAlphabet(value: Byte): Boolean = isInAlphabet(value.toInt())
+
+    /**
+     * Returns `true` if the given [value] is a valid symbol in this codec.
+     */
+    public fun isInAlphabet(value: Char): Boolean = isInAlphabet(value.code)
 }
