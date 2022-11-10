@@ -19,14 +19,12 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointe
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerDelegator
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
@@ -127,7 +125,15 @@ internal class KtFirKotlinPropertySymbol(
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }
 
     override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtVariableLikeSymbol>(this)?.let { psiPointer ->
+            return symbolPointerDelegator(psiPointer) {
+                when (it) {
+                    is KtKotlinPropertySymbol -> it
+                    is KtValueParameterSymbol -> it.generatedPrimaryConstructorProperty
+                    else -> null
+                }
+            }
+        }
 
         return when (val kind = symbolKind) {
             KtSymbolKind.TOP_LEVEL -> KtFirTopLevelPropertySymbolPointer(firSymbol.callableId, firSymbol.createSignature())

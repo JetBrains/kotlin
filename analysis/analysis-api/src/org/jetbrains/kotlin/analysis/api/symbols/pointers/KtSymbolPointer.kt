@@ -38,3 +38,14 @@ public inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysi
         @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
         override fun restoreSymbol(analysisSession: KtAnalysisSession): S? = getSymbol(analysisSession)
     }
+
+public inline fun <T : KtSymbol, R : KtSymbol> symbolPointerDelegator(
+    pointer: KtSymbolPointer<T>,
+    crossinline transformer: context(KtAnalysisSession) (T) -> R?,
+): KtSymbolPointer<R> = object : KtSymbolPointer<R>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KtAnalysisSession): R? = with(analysisSession) {
+        val symbol = pointer.restoreSymbol() ?: return null
+        transformer(this, symbol)
+    }
+}
