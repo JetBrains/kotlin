@@ -28035,6 +28035,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("scriptScopes.kts")
+            public void testScriptScopes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/script/scriptScopes.kts");
+            }
+
+            @Test
             @TestMetadata("SimpleScript.kts")
             public void testSimpleScript() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/script/SimpleScript.kts");
