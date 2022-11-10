@@ -14,7 +14,7 @@ with(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.apply(rootPr
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.apply(rootProject)) {
-    version = "10.9.130"
+    version = "10.9.194"
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.apply(rootProject)) {
