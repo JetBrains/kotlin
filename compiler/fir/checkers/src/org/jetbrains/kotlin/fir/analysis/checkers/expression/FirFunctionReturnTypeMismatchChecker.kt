@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULL_FOR_NONNULL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSI
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.*
 
@@ -24,6 +27,15 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         if (expression.source == null) return
         val targetElement = expression.target.labeledElement
         if (targetElement is FirErrorFunction || targetElement is FirAnonymousFunction && targetElement.isLambda) {
+            return
+        }
+
+        val sourceKind = expression.source?.kind
+        if (
+            !targetElement.symbol.hasExplicitReturnType &&
+            sourceKind != KtRealSourceElementKind &&
+            targetElement !is FirPropertyAccessor
+        ) {
             return
         }
         val resultExpression = expression.result
@@ -35,7 +47,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         else
             targetElement.returnTypeRef.coneType
         if (targetElement is FirAnonymousFunction &&
-            expression.source?.kind is KtFakeSourceElementKind.ImplicitReturn.FromLastStatement &&
+            sourceKind is KtFakeSourceElementKind.ImplicitReturn.FromLastStatement &&
             functionReturnType.isUnit
         ) {
             return
