@@ -5,7 +5,7 @@
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class A(val x: Int) {
-    fun equals(other: A) = x % 5 == other.x % 5
+    operator fun equals(other: A) = x % 5 == other.x % 5
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION

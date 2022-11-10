@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isEquals
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -217,7 +218,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 reporter.reportOn(
                     equalsFromAnyOverriding!!.source,
                     FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-                    declaration.name.asString(),
+                    declaration.defaultType().replaceArgumentsWithStarProjections(),
                     context
                 )
             }

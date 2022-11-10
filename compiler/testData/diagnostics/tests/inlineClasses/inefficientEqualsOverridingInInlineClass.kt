@@ -22,7 +22,16 @@ value class IC2(val x: Int) {
 value class IC3(val x: Int) {
     override fun equals(other: Any?) = true
 
-    fun equals(other: IC3) = true
+    operator fun equals(other: IC3) = true
+
+    override fun hashCode() = 0
+}
+
+@JvmInline
+value class IC4(val x: Int) {
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS!>equals<!>(other: Any?) = true
+
+    fun equals(other: IC4) = true
 
     override fun hashCode() = 0
 }

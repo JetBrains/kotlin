@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
@@ -1308,10 +1307,16 @@ fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>
 fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
 
-val IrFunction.isTypedEquals: Boolean
-    get() {
-        val parentClass = parent as? IrClass ?: return false
-        return name == OperatorNameConventions.EQUALS && returnType.isBoolean() && valueParameters.size == 1
-                && (valueParameters[0].type.classFqName?.run { parentClass.hasEqualFqName(this) } ?: false)
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && parentClass.isValue
-    }
+fun IrFunction.isToString(): Boolean =
+    name.asString() == "toString" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
+
+fun IrFunction.isHashCode() =
+    name.asString() == "hashCode" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
+
+fun IrFunction.isEquals(irBuiltIns: IrBuiltIns) =
+    name.asString() == "equals" &&
+            extensionReceiverParameter == null && contextReceiverParametersCount == 0 &&
+            valueParameters.singleOrNull()?.type == irBuiltIns.anyNType
+
+fun IrFunction.isTypedEquals(irBuiltIns: IrBuiltIns) =
+    name == OperatorNameConventions.EQUALS && ((this as? IrSimpleFunction)?.isOperator == true) && !isEquals(irBuiltIns)

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isEquals
-import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isToString
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -736,7 +734,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                         }
                     } else {
                         // left one is unboxed, right is not
-                        val equals = leftClass.functions.single { it.isEquals(backendContext) }
+                        val equals = leftClass.functions.single { it.isEquals(backendContext.irBuiltIns) }
                         +irCall(equals).apply {
                             copyTypeArgumentsFrom(expression)
                             dispatchReceiver = leftArgument
