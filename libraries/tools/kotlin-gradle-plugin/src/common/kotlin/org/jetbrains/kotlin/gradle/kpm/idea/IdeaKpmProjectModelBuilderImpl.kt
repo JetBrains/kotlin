@@ -12,8 +12,8 @@ import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectContainer
 import org.jetbrains.kotlin.gradle.idea.proto.kpm.toByteArray
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
@@ -48,7 +48,7 @@ internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods in
     private val registeredDependencyResolvers = mutableListOf<RegisteredDependencyResolver>()
     private val registeredDependencyTransformers = mutableListOf<RegisteredDependencyTransformer>()
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
-    private val registeredExtrasSerializationExtensions = mutableListOf<IdeaExtrasSerializationExtension>()
+    private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKotlinExtrasSerializationExtension>()
 
     override fun registerDependencyResolver(
         resolver: IdeaKpmDependencyResolver,
@@ -81,12 +81,12 @@ internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods in
     }
 
     override fun registerExtrasSerializationExtension(
-        extension: IdeaExtrasSerializationExtension
+        extension: IdeaKotlinExtrasSerializationExtension
     ) {
         registeredExtrasSerializationExtensions.add(extension)
     }
 
-    override fun buildSerializationContext(): IdeaSerializationContext {
+    override fun buildSerializationContext(): IdeaKotlinSerializationContext {
         return IdeaSerializationContext(
             logger = extension.project.logger,
             extrasSerializationExtensions = registeredExtrasSerializationExtensions.toList()

@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.idea.testFixtures.serialize
 
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializer
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import java.nio.ByteBuffer
 
-object TestIdeaIntExtrasSerializer : IdeaExtrasSerializer<Int> {
-    override fun serialize(context: IdeaSerializationContext, value: Int): ByteArray {
+object TestIdeaIntKotlinExtrasSerializer : IdeaKotlinExtrasSerializer<Int> {
+    override fun serialize(context: IdeaKotlinSerializationContext, value: Int): ByteArray {
         return ByteBuffer.allocate(Int.SIZE_BYTES).putInt(value).array()
     }
 
-    override fun deserialize(context: IdeaSerializationContext, data: ByteArray): Int {
+    override fun deserialize(context: IdeaKotlinSerializationContext, data: ByteArray): Int {
         return ByteBuffer.wrap(data).int
     }
 }

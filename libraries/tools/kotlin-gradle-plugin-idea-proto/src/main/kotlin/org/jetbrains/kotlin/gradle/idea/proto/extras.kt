@@ -10,17 +10,17 @@ package org.jetbrains.kotlin.gradle.idea.proto
 import com.google.protobuf.ByteString
 import org.jetbrains.kotlin.gradle.idea.proto.generated.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.ideaExtrasProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializer
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.tooling.core.*
 
 @Suppress("unchecked_cast")
-internal fun IdeaSerializationContext.IdeaExtrasProto(extras: Extras): IdeaExtrasProto {
+internal fun IdeaKotlinSerializationContext.IdeaExtrasProto(extras: Extras): IdeaExtrasProto {
     val context = this
     return ideaExtrasProto {
         extras.entries.forEach { (key, value) ->
             val serializer = context.extrasSerializationExtension.serializer(key) ?: return@forEach
-            serializer as IdeaExtrasSerializer<Any>
+            serializer as IdeaKotlinExtrasSerializer<Any>
             val serialized = runCatching { serializer.serialize(context, value) ?: return@forEach }.getOrElse { exception ->
                 logger.error("Failed to serialize $key, using ${serializer.javaClass.simpleName}", exception)
                 return@forEach
@@ -32,7 +32,7 @@ internal fun IdeaSerializationContext.IdeaExtrasProto(extras: Extras): IdeaExtra
 }
 
 @Suppress("unchecked_cast")
-internal fun IdeaSerializationContext.Extras(proto: IdeaExtrasProto): MutableExtras {
+internal fun IdeaKotlinSerializationContext.Extras(proto: IdeaExtrasProto): MutableExtras {
     return proto.valuesMap.entries.mapNotNull { (keyString, value) ->
         val key = Extras.Key.fromString(keyString) as Extras.Key<Any>
         val serializer = extrasSerializationExtension.serializer(key) ?: return@mapNotNull null

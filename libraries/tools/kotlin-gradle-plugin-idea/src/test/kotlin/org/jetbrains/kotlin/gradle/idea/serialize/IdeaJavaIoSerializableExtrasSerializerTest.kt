@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.serialize
 
-import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaKotlinSerializationContext
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import org.junit.Test
 import java.io.Serializable
@@ -18,8 +18,8 @@ class IdeaJavaIoSerializableExtrasSerializerTest {
 
     @Test
     fun `serialize - deserialize - String`() {
-        val context = TestIdeaSerializationContext()
-        val serializer = IdeaExtrasSerializer.javaIoSerializable<String>()
+        val context = TestIdeaKotlinSerializationContext()
+        val serializer = IdeaKotlinExtrasSerializer.javaIoSerializable<String>()
         val binary = assertNotNull(
             serializer.serialize(context, "Sunny Cash"),
             "Failed to serialize: ${context.logger.reports}"
@@ -34,12 +34,12 @@ class IdeaJavaIoSerializableExtrasSerializerTest {
     fun `serialize - deserialize - non serializable object`() {
         class ThisIsNotSerializable
 
-        val context = TestIdeaSerializationContext()
-        val serializer = IdeaExtrasSerializer.javaIoSerializable<ThisIsNotSerializable>()
+        val context = TestIdeaKotlinSerializationContext()
+        val serializer = IdeaKotlinExtrasSerializer.javaIoSerializable<ThisIsNotSerializable>()
         assertNull(serializer.serialize(context, ThisIsNotSerializable()), "Expected null return value for non serializable object")
 
         val serializationFailureReportsCount = context.logger.reports.count { report ->
-            report.message.startsWith(IdeaJavaIoSerializableExtrasSerializer.ErrorMessages.SERIALIZATION_FAILURE)
+            report.message.startsWith(IdeaKotlinJavaIoSerializableExtrasSerializer.ErrorMessages.SERIALIZATION_FAILURE)
         }
 
         assertEquals(
@@ -58,8 +58,8 @@ class IdeaJavaIoSerializableExtrasSerializerTest {
             fun readResolve(): Any = throw exception
         }
 
-        val context = TestIdeaSerializationContext()
-        val serializer = IdeaExtrasSerializer.javaIoSerializable<NotDeserializable>()
+        val context = TestIdeaKotlinSerializationContext()
+        val serializer = IdeaKotlinExtrasSerializer.javaIoSerializable<NotDeserializable>()
         val binary = assertNotNull(serializer.serialize(context, NotDeserializable()))
         assertNull(serializer.deserialize(context, binary))
 
@@ -72,8 +72,8 @@ class IdeaJavaIoSerializableExtrasSerializerTest {
         val reportMessage = assertNotNull(report.message, "Expected message in issue report")
 
         assertTrue(
-            reportMessage.startsWith(IdeaJavaIoSerializableExtrasSerializer.ErrorMessages.DESERIALIZATION_FAILURE),
-            "Expected issue report to start with ${IdeaJavaIoSerializableExtrasSerializer.ErrorMessages.DESERIALIZATION_FAILURE}"
+            reportMessage.startsWith(IdeaKotlinJavaIoSerializableExtrasSerializer.ErrorMessages.DESERIALIZATION_FAILURE),
+            "Expected issue report to start with ${IdeaKotlinJavaIoSerializableExtrasSerializer.ErrorMessages.DESERIALIZATION_FAILURE}"
         )
 
 

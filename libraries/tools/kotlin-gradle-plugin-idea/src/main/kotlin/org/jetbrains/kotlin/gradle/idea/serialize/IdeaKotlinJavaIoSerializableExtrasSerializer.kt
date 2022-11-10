@@ -11,11 +11,11 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import kotlin.reflect.KClass
 
-internal class IdeaJavaIoSerializableExtrasSerializer<T : Any>(
+internal class IdeaKotlinJavaIoSerializableExtrasSerializer<T : Any>(
     private val clazz: KClass<T>
-) : IdeaExtrasSerializer<T> {
+) : IdeaKotlinExtrasSerializer<T> {
 
-    override fun serialize(context: IdeaSerializationContext, value: T): ByteArray? {
+    override fun serialize(context: IdeaKotlinSerializationContext, value: T): ByteArray? {
         return try {
             ByteArrayOutputStream().use { byteArrayOutputStream ->
                 ObjectOutputStream(byteArrayOutputStream).use { oos -> oos.writeObject(value) }
@@ -27,7 +27,7 @@ internal class IdeaJavaIoSerializableExtrasSerializer<T : Any>(
         }
     }
 
-    override fun deserialize(context: IdeaSerializationContext, data: ByteArray): T? {
+    override fun deserialize(context: IdeaKotlinSerializationContext, data: ByteArray): T? {
         return try {
             ObjectInputStream(ByteArrayInputStream(data)).use { stream -> clazz.java.cast(stream.readObject()) }
         } catch (t: Throwable) {

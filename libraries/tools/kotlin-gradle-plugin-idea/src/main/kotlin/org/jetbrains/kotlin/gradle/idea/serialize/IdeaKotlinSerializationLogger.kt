@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.serialize
 
-interface IdeaSerializationLogger {
+interface IdeaKotlinSerializationLogger {
     enum class Severity {
         WARNING,
         ERROR,
@@ -15,7 +15,7 @@ interface IdeaSerializationLogger {
     fun warn(message: String, cause: Throwable? = null) = report(Severity.WARNING, message, cause)
     fun error(message: String, cause: Throwable? = null) = report(Severity.ERROR, message, cause)
 
-    object None : IdeaSerializationLogger {
+    object None : IdeaKotlinSerializationLogger {
         override fun report(severity: Severity, message: String, cause: Throwable?) = Unit
     }
 }

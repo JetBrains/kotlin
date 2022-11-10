@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
@@ -99,6 +99,6 @@ internal fun IdeaKpmProjectModelBuilder.Companion.default(
 
     registerExtrasSerializationExtension {
         /* For transporting debugging breadcrumbs into the ide */
-        register(kotlinDebugKey, IdeaExtrasSerializer.javaIoSerializable())
+        register(kotlinDebugKey, IdeaKotlinExtrasSerializer.javaIoSerializable())
     }
 }
