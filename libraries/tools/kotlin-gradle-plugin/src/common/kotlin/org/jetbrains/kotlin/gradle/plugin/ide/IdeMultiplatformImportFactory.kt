@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.kpm.idea.kotlinDebugKey
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeDependsOnDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeTransformedMetadataDependencyResolver
@@ -29,7 +29,7 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
         )
 
         registerExtrasSerializationExtension {
-            register(kotlinDebugKey, IdeaExtrasSerializer.javaIoSerializable())
+            register(kotlinDebugKey, IdeaKotlinExtrasSerializer.javaIoSerializable())
         }
     }
 }

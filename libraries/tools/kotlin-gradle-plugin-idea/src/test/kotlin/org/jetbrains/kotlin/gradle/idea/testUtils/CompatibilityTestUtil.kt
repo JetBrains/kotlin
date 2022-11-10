@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.idea.testUtils
 
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationLogger
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.TestIdeaKpmClassLoaderProjectSerializer
 import java.io.File
 import java.net.URLClassLoader
@@ -49,7 +49,7 @@ fun deserializeIdeaKpmProjectWithBackwardsCompatibleClasses(project: ByteArray):
     )
 
     assertEquals(
-        0, serializer.reports.count { it.severity > IdeaSerializationLogger.Severity.WARNING },
+        0, serializer.reports.count { it.severity > IdeaKotlinSerializationLogger.Severity.WARNING },
         "Expected no severe deserialization reports. Found ${serializer.reports}"
     )
 

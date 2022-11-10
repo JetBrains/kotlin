@@ -9,13 +9,13 @@ import com.google.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependencyProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependencyProto.DependencyCase
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ideaKotlinDependencyProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 
-internal fun IdeaSerializationContext.IdeaKotlinDependencyProto(dependency: IdeaKotlinDependency): IdeaKotlinDependencyProto {
+internal fun IdeaKotlinSerializationContext.IdeaKotlinDependencyProto(dependency: IdeaKotlinDependency): IdeaKotlinDependencyProto {
     return ideaKotlinDependencyProto {
         when (dependency) {
             is IdeaKotlinResolvedBinaryDependency -> resolvedBinaryDependency = IdeaKotlinResolvedBinaryDependencyProto(dependency)
@@ -25,7 +25,7 @@ internal fun IdeaSerializationContext.IdeaKotlinDependencyProto(dependency: Idea
     }
 }
 
-internal fun IdeaSerializationContext.IdeaKotlinDependency(proto: IdeaKotlinDependencyProto): IdeaKotlinDependency? {
+internal fun IdeaKotlinSerializationContext.IdeaKotlinDependency(proto: IdeaKotlinDependencyProto): IdeaKotlinDependency? {
     return when (proto.dependencyCase) {
         DependencyCase.SOURCE_DEPENDENCY -> IdeaKotlinSourceDependency(proto.sourceDependency)
         DependencyCase.RESOLVED_BINARY_DEPENDENCY -> IdeaKotlinResolvedBinaryDependency(proto.resolvedBinaryDependency)
@@ -38,11 +38,11 @@ internal fun IdeaSerializationContext.IdeaKotlinDependency(proto: IdeaKotlinDepe
     }
 }
 
-fun IdeaKotlinDependency.toByteArray(context: IdeaSerializationContext): ByteArray {
+fun IdeaKotlinDependency.toByteArray(context: IdeaKotlinSerializationContext): ByteArray {
     return context.IdeaKotlinDependencyProto(this).toByteArray()
 }
 
-fun IdeaSerializationContext.IdeaKotlinDependency(data: ByteArray): IdeaKotlinDependency? {
+fun IdeaKotlinSerializationContext.IdeaKotlinDependency(data: ByteArray): IdeaKotlinDependency? {
     return try {
         val proto = IdeaKotlinDependencyProto.parseFrom(data)
         IdeaKotlinDependency(proto)

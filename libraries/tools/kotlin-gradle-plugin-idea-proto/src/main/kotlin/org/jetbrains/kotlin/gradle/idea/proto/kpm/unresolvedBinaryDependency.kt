@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.gradle.idea.proto.Extras
 import org.jetbrains.kotlin.gradle.idea.proto.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.IdeaKpmUnresolvedBinaryDependencyProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.ideaKpmUnresolvedBinaryDependencyProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 
-internal fun IdeaSerializationContext.IdeaKpmUnresolvedBinaryDependencyProto(
+internal fun IdeaKotlinSerializationContext.IdeaKpmUnresolvedBinaryDependencyProto(
     dependency: IdeaKpmUnresolvedBinaryDependency
 ): IdeaKpmUnresolvedBinaryDependencyProto {
     return ideaKpmUnresolvedBinaryDependencyProto {
@@ -23,7 +23,7 @@ internal fun IdeaSerializationContext.IdeaKpmUnresolvedBinaryDependencyProto(
     }
 }
 
-internal fun IdeaSerializationContext.IdeaKpmUnresolvedBinaryDependency(proto: IdeaKpmUnresolvedBinaryDependencyProto): IdeaKpmUnresolvedBinaryDependency {
+internal fun IdeaKotlinSerializationContext.IdeaKpmUnresolvedBinaryDependency(proto: IdeaKpmUnresolvedBinaryDependencyProto): IdeaKpmUnresolvedBinaryDependency {
     return IdeaKpmUnresolvedBinaryDependencyImpl(
         cause = if (proto.hasCause()) proto.cause else null,
         coordinates = if (proto.hasCoordinates()) IdeaKpmBinaryCoordinates(proto.coordinates) else null,
@@ -31,10 +31,10 @@ internal fun IdeaSerializationContext.IdeaKpmUnresolvedBinaryDependency(proto: I
     )
 }
 
-internal fun IdeaSerializationContext.IdeaKpmUnresolvedBinaryDependency(data: ByteArray): IdeaKpmUnresolvedBinaryDependency {
+internal fun IdeaKotlinSerializationContext.IdeaKpmUnresolvedBinaryDependency(data: ByteArray): IdeaKpmUnresolvedBinaryDependency {
     return IdeaKpmUnresolvedBinaryDependency(IdeaKpmUnresolvedBinaryDependencyProto.parseFrom(data))
 }
 
-internal fun IdeaKpmUnresolvedBinaryDependency.toByteArray(context: IdeaSerializationContext): ByteArray {
+internal fun IdeaKpmUnresolvedBinaryDependency.toByteArray(context: IdeaKotlinSerializationContext): ByteArray {
     return context.IdeaKpmUnresolvedBinaryDependencyProto(this).toByteArray()
 }

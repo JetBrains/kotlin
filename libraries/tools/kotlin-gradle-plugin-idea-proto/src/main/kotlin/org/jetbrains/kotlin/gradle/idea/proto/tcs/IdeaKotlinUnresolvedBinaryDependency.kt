@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.gradle.idea.proto.Extras
 import org.jetbrains.kotlin.gradle.idea.proto.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinUnresolvedBinaryDependencyProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ideaKotlinUnresolvedBinaryDependencyProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.tooling.core.toMutableExtras
 
-internal fun IdeaSerializationContext.IdeaKotlinUnresolvedBinaryDependencyProto(
+internal fun IdeaKotlinSerializationContext.IdeaKotlinUnresolvedBinaryDependencyProto(
     dependency: IdeaKotlinUnresolvedBinaryDependency
 ): IdeaKotlinUnresolvedBinaryDependencyProto {
     return ideaKotlinUnresolvedBinaryDependencyProto {
@@ -23,7 +23,7 @@ internal fun IdeaSerializationContext.IdeaKotlinUnresolvedBinaryDependencyProto(
     }
 }
 
-internal fun IdeaSerializationContext.IdeaKotlinUnresolvedBinaryDependency(
+internal fun IdeaKotlinSerializationContext.IdeaKotlinUnresolvedBinaryDependency(
     proto: IdeaKotlinUnresolvedBinaryDependencyProto
 ): IdeaKotlinUnresolvedBinaryDependency {
     return IdeaKotlinUnresolvedBinaryDependency(

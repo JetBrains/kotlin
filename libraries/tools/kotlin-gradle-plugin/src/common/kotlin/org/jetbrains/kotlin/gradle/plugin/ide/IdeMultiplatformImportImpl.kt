@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.toByteArray
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -64,7 +64,7 @@ internal class IdeMultiplatformImportImpl(
     private val registeredDependencyResolvers = mutableListOf<RegisteredDependencyResolver>()
     private val registeredDependencyTransformers = mutableListOf<RegisteredDependencyTransformer>()
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
-    private val registeredExtrasSerializationExtensions = mutableListOf<IdeaExtrasSerializationExtension>()
+    private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKotlinExtrasSerializationExtension>()
 
     @ExternalKotlinTargetApi
     override fun registerDependencyResolver(
@@ -97,7 +97,7 @@ internal class IdeMultiplatformImportImpl(
     }
 
     @ExternalKotlinTargetApi
-    override fun registerExtrasSerializationExtension(extension: IdeaExtrasSerializationExtension) {
+    override fun registerExtrasSerializationExtension(extension: IdeaKotlinExtrasSerializationExtension) {
         registeredExtrasSerializationExtensions.add(extension)
     }
 
@@ -149,7 +149,7 @@ internal class IdeMultiplatformImportImpl(
             .forEach { it.effect(sourceSet, dependencies) }
     }
 
-    private fun createSerializationContext(): IdeaSerializationContext {
+    private fun createSerializationContext(): IdeaKotlinSerializationContext {
         return IdeaSerializationContext(
             logger = extension.project.logger,
             extrasSerializationExtensions = registeredExtrasSerializationExtensions.toList()

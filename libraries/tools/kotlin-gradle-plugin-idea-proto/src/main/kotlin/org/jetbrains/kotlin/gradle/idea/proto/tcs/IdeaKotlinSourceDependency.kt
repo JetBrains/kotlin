@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.gradle.idea.proto.Extras
 import org.jetbrains.kotlin.gradle.idea.proto.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceDependencyProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ideaKotlinSourceDependencyProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.tooling.core.toMutableExtras
 
-internal fun IdeaSerializationContext.IdeaKotlinSourceDependencyProto(
+internal fun IdeaKotlinSerializationContext.IdeaKotlinSourceDependencyProto(
     dependency: IdeaKotlinSourceDependency
 ): IdeaKotlinSourceDependencyProto {
     return ideaKotlinSourceDependencyProto {
@@ -27,7 +27,7 @@ internal fun IdeaSerializationContext.IdeaKotlinSourceDependencyProto(
     }
 }
 
-internal fun IdeaSerializationContext.IdeaKotlinSourceDependency(
+internal fun IdeaKotlinSerializationContext.IdeaKotlinSourceDependency(
     proto: IdeaKotlinSourceDependencyProto
 ): IdeaKotlinSourceDependency {
     return IdeaKotlinSourceDependency(
