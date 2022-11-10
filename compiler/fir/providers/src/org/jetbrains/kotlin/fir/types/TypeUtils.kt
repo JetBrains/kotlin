@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -426,15 +425,15 @@ private fun ConeKotlinType.approximateToOnlySupertype(session: FirSession): Cone
 }
 
 fun shouldApproximateLocalTypesOfNonLocalDeclaration(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
-    if (containingCallableVisibility == null) {
-        return false
-    }
     // Approximate types for non-private (all but package private or private) members.
     // Also private inline functions, as per KT-33917.
-    return containingCallableVisibility == Visibilities.Public ||
-            containingCallableVisibility == Visibilities.Protected ||
-            containingCallableVisibility == Visibilities.Internal ||
-            containingCallableVisibility == Visibilities.Private && isInlineFunction
+    return when (containingCallableVisibility) {
+        Visibilities.Public,
+        Visibilities.Protected,
+        Visibilities.Internal -> true
+        Visibilities.Private -> isInlineFunction
+        else -> false
+    }
 }
 
 fun FirDeclaration.visibilityForApproximation(container: FirDeclaration?): Visibility {

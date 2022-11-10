@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -635,8 +636,10 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (finalType != null) {
-            val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
-            anonymousFunction.transformReturnTypeRef(StoreType, resultType)
+            if (anonymousFunction.returnTypeRef !is FirImplicitUnitTypeRef) {
+                val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
+                anonymousFunction.transformReturnTypeRef(StoreType, resultType)
+            }
             needUpdateLambdaType = true
         }
 

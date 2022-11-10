@@ -272,35 +272,6 @@ fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinT
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)
     val supertypeFullyExpanded = supertype.fullyExpandedType(context.session)
     return AbstractTypeChecker.isSubtypeOf(context, subtypeFullyExpanded, supertypeFullyExpanded)
-            || isSubtypeOfForFunctionalTypeReturningUnit(context.session.typeContext, subtypeFullyExpanded, supertypeFullyExpanded)
-}
-
-private fun isSubtypeOfForFunctionalTypeReturningUnit(
-    context: ConeInferenceContext,
-    subtype: ConeKotlinType,
-    supertype: ConeKotlinType
-): Boolean {
-    if (!supertype.isBuiltinFunctionalType(context.session)) return false
-    val functionalTypeReturnType = supertype.typeArguments.lastOrNull()
-    if ((functionalTypeReturnType as? ConeClassLikeType)?.isUnit == true) {
-        // We don't try to match return type for this case
-        // Dropping the return type (getting only the lambda args)
-        val superTypeArgs = supertype.typeArguments.dropLast(1)
-        val subTypeArgs = subtype.typeArguments.dropLast(1)
-        if (superTypeArgs.size != subTypeArgs.size) return false
-
-        for (i in superTypeArgs.indices) {
-            val subTypeArg = subTypeArgs[i].type ?: return false
-            val superTypeArg = superTypeArgs[i].type ?: return false
-
-            if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, subTypeArg, superTypeArg)) {
-                return false
-            }
-        }
-
-        return true
-    }
-    return false
 }
 
 fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {

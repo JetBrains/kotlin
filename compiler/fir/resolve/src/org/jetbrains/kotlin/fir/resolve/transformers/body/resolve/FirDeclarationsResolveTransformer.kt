@@ -876,9 +876,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             initialReturnTypeRef is FirResolvedTypeRef -> {
                 initialReturnTypeRef.coneType
             }
-            implicitReturns.isNotEmpty() || lambda.returnType?.isUnit == true -> {
+            implicitReturns.isNotEmpty() || (lambda.returnType?.isUnit == true && lambda.isLambda) -> {
                 // i.e., early return, e.g., l@{ ... return@l ... }
                 // Note that the last statement will be coerced to Unit if needed.
+                // also we don't coerce to Unit anonymous functions, only lambdas
                 session.builtinTypes.unitType.type
             }
             else -> {
@@ -888,11 +889,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 ) ?: session.builtinTypes.unitType.type
             }
         }
-        lambda.replaceReturnTypeRef(
-            lambda.returnTypeRef.resolvedTypeFromPrototype(returnType).also {
-                session.lookupTracker?.recordTypeResolveAsLookup(it, lambda.source, components.file.source)
-            }
-        )
+        if (lambda.returnTypeRef !is FirImplicitUnitTypeRef) {
+            lambda.replaceReturnTypeRef(
+                initialReturnTypeRef.resolvedTypeFromPrototype(returnType).also {
+                    session.lookupTracker?.recordTypeResolveAsLookup(it, lambda.source, components.file.source)
+                }
+            )
+        }
         lambda.replaceTypeRef(
             lambda.constructFunctionalTypeRef(
                 isSuspend = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true

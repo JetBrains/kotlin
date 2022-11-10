@@ -79,6 +79,11 @@ fun ConeKotlinType.isFunctionalType(session: FirSession): Boolean {
     return isFunctionalType(session) { it == FunctionClassKind.Function }
 }
 
+// Function, SuspendFunction
+fun ConeKotlinType.isFunctionalOrSuspendFunctionalType(session: FirSession): Boolean {
+    return isFunctionalType(session) { it == FunctionClassKind.Function || it == FunctionClassKind.SuspendFunction }
+}
+
 // SuspendFunction, KSuspendFunction
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
     return isFunctionalType(session) { it.isSuspendType }
