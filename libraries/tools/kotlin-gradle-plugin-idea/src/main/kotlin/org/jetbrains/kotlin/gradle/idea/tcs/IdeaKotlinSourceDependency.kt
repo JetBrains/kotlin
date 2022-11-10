@@ -14,6 +14,14 @@ data class IdeaKotlinSourceDependency(
     override val extras: MutableExtras
 ) : IdeaKotlinDependency {
     enum class Type : Serializable {
-        Regular, Friend, DependsOn
+        Regular, Friend, DependsOn;
+
+        internal companion object {
+            const val serialVersionUID = 0L
+        }
+    }
+
+    internal companion object {
+        const val serialVersionUID = 0L
     }
 }

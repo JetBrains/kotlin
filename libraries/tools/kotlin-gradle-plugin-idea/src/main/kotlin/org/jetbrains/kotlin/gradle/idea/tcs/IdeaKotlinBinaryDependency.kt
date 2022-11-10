@@ -17,10 +17,18 @@ data class IdeaKotlinResolvedBinaryDependency(
     val binaryFile: File,
     override val extras: MutableExtras,
     override val coordinates: IdeaKotlinBinaryCoordinates?
-) : IdeaKotlinBinaryDependency()
+) : IdeaKotlinBinaryDependency() {
+    internal companion object {
+        const val serialVersionUID = 0L
+    }
+}
 
 data class IdeaKotlinUnresolvedBinaryDependency(
     val cause: String?,
     override val coordinates: IdeaKotlinBinaryCoordinates?,
     override val extras: MutableExtras
-) : IdeaKotlinBinaryDependency()
+) : IdeaKotlinBinaryDependency() {
+    internal companion object {
+        const val serialVersionUID = 0L
+    }
+}
