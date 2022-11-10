@@ -138,6 +138,7 @@ interface IdeMultiplatformImport {
         companion object {
             val unconstrained = SourceSetConstraint { true }
             val isNative = SourceSetConstraint { sourceSet -> isNativeSourceSet(sourceSet) }
+            val isMetadata = SourceSetConstraint { sourceSet -> sourceSet.internal.compilations.any { it is KotlinMetadataCompilation } }
         }
     }
 

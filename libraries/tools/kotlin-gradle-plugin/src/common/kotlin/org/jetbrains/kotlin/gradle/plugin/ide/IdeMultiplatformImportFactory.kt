@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaExtrasSerializer
 import org.jetbrains.kotlin.gradle.kpm.idea.kotlinDebugKey
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeDependsOnDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeTransformedMetadataDependencyResolver
 
 fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {
@@ -17,6 +18,13 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
             resolver = IdeDependsOnDependencyResolver,
             constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        registerDependencyResolver(
+            resolver = IdeTransformedMetadataDependencyResolver,
+            constraint = IdeMultiplatformImport.SourceSetConstraint.isMetadata,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
 

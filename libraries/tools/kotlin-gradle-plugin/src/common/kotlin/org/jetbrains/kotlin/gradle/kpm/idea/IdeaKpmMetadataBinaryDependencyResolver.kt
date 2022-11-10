@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule.Companion.moduleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.read
 
 internal class IdeaKpmMetadataBinaryDependencyResolver(
     private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory

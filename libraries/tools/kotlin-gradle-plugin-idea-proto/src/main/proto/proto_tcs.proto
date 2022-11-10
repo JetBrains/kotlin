@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package org.jetbrains.kotlin.gradle.idea.proto.generated.tcs;
+import "proto_extras.proto";
+option java_multiple_files = true;
+
+message IdeaKotlinDependencyProto {
+  oneof dependency {
+    IdeaKotlinSourceDependencyProto source_dependency = 1;
+    IdeaKotlinResolvedBinaryDependencyProto resolved_binary_dependency = 2;
+    IdeaKotlinUnresolvedBinaryDependencyProto unresolved_binary_dependency = 3;
+  }
+}
+
+message IdeaKotlinSourceDependencyProto {
+  enum Type {
+    REGULAR = 0;
+    FRIEND = 1;
+    DEPENDS_ON = 2;
+  }
+
+  optional IdeaExtrasProto extras = 1;
+  optional Type type = 2;
+  optional IdeaKotlinSourceCoordinatesProto coordinates = 3;
+}
+
+message IdeaKotlinUnresolvedBinaryDependencyProto {
+  optional IdeaExtrasProto extras = 1;
+  optional IdeaKotlinBinaryCoordinatesProto coordinates = 2;
+  optional string cause = 3;
+}
+
+message IdeaKotlinResolvedBinaryDependencyProto {
+  optional IdeaExtrasProto extras = 1;
+  optional IdeaKotlinBinaryCoordinatesProto coordinates = 2;
+  optional string binary_type = 3;
+  optional string binary_file = 4;
+}
+
+message IdeaKotlinBinaryCoordinatesProto {
+  optional string group = 1;
+  optional string module = 2;
+  optional string version = 3;
+  optional string source_set_name = 4;
+}
+
+message IdeaKotlinSourceCoordinatesProto {
+  optional string build_id = 1;
+  optional string project_path = 2;
+  optional string project_name = 3;
+  optional string source_set_name = 4;
+}
