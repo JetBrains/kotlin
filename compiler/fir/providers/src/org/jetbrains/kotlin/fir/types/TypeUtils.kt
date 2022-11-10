@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
@@ -270,10 +269,6 @@ fun ConeKotlinType.toFirResolvedTypeRef(
     }
 }
 
-fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
-    return coneTypeSafe<ConeKotlinType>()?.isUnsafeVarianceType(session) == true
-}
-
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
 
@@ -330,101 +325,7 @@ fun FirTypeRef.withReplacedConeType(
     }
 }
 
-fun FirTypeRef.approximated(
-    typeApproximator: ConeTypeApproximator,
-    toSuper: Boolean,
-): FirTypeRef {
-    val alternativeType = (coneType as? ConeIntersectionType)?.alternativeType ?: coneType
-    if (alternativeType !== coneType && !alternativeType.requiresApproximationInPublicPosition()) {
-        return withReplacedConeType(alternativeType)
-    }
-    val approximatedType = if (toSuper)
-        typeApproximator.approximateToSuperType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
-    else
-        typeApproximator.approximateToSubType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
-    return withReplacedConeType(approximatedType)
-}
-
-fun FirTypeRef.approximatedIfNeededOrSelf(
-    approximator: ConeTypeApproximator,
-    containingCallableVisibility: Visibility?,
-    session: FirSession,
-    isInlineFunction: Boolean = false
-): FirTypeRef {
-    val approximated = if (containingCallableVisibility == Visibilities.Public || containingCallableVisibility == Visibilities.Protected)
-        approximatedForPublicPosition(approximator)
-    else
-        this
-    return approximated.hideLocalTypeIfNeeded(containingCallableVisibility, session, isInlineFunction).withoutEnhancedNullability()
-}
-
-fun FirTypeRef.approximatedForPublicPosition(approximator: ConeTypeApproximator): FirTypeRef =
-    if (this is FirResolvedTypeRef && type.requiresApproximationInPublicPosition())
-        this.approximated(approximator, toSuper = true)
-    else
-        this
-
-private fun ConeKotlinType.requiresApproximationInPublicPosition(): Boolean = contains {
-    it is ConeIntegerLiteralType || it is ConeCapturedType || it is ConeDefinitelyNotNullType || it is ConeIntersectionType
-}
-
-/*
- * Suppose a function without an explicit return type just returns an anonymous object:
- *
- *   fun foo(...) = object : ObjectSuperType {
- *     override fun ...
- *   }
- *
- * Without unwrapping, the return type ended up with that anonymous object (<no name provided>), while the resolved super type, which
- * acts like an implementing interface, is a better fit. In fact, exposing an anonymous object types is prohibited for certain cases,
- * e.g., KT-33917. We can also apply this to any local types.
- */
-private fun FirTypeRef.hideLocalTypeIfNeeded(
-    containingCallableVisibility: Visibility?,
-    session: FirSession,
-    isInlineFunction: Boolean = false
-): FirTypeRef {
-    if (this !is FirResolvedTypeRef || !shouldApproximateLocalTypesOfNonLocalDeclaration(containingCallableVisibility, isInlineFunction)) return this
-    return withReplacedConeType(type.approximateToOnlySupertype(session))
-}
-
-private fun ConeKotlinType.approximateToOnlySupertype(session: FirSession): ConeKotlinType? {
-    if (this is ConeFlexibleType) {
-        val lower = lowerBound.approximateToOnlySupertype(session)?.coneLowerBoundIfFlexible()
-        val upper = upperBound.approximateToOnlySupertype(session)?.coneUpperBoundIfFlexible()
-        if (lower == null && upper == null) {
-            return null
-        }
-        return coneFlexibleOrSimpleType(session.typeContext, lower ?: lowerBound, upper ?: upperBound)
-    }
-
-    if (this !is ConeClassLikeType) {
-        return null
-    }
-    val firClass = (lookupTag as? ConeClassLookupTagWithFixedSymbol)?.symbol?.fir
-    if (firClass !is FirAnonymousObject) {
-        // NB: local classes are acceptable here, but reported by EXPOSED_* checkers as errors
-        return null
-    }
-    if (firClass.superTypeRefs.size > 1) {
-        // NB: don't approximate so members can be resolved. The error is reported by FirAmbiguousAnonymousTypeChecker.
-        return null
-    }
-    val superType = firClass.superTypeRefs.single()
-    if (superType !is FirResolvedTypeRef) {
-        return null
-    }
-    val result = superType.type.withNullability(nullability, session.typeContext)
-    if (typeArguments.isNotEmpty() && typeArguments.size == firClass.typeParameters.size) {
-        val substitution = firClass.typeParameters.zip(typeArguments).associate { (parameter, argument) ->
-            parameter.symbol to argument.type!!
-        }
-        return ConeSubstitutorByMap(substitution, session).substituteOrSelf(result)
-    }
-    return result
-}
-
-fun shouldApproximateLocalTypesOfNonLocalDeclaration(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
+fun shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
     // Approximate types for non-private (all but package private or private) members.
     // Also private inline functions, as per KT-33917.
     return when (containingCallableVisibility) {

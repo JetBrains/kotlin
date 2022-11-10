@@ -70,13 +70,13 @@ public abstract interface I /* I*/ {
 
 public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.Object x;
+  private final java.lang.Runnable x;
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.Object bar();//  bar()
+  public final java.lang.Runnable bar();//  bar()
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.Object getX();//  getX()
+  public final java.lang.Runnable getX();//  getX()
 
   public  InvalidPublicSupertype();//  .ctor()
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -992,7 +993,12 @@ class CallAndReferenceGenerator(
                 val typeParameter = access.findTypeParameter(index)
                 val argumentFirType = (argument as FirTypeProjectionWithVariance).typeRef
                 val argumentIrType = if (typeParameter?.isReified == true) {
-                    argumentFirType.approximatedForPublicPosition(approximator).toIrType()
+                    argumentFirType.approximateDeclarationType(
+                        session,
+                        containingCallableVisibility = null,
+                        isLocal = false,
+                        stripEnhancedNullability = false
+                    ).toIrType()
                 } else {
                     argumentFirType.toIrType()
                 }

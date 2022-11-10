@@ -287,6 +287,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
 
             val stubTypeCompletionResultsWriter = FirStubTypeTransformer(finalSubstitutor)
             property.transformSingle(stubTypeCompletionResultsWriter, null)
+            property.replaceReturnTypeRef(property.returnTypeRef.approximateDeclarationType(session, property.visibilityForApproximation(), property.isLocal))
 
             val callCompletionResultsWriter = callCompleter.createCompletionResultsWriter(
                 finalSubstitutor,
@@ -296,9 +297,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 it.transformSingle(callCompletionResultsWriter, null)
             }
 
-            val declarationCompletionResultsWriter =
-                FirDeclarationCompletionResultsWriter(finalSubstitutor, session.typeApproximator, session.typeContext)
-            property.transformSingle(declarationCompletionResultsWriter, FirDeclarationCompletionResultsWriter.ApproximationData.Default)
+            property
         }
     }
 
@@ -648,10 +647,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 result.transformReturnTypeRef(
                     transformer,
                     withExpectedType(
-                        returnExpression.resultType.approximatedIfNeededOrSelf(
-                            session.typeApproximator,
-                            simpleFunction?.visibilityForApproximation(),
+                        returnExpression.resultType.approximateDeclarationType(
                             session,
+                            simpleFunction?.visibilityForApproximation(),
+                            isLocal = simpleFunction?.isLocal == true,
                             isInlineFunction = simpleFunction?.isInline == true
                         )
                     )
@@ -814,7 +813,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         val initialReturnTypeRef = lambda.returnTypeRef
         val valueParameters = when {
             resolvedLambdaAtom != null -> obtainValueParametersFromResolvedLambdaAtom(resolvedLambdaAtom, lambda)
-            else -> lambda.valueParameters
+            else -> obtainValueParametersFromExpectedType(expectedTypeRef.coneTypeSafe(), lambda)
         }
         val returnTypeRefFromResolvedAtom = resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
         lambda = buildAnonymousFunctionCopy(lambda) {
@@ -928,17 +927,37 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 listOf(itParam)
             }
 
-            else -> {
-                lambda.valueParameters.mapIndexed { index, param ->
-                    if (param.returnTypeRef is FirResolvedTypeRef) {
-                        param
-                    } else {
-                        val resolvedType =
-                            param.returnTypeRef.resolvedTypeFromPrototype(resolvedLambdaAtom.parameters[index])
-                        param.replaceReturnTypeRef(resolvedType)
-                        param
-                    }
-                }
+            else -> obtainValueParametersFromExpectedParameterTypes(resolvedLambdaAtom.parameters, lambda)
+        }
+    }
+
+    private fun obtainValueParametersFromExpectedType(
+        expectedType: ConeKotlinType?,
+        lambda: FirAnonymousFunction
+    ): List<FirValueParameter> {
+        if (expectedType == null) return lambda.valueParameters
+        if (!expectedType.isFunctionalOrSuspendFunctionalType(session)) return lambda.valueParameters
+        val parameterTypes = expectedType.typeArguments
+            .mapTo(mutableListOf()) { it.type ?: session.builtinTypes.nullableAnyType.type }
+            .also { it.removeLastOrNull() }
+        if (expectedType.isExtensionFunctionType) {
+            parameterTypes.removeFirstOrNull()
+        }
+        return obtainValueParametersFromExpectedParameterTypes(parameterTypes, lambda)
+    }
+
+    private fun obtainValueParametersFromExpectedParameterTypes(
+        expectedTypeParameterTypes: List<ConeKotlinType>,
+        lambda: FirAnonymousFunction
+    ): List<FirValueParameter> {
+        return lambda.valueParameters.mapIndexed { index, param ->
+            if (param.returnTypeRef is FirResolvedTypeRef) {
+                param
+            } else {
+                val resolvedType =
+                    param.returnTypeRef.resolvedTypeFromPrototype(expectedTypeParameterTypes[index])
+                param.replaceReturnTypeRef(resolvedType)
+                param
             }
         }
     }
@@ -1024,11 +1043,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         return backingField.transformReturnTypeRef(
             transformer,
             withExpectedType(
-                expectedType.approximatedIfNeededOrSelf(
-                    session.typeApproximator,
-                    backingField.visibilityForApproximation(),
-                    session
-                )
+                expectedType.approximateDeclarationType(session, backingField.visibilityForApproximation(), isLocal = false)
             )
         )
     }
@@ -1050,11 +1065,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 withExpectedType(
                     resultType?.let {
                         val expectedType = it.toExpectedTypeRef()
-                        expectedType.approximatedIfNeededOrSelf(
-                            session.typeApproximator,
-                            variable.visibilityForApproximation(),
-                            session
-                        )
+                        expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocal)
                     } ?: buildErrorTypeRef {
                         diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
                         source = variable.source
@@ -1066,6 +1077,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             }
         }
     }
+
+    private val FirVariable.isLocal: Boolean
+        get() = when (this) {
+            is FirProperty -> this.isLocal
+            is FirValueParameter -> true
+            else -> false
+        }
 
     private fun FirTypeRef.toExpectedTypeRef(): FirResolvedTypeRef {
         return when (this) {

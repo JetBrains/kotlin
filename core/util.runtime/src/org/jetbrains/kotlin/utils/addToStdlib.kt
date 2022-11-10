@@ -255,7 +255,7 @@ fun <K, V> Map<K, V>.compactIfPossible(): Map<K, V> =
         else -> this
     }
 
-inline fun <T> T.applyIf(`if`: Boolean, body: T.() -> T): T =
+inline fun <T, R : T> R.applyIf(`if`: Boolean, body: R.() -> T): T =
     if (`if`) body() else this
 
 

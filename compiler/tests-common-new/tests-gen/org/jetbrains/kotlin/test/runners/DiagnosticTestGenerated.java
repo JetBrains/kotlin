@@ -38488,6 +38488,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("moreOnlyInputTypes.kt")
+                public void testMoreOnlyInputTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/moreOnlyInputTypes.kt");
+                }
+
+                @Test
                 @TestMetadata("noInferAndLowPriority.kt")
                 public void testNoInferAndLowPriority() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferAndLowPriority.kt");
