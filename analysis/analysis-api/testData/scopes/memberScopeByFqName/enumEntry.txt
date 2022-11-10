@@ -337,30 +337,3 @@ KtKotlinPropertySymbol:
   javaGetterName: getOrdinal
   javaSetterName: null
   setterDeprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/E.getDeclaringClass
-  contextReceivers: []
-  hasStableParameterNames: false
-  isBuiltinFunctionInvoke: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: FINAL
-  name: getDeclaringClass
-  origin: SUBSTITUTION_OVERRIDE
-  receiverParameter: null
-  returnType: ft<java/lang/Class<test/E!>, java/lang/Class<test/E!>?>
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): test/E
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
