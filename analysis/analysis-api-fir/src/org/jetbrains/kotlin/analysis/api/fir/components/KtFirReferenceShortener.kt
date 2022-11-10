@@ -434,9 +434,9 @@ private class ElementsToShortenCollector(
      *   inner class Inner // Inner has an implicit type parameter `T`.
      * }
      */
-    private fun FirClassLikeSymbol<*>.hasTypeParameterFromParent(): Boolean = typeParameterSymbols?.any {
+    private fun FirClassLikeSymbol<*>.hasTypeParameterFromParent(): Boolean = typeParameterSymbols.orEmpty().any {
         it.containingDeclarationSymbol != this
-    } == true
+    }
 
     private inline fun <E> findClassifierElementsToShorten(
         positionScopes: List<FirScope>,
@@ -446,8 +446,8 @@ private class ElementsToShortenCollector(
         findFakePackageToShortenFn: (E) -> ElementToShorten?,
     ): ElementToShorten? {
         for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
-            val classSymbol = shorteningContext.toClassSymbol(classId)
-            val option = classShortenOption(classSymbol ?: return null)
+            val classSymbol = shorteningContext.toClassSymbol(classId) ?: return null
+            val option = classShortenOption(classSymbol)
             if (option == ShortenOption.DO_NOT_SHORTEN) continue
 
             // If its parent has a type parameter, we cannot shorten it because the class will lose its type parameter.
@@ -513,17 +513,48 @@ private class ElementsToShortenCollector(
 
         // Since the scope for a constructor (both primary and secondary constructors) does not return constructors when we call
         // "getFunctions()", we cannot handle constructors in "processCallableQualifiedAccess(..)". Thus, we handle a constructor
-        // sperately.
+        // separately.
         // TODO: Consider if it is a bug of `FirClassDeclaredMemberScope`.
         if (calledSymbol is FirConstructorSymbol) {
-            val classId = calledSymbol.fir.getContainingClass(calledSymbol.llFirSession)?.classId ?: return
+            val classId = calledSymbol.callableId.classId ?: return
             findTypeQualifierToShorten(classId, qualifiedCallExpression)?.let(::addElementToShorten)
         } else {
             processCallableQualifiedAccess(calledSymbol, qualifiedCallExpression, callExpression, shorteningContext::findFunctionsInScopes)
         }
     }
 
+    private fun ConeKotlinType.isDifferentValueParamOf(another: ConeKotlinType): Boolean = when {
+        // We don't want to compare type parameters with each other
+        this is ConeTypeParameterType && another is ConeTypeParameterType -> false
+
+        // Otherwise, compare types
+        else -> this != another
+    }
+
+    private fun FirCallableSymbol<*>.isFunctionWithValueParamters(valueParamSymbols: List<FirValueParameterSymbol>): Boolean {
+        if (this !is FirFunctionSymbol) return false
+        if (valueParameterSymbols.size != valueParamSymbols.size) return false
+
+        for ((valueParam, valueParamOfAnother) in valueParameterSymbols.zip(valueParamSymbols)) {
+            val typeOfValueParam = valueParam.resolvedReturnType
+            val typeOfAnotherValueParam = valueParamOfAnother.resolvedReturnType
+            if (typeOfValueParam.isDifferentValueParamOf(typeOfAnotherValueParam)) return false
+        }
+        return true
+    }
+
+    /**
+     * Returns whether [another] has the same callable (function or variable) signature as the receiver [FirCallableSymbol] or not.
+     *
+     * We consider they have the same signature if they have
+     *  1. the same return type
+     *  2. the same return receiver type
+     *  3. the same number of type parameters
+     *  4. the same value parameters with the consideration of their orders
+     */
     private fun FirCallableSymbol<*>.hasSameSignatureWith(another: FirCallableSymbol<*>): Boolean {
+        if (resolvedReturnType != another.resolvedReturnType) return false
+
         if (resolvedReceiverTypeRef != another.resolvedReceiverTypeRef) return false
 
         // Since we cannot determine whether a type parameter for a symbol is the same as the one of another, we just compare its number.
@@ -534,32 +565,9 @@ private class ElementsToShortenCollector(
         if (typeParameterSymbols.size != another.typeParameterSymbols.size) return false
 
         return when (this) {
-            is FirFunctionSymbol -> {
-                if (another !is FirFunctionSymbol) return false
-                if (valueParameterSymbols.size != another.valueParameterSymbols.size) return false
-                for ((valueParam, valueParamOfAnother) in valueParameterSymbols.zip(another.valueParameterSymbols)) {
-                    val typeOfValueParam = valueParam.resolvedReturnType
-                    val typeOfAnotherValueParam = valueParamOfAnother.resolvedReturnType
+            is FirFunctionSymbol -> another.isFunctionWithValueParamters(valueParameterSymbols)
 
-                    if (typeOfValueParam is ConeTypeParameterType) {
-                        // Case 1. Both have type parameter types: same
-                        if (typeOfAnotherValueParam is ConeTypeParameterType) continue
-                        // Case 2. Only one has type parameter types: not same
-                        return false
-                    }
-                    // Case 2. Only one has type parameter types: not same
-                    if (typeOfAnotherValueParam is ConeTypeParameterType) return false
-
-                    // Case 3. Both have normal types: same if types are same
-                    if (typeOfValueParam != typeOfAnotherValueParam) return false
-                }
-                true
-            }
-
-            is FirVariableSymbol -> {
-                if (another !is FirVariableSymbol) return false
-                true
-            }
+            is FirVariableSymbol -> another is FirVariableSymbol
 
             else -> false
         }
@@ -574,7 +582,7 @@ private class ElementsToShortenCollector(
         val option = callableShortenOption(calledSymbol)
         if (option == ShortenOption.DO_NOT_SHORTEN) return
 
-        // When the symbol has an explicit receiver, we skip shortening it. In some cases, we can still short it but determining
+        // When the symbol has an explicit receiver, we skip shortening it. In some cases, we can still shorten it but determining
         // whether it is fine or not is complicated. For example,
         //
         //    package inspector.p30879
@@ -594,12 +602,9 @@ private class ElementsToShortenCollector(
         //    class C { object G }
         if (calledSymbol.resolvedReceiverTypeRef != null) return
 
-        val needReturnTypeCheck = analyze(qualifiedCallExpression) { qualifiedCallExpression.isUsedAsExpression() }
-        val callableSymbolReturnType = if (needReturnTypeCheck) calledSymbol.resolvedReturnType else null
-
         val scopes = shorteningContext.findScopesAtPosition(expressionToGetScope, namesToImport, towerContextProvider) ?: return
         val availableCallables = findCallableInScopes(scopes, calledSymbol.name).filter {
-            if (needReturnTypeCheck && callableSymbolReturnType != it.symbol.resolvedReturnType) return@filter false
+            if (calledSymbol.resolvedReturnType != it.symbol.resolvedReturnType) return@filter false
             it.symbol.hasSameSignatureWith(calledSymbol)
         }
 
