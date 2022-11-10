@@ -57,7 +57,10 @@ projectTest(
     dependsOn(":dist")
 
     workingDir = rootDir
+
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
+
     val antLauncherJarPathProvider = project.provider {
         antLauncherJar.asPath
     }
