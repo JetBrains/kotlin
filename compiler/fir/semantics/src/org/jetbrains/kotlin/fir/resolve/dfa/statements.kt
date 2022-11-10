@@ -62,6 +62,12 @@ enum class Operation {
         NotEqNull -> EqNull
     }
 
+    fun valueIfKnown(given: Operation): Boolean? = when (this) {
+        EqTrue, EqFalse -> if (given == NotEqNull) null else given == this
+        EqNull -> given == EqNull
+        NotEqNull -> given == NotEqNull
+    }
+
     override fun toString(): String = when (this) {
         EqTrue -> "== True"
         EqFalse -> "== False"

@@ -26,16 +26,16 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         flow: FLOW,
         originalVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
-        shouldRemoveOriginalStatements: Boolean,
+        shouldRemoveOriginalStatements: Boolean = originalVariable.isSynthetic(),
         filter: (Implication) -> Boolean = { true },
         transform: (Implication) -> Implication? = { it },
     )
 
-    // This does *not* commit the results to the flow (but it does mutate the flow if shouldRemoveSynthetics=true)
+    // This does *not* commit the results to the flow (but it does mutate the flow if removeApprovedOrImpossible=true)
     abstract fun approveOperationStatement(
         flow: FLOW,
         approvedStatement: OperationStatement,
-        shouldRemoveSynthetics: Boolean = false
+        removeApprovedOrImpossible: Boolean = false
     ): TypeStatements
 
     protected abstract fun ConeKotlinType.isAcceptableForSmartcast(): Boolean
@@ -89,27 +89,4 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     protected fun or(statements: Collection<TypeStatement>): TypeStatement =
         statements.singleOrNew { unifyTypes(statements.map { it.exactType })?.let { mutableSetOf(it) } ?: mutableSetOf() }
-}
-
-/*
- *  used for:
- *   1. val b = x is String
- *   2. b = x is String
- *   3. !b | b.not()   for Booleans
- */
-fun <F : Flow> LogicSystem<F>.replaceVariableFromConditionInStatements(
-    flow: F,
-    originalVariable: DataFlowVariable,
-    newVariable: DataFlowVariable,
-    filter: (Implication) -> Boolean = { true },
-    transform: (Implication) -> Implication = { it },
-) {
-    translateVariableFromConditionInStatements(
-        flow,
-        originalVariable,
-        newVariable,
-        shouldRemoveOriginalStatements = true,
-        filter,
-        transform,
-    )
 }

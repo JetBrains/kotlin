@@ -256,7 +256,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     override fun approveOperationStatement(
         flow: PersistentFlow,
         approvedStatement: OperationStatement,
-        shouldRemoveSynthetics: Boolean,
+        removeApprovedOrImpossible: Boolean,
     ): TypeStatements {
         val approvedTypeStatements: ArrayListMultimap<RealVariable, TypeStatement> = ArrayListMultimap.create()
         val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
@@ -266,17 +266,21 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             // Defense from cycles in facts
             if (!approved.add(next)) continue
             val variable = next.variable
-            val statements = flow.logicStatements[variable]?.takeIf { it.isNotEmpty() } ?: continue
-            if (shouldRemoveSynthetics && variable.isSynthetic()) {
-                flow.logicStatements -= variable
-            }
-            for (statement in statements) {
-                if (statement.condition == next) {
-                    when (val effect = statement.effect) {
+            val statements = flow.logicStatements[variable] ?: continue
+            val stillUnknown = statements.removeAll {
+                val knownValue = it.condition.operation.valueIfKnown(next.operation)
+                if (knownValue == true) {
+                    when (val effect = it.effect) {
                         is OperationStatement -> queue += effect
                         is TypeStatement -> approvedTypeStatements.put(effect.variable, effect)
                     }
                 }
+                removeApprovedOrImpossible && knownValue != null
+            }
+            if (stillUnknown.isEmpty()) {
+                flow.logicStatements -= variable
+            } else if (stillUnknown != statements) {
+                flow.logicStatements = flow.logicStatements.put(variable, stillUnknown)
             }
         }
         return approvedTypeStatements.asMap().mapValues { and(it.value) }
