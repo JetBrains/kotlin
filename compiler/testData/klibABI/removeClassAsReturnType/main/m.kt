@@ -2,14 +2,14 @@ import abitestutils.abiTest
 
 fun box() = abiTest {
     val d = D()
-    expectFailure(prefixed("function expF can not be called")) { d.barF() }
+    expectFailure(skipHashes("Function expF can not be called: Function expF uses unlinked class symbol /E")) { d.barF() }
     expectSuccess { d.fooF() }
-    expectFailure(prefixed("property accessor expP1.<get-expP1> can not be called")) { d.barP1 }
+    expectFailure(skipHashes("Property accessor expP1.<get-expP1> can not be called: Property accessor expP1.<get-expP1> uses unlinked class symbol /E")) { d.barP1 }
     expectSuccess { d.fooP1 }
-    expectFailure(prefixed("property accessor expP2.<get-expP2> can not be called")) { D2().barP2 }
-    expectFailure(prefixed("function foo can not be called")) { bar() }
-    expectFailure(prefixed("function foo can not be called")) { baz() }
-    expectFailure(prefixed("function foo can not be called")) { quux() }
-    expectFailure(prefixed("function foo can not be called")) { grault() }
-    expectFailure(prefixed("function foo can not be called")) { waldo() }
+    expectFailure(skipHashes("Property accessor expP2.<get-expP2> can not be called: Property accessor expP2.<get-expP2> uses unlinked class symbol /E")) { D2().barP2 }
+    expectFailure(skipHashes("Function foo can not be called: Function foo uses unlinked class symbol /E")) { bar() }
+    expectFailure(skipHashes("Function foo can not be called: Function foo uses unlinked class symbol /E")) { baz() }
+    expectFailure(skipHashes("Function foo can not be called: Function foo uses unlinked class symbol /E")) { quux() }
+    expectFailure(skipHashes("Function foo can not be called: Function foo uses unlinked class symbol /E")) { grault() }
+    expectFailure(skipHashes("Function foo can not be called: Function foo uses unlinked class symbol /E")) { waldo() }
 }

@@ -1,4 +1,4 @@
-class Bar : Foo()
+open class Bar : Foo()
 
 inline fun fooVariableType() {
     val foo: Foo? = null
@@ -29,4 +29,9 @@ inline fun barInstance2() {
 inline fun fooAnonymousObject() {
     val foo = object : Foo() {}
     check(foo == null)
+}
+
+inline fun barAnonymousObject() {
+    val bar = object : Bar() {}
+    check(bar == null)
 }
