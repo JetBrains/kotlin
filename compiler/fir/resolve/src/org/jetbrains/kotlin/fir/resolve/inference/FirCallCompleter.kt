@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
@@ -44,6 +45,8 @@ import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class FirCallCompleter(
     private val transformer: FirAbstractBodyResolveTransformerDispatcher,
@@ -306,15 +309,13 @@ class FirCallCompleter(
 
             val expectedReturnTypeRef = expectedReturnType?.let { lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(it) }
 
-            lambdaArgument.replaceReceiverParameter(
-                lambdaArgument.receiverParameter?.let { receiverParameter ->
-                    receiverType?.approximateLambdaInputType()?.let { approximatedType ->
-                        receiverParameter.apply {
-                            replaceTypeRef(typeRef.resolvedTypeFromPrototype(approximatedType))
-                        }
-                    }
+            if (receiverType == null) {
+                lambdaArgument.replaceReceiverParameter(null)
+            } else {
+                lambdaArgument.receiverParameter?.apply {
+                    replaceTypeRef(typeRef.resolvedTypeFromPrototype(receiverType.approximateLambdaInputType()))
                 }
-            )
+            }
 
             if (contextReceivers.isNotEmpty()) {
                 lambdaArgument.replaceContextReceivers(
