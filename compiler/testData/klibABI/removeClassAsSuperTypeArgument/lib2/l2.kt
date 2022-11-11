@@ -7,7 +7,7 @@ class ST : I<C> {
 }
 
 class EX: I<E> {
-    override val o: E = E()
+    override val o: E = TODO()
 }
 
 class D {

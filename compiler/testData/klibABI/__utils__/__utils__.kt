@@ -7,15 +7,13 @@ import abitestutils.ThrowableKind.*
 /** API **/
 
 interface TestBuilder {
-    fun prefixed(prefix: String): ErrorMessagePattern
+    fun skipHashes(message: String): ErrorMessagePattern
     fun nonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String): ErrorMessagePattern
 
     fun expectFailure(errorMessagePattern: ErrorMessagePattern, block: Block<Any?>)
     fun expectSuccess(block: Block<String>) // OK is expected
     fun <T : Any> expectSuccess(expectedOutcome: T, block: Block<T>)
 }
-
-const val OK_STATUS = "OK"
 
 sealed interface ErrorMessagePattern
 
@@ -30,10 +28,12 @@ fun abiTest(init: TestBuilder.() -> Unit): String {
 
 /** Implementation **/
 
+private const val OK_STATUS = "OK"
+
 private class TestBuilderImpl : TestBuilder {
     private val tests = mutableListOf<Test>()
 
-    override fun prefixed(prefix: String) = PrefixOfErrorMessage(prefix)
+    override fun skipHashes(message: String) = ErrorMessageWithSkippedSignatureHashes(message)
 
     override fun nonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String) =
         NonImplementedCallable(callableTypeAndName, classifierTypeAndName)
@@ -95,18 +95,20 @@ private sealed interface AbstractErrorMessagePattern : ErrorMessagePattern {
     fun checkIrLinkageErrorMessage(errorMessage: String?): TestFailureDetails?
 }
 
-private class PrefixOfErrorMessage(prefix: String) : AbstractErrorMessagePattern {
+private class ErrorMessageWithSkippedSignatureHashes(private val expectedMessage: String) : AbstractErrorMessagePattern {
     init {
-        check(prefix.isNotBlank()) { "Prefix is blank: [$prefix]" }
+        check(expectedMessage.isNotBlank()) { "Message is blank: [$expectedMessage]" }
     }
 
-    private val fullPrefix = "$prefix because it uses unlinked symbols"
-
     override fun checkIrLinkageErrorMessage(errorMessage: String?) =
-        if (errorMessage?.startsWith(fullPrefix) == true)
+        if (errorMessage?.replace(SIGNATURE_WITH_HASH) { it.groupValues[1] } == expectedMessage)
             null // Success.
         else
-            TestMismatchedExpectation(fullPrefix, errorMessage)
+            TestMismatchedExpectation(expectedMessage, errorMessage)
+
+    companion object {
+        val SIGNATURE_WITH_HASH = Regex("(symbol /[\\da-zA-Z.<>_\\-]+)(\\|\\S+)")
+    }
 }
 
 private class NonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String) : AbstractErrorMessagePattern {

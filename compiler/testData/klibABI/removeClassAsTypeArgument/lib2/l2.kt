@@ -9,7 +9,7 @@ class D {
     fun foo(): String = stable().o.o()
 
     fun exp(): I<E> = object : I<E> {
-        override val o: E = E()
+        override val o: E = TODO()
     }
     fun bar(): String = exp().o.e()
 }
