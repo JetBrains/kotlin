@@ -30,11 +30,11 @@ class Checker(val tokenState: MutableMap<ClassId, SchemaContext>) : FirFunctionC
         val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
     }
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        with(KotlinTypeFacadeImpl(context.session)) {
-            val processor = expression.loadInterpreter(session) ?: return
-            interpret(expression, processor, tokenState = tokenState, reporter = InterpretationErrorReporter { call, message ->
-                reporter.reportOn(call.source, ERROR, message, context)
-            })
-        }
+//        with(KotlinTypeFacadeImpl(context.session)) {
+//            val processor = expression.loadInterpreter(session) ?: return
+//            interpret(expression, processor, tokenState = tokenState, reporter = InterpretationErrorReporter { call, message ->
+//                reporter.reportOn(call.source, ERROR, message, context)
+//            })
+//        }
     }
 }
