@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.classFileContainsMethod
-import org.jetbrains.kotlin.backend.jvm.ir.extensionReceiverName
-import org.jetbrains.kotlin.backend.jvm.ir.isStaticValueClassReplacement
-import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -64,7 +61,7 @@ class MemoizedInlineClassReplacements(
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
                     when {
-                        it.isTypedEquals -> createStaticReplacement(it).also {
+                        it.isTypedEquals() -> createStaticReplacement(it).also {
                             it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
                             specializedEqualsCache.computeIfAbsent(it.parentAsClass) { it }
                         }

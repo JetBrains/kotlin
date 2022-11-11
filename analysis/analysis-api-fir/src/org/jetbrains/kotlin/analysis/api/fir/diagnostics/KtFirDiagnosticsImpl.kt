@@ -3262,7 +3262,7 @@ internal class RedundantInlineSuspendFunctionTypeImpl(
 ) : KtFirDiagnostic.RedundantInlineSuspendFunctionType(), KtAbstractFirDiagnostic<KtElement>
 
 internal class InefficientEqualsOverridingInInlineClassImpl(
-    override val className: String,
+    override val type: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InefficientEqualsOverridingInInlineClass(), KtAbstractFirDiagnostic<KtNamedFunction>

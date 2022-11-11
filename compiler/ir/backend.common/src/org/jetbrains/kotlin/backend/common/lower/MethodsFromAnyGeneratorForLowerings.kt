@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isHashCode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -38,23 +37,11 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
 
     fun createEqualsMethodDeclaration(): IrSimpleFunction =
         irClass.addSyntheticFunction("equals", context.irBuiltIns.booleanType).apply {
-            overriddenSymbols = irClass.collectOverridenSymbols { it.isEquals(context) }
+            overriddenSymbols = irClass.collectOverridenSymbols { it.isEquals() }
             addValueParameter("other", context.irBuiltIns.anyNType)
         }
 
     companion object {
-        fun IrFunction.isToString(): Boolean =
-            name.asString() == "toString" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
-
-        fun IrFunction.isHashCode() =
-            name.asString() == "hashCode" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
-
-        fun IrFunction.isEquals(context: BackendContext) =
-            name.asString() == "equals" &&
-                    extensionReceiverParameter == null && contextReceiverParametersCount == 0 &&
-                    valueParameters.singleOrNull()?.type == context.irBuiltIns.anyNType
-
-
         fun IrClass.collectOverridenSymbols(predicate: (IrFunction) -> Boolean): List<IrSimpleFunctionSymbol> =
             superTypes.mapNotNull { it.getClass()?.functions?.singleOrNull(predicate)?.symbol }
     }

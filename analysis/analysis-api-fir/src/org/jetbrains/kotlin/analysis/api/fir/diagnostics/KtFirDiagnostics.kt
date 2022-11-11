@@ -2706,7 +2706,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class InefficientEqualsOverridingInInlineClass : KtFirDiagnostic<KtNamedFunction>() {
         override val diagnosticClass get() = InefficientEqualsOverridingInInlineClass::class
-        abstract val className: String
+        abstract val type: KtType
     }
 
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {

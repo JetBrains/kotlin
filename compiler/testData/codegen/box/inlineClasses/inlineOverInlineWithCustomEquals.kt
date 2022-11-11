@@ -6,7 +6,7 @@
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class A(val x: Int) {
-    fun equals(other: A) = true
+    operator fun equals(other: A) = true
 }
 
 class C
@@ -20,13 +20,13 @@ value class B2(val x: A?)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class D1(val x: C) {
-    fun equals(other: D1) = true
+    operator fun equals(other: D1) = true
 }
 
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class D2(val x: C?) {
-    fun equals(other: D2) = true
+    operator fun equals(other: D2) = true
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
