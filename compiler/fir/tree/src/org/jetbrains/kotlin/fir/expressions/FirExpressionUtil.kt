@@ -74,7 +74,7 @@ fun FirExpression.toReference(): FirReference? {
 }
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
-    return toResolvedCallableReference()?.resolvedSymbol as FirCallableSymbol<*>?
+    return toResolvedCallableReference()?.resolvedSymbol as? FirCallableSymbol<*>?
 }
 
 fun FirReference.toResolvedCallableSymbol(): FirCallableSymbol<*>? {

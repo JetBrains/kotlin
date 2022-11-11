@@ -168,10 +168,20 @@ internal class KtFirCallResolver(
         return when (this) {
             is FirResolvable -> {
                 when (val calleeReference = calleeReference) {
-                    is FirResolvedNamedReference -> {
-                        val call = createKtCall(psi, this, null, resolveFragmentOfCall)
-                            ?: errorWithFirSpecificEntries("expect `createKtCall` to succeed for resolvable case", fir = this, psi = psi)
-                        KtSuccessCallInfo(call)
+                    is FirResolvedNamedReference -> when (calleeReference.resolvedSymbol) {
+                        // `calleeReference.resolvedSymbol` isn't guaranteed to be callable. For example, function type parameters used in
+                        // expression positions (e.g. `T` in `println(T)`) are parsed as `KtSimpleNameExpression` and built into
+                        // `FirPropertyAccessExpression` (which is `FirResolvable`).
+                        is FirCallableSymbol<*> -> {
+                            val call = createKtCall(psi, this, null, resolveFragmentOfCall)
+                                ?: errorWithFirSpecificEntries(
+                                    "expect `createKtCall` to succeed for resolvable case with callable symbol",
+                                    fir = this,
+                                    psi = psi
+                                )
+                            KtSuccessCallInfo(call)
+                        }
+                        else -> null
                     }
                     is FirErrorNamedReference -> {
                         val diagnostic = calleeReference.diagnostic

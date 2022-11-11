@@ -898,6 +898,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
         public void testGetterAssignment() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/getterAssignment.kt");
         }
+
+        @Test
+        @TestMetadata("typeParameterAsValue.kt")
+        public void testTypeParameterAsValue() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/typeParameterAsValue.kt");
+        }
     }
 
     @Nested

@@ -128,6 +128,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
         }
 
         @Test
+        @TestMetadata("unusedTypeHiddenByTypeParameter_invalidAsArgument.kt")
+        public void testUnusedTypeHiddenByTypeParameter_invalidAsArgument() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unusedTypeHiddenByTypeParameter_invalidAsArgument.kt");
+        }
+
+        @Test
         @TestMetadata("usedConstructor_invalidArguments.kt")
         public void testUsedConstructor_invalidArguments() throws Exception {
             runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedConstructor_invalidArguments.kt");
