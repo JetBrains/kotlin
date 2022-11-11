@@ -102,7 +102,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             if (resultExpression is FirConstExpression<*>) {
                 if (!resultExpression.isApplicableWith(operation)) return false
             } else {
-                val resultVar = variableStorage.getOrCreateVariable(flow, resultExpression)
+                val resultVar = variableStorage.getOrCreate(flow, resultExpression)
                 typeStatements = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation), builtinTypes)
             }
         }

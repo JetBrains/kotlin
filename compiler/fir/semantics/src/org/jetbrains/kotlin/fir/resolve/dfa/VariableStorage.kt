@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 abstract class VariableStorage {
     abstract fun getRealVariableWithoutUnwrappingAlias(flow: Flow, fir: FirElement): RealVariable?
-    abstract fun getRealVariable(flow: Flow, fir: FirElement): RealVariable?
     abstract fun getLocalVariable(symbol: FirBasedSymbol<*>): RealVariable?
-    abstract fun getSyntheticVariable(fir: FirElement): SyntheticVariable?
-    abstract fun getVariable(flow: Flow, fir: FirElement): DataFlowVariable?
+    abstract fun get(flow: Flow, fir: FirElement): DataFlowVariable?
 }
