@@ -59,15 +59,6 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         return flow.unwrapVariable(getOrCreateRealVariableWithoutUnwrappingAlias(flow, symbol, fir, stability))
     }
 
-    private fun FirElement.unwrapElement(): FirElement = when (this) {
-        is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
-        is FirSmartCastExpression -> originalExpression.unwrapElement()
-        is FirSafeCallExpression -> selector.unwrapElement()
-        is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
-        is FirCheckNotNullCall -> argument.unwrapElement()
-        else -> this
-    }
-
     private fun getIdentifierBySymbol(
         flow: Flow,
         symbol: FirBasedSymbol<*>,
@@ -128,9 +119,12 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         }
     }
 
-    @JvmName("getOrCreateRealVariableOrNull")
-    fun getOrCreateRealVariable(flow: Flow, symbol: FirBasedSymbol<*>?, fir: FirElement): RealVariable? =
-        symbol.getStability(fir)?.let { getOrCreateRealVariable(flow, symbol!!, fir, it) }
+    fun getOrCreateRealVariable(flow: Flow, fir: FirElement): RealVariable? {
+        val realFir = fir.unwrapElement()
+        val symbol = realFir.symbol ?: return null
+        val stability = symbol.getStability(realFir) ?: return null
+        return getOrCreateRealVariable(flow, symbol, realFir, stability)
+    }
 
     fun createSyntheticVariable(fir: FirElement): SyntheticVariable =
         SyntheticVariable(fir, counter++).also { syntheticVariables[fir] = it }
@@ -146,30 +140,26 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         }
     }
 
-    override fun getRealVariableWithoutUnwrappingAlias(flow: Flow, symbol: FirBasedSymbol<*>?, fir: FirElement): RealVariable? {
+    override fun getRealVariableWithoutUnwrappingAlias(flow: Flow, fir: FirElement): RealVariable? {
         val realFir = fir.unwrapElement()
-        return symbol.takeIf { it.getStability(realFir) != null }?.let {
-            _realVariables[getIdentifierBySymbol(flow, it, realFir.unwrapElement())]
-        }
+        val symbol = realFir.symbol ?: return null
+        if (symbol.getStability(realFir) == null) return null
+        return _realVariables[getIdentifierBySymbol(flow, symbol, realFir)]
     }
 
-    override fun getRealVariable(flow: Flow, symbol: FirBasedSymbol<*>?, fir: FirElement): RealVariable? {
-        return getRealVariableWithoutUnwrappingAlias(flow, symbol, fir)?.let { flow.unwrapVariable(it) }
+    override fun getRealVariable(flow: Flow, fir: FirElement): RealVariable? {
+        return getRealVariableWithoutUnwrappingAlias(flow, fir)?.let { flow.unwrapVariable(it) }
     }
+
+    override fun getLocalVariable(symbol: FirBasedSymbol<*>): RealVariable? =
+        _realVariables[Identifier(symbol, null, null)]
 
     override fun getSyntheticVariable(fir: FirElement): SyntheticVariable? {
         return syntheticVariables[fir.unwrapElement()]
     }
 
     override fun getVariable(flow: Flow, fir: FirElement): DataFlowVariable? {
-        val realFir = fir.unwrapElement()
-        val symbol = realFir.symbol
-        val stability = symbol.getStability(fir)
-        return if (stability != null) {
-            getRealVariable(flow, symbol, realFir)
-        } else {
-            getSyntheticVariable(fir)
-        }
+        return getRealVariable(flow, fir) ?: getSyntheticVariable(fir)
     }
 
     fun removeRealVariable(symbol: FirBasedSymbol<*>) {
