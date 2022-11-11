@@ -446,22 +446,27 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 if (operandVariable.isReal()) {
                     flow.addTypeStatement(operandVariable typeEq type)
                 }
-                logicSystem.approveStatementsInsideFlow(
-                    flow,
-                    operandVariable notEq null,
-                    shouldRemoveSynthetics = true,
-                    shouldForkFlow = false
-                )
+                if (!type.canBeNull) {
+                    logicSystem.approveStatementsInsideFlow(
+                        flow,
+                        operandVariable notEq null,
+                        shouldRemoveSynthetics = true,
+                        shouldForkFlow = false
+                    )
+                } else {
+                    val expressionVariable = variableStorage.createSyntheticVariable(typeOperatorCall)
+                    flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
+                }
             }
 
             FirOperation.SAFE_AS -> {
                 val expressionVariable = variableStorage.createSyntheticVariable(typeOperatorCall)
+                flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
                 if (operandVariable.isReal()) {
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEq type))
-                    flow.addImplication((expressionVariable eq null) implies (operandVariable typeNotEq type))
-                }
-                if (type.nullability == ConeNullability.NOT_NULL) {
-                    flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
+                    if (!type.canBeNull) {
+                        flow.addImplication((expressionVariable eq null) implies (operandVariable typeNotEq type))
+                    }
                 }
             }
 
