@@ -25,7 +25,6 @@ import javax.inject.Inject
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
-@InternalKotlinGradlePluginApi
 abstract class DefaultKotlinSourceSet @Inject constructor(
     final override val project: Project,
     val displayName: String
