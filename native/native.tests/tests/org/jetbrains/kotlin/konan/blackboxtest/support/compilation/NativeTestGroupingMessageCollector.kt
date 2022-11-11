@@ -112,7 +112,7 @@ internal class NativeTestGroupingMessageCollector(
     }
 
     private fun isPartialLinkageWarning(message: String): Boolean =
-        partialLinkageEnabled && message.matches(PARTIAL_LINKAGE_WARNING_REGEX)
+        partialLinkageEnabled && PARTIAL_LINKAGE_WARNING_REGEXES.any(message::matches)
 
 
     private fun isK2Experimental(message: String): Boolean = message.startsWith(K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX)
@@ -124,7 +124,14 @@ internal class NativeTestGroupingMessageCollector(
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
-        private val PARTIAL_LINKAGE_WARNING_REGEX = Regex(".+ uses unlinked symbols(:.*)?")
+
+        private val PARTIAL_LINKAGE_WARNING_REGEXES = listOf(
+            Regex(".*No .+ found for symbol .+"),
+            Regex(".+ uses unlinked .+ symbol .+"),
+            Regex(".+ lacks enclosing class$"),
+            Regex("^Abstract .+ is not implemented in non-abstract .+"),
+            Regex(".+ is .+ while .+ is expected$")
+        )
 
         private fun parseLanguageFeatureArg(arg: String): String? =
             substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")
