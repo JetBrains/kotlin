@@ -2044,10 +2044,22 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token496 {
     }
     internal final interface Token497 {
+        internal abstract val year: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+        internal abstract val age: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
     }
     internal final interface Token498 {
     }
     internal final interface Token499 {
+        internal abstract val year: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+        internal abstract val age: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
     }
 FILE: __GENERATED DECLARATIONS__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.year: R|kotlin/Int|

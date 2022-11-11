@@ -2026,6 +2026,9 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token498 {
     }
     internal final interface Token499 {
+        internal abstract val timestamps: R|kotlin/collections/List<kotlin/Int>|
+            internal get(): R|kotlin/collections/List<kotlin/Int>|
+
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe.api

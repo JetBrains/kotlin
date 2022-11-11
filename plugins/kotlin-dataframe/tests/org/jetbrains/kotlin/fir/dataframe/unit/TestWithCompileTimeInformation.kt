@@ -101,7 +101,7 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
                 if (it == "test") {
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
-                    val result = interpret(call, interpreter, tokenState = tokenState, reporter = { _, _ -> })?.value ?: TODO("test error cases")
+                    val result = interpret(call, interpreter, reporter = { _, _ -> })?.value ?: TODO("test error cases")
 
                     setTestSubject(result as PluginDataFrameSchema)
                     onCompile(session)
