@@ -1304,7 +1304,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Block -----------------------------------
 
-    fun enterInitBlock(initBlock: FirAnonymousInitializer): Pair<InitBlockEnterNode, CFGNode<*>?> {
+    fun enterInitBlock(initBlock: FirAnonymousInitializer): InitBlockEnterNode {
         // TODO: questionable moment that we should pass data flow from init to init
 
         val graph = ControlFlowGraph(initBlock, "init block", ControlFlowGraph.Kind.Function)
@@ -1320,7 +1320,7 @@ class ControlFlowGraphBuilder {
             exitTargetsForTry.push(it)
         }
 
-        return enterNode to lastNode
+        return enterNode
     }
 
     fun exitInitBlock(initBlock: FirAnonymousInitializer): Pair<InitBlockExitNode, ControlFlowGraph> {
