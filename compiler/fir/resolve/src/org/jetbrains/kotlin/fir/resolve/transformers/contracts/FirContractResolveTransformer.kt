@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 
-open class FirContractResolveTransformer(
+class FirContractResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     outerBodyResolveContext: BodyResolveContext? = null
@@ -18,6 +18,6 @@ open class FirContractResolveTransformer(
     scopeSession,
     outerBodyResolveContext,
 ) {
-    final override val declarationsTransformer: FirDeclarationsResolveTransformer =
-        FirDeclarationsContractResolveTransformer(this)
+    override val contractDeclarationsTransformer: FirDeclarationsContractResolveTransformer
+        get() = FirDeclarationsContractResolveTransformer()
 }

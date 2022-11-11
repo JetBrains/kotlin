@@ -29,14 +29,15 @@ internal class LLFirDesignatedContractsResolveTransformer(
 
     private val ideDeclarationTransformer = LLFirDeclarationTransformer(designation)
 
-    override val declarationsTransformer: FirDeclarationsResolveTransformer = object : FirDeclarationsContractResolveTransformer(this) {
-        override fun transformDeclarationContent(firClass: FirClass, data: ResolutionMode) {
-            ideDeclarationTransformer.transformDeclarationContent(this, firClass, data) {
-                super.transformDeclarationContent(firClass, data)
-                firClass
+    override val contractDeclarationsTransformer: FirDeclarationsContractResolveTransformer
+        get() = object : FirDeclarationsContractResolveTransformer() {
+            override fun transformDeclarationContent(firClass: FirClass, data: ResolutionMode) {
+                ideDeclarationTransformer.transformDeclarationContent(this, firClass, data) {
+                    super.transformDeclarationContent(firClass, data)
+                    firClass
+                }
             }
         }
-    }
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {

@@ -25,7 +25,7 @@ fun whenInContract(x: Any?, boolean: Boolean) {
 
 fun forInContract(x: Any?) {
     contract {
-        for (i in <!HAS_NEXT_MISSING!>0..1<!>) {
+        for (i in 0..1) {
             returns() implies (x is String)
         }
     }

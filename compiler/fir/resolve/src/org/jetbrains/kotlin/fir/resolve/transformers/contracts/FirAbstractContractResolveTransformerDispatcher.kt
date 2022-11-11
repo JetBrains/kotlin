@@ -48,6 +48,14 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
     final override val expressionsTransformer: FirExpressionsResolveTransformer =
         FirExpressionsResolveTransformer(this)
 
+    final override val declarationsTransformer: FirDeclarationsResolveTransformer
+        get() = if (contractMode) contractDeclarationsTransformer else regularDeclarationsTransformer
+
+    protected abstract val contractDeclarationsTransformer: FirDeclarationsContractResolveTransformer
+    private val regularDeclarationsTransformer = FirDeclarationsResolveTransformer(this)
+
+    private var contractMode = true
+
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
         return annotation
     }
@@ -56,9 +64,8 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         return annotationCall
     }
 
-    protected open class FirDeclarationsContractResolveTransformer(
-        transformer: FirAbstractBodyResolveTransformerDispatcher
-    ) : FirDeclarationsResolveTransformer(transformer) {
+    protected open inner class FirDeclarationsContractResolveTransformer :
+        FirDeclarationsResolveTransformer(this@FirAbstractContractResolveTransformerDispatcher) {
         override fun transformSimpleFunction(
             simpleFunction: FirSimpleFunction,
             data: ResolutionMode
@@ -136,7 +143,12 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             for (valueParameter in valueParameters) {
                 context.storeVariable(valueParameter, session)
             }
-            val contractCall = contractDescription.contractCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            val contractCall = try {
+                contractMode = false
+                contractDescription.contractCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            } finally {
+                contractMode = true
+            }
             val resolvedId = contractCall.toResolvedCallableSymbol()?.callableId ?: return transformOwnerWithUnresolvedContract(owner)
             if (resolvedId != FirContractsDslNames.CONTRACT) return transformOwnerWithUnresolvedContract(owner)
             if (contractCall.arguments.size != 1) return transformOwnerOfErrorContract(owner)
