@@ -2011,8 +2011,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-            "Overriding ''equals'' from ''Any'' in inline class alongside with lack of ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
-            STRING
+            "Overriding ''equals'' from ''Any'' in inline class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
+            RENDER_TYPE
         )
 
         //imports

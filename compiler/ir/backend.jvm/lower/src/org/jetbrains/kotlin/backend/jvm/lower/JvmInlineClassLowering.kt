@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isEquals
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -488,7 +486,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val right = function.valueParameters[1]
         val type = left.type.unboxInlineClass()
 
-        val untypedEquals = valueClass.functions.single { it.isEquals(context) }
+        val untypedEquals = valueClass.functions.single { it.isEquals() }
 
         function.body = context.createIrBuilder(valueClass.symbol).run {
             val context = this@JvmInlineClassLowering.context

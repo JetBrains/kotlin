@@ -18017,9 +18017,9 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("typedEqualsOperatorModifierInInlineClass.kt")
-            public void testTypedEqualsOperatorModifierInInlineClass() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inlineClasses/typedEqualsOperatorModifierInInlineClass.kt");
+            @TestMetadata("typedEqualsOperatorDeclarationCheck.kt")
+            public void testTypedEqualsOperatorDeclarationCheck() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/typedEqualsOperatorDeclarationCheck.kt");
             }
 
             @Test

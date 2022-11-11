@@ -7,7 +7,7 @@ import kotlin.math.abs
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC(val x: Double) {
-    fun equals(other: IC): Boolean {
+    operator fun equals(other: IC): Boolean {
         return abs(x - other.x) < 0.1
     }
 

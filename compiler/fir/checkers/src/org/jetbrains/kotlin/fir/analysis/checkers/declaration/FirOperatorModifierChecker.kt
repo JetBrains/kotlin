@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -196,7 +197,9 @@ private object OperatorFunctionChecks {
                     return buildString {
                         append("must override ''equals()'' in Any")
                         if (customEqualsSupported && containingClassSymbol.isInline) {
-                            append(" or define ''equals(other: ${containingClassSymbol.name}): Boolean''")
+                            val expectedParameterTypeRendered =
+                                containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable();
+                            append(" or define ''equals(other: ${expectedParameterTypeRendered}): Boolean''")
                         }
                     }
                 }

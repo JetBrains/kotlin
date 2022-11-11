@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isEquals
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -205,19 +206,28 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
             var equalsFromAnyOverriding: FirSimpleFunction? = null
-            var typedEqualsIsDefined = false
+            var typedEquals: FirSimpleFunction? = null
             declaration.declarations.forEach {
                 if (it !is FirSimpleFunction) {
                     return@forEach
                 }
                 if (it.isEquals()) equalsFromAnyOverriding = it
-                if (it.isTypedEqualsInInlineClass(context.session)) typedEqualsIsDefined = true
+                if (it.isTypedEqualsInInlineClass(context.session)) typedEquals = it
             }
-            if (equalsFromAnyOverriding != null && !typedEqualsIsDefined) {
+
+            if (typedEquals?.typeParameters?.isNotEmpty() == true) {
+                reporter.reportOn(
+                    typedEquals!!.source,
+                    FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
+                    context
+                )
+            }
+
+            if (equalsFromAnyOverriding != null && typedEquals == null) {
                 reporter.reportOn(
                     equalsFromAnyOverriding!!.source,
                     FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-                    declaration.name.asString(),
+                    declaration.defaultType().replaceArgumentsWithStarProjections(),
                     context
                 )
             }

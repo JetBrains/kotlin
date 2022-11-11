@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 private val javaLangCloneable = FqNameUnsafe("java.lang.Cloneable")
 
@@ -169,9 +170,20 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         fun KtClass.namedFunctions() = declarations.filterIsInstance<KtNamedFunction>()
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
+            val typedEquals = declaration.namedFunctions().firstOrNull { isTypedEquals(it) }
+
+            if (typedEquals?.typeParameters?.isNotEmpty() == true) {
+                trace.report(Errors.TYPE_PARAMETERS_NOT_ALLOWED.on(typedEquals))
+            }
+
             declaration.namedFunctions().singleOrNull { isUntypedEquals(it) }?.apply {
-                if (declaration.namedFunctions().none { isTypedEquals(it) }) {
-                    trace.report(Errors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(this@apply, descriptor.name.asString()))
+                if (typedEquals == null) {
+                    trace.report(
+                        Errors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(
+                            this@apply,
+                            descriptor.defaultType.replaceArgumentsWithStarProjections()
+                        )
+                    )
                 }
             }
         }

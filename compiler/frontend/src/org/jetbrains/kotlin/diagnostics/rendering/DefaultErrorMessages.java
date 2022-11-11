@@ -802,8 +802,8 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
         MAP.put(INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Inline classes cannot have context receivers");
         MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-                "Overriding ''equals'' from ''Any'' in inline class alongside with lack of ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
-                STRING);
+                "Overriding ''equals'' from ''Any'' in inline class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
+                RENDER_TYPE);
 
         MAP.put(RESULT_CLASS_IN_RETURN_TYPE, "'kotlin.Result' cannot be used as a return type");
         MAP.put(RESULT_CLASS_WITH_NULLABLE_OPERATOR, "Expression of type ''kotlin.Result'' cannot be used as a left operand of ''{0}''", STRING);

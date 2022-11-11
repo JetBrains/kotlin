@@ -1400,7 +1400,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE by warning<KtElement>(PositioningStrategy.SUSPEND_MODIFIER)
 
         val INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<String>("className")
+            parameter<ConeKotlinType>("type")
         }
     }
 
