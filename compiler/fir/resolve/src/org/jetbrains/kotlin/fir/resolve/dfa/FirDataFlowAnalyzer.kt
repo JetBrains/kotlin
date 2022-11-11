@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
@@ -99,10 +98,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 private val visibilityChecker = components.session.visibilityChecker
                 private val typeContext = components.session.typeContext
 
-                override fun receiverUpdated(symbol: FirBasedSymbol<*>, types: Set<ConeKotlinType>?) {
+                override fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?) {
                     val index = receiverStack.getReceiverIndex(symbol) ?: return
                     val originalType = receiverStack.getOriginalType(index)
-                    receiverStack.replaceReceiverType(index, types.intersectWith(typeContext, originalType))
+                    receiverStack.replaceReceiverType(index, info?.exactType.intersectWith(typeContext, originalType))
                 }
 
                 override val logicSystem: PersistentLogicSystem =
@@ -137,7 +136,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     protected abstract val logicSystem: LogicSystem<FLOW>
     protected abstract val receiverStack: Iterable<ImplicitReceiverValue<*>>
-    protected abstract fun receiverUpdated(symbol: FirBasedSymbol<*>, types: Set<ConeKotlinType>?)
+    protected abstract fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?)
 
     private val graphBuilder get() = context.graphBuilder
     private val variableStorage get() = context.variableStorage
@@ -161,7 +160,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
         val flow = graphBuilder.lastNode.flow
         val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, expression) ?: return null
-        return flow.getType(variable)?.takeIf { it.isNotEmpty() }?.let { variable.stability to it.toMutableList() }
+        val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
+        return variable.stability to types.toMutableList()
     }
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement> {
@@ -223,7 +223,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (graphBuilder.isTopLevel()) {
             context.reset()
         } else {
-            resetReceivers(graph.enterNode.flow)
+            resetReceivers()
         }
         return FirControlFlowGraphReferenceImpl(graph, DataFlowInfo(variableStorage, flowOnNodes))
     }
@@ -245,7 +245,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 enterCapturingStatement(flowOnEntry, anonymousFunction)
             else -> {}
         }
-        resetReceivers(flowOnEntry)
     }
 
     private fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): FirControlFlowGraphReference {
@@ -261,8 +260,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             else -> {}
         }
         functionExitNode.mergeIncomingFlow()
-        postponedLambdaExitNode?.mergeIncomingFlow()
-        resetReceivers(graph.enterNode.flow)
+        if (postponedLambdaExitNode != null) {
+            postponedLambdaExitNode.mergeIncomingFlow()
+        } else {
+            resetReceivers()
+        }
         return FirControlFlowGraphReferenceImpl(graph)
     }
 
@@ -617,7 +619,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private fun CFGNode<*>.mergeWhenBranchEntryFlow() {
         val previousConditionExitNode = previousNodes.singleOrNull()
         if (previousConditionExitNode is WhenBranchConditionExitNode) {
-            val flow = mergeIncomingFlow(updateReceivers = true)
+            val flow = mergeIncomingFlow()
             val previousConditionVariable = context.variablesForWhenConditions.remove(previousConditionExitNode) ?: return
             flow.commitOperationStatement(previousConditionVariable eq false)
         } else { // first branch
@@ -733,7 +735,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun enterCatchClause(catch: FirCatch) {
-        graphBuilder.enterCatchClause(catch).mergeIncomingFlow(updateReceivers = true)
+        graphBuilder.enterCatchClause(catch).mergeIncomingFlow()
     }
 
     fun exitCatchClause(catch: FirCatch) {
@@ -741,7 +743,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun enterFinallyBlock() {
-        graphBuilder.enterFinallyBlock().mergeIncomingFlow(updateReceivers = true)
+        graphBuilder.enterFinallyBlock().mergeIncomingFlow()
     }
 
     fun exitFinallyBlock() {
@@ -775,7 +777,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // is non-null. In theory, this should be unnecessary if the TODOs below are implemented.
         val flowFromPreviousSafeCall = (node.firstPreviousNode as? ExitSafeCallNode)?.lastNodeInNotNullCase?.flow
         if (flowFromPreviousSafeCall != null) {
-            logicSystem.copyAllInformation(flowFromPreviousSafeCall, flow)
+            flow.copyAllInformationFrom(flowFromPreviousSafeCall)
         }
         val receiverVariable = variableStorage.getOrCreateIfReal(node.flow, safeCall.receiver) ?: return
         flow.commitOperationStatement(receiverVariable notEq null)
@@ -851,9 +853,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun UnionFunctionCallArgumentsNode.unionFlowFromArguments() {
-        flow = logicSystem.unionFlow(previousNodes.map { it.flow }).also {
-            resetReceivers(it)
-        }
+        flow = logicSystem.unionFlow(previousNodes.map { it.flow })
     }
 
     private fun processConditionalContract(qualifiedAccess: FirQualifiedAccess) {
@@ -913,7 +913,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 }
             }
         }
-        graphBuilder.exitContract(qualifiedAccess).mergeIncomingFlow(updateReceivers = true)
+        graphBuilder.exitContract(qualifiedAccess).mergeIncomingFlow()
         contractDescriptionVisitingMode = false
     }
 
@@ -1137,7 +1137,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val lhsIsNotNullFlow = lhsIsNotNullNode.mergeIncomingFlow()
         val rhsEnterFlow = rhsEnterNode.mergeIncomingFlow()
         val lhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.lhs) ?: return
-        lhsIsNotNullFlow.commitOperationStatement(lhsVariable notEq null, updateReceivers = false)
+        lhsIsNotNullFlow.commitOperationStatement(lhsVariable notEq null)
         rhsEnterFlow.commitOperationStatement(lhsVariable eq null)
     }
 
@@ -1193,35 +1193,58 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) firstPreviousNode else this
 
-    // `updateReceivers` should be set if the predecessor node is not the last one that was handled:
-    // when entering a new `when` branch condition or a `catch`/`finally` block.
-    private fun CFGNode<*>.mergeIncomingFlow(updateReceivers: Boolean = false): FLOW {
-        var incomingEdgeCount = 0
+    // Smart cast information is taken from `graphBuilder.lastNode`, but the problem with receivers specifically
+    // is that they also affect tower resolver's scope stack. To allow accessing members on smart casted receivers,
+    // we explicitly patch up the stack by calling `receiverUpdated` in a way that maintains consistency with
+    // `getTypeUsingSmartcastInfo`; i.e. at any point between calls to this class' methods the types in the implicit
+    // receiver stack also correspond to the data flow information attached to `graphBuilder.lastNode`.
+    private var currentReceiverState: FLOW? = null
+
+    // Generally when calling some method on `graphBuilder`, one of the nodes it returns is the new `lastNode`.
+    // In that case `mergeIncomingFlow` will automatically ensure consistency once called on that node.
+    private fun CFGNode<*>.mergeIncomingFlow(): FLOW {
         val previousFlows = previousNodes.mapNotNull {
             val incomingEdgeKind = incomingEdges.getValue(it).kind
-            if (incomingEdgeKind.usedInDeadDfa) {
-                incomingEdgeCount++
-            }
-            if (incomingEdgeKind.usedInDfa || (isDead && incomingEdgeKind.usedInDeadDfa)) {
-                it.flow
-            } else {
-                null
-            }
+            it.takeIf { incomingEdgeKind.usedInDfa || (isDead && incomingEdgeKind.usedInDeadDfa) }?.flow
         }
-        return logicSystem.joinFlow(previousFlows).also {
-            flow = it
-            if (updateReceivers || incomingEdgeCount > 1) {
-                resetReceivers(it)
+        val result = logicSystem.joinFlow(previousFlows).also { flow = it }
+        if (graphBuilder.lastNodeOrNull == this) {
+            // Here it is, the new `lastNode`. If the previous state is the only predecessor, then there is actually
+            // nothing to update; `addTypeStatement` has already ensured we have the correct information.
+            if (currentReceiverState == null || previousFlows.singleOrNull() != currentReceiverState) {
+                updateAllReceivers(currentReceiverState, result)
+            }
+            currentReceiverState = result
+        }
+        return result
+    }
+
+    // In rare cases (like after exiting functions) after adding more nodes `graphBuilder` will revert the current
+    // state to a previously created node, so none of the nodes it returned are `lastNode` and `mergeIncomingFlow`
+    // will not ensure consistency. In that case an explicit call to `resetReceivers` is needed to roll back the stack
+    // to that previously created node's state.
+    private fun resetReceivers() {
+        val currentFlow = graphBuilder.lastNodeOrNull?.flow
+        updateAllReceivers(currentReceiverState, currentFlow)
+        currentReceiverState = currentFlow
+    }
+
+    private fun updateAllReceivers(from: FLOW?, to: FLOW?) {
+        receiverStack.forEach {
+            variableStorage.getLocalVariable(it.boundSymbol)?.let { variable ->
+                val newStatement = to?.getTypeStatement(variable)
+                if (newStatement != from?.getTypeStatement(variable)) {
+                    receiverUpdated(it.boundSymbol, newStatement)
+                }
             }
         }
     }
 
-    private fun resetReceivers(flow: FLOW) {
-        receiverStack.forEach {
-            variableStorage.getLocalVariable(it.boundSymbol)?.let { variable ->
-                receiverUpdated(it.boundSymbol, flow.getType(variable))
-            }
+    private fun FLOW.copyAllInformationFrom(other: FLOW) {
+        if (this === currentReceiverState) {
+            updateAllReceivers(this, other)
         }
+        logicSystem.copyAllInformation(other, this)
     }
 
     private fun FLOW.addImplication(statement: Implication) {
@@ -1240,9 +1263,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun FLOW.addTypeStatement(info: TypeStatement) {
-        logicSystem.addTypeStatement(this, info)
-        if (info.variable.isThisReference) {
-            receiverUpdated(info.variable.identifier.symbol, getType(info.variable))
+        val newStatement = logicSystem.addTypeStatement(this, info) ?: return
+        if (newStatement.variable.isThisReference && this === currentReceiverState) {
+            receiverUpdated(newStatement.variable.identifier.symbol, newStatement)
         }
     }
 
@@ -1250,20 +1273,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         statements.values.forEach { addImplication(condition implies it) }
     }
 
-    private fun FLOW.commitOperationStatement(statement: OperationStatement, updateReceivers: Boolean = true) {
+    private fun FLOW.commitOperationStatement(statement: OperationStatement) {
         logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true).values.forEach {
-            logicSystem.addTypeStatement(this, it)
-            if (updateReceivers && it.variable.isThisReference) {
-                receiverUpdated(it.variable.identifier.symbol, getType(it.variable))
-            }
+            addTypeStatement(it)
         }
         if (statement.operation == Operation.NotEqNull) {
             val variable = statement.variable
             if (variable is RealVariable) {
-                logicSystem.addTypeStatement(this, variable typeEq any)
-                if (updateReceivers && variable.isThisReference) {
-                    receiverUpdated(variable.identifier.symbol, getType(variable))
-                }
+                addTypeStatement(variable typeEq any)
             }
         }
     }

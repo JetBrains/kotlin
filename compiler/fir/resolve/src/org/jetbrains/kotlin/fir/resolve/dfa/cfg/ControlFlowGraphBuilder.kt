@@ -43,6 +43,9 @@ class ControlFlowGraphBuilder {
     val lastNode: CFGNode<*>
         get() = lastNodes.top()
 
+    val lastNodeOrNull: CFGNode<*>?
+        get() = lastNodes.topOrNull()
+
     var levelCounter: Int = 0
 
     private val modes: Stack<Mode> = stackOf(Mode.TopLevel)

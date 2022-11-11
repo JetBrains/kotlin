@@ -55,7 +55,7 @@ internal open class StubBodyResolveTransformerComponents(
             override val receiverStack: Iterable<ImplicitReceiverValue<*>>
                 get() = error("Should not be called")
 
-            override fun receiverUpdated(symbol: FirBasedSymbol<*>, types: Set<ConeKotlinType>?) =
+            override fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?) =
                 error("Should not be called")
 
             override fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? =
