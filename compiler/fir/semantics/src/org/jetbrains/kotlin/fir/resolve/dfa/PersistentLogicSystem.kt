@@ -64,11 +64,8 @@ class PersistentFlow : Flow {
     override fun unwrapVariable(variable: RealVariable): RealVariable =
         directAliasMap[variable] ?: variable
 
-    fun getTypeStatement(variable: RealVariable): TypeStatement =
-        approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable) ?: MutableTypeStatement(variable)
-
-    override fun getType(variable: RealVariable): Set<ConeKotlinType>? =
-        approvedTypeStatements[unwrapVariable(variable)]?.exactType
+    override fun getTypeStatement(variable: RealVariable): TypeStatement? =
+        approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
 }
 
 abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSystem<PersistentFlow>(context) {
@@ -108,7 +105,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         // Computing the statements for these aliases is redundant as the result is equal
         // to the statements for whatever they are aliasing.
         val variables = flows.flatMapTo(mutableSetOf()) { it.approvedTypeStatements.keys + it.directAliasMap.keys } - commonAliases.keys
-        val statements = variables.mapNotNull { variable ->
+        val statements = variables.mapNotNull computeStatement@{ variable ->
             val statement = if (allExecute) {
                 // All input flows execute in some order. If none of the flows reassign, i.e. the only key
                 // in `byAssignment` is `commonFlow`'s assignment index, then all statements are true.
@@ -118,12 +115,14 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                 if (byAssignment.size > 1) {
                     byAssignment.remove(commonFlow.assignmentIndex[variable] ?: -1)
                 }
-                or(byAssignment.values.map { flowSubset -> and(flowSubset.map { it.getTypeStatement(variable) }) })
+                or(byAssignment.values.map { flowSubset ->
+                    and(flowSubset.mapNotNull { it.getTypeStatement(variable) }) ?: return@computeStatement null
+                })
             } else {
                 // One input flow executes - one set of statements is true, others might be false.
-                or(flows.map { it.getTypeStatement(variable) })
+                or(flows.map { it.getTypeStatement(variable) ?: return@computeStatement null })
             }
-            if (statement.isNotEmpty) variable to statement.toPersistent() else null
+            if (statement?.isEmpty == false) variable to statement.toPersistent() else null
         }
 
         // If a variable was reassigned in one branch, it was reassigned at the join point.
@@ -213,13 +212,15 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
-    override fun addTypeStatement(flow: PersistentFlow, statement: TypeStatement) {
-        if (statement.exactType.isEmpty()) return
+    override fun addTypeStatement(flow: PersistentFlow, statement: TypeStatement): TypeStatement? {
+        if (statement.exactType.isEmpty()) return null
         val variable = statement.variable
         val oldExactType = flow.approvedTypeStatements[variable]?.exactType
         val newExactType = oldExactType?.addAll(statement.exactType) ?: statement.exactType.toPersistentSet()
-        if (newExactType === oldExactType) return
-        flow.approvedTypeStatements = flow.approvedTypeStatements.put(variable, PersistentTypeStatement(variable, newExactType))
+        if (newExactType === oldExactType) return null
+        val newStatement = PersistentTypeStatement(variable, newExactType)
+        flow.approvedTypeStatements = flow.approvedTypeStatements.put(variable, newStatement)
+        return newStatement
     }
 
     override fun addImplication(flow: PersistentFlow, implication: Implication) {
@@ -283,7 +284,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                 flow.logicStatements = flow.logicStatements.put(variable, stillUnknown)
             }
         }
-        return approvedTypeStatements.asMap().mapValues { and(it.value) }
+        return approvedTypeStatements.asMap().mapValues { and(it.value)!! }
     }
 
     override fun recordNewAssignment(flow: PersistentFlow, variable: RealVariable, index: Int) {

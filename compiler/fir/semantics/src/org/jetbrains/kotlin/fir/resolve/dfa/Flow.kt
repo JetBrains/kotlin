@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-
 abstract class Flow {
     abstract val approvedTypeStatements: TypeStatements
     abstract fun unwrapVariable(variable: RealVariable): RealVariable
-    abstract fun getType(variable: RealVariable): Set<ConeKotlinType>?
+    abstract fun getTypeStatement(variable: RealVariable): TypeStatement?
 }

@@ -15,7 +15,8 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     abstract fun unionFlow(flows: Collection<FLOW>): FLOW
 
     // -------------------------------- Flow mutators --------------------------------
-    abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement)
+    // Returns all known information about the variable, or null if unchanged by this statement:
+    abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement): TypeStatement?
     abstract fun addImplication(flow: FLOW, implication: Implication)
     abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
     abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
@@ -47,7 +48,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         right.isEmpty() -> right
         else -> buildMap {
             for ((variable, leftStatement) in left) {
-                put(variable, or(listOf(leftStatement, right[variable] ?: continue)))
+                put(variable, or(listOf(leftStatement, right[variable] ?: continue))!!)
             }
         }
     }
@@ -57,14 +58,14 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         right.isEmpty() -> left
         else -> left.toMutableMap().apply {
             for ((variable, rightStatement) in right) {
-                put(variable, { rightStatement }, { and(listOf(it, rightStatement)) })
+                put(variable, { rightStatement }, { and(listOf(it, rightStatement))!! })
             }
         }
     }
 
-    private inline fun Collection<TypeStatement>.singleOrNew(exactType: () -> MutableSet<ConeKotlinType>): TypeStatement =
+    private inline fun Collection<TypeStatement>.singleOrNew(exactType: () -> MutableSet<ConeKotlinType>): TypeStatement? =
         when (size) {
-            0 -> throw AssertionError("need at least one statement")
+            0 -> null
             1 -> first()
             else -> {
                 val variable = first().variable
@@ -84,9 +85,9 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         }
     }
 
-    protected fun and(statements: Collection<TypeStatement>): TypeStatement =
+    protected fun and(statements: Collection<TypeStatement>): TypeStatement? =
         statements.singleOrNew { statements.flatMapTo(mutableSetOf()) { it.exactType } }
 
-    protected fun or(statements: Collection<TypeStatement>): TypeStatement =
+    protected fun or(statements: Collection<TypeStatement>): TypeStatement? =
         statements.singleOrNew { unifyTypes(statements.map { it.exactType })?.let { mutableSetOf(it) } ?: mutableSetOf() }
 }
