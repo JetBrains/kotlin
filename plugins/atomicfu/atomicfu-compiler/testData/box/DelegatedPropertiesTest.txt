@@ -23,9 +23,7 @@ public final class DelegatedProperties$D {
     private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field c: java.lang.Object
     synthetic final field this$0: DelegatedProperties
     public method <init>(p0: DelegatedProperties): void
-    public final method getB(): int
     public final @org.jetbrains.annotations.NotNull method getC(): java.lang.String
-    public final method setB(p0: int): void
     public final method setC(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final inner class DelegatedProperties$D
 }
@@ -47,30 +45,31 @@ public final class DelegatedProperties {
     private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field vRef: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
-    public synthetic final static method access$get_a$p(p0: DelegatedProperties): int
-    public synthetic final static method access$set_a$p(p0: DelegatedProperties, p1: int): void
     public final method getA(): int
-    public final method getB(): boolean
-    public final method getL(): long
-    public final @org.jetbrains.annotations.NotNull method getRef(): DelegatedProperties$A
-    public final method getVBoolean(): boolean
-    public final method getVInt(): int
-    public final method getVLong(): int
-    public final @org.jetbrains.annotations.NotNull method getVRef(): DelegatedProperties$A
+    private final method getB(): boolean
+    private final method getL(): long
+    private final method getPrivateA(): int
+    private final method getRef(): DelegatedProperties$A
+    private final method getVBoolean(): boolean
+    private final method getVInt(): int
+    private final method getVLong(): int
+    private final method getVRef(): DelegatedProperties$A
     public final method setA(p0: int): void
-    public final method setB(p0: boolean): void
-    public final method setL(p0: long): void
-    public final method setRef(@org.jetbrains.annotations.NotNull p0: DelegatedProperties$A): void
-    public final method setVBoolean(p0: boolean): void
-    public final method setVInt(p0: int): void
-    public final method setVLong(p0: int): void
-    public final method setVRef(@org.jetbrains.annotations.NotNull p0: DelegatedProperties$A): void
+    private final method setB(p0: boolean): void
+    private final method setL(p0: long): void
+    private final method setPrivateA(p0: int): void
+    private final method setRef(p0: DelegatedProperties$A): void
+    private final method setVBoolean(p0: boolean): void
+    private final method setVInt(p0: int): void
+    private final method setVLong(p0: int): void
+    private final method setVRef(p0: DelegatedProperties$A): void
     public final method test(): void
     public final method testDelegatedAtomicBoolean(): void
     public final method testDelegatedAtomicInt(): void
     public final method testDelegatedAtomicLong(): void
     public final method testDelegatedAtomicRef(): void
-    public final method testScopedDelegatedProperties(): void
+    public final method testDelegatedVariablesFlow(): void
+    public final method testScopedVolatileProperties(): void
     public final method testVolatileBoolean(): void
     public final method testVolatileInt(): void
     public final method testVolatileLong(): void
