@@ -115,13 +115,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
         for ((realVar, requiredTypeStatement) in conditionStatements) {
             val fixedRealVar = typeStatements.keys.find { it.identifier == realVar.identifier } ?: realVar
-            val resultTypeStatement = typeStatements[fixedRealVar]
-
-            val resultType = mutableListOf<ConeKotlinType>().apply {
-                addIfNotNull(function.getParameterType(fixedRealVar.identifier.symbol, context))
-                if (resultTypeStatement != null) addAll(resultTypeStatement.exactType)
-            }.let { typeContext.intersectTypesOrNull(it) }
-
+            val originalType = function.getParameterType(fixedRealVar.identifier.symbol, context) ?: continue
+            val resultType = typeStatements[fixedRealVar]?.exactType.intersectWith(typeContext, originalType)
             val requiredType = typeContext.intersectTypesOrNull(requiredTypeStatement.exactType.toList())
             if (requiredType != null && !requiredType.isSupertypeOf(typeContext, resultType)) return true
         }

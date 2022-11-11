@@ -102,12 +102,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 override fun receiverUpdated(symbol: FirBasedSymbol<*>, types: Set<ConeKotlinType>?) {
                     val index = receiverStack.getReceiverIndex(symbol) ?: return
                     val originalType = receiverStack.getOriginalType(index)
-                    val type = if (types?.isNotEmpty() == true) {
-                        typeContext.intersectTypes(types.toMutableList().also { it += originalType })
-                    } else {
-                        originalType
-                    }
-                    receiverStack.replaceReceiverType(index, type)
+                    receiverStack.replaceReceiverType(index, types.intersectWith(typeContext, originalType))
                 }
 
                 override val logicSystem: PersistentLogicSystem =

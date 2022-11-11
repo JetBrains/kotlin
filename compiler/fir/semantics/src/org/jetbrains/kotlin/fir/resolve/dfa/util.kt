@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeContext
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.contracts.ExperimentalContracts
@@ -57,14 +58,12 @@ internal inline fun <K, V> PersistentMap<K, V>.put(
     }
 }
 
-@DfaInternals
-fun FirOperation.invert(): FirOperation = when (this) {
-    FirOperation.EQ -> FirOperation.NOT_EQ
-    FirOperation.NOT_EQ -> FirOperation.EQ
-    FirOperation.IDENTITY -> FirOperation.NOT_IDENTITY
-    FirOperation.NOT_IDENTITY -> FirOperation.IDENTITY
-    else -> throw IllegalArgumentException("$this can not be inverted")
-}
+fun Set<ConeKotlinType>?.intersectWith(context: ConeTypeContext, originalType: ConeKotlinType): ConeKotlinType =
+    if (!isNullOrEmpty()) {
+        context.intersectTypes(toMutableList().also { it += originalType })
+    } else {
+        originalType
+    }
 
 @DfaInternals
 fun FirOperation.isEq(): Boolean {
