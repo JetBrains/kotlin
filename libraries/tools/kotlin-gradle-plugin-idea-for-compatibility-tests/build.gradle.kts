@@ -4,7 +4,7 @@
  * Version of kotlin-gradle-plugin-idea module that should be resolved for compatibility tests
  * This version can be treated as 'minimal guaranteed backwards compatible version' of the module.
  */
-val testedVersion = "1.8.20-dev-2237"
+val testedVersion = "1.8.20-dev-2253"
 
 val isSnapshotTest = properties.contains("kgp-idea.snapshot_test")
 val resolvedTestedVersion = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString() else testedVersion
@@ -38,7 +38,6 @@ dependencies {
     incomingClasspath.resolutionStrategy {
         force(kotlin("stdlib", bootstrapKotlinVersion))
         force(kotlin("test-junit", bootstrapKotlinVersion))
-        force(kotlin("gradle-plugin-annotations", bootstrapKotlinVersion)) // Remove after this is available under 'testedVersion'
     }
 }
 
