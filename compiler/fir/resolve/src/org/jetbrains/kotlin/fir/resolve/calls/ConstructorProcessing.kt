@@ -319,7 +319,7 @@ private class TypeAliasConstructorsSubstitutingScope(
                         //
                         receiverParameter = originalConstructorSymbol.fir.returnTypeRef.withReplacedConeType(outerType).let {
                             buildReceiverParameter {
-                                type = it
+                                typeRef = it
                             }
                         }
                     }

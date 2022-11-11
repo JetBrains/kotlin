@@ -61,7 +61,7 @@ class ConeEquivalentCallConflictResolver(
     ): Boolean {
         if (first.symbol.callableId != second.symbol.callableId) return false
         if (first.isExpect != second.isExpect) return false
-        if (first.receiverParameter?.type?.coneType != second.receiverParameter?.type?.coneType) {
+        if (first.receiverParameter?.typeRef?.coneType != second.receiverParameter?.typeRef?.coneType) {
             return false
         }
         if (first is FirVariable != second is FirVariable) {

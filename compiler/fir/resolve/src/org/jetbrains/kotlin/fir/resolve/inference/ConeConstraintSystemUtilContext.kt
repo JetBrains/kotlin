@@ -69,7 +69,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
                     else null
                 } else { // function expression - all types are explicit, shouldn't return null
                     buildList {
-                        atom.receiverParameter?.type?.coneType?.let { add(it) }
+                        atom.receiverParameter?.typeRef?.coneType?.let { add(it) }
                         addAll(atom.collectDeclaredValueParameterTypes())
                     }
                 }
@@ -90,7 +90,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         require(this is PostponedResolvedAtom)
         return this is LambdaWithTypeVariableAsExpectedTypeAtom &&
                 !this.atom.anonymousFunction.isLambda &&
-                this.atom.anonymousFunction.receiverParameter?.type?.coneType != null
+                this.atom.anonymousFunction.receiverParameter?.typeRef?.coneType != null
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {

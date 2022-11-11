@@ -175,7 +175,7 @@ abstract class AbstractConeCallConflictResolver(
     ): List<TypeWithConversion> {
         return buildList {
             val session = inferenceComponents.session
-            addIfNotNull(called.receiverParameter?.type?.coneType?.fullyExpandedType(session)?.let { TypeWithConversion(it) })
+            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.fullyExpandedType(session)?.let { TypeWithConversion(it) })
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
                 // Return type isn't needed here       v

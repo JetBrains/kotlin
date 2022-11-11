@@ -389,7 +389,7 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagB
 
     return createFunctionalType(
         parameterTypes,
-        receiverType = receiverParameter?.type?.coneType,
+        receiverType = receiverParameter?.typeRef?.coneType,
         rawReturnType = returnTypeRef.coneType,
         isSuspend = this.isSuspend
     )

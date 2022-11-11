@@ -310,7 +310,7 @@ class FirCallCompleter(
                 lambdaArgument.receiverParameter?.let { receiverParameter ->
                     receiverType?.approximateLambdaInputType()?.let { approximatedType ->
                         receiverParameter.apply {
-                            replaceType(type.resolvedTypeFromPrototype(approximatedType))
+                            replaceTypeRef(typeRef.resolvedTypeFromPrototype(approximatedType))
                         }
                     }
                 }
@@ -399,7 +399,7 @@ internal fun FirFunction.isFunctionForExpectTypeFromCastFeature(): Boolean {
         coneTypeSafe<ConeKotlinType>()
             ?.contains { (it.unwrap() as? ConeTypeParameterType)?.lookupTag == typeParameter.symbol.toLookupTag() } != false
 
-    if (valueParameters.any { it.returnTypeRef.isBadType() } || receiverParameter?.type?.isBadType() == true) return false
+    if (valueParameters.any { it.returnTypeRef.isBadType() } || receiverParameter?.typeRef?.isBadType() == true) return false
 
     return true
 }

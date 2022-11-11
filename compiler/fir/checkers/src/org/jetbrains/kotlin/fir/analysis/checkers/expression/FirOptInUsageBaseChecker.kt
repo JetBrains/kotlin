@@ -173,7 +173,7 @@ object FirOptInUsageBaseChecker {
             if (fir !is FirConstructor) {
                 // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
                 fir.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-                fir.receiverParameter?.type?.coneType.addExperimentalities(context, result, visited)
+                fir.receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
                 if (fir is FirSimpleFunction) {
                     fir.valueParameters.forEach {
                         it.returnTypeRef.coneType.addExperimentalities(context, result, visited)

@@ -390,7 +390,7 @@ class ScopeTowerLevel(
         candidate: FirCallableSymbol<*>,
         processor: TowerScopeLevelProcessor<T>
     ) {
-        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.type
+        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
         if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers) == null) {
             return
         }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirReceiverParameter : FirPureAbstractElement(), FirAnnotationContainer {
     abstract override val source: KtSourceElement?
-    abstract val type: FirTypeRef
+    abstract val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitReceiverParameter(this, data)
@@ -29,9 +29,9 @@ abstract class FirReceiverParameter : FirPureAbstractElement(), FirAnnotationCon
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
         transformer.transformReceiverParameter(this, data) as E
 
-    abstract fun replaceType(newType: FirTypeRef)
+    abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract fun <D> transformType(transformer: FirTransformer<D>, data: D): FirReceiverParameter
+    abstract fun <D> transformTypeRef(transformer: FirTransformer<D>, data: D): FirReceiverParameter
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReceiverParameter
 }

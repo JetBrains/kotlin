@@ -129,7 +129,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
         val name: String
         val typeRef = if (valueParameterIndex < 0) {
             name = "this"
-            ownerFunction.receiverParameter?.type
+            ownerFunction.receiverParameter?.typeRef
         } else {
             val parameter = ownerFunction.valueParameters.getOrNull(valueParameterIndex) ?: return null
             name = parameter.name.asString()

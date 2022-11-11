@@ -240,7 +240,7 @@ fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): Li
 }
 
 val FirAnonymousFunction.returnType: ConeKotlinType? get() = returnTypeRef.coneTypeSafe()
-val FirAnonymousFunction.receiverType: ConeKotlinType? get() = receiverParameter?.type?.coneTypeSafe()
+val FirAnonymousFunction.receiverType: ConeKotlinType? get() = receiverParameter?.typeRef?.coneTypeSafe()
 
 fun ConeTypeContext.isTypeMismatchDueToNullability(
     actualType: ConeKotlinType,

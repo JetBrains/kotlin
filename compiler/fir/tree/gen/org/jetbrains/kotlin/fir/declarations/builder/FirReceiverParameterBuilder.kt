@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirReceiverParameterBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    lateinit var type: FirTypeRef
+    lateinit var typeRef: FirTypeRef
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     override fun build(): FirReceiverParameter {
         return FirReceiverParameterImpl(
             source,
-            type,
+            typeRef,
             annotations,
         )
     }
@@ -53,7 +53,7 @@ inline fun buildReceiverParameterCopy(original: FirReceiverParameter, init: FirR
     }
     val copyBuilder = FirReceiverParameterBuilder()
     copyBuilder.source = original.source
-    copyBuilder.type = original.type
+    copyBuilder.typeRef = original.typeRef
     copyBuilder.annotations.addAll(original.annotations)
     return copyBuilder.apply(init).build()
 }

@@ -409,7 +409,7 @@ class CallAndReferenceGenerator(
                 qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
                     val callableDeclaration = firSymbol?.fir as? FirCallableDeclaration
                     val targetType = callableDeclaration?.dispatchReceiverType?.toIrType()
-                        ?: callableDeclaration?.receiverParameter?.type?.toIrType()
+                        ?: callableDeclaration?.receiverParameter?.typeRef?.toIrType()
                         ?: error("Couldn't get the proper receiver")
                     IrTypeOperatorCallImpl(
                         startOffset, endOffset, targetType,
@@ -1061,7 +1061,7 @@ class CallAndReferenceGenerator(
                 if (ownerFunction?.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
                         ((qualifiedAccess.calleeReference as FirResolvedNamedReference)
-                            .resolvedSymbol.fir as? FirCallableDeclaration)?.receiverParameter?.type?.let { receiverType ->
+                            .resolvedSymbol.fir as? FirCallableDeclaration)?.receiverParameter?.typeRef?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
                                 it.cast(
                                     qualifiedAccess.extensionReceiver,

@@ -226,9 +226,9 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private fun FirFunction.getParameterType(symbol: FirBasedSymbol<*>, context: CheckerContext): ConeKotlinType? {
         val typeRef = if (this.symbol == symbol) {
             if (symbol is FirPropertyAccessorSymbol) {
-                context.containingProperty?.receiverParameter?.type
+                context.containingProperty?.receiverParameter?.typeRef
             } else {
-                receiverParameter?.type
+                receiverParameter?.typeRef
             }
         } else {
             valueParameters.find { it.symbol == symbol }?.returnTypeRef

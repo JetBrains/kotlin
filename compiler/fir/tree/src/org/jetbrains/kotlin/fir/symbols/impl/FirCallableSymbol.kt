@@ -29,13 +29,13 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
 
     val resolvedReceiverTypeRef: FirResolvedTypeRef?
         get() {
-            ensureType(fir.receiverParameter?.type)
-            return fir.receiverParameter?.type as FirResolvedTypeRef?
+            ensureType(fir.receiverParameter?.typeRef)
+            return fir.receiverParameter?.typeRef as FirResolvedTypeRef?
         }
 
     val receiverParameter: FirAnnotationContainer?
         get() {
-            ensureType(fir.receiverParameter?.type)
+            ensureType(fir.receiverParameter?.typeRef)
             return fir.receiverParameter
         }
 

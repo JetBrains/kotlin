@@ -20,22 +20,22 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirReceiverParameterImpl(
     override val source: KtSourceElement?,
-    override var type: FirTypeRef,
+    override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotation>,
 ) : FirReceiverParameter() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        type.accept(visitor, data)
+        typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirReceiverParameterImpl {
-        transformType(transformer, data)
+        transformTypeRef(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
 
-    override fun <D> transformType(transformer: FirTransformer<D>, data: D): FirReceiverParameterImpl {
-        type = type.transform(transformer, data)
+    override fun <D> transformTypeRef(transformer: FirTransformer<D>, data: D): FirReceiverParameterImpl {
+        typeRef = typeRef.transform(transformer, data)
         return this
     }
 
@@ -44,7 +44,7 @@ internal class FirReceiverParameterImpl(
         return this
     }
 
-    override fun replaceType(newType: FirTypeRef) {
-        type = newType
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
     }
 }

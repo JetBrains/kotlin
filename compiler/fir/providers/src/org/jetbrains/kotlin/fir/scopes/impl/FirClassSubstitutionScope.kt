@@ -281,7 +281,7 @@ class FirClassSubstitutionScope(
             forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != member.dispatchReceiverClassLookupTagOrNull()
         )
 
-        val receiverType = member.receiverParameter?.type?.coneType
+        val receiverType = member.receiverParameter?.typeRef?.coneType
         val newReceiverType = receiverType?.substitute(substitutor)
 
         val newDispatchReceiverType = dispatchReceiverTypeForSubstitutedMembers.substitute(substitutor)

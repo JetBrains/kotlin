@@ -270,7 +270,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 when (psi) {
                     is KtLambdaArgument -> {
                         val firLambda = (psi.firstOfType<FirLambdaArgumentExpression>()?.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
-                        firLambda?.receiverParameter?.type?.let {
+                        firLambda?.receiverParameter?.typeRef?.let {
                             lastCallWithLambda = psi.getLambdaExpression()?.firstOfType<FirLabel>()?.name
                             implicitReceivers += it.coneType
                             psi.accept(this)
@@ -537,7 +537,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             data.append(if (fir.isVar) "var" else "val").append(" ")
             renderListInTriangles(fir.typeParameters, data, withSpace = true)
 
-            val receiver = fir.receiverParameter?.type?.render()
+            val receiver = fir.receiverParameter?.typeRef?.render()
             when {
                 receiver != null -> data.append(receiver).append(".").append(symbol.callableId.callableName)
                 fir.dispatchReceiverType != null -> {
@@ -560,7 +560,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
             val id = getSymbolId(symbol)
             val callableName = symbol.callableId.callableName
-            val receiverParameterType = fir.receiverParameter?.type
+            val receiverParameterType = fir.receiverParameter?.typeRef
 
             if (call == null) {
                 // call is null for callable reference

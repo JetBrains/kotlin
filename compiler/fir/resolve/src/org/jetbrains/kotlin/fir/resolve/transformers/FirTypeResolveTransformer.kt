@@ -115,7 +115,7 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformReceiverParameter(receiverParameter: FirReceiverParameter, data: Any?): FirReceiverParameter {
-        return receiverParameter.transformAnnotations(this, data).transformType(this, data)
+        return receiverParameter.transformAnnotations(this, data).transformTypeRef(this, data)
     }
 
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty {

@@ -74,7 +74,7 @@ object FirClassVarianceChecker : FirClassChecker() {
 
         checkVarianceConflict(member.returnTypeRef, returnTypeVariance, context, reporter, returnSource)
 
-        val receiverTypeRef = member.receiverParameter?.type
+        val receiverTypeRef = member.receiverParameter?.typeRef
         if (receiverTypeRef != null) {
             checkVarianceConflict(receiverTypeRef, Variance.IN_VARIANCE, context, reporter)
         }

@@ -967,12 +967,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generateReceiver(declaration: FirCallableDeclaration) {
-        generateReceiver(declaration.receiverParameter?.type)
+        generateReceiver(declaration.receiverParameter)
     }
 
-    private fun FlowContent.generateReceiver(receiverTypeRef: FirTypeRef?) {
-        receiverTypeRef ?: return
-        generate(receiverTypeRef)
+    private fun FlowContent.generateReceiver(receiverParameter: FirReceiverParameter?) {
+        receiverParameter ?: return
+        generate(receiverParameter.typeRef)
         +"."
     }
 
@@ -1119,7 +1119,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirFunction) {
         describeTypeParameters(fir)
 
-        fir.receiverParameter?.type?.let {
+        fir.receiverParameter?.typeRef?.let {
             +"("
             generate(it)
             +")."
@@ -1138,7 +1138,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirVariable) {
         if (fir is FirTypeParametersOwner) describeTypeParameters(fir)
 
-        fir.receiverParameter?.type?.let {
+        fir.receiverParameter?.typeRef?.let {
             +"("
             generate(it)
             +")."
@@ -1766,7 +1766,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             iline {
                 generateLabel(anonymousFunction.label)
                 keyword("fun ")
-                generateReceiver(anonymousFunction.receiverParameter?.type)
+                generateReceiver(anonymousFunction.receiverParameter)
 
                 +"("
                 generateList(anonymousFunction.valueParameters) {

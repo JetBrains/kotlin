@@ -60,7 +60,7 @@ class Fir2IrLazySimpleFunction(
 
     override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
         fir.receiverParameter?.let {
-            createThisReceiverParameter(it.type.toIrType(typeConverter), it)
+            createThisReceiverParameter(it.typeRef.toIrType(typeConverter), it)
         }
     }
 

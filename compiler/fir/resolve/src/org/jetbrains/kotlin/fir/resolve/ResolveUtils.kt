@@ -66,7 +66,7 @@ fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupT
         is FirSimpleFunction -> receiverParameter
         is FirAnonymousFunction -> receiverParameter
         else -> null
-    }?.type
+    }?.typeRef
 
     val parameters = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(

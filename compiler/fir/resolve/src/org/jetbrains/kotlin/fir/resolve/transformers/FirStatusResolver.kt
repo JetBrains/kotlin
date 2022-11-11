@@ -304,7 +304,7 @@ class FirStatusResolver(
         if (declaration is FirConstructor) return false
         if (containingClass.typeParameters.all { it.symbol.variance == Variance.INVARIANT }) return false
 
-        if (declaration.receiverParameter?.type?.contradictsWith(Variance.IN_VARIANCE) == true) {
+        if (declaration.receiverParameter?.typeRef?.contradictsWith(Variance.IN_VARIANCE) == true) {
             return true
         }
         if (declaration.returnTypeRef.contradictsWith(

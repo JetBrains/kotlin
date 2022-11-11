@@ -131,8 +131,8 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
         if (!isEqualReceiverTypes(
-                overrideCandidate.receiverParameter?.type,
-                baseDeclaration.receiverParameter?.type,
+                overrideCandidate.receiverParameter?.typeRef,
+                baseDeclaration.receiverParameter?.typeRef,
                 substitutor,
             )
         ) return false
@@ -152,6 +152,6 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
-        return isEqualReceiverTypes(overrideCandidate.receiverParameter?.type, baseDeclaration.receiverParameter?.type, substitutor)
+        return isEqualReceiverTypes(overrideCandidate.receiverParameter?.typeRef, baseDeclaration.receiverParameter?.typeRef, substitutor)
     }
 }

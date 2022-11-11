@@ -573,13 +573,13 @@ fun FirTypeRef.asReceiverParameter(receiverAnnotations: List<FirAnnotationCall>?
     return buildReceiverParameter {
         source = typeRef.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
         receiverAnnotations?.let { annotations += it.filterUseSiteTarget(AnnotationUseSiteTarget.RECEIVER) }
-        type = typeRef
+        this.typeRef = typeRef
     }
 }
 
 fun FirImplicitTypeRef.asReceiverParameter(): FirReceiverParameter = buildReceiverParameter {
     source = this@asReceiverParameter.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
-    type = this@asReceiverParameter
+    typeRef = this@asReceiverParameter
 }
 
 fun <T> FirCallableDeclaration.initContainingClassAttr(context: Context<T>) {

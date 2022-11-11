@@ -142,7 +142,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
                 }
             }
         }
-        checkMemberReceiver(declaration.receiverParameter?.type, declaration as? FirCallableDeclaration, reporter, context)
+        checkMemberReceiver(declaration.receiverParameter?.typeRef, declaration as? FirCallableDeclaration, reporter, context)
     }
 
     private fun checkProperty(declaration: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
@@ -172,7 +172,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
                     )
                 }
             }
-        checkMemberReceiver(declaration.receiverParameter?.type, declaration, reporter, context)
+        checkMemberReceiver(declaration.receiverParameter?.typeRef, declaration, reporter, context)
     }
 
     private fun checkMemberReceiver(

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.contracts.toFirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.errorTypeFromPrototype
 import org.jetbrains.kotlin.fir.expressions.*
@@ -169,7 +170,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
                 receiverParameter = buildReceiverParameter {
-                    type = buildImplicitTypeRef()
+                    typeRef = buildImplicitTypeRef()
                 }
                 symbol = FirAnonymousFunctionSymbol()
                 isLambda = true

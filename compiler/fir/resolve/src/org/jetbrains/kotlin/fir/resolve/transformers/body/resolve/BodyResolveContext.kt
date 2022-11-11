@@ -569,7 +569,7 @@ class BodyResolveContext(
                 for (parameter in function.valueParameters) {
                     storeVariable(parameter, holder.session)
                 }
-                val receiverTypeRef = function.receiverParameter?.type
+                val receiverTypeRef = function.receiverParameter?.typeRef
                 val type = receiverTypeRef?.coneType
                 val additionalLabelName = type?.labelName()
                 withLabelAndReceiverType(function.name, function, type, holder, additionalLabelName, f)
@@ -622,7 +622,7 @@ class BodyResolveContext(
         }
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope(holder.session))
-            val receiverTypeRef = anonymousFunction.receiverParameter?.type
+            val receiverTypeRef = anonymousFunction.receiverParameter?.typeRef
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
             withContainer(anonymousFunction) {
                 withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
@@ -717,7 +717,7 @@ class BodyResolveContext(
             }
         }
         return withTowerDataCleanup {
-            val receiverTypeRef = property.receiverParameter?.type
+            val receiverTypeRef = property.receiverParameter?.typeRef
             addLocalScope(FirLocalScope(holder.session))
             if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
                 !property.isLocal && property.delegate == null

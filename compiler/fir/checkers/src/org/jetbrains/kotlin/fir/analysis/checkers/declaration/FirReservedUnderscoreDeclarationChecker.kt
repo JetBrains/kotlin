@@ -69,7 +69,7 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
 
         val returnOrReceiverTypeRef = when (declaration) {
             is FirValueParameter -> declaration.returnTypeRef
-            is FirFunction -> declaration.receiverParameter?.type
+            is FirFunction -> declaration.receiverParameter?.typeRef
             else -> null
         }
 

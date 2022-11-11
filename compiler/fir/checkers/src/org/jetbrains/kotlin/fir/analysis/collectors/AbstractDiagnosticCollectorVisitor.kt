@@ -65,7 +65,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     private fun visitClassAndChildren(klass: FirClass, type: ConeClassLikeType) {
         val receiverParameter = buildReceiverParameter {
-            this.type = buildResolvedTypeRef {
+            typeRef = buildResolvedTypeRef {
                 this.type = type
             }
         }
@@ -246,7 +246,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
             withLabelAndReceiverType(
                 labelName,
                 declaration,
-                receiverParameter?.type?.coneType
+                receiverParameter?.typeRef?.coneType
             ) {
                 visitNestedElements(declaration)
             }

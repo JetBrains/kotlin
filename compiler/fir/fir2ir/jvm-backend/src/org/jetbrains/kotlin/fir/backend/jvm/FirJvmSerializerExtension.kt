@@ -231,7 +231,7 @@ class FirJvmSerializerExtension(
         this is FirSimpleFunction && isInline && !isSuspend && !isParamAssertionsDisabled &&
                 !Visibilities.isPrivate(visibility) &&
                 (valueParameters.any { it.returnTypeRef.coneType.isBuiltinFunctionalType(session) } ||
-                        receiverParameter?.type?.coneType?.isBuiltinFunctionalType(session) == true)
+                        receiverParameter?.typeRef?.coneType?.isBuiltinFunctionalType(session) == true)
 
     override fun serializeProperty(
         property: FirProperty,
@@ -320,7 +320,7 @@ class FirJvmSerializerExtension(
         private fun requiresSignature(function: FirFunction, desc: String): Boolean {
             val sb = StringBuilder()
             sb.append("(")
-            val receiverTypeRef = function.receiverParameter?.type
+            val receiverTypeRef = function.receiverParameter?.typeRef
             if (receiverTypeRef != null) {
                 val receiverDesc = mapTypeDefault(receiverTypeRef) ?: return true
                 sb.append(receiverDesc)

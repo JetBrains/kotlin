@@ -196,7 +196,7 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
         returnTypeRef = function.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         receiverParameter = function.receiverParameter?.let { receiverParameter ->
             buildReceiverParameterCopy(receiverParameter) {
-                type = receiverParameter.type.approximated(approximator, typeParameterSet, toSuper = false)
+                typeRef = receiverParameter.typeRef.approximated(approximator, typeParameterSet, toSuper = false)
             }
         }
 
@@ -247,7 +247,7 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         returnTypeRef = property.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         receiverParameter = property.receiverParameter?.let { receiverParameter ->
             buildReceiverParameterCopy(receiverParameter) {
-                type = receiverParameter.type.approximated(approximator, typeParameterSet, toSuper = false)
+                typeRef = receiverParameter.typeRef.approximated(approximator, typeParameterSet, toSuper = false)
             }
         }
         name = property.name

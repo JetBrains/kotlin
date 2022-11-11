@@ -131,7 +131,7 @@ class FirCallCompletionResultsWriterTransformer(
         var extensionReceiver = subCandidate.chosenExtensionReceiverExpression()
         if (!declaration.isWrappedIntegerOperator()) {
             val expectedDispatchReceiverType = (declaration as? FirCallableDeclaration)?.dispatchReceiverType
-            val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverParameter?.type?.coneType
+            val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef?.coneType
             dispatchReceiver = dispatchReceiver.transformSingle(integerOperatorApproximator, expectedDispatchReceiverType)
             extensionReceiver = extensionReceiver.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
@@ -615,10 +615,10 @@ class FirCallCompletionResultsWriterTransformer(
         var needUpdateLambdaType = false
 
         val receiverParameter = anonymousFunction.receiverParameter
-        val initialReceiverType = receiverParameter?.type?.coneTypeSafe<ConeKotlinType>()
+        val initialReceiverType = receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>()
         val resultReceiverType = initialReceiverType?.let { finalSubstitutor.substituteOrNull(it) }
         if (resultReceiverType != null) {
-            receiverParameter.replaceType(receiverParameter.type.resolvedTypeFromPrototype(resultReceiverType))
+            receiverParameter.replaceTypeRef(receiverParameter.typeRef.resolvedTypeFromPrototype(resultReceiverType))
             needUpdateLambdaType = true
         }
 

@@ -569,6 +569,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirArrayOfCallImpl",
             "FirIntegerLiteralOperatorCallImpl",
             "FirContextReceiverImpl",
+            "FirReceiverParameterImpl",
             "FirClassReferenceExpressionImpl",
             "FirGetClassCallImpl",
             "FirSmartCastExpressionImpl"

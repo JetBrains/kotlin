@@ -56,7 +56,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        if (function.receiverParameter?.type.isFunctionalTypeRef(session)) {
+        if (function.receiverParameter?.typeRef.isFunctionalTypeRef(session)) {
             val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(-1)
             if (effectDeclaration != null) functionalTypeEffects[function.symbol] = effectDeclaration
         }

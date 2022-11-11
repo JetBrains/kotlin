@@ -166,7 +166,7 @@ class JavaOverrideChecker internal constructor(
 
     private fun FirCallableDeclaration.isTypeParameterDependent(): Boolean =
         typeParameters.isNotEmpty() || returnTypeRef.isTypeParameterDependent() ||
-                receiverParameter?.type.isTypeParameterDependent() ||
+                receiverParameter?.typeRef.isTypeParameterDependent() ||
                 this is FirSimpleFunction && valueParameters.any { it.returnTypeRef.isTypeParameterDependent() }
 
     private fun FirTypeRef.extractTypeParametersTo(result: MutableCollection<FirTypeParameterRef>) {
@@ -195,7 +195,7 @@ class JavaOverrideChecker internal constructor(
     private fun FirCallableDeclaration.extractTypeParametersTo(result: MutableCollection<FirTypeParameterRef>) {
         result += typeParameters
         returnTypeRef.extractTypeParametersTo(result)
-        receiverParameter?.type?.extractTypeParametersTo(result)
+        receiverParameter?.typeRef?.extractTypeParametersTo(result)
         if (this is FirSimpleFunction) {
             this.valueParameters.forEach { it.returnTypeRef.extractTypeParametersTo(result) }
         }
@@ -224,7 +224,7 @@ class JavaOverrideChecker internal constructor(
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
 
         // NB: overrideCandidate is from Java and has no receiver
-        val receiverTypeRef = baseDeclaration.receiverParameter?.type
+        val receiverTypeRef = baseDeclaration.receiverParameter?.typeRef
         val baseParameterTypes = listOfNotNull(receiverTypeRef) + baseDeclaration.valueParameters.map { it.returnTypeRef }
 
         if (overrideCandidate.valueParameters.size != baseParameterTypes.size) return false
@@ -247,7 +247,7 @@ class JavaOverrideChecker internal constructor(
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-        val receiverTypeRef = baseDeclaration.receiverParameter?.type
+        val receiverTypeRef = baseDeclaration.receiverParameter?.typeRef
         return when (overrideCandidate) {
             is FirSimpleFunction -> {
                 if (receiverTypeRef == null) {
@@ -259,7 +259,7 @@ class JavaOverrideChecker internal constructor(
                 }
             }
             is FirProperty -> {
-                val overrideReceiverTypeRef = overrideCandidate.receiverParameter?.type
+                val overrideReceiverTypeRef = overrideCandidate.receiverParameter?.typeRef
                 return when {
                     receiverTypeRef == null -> overrideReceiverTypeRef == null
                     overrideReceiverTypeRef == null -> false

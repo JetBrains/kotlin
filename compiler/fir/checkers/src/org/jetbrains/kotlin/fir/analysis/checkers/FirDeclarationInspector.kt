@@ -147,7 +147,7 @@ interface FirDeclarationPresenter {
 
     fun represent(it: FirVariable) = buildString {
         append('[')
-        it.receiverParameter?.type?.let {
+        it.receiverParameter?.typeRef?.let {
             appendRepresentation(it)
         }
         append(']')
@@ -172,7 +172,7 @@ interface FirDeclarationPresenter {
         }
         append('>')
         append('[')
-        it.receiverParameter?.type?.let {
+        it.receiverParameter?.typeRef?.let {
             appendRepresentation(it)
         }
         append(']')

@@ -128,7 +128,7 @@ object CheckExtensionReceiver : ResolutionStage() {
 
     private fun Candidate.getExpectedReceiverType(): ConeKotlinType? {
         val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
-        return callableSymbol.fir.receiverParameter?.type?.coneType
+        return callableSymbol.fir.receiverParameter?.typeRef?.coneType
     }
 }
 

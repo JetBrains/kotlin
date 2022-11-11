@@ -371,7 +371,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.returnTypeRef = returnTypeRef
             receiverParameter = proto.receiverType(c.typeTable)?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
-                    type = receiverType
+                    typeRef = receiverType
                     annotations += receiverAnnotations
                 }
             }
@@ -476,7 +476,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
             receiverParameter = proto.receiverType(local.typeTable)?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
-                    type = receiverType
+                    typeRef = receiverType
                     annotations += receiverAnnotations
                 }
             }

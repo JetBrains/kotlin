@@ -355,7 +355,7 @@ class Fir2IrDeclarationStorage(
                             Name.identifier("\$this\$$suffix")
                         } ?: SpecialNames.THIS
                         declareThisReceiverParameter(
-                            thisType = receiver.type.toIrType(typeContext),
+                            thisType = receiver.typeRef.toIrType(typeContext),
                             thisOrigin = thisOrigin,
                             startOffset = startOffset,
                             endOffset = endOffset,

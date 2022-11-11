@@ -679,7 +679,7 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
         }
 
         override fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
-            receiverParameter.type.accept(this)
+            receiverParameter.typeRef.accept(this)
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {

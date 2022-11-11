@@ -307,7 +307,7 @@ class FirSignatureEnhancement(
                     returnTypeRef = newReturnTypeRef
                     receiverParameter = newReceiverTypeRef?.let { receiverType ->
                         buildReceiverParameter {
-                            type = receiverType
+                            typeRef = receiverType
                             annotations += firMethod.valueParameters.first().annotations
                             source = receiverType.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
                         }
@@ -510,7 +510,7 @@ class FirSignatureEnhancement(
         object Receiver : TypeInSignature() {
             override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
                 if (member is FirJavaMethod) return member.valueParameters[0].returnTypeRef
-                return member.receiverParameter?.type!!
+                return member.receiverParameter?.typeRef!!
             }
         }
 

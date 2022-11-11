@@ -154,7 +154,7 @@ open class FirJvmMangleComputer(
             mangleType(builder, it.typeRef.coneType)
         }
 
-        val receiverType = receiverParameter?.type ?: (this as? FirPropertyAccessor)?.propertySymbol?.fir?.receiverParameter?.type
+        val receiverType = receiverParameter?.typeRef ?: (this as? FirPropertyAccessor)?.propertySymbol?.fir?.receiverParameter?.typeRef
         receiverType?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)
@@ -317,7 +317,7 @@ open class FirJvmMangleComputer(
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
         }
 
-        variable.receiverParameter?.type?.let {
+        variable.receiverParameter?.typeRef?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)
         }

@@ -121,7 +121,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     }
 
     override fun transformReceiverParameter(receiverParameter: FirReceiverParameter, data: ResolutionMode): FirReceiverParameter {
-        return receiverParameter.transformAnnotations(transformer, data).transformType(transformer, data)
+        return receiverParameter.transformAnnotations(transformer, data).transformTypeRef(transformer, data)
     }
 
     override fun transformField(field: FirField, data: ResolutionMode): FirField {

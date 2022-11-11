@@ -232,7 +232,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         val typeRef = propertyReferenceAccess.typeRef
         if (typeRef is FirResolvedTypeRef && property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (typeRef.type as ConeClassLikeType).typeArguments
-            val extensionType = property.receiverParameter?.type?.coneType
+            val extensionType = property.receiverParameter?.typeRef?.coneType
             val dispatchType = context.containingClass?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
@@ -815,10 +815,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         }
         val returnTypeRefFromResolvedAtom = resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
         lambda = buildAnonymousFunctionCopy(lambda) {
-            receiverParameter = lambda.receiverParameter?.takeIf { it.type !is FirImplicitTypeRef }
+            receiverParameter = lambda.receiverParameter?.takeIf { it.typeRef !is FirImplicitTypeRef }
                 ?: resolvedLambdaAtom?.receiver?.let { coneKotlinType ->
                     lambda.receiverParameter?.apply {
-                        replaceType(type.resolvedTypeFromPrototype(coneKotlinType))
+                        replaceTypeRef(typeRef.resolvedTypeFromPrototype(coneKotlinType))
                     }
                 }
 

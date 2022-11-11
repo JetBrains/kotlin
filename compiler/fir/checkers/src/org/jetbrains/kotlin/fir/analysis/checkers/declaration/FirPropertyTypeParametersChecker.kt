@@ -28,7 +28,7 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker() {
                 }
             }
         }
-        declaration.receiverParameter?.type?.let { collectAllTypes(it.coneType) }
+        declaration.receiverParameter?.typeRef?.let { collectAllTypes(it.coneType) }
         declaration.contextReceivers.forEach { collectAllTypes(it.typeRef.coneType) }
 
         val usedNames = usedTypes.filterIsInstance<ConeTypeParameterType>().map { it.lookupTag.name }

@@ -152,7 +152,7 @@ object FirFakeOverrideGenerator {
             this.origin = origin
             receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
                 buildReceiverParameterCopy(receiverParameter) {
-                    type = receiverParameter.type.withReplacedConeType(null)
+                    typeRef = receiverParameter.typeRef.withReplacedConeType(null)
                 }
             }
 
@@ -269,7 +269,7 @@ object FirFakeOverrideGenerator {
         if (this is FirSimpleFunctionBuilder) {
             receiverParameter = baseFunction.receiverParameter?.let { receiverParameter ->
                 buildReceiverParameterCopy(receiverParameter) {
-                    type = receiverParameter.type.withReplacedConeType(newReceiverType)
+                    typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)
                 }
             }
         }
@@ -418,7 +418,7 @@ object FirFakeOverrideGenerator {
     ): Triple<ConeKotlinType?, List<ConeKotlinType?>, Maybe<ConeKotlinType?>> {
         val copiedReceiverType = newReceiverType?.let {
             substitutor.substituteOrNull(it)
-        } ?: baseCallable.receiverParameter?.type?.let {
+        } ?: baseCallable.receiverParameter?.typeRef?.let {
             substitutor.substituteOrNull(it.coneType)
         }
 
@@ -464,7 +464,7 @@ object FirFakeOverrideGenerator {
 
         receiverParameter = baseProperty.receiverParameter?.let { receiverParameter ->
             buildReceiverParameterCopy(receiverParameter) {
-                type = receiverParameter.type.withReplacedConeType(newReceiverType)
+                typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)
             }
         }
 

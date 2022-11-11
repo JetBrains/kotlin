@@ -331,7 +331,7 @@ class FirElementSerializer private constructor(
 
         val receiverParameter = property.receiverParameter
         if (receiverParameter != null) {
-            val receiverTypeRef = receiverParameter.type
+            val receiverTypeRef = receiverParameter.typeRef
             if (useTypeTable()) {
                 builder.receiverTypeId = local.typeId(receiverTypeRef)
             } else {
@@ -415,7 +415,7 @@ class FirElementSerializer private constructor(
 
         val receiverParameter = function.receiverParameter
         if (receiverParameter != null) {
-            val receiverTypeRef = receiverParameter.type
+            val receiverTypeRef = receiverParameter.typeRef
             if (useTypeTable()) {
                 builder.receiverTypeId = local.typeId(receiverTypeRef)
             } else {
