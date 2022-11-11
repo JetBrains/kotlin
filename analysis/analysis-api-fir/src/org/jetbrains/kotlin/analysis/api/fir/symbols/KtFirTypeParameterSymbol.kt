@@ -52,7 +52,7 @@ internal class KtFirTypeParameterSymbol(
     override val isReified: Boolean get() = withValidityAssertion { firSymbol.isReified }
 
     override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeParameterSymbol>(this)?.let { return it }
 
         val containingDeclarationSymbol = firSymbol.containingDeclarationSymbol
         val typeParameters = containingDeclarationSymbol.typeParameterSymbols

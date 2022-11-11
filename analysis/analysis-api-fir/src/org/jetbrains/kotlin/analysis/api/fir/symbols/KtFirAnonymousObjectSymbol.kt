@@ -38,7 +38,7 @@ internal class KtFirAnonymousObjectSymbol(
     override val superTypes: List<KtType> by cached { firSymbol.superTypesList(builder) }
 
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousObjectSymbol>(this)?.let { return it }
         if (firSymbol.source?.kind == KtFakeSourceElementKind.EnumInitializer) {
             return KtFirEnumEntryInitializerSymbolPointer(requireOwnerPointer())
         }

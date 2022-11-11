@@ -99,7 +99,7 @@ internal class KtFirPropertySetterSymbol(
         get() = withValidityAssertion { true }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertySetterSymbol>(this)?.let { return it }
 
         @Suppress("UNCHECKED_CAST")
         KtFirPropertyAccessorSymbolPointer(requireOwnerPointer(), true) as KtSymbolPointer<KtPropertySetterSymbol>

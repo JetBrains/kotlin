@@ -44,7 +44,8 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
     public constructor(psi: KtElement, expectedClass: KClass<S>) : this(psi.createSmartPointer(), expectedClass)
 
     public companion object {
-        public inline fun <reified S : KtSymbol> createForSymbolFromSource(symbol: S): KtPsiBasedSymbolPointer<S>? {
+        @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+        public inline fun <reified S : KtSymbol> createForSymbolFromSource(symbol: @kotlin.internal.NoInfer S): KtPsiBasedSymbolPointer<S>? {
             return createForSymbolFromSource(symbol, S::class)
         }
 

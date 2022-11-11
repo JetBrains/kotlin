@@ -92,7 +92,7 @@ internal class KtFirFunctionSymbol(
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFunctionSymbol>(this)?.let { return it }
 
         return when (val kind = symbolKind) {
             KtSymbolKind.TOP_LEVEL -> KtFirTopLevelFunctionSymbolPointer(firSymbol.callableId, firSymbol.createSignature())

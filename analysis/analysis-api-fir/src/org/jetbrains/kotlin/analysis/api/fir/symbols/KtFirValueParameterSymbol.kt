@@ -76,7 +76,7 @@ internal class KtFirValueParameterSymbol(
     }
 
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtValueParameterSymbol>(this)?.let { return it }
 
         analyze(firResolveSession.useSiteKtModule) {
             val owner = getContainingSymbol() as KtFunctionLikeSymbol
