@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -27,9 +28,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             return
         }
         val resultExpression = expression.result
-        // To avoid duplications with NO_ELSE_IN_WHEN or INVALID_IF_AS_EXPRESSION
-        // as well as duplicate RETURN_TYPE_MISMATCH
-        if (resultExpression is FirResolvable) return
+        if (expression.canBeIgnoredToPreventDuplication) return
 
         val functionReturnType = if (targetElement is FirConstructor)
             context.session.builtinTypes.unitType.coneType
@@ -77,4 +76,11 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             }
         }
     }
+
+    private val FirReturnExpression.canBeIgnoredToPreventDuplication: Boolean
+        get() {
+            // Possible duplicates: NO_ELSE_IN_WHEN, INVALID_IF_AS_EXPRESSION, RETURN_TYPE_MISMATCH
+            val targetHadImplicitTypeRefDuringResolution = target.labeledElement.returnTypeRef.source?.kind != KtRealSourceElementKind
+            return result is FirResolvable && !targetHadImplicitTypeRefDuringResolution
+        }
 }
