@@ -27,12 +27,10 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
@@ -110,7 +108,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         }
 
         val conditionStatements = effectDeclaration.condition.buildTypeStatements(
-            function, logicSystem, variableStorage, flow, context
+            function, logicSystem, variableStorage, context
         ) ?: return false
 
         for ((realVar, requiredTypeStatement) in conditionStatements) {
@@ -142,20 +140,16 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private fun ConeBooleanExpression.buildTypeStatements(
         function: FirFunction,
         logicSystem: LogicSystem<*>,
-        variableStorage: VariableStorageImpl,
-        flow: Flow,
+        variableStorage: VariableStorage,
         context: CheckerContext
     ): TypeStatements? {
-        fun getOrCreateRealVariable(arg: ConeValueParameterReference): RealVariable? {
-            val parameterSymbol = function.getParameterSymbol(arg.parameterIndex, context)
-
-            @OptIn(SymbolInternals::class)
-            val parameter = parameterSymbol.fir
-            return variableStorage.getOrCreateRealVariable(flow, parameterSymbol, parameter)?.takeIf {
-                it.stability == PropertyStability.STABLE_VALUE ||
-                        // TODO: consider removing the part below
-                        it.stability == PropertyStability.LOCAL_VAR
-            }
+        fun ConeValueParameterReference.toVariable(): RealVariable {
+            val parameterSymbol = function.getParameterSymbol(parameterIndex, context)
+            return variableStorage.getLocalVariable(parameterSymbol)
+                ?: RealVariable(
+                    Identifier(parameterSymbol, null, null),
+                    parameterIndex < 0, null, parameterIndex + 1, PropertyStability.STABLE_VALUE
+                )
         }
 
         fun ConeBooleanExpression.toTypeStatements(inverted: Boolean): TypeStatements? = when (this) {
@@ -170,10 +164,9 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
                 }
             }
             is ConeIsInstancePredicate ->
-                if (isNegated == inverted) getOrCreateRealVariable(arg)?.let { it typeEq type }?.singleton() else mapOf()
+                if (isNegated == inverted) (arg.toVariable() typeEq type).singleton() else mapOf()
             is ConeIsNullPredicate ->
-                getOrCreateRealVariable(arg)?.nullabilityStatement(context.session.builtinTypes, isNull = isNegated == inverted)
-                    ?.singleton()
+                arg.toVariable().nullabilityStatement(context.session.builtinTypes, isNull = isNegated == inverted).singleton()
             is ConeLogicalNot -> arg.toTypeStatements(!inverted)
             else -> null
         }

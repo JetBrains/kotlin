@@ -114,6 +114,16 @@ internal val FirResolvable.symbol: FirBasedSymbol<*>?
         else -> null
     }
 
+@DfaInternals
+fun FirElement.unwrapElement(): FirElement = when (this) {
+    is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
+    is FirSmartCastExpression -> originalExpression.unwrapElement()
+    is FirSafeCallExpression -> selector.unwrapElement()
+    is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
+    is FirCheckNotNullCall -> argument.unwrapElement()
+    else -> this
+}
+
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
     when (this) {
         is FirSmartCastExpression -> originalExpression
