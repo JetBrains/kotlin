@@ -46,43 +46,43 @@ internal external fun dynamicSetString(obj: Dynamic, index: String, value: Strin
 internal external fun dynamicSetAny(obj: Dynamic, index: String, value: Any?)
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetBoolean(obj: Dynamic, index: String): Boolean
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetByte(obj: Dynamic, index: String): Byte
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetShort(obj: Dynamic, index: String): Short
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetChar(obj: Dynamic, index: String): Char
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetInt(obj: Dynamic, index: String): Int
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetLong(obj: Dynamic, index: String): Long
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetFloat(obj: Dynamic, index: String): Float
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetDouble(obj: Dynamic, index: String): Double
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetString(obj: Dynamic, index: String): String?
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index]")
+@JsFun("(obj, index) => obj[index]")
 internal external fun dynamicGetAny(obj: Dynamic, index: String): Any?
 
 @PublishedApi
