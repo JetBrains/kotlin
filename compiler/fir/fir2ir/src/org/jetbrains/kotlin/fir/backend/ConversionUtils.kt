@@ -655,7 +655,9 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
     createTemporaryVariable(receiverExpression, conversionScope, "safe_receiver")
 
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
-    require((klass.valueClassRepresentation != null) == klass.isInline)
+    require((klass.valueClassRepresentation != null) == klass.isInline) {
+        "Value class has no representation: ${klass.render()}"
+    }
     return klass.valueClassRepresentation?.mapUnderlyingType {
         with(typeConverter) {
             it.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${klass.render()}")
