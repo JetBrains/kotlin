@@ -105,9 +105,12 @@ run {
     }
 
     tasks.test {
-        dependsOn(compatibilityTestClasspath)
-        inputs.files(compatibilityTestClasspath)
-        doFirst { systemProperty("compatibilityTestClasspath", compatibilityTestClasspath.files.joinToString(";") { it.absolutePath }) }
+        val capturedCompatibilityTestClasspath: FileCollection = compatibilityTestClasspath
+        dependsOn(capturedCompatibilityTestClasspath)
+        inputs.files(capturedCompatibilityTestClasspath)
+        doFirst {
+            systemProperty("compatibilityTestClasspath", capturedCompatibilityTestClasspath.files.joinToString(";") { it.absolutePath })
+        }
     }
 }
 
