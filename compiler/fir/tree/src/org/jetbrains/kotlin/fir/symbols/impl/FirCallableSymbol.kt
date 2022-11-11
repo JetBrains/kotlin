@@ -65,9 +65,12 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
     }
 
     private fun ensureType(typeRef: FirTypeRef?) {
-        typeRef?.let { lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) }
+        when (typeRef) {
+            null, is FirResolvedTypeRef -> {}
+            is FirImplicitTypeRef -> lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            else -> lazyResolveToPhase(FirResolvePhase.TYPES)
+        }
     }
-
     override fun toString(): String = "${this::class.simpleName} $callableId"
 }
 
