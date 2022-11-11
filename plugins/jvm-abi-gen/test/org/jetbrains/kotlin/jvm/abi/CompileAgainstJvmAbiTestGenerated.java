@@ -60,6 +60,16 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
     }
 
+    @TestMetadata("inlineClassWithPrivateConstructor")
+    public void testInlineClassWithPrivateConstructor() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructor/");
+    }
+
+    @TestMetadata("inlineClassWithPrivateConstructorK2")
+    public void testInlineClassWithPrivateConstructorK2() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructorK2/");
+    }
+
     @TestMetadata("inlineNoRegeneration")
     public void testInlineNoRegeneration() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration/");
