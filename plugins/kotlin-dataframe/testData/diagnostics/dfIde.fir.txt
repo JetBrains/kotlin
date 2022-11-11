@@ -2067,10 +2067,22 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token496 {
     }
     internal final interface Token497 {
+        internal abstract val age: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
     }
     internal final interface Token498 {
     }
     internal final interface Token499 {
+        internal abstract val i: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+        internal abstract val fff: R|kotlin/String|
+            internal get(): R|kotlin/String|
+
+        internal abstract val ca: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe.api

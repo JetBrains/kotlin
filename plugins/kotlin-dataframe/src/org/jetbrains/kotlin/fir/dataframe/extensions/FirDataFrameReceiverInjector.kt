@@ -71,7 +71,7 @@ fun KotlinTypeFacade.coneKotlinTypes(
     val processor = functionCall.loadInterpreter(session) ?: return emptyList()
 
     val dataFrameSchema =
-        interpret(functionCall, processor, reporter = reporter, tokenState = tokenState)
+        interpret(functionCall, processor, reporter = reporter)
             ?.let {
                 val value = it.value
                 if (value !is PluginDataFrameSchema) {

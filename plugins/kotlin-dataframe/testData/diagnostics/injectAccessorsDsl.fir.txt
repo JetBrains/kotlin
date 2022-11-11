@@ -2028,6 +2028,12 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token497 {
     }
     internal final interface Token498 {
+        internal abstract val col1: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+        internal abstract val col2: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
     }
     internal final interface Token499 {
     }
