@@ -59,7 +59,7 @@ internal class KtFirTypeAliasSymbol(
     override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind(firResolveSession) }
 
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeAliasSymbol>(this)?.let { return it }
         when (val symbolKind = symbolKind) {
             KtSymbolKind.LOCAL ->
                 throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())

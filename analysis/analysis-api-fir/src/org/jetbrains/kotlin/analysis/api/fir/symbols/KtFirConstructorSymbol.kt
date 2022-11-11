@@ -60,7 +60,7 @@ internal class KtFirConstructorSymbol(
 
 
     override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtConstructorSymbol>(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {
             throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("constructor")
         }

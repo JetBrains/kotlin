@@ -29,7 +29,7 @@ internal class KtFirClassInitializerSymbol(
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override fun createPointer(): KtSymbolPointer<KtSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtClassInitializerSymbol>(this)?.let { return it }
         TODO("Figure out how to create such a pointer. Should we give an index to class initializers?")
     }
 

@@ -48,7 +48,7 @@ internal class KtFirLocalVariableSymbol(
     override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.LOCAL }
 
     override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtLocalVariableSymbol>(this)?.let { return it }
         throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
     }
 

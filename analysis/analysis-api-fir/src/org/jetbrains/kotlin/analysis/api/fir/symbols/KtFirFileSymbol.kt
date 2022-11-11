@@ -26,7 +26,7 @@ internal class KtFirFileSymbol(
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override fun createPointer(): KtSymbolPointer<KtFileSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFileSymbol>(this)?.let { return it }
         TODO("Creating pointers for files from library is not supported yet")
     }
 
