@@ -4,7 +4,7 @@
  * Version of kotlin-gradle-plugin-idea module that should be resolved for compatibility tests
  * This version can be treated as 'minimal guaranteed backwards compatible version' of the module.
  */
-val testedVersion = "1.8.20-dev-2192"
+val testedVersion = "1.8.20-dev-2237"
 
 val isSnapshotTest = properties.contains("kgp-idea.snapshot_test")
 val resolvedTestedVersion = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString() else testedVersion
@@ -12,16 +12,13 @@ val resolvedTestedVersion = if (isSnapshotTest) properties["defaultSnapshotVersi
 //region Download and prepare classpath for specified tested version
 
 repositories {
-    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
-    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies")
-}
-
-if (isSnapshotTest) {
-    repositories {
-        clear()
+    if (isSnapshotTest) {
         mavenLocal()
         mavenCentral()
     }
+
+    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
+    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies")
 }
 
 val classpathDestination = layout.buildDirectory.dir("classpath")
