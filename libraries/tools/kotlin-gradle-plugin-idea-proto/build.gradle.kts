@@ -58,6 +58,7 @@ run {
     artifacts.add(binaryValidationApiElements.name, binaryValidationApiJar)
 }
 
+/* Setup protoc */
 tasks.register<Exec>("protoc") {
     val protoSources = file("src/main/proto")
     val javaOutput = file("src/generated/java/")
@@ -87,3 +88,25 @@ tasks.register<Exec>("protoc") {
             .map { it.path },
     )
 }
+
+
+/* Setup backwards compatibility tests */
+run {
+    val compatibilityTestClasspath by configurations.creating {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+    }
+
+    dependencies {
+        compatibilityTestClasspath(project(":kotlin-gradle-plugin-idea-for-compatibility-tests"))
+    }
+
+    tasks.test {
+        dependsOn(compatibilityTestClasspath)
+        inputs.files(compatibilityTestClasspath)
+        doFirst { systemProperty("compatibilityTestClasspath", compatibilityTestClasspath.files.joinToString(";") { it.absolutePath }) }
+    }
+}
+
