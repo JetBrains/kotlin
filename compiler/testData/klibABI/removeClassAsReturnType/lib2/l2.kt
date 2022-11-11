@@ -8,26 +8,26 @@ class D {
     val stableP2: C = C()
     val fooP2: String = stableP1.op
 
-    fun expF(): E = E()
+    fun expF(): E = TODO()
     fun barF(): String = expF().e()
 
-    val expP1: E get() = E()
+    val expP1: E get() = TODO()
     val barP1: String get() = expP1.ep
 }
 
 class D2 {
-    val expP2: E = E()
+    val expP2: E = TODO()
     val barP2: String = expP2.ep
 }
 
 fun bar() {
-    fun foo(): E = E()
+    fun foo(): E = TODO()
     foo()
 }
 
 fun baz() {
     fun qux() {
-        fun foo(): E = E()
+        fun foo(): E = TODO()
         foo()
     }
     qux()
@@ -36,7 +36,7 @@ fun baz() {
 fun quux() {
     class Local {
         fun corge() {
-            fun foo(): E = E()
+            fun foo(): E = TODO()
             foo()
         }
     }
@@ -46,7 +46,7 @@ fun quux() {
 fun grault() {
     object {
         fun garply() {
-            fun foo(): E = E()
+            fun foo(): E = TODO()
             foo()
         }
     }.garply()
@@ -55,7 +55,7 @@ fun grault() {
 fun waldo() {
     val fred = object {
         fun garply() {
-            fun foo(): E = E()
+            fun foo(): E = TODO()
             foo()
         }
     }

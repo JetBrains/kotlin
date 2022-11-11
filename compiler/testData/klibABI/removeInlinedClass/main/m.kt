@@ -1,11 +1,12 @@
 import abitestutils.abiTest
 
 fun box() = abiTest {
-    expectFailure(prefixed("val foo can not be read")) { fooVariableType() }
-    expectFailure(prefixed("val bar can not be read")) { barVariableType() }
-    expectFailure(prefixed("constructor Foo.<init> can not be called")) { fooInstance() }
-    expectFailure(prefixed("constructor Bar.<init> can not be called")) { barInstance() }
-    expectFailure(prefixed("reference to constructor Foo.<init> can not be evaluated")) { fooInstance2() }
-    expectFailure(prefixed("reference to constructor Bar.<init> can not be evaluated")) { barInstance2() }
-    expectFailure(prefixed("val foo can not be read")) { fooAnonymousObject() }
+    expectFailure(skipHashes("Can not read value from variable foo: Variable foo uses unlinked class symbol /Foo")) { fooVariableType() }
+    expectFailure(skipHashes("Can not read value from variable bar: Variable bar uses unlinked class symbol /Foo (through class Bar)")) { barVariableType() }
+    expectFailure(skipHashes("Constructor Foo.<init> can not be called: No constructor found for symbol /Foo.<init>")) { fooInstance() }
+    expectFailure(skipHashes("Constructor Bar.<init> can not be called: Constructor Bar.<init> uses unlinked class symbol /Foo (through class Bar)")) { barInstance() }
+    expectFailure(skipHashes("Reference to constructor Foo.<init> can not be evaluated: No constructor found for symbol /Foo.<init>")) { fooInstance2() }
+    expectFailure(skipHashes("Reference to constructor Bar.<init> can not be evaluated: Constructor Bar.<init> uses unlinked class symbol /Foo (through class Bar)")) { barInstance2() }
+    expectFailure(skipHashes("Can not read value from variable foo: Variable foo uses unlinked class symbol /Foo (through anonymous object)")) { fooAnonymousObject() }
+    expectFailure(skipHashes("Can not read value from variable bar: Variable bar uses unlinked class symbol /Foo (through anonymous object)")) { barAnonymousObject() }
 }
