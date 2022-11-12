@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.descriptors
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 
 val String.synthesizedName: Name get() = Name.identifier(this.synthesizedString)
@@ -39,24 +36,4 @@ val CallableDescriptor.allParameters: List<ParameterDescriptor>
         listOf(this.constructedClass.thisAsReceiverParameter) + explicitParameters
     } else {
         explicitParameters
-    }
-
-/**
- * @return naturally-ordered list of the parameters that can have values specified at call site.
- */
-val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
-    get() {
-        val result = ArrayList<ParameterDescriptor>(valueParameters.size + 2)
-
-        this.dispatchReceiverParameter?.let {
-            result.add(it)
-        }
-
-        this.extensionReceiverParameter?.let {
-            result.add(it)
-        }
-
-        result.addAll(valueParameters)
-
-        return result
     }
