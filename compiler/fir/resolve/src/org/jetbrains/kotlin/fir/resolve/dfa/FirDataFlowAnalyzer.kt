@@ -919,7 +919,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 flow, conditionalEffect.condition, argumentVariables, substitutor, removeApprovedOrImpossible = operation == null
             ) ?: continue // TODO: do what if the result is known to be false?
             if (operation == null) {
-                statements.values.forEach { flow.addTypeStatement(it) }
+                flow.addAllStatements(statements)
             } else {
                 val functionCallVariable = variableStorage.getOrCreate(flow, qualifiedAccess)
                 flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
@@ -1269,15 +1269,22 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    private fun FLOW.addAllConditionally(condition: OperationStatement, statements: TypeStatements) {
-        statements.values.forEach { addImplication(condition implies it) }
-    }
-
-    private fun FLOW.commitOperationStatement(statement: OperationStatement) {
-        logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true).values.forEach {
-            addTypeStatement(it)
+    private fun FLOW.addAllStatements(statements: TypeStatements) {
+        val newStatements = logicSystem.addTypeStatements(this, statements)
+        if (this === currentReceiverState) {
+            for (newStatement in newStatements) {
+                if (newStatement.variable.isThisReference) {
+                    receiverUpdated(newStatement.variable.identifier.symbol, newStatement)
+                }
+            }
         }
     }
+
+    private fun FLOW.addAllConditionally(condition: OperationStatement, statements: TypeStatements) =
+        statements.values.forEach { addImplication(condition implies it) }
+
+    private fun FLOW.commitOperationStatement(statement: OperationStatement) =
+        addAllStatements(logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true))
 
     private val CFGNode<*>.previousFlow: FLOW
         get() = firstPreviousNode.flow
