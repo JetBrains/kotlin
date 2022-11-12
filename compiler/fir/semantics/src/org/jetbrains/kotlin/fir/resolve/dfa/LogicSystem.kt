@@ -17,6 +17,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     // -------------------------------- Flow mutators --------------------------------
     // Returns all known information about the variable, or null if unchanged by this statement:
     abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement): TypeStatement?
+    abstract fun addTypeStatements(flow: FLOW, statements: TypeStatements): List<TypeStatement>
     abstract fun addImplication(flow: FLOW, implication: Implication)
     abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
     abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
