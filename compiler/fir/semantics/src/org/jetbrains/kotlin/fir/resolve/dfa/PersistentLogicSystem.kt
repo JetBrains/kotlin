@@ -237,12 +237,11 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         originalVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
         shouldRemoveOriginalStatements: Boolean,
-        filter: (Implication) -> Boolean,
         transform: (Implication) -> Implication?
     ) {
         with(flow) {
             val statements = logicStatements[originalVariable]?.takeIf { it.isNotEmpty() } ?: return
-            val newStatements = statements.filter(filter).mapNotNull {
+            val newStatements = statements.mapNotNull {
                 val newStatement = OperationStatement(newVariable, it.condition.operation) implies it.effect
                 transform(newStatement)
             }.toPersistentList()

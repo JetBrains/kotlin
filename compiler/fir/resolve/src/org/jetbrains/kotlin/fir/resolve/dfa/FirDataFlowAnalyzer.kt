@@ -11,19 +11,16 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
-import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -35,7 +32,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -99,7 +95,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 override fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?) {
                     val index = receiverStack.getReceiverIndex(symbol) ?: return
                     val originalType = receiverStack.getOriginalType(index)
-                    receiverStack.replaceReceiverType(index, info?.exactType.intersectWith(typeContext, originalType))
+                    receiverStack.replaceReceiverType(index, info.smartCastedType(typeContext, originalType))
                 }
 
                 override val logicSystem: PersistentLogicSystem =
@@ -138,8 +134,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private val graphBuilder get() = context.graphBuilder
     private val variableStorage get() = context.variableStorage
-
-    private var contractDescriptionVisitingMode = false
 
     private val any = components.session.builtinTypes.anyType.type
     private val nullableNothing = components.session.builtinTypes.nullableNothingType.type
@@ -393,7 +387,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
                         }
                         if (!type.canBeNull) {
+                            // x is (T & Any) => x != null
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable notEq null))
+                        } else {
+                            // TODO? (KT-22996) x !is T? => x != null; don't forget to change `approveContractStatement`
+                            // flow.addImplication((expressionVariable eq !isType) implies (operandVariable notEq null))
                         }
                     }
                 }
@@ -408,7 +406,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 } else {
                     val expressionVariable = variableStorage.createSynthetic(typeOperatorCall)
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
-                    // TODO? flow.addImplication((expressionVariable eq null) implies (operandVariable eq null))
+                    // TODO? (x as T?) == null => x == null
+                    // flow.addImplication((expressionVariable eq null) implies (operandVariable eq null))
                 }
             }
 
@@ -771,8 +770,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun enterQualifiedAccessExpression() {}
 
     fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
-        graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow()
-        processConditionalContract(qualifiedAccessExpression)
+        val flow = graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow()
+        processConditionalContract(flow, qualifiedAccessExpression)
     }
 
     fun exitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {
@@ -843,10 +842,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (functionCallNode, unionNode) = graphBuilder.exitFunctionCall(functionCall, callCompleted)
         unionNode?.unionFlowFromArguments()
         val flow = functionCallNode.mergeIncomingFlow()
-        if (functionCall.isBooleanNot()) {
-            exitBooleanNot(flow, functionCall, functionCallNode)
-        }
-        processConditionalContract(functionCall)
+        processConditionalContract(flow, functionCall)
     }
 
     fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean) {
@@ -865,69 +861,74 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         flow = logicSystem.unionFlow(previousNodes.map { it.flow })
     }
 
-    private fun processConditionalContract(qualifiedAccess: FirQualifiedAccess) {
-        val owner: FirContractDescriptionOwner? = when (qualifiedAccess) {
+    private fun FirQualifiedAccess.orderedArguments(callee: FirFunction): Array<out FirExpression?>? {
+        val receiver = extensionReceiver.takeIf { it != FirNoReceiverExpression }
+            ?: dispatchReceiver.takeIf { it != FirNoReceiverExpression }
+        return when (this) {
+            is FirFunctionCall -> {
+                val argumentToParameter = resolvedArgumentMapping ?: return null
+                val parameterToArgument = argumentToParameter.entries.associate { it.value to it.key.unwrapArgument() }
+                Array(callee.valueParameters.size + 1) { i ->
+                    if (i > 0) parameterToArgument[callee.valueParameters[i - 1]] else receiver
+                }
+            }
+            is FirQualifiedAccessExpression -> arrayOf(receiver)
+            is FirVariableAssignment -> arrayOf(receiver, rValue)
+            else -> return null
+        }
+    }
+
+    private fun processConditionalContract(flow: FLOW, qualifiedAccess: FirQualifiedAccess) {
+        val callee = when (qualifiedAccess) {
             is FirFunctionCall -> qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction
-            is FirQualifiedAccessExpression -> {
-                val property = qualifiedAccess.calleeReference.resolvedSymbol?.fir as? FirProperty
-                property?.getter
-            }
-            is FirVariableAssignment -> {
-                val property = qualifiedAccess.lValue.resolvedSymbol?.fir as? FirProperty
-                property?.setter
-            }
+            is FirQualifiedAccessExpression -> (qualifiedAccess.calleeReference.resolvedSymbol?.fir as? FirProperty)?.getter
+            is FirVariableAssignment -> (qualifiedAccess.lValue.resolvedSymbol?.fir as? FirProperty)?.setter
             else -> null
+        } ?: return
+
+        if (callee.symbol.callableId == StandardClassIds.Callables.not) {
+            // Special hardcoded contract for Boolean.not():
+            //   returns(true) implies (this == false)
+            //   returns(false) implies (this == true)
+            return exitBooleanNot(flow, qualifiedAccess as FirFunctionCall)
         }
 
-        val contractDescription = owner?.contractDescription as? FirResolvedContractDescription ?: return
-        val conditionalEffects = contractDescription.effects.map { it.effect }.filterIsInstance<ConeConditionalEffectDeclaration>()
+        val contractDescription = callee.contractDescription as? FirResolvedContractDescription ?: return
+        val conditionalEffects = contractDescription.effects.mapNotNull { it.effect as? ConeConditionalEffectDeclaration }
         if (conditionalEffects.isEmpty()) return
-        val argumentsMapping = createArgumentsMapping(qualifiedAccess) ?: return
 
-        val typeParameters = (owner as? FirTypeParameterRefsOwner)?.typeParameters
-        val substitutor = if (!typeParameters.isNullOrEmpty()) {
+        val arguments = qualifiedAccess.orderedArguments(callee) ?: return
+        val argumentVariables = Array(arguments.size) { i -> arguments[i]?.let { variableStorage.getOrCreateIfReal(flow, it) } }
+        if (argumentVariables.all { it == null }) return
+
+        val typeParameters = callee.typeParameters
+        val substitutor = if (typeParameters.isNotEmpty()) {
             @Suppress("UNCHECKED_CAST")
             val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
                 typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
             }.filter { it.second != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
             ConeSubstitutorByMap(substitutionFromArguments, components.session)
         } else {
-            ConeSubstitutor.Empty
+            null
         }
 
-        contractDescriptionVisitingMode = true
-        graphBuilder.enterContract(qualifiedAccess).mergeIncomingFlow()
-        val lastFlow = graphBuilder.lastNode.flow
-        val functionCallVariable = variableStorage.getOrCreate(lastFlow, qualifiedAccess)
         for (conditionalEffect in conditionalEffects) {
-            val fir = conditionalEffect.buildContractFir(argumentsMapping, substitutor) ?: continue
             val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
-            fir.transformSingle(components.transformer, ResolutionMode.ContextDependent)
-            val argumentVariable = variableStorage.get(lastFlow, fir) ?: continue
-            val lastNode = graphBuilder.lastNode
-            when (val value = effect.value) {
-                ConeConstantReference.WILDCARD -> {
-                    lastNode.flow.commitOperationStatement(argumentVariable eq true)
-                }
-
-                else -> {
-                    logicSystem.translateVariableFromConditionInStatements(
-                        lastNode.flow,
-                        argumentVariable,
-                        functionCallVariable,
-                        shouldRemoveOriginalStatements = true,
-                        filter = { it.condition.operation == Operation.EqTrue },
-                        transform = { OperationStatement(it.condition.variable, value.toOperation()) implies it.effect }
-                    )
-                }
+            val operation = effect.value.toOperation()
+            val statements = logicSystem.approveContractStatement(
+                flow, conditionalEffect.condition, argumentVariables, substitutor, removeApprovedOrImpossible = operation == null
+            ) ?: continue // TODO: do what if the result is known to be false?
+            if (operation == null) {
+                statements.values.forEach { flow.addTypeStatement(it) }
+            } else {
+                val functionCallVariable = variableStorage.getOrCreate(flow, qualifiedAccess)
+                flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
             }
         }
-        graphBuilder.exitContract(qualifiedAccess).mergeIncomingFlow()
-        contractDescriptionVisitingMode = false
     }
 
     fun exitConstExpression(constExpression: FirConstExpression<*>) {
-        if (constExpression.resultType is FirResolvedTypeRef && !contractDescriptionVisitingMode) return
+        if (constExpression.resultType is FirResolvedTypeRef) return
         graphBuilder.exitConstExpression(constExpression).mergeIncomingFlow()
     }
 
@@ -949,7 +950,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
             }
         }
-        processConditionalContract(assignment)
+        processConditionalContract(flow, assignment)
     }
 
     private fun exitVariableInitialization(
@@ -1089,9 +1090,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    private fun exitBooleanNot(flow: FLOW, functionCall: FirFunctionCall, node: FunctionCallNode) {
-        val argumentVariable = variableStorage.get(flow, node.firstPreviousNode.fir) ?: return
-        val expressionVariable = variableStorage.createSynthetic(functionCall)
+    private fun exitBooleanNot(flow: FLOW, expression: FirFunctionCall) {
+        val argumentVariable = variableStorage.get(flow, expression.dispatchReceiver) ?: return
+        val expressionVariable = variableStorage.createSynthetic(expression)
         // Alternatively: (expression == true => argument == false) && (expression == false => argument == true)
         // Which implementation is faster and/or consumes less memory is an open question.
         logicSystem.translateVariableFromConditionInStatements(flow, argumentVariable, expressionVariable) {

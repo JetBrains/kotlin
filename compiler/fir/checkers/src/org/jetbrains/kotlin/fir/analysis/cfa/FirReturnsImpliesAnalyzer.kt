@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.coneEffects
@@ -27,10 +25,11 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.ConstantValueKind
 
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
@@ -47,11 +46,10 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
         val logicSystem = object : PersistentLogicSystem(context.session.typeContext) {
             override val variableStorage: VariableStorageImpl
-                get() = dataFlowInfo.variableStorage as VariableStorageImpl
+                get() = throw IllegalStateException("shouldn't be called")
 
-            override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
-                return !isNullableNothing
-            }
+            override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean =
+                !isNullableNothing
         }
 
         effects.forEach { effect ->
@@ -89,94 +87,70 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        // TODO: create separate variable storage and don't modify existing one
-        val variableStorage = dataFlowInfo.variableStorage as VariableStorageImpl
         val flow = dataFlowInfo.flowOnNodes.getValue(node) as PersistentFlow
         var typeStatements: TypeStatements = flow.approvedTypeStatements
 
-        if (effect.value != ConeConstantReference.WILDCARD) {
-            val operation = effect.value.toOperation()
-            if (expressionType != null && expressionType.isInapplicableWith(operation, context.session)) return false
-
+        val operation = effect.value.toOperation()
+        if (operation != null) {
             if (resultExpression is FirConstExpression<*>) {
-                if (!resultExpression.isApplicableWith(operation)) return false
+                if (!operation.isTrueFor(resultExpression.value)) return false
             } else {
-                val resultVar = variableStorage.getOrCreate(flow, resultExpression)
-                typeStatements = logicSystem.andForTypeStatements(
-                    typeStatements,
-                    logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
-                )
-            }
-        }
-
-        val conditionStatements = effectDeclaration.condition.buildTypeStatements(
-            function, logicSystem, variableStorage, context
-        ) ?: return false
-
-        for ((realVar, requiredTypeStatement) in conditionStatements) {
-            val fixedRealVar = typeStatements.keys.find { it.identifier == realVar.identifier } ?: realVar
-            val originalType = function.getParameterType(fixedRealVar.identifier.symbol, context) ?: continue
-            val resultType = typeStatements[fixedRealVar]?.exactType.intersectWith(typeContext, originalType)
-            val requiredType = typeContext.intersectTypesOrNull(requiredTypeStatement.exactType.toList())
-            if (requiredType != null && !requiredType.isSupertypeOf(typeContext, resultType)) return true
-        }
-        return false
-    }
-
-    private fun ConeBooleanExpression.buildTypeStatements(
-        function: FirFunction,
-        logicSystem: LogicSystem<*>,
-        variableStorage: VariableStorage,
-        context: CheckerContext
-    ): TypeStatements? {
-        fun ConeValueParameterReference.toVariable(): RealVariable {
-            val parameterSymbol = function.getParameterSymbol(parameterIndex, context)
-            return variableStorage.getLocalVariable(parameterSymbol)
-                ?: RealVariable(
-                    Identifier(parameterSymbol, null, null),
-                    parameterIndex < 0, null, parameterIndex + 1, PropertyStability.STABLE_VALUE
-                )
-        }
-
-        fun ConeBooleanExpression.toTypeStatements(inverted: Boolean): TypeStatements? = when (this) {
-            is ConeBinaryLogicExpression -> {
-                val left = left.toTypeStatements(inverted)
-                val right = right.toTypeStatements(inverted)
-                when {
-                    left == null -> right
-                    right == null -> left
-                    (kind == LogicOperationKind.AND) == !inverted -> logicSystem.andForTypeStatements(left, right)
-                    else -> logicSystem.orForTypeStatements(left, right)
+                if (expressionType != null && !operation.canBeTrueFor(context.session, expressionType)) return false
+                // TODO: avoid modifying the storage
+                val variableStorage = dataFlowInfo.variableStorage as VariableStorageImpl
+                val resultVar = variableStorage.getOrCreateIfReal(flow, resultExpression)
+                if (resultVar != null) {
+                    typeStatements = logicSystem.andForTypeStatements(
+                        typeStatements,
+                        logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
+                    )
                 }
             }
-            is ConeIsInstancePredicate ->
-                if (isNegated == inverted) (arg.toVariable() typeEq type).singleton() else mapOf()
-            is ConeIsNullPredicate ->
-                arg.toVariable().nullabilityStatement(context.session.builtinTypes, isNull = isNegated == inverted).singleton()
-            is ConeLogicalNot -> arg.toTypeStatements(!inverted)
-            else -> null
         }
 
-        return toTypeStatements(inverted = false)
+        // TODO: if this is not a top-level function, `FirDataFlowAnalyzer` has erased its value parameters
+        //  from `dataFlowInfo.variableStorage` for some reason, so its `getLocalVariable` doesn't work.
+        val knownVariables = typeStatements.keys.associateBy { it.identifier }
+        val argumentVariables = Array(function.valueParameters.size + 1) { i ->
+            val parameterSymbol = if (i > 0) {
+                function.valueParameters[i - 1].symbol
+            } else {
+                if (function.symbol is FirPropertyAccessorSymbol) {
+                    context.containingProperty?.symbol
+                } else {
+                    null
+                } ?: function.symbol
+            }
+            val identifier = Identifier(parameterSymbol, null, null)
+            // Might be unknown if there are no statements made about that parameter, but it's still possible that trivial
+            // contracts are valid. E.g. `returns() implies (x is String)` when `x`'s *original type* is already `String`.
+            knownVariables[identifier] ?: RealVariable(identifier, i == 0, null, i, PropertyStability.STABLE_VALUE)
+        }
+
+        val conditionStatements = logicSystem.approveContractStatement(
+            flow, effectDeclaration.condition, argumentVariables, substitutor = null
+        ) ?: return true
+
+        return !conditionStatements.values.all { requirement ->
+            val originalType = requirement.variable.identifier.symbol.correspondingParameterType ?: return@all true
+            val requiredType = requirement.smartCastedType(typeContext, originalType)
+            val actualType = typeStatements[requirement.variable].smartCastedType(typeContext, originalType)
+            actualType.isSubtypeOf(typeContext, requiredType)
+        }
     }
 
-    private fun RealVariable.nullabilityStatement(builtinTypes: BuiltinTypes, isNull: Boolean) =
-        this typeEq (if (isNull) builtinTypes.nullableNothingType.type else builtinTypes.anyType.type)
-
-    private fun TypeStatement.singleton(): TypeStatements =
-        mapOf(variable to this)
-
-    private fun ConeKotlinType.isInapplicableWith(operation: Operation, session: FirSession): Boolean {
-        return (operation == Operation.EqFalse || operation == Operation.EqTrue)
-                && !AbstractTypeChecker.isSubtypeOf(session.typeContext, session.builtinTypes.booleanType.type, this)
-                || operation == Operation.EqNull && !isNullable
+    private fun Operation.canBeTrueFor(session: FirSession, type: ConeKotlinType): Boolean = when (this) {
+        Operation.EqTrue, Operation.EqFalse ->
+            AbstractTypeChecker.isSubtypeOf(session.typeContext, session.builtinTypes.booleanType.type, type)
+        Operation.EqNull -> type.canBeNull
+        Operation.NotEqNull -> !type.isNullableNothing
     }
 
-    private fun FirConstExpression<*>.isApplicableWith(operation: Operation): Boolean = when {
-        kind == ConstantValueKind.Null -> operation == Operation.EqNull
-        kind == ConstantValueKind.Boolean && operation == Operation.EqTrue -> (value as Boolean)
-        kind == ConstantValueKind.Boolean && operation == Operation.EqFalse -> !(value as Boolean)
-        else -> true
+    private fun Operation.isTrueFor(value: Any?) = when (this) {
+        Operation.EqTrue -> value == true
+        Operation.EqFalse -> value == false
+        Operation.EqNull -> value == null
+        Operation.NotEqNull -> value != null
     }
 
     private fun CFGNode<*>.collectBranchExits(nodes: MutableList<CFGNode<*>> = mutableListOf()): List<CFGNode<*>> {
@@ -189,28 +163,10 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private val CheckerContext.containingProperty: FirProperty?
         get() = (containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty)
 
-    private fun FirFunction.getParameterType(symbol: FirBasedSymbol<*>, context: CheckerContext): ConeKotlinType? {
-        val typeRef = if (this.symbol == symbol) {
-            if (symbol is FirPropertyAccessorSymbol) {
-                context.containingProperty?.receiverParameter?.typeRef
-            } else {
-                receiverParameter?.typeRef
-            }
-        } else {
-            valueParameters.find { it.symbol == symbol }?.returnTypeRef
+    private val FirBasedSymbol<*>.correspondingParameterType: ConeKotlinType?
+        get() = when (this) {
+            is FirValueParameterSymbol -> resolvedReturnType
+            is FirCallableSymbol<*> -> resolvedReceiverTypeRef?.coneType
+            else -> null
         }
-        return typeRef?.coneType
-    }
-
-    private fun FirFunction.getParameterSymbol(index: Int, context: CheckerContext): FirBasedSymbol<*> {
-        return if (index == -1) {
-            if (symbol !is FirPropertyAccessorSymbol) {
-                symbol
-            } else {
-                context.containingProperty?.symbol ?: symbol
-            }
-        } else {
-            this.valueParameters[index].symbol
-        }
-    }
 }

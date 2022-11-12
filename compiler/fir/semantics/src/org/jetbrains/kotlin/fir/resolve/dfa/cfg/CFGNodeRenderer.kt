@@ -92,9 +92,6 @@ fun CFGNode<*>.render(): String =
                 is AnnotationEnterNode -> "Enter annotation"
                 is AnnotationExitNode -> "Exit annotation"
 
-                is EnterContractNode -> "Enter contract"
-                is ExitContractNode -> "Exit contract"
-
                 is EnterSafeCallNode -> "Enter safe call"
                 is ExitSafeCallNode -> "Exit safe call"
 
