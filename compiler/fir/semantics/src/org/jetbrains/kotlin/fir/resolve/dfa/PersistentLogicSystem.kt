@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import com.google.common.collect.ArrayListMultimap
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -254,26 +253,37 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
+    private val nullableNothingType = context.session.builtinTypes.nullableNothingType.type
+    private val anyType = context.session.builtinTypes.anyType.type
+
     override fun approveOperationStatement(
         flow: PersistentFlow,
         approvedStatement: OperationStatement,
         removeApprovedOrImpossible: Boolean,
     ): TypeStatements {
-        val approvedTypeStatements: ArrayListMultimap<RealVariable, TypeStatement> = ArrayListMultimap.create()
+        val result = mutableMapOf<RealVariable, MutableTypeStatement>()
         val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
         val approved = mutableSetOf<OperationStatement>()
         while (queue.isNotEmpty()) {
-            val next: OperationStatement = queue.removeFirst()
+            val next = queue.removeFirst()
             // Defense from cycles in facts
-            if (!approved.add(next)) continue
+            if (!removeApprovedOrImpossible && !approved.add(next)) continue
+
+            val operation = next.operation
             val variable = next.variable
+            if (variable.isReal()) {
+                val impliedType = if (operation == Operation.EqNull) nullableNothingType else anyType
+                result.getOrPut(variable) { MutableTypeStatement(variable) }.exactType.add(impliedType)
+            }
+
             val statements = flow.logicStatements[variable] ?: continue
             val stillUnknown = statements.removeAll {
-                val knownValue = it.condition.operation.valueIfKnown(next.operation)
+                val knownValue = it.condition.operation.valueIfKnown(operation)
                 if (knownValue == true) {
                     when (val effect = it.effect) {
                         is OperationStatement -> queue += effect
-                        is TypeStatement -> approvedTypeStatements.put(effect.variable, effect)
+                        is TypeStatement ->
+                            result.getOrPut(effect.variable) { MutableTypeStatement(effect.variable) } += effect
                     }
                 }
                 removeApprovedOrImpossible && knownValue != null
@@ -284,7 +294,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                 flow.logicStatements = flow.logicStatements.put(variable, stillUnknown)
             }
         }
-        return approvedTypeStatements.asMap().mapValues { and(it.value)!! }
+        return result
     }
 
     override fun recordNewAssignment(flow: PersistentFlow, variable: RealVariable, index: Int) {

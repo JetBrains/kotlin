@@ -76,7 +76,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         val effect = effectDeclaration.effect as ConeReturnsEffectDeclaration
         val builtinTypes = context.session.builtinTypes
         val typeContext = context.session.typeContext
-        val flow = dataFlowInfo.flowOnNodes.getValue(node) as PersistentFlow
 
         val isReturn = node is JumpNode && node.fir is FirReturnExpression
         val resultExpression = if (isReturn) (node.fir as FirReturnExpression).result else node.fir
@@ -92,7 +91,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
         // TODO: create separate variable storage and don't modify existing one
         val variableStorage = dataFlowInfo.variableStorage as VariableStorageImpl
-
+        val flow = dataFlowInfo.flowOnNodes.getValue(node) as PersistentFlow
         var typeStatements: TypeStatements = flow.approvedTypeStatements
 
         if (effect.value != ConeConstantReference.WILDCARD) {
@@ -103,7 +102,10 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
                 if (!resultExpression.isApplicableWith(operation)) return false
             } else {
                 val resultVar = variableStorage.getOrCreate(flow, resultExpression)
-                typeStatements = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation), builtinTypes)
+                typeStatements = logicSystem.andForTypeStatements(
+                    typeStatements,
+                    logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
+                )
             }
         }
 
@@ -119,22 +121,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             if (requiredType != null && !requiredType.isSupertypeOf(typeContext, resultType)) return true
         }
         return false
-    }
-
-    private fun LogicSystem<PersistentFlow>.approveOperationStatement(
-        flow: PersistentFlow,
-        statement: OperationStatement,
-        builtinTypes: BuiltinTypes
-    ): TypeStatements {
-        val newTypeStatements = andForTypeStatements(flow.approvedTypeStatements, approveOperationStatement(flow, statement))
-        val variable = statement.variable
-        if (!variable.isReal()) return newTypeStatements
-        val extraStatement = when (statement.operation) {
-            Operation.NotEqNull -> variable.nullabilityStatement(builtinTypes, isNull = false)
-            Operation.EqNull -> variable.nullabilityStatement(builtinTypes, isNull = true)
-            else -> return newTypeStatements
-        }
-        return andForTypeStatements(newTypeStatements, mapOf(variable to extraStatement))
     }
 
     private fun ConeBooleanExpression.buildTypeStatements(

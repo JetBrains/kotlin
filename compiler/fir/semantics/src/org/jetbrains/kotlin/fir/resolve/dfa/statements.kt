@@ -54,7 +54,7 @@ enum class Operation {
     fun valueIfKnown(given: Operation): Boolean? = when (this) {
         EqTrue, EqFalse -> if (given == NotEqNull) null else given == this
         EqNull -> given == EqNull
-        NotEqNull -> given == NotEqNull
+        NotEqNull -> given != EqNull
     }
 
     override fun toString(): String = when (this) {

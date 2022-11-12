@@ -79,10 +79,15 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         val intersected = types.map { ConeTypeIntersector.intersectTypes(context, it.toList()) }
         val unified = context.commonSuperTypeOrNull(intersected) ?: return null
         return when {
+            unified.isNullableAny -> null
             unified.isAcceptableForSmartcast() -> unified
             unified.canBeNull -> null
             else -> context.anyType()
         }
+    }
+
+    protected operator fun MutableTypeStatement.plusAssign(other: TypeStatement) {
+        exactType += other.exactType
     }
 
     protected fun and(statements: Collection<TypeStatement>): TypeStatement? =
