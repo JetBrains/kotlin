@@ -445,13 +445,19 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
         var newParameterIndex = 0
 
+        lambda.valueParameters.take(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
+            oldParameter.copy(lambda, newParameterIndex++).also {
+                oldToNew[oldParameter] = it
+            }
+        }
+
         newValueParameters.add(
             oldExtensionReceiver.copy(lambda, newParameterIndex++, Name.identifier("\$receiver")).also {
                 oldToNew[oldExtensionReceiver] = it
             }
         )
 
-        lambda.valueParameters.mapTo(newValueParameters) { oldParameter ->
+        lambda.valueParameters.drop(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
             oldParameter.copy(lambda, newParameterIndex++).also {
                 oldToNew[oldParameter] = it
             }
