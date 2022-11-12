@@ -28,3 +28,23 @@ fun PropertyAccessorDescriptor.hasBody(): Boolean {
 fun isBackingFieldReference(descriptor: DeclarationDescriptor?): Boolean {
     return descriptor is SyntheticFieldDescriptor
 }
+
+/**
+ * @return naturally-ordered list of the parameters that can have values specified at call site.
+ */
+val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
+    get() {
+        val result = ArrayList<ParameterDescriptor>(valueParameters.size + 2)
+
+        this.dispatchReceiverParameter?.let {
+            result.add(it)
+        }
+
+        this.extensionReceiverParameter?.let {
+            result.add(it)
+        }
+
+        result.addAll(valueParameters)
+
+        return result
+    }
