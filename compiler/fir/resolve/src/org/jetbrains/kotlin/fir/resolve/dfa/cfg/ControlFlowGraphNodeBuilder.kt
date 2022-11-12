@@ -166,12 +166,6 @@ fun ControlFlowGraphBuilder.createElvisExitNode(fir: FirElvisExpression): ElvisE
 fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirProperty): VariableDeclarationNode =
     VariableDeclarationNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createExitContractNode(fir: FirQualifiedAccess): ExitContractNode =
-    ExitContractNode(currentGraph, fir, levelCounter, createId())
-
-fun ControlFlowGraphBuilder.createEnterContractNode(fir: FirQualifiedAccess): EnterContractNode =
-    EnterContractNode(currentGraph, fir, levelCounter, createId())
-
 fun ControlFlowGraphBuilder.createConstExpressionNode(fir: FirConstExpression<*>): ConstExpressionNode =
     ConstExpressionNode(currentGraph, fir, levelCounter, createId())
 

@@ -12,10 +12,10 @@ var Any?.isNotNull: Boolean
         return this != null
     }
     set(value) {
-        contract {
+        <!WRONG_IMPLIES_CONDITION!>contract {
             returns() implies (this@isNotNull != null)
             <!ERROR_IN_CONTRACT_DESCRIPTION!>require(<!SENSELESS_COMPARISON!>this != null<!>)<!>
-        }
+        }<!>
     }
 
 fun test_1(a: A?) {

@@ -28,7 +28,6 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         originalVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
         shouldRemoveOriginalStatements: Boolean = originalVariable.isSynthetic(),
-        filter: (Implication) -> Boolean = { true },
         transform: (Implication) -> Implication? = { it },
     )
 

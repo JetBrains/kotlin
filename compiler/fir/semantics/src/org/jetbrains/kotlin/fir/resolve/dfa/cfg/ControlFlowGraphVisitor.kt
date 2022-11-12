@@ -339,14 +339,6 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitEnterContractNode(node: EnterContractNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitExitContractNode(node: ExitContractNode, data: D): R {
-        return visitNode(node, data)
-    }
-
     open fun visitEnterSafeCallNode(node: EnterSafeCallNode, data: D): R {
         return visitNode(node, data)
     }
