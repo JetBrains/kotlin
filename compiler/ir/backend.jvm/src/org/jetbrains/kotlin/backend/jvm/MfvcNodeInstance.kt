@@ -103,7 +103,7 @@ internal class ExpressionCopierImpl(
         } else SavedToVariable(
             scope.savableStandaloneVariableWithSetter(
                 this@orSavedToVariable,
-                origin = IrDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE,
+                origin = JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE,
                 saveVariable = saveVariable,
                 isTemporary = true,
             )
@@ -178,7 +178,7 @@ class ReceiverBasedMfvcNodeInstance(
                 val value = makeGetterExpression(scope, registerPossibleExtraBoxCreation = { /* The box is definitely useful */ })
                 val asVariable = scope.savableStandaloneVariableWithSetter(
                     value,
-                    origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER,
+                    origin = JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE,
                     saveVariable = saveVariable,
                     isTemporary = true,
                 )
@@ -243,7 +243,9 @@ fun IrBuilderWithScope.savableStandaloneVariable(
     name: String? = null,
     isMutable: Boolean = false,
     origin: IrDeclarationOrigin,
-    isTemporary: Boolean = origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+    isTemporary: Boolean = origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            || origin == JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
+            || origin == JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER,
     saveVariable: (IrVariable) -> Unit,
 ): IrVariable {
     val variable = if (isTemporary || name == null) scope.createTemporaryVariableDeclaration(

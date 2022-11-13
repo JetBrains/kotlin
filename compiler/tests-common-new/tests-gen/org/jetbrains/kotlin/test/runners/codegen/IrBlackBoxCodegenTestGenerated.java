@@ -50502,6 +50502,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineFunctions.kt")
+        public void testInlineFunctions() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/inlineFunctions.kt");
+        }
+
+        @Test
         @TestMetadata("mfvcBothEqualsOverride.kt")
         public void testMfvcBothEqualsOverride() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/mfvcBothEqualsOverride.kt");

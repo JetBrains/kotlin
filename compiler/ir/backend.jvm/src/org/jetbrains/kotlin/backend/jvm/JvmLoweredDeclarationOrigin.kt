@@ -15,8 +15,6 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
     object LAMBDA_IMPL : IrDeclarationOriginImpl("LAMBDA_IMPL")
     object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL", isSynthetic = true)
-    object MFVC_PRIMARY_CONSTRUCTOR_REFERENCE_HELPER :
-        IrDeclarationOriginImpl("MFVC_PRIMARY_CONSTRUCTOR_REFERENCE_HELPER", isSynthetic = true)
     object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR", isSynthetic = true)
     object SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR :
         IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR", isSynthetic = true)
@@ -40,6 +38,10 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object STATIC_INLINE_CLASS_CONSTRUCTOR : IrDeclarationOriginImpl("STATIC_INLINE_CLASS_CONSTRUCTOR")
     object STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR : IrDeclarationOriginImpl("STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR")
     object GENERATED_ASSERTION_ENABLED_FIELD : IrDeclarationOriginImpl("GENERATED_ASSERTION_ENABLED_FIELD", isSynthetic = true)
+    object GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER : IrDeclarationOriginImpl("GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER")
+    object TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER : IrDeclarationOriginImpl("TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER")
+    object TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE : IrDeclarationOriginImpl("TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE")
+    object MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE : IrDeclarationOriginImpl("MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE")
     object GENERATED_EXTENDED_MAIN : IrDeclarationOriginImpl("GENERATED_EXTENDED_MAIN", isSynthetic = true)
     object SUSPEND_IMPL_STATIC_FUNCTION : IrDeclarationOriginImpl("SUSPEND_IMPL_STATIC_FUNCTION", isSynthetic = true)
     object INTERFACE_COMPANION_PRIVATE_INSTANCE : IrDeclarationOriginImpl("INTERFACE_COMPANION_PRIVATE_INSTANCE", isSynthetic = true)

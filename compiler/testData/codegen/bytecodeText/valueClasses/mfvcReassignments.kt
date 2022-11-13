@@ -12,13 +12,23 @@ class Box(var value: DPoint)
 fun supplier(index: Int) {} // to make usage of the argument
 fun supplier(index: Int, x: DPoint) {} // to make usage of the argument
 
+
+fun `1`() = 1.0
+fun `2`() = 2.0
+fun `3`() = 3.0
+fun `4`() = 4.0
+fun `5`() = 5.0
+fun `6`() = 6.0
+fun `7`() = 7.0
+fun `8`() = 8.0
+
 fun reassignVariable(x: DPoint, box: Box) {
     supplier(100)
-    var p = DPoint(1.0, 2.0) // should not use temporary variables
+    var p = DPoint(`1`(), `2`()) // should not use temporary variables
     supplier(101, p)
     p = p // should not use temporary variables
     supplier(102, p)
-    p = DPoint(3.0, 4.0) // should use tempVars
+    p = DPoint(`3`(), `4`()) // should use tempVars
     supplier(103, p)
     p = x // should not use temporary variables
     supplier(104, p)
@@ -30,13 +40,13 @@ fun reassignVariable(x: DPoint, box: Box) {
 
 fun reassignField(x: DPoint, box: Box) {
     supplier(107)
-    val p = DPoint(5.0, 6.0)
+    val p = DPoint(`5`(), `6`())
     supplier(108, p)
     var b = Box(p) // should not use temporary variables
     supplier(109)
     b.value = b.value // should not use temporary variables
     supplier(110)
-    b.value = DPoint(7.0, 8.0) // should use tempVars
+    b.value = DPoint(`7`(), `8`()) // should use tempVars
     supplier(111)
     b.value = x // should not use temporary variables
     supplier(112)

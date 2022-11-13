@@ -1,7 +1,6 @@
 @kotlin.Metadata
 public final class ClassFlatteningKt {
     // source: 'classFlattening.kt'
-    private final static method box$lambda$3$lambda$2(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String, p6: int, p7: int, p8: java.lang.String): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method gmfvc-Ket90g4(p0: int, p1: int, p2: int, @org.jetbrains.annotations.NotNull p3: java.lang.String, p4: int, p5: int, p6: int, @org.jetbrains.annotations.NotNull p7: java.lang.String, p8: int): int
     public final static method ic-K5cTq2M(p0: int): int

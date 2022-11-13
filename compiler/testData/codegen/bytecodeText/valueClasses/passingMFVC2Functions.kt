@@ -7,12 +7,17 @@
 @JvmInline
 value class DPoint(val x: Double, val y: Double)
 
+fun `1`() = 1.0
+fun `2`() = 2.0
+fun `3`() = 3.0
+fun `4`() = 4.0
+
 fun acceptBoxed(x: Any?) {}
 fun acceptFlattened(x: DPoint) {}
-fun returnBoxed() = DPoint(3.0, 4.0)
+fun returnBoxed() = DPoint(`3`(), `4`())
 
 fun testFlattened2Boxed() {
-    acceptBoxed(DPoint(1.0, 2.0))
+    acceptBoxed(DPoint(`1`(), `2`()))
 }
 
 fun testBoxed2Boxed() {
@@ -20,7 +25,7 @@ fun testBoxed2Boxed() {
 }
 
 fun testFlattened2Flattened() {
-    acceptFlattened(DPoint(1.0, 2.0))
+    acceptFlattened(DPoint(`1`(), `2`()))
 }
 
 fun testBoxed2Flattened() {
@@ -28,8 +33,8 @@ fun testBoxed2Flattened() {
 }
 
 fun testIgnoredFlattened() {
-    DPoint(1.0, 2.0)
-    DPoint(1.0, 2.0)
+    DPoint(`1`(), `2`())
+    DPoint(`1`(), `2`())
 }
 
 fun testIgnoredBoxed() {
@@ -38,8 +43,8 @@ fun testIgnoredBoxed() {
 
 object Init {
     init {
-        DPoint(1.0, 2.0)
-        DPoint(1.0, 2.0)
+        DPoint(`1`(), `2`())
+        DPoint(`1`(), `2`())
     }
 }
 

@@ -63,7 +63,6 @@ public final class DefaultParametersKt {
     public final static @org.jetbrains.annotations.NotNull method complexFun-552ch2I(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double): java.lang.String
     public synthetic static method complexInlineFun-552ch2I$default(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: int, p7: java.lang.Object): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method complexInlineFun-552ch2I(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double): java.lang.String
-    public final inner class kotlin/jvm/internal/Ref$DoubleRef
 }
 
 @kotlin.Metadata

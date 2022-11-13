@@ -413,7 +413,9 @@ class ExpressionCodegen(
         get() = origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
                 origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR &&
                 origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER &&
-                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
+                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER &&
+                origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE &&
+                origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER
 
     private fun writeLocalVariablesInTable(info: BlockInfo, endLabel: Label) {
         info.variables.forEach {

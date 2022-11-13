@@ -142,7 +142,7 @@ class MemoizedMultiFieldValueClassReplacements(
             newFlattenedParameters.add(newParameters)
         }
         newFlattenedParameters += sourceFunction.valueParameters.drop(sourceFunction.contextReceiverParametersCount)
-            .grouped(name = null, substitutionMap, targetFunction, IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER)
+            .grouped(name = null, substitutionMap, targetFunction, JvmLoweredDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER)
         return newFlattenedParameters
     }
 

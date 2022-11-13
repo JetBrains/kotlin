@@ -180,7 +180,7 @@ open class BoxingInterpreter(
                     v is TaintedBoxedValue -> v
                     w is TaintedBoxedValue -> w
                     v.type != w.type -> mergeBoxedHazardous(v, w, isLocalVariable)
-                    else -> v
+                    else -> v // two clean boxed values with the same type are equal
                 }
             }
             v is BoxedBasicValue ->
@@ -222,10 +222,10 @@ private val KCLASS_TO_JLCLASS = Type.getMethodDescriptor(AsmTypes.JAVA_CLASS_TYP
 private val JLCLASS_TO_KCLASS = Type.getMethodDescriptor(AsmTypes.K_CLASS_TYPE, AsmTypes.JAVA_CLASS_TYPE)
 
 fun AbstractInsnNode.isUnboxing(state: GenerationState) =
-    isPrimitiveUnboxing() || isJavaLangClassUnboxing() || isInlineClassUnboxing(state)
+    isPrimitiveUnboxing() || isJavaLangClassUnboxing() || isInlineClassUnboxing(state) || isMultiFieldValueClassUnboxing(state)
 
 fun AbstractInsnNode.isBoxing(state: GenerationState) =
-    isPrimitiveBoxing() || isJavaLangClassBoxing() || isInlineClassBoxing(state) || isCoroutinePrimitiveBoxing()
+    isPrimitiveBoxing() || isJavaLangClassBoxing() || isInlineClassBoxing(state) || isCoroutinePrimitiveBoxing() || isMultiFieldValueClassBoxing(state)
 
 fun AbstractInsnNode.isPrimitiveUnboxing() =
     isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
@@ -292,9 +292,19 @@ private fun AbstractInsnNode.isInlineClassBoxing(state: GenerationState) =
         isInlineClassBoxingMethodDescriptor(state)
     }
 
+private fun AbstractInsnNode.isMultiFieldValueClassBoxing(state: GenerationState) =
+    isMethodInsnWith(Opcodes.INVOKESTATIC) {
+        isMultiFieldValueClassBoxingMethodDescriptor(state)
+    }
+
 private fun AbstractInsnNode.isInlineClassUnboxing(state: GenerationState) =
     isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
         isInlineClassUnboxingMethodDescriptor(state)
+    }
+
+private fun AbstractInsnNode.isMultiFieldValueClassUnboxing(state: GenerationState) =
+    isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
+        isMultiFieldValueClassUnboxingMethodDescriptor(state)
     }
 
 private fun MethodInsnNode.isInlineClassBoxingMethodDescriptor(state: GenerationState): Boolean {
@@ -305,12 +315,28 @@ private fun MethodInsnNode.isInlineClassBoxingMethodDescriptor(state: Generation
     return desc == Type.getMethodDescriptor(ownerType, unboxedType)
 }
 
+private fun MethodInsnNode.isMultiFieldValueClassBoxingMethodDescriptor(state: GenerationState): Boolean {
+    if (name != KotlinTypeMapper.BOX_JVM_METHOD_NAME) return false
+
+    val ownerType = Type.getObjectType(owner)
+    val multiFieldValueClassUnboxInfo = getMultiFieldValueClassUnboxInfo(ownerType, state) ?: return false
+    return desc == Type.getMethodDescriptor(ownerType, *multiFieldValueClassUnboxInfo.unboxedTypes.toTypedArray())
+}
+
 private fun MethodInsnNode.isInlineClassUnboxingMethodDescriptor(state: GenerationState): Boolean {
     if (name != KotlinTypeMapper.UNBOX_JVM_METHOD_NAME) return false
 
     val ownerType = Type.getObjectType(owner)
     val unboxedType = unboxedTypeOfInlineClass(ownerType, state) ?: return false
     return desc == Type.getMethodDescriptor(unboxedType)
+}
+
+private fun MethodInsnNode.isMultiFieldValueClassUnboxingMethodDescriptor(state: GenerationState): Boolean {
+    val ownerType = Type.getObjectType(owner)
+    val multiFieldValueClassUnboxInfo = getMultiFieldValueClassUnboxInfo(ownerType, state) ?: return false
+    return multiFieldValueClassUnboxInfo.unboxedTypesAndMethodNamesAndFieldNames.any { (type, methodName) ->
+        name == methodName && desc == Type.getMethodDescriptor(type)
+    }
 }
 
 fun AbstractInsnNode.isNextMethodCallOfProgressionIterator(values: List<BasicValue>) =
@@ -349,8 +375,8 @@ fun areSameTypedPrimitiveBoxedValues(values: List<BasicValue>): Boolean {
     val (v1, v2) = values
     return v1 is BoxedBasicValue &&
             v2 is BoxedBasicValue &&
-            v1.descriptor.unboxedType == v2.descriptor.unboxedType &&
-            !v1.descriptor.isInlineClassValue && !v2.descriptor.isInlineClassValue
+            !v1.descriptor.isValueClassValue && !v2.descriptor.isValueClassValue &&
+            v1.descriptor.unboxedTypes.single() == v2.descriptor.unboxedTypes.single()
 }
 
 fun AbstractInsnNode.isAreEqualIntrinsic() =
@@ -362,8 +388,10 @@ fun AbstractInsnNode.isAreEqualIntrinsic() =
 
 private val shouldUseEqualsForWrappers = setOf(Type.DOUBLE_TYPE, Type.FLOAT_TYPE, AsmTypes.JAVA_CLASS_TYPE)
 
-fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>, generationState: GenerationState): Boolean =
-    values.none { getUnboxedType(it.type, generationState) in shouldUseEqualsForWrappers }
+fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>, generationState: GenerationState): Boolean = values.none {
+    val unboxedType = getUnboxedTypes(it.type, generationState, getMultiFieldValueClassUnboxInfo(it.type, generationState)).singleOrNull()
+    unboxedType == null || unboxedType in shouldUseEqualsForWrappers
+}
 
 fun AbstractInsnNode.isJavaLangComparableCompareToForSameTypedBoxedValues(values: List<BasicValue>) =
     isJavaLangComparableCompareTo() && areSameTypedPrimitiveBoxedValues(values)

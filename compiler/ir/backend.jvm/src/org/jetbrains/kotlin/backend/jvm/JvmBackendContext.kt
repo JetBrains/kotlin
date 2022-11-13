@@ -159,6 +159,14 @@ class JvmBackendContext(
         state.mapInlineClass = { descriptor ->
             defaultTypeMapper.mapType(referenceClass(descriptor).defaultType)
         }
+
+        state.multiFieldValueClassUnboxInfo = lambda@{ descriptor ->
+            val irClass = symbolTable.lazyWrapper.referenceClass(descriptor).owner
+            val node = multiFieldValueClassReplacements.getRootMfvcNodeOrNull(irClass) ?: return@lambda null
+            val leavesInfo =
+                node.leaves.map { Triple(defaultTypeMapper.mapType(it.type), it.fullMethodName.asString(), it.fullFieldName.asString()) }
+            GenerationState.MultiFieldValueClassUnboxInfo(leavesInfo)
+        }
     }
 
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =

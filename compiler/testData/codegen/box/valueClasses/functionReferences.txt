@@ -234,6 +234,17 @@ public final class AnotherKt {
 }
 
 @kotlin.Metadata
+public final class CallerKt$runSuspend$$inlined$Continuation$1 {
+    // source: 'Continuation.kt'
+    enclosing method CallerKt.runSuspend(Lkotlin/jvm/functions/Function1;)V
+    synthetic final field $context: kotlin.coroutines.CoroutineContext
+    inner (anonymous) class CallerKt$runSuspend$$inlined$Continuation$1
+    public method <init>(p0: kotlin.coroutines.CoroutineContext): void
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
+    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
 public final class CallerKt {
     // source: 'caller.kt'
     public final static method runSuspend(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
@@ -304,18 +315,6 @@ public final class DPoint {
 public interface F {
     // source: 'another.kt'
     public abstract @org.jetbrains.annotations.Nullable method run-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
-}
-
-@kotlin.Metadata
-final class RunSuspend {
-    // source: 'caller.kt'
-    private @org.jetbrains.annotations.Nullable field result: kotlin.Result
-    public method <init>(): void
-    public final method await(): void
-    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
-    public final @org.jetbrains.annotations.Nullable method getResult-xLWZpok(): kotlin.Result
-    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final method setResult(@org.jetbrains.annotations.Nullable p0: kotlin.Result): void
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -2049,11 +2048,6 @@ public final class TestKt {
     inner (anonymous) class TestKt$box$97
     inner (anonymous) class TestKt$box$98
     inner (anonymous) class TestKt$box$99
-    private final static method box$lambda$2$lambda$1(p0: double, p1: double, p2: double, p3: double): DPoint
-    private final static method box$lambda$4$lambda$3(p0: double, p1: double, p2: double, p3: double): DPoint
-    private final static method box$lambda$7$lambda$6(p0: double, p1: double): DPoint
-    private final static method box$stub_for_inlining$0$stub_for_inlining(p0: double, p1: double, p2: double, p3: double): DPoint
-    private final static method box$stub_for_inlining$9$stub_for_inlining$8(p0: double, p1: double): DPoint
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method consume-lIoT8es(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2): DPoint
     public final static @org.jetbrains.annotations.NotNull method consumeInline-lIoT8es(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2): DPoint

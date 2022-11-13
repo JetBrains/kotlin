@@ -58,7 +58,7 @@ fun MfvcNode.createInstanceFromValueDeclarations(
         scope.savableStandaloneVariable(
             type = it.type,
             name = listOf(name, it.fullFieldName).joinToString("-"),
-            origin = IrDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE,
+            origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE,
             saveVariable = saveVariable
         )
     }
