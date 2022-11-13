@@ -80,7 +80,6 @@ open internal class CharSet(char: Char, val ignoreCase: Boolean = false) : LeafS
         return when (set) {
             is CharSet -> set.char == char
             is RangeSet -> set.accepts(0, char.toString()) > 0
-            is SupplementaryCharSet -> false
             is SupplementaryRangeSet -> set.contains(char)
             else -> true
         }

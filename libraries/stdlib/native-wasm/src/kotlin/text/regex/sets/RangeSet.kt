@@ -46,7 +46,6 @@ open internal class RangeSet(charClass: AbstractCharClass, val ignoreCase: Boole
         return when (set) {
             is CharSet -> AbstractCharClass.intersects(chars, set.char.toInt())
             is RangeSet -> AbstractCharClass.intersects(chars, set.chars)
-            is SupplementaryCharSet -> false
             is SupplementaryRangeSet -> AbstractCharClass.intersects(chars, set.chars)
             else -> true
         }

@@ -114,7 +114,6 @@ internal class SurrogateRangeSet(surrChars: AbstractCharClass) : RangeSet(surrCh
             is SurrogateRangeSet -> true
             is CharSet,
             is RangeSet,
-            is SupplementaryCharSet,
             is SupplementaryRangeSet -> false
             else -> true
         }

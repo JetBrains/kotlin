@@ -139,7 +139,6 @@ open internal class SupplementaryRangeSet(charClass: AbstractCharClass, val igno
     override fun first(set: AbstractSet): Boolean {
         @Suppress("DEPRECATION")
         return when(set) {
-            is SupplementaryCharSet -> AbstractCharClass.intersects(chars, set.codePoint)
             is CharSet -> AbstractCharClass.intersects(chars, set.char.toInt())
             is SupplementaryRangeSet -> AbstractCharClass.intersects(chars, set.chars)
             is RangeSet -> AbstractCharClass.intersects(chars, set.chars)
