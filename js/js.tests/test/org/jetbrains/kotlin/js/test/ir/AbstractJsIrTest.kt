@@ -227,14 +227,14 @@ open class AbstractFirJsBlackBoxCodegenTest(
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             }
 
-        firHandlersStep {
-            useHandlers(
-                ::FirDumpHandler,
-                ::FirCfgDumpHandler,
-                ::FirCfgConsistencyHandler,
-                ::FirResolvedTypesVerifier,
-            )
-        }
+            firHandlersStep {
+                useHandlers(
+                    ::FirDumpHandler,
+                    ::FirCfgDumpHandler,
+                    ::FirCfgConsistencyHandler,
+                    ::FirResolvedTypesVerifier,
+                )
+            }
 
             configureJsArtifactsHandlersStep {
                 useHandlers(
