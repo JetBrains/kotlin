@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 @file:JsModule("foo")
 package foo
 
