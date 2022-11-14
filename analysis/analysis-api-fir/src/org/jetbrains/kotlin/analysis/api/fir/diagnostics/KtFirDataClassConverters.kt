@@ -974,6 +974,24 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
+        JsModuleProhibitedOnVarImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE) { firDiagnostic ->
+        JsModuleProhibitedOnNonNativeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NESTED_JS_MODULE_PROHIBITED) { firDiagnostic ->
+        NestedJsModuleProhibitedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OPT_IN_USAGE) { firDiagnostic ->
         OptInUsageImpl(
             firDiagnostic.a,
