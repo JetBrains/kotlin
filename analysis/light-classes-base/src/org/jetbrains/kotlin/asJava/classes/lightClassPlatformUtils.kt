@@ -83,7 +83,7 @@ fun getParentForLocalDeclaration(classOrObject: KtClassOrObject): PsiElement? {
 
                     val psiField = propertyMethods.backingField
                     if (psiField != null) {
-                        return wrapField(psiField, forceWrapping = true)
+                        return wrapField(psiField, forceWrapping = false)
                     }
                 }
             }
