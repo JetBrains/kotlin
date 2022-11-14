@@ -168,6 +168,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_E
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_LABEL_IN_WHEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ELSE_MISPLACED_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_CHARACTER_LITERAL
@@ -1224,6 +1225,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound")
+
+        map.put(DYNAMIC_RECEIVER_NOT_ALLOWED, "Dynamic receiver is prohibited")
 
         // Reflection
         map.put(

@@ -657,6 +657,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val DYNAMIC_UPPER_BOUND by error<KtTypeReference>()
 
+        val DYNAMIC_RECEIVER_NOT_ALLOWED by error<KtElement>()
+
         val INCOMPATIBLE_TYPES by error<KtElement> {
             parameter<ConeKotlinType>("typeA")
             parameter<ConeKotlinType>("typeB")
