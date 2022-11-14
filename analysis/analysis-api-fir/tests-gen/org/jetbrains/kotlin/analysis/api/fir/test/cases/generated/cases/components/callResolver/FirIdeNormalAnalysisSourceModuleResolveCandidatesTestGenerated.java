@@ -86,6 +86,18 @@ public class FirIdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated exte
         }
 
         @Test
+        @TestMetadata("forEach.kt")
+        public void testForEach() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/forEach.kt");
+        }
+
+        @Test
+        @TestMetadata("groupBy.kt")
+        public void testGroupBy() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/groupBy.kt");
+        }
+
+        @Test
         @TestMetadata("implicitInvoke.kt")
         public void testImplicitInvoke() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/implicitInvoke.kt");
