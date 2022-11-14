@@ -443,6 +443,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtType>
     }
 
+    abstract class WrongMultipleInheritance : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongMultipleInheritance::class
+        abstract val symbol: KtCallableSymbol
+    }
+
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ConstructorInObject::class
     }
