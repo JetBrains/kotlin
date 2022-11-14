@@ -72,9 +72,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
         withAnnotationContainer(regularClass) {
-            whileAnalysing(regularClass) {
-                visitClassAndChildren(regularClass, regularClass.defaultType())
-            }
+            visitClassAndChildren(regularClass, regularClass.defaultType())
         }
     }
 
@@ -90,17 +88,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
         withAnnotationContainer(simpleFunction) {
-            whileAnalysing(simpleFunction) {
-                visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
-            }
+            visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
         }
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
         withAnnotationContainer(constructor) {
-            whileAnalysing(constructor) {
-                visitWithDeclaration(constructor)
-            }
+            visitWithDeclaration(constructor)
         }
     }
 
@@ -121,17 +115,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitProperty(property: FirProperty, data: Nothing?) {
         withAnnotationContainer(property) {
-            whileAnalysing(property) {
-                visitWithDeclaration(property)
-            }
+            visitWithDeclaration(property)
         }
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
         withAnnotationContainer(typeAlias) {
-            whileAnalysing(typeAlias) {
-                visitWithDeclaration(typeAlias)
-            }
+            visitWithDeclaration(typeAlias)
         }
     }
 
@@ -150,9 +140,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
         withAnnotationContainer(enumEntry) {
-            whileAnalysing(enumEntry) {
-                visitWithDeclaration(enumEntry)
-            }
+            visitWithDeclaration(enumEntry)
         }
     }
 
@@ -224,9 +212,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?) {
-        whileAnalysing(variableAssignment) {
-            visitWithQualifiedAccessOrAnnotationCall(variableAssignment)
-        }
+        visitWithQualifiedAccessOrAnnotationCall(variableAssignment)
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?) {
@@ -275,7 +261,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall)
         try {
-            return block()
+            return whileAnalysing(qualifiedAccessOrAnnotationCall) {
+                block()
+            }
         } finally {
             existingContext.dropQualifiedAccessOrAnnotationCall()
             context = existingContext
@@ -288,7 +276,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addGetClassCall(getClassCall)
         try {
-            return block()
+            return whileAnalysing(getClassCall) {
+                block()
+            }
         } finally {
             existingContext.dropGetClassCall()
             context = existingContext
@@ -301,7 +291,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addDeclaration(declaration)
         try {
-            return block()
+            return whileAnalysing(declaration) {
+                block()
+            }
         } finally {
             existingContext.dropDeclaration()
             context = existingContext

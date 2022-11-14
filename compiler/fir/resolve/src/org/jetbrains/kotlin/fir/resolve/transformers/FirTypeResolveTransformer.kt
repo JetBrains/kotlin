@@ -75,8 +75,8 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?) = whileAnalysing(regularClass) {
-        withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement = whileAnalysing(regularClass) {
+        return withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
             withScopeCleanup {
                 regularClass.addTypeParametersScope()
                 regularClass.typeParameters.forEach {
@@ -95,29 +95,29 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: Any?) = whileAnalysing(constructor) {
-        withScopeCleanup {
+    override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor = whileAnalysing(constructor) {
+        return withScopeCleanup {
             constructor.addTypeParametersScope()
             transformDeclaration(constructor, data)
         } as FirConstructor
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?) = whileAnalysing(typeAlias) {
-        withScopeCleanup {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias = whileAnalysing(typeAlias) {
+        return withScopeCleanup {
             typeAlias.addTypeParametersScope()
             transformDeclaration(typeAlias, data)
         } as FirTypeAlias
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?) = whileAnalysing(enumEntry) {
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): FirEnumEntry = whileAnalysing(enumEntry) {
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformAnnotations(this, data)
-        enumEntry
+        return enumEntry
     }
 
-    override fun transformProperty(property: FirProperty, data: Any?) = whileAnalysing(property) {
-        withScopeCleanup {
+    override fun transformProperty(property: FirProperty, data: Any?): FirProperty = whileAnalysing(property) {
+        return withScopeCleanup {
             property.addTypeParametersScope()
             property.transformTypeParameters(this, data)
                 .transformReturnTypeRef(this, data)
@@ -148,15 +148,18 @@ open class FirTypeResolveTransformer(
         property.setter?.valueParameters?.map { it.transformReturnTypeRef(StoreType, property.returnTypeRef) }
     }
 
-    override fun transformField(field: FirField, data: Any?): FirField {
+    override fun transformField(field: FirField, data: Any?): FirField = whileAnalysing(field) {
         return withScopeCleanup {
             field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
             field
         }
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) = whileAnalysing(simpleFunction) {
-        withScopeCleanup {
+    override fun transformSimpleFunction(
+        simpleFunction: FirSimpleFunction,
+        data: Any?
+    ): FirSimpleFunction = whileAnalysing(simpleFunction) {
+        return withScopeCleanup {
             simpleFunction.addTypeParametersScope()
             transformDeclaration(simpleFunction, data).also {
                 unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
@@ -206,7 +209,7 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement = whileAnalysing(valueParameter) {
         valueParameter.transformReturnTypeRef(this, data)
         valueParameter.transformAnnotations(this, data)
         valueParameter.transformVarargTypeToArrayType()
@@ -222,7 +225,7 @@ open class FirTypeResolveTransformer(
         return annotation
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement {
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement = whileAnalysing(annotationCall) {
         return transformAnnotation(annotationCall, data)
     }
 
