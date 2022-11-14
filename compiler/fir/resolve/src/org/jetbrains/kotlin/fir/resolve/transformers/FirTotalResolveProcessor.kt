@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
-import org.jetbrains.kotlin.fir.forEachWrappingFileAnalysisException
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 class FirTotalResolveProcessor(session: FirSession) {
     val scopeSession: ScopeSession = ScopeSession()
@@ -30,7 +30,11 @@ class FirTotalResolveProcessor(session: FirSession) {
             processor.beforePhase()
             when (processor) {
                 is FirTransformerBasedResolveProcessor -> {
-                    files.forEachWrappingFileAnalysisException { processor.processFile(it) }
+                    files.forEach {
+                        withFileAnalysisExceptionWrapping(it) {
+                            processor.processFile(it)
+                        }
+                    }
                 }
                 is FirGlobalResolveProcessor -> {
                     processor.process(files)

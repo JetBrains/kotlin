@@ -147,7 +147,3 @@ inline fun <R> withFileAnalysisExceptionWrapping(file: FirFile, block: () -> R):
         block,
     )
 }
-
-inline fun Collection<FirFile>.forEachWrappingFileAnalysisException(crossinline block: (FirFile) -> Unit) = forEach {
-    withFileAnalysisExceptionWrapping(it) { block(it) }
-}

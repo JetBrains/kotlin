@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.forEachWrappingFileAnalysisException
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -46,13 +46,25 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
         val transformer = FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession)
         val registeredPluginAnnotations = session.registeredPluginAnnotations
         if (!registeredPluginAnnotations.hasRegisteredAnnotations) {
-            files.forEachWrappingFileAnalysisException { it.transformSingle(transformer, Mode.RegularAnnotations) }
+            files.forEach {
+                withFileAnalysisExceptionWrapping(it) {
+                    it.transformSingle(transformer, Mode.RegularAnnotations)
+                }
+            }
             return
         }
         if (registeredPluginAnnotations.metaAnnotations.isNotEmpty()) {
-            files.forEachWrappingFileAnalysisException { it.transformSingle(transformer, Mode.MetaAnnotations) }
+            files.forEach {
+                withFileAnalysisExceptionWrapping(it) {
+                    it.transformSingle(transformer, Mode.MetaAnnotations)
+                }
+            }
         }
-        files.forEachWrappingFileAnalysisException { it.transformSingle(transformer, Mode.RegularAnnotations) }
+        files.forEach {
+            withFileAnalysisExceptionWrapping(it) {
+                it.transformSingle(transformer, Mode.RegularAnnotations)
+            }
+        }
     }
 
     @OptIn(FirSymbolProviderInternals::class)
