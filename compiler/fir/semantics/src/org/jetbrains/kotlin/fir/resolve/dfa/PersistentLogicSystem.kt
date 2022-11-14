@@ -165,10 +165,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         flow.addAliases(persistentSetOf(alias), flow.unwrapVariable(underlyingVariable))
     }
 
-    override fun removeAllAboutVariable(flow: PersistentFlow, variable: RealVariable) {
-        flow.replaceVariable(variable, null)
-    }
-
     private fun PersistentFlow.replaceVariable(variable: RealVariable, replacement: RealVariable?) {
         val original = directAliasMap[variable]
         if (original != null) {
@@ -320,7 +316,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun recordNewAssignment(flow: PersistentFlow, variable: RealVariable, index: Int) {
-        removeAllAboutVariable(flow, variable)
+        flow.replaceVariable(variable, null)
         flow.assignmentIndex = flow.assignmentIndex.put(variable, index)
     }
 

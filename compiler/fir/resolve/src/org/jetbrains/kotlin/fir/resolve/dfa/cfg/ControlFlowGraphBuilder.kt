@@ -786,7 +786,7 @@ class ControlFlowGraphBuilder {
         return conditionExitNode to loopBlockEnterNode
     }
 
-    fun exitWhileLoop(loop: FirLoop): Pair<LoopBlockExitNode, LoopExitNode> {
+    fun exitWhileLoop(loop: FirLoop): Triple<LoopConditionEnterNode, LoopBlockExitNode, LoopExitNode> {
         levelCounter--
         val loopBlockExitNode = createLoopBlockExitNode(loop)
         popAndAddEdge(loopBlockExitNode)
@@ -796,7 +796,7 @@ class ControlFlowGraphBuilder {
         loopExitNode.updateDeadStatus()
         lastNodes.push(loopExitNode)
         levelCounter--
-        return loopBlockExitNode to loopExitNode
+        return Triple(conditionEnterNode, loopBlockExitNode, loopExitNode)
     }
 
     // ----------------------------------- Do while Loop -----------------------------------
