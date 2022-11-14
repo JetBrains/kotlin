@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
@@ -39,6 +40,7 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirNamedFunctionSymbol>("function")
         }
+        val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION by error<PsiElement>()
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
