@@ -28,6 +28,9 @@ public final class org/jetbrains/kotlin/tooling/core/ClosureKt {
 	public static final fun createResultSet (I)Ljava/util/Set;
 	public static final fun createResultSet (Ljava/lang/Iterable;I)Ljava/util/Set;
 	public static final fun createResultSet (Ljava/lang/Object;I)Ljava/util/Set;
+	public static synthetic fun createResultSet$default (IILjava/lang/Object;)Ljava/util/Set;
+	public static synthetic fun createResultSet$default (Ljava/lang/Iterable;IILjava/lang/Object;)Ljava/util/Set;
+	public static synthetic fun createResultSet$default (Ljava/lang/Object;IILjava/lang/Object;)Ljava/util/Set;
 }
 
 public abstract interface class org/jetbrains/kotlin/tooling/core/Extras : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
@@ -52,6 +55,7 @@ public final class org/jetbrains/kotlin/tooling/core/Extras$Entry : java/io/Seri
 public final class org/jetbrains/kotlin/tooling/core/Extras$Key : java/io/Serializable {
 	public static final field Companion Lorg/jetbrains/kotlin/tooling/core/Extras$Key$Companion;
 	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Type;Ljava/lang/String;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Type;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getName ()Ljava/lang/String;
 	public final fun getStableString ()Ljava/lang/String;
