@@ -82,7 +82,7 @@ class KotlinBuildProperties(
 
     val localBootstrapPath: String? = getOrNull("bootstrap.local.path") as String?
 
-    val useFir: Boolean = getBoolean("kotlin.build.useFir")
+    val useFir: Boolean = getBoolean("kotlin.build.useFir", default = !isTeamcityBuild)
 
     val useFirForLibraries: Boolean = getBoolean("kotlin.build.useFirForLibraries")
 
