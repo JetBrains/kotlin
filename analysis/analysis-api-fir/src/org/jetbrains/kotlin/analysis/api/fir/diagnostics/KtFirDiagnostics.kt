@@ -701,6 +701,18 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = WrongJsQualifier::class
     }
 
+    abstract class JsModuleProhibitedOnVar : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsModuleProhibitedOnVar::class
+    }
+
+    abstract class JsModuleProhibitedOnNonNative : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsModuleProhibitedOnNonNative::class
+    }
+
+    abstract class NestedJsModuleProhibited : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NestedJsModuleProhibited::class
+    }
+
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName
