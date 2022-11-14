@@ -94,9 +94,6 @@ object FirFakeOverrideGenerator {
             fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
             originalForSubstitutionOverrideAttr = baseFunction
-            if (isStatic) {
-                containingClassForStaticMemberAttr = (newDispatchReceiverType as? ConeClassLikeType)?.lookupTag
-            }
         }
     }
 
@@ -312,9 +309,6 @@ object FirFakeOverrideGenerator {
             fakeOverrideSubstitution = fakeOverrideSubstitution
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
-            if (isStatic) {
-                containingClassForStaticMemberAttr = (newDispatchReceiverType as? ConeClassLikeType)?.lookupTag
-            }
         }
         return symbolForSubstitutionOverride
     }
