@@ -169,6 +169,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_LABEL_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ELSE_MISPLACED_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_CHARACTER_LITERAL
@@ -1218,6 +1219,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
             "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause"
         )
+
+        map.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic")
 
         map.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound")
 
