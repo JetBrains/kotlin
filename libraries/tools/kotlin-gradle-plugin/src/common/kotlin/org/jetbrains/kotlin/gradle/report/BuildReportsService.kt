@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
@@ -26,13 +27,14 @@ import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.utils.formatSize
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
+import java.io.File
 import java.net.InetAddress
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
 abstract class BuildReportsService : BuildService<BuildReportsService.Parameters>, AutoCloseable, OperationCompletionListener {
@@ -55,6 +57,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
         val reportingSettings: Property<ReportingSettings>
         var buildMetricsService: Provider<BuildMetricsService>
 
+        val projectDir: DirectoryProperty
         val label: Property<String?>
         val projectName: Property<String>
         val kotlinVersion: Property<String>
@@ -100,6 +103,17 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     }
 
     private fun reportBuildFinish() {
+        val httpReportSettings = parameters.reportingSettings.get().httpReportSettings ?: return
+
+        val branchName = if (httpReportSettings.includeGitBranchName) {
+            val process = ProcessBuilder("git", "rev-parse", "--abbrev-ref", "HEAD")
+                .directory(parameters.projectDir.asFile.get())
+                .start().also {
+                    it.waitFor(5, TimeUnit.SECONDS)
+                }
+            process.inputStream.reader().readText()
+        } else "is not set"
+
         val buildFinishData = BuildFinishStatisticsData(
             projectName = parameters.projectName.get(),
             startParameters = parameters.startParameters.get()
@@ -109,9 +123,11 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             totalTime = (System.nanoTime() - startTime) / 1_000_000,
             finishTime = System.currentTimeMillis(),
             hostName = hostName,
-            tags = tags.toList()
+            tags = tags.toList(),
+            gitBranch = branchName
         )
-        parameters.reportingSettings.get().httpReportSettings?.also { sendDataViaHttp(it, buildFinishData, log) }
+
+        sendDataViaHttp(httpReportSettings, buildFinishData, log)
     }
 
     private fun GradleBuildStartParameters.includeVerboseEnvironment(verboseEnvironment: Boolean): GradleBuildStartParameters {
@@ -301,6 +317,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                 it.parameters.startParameters.set(getStartParameters(project))
                 it.parameters.reportingSettings.set(reportingSettings)
                 it.parameters.buildMetricsService = buildMetricsService
+                it.parameters.projectDir.set(project.rootProject.layout.projectDirectory)
 
                 //init gradle tags for build scan and http reports
                 it.parameters.additionalTags.value(setupTags(gradle))
