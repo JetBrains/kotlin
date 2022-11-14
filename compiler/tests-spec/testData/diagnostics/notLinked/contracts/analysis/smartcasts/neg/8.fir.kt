@@ -58,7 +58,7 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     funWithReturns(value_1 !is Number?)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>())
     if (funWithReturnsTrue(value_1 !is Number)) {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
         if (funWithReturnsNotNull(value_1 is Int) == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
@@ -68,7 +68,7 @@ fun case_1(value_1: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any?) {
     if (!funWithReturnsFalse(value_1 !is Number?)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>())
         funWithReturns(value_1 !is Number)
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
         if (funWithReturnsNull(value_1 !is Int) == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
@@ -78,12 +78,12 @@ fun case_2(value_1: Any?) {
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?, value_2: Any?) {
     if (!value_1.case_3(value_1, value_2 is Number?)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>())
         println(value_1)
     } else if (value_1.case_3(value_1, value_2 is Number?)) {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     } else {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 

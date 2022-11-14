@@ -401,10 +401,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                         if (!type.canBeNull) {
                             // x is (T & Any) => x != null
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable notEq null))
-                        } else {
-                            // TODO? (KT-22996) x !is T? => x != null; don't forget to change `approveContractStatement`
-                            // flow.addImplication((expressionVariable eq !isType) implies (operandVariable notEq null))
-                        }
+                        } else if (type.isMarkedNullable) {
+                            // x !is T? => x != null
+                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable notEq null))
+                        } // else probably a type parameter, so which implication is correct depends on instantiation
                     }
                 }
             }
@@ -418,8 +418,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 } else {
                     val expressionVariable = variableStorage.createSynthetic(typeOperatorCall)
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
-                    // TODO? (x as T?) == null => x == null
-                    // flow.addImplication((expressionVariable eq null) implies (operandVariable eq null))
+                    flow.addImplication((expressionVariable eq null) implies (operandVariable eq null))
                 }
             }
 
