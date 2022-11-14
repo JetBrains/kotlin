@@ -17,7 +17,7 @@ public class CompilationException extends KotlinExceptionWithAttachments {
 
     public CompilationException(@NotNull String message, @Nullable Throwable cause, @Nullable PsiElement element) {
         super(ExceptionUtilKt.getExceptionMessage("Back-end (JVM)", message, cause,
-                                                  element == null ? null : PsiDiagnosticUtils.atLocation(element)),
+                                                  element == null ? null : PsiDiagnosticUtils.atLocation(element), null),
               cause);
         this.element = element;
 
