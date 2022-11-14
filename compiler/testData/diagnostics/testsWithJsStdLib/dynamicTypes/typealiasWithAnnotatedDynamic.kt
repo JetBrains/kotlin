@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 @Target(AnnotationTarget.TYPE)
 annotation class Ann1
 
