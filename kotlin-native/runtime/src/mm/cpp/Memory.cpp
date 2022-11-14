@@ -113,15 +113,16 @@ extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
     AssertThreadState(state, ThreadState::kNative);
     auto* node = mm::FromMemoryState(state);
     if (destroyRuntime) {
-        ThreadStateGuard guard(state, ThreadState::kRunnable);
-        node->Get()->gc().ScheduleAndWaitFullGCWithFinalizers();
-        // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
-        mm::GlobalData::Instance().gc().StopFinalizerThreadIfRunning();
-    }
-    mm::ThreadRegistry::Instance().Unregister(node);
-    if (destroyRuntime) {
+        {
+            ThreadStateGuard guard(state, ThreadState::kRunnable);
+            node->Get()->gc().ScheduleAndWaitFullGCWithFinalizers();
+            // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
+            mm::GlobalData::Instance().gc().StopFinalizerThreadIfRunning();
+        }
+        // we can clear reference in advance, as Unregister function can't use it anyway
         mm::ThreadRegistry::ClearCurrentThreadData();
     }
+    mm::ThreadRegistry::Instance().Unregister(node);
 }
 
 extern "C" void RestoreMemory(MemoryState*) {
