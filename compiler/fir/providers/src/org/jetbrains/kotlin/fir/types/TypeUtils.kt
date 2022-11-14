@@ -11,18 +11,20 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -729,4 +731,34 @@ fun ConeKotlinType.convertToNonRawVersion(): ConeKotlinType {
     }
 
     return withAttributes(attributes.remove(CompilerConeAttributes.RawType))
+}
+
+fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = when (this) {
+    is FirCallableSymbol<*> -> containingClassLookupTag()?.toSymbol(session)
+    is FirClassLikeSymbol<*> -> getContainingClassLookupTag()?.toSymbol(session)
+    else -> null
+}
+
+fun FirDeclaration.getContainingClassSymbol(session: FirSession) = symbol.getContainingClassSymbol(session)
+
+fun FirPropertySymbol.directOverriddenProperties(session: FirSession, scopeSession: ScopeSession): List<FirPropertySymbol> {
+    val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
+    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+
+    scope.processPropertiesByName(name) { }
+    return scope.getDirectOverriddenProperties(this, true)
+}
+
+fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
+    val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
+    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+
+    scope.processFunctionsByName(name) { }
+    return scope.getDirectOverriddenFunctions(this, true)
+}
+
+fun FirCallableSymbol<*>.directOverriddenCallables(session: FirSession, scopeSession: ScopeSession) = when (this) {
+    is FirPropertySymbol -> directOverriddenProperties(session, scopeSession)
+    is FirNamedFunctionSymbol -> directOverriddenFunctions(session, scopeSession)
+    else -> emptyList()
 }
