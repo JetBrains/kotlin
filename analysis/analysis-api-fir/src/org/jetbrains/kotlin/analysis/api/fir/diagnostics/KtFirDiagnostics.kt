@@ -3303,6 +3303,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonAbstractMemberOfExternalInterface::class
     }
 
+    abstract class NonExternalDeclarationInInappropriateFile : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NonExternalDeclarationInInappropriateFile::class
+        abstract val type: KtType
+    }
+
     abstract class DelegationByDynamic : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = DelegationByDynamic::class
     }
