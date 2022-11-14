@@ -409,6 +409,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kotlinTestInferJvmVariant: Boolean
         get() = booleanProperty("kotlin.test.infer.jvm.variant") ?: true
 
+    val kotlinOptionsSuppressFreeArgsModificationWarning: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING) ?: false
+
     enum class JvmTargetValidationMode {
         IGNORE, WARNING, ERROR
     }
@@ -493,6 +496,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_JS_KARMA_BROWSERS = "kotlin.js.browser.karma.browsers"
         const val KOTLIN_BUILD_REPORT_SINGLE_FILE = "kotlin.build.report.single_file"
         const val KOTLIN_BUILD_REPORT_HTTP_URL = "kotlin.build.report.http.url"
+        const val KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING = "kotlin.options.suppressFreeCompilerArgsModificationWarning"
     }
 
     companion object {

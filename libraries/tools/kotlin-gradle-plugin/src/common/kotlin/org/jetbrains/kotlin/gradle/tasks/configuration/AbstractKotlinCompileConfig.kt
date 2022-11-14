@@ -73,6 +73,9 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             }
             task.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy).finalizeValueOnRead()
             task.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy).finalizeValueOnRead()
+            task.suppressKotlinOptionsFreeArgsModificationWarning
+                .convention(propertiesProvider.kotlinOptionsSuppressFreeArgsModificationWarning)
+                .finalizeValueOnRead()
 
             task.incremental = false
             task.useModuleDetection.convention(false)

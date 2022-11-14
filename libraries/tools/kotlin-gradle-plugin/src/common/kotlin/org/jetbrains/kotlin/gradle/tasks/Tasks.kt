@@ -298,6 +298,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     val startParameters = BuildReportsService.getStartParameters(project)
 
+    @get:Internal
+    internal abstract val suppressKotlinOptionsFreeArgsModificationWarning: Property<Boolean>
+
     internal fun reportingSettings() = buildReportsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
 
     @get:Internal

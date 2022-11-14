@@ -24,10 +24,7 @@ class KotlinMultiplatformCommonOptionsCompat(
         }
 
         set(value) = if (isTaskExecuting) {
-            task().logger.warn(
-                "kotlinOptions.freeCompilerArgs were changed on task execution phase: ${value.joinToString()}\n" +
-                        "This behaviour will be deprecated and become an error in future releases!"
-            )
+            task().nagUserFreeArgsModifiedOnExecution(value)
             task().additionalFreeCompilerArgs = value
         } else {
             options.freeCompilerArgs.set(value)

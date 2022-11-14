@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 
 internal class CompilerOptionsIT : KGPBaseTest() {
 
@@ -22,7 +23,36 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     internal fun compatibleWithKotlinDsl(gradleVersion: GradleVersion) {
         project("buildSrcWithKotlinDslAndKgp", gradleVersion) {
             build("tasks") {
-                assertOutputContains("kotlinOptions.freeCompilerArgs were changed on task execution phase:")
+                assertOutputContains("kotlinOptions.freeCompilerArgs were changed on task :compileKotlin execution phase:")
+            }
+        }
+    }
+
+    @DisplayName("Allow to suppress kotlinOptions.freeCompilerArgs on task execution modification warning")
+    @JvmGradlePluginTests
+    @GradleTest
+    internal fun suppressFreeArgsModification(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.named("compileKotlin") {
+                |    doFirst {
+                |        kotlinOptions.freeCompilerArgs += ["-module-name=java"]
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.options.suppressFreeCompilerArgsModificationWarning=true
+                """.trimMargin()
+            )
+
+            build("assemble") {
+                assertOutputDoesNotContain("kotlinOptions.freeCompilerArgs were changed on task")
             }
         }
     }
