@@ -430,13 +430,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         when {
             isGetter -> {
                 if (returnTypeRef is FirImplicitTypeRef || forceUpdateForNonImplicitTypes) {
-                    replaceReturnTypeRef(propertyTypeRef)
+                    replaceReturnTypeRef(propertyTypeRef.copyWithNewSource(returnTypeRef.source))
                 }
             }
             isSetter -> {
                 val valueParameter = valueParameters.firstOrNull() ?: return
                 if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
-                    valueParameter.transformReturnTypeRef(StoreType, propertyTypeRef)
+                    valueParameter.transformReturnTypeRef(StoreType, propertyTypeRef.copyWithNewSource(returnTypeRef.source))
                 }
             }
         }
@@ -1066,6 +1066,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 buildResolvedTypeRef {
                     type = this@toExpectedTypeRef.coneType
                     annotations.addAll(this@toExpectedTypeRef.annotations)
+                    this@toExpectedTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)?.let {
+                        source = it
+                    }
                 }
             }
         }
