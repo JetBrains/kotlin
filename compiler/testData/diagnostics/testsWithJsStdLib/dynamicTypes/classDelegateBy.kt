@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // FIR_IDENTICAL
 val x: dynamic = 23
 
