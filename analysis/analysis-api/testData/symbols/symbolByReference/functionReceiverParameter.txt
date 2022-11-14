@@ -9,6 +9,5 @@ KtReceiverParameterSymbol:
     ReceiverTypeAnnotation()
       psi: KtAnnotationEntry
   ] @R|ReceiverTypeAnnotation|()  kotlin/Int
-  getContainingModule: Could not render due to java.lang.IllegalArgumentException: Failed requirement.
-
-  deprecationStatus: Could not render due to java.lang.IllegalArgumentException: Failed requirement.
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

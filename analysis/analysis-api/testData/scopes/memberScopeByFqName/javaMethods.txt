@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: foo
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -42,7 +42,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: doo
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -60,7 +60,7 @@ KtFunctionSymbol:
       isVararg: false
       name: i
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -89,7 +89,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: getStringValue
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -116,7 +116,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -134,7 +134,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: LIBRARY
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -163,7 +163,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -190,7 +190,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -209,7 +209,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: true
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: JavaClass
   symbolKind: CLASS_MEMBER
   typeParameters: []

@@ -18,7 +18,10 @@ KtFunctionSymbol:
   receiverParameter: KtReceiverParameterSymbol:
     annotationsList: []
     origin: SOURCE
+    owningCallableSymbol: KtFunctionSymbol(/foo)
     type: kotlin/String
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -8,7 +8,7 @@ KtJavaFieldSymbol:
   modality: OPEN
   name: field
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []

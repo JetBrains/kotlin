@@ -21,7 +21,10 @@ KtKotlinPropertySymbol:
   receiverParameter: KtReceiverParameterSymbol:
     annotationsList: []
     origin: DELEGATED
+    owningCallableSymbol: KtKotlinPropertySymbol(/I.zoo)
     type: kotlin/Int
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Unit
   setter: null
   symbolKind: CLASS_MEMBER
@@ -116,7 +119,10 @@ KtFunctionSymbol:
   receiverParameter: KtReceiverParameterSymbol:
     annotationsList: []
     origin: DELEGATED
+    owningCallableSymbol: KtFunctionSymbol(/I.smth)
     type: kotlin/Int
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Short
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -183,7 +189,10 @@ KtKotlinPropertySymbol:
   receiverParameter: KtReceiverParameterSymbol:
     annotationsList: []
     origin: DELEGATED
+    owningCallableSymbol: KtKotlinPropertySymbol(/I.doo)
     type: kotlin/Int
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER

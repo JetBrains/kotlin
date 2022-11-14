@@ -67,7 +67,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         context.withSimpleFunction(simpleFunction, session) {
             simpleFunction
                 .transformReturnTypeRef(transformer, data)
-                .transformReceiverTypeRef(transformer, data)
+                .transformReceiverParameter(transformer, data)
                 .transformValueParameters(transformer, data)
                 .transformAnnotations(transformer, data)
         }
@@ -82,7 +82,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         context.withConstructor(constructor) {
             constructor
                 .transformAnnotations(transformer, data)
-                .transformReceiverTypeRef(transformer, data)
+                .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
 
             context.forConstructorParameters(constructor, containingClass, components) {
@@ -104,13 +104,13 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
     }
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
-        property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+        property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
         doTransformTypeParameters(property)
 
         context.withProperty(property) {
             property
                 .transformAnnotations(transformer, data)
-                .transformReceiverTypeRef(transformer, data)
+                .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
                 .transformGetter(transformer, data)
                 .transformSetter(transformer, data)
@@ -126,7 +126,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         propertyAccessor
             .transformValueParameters(transformer, data)
             .transformReturnTypeRef(transformer, data)
-            .transformReceiverTypeRef(transformer, data)
+            .transformReceiverParameter(transformer, data)
             .transformReturnTypeRef(transformer, data)
             .transformAnnotations(transformer, data)
         return propertyAccessor
@@ -140,7 +140,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         context.forEnumEntry {
             enumEntry
                 .transformAnnotations(transformer, data)
-                .transformReceiverTypeRef(transformer, data)
+                .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
                 .transformTypeParameters(transformer, data)
         }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertyS
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -34,8 +35,8 @@ internal class KtFirSymbolInfoProvider(
     private val apiVersion = analysisSession.useSiteSession.languageVersionSettings.apiVersion
 
     override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {
-        if (symbol is KtFirBackingFieldSymbol || symbol is KtFirPackageSymbol) return null
-        require(symbol is KtFirSymbol<*>)
+        if (symbol is KtFirBackingFieldSymbol || symbol is KtFirPackageSymbol || symbol is KtReceiverParameterSymbol) return null
+        require(symbol is KtFirSymbol<*>) { "${this::class}" }
         return when (val firSymbol = symbol.firSymbol) {
             is FirPropertySymbol -> {
                 firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
@@ -44,7 +45,6 @@ internal class KtFirSymbolInfoProvider(
                 firSymbol.getDeprecationForCallSite(apiVersion)
             }
         }
-
     }
 
     override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {

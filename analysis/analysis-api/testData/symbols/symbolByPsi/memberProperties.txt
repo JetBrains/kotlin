@@ -71,7 +71,10 @@ KtKotlinPropertySymbol:
     receiverParameter: KtReceiverParameterSymbol:
       annotationsList: []
       origin: SOURCE
+      owningCallableSymbol: KtKotlinPropertySymbol(/A.y)
       type: kotlin/Int
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -97,7 +100,10 @@ KtKotlinPropertySymbol:
   receiverParameter: KtReceiverParameterSymbol:
     annotationsList: []
     origin: SOURCE
+    owningCallableSymbol: KtKotlinPropertySymbol(/A.y)
     type: kotlin/Int
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER

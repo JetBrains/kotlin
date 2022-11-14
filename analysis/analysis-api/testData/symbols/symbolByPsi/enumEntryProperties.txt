@@ -14,7 +14,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -38,7 +38,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: a
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -60,7 +60,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: FirstEntry
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -75,7 +75,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: SecondEntry
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -98,7 +98,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -122,7 +122,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: b
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -152,7 +152,13 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: kotlin/Int
+    receiverParameter: KtReceiverParameterSymbol:
+      annotationsList: []
+      origin: SOURCE
+      owningCallableSymbol: KtKotlinPropertySymbol(<local>/d)
+      type: kotlin/Int
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -175,7 +181,13 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: d
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiverParameter: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    owningCallableSymbol: KtKotlinPropertySymbol(<local>/d)
+    type: kotlin/Int
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -197,7 +209,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: ThirdEntry
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []

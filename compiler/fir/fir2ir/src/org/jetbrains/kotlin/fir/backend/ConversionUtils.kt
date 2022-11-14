@@ -245,7 +245,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
             dispatchReceiver.typeRef.coneType.let { it.findClassRepresentation(it, declarationStorage.session) }
         }
         // Unbound callable reference to member (non-extension)
-        isReference && fir.receiverTypeRef == null -> {
+        isReference && fir.receiverParameter == null -> {
             // TODO: remove runIf with StandardClassIds.Any comparison after fixing ValueClass::equals case (KT-54887)
             runIf(containingClassLookupTag()?.classId != StandardClassIds.Any) {
                 (explicitReceiver as? FirResolvedQualifier)?.toLookupTag()

@@ -43,5 +43,8 @@ fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSessi
     return target.llFirModuleData.ktModule
 }
 
-fun KtSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule =
-    firSymbol.getContainingKtModule(firResolveSession)
+fun KtSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule = when (this) {
+    is KtFirSymbol<*> -> firSymbol.getContainingKtModule(firResolveSession)
+    is KtReceiverParameterSymbol -> owningCallableSymbol.getContainingKtModule(firResolveSession)
+    else -> TODO("${this::class}")
+}

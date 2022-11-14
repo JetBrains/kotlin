@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: a
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -42,7 +42,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -60,7 +60,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: FirstEntry
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -84,7 +84,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -110,7 +110,7 @@ KtKotlinPropertySymbol:
     isOverride: true
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -133,7 +133,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: i
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -155,7 +155,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: SecondEntry
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -179,7 +179,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -206,7 +206,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -224,7 +224,7 @@ KtFunctionSymbol:
       isVararg: false
       name: i
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -244,7 +244,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: ThirdEntry
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -268,7 +268,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -295,7 +295,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -313,7 +313,7 @@ KtFunctionSymbol:
       isVararg: false
       name: i
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -341,7 +341,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -365,7 +365,7 @@ KtKotlinPropertySymbol:
   modality: OPEN
   name: i
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER

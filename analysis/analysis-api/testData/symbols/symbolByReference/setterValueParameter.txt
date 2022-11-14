@@ -11,7 +11,7 @@ KtValueParameterSymbol:
   isVararg: false
   name: value
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []

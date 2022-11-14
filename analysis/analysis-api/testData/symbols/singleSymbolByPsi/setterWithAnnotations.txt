@@ -33,13 +33,13 @@ KtPropertySetterSymbol:
     isVararg: false
     name: value
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: ACCESSOR
   typeParameters: []
@@ -62,7 +62,7 @@ KtPropertySetterSymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
