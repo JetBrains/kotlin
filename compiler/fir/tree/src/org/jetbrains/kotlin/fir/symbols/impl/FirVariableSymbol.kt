@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -86,6 +88,14 @@ class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProp
 class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId) {
     val hasInitializer: Boolean
         get() = fir.initializer != null
+
+    val resolvedInitializerType
+        get(): ConeKotlinType? {
+            ensureType(fir.initializer?.typeRef)
+            return fir.initializer?.typeRef?.coneType
+        }
+
+    val initializerSource get() = fir.initializer?.source
 
     val isVal: Boolean
         get() = fir.isVal
