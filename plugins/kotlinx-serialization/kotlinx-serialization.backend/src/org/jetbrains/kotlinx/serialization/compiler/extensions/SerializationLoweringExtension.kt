@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -154,6 +155,7 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
     }
 
     private fun canEnableIntrinsics(ctx: JvmBackendContext): Boolean {
+        if (ctx.state.configuration[CommonConfigurationKeys.USE_FIR] == true) return false
         return when (intrinsicsState) {
             SerializationIntrinsicsState.FORCE_ENABLED -> true
             SerializationIntrinsicsState.DISABLED -> false
