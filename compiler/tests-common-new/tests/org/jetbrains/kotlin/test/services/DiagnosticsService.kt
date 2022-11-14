@@ -61,6 +61,9 @@ class DiagnosticsService(val testServices: TestServices) : TestService {
                 collection += name
             }
         }
+        if (DiagnosticsDirectives.MARK_DYNAMIC_CALLS in module.directives) {
+            enabledNames += "DEBUG_INFO_DYNAMIC"
+        }
         return DiagnosticConditions(
             enabledNames,
             disabledNames,

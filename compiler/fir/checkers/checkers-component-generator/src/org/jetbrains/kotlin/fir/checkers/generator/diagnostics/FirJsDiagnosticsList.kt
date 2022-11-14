@@ -27,4 +27,8 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<FirCallableSymbol<*>>("symbol")
         }
     }
+
+    val DEBUG_INFO by object : DiagnosticGroup("Debug Info") {
+        val DYNAMIC by debugInfo<KtElement>()
+    }
 }
