@@ -20,7 +20,7 @@ inline fun case_1(value_1: Int?, block: () -> Unit): Boolean {
 
 // TESTCASE NUMBER: 2
 inline fun <T> T?.case_2(value_1: Int?, value_2: Any?, block: () -> Unit): Boolean? {
-    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
+    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns(true) implies (value_1 == null && this@case_2 == null && value_2 !is Boolean?)
         returns(false) implies (value_2 is Boolean?)
@@ -55,7 +55,7 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
     val value_4: Int
     when (value_1.case_2(value_2, value_3) { value_4 = 10 }) {
         true -> {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3?.<!UNRESOLVED_REFERENCE!>xor<!>(true))
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>xor<!>(true))
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
             println(value_1<!UNSAFE_CALL!>.<!>inv())
             println(value_2<!UNSAFE_CALL!>.<!>inv())
@@ -66,7 +66,7 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
             println(value_2)
         }
         null -> {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3?.<!UNRESOLVED_REFERENCE!>xor<!>(true))
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>xor<!>(true))
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
             println(value_1)
             println(value_2)

@@ -235,7 +235,7 @@ fun case_3(value_1: Any?) {
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
     case_4_1(value_1)
-    value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
+    value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>()
     case_4_2(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)
     value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
     case_4_3(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)
@@ -329,14 +329,14 @@ fun case_7(value_1: Any?) {
 // TESTCASE NUMBER: 8
 fun case_8(value_1: Any?) {
     if (case_8_1(value_1)) {
-        value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
+        value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>()
         if (case_8_2(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
             if (case_8_3(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
     if (!case_8_4(value_1)) {
-        value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
+        value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>()
         if (!case_8_5(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
             if (!case_8_6(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()

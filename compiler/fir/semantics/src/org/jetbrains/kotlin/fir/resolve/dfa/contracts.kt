@@ -45,9 +45,11 @@ fun <F : Flow> LogicSystem<F>.approveContractStatement(
                     substitutedType.isAny -> it.processEqNull(!isType)
                     substitutedType.isNullableNothing -> it.processEqNull(isType)
                     else -> {
-                        // x is (T & Any) => x != null
-                        // TODO? (KT-22996) x !is T? => x != null: change `&&` to `==`
-                        val fromNullability = if (isType && !type.canBeNull) it.processEqNull(false) else mapOf()
+                        // x is (T & Any) || x !is T? => x != null
+                        val fromNullability = if ((isType && !type.canBeNull) || (!isType && type.isMarkedNullable))
+                            it.processEqNull(false)
+                        else
+                            mapOf()
                         if (isType && it is RealVariable) {
                             andForTypeStatements(fromNullability, mapOf(it to (it typeEq substitutedType)))
                         } else {

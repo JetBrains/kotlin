@@ -44,6 +44,6 @@ fun case_6(value_1: Any?): String = when (value_1) {
  * ISSUES: KT-22996
  */
 fun case_7(value_1: Any?): String = when (value_1) {
-    is Number?, null, !is SealedChild3 -> "" // triple nullable type check in the one branch
+    is Number?, <!SENSELESS_NULL_IN_WHEN!>null<!>, !is SealedChild3 -> "" // triple nullable type check in the one branch
     else -> ""
 }

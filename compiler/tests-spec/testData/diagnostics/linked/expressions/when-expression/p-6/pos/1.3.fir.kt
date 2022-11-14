@@ -1,15 +1,5 @@
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
- *
- * SPEC VERSION: 0.1-296
- * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 1
- * NUMBER: 3
- * DESCRIPTION: 'When' with bound value and enumaration of type test conditions.
- * HELPERS: classes, sealedClasses, objects
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any) = when (value_1) {
     is Int -> {}
@@ -56,7 +46,7 @@ fun case_5(value_1: Any?): String {
     when (value_1) {
         is Float, is Char?, is Int -> return ""
         is Double, is EmptyObject, is String -> return ""
-        null -> return "" // null-check redundant
+        <!SENSELESS_NULL_IN_WHEN!>null<!> -> return "" // null-check redundant
         else -> return ""
     }
 }
@@ -68,7 +58,7 @@ fun case_5(value_1: Any?): String {
  */
 fun case_6(value_1: Any?): String {
     when (value_1) {
-        is Float, is Char?, null, is Int -> return "" // double nullable type check in the one branch
+        is Float, is Char?, <!SENSELESS_NULL_IN_WHEN!>null<!>, is Int -> return "" // double nullable type check in the one branch
         is Double, is EmptyObject, is String -> return ""
         else -> return ""
     }
