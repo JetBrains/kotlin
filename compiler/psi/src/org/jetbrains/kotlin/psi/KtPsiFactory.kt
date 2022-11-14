@@ -25,23 +25,15 @@ import org.jetbrains.kotlin.utils.checkWithAttachment
 
 @JvmOverloads
 @JvmName("KtPsiFactory")
-@Suppress("unused")
-@Deprecated(
-    "Use 'KtPsiFactory' constructor instead",
-    level = DeprecationLevel.WARNING,
-    replaceWith = ReplaceWith("KtPsiFactory(project!!, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory")
-)
-fun KtPsiFactory(project: Project?, markGenerated: Boolean = true): KtPsiFactory = KtPsiFactory(project!!, markGenerated)
+@Suppress("FunctionName", "unused")
+@Deprecated("Use 'KtPsiFactory' constructor instead", level = DeprecationLevel.HIDDEN)
+fun KtPsiFactoryOld(project: Project?, markGenerated: Boolean = true): KtPsiFactory = KtPsiFactory(project!!, markGenerated)
 
 @JvmOverloads
 @JvmName("KtPsiFactory")
-@Suppress("unused")
-@Deprecated(
-    "Use 'KtPsiFactory' constructor instead",
-    level = DeprecationLevel.WARNING,
-    replaceWith = ReplaceWith("KtPsiFactory(elementForProject.project, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory")
-)
-fun KtPsiFactory(elementForProject: PsiElement, markGenerated: Boolean = true): KtPsiFactory =
+@Suppress("FunctionName", "unused")
+@Deprecated("Use 'KtPsiFactory' constructor instead", level = DeprecationLevel.HIDDEN)
+fun KtPsiFactoryOld(elementForProject: PsiElement, markGenerated: Boolean = true): KtPsiFactory =
     KtPsiFactory(elementForProject.project, markGenerated)
 
 private const val DO_NOT_ANALYZE_NOTIFICATION = "This file was created by KtPsiFactory and should not be analyzed\n" +
