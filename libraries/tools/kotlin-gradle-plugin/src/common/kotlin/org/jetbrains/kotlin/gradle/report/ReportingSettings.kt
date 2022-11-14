@@ -35,7 +35,8 @@ data class HttpReportSettings(
     val url: String,
     val password: String?,
     val user: String?,
-    val verboseEnvironment: Boolean
+    val verboseEnvironment: Boolean,
+    val includeGitBranchName: Boolean
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0

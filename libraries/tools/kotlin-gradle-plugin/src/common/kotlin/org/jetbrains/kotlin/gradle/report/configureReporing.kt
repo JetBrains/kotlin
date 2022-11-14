@@ -34,7 +34,8 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
             ?: throw IllegalStateException("Can't configure http report: '$KOTLIN_BUILD_REPORT_HTTP_URL' property is mandatory")
         val password = properties.buildReportHttpPassword
         val user = properties.buildReportHttpUser
-        HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment)
+        val includeGitBranchName = properties.buildReportHttpIncludeGitBranchName
+        HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment, includeGitBranchName)
     } else {
         null
     }
