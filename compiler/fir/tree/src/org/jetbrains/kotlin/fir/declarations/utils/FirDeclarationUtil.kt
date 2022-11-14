@@ -49,3 +49,23 @@ inline val FirDeclaration.isPrecompiled: Boolean
     get() = origin == FirDeclarationOrigin.Precompiled
 inline val FirDeclaration.isSynthetic: Boolean
     get() = origin == FirDeclarationOrigin.Synthetic
+
+val FirBasedSymbol<*>.singleFqName
+    get() = when (this) {
+        is FirCallableSymbol<*> -> callableId.asSingleFqName()
+        is FirClassLikeSymbol<*> -> classId.asSingleFqName()
+        else -> error("This declaration has no FqName")
+    }
+
+val FirDeclaration.singleFqName get() = symbol.singleFqName
+
+val FirDeclaration.isNonLocal
+    get() = when (this) {
+        is FirFile -> true
+        is FirCallableDeclaration -> !symbol.callableId.isLocal
+        is FirClassLikeDeclaration -> !symbol.classId.isLocal
+        else -> false
+    }
+
+val FirDeclaration.isExtension
+    get() = this is FirCallableDeclaration && receiverParameter != null

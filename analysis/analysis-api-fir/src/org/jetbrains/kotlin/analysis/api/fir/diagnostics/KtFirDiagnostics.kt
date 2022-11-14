@@ -3193,6 +3193,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val function: KtFunctionLikeSymbol
     }
 
+    abstract class CallToDefinedExternallyFromNonExternalDeclaration : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = CallToDefinedExternallyFromNonExternalDeclaration::class
+    }
+
     abstract class DelegationByDynamic : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = DelegationByDynamic::class
     }
