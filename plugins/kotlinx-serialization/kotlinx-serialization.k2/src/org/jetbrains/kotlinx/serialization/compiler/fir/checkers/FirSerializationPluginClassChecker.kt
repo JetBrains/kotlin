@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.diagnostics.*
@@ -415,7 +417,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             val propertySymbol = property.propertySymbol
             val typeRef = propertySymbol.resolvedReturnTypeRef
             val propertyType = typeRef.coneType
-            val source = typeRef.source ?: propertySymbol.source
+            val source = typeRef.source?.takeUnless { it.kind == KtFakeSourceElementKind.ImplicitTypeRef } ?: propertySymbol.source
             if (serializerType != null && serializerSymbol != null) {
                 checkCustomSerializerMatch(
                     classSymbol,
