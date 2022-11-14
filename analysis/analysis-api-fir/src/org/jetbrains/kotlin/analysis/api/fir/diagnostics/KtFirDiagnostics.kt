@@ -3172,6 +3172,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JavaSamInterfaceConstructorReference::class
     }
 
+    abstract class Dynamic : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = Dynamic::class
+    }
+
     abstract class Syntax : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Syntax::class
     }
