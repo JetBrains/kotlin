@@ -121,7 +121,9 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
         function.copyReceiverParametersFrom(this, substitutionMap)
 
         function.overriddenSymbols += overriddenSymbols.map {
-            it.owner.getOrCreateFunctionWithContinuationStub(context).symbol
+            factory.stageController.restrictTo(it.owner) {
+                it.owner.getOrCreateFunctionWithContinuationStub(context).symbol
+            }
         }
         function.valueParameters = valueParameters.map { it.copyTo(function) }
 

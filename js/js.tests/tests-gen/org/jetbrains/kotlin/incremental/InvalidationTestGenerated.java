@@ -280,6 +280,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/suspendFunctions/");
     }
 
+    @TestMetadata("suspendInterfaceWithDefaultParams")
+    public void testSuspendInterfaceWithDefaultParams() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/suspendInterfaceWithDefaultParams/");
+    }
+
     @TestMetadata("toplevelProperties")
     public void testToplevelProperties() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/toplevelProperties/");
