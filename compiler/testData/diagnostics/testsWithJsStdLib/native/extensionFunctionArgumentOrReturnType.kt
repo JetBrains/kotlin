@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // FIR_IDENTICAL
 external fun foo(<!EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION!>f: Int.() -> Int<!>)
 
