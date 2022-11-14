@@ -837,6 +837,21 @@ internal class WrongJsQualifierImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.WrongJsQualifier(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class JsModuleProhibitedOnVarImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsModuleProhibitedOnVar(), KtAbstractFirDiagnostic<KtElement>
+
+internal class JsModuleProhibitedOnNonNativeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsModuleProhibitedOnNonNative(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NestedJsModuleProhibitedImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NestedJsModuleProhibited(), KtAbstractFirDiagnostic<KtElement>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
