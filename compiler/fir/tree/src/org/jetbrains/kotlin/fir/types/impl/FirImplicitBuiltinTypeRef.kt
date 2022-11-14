@@ -171,10 +171,9 @@ class FirImplicitKMutableProperty2TypeRef(
     arrayOf(dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument)
 )
 
-fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): FirImplicitBuiltinTypeRef {
+fun FirImplicitBuiltinTypeRef.withNewSource(newSource: KtSourceElement?): FirImplicitBuiltinTypeRef {
     val source = source ?: return this
-    if (source.kind == kind) return this
-    val newSource = source.fakeElement(kind)
+    if (source.kind == newSource?.kind) return this
     return when (this) {
         is FirImplicitUnitTypeRef -> FirImplicitUnitTypeRef(newSource)
         is FirImplicitAnyTypeRef -> FirImplicitAnyTypeRef(newSource)
