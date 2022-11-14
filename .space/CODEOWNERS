@@ -71,7 +71,7 @@
 /compiler/ir/serialization.js/ "Kotlin JS"
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/javac-wrapper/ "Kotlin Compiler Core"
-/compiler/light-classes/ "Kotlin Compiler Core"
+/compiler/light-classes/ "Kotlin IDE"
 /compiler/plugin-api/ "Kotlin Compiler Core"
 /compiler/preloader/ "Kotlin Compiler Core"
 /compiler/psi/ "Kotlin Compiler Core"
