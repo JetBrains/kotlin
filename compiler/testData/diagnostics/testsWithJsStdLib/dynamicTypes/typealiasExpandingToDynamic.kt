@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 typealias Dyn = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>dynamic<!>
 typealias Dyn2 = Dyn
 typealias Dyn3 = Dyn2

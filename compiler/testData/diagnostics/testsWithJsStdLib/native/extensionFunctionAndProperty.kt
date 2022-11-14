@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 class A
 
 <!WRONG_EXTERNAL_DECLARATION!>external fun A.foo(): Unit<!> = definedExternally
