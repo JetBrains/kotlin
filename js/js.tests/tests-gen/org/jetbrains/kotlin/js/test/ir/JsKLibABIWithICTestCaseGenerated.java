@@ -40,6 +40,11 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         runTest("compiler/testData/klibABI/changePropertyVisibility/");
     }
 
+    @TestMetadata("classTransformations")
+    public void testClassTransformations() throws Exception {
+        runTest("compiler/testData/klibABI/classTransformations/");
+    }
+
     @TestMetadata("noNonImplementedCallableFalsePositives")
     public void testNoNonImplementedCallableFalsePositives() throws Exception {
         runTest("compiler/testData/klibABI/noNonImplementedCallableFalsePositives/");
