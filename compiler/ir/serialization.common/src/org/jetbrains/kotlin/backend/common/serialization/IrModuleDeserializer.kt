@@ -119,10 +119,10 @@ class IrModuleDeserializerWithBuiltIns(
 //        assert(builtIns.builtIns.builtInsModule === delegate.moduleDescriptor)
     }
 
-    private val irBuiltInsMap = builtIns.knownBuiltins.map {
+    private val irBuiltInsMap = builtIns.knownBuiltins.associate {
         val symbol = (it as IrSymbolOwner).symbol
         symbol.signature to symbol
-    }.toMap()
+    }
 
     private fun checkIsFunctionInterface(idSig: IdSignature): Boolean {
         val publicSig = idSig.asPublic()
