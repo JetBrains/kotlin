@@ -40,8 +40,8 @@ class ConeIntegerLiteralConstantTypeImpl(
         fun create(
             value: Long,
             isUnsigned: Boolean,
-            nullability: ConeNullability = ConeNullability.NOT_NULL,
-            isTypePresent: (ConeClassLikeType) -> Boolean = { true },
+            isTypePresent: (ConeClassLikeType) -> Boolean,
+            nullability: ConeNullability = ConeNullability.NOT_NULL
         ): ConeSimpleKotlinType {
             val possibleTypes = mutableListOf<ConeClassLikeType>()
 
@@ -67,8 +67,8 @@ class ConeIntegerLiteralConstantTypeImpl(
 
             if (isUnsigned) {
                 addUnsignedPossibleType()
-                if (!possibleTypes.all { isTypePresent(it) }) {
-                    return ConeErrorType(ConeSimpleDiagnostic("Unsigned integers need stdlib", DiagnosticKind.UnsignedLiteralsNotPresent))
+                if (possibleTypes.any { !isTypePresent(it) }) {
+                    return ConeErrorType(ConeSimpleDiagnostic("Unsigned integers need stdlib", DiagnosticKind.UnsignedNumbersAreNotPresent))
                 }
             } else {
                 addSignedPossibleTypes()

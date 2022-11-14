@@ -1010,8 +1010,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
                 val expressionType = ConeIntegerLiteralConstantTypeImpl.create(
                     constExpression.value as Long,
-                    isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral,
-                    isTypePresent = { it.lookupTag.toSymbol(session) != null }
+                    isTypePresent = { it.lookupTag.toSymbol(session) != null },
+                    isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral
                 )
                 val expectedTypeRef = data.expectedType
                 @Suppress("UNCHECKED_CAST")

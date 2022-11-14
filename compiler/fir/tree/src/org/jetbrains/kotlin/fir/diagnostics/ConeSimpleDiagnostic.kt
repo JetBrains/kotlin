@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
@@ -84,7 +82,7 @@ enum class DiagnosticKind {
     IntLiteralOutOfRange,
     FloatLiteralOutOfRange,
     WrongLongSuffix,
-    UnsignedLiteralsNotPresent,
+    UnsignedNumbersAreNotPresent,
 
     IsEnumEntry,
     EnumEntryAsType,
