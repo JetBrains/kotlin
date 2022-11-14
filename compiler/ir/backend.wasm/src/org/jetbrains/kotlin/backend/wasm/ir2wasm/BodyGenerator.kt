@@ -405,7 +405,7 @@ class BodyGenerator(
                     body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1))
 
                     val classITableReference = context.referenceClassITableGcType(symbol)
-                    body.buildRefCastStatic(classITableReference)
+                    body.buildRefCastNullStatic(classITableReference)
                     body.buildStructGet(classITableReference, context.referenceClassITableInterfaceSlot(symbol))
 
                     val vfSlot = context.getInterfaceMetadata(symbol).methods
@@ -430,7 +430,7 @@ class BodyGenerator(
 
     private fun generateRefCast(fromType: IrType, toType: IrType) {
         if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
-            body.buildRefCastStatic(
+            body.buildRefCastNullStatic(
                 toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
             )
         }
