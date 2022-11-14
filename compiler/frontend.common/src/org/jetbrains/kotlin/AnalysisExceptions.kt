@@ -20,12 +20,11 @@ inline fun <R> whileAnalysing(element: KtSourceElement?, block: () -> R): R {
         throw exception
     } catch (exception: ProcessCanceledException) {
         throw exception // KT-38483
-    } catch (exception: Exception) {
-        val source = element?.takeIf { it is KtRealPsiSourceElement } ?: throw exception
-        throw SourceCodeAnalysisException(source, exception)
-    } catch (error: StackOverflowError) {
-        val source = element?.takeIf { it is KtRealPsiSourceElement } ?: throw error
-        throw SourceCodeAnalysisException(source, error)
+    } catch (error: VirtualMachineError) {
+        throw error
+    } catch (throwable: Throwable) {
+        val source = element?.takeIf { it is KtRealPsiSourceElement } ?: throw throwable
+        throw SourceCodeAnalysisException(source, throwable)
     }
 }
 
@@ -60,11 +59,10 @@ inline fun <R> withFileAnalysisExceptionWrapping(
         throw FileAnalysisException(path, exception.cause, lineAndOffset)
     } catch (exception: ProcessCanceledException) {
         throw exception // KT-38483
-    } catch (exception: Exception) {
-        val path = filePath ?: throw exception
-        throw FileAnalysisException(path, exception)
-    } catch (error: StackOverflowError) {
-        val path = filePath ?: throw error
-        throw FileAnalysisException(path, error)
+    } catch (error: VirtualMachineError) {
+        throw error
+    } catch (throwable: Throwable) {
+        val path = filePath ?: throw throwable
+        throw FileAnalysisException(path, throwable)
     }
 }
