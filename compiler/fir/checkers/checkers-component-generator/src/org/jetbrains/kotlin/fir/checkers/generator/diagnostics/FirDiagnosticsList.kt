@@ -655,6 +655,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning<KtTypeParameter>()
 
+        val DYNAMIC_SUPERTYPE by error<KtTypeReference>()
+
         val DYNAMIC_UPPER_BOUND by error<KtTypeReference>()
 
         val DYNAMIC_RECEIVER_NOT_ALLOWED by error<KtElement>()
