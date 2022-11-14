@@ -14,7 +14,7 @@ fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onString<!>()
 
     d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
-    d?.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
+    d?.<!UNRESOLVED_REFERENCE!>onDynamic<!>()
 
     (d as String).onString()
     (d as Any).onAny()

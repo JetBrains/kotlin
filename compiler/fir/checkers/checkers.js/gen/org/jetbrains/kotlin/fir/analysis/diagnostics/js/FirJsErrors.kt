@@ -28,6 +28,9 @@ object FirJsErrors {
     // Supertypes
     val WRONG_MULTIPLE_INHERITANCE by error1<KtElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
+    // Debug Info
+    val DYNAMIC by info0<KtElement>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
     }
