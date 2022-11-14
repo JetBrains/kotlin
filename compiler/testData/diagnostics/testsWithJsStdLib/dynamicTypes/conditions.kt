@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test(d: dynamic, b: Boolean?) {
     if (d) {}
     while (d) {}
