@@ -277,6 +277,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException;
 
+    @NotNull
     private List<String> getCompilerPluginClassPaths() {
         ArrayList<String> result = new ArrayList<>();
 
@@ -444,7 +445,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         configureSpecificCompilerArguments(arguments, sourceRoots);
 
         try {
-            args.removeAll(Collections.singleton(null));
+            if (args != null && args.contains(null)) {
+                throw new IllegalArgumentException("Invalid compiler argument: null");
+            }
             compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);
         }
         catch (IllegalArgumentException e) {
@@ -456,7 +459,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         }
 
         List<String> pluginClassPaths = getCompilerPluginClassPaths();
-        if (pluginClassPaths != null && !pluginClassPaths.isEmpty()) {
+        if (!pluginClassPaths.isEmpty()) {
             if (arguments.getPluginClasspaths() == null || arguments.getPluginClasspaths().length == 0) {
                 arguments.setPluginClasspaths(pluginClassPaths.toArray(new String[pluginClassPaths.size()]));
             } else {
