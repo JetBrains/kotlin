@@ -23,6 +23,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
     abstract fun removeAllAboutVariable(flow: FLOW, variable: RealVariable)
     abstract fun copyAllInformation(from: FLOW, to: FLOW)
+    abstract fun isSameValueIn(a: FLOW, b: FLOW, variable: RealVariable): Boolean
 
     abstract fun translateVariableFromConditionInStatements(
         flow: FLOW,

@@ -30644,6 +30644,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("reassignedInRhs.kt")
+                public void testReassignedInRhs() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedInRhs.kt");
+                }
+
+                @Test
                 @TestMetadata("varAsUse.kt")
                 public void testVarAsUse() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/varAsUse.kt");
