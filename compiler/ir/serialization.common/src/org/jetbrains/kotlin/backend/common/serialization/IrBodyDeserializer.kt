@@ -149,7 +149,7 @@ class IrBodyDeserializer(
     private fun deserializeBlock(proto: ProtoBlock, start: Int, end: Int, type: IrType): IrBlock {
         val statements = mutableListOf<IrStatement>()
         val statementProtos = proto.statementList
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         statementProtos.forEach {
             statements.add(deserializeStatement(it) as IrStatement)
@@ -246,7 +246,7 @@ class IrBodyDeserializer(
             symbol, typeArgumentsCount = proto.memberAccess.typeArgumentCount,
             constructorTypeArgumentsCount = proto.constructorTypeArgumentsCount,
             valueArgumentsCount = proto.memberAccess.valueArgumentCount,
-            origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+            origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         ).also {
             deserializeMemberAccessCommon(it, proto.memberAccess)
         }
@@ -258,8 +258,7 @@ class IrBodyDeserializer(
         val superSymbol = if (proto.hasSuper()) {
             declarationDeserializer.deserializeIrSymbolAndRemap(proto.`super`) as IrClassSymbol
         } else null
-
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         val call: IrCall =
             // TODO: implement the last three args here.
@@ -277,7 +276,7 @@ class IrBodyDeserializer(
     private fun deserializeComposite(proto: ProtoComposite, start: Int, end: Int, type: IrType): IrComposite {
         val statements = mutableListOf<IrStatement>()
         val statementProtos = proto.statementList
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         statementProtos.forEach {
             statements.add(deserializeStatement(it) as IrStatement)
@@ -369,7 +368,7 @@ class IrBodyDeserializer(
     ): IrFunctionReference {
 
         val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrFunctionSymbol
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         val reflectionTarget =
             if (proto.hasReflectionTargetSymbol()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.reflectionTargetSymbol) as IrFunctionSymbol else null
         val callable = IrFunctionReferenceImpl(
@@ -395,7 +394,7 @@ class IrBodyDeserializer(
     private fun deserializeGetField(proto: ProtoGetField, start: Int, end: Int, type: IrType): IrGetField {
         val access = proto.fieldAccess
         val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(access.symbol) as IrFieldSymbol
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         val superQualifier = if (access.hasSuper()) {
             declarationDeserializer.deserializeIrSymbolAndRemap(access.`super`) as IrClassSymbol
@@ -409,7 +408,7 @@ class IrBodyDeserializer(
 
     private fun deserializeGetValue(proto: ProtoGetValue, start: Int, end: Int, type: IrType): IrGetValue {
         val symbol = declarationDeserializer.deserializeIrSymbol(proto.symbol) as IrValueSymbol
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         // TODO: origin!
         return IrGetValueImpl(start, end, type, symbol, origin)
     }
@@ -455,7 +454,7 @@ class IrBodyDeserializer(
         val setter =
             if (proto.hasSetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
         val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrLocalDelegatedPropertySymbol
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         return IrLocalDelegatedPropertyReferenceImpl(
             start, end, type,
@@ -476,7 +475,7 @@ class IrBodyDeserializer(
             if (proto.hasGetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.getter) as IrSimpleFunctionSymbol else null
         val setter =
             if (proto.hasSetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         val callable = IrPropertyReferenceImpl(
             start, end, type,
@@ -507,7 +506,7 @@ class IrBodyDeserializer(
             deserializeExpression(access.receiver)
         } else null
         val value = deserializeExpression(proto.value)
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         return IrSetFieldImpl(start, end, symbol, receiver, value, builtIns.unitType, origin, superQualifier)
     }
@@ -515,7 +514,7 @@ class IrBodyDeserializer(
     private fun deserializeSetValue(proto: ProtoSetValue, start: Int, end: Int): IrSetValue {
         val symbol = declarationDeserializer.deserializeIrSymbol(proto.symbol) as IrValueSymbol
         val value = deserializeExpression(proto.value)
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         return IrSetValueImpl(start, end, builtIns.unitType, symbol, value, origin)
     }
 
@@ -545,8 +544,7 @@ class IrBodyDeserializer(
         proto.catchList.forEach {
             catches.add(deserializeStatement(it) as IrCatch)
         }
-        val finallyExpression =
-            if (proto.hasFinally()) deserializeExpression(proto.getFinally()) else null
+        val finallyExpression = if (proto.hasFinally()) deserializeExpression(proto.finally) else null
         return IrTryImpl(start, end, type, result, catches, finallyExpression)
     }
 
@@ -605,7 +603,7 @@ class IrBodyDeserializer(
 
     private fun deserializeWhen(proto: ProtoWhen, start: Int, end: Int, type: IrType): IrWhen {
         val branches = mutableListOf<IrBranch>()
-        val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         proto.branchList.forEach {
             branches.add(deserializeStatement(it) as IrBranch)
@@ -633,7 +631,7 @@ class IrBodyDeserializer(
         deserializeLoop(
             proto.loop,
             deserializeLoopHeader(proto.loop.loopId) {
-                val origin = if (proto.loop.hasOriginName()) deserializeIrStatementOrigin(proto.loop.originName) else null
+                val origin = deserializeIrStatementOrigin(proto.loop.hasOriginName()) { proto.loop.originName }
                 IrDoWhileLoopImpl(start, end, type, origin)
             }
         )
@@ -642,7 +640,7 @@ class IrBodyDeserializer(
         deserializeLoop(
             proto.loop,
             deserializeLoopHeader(proto.loop.loopId) {
-                val origin = if (proto.loop.hasOriginName()) deserializeIrStatementOrigin(proto.loop.originName) else null
+                val origin = deserializeIrStatementOrigin(proto.loop.hasOriginName()) { proto.loop.originName }
                 IrWhileLoopImpl(start, end, type, origin)
             }
         )
@@ -820,16 +818,17 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeIrStatementOrigin(protoName: Int): IrStatementOrigin {
-        return libraryFile.string(protoName).let {
-            val componentPrefix = "COMPONENT_"
-            when {
-                it.startsWith(componentPrefix) -> {
-                    IrStatementOrigin.COMPONENT_N.withIndex(it.removePrefix(componentPrefix).toInt())
-                }
-                else -> statementOriginIndex[it] ?: error("Unexpected statement origin: $it")
-            }
-        }
+        val originName = libraryFile.string(protoName)
+        val componentPrefix = "COMPONENT_"
+
+        return if (originName.startsWith(componentPrefix))
+            IrStatementOrigin.COMPONENT_N.withIndex(originName.removePrefix(componentPrefix).toInt())
+        else
+            statementOriginIndex[originName] ?: error("Unexpected statement origin: $originName")
     }
+
+    private inline fun deserializeIrStatementOrigin(hasOriginName: Boolean, protoName: () -> Int): IrStatementOrigin? =
+        if (hasOriginName) deserializeIrStatementOrigin(protoName()) else null
 
     companion object {
 
