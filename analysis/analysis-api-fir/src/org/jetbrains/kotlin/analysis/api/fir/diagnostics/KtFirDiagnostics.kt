@@ -755,6 +755,30 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NativeSetterWrongReturnType::class
     }
 
+    abstract class JsNameIsNotOnAllAccessors : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameIsNotOnAllAccessors::class
+    }
+
+    abstract class JsNameProhibitedForNamedNative : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameProhibitedForNamedNative::class
+    }
+
+    abstract class JsNameProhibitedForOverride : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameProhibitedForOverride::class
+    }
+
+    abstract class JsNameOnPrimaryConstructorProhibited : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameOnPrimaryConstructorProhibited::class
+    }
+
+    abstract class JsNameOnAccessorAndProperty : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameOnAccessorAndProperty::class
+    }
+
+    abstract class JsNameProhibitedForExtensionProperty : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameProhibitedForExtensionProperty::class
+    }
+
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName
