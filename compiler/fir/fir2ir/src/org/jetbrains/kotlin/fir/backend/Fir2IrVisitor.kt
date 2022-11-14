@@ -575,14 +575,17 @@ class Fir2IrVisitor(
         )
     }
 
-    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?) = whileAnalysing(variableAssignment) {
+    override fun visitVariableAssignment(
+        variableAssignment: FirVariableAssignment,
+        data: Any?
+    ): IrElement = whileAnalysing(variableAssignment) {
         val explicitReceiverExpression = convertToIrReceiverExpression(
             variableAssignment.explicitReceiver, variableAssignment.calleeReference
         )
         callGenerator.convertToIrSetCall(variableAssignment, explicitReceiverExpression)
     }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?) = whileAnalysing(constExpression) {
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement = whileAnalysing(constExpression) {
         constExpression.toIrConst(constExpression.typeRef.toIrType())
     }
 

@@ -355,7 +355,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return checkedSafeCallSubject
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode) = whileAnalysing(functionCall) {
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement = whileAnalysing(functionCall) {
         val calleeReference = functionCall.calleeReference
         if (
             (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
@@ -524,7 +524,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformAssignmentOperatorStatement(
         assignmentOperatorStatement: FirAssignmentOperatorStatement,
         data: ResolutionMode
-    ) = whileAnalysing(assignmentOperatorStatement) {
+    ): FirStatement = whileAnalysing(assignmentOperatorStatement) {
         val operation = assignmentOperatorStatement.operation
         require(operation != FirOperation.ASSIGN)
 
@@ -1004,7 +1004,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun <T> transformConstExpression(
         constExpression: FirConstExpression<T>,
         data: ResolutionMode,
-    ) = whileAnalysing(constExpression) {
+    ): FirStatement = whileAnalysing(constExpression) {
         constExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
 
         val type = when (val kind = constExpression.kind) {
@@ -1195,7 +1195,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformAugmentedArraySetCall(
         augmentedArraySetCall: FirAugmentedArraySetCall,
         data: ResolutionMode
-    ) = whileAnalysing(augmentedArraySetCall) {
+    ): FirStatement = whileAnalysing(augmentedArraySetCall) {
         /*
          * a[b] += c can be desugared to:
          *
