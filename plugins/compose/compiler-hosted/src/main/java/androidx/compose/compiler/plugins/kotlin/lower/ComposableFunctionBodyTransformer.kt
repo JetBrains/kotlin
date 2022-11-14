@@ -1092,7 +1092,7 @@ class ComposableFunctionBodyTransformer(
                 body.startOffset,
                 body.endOffset,
                 listOfNotNull(
-                    if (collectSourceInformation && scope.isInlinedLambda)
+                    if (scope.isInlinedLambda)
                         irStartReplaceableGroup(body, scope, irFunctionSourceKey())
                     else null,
                     *sourceInformationPreamble.statements.toTypedArray(),
@@ -1100,9 +1100,7 @@ class ComposableFunctionBodyTransformer(
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformedBody,
-                    if (collectSourceInformation && scope.isInlinedLambda)
-                        irEndReplaceableGroup()
-                    else null,
+                    if (scope.isInlinedLambda) irEndReplaceableGroup() else null,
                     returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
                 )
             )
