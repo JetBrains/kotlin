@@ -1,5 +1,3 @@
-// FIR_IGNORE
-// FIR_IDENTICAL
 external interface I
 
 external object O : I
