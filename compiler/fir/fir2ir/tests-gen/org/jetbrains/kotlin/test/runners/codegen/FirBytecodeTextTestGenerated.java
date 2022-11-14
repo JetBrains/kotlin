@@ -4268,6 +4268,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("extensionReceiversNames.kt")
+        public void testExtensionReceiversNames() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/invokedynamic/extensionReceiversNames.kt");
+        }
+
+        @Test
         @TestMetadata("functionRefToJavaInterface.kt")
         public void testFunctionRefToJavaInterface() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/invokedynamic/functionRefToJavaInterface.kt");
