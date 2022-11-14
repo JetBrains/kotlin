@@ -33,4 +33,11 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsDynamicDeclarationChecker,
             FirJsInheritanceClassChecker,
         )
+
+    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        get() = setOf(
+            FirJsNativeInvokeChecker,
+            FirJsNativeGetterChecker,
+            FirJsNativeSetterChecker,
+        )
 }
