@@ -677,6 +677,9 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext) = isEffecti
 
 val CheckerContext.closestNonLocal get() = containingDeclarations.takeWhile { it.isNonLocal }.lastOrNull()
 
+fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration) =
+    (containingDeclarations + declaration).takeWhile { it.isNonLocal }.lastOrNull()
+
 val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull() is FirFile
 
 fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: CheckerContext): Boolean {
