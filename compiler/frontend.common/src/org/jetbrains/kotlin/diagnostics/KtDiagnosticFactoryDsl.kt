@@ -106,6 +106,12 @@ inline fun <reified P : PsiElement, A, B, C, D> deprecationError4(
     return DeprecationDiagnosticFactory4DelegateProvider(featureForError, positioningStrategy, P::class)
 }
 
+inline fun <reified P : PsiElement> info0(
+    positioningStrategy: AbstractSourceElementPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT
+): DebugInfoDiagnosticFactory0DelegateProvider {
+    return DebugInfoDiagnosticFactory0DelegateProvider(Severity.INFO, positioningStrategy, P::class)
+}
+
 // ------------------------------ Providers ------------------------------
 
 class DiagnosticFactory0DelegateProvider(
@@ -218,6 +224,18 @@ class DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D>(
         val errorFactory = KtDiagnosticFactory4<A, B, C, D>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
         val warningFactory = KtDiagnosticFactory4<A, B, C, D>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
         return DummyDelegate(KtDiagnosticFactoryForDeprecation4(featureForError, warningFactory, errorFactory))
+    }
+}
+
+private const val DEBUG_INFO = "DEBUG_INFO_"
+
+class DebugInfoDiagnosticFactory0DelegateProvider(
+    private val severity: Severity,
+    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val psiType: KClass<*>
+) {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory0> {
+        return DummyDelegate(KtDiagnosticFactory0("$DEBUG_INFO${prop.name}", severity, positioningStrategy, psiType))
     }
 }
 

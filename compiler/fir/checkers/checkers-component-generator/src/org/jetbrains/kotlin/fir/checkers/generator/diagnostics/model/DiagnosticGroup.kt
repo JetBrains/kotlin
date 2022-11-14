@@ -42,6 +42,12 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
         crossinline init: DiagnosticBuilder.Deprecation.() -> Unit = {}
     ) = deprecationDiagnosticDelegateProvider<P>(featureForError, positioningStrategy, init)
 
+    @OptIn(PrivateForInline::class)
+    internal inline fun <reified P : PsiElement> debugInfo(
+        positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
+        crossinline init: DiagnosticBuilder.Regular.() -> Unit = {}
+    ) = diagnosticDelegateProvider<P>(Severity.INFO, positioningStrategy, init)
+
     @PrivateForInline
     internal inline fun <reified P : PsiElement> diagnosticDelegateProvider(
         severity: Severity,
