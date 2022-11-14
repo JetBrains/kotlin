@@ -73,7 +73,7 @@ public object KtDeclarationRendererForSource {
         singleTypeParameterRenderer = KtSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS
         propertyAccessorsRenderer = KtPropertyAccessorsRenderer.NO_DEFAULT
 
-        receiverTyperRenderer = KtCallableReceiverTypeRenderer.WITH_IN_APPROXIMATION
+        callableReceiverRenderer = KtCallableReceiverRenderer.AS_TYPE_WITH_IN_APPROXIMATION
         returnTypeRenderer = KtCallableReturnTypeRenderer.WITH_OUT_APPROXIMATION
 
         typeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES

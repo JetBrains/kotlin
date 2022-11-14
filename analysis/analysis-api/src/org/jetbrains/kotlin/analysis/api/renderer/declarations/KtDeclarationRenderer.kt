@@ -49,7 +49,7 @@ public class KtDeclarationRenderer private constructor(
     public val accessorBodyRenderer: KtPropertyAccessorBodyRenderer,
 
     public val returnTypeRenderer: KtCallableReturnTypeRenderer,
-    public val receiverTyperRenderer: KtCallableReceiverTypeRenderer,
+    public val callableReceiverRenderer: KtCallableReceiverRenderer,
 
     public val valueParametersRenderer: KtCallableParameterRenderer,
     public val typeParametersRenderer: KtTypeParametersRenderer,
@@ -131,7 +131,7 @@ public class KtDeclarationRenderer private constructor(
             this.accessorBodyRenderer = renderer.accessorBodyRenderer
 
             this.returnTypeRenderer = renderer.returnTypeRenderer
-            this.receiverTyperRenderer = renderer.receiverTyperRenderer
+            this.callableReceiverRenderer = renderer.callableReceiverRenderer
 
             this.valueParametersRenderer = renderer.valueParametersRenderer
             this.typeParametersRenderer = renderer.typeParametersRenderer
@@ -196,7 +196,7 @@ public class KtDeclarationRenderer private constructor(
         public lateinit var accessorBodyRenderer: KtPropertyAccessorBodyRenderer
 
         public lateinit var returnTypeRenderer: KtCallableReturnTypeRenderer
-        public lateinit var receiverTyperRenderer: KtCallableReceiverTypeRenderer
+        public lateinit var callableReceiverRenderer: KtCallableReceiverRenderer
 
         public lateinit var valueParametersRenderer: KtCallableParameterRenderer
         public lateinit var typeParametersRenderer: KtTypeParametersRenderer
@@ -250,7 +250,7 @@ public class KtDeclarationRenderer private constructor(
             accessorBodyRenderer,
 
             returnTypeRenderer,
-            receiverTyperRenderer,
+            callableReceiverRenderer,
 
             valueParametersRenderer,
             typeParametersRenderer,

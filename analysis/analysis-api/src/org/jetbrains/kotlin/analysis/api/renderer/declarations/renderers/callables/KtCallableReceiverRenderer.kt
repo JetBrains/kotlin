@@ -7,19 +7,18 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callab
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.receiverType
+import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
-public interface KtCallableReceiverTypeRenderer {
+public interface KtCallableReceiverRenderer {
     context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderReceiverType(symbol: KtCallableSymbol, printer: PrettyPrinter)
+    public fun renderReceiver(symbol: KtReceiverParameterSymbol, printer: PrettyPrinter)
 
-    public object WITH_IN_APPROXIMATION : KtCallableReceiverTypeRenderer {
+    public object AS_TYPE_WITH_IN_APPROXIMATION : KtCallableReceiverRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderReceiverType(symbol: KtCallableSymbol, printer: PrettyPrinter) {
-            val receiverType = symbol.receiverType?.let { declarationTypeApproximator.approximateType(it, Variance.IN_VARIANCE) } ?: return
+        override fun renderReceiver(symbol: KtReceiverParameterSymbol, printer: PrettyPrinter) {
+            val receiverType = declarationTypeApproximator.approximateType(symbol.type, Variance.IN_VARIANCE)
             typeRenderer.renderType(receiverType, printer)
         }
     }

@@ -27,7 +27,11 @@ public interface KtCallableSignatureRender {
                 },
                 { typeParametersRenderer.renderTypeParameters(symbol, printer) },
                 {
-                    withSuffix(".") { receiverTyperRenderer.renderReceiverType(symbol, printer) }
+                    val receiverSymbol = symbol.receiverParameter
+                    if (receiverSymbol != null) {
+                        withSuffix(".") { callableReceiverRenderer.renderReceiver(receiverSymbol, printer) }
+                    }
+
                     if (symbol is KtNamedSymbol) {
                         nameRenderer.renderName(symbol, printer)
                     }
