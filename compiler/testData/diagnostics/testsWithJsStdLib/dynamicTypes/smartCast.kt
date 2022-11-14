@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // !MARK_DYNAMIC_CALLS
 
 fun foo(d: dynamic) {
