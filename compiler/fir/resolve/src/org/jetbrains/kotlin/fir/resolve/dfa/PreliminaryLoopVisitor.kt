@@ -26,9 +26,9 @@ class PreliminaryLoopVisitor {
         return reassignedVariablesPerElement[statement]
     }
 
-    fun exitCapturingStatement(statement: FirStatement) {
+    fun exitCapturingStatement(statement: FirStatement): Set<Name> {
         assert(statement is FirLoop || statement is FirClass || statement is FirFunction)
-        reassignedVariablesPerElement.removeKey(statement)
+        return reassignedVariablesPerElement.removeKey(statement)
     }
 
     fun resetState() {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -40,7 +40,8 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
     val graphBuilder: ControlFlowGraphBuilder,
     variableStorage: VariableStorageImpl,
     flowOnNodes: MutableMap<CFGNode<*>, FLOW>,
-    val preliminaryLoopVisitor: PreliminaryLoopVisitor
+    val preliminaryLoopVisitor: PreliminaryLoopVisitor,
+    val variablesClearedBeforeLoop: Stack<List<RealVariable>>,
 ) {
     var flowOnNodes = flowOnNodes
         private set
@@ -62,6 +63,7 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
         flowOnNodes = mutableMapOf()
 
         preliminaryLoopVisitor.resetState()
+        variablesClearedBeforeLoop.reset()
         firLocalVariableAssignmentAnalyzer = null
     }
 
@@ -69,7 +71,7 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
         fun <FLOW : Flow> empty(session: FirSession): DataFlowAnalyzerContext<FLOW> =
             DataFlowAnalyzerContext(
                 ControlFlowGraphBuilder(), VariableStorageImpl(session),
-                mutableMapOf(), PreliminaryLoopVisitor()
+                mutableMapOf(), PreliminaryLoopVisitor(), stackOf()
             )
     }
 }
@@ -229,12 +231,15 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (postponedLambdaEnterNode, functionEnterNode) = graphBuilder.enterAnonymousFunction(anonymousFunction)
         postponedLambdaEnterNode?.mergeIncomingFlow()
         val flowOnEntry = functionEnterNode.mergeIncomingFlow()
-        when (anonymousFunction.invocationKind) {
-            EventOccurrencesRange.AT_LEAST_ONCE,
-            EventOccurrencesRange.MORE_THAN_ONCE,
-            EventOccurrencesRange.UNKNOWN, null ->
-                enterCapturingStatement(flowOnEntry, anonymousFunction)
-            else -> {}
+        val invocationKind = anonymousFunction.invocationKind
+        if (invocationKind == null || invocationKind.canBeRevisited()) {
+            // TODO: if invocation can happen 0 times, there will be an edge from `functionEnterNode`
+            //  to `functionExitNode`, so erasing statements here causes all information to be lost
+            //  even though `statements from before && statements made inside the lambda` are correct.
+            //     x = ""
+            //     callUnknownNumberOfTimes { x = "" }
+            //     /* x is String no matter how many times the lambda is called, but that information got lost */
+            enterCapturingStatement(flowOnEntry, anonymousFunction)
         }
     }
 
@@ -243,12 +248,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             anonymousFunction
         )
         val (functionExitNode, postponedLambdaExitNode, graph) = graphBuilder.exitAnonymousFunction(anonymousFunction)
-        when (anonymousFunction.invocationKind) {
-            EventOccurrencesRange.AT_LEAST_ONCE,
-            EventOccurrencesRange.MORE_THAN_ONCE,
-            EventOccurrencesRange.UNKNOWN, null ->
-                exitCapturingStatement(anonymousFunction)
-            else -> {}
+        val invocationKind = anonymousFunction.invocationKind
+        if (invocationKind == null || invocationKind.canBeRevisited()) {
+            exitCapturingStatement(anonymousFunction)
         }
         functionExitNode.mergeIncomingFlow()
         if (postponedLambdaExitNode != null) {
@@ -668,9 +670,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun enterWhileLoop(loop: FirLoop) {
         val (loopEnterNode, loopConditionEnterNode) = graphBuilder.enterWhileLoop(loop)
-        val loopEnterFlow = loopEnterNode.mergeIncomingFlow()
-        enterCapturingStatement(loopEnterFlow, loop)
-        loopConditionEnterNode.mergeIncomingFlow()
+        loopEnterNode.mergeIncomingFlow()
+        val loopConditionEnterFlow = loopConditionEnterNode.mergeIncomingFlow()
+        enterCapturingStatement(loopConditionEnterFlow, loop)
     }
 
     fun exitWhileLoopCondition(loop: FirLoop) {
@@ -684,18 +686,36 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitWhileLoop(loop: FirLoop) {
-        val (blockExitNode, exitNode) = graphBuilder.exitWhileLoop(loop)
+        val (conditionEnterNode, blockExitNode, exitNode) = graphBuilder.exitWhileLoop(loop)
         blockExitNode.mergeIncomingFlow()
-        exitNode.mergeLoopExitFlow()
-        exitCapturingStatement(loop)
+        val possiblyChangedVariables = exitCapturingStatement(loop)
+        // While analyzing the loop we might have added some backwards jumps to `conditionEnterNode` which weren't
+        // there at the time its flow was computed - which is why we erased all information about `possiblyChangedVariables`
+        // from it. Now that we have those edges, we can restore type information for the code after the loop.
+        if (!possiblyChangedVariables.isNullOrEmpty()) {
+            val conditionEnterFlow = conditionEnterNode.flow
+            val loopEnterAndContinueFlows = conditionEnterNode.livePreviousFlows
+            val conditionExitAndBreakFlows = exitNode.livePreviousFlows
+            possiblyChangedVariables.forEach { variable ->
+                // The statement about `variable` in `conditionEnterFlow` should be empty, so to obtain the new statement
+                // we can simply add the now-known input to whatever was inferred from nothing so long as the value is the same.
+                val statement = logicSystem.or(loopEnterAndContinueFlows.map { it.getTypeStatement(variable) ?: return@forEach })
+                    ?: return@forEach
+                for (beforeExitFlow in conditionExitAndBreakFlows) {
+                    if (logicSystem.isSameValueIn(conditionEnterFlow, beforeExitFlow, variable)) {
+                        beforeExitFlow.addTypeStatement(statement)
+                    }
+                }
+            }
+        }
+        exitNode.mergeLoopExitFlow(exitNode.firstPreviousNode as LoopConditionExitNode)
     }
 
-    private fun LoopExitNode.mergeLoopExitFlow() {
+    private fun LoopExitNode.mergeLoopExitFlow(conditionExitNode: LoopConditionExitNode) {
         val flow = mergeIncomingFlow()
-        // Might be > 1 node or other type if there are `break`s:
-        val singlePreviousNode = previousNodes.singleOrNull { !it.isDead } as? LoopConditionExitNode ?: return
-        if (singlePreviousNode.fir.coneType.isBoolean) {
-            val variable = variableStorage.get(flow, singlePreviousNode.fir) ?: return
+        if (conditionExitNode.isDead || previousNodes.count { !it.isDead } > 1) return
+        if (conditionExitNode.fir.coneType.isBoolean) {
+            val variable = variableStorage.get(flow, conditionExitNode.fir) ?: return
             flow.commitOperationStatement(variable eq false)
         }
     }
@@ -703,18 +723,23 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private fun enterCapturingStatement(flow: FLOW, statement: FirStatement) {
         val reassignedNames = context.preliminaryLoopVisitor.enterCapturingStatement(statement)
         if (reassignedNames.isEmpty()) return
-        val possiblyChangedVariables = variableStorage.realVariables.filterKeys {
-            val fir = (it.symbol as? FirVariableSymbol<*>)?.fir ?: return@filterKeys false
-            fir.isVar && fir.name in reassignedNames
-        }.values
-        if (possiblyChangedVariables.isEmpty()) return
-        for (variable in possiblyChangedVariables) {
-            logicSystem.removeAllAboutVariable(flow, variable)
+        // TODO: only choose the innermost variable for each name
+        val possiblyChangedVariables = variableStorage.realVariables.values.filter {
+            val identifier = it.identifier
+            val symbol = identifier.symbol
+            // Non-local vars can never produce stable smart casts anyway.
+            identifier.dispatchReceiver == null && identifier.extensionReceiver == null &&
+                    symbol is FirPropertySymbol && symbol.isVar && symbol.name in reassignedNames
         }
+        for (variable in possiblyChangedVariables) {
+            logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
+        }
+        context.variablesClearedBeforeLoop.push(possiblyChangedVariables)
     }
 
-    private fun exitCapturingStatement(statement: FirStatement) {
-        context.preliminaryLoopVisitor.exitCapturingStatement(statement)
+    private fun exitCapturingStatement(statement: FirStatement): List<RealVariable>? {
+        if (context.preliminaryLoopVisitor.exitCapturingStatement(statement).isEmpty()) return null
+        return context.variablesClearedBeforeLoop.pop()
     }
 
     // ----------------------------------- Do while Loop -----------------------------------
@@ -735,7 +760,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun exitDoWhileLoop(loop: FirLoop) {
         val (loopConditionExitNode, loopExitNode) = graphBuilder.exitDoWhileLoop(loop)
         loopConditionExitNode.mergeIncomingFlow()
-        loopExitNode.mergeLoopExitFlow()
+        loopExitNode.mergeLoopExitFlow(loopConditionExitNode)
         exitCapturingStatement(loop)
     }
 
@@ -1216,6 +1241,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
     private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) firstPreviousNode else this
+
+    private val CFGNode<*>.livePreviousFlows: List<FLOW>
+        get() = previousNodes.mapNotNull { it.takeIf { this.isDead || !it.isDead }?.flow }
 
     // Smart cast information is taken from `graphBuilder.lastNode`, but the problem with receivers specifically
     // is that they also affect tower resolver's scope stack. To allow accessing members on smart casted receivers,

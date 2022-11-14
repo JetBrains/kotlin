@@ -21,7 +21,6 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     abstract fun addImplication(flow: FLOW, implication: Implication)
     abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
     abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
-    abstract fun removeAllAboutVariable(flow: FLOW, variable: RealVariable)
     abstract fun copyAllInformation(from: FLOW, to: FLOW)
     abstract fun isSameValueIn(a: FLOW, b: FLOW, variable: RealVariable): Boolean
 
@@ -91,9 +90,9 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         exactType += other.exactType
     }
 
-    protected fun and(statements: Collection<TypeStatement>): TypeStatement? =
+    fun and(statements: Collection<TypeStatement>): TypeStatement? =
         statements.singleOrNew { statements.flatMapTo(mutableSetOf()) { it.exactType } }
 
-    protected fun or(statements: Collection<TypeStatement>): TypeStatement? =
+    fun or(statements: Collection<TypeStatement>): TypeStatement? =
         statements.singleOrNew { unifyTypes(statements.map { it.exactType })?.let { mutableSetOf(it) } ?: mutableSetOf() }
 }
