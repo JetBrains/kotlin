@@ -527,6 +527,12 @@ internal class AmbiguousSuperImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.AmbiguousSuper(), KtAbstractFirDiagnostic<KtSuperExpression>
 
+internal class WrongMultipleInheritanceImpl(
+    override val symbol: KtCallableSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.WrongMultipleInheritance(), KtAbstractFirDiagnostic<KtElement>
+
 internal class ConstructorInObjectImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
