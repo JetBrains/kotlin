@@ -245,6 +245,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("companionObjectReference.kt")
+    public void testCompanionObjectReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/companionObjectReference.kt");
+    }
+
+    @Test
     @TestMetadata("comparisonCall.kt")
     public void testComparisonCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/comparisonCall.kt");
@@ -897,6 +903,24 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
         @TestMetadata("getterAssignment.kt")
         public void testGetterAssignment() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/getterAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("incompleteCodeNoParenthesis.kt")
+        public void testIncompleteCodeNoParenthesis() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/incompleteCodeNoParenthesis.kt");
+        }
+
+        @Test
+        @TestMetadata("incompleteCodeWithAmbiguity.kt")
+        public void testIncompleteCodeWithAmbiguity() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/incompleteCodeWithAmbiguity.kt");
+        }
+
+        @Test
+        @TestMetadata("incorrectCodeJavaDeclaration.kt")
+        public void testIncorrectCodeJavaDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/incorrectCodeJavaDeclaration.kt");
         }
 
         @Test

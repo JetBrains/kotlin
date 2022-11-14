@@ -150,6 +150,15 @@ internal class KtFirCallResolver(
 
         createGenericTypeQualifierCallIfApplicable(this, psi)?.let { return it }
 
+        if (this is FirResolvedQualifier && psi is KtCallExpression) {
+            val constructors = findQualifierConstructors()
+            val calls = toKtCalls(constructors)
+            return when (calls.size) {
+                0 -> KtErrorCallInfo(listOf(KtQualifierCall(token, psi)), inapplicableCandidateDiagnostic(), token)
+                else -> KtErrorCallInfo(calls, inapplicableCandidateDiagnostic(), token)
+            }
+        }
+
         if (resolveCalleeExpressionOfFunctionCall && this is FirImplicitInvokeCall) {
             // For implicit invoke, we resolve the calleeExpression of the CallExpression to the call that creates the receiver of this
             // implicit invoke call. For example,
@@ -230,6 +239,8 @@ internal class KtFirCallResolver(
             else -> null
         }
     }
+
+    private fun inapplicableCandidateDiagnostic() = KtNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
 
     /**
      * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo`, `test.Foo<Bar>::foo` and class literals like `Foo<Bar>`::class.java.
@@ -877,22 +888,31 @@ internal class KtFirCallResolver(
     }
 
     private fun FirResolvedQualifier.toKtCallCandidateInfos(): List<KtCallCandidateInfo> {
+        return toKtCalls(findQualifierConstructors()).map {
+            KtInapplicableCallCandidateInfo(
+                it,
+                isInBestCandidates = false,
+                _diagnostic = inapplicableCandidateDiagnostic()
+            )
+        }
+    }
+
+    private fun FirResolvedQualifier.findQualifierConstructors(): List<KtConstructorSymbol> {
         val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.useSiteSession) ?: return emptyList()
-        val constructors = classSymbol.unsubstitutedScope(
+        return classSymbol.unsubstitutedScope(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
             withForcedTypeCalculator = true
         )
             .getConstructors(analysisSession.firSymbolBuilder)
             .toList()
+    }
+
+    private fun FirResolvedQualifier.toKtCalls(constructors: List<KtConstructorSymbol>): List<KtCall> {
         analysisSession.apply {
             return constructors.map { constructor ->
                 val partiallyAppliedSymbol = KtPartiallyAppliedFunctionSymbol(constructor.asSignature(), null, null)
-                KtInapplicableCallCandidateInfo(
-                    KtSimpleFunctionCall(partiallyAppliedSymbol, LinkedHashMap(), toTypeArgumentsMapping(partiallyAppliedSymbol), false),
-                    isInBestCandidates = false,
-                    _diagnostic = KtNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
-                )
+                KtSimpleFunctionCall(partiallyAppliedSymbol, LinkedHashMap(), toTypeArgumentsMapping(partiallyAppliedSymbol), false)
             }
         }
     }
