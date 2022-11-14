@@ -446,7 +446,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         var newParameterIndex = 0
 
         newValueParameters.add(
-            oldExtensionReceiver.copy(lambda, newParameterIndex++, Name.identifier("\$receiver")).also {
+            oldExtensionReceiver.copy(lambda, newParameterIndex++, oldExtensionReceiver.name).also {
                 oldToNew[oldExtensionReceiver] = it
             }
         )
