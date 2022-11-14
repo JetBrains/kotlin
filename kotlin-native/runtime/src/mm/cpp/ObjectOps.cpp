@@ -34,6 +34,12 @@ ALWAYS_INLINE void mm::SetHeapRefAtomic(ObjHeader** location, ObjHeader* value) 
     __atomic_store_n(location, value, __ATOMIC_RELEASE);
 }
 
+ALWAYS_INLINE void mm::SetHeapRefAtomicSeqCst(ObjHeader** location, ObjHeader* value) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
+    __atomic_store_n(location, value, __ATOMIC_SEQ_CST);
+}
+
+
 ALWAYS_INLINE OBJ_GETTER(mm::ReadHeapRefAtomic, ObjHeader** location) noexcept {
     AssertThreadState(ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
@@ -45,13 +51,23 @@ ALWAYS_INLINE OBJ_GETTER(mm::CompareAndSwapHeapRef, ObjHeader** location, ObjHea
     AssertThreadState(ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
     ObjHeader* actual = expected;
-    // TODO: Do we need this strong memory model? Do we need to use strong CAS?
-    // This intrinsic modifies `actual` non-atomically.
     __atomic_compare_exchange_n(location, &actual, value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-    // On success, we already have old value (== `expected`) in `actual`.
-    // On failure, we have the old value written into `actual`.
     RETURN_OBJ(actual);
 }
+
+ALWAYS_INLINE bool mm::CompareAndSetHeapRef(ObjHeader** location, ObjHeader* expected, ObjHeader* value) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
+    // TODO: Make this work with GCs that can stop thread at any point.
+    ObjHeader* actual = expected;
+    return __atomic_compare_exchange_n(location, &actual, value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+}
+
+ALWAYS_INLINE OBJ_GETTER(mm::GetAndSetHeapRef, ObjHeader** location, ObjHeader* value) noexcept {
+    AssertThreadState(ThreadState::kRunnable);;
+    auto *actual = __atomic_exchange_n(location, value,  __ATOMIC_SEQ_CST);
+    RETURN_OBJ(actual);
+}
+
 
 #pragma clang diagnostic pop
 

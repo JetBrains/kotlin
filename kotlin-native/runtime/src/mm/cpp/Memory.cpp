@@ -188,6 +188,22 @@ extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location
     mm::SetHeapRef(location, const_cast<ObjHeader*>(object));
 }
 
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
+    mm::SetHeapRefAtomicSeqCst(location, const_cast<ObjHeader*>(object));
+}
+
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    RETURN_RESULT_OF(mm::CompareAndSwapHeapRef, location, expectedValue, newValue);
+}
+
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    return mm::CompareAndSetHeapRef(location, expectedValue, newValue);
+}
+
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
+    RETURN_RESULT_OF(mm::GetAndSetHeapRef, location, newValue);
+}
+
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) {
     if (object == nullptr) return;
     ObjHeader* result = nullptr; // No need to store this value in a rootset.

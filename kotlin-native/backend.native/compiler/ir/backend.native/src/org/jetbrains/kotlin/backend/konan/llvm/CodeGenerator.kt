@@ -560,21 +560,22 @@ internal abstract class FunctionGenerationContext(
 
     fun param(index: Int): LLVMValueRef = LLVMGetParam(this.function, index)!!
 
-    fun load(address: LLVMValueRef, name: String = "", memoryOrder: LLVMAtomicOrdering? = null): LLVMValueRef {
+    fun load(address: LLVMValueRef, name: String = "",
+             memoryOrder: LLVMAtomicOrdering? = null, alignment: Int? = null
+    ): LLVMValueRef {
         val value = LLVMBuildLoad(builder, address, name)!!
-        if (memoryOrder != null) {
-            LLVMSetOrdering(value, memoryOrder)
-        }
+        memoryOrder?.let { LLVMSetOrdering(value, it) }
+        alignment?.let { LLVMSetAlignment(value, it) }
         // Use loadSlot() API for that.
         assert(!isObjectRef(value))
         return value
     }
 
-    fun loadSlot(address: LLVMValueRef, isVar: Boolean, resultSlot: LLVMValueRef? = null, name: String = "", memoryOrder: LLVMAtomicOrdering? = null): LLVMValueRef {
+    fun loadSlot(address: LLVMValueRef, isVar: Boolean, resultSlot: LLVMValueRef? = null, name: String = "",
+                 memoryOrder: LLVMAtomicOrdering? = null, alignment: Int? = null): LLVMValueRef {
         val value = LLVMBuildLoad(builder, address, name)!!
-        if (memoryOrder != null) {
-            LLVMSetOrdering(value, memoryOrder)
-        }
+        memoryOrder?.let { LLVMSetOrdering(value, it) }
+        alignment?.let { LLVMSetAlignment(value, it) }
         if (isObjectRef(value) && isVar) {
             val slot = resultSlot ?: alloca(LLVMTypeOf(value), variableLocation = null)
             storeStackRef(value, slot)
@@ -582,8 +583,10 @@ internal abstract class FunctionGenerationContext(
         return value
     }
 
-    fun store(value: LLVMValueRef, ptr: LLVMValueRef) {
-        LLVMBuildStore(builder, value, ptr)
+    fun store(value: LLVMValueRef, ptr: LLVMValueRef, memoryOrder: LLVMAtomicOrdering? = null, alignment: Int? = null) {
+        val store = LLVMBuildStore(builder, value, ptr)
+        memoryOrder?.let { LLVMSetOrdering(store, it) }
+        alignment?.let { LLVMSetAlignment(store, it) }
     }
 
     fun storeHeapRef(value: LLVMValueRef, ptr: LLVMValueRef) {
@@ -594,12 +597,12 @@ internal abstract class FunctionGenerationContext(
         updateRef(value, ptr, onStack = true)
     }
 
-    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, onStack: Boolean) = if (isObjectRef(value)) {
-            if (onStack) storeStackRef(value, ptr) else storeHeapRef(value, ptr)
-            null
-        } else {
-            LLVMBuildStore(builder, value, ptr)
+    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null) {
+        when {
+            isObjectRef(value) -> updateRef(value, ptr, onStack, isVolatile, alignment)
+            else -> store(value, ptr, if (isVolatile) LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent else null, alignment)
         }
+    }
 
     fun freeze(value: LLVMValueRef, exceptionHandler: ExceptionHandler) {
         if (isObjectRef(value))
@@ -618,14 +621,21 @@ internal abstract class FunctionGenerationContext(
             call(llvm.updateReturnRefFunction, listOf(address, value))
     }
 
-    private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean) {
+    private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
+                          isVolatile: Boolean = false, alignment: Int? = null) {
+        require(alignment == null || alignment == runtime.pointerAlignment)
         if (onStack) {
+            require(!isVolatile) { "Stack ref update can't be volatile"}
             if (context.memoryModel == MemoryModel.STRICT)
                 store(value, address)
             else
                 call(llvm.updateStackRefFunction, listOf(address, value))
         } else {
-            call(llvm.updateHeapRefFunction, listOf(address, value))
+            if (isVolatile && context.memoryModel == MemoryModel.EXPERIMENTAL) {
+                call(llvm.UpdateVolatileHeapRef, listOf(address, value))
+            } else {
+                call(llvm.updateHeapRefFunction, listOf(address, value))
+            }
         }
     }
 
@@ -1349,7 +1359,7 @@ internal abstract class FunctionGenerationContext(
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
             memScoped {
-                slotToVariableLocation.forEach { slot, variable ->
+                slotToVariableLocation.forEach { (slot, variable) ->
                     val expr = longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
                             runtime.pointerSize * slot.toLong()).toCValues()
                     DIInsertDeclaration(

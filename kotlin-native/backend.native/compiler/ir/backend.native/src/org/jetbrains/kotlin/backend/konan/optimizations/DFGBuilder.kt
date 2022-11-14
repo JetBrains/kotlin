@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.backend.konan.llvm.*
 
 internal class ExternalModulesDFG(val allTypes: List<DataFlowIR.Type.Declared>,
                                   val publicTypes: Map<Long, DataFlowIR.Type.Public>,
@@ -258,7 +259,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
         context.logMultiple {
             +"SYMBOL TABLE:"
-            symbolTable.classMap.forEach { irClass, type ->
+            symbolTable.classMap.forEach { (irClass, type) ->
                 +"    DESCRIPTOR: ${irClass.descriptor}"
                 +"    TYPE: $type"
                 if (type !is DataFlowIR.Type.Declared)
@@ -309,39 +310,61 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     expressions += expression to currentLoop
             }
 
-            if (expression is IrCall && expression.symbol == initInstanceSymbol) {
-                // Skip the constructor call as initInstance is handled specially later.
-                val thiz = expression.getValueArgument(0)!!
-                val constructorCall = expression.getValueArgument(1)!!
-                thiz.acceptVoid(this)
-                constructorCall.acceptChildrenVoid(this)
-                return
+            if (expression is IrCall) {
+                if (expression.symbol == initInstanceSymbol) {
+                    // Skip the constructor call as initInstance is handled specially later.
+                    val thiz = expression.getValueArgument(0)!!
+                    val constructorCall = expression.getValueArgument(1)!!
+                    thiz.acceptVoid(this)
+                    constructorCall.acceptChildrenVoid(this)
+                    return
+                }
+                if (expression.symbol == executeImplSymbol) {
+                    // Producer and job of executeImpl are called externally, we need to reflect this somehow.
+                    val producerInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
+                            executeImplProducerInvoke.returnType,
+                            executeImplProducerInvoke.symbol,
+                            executeImplProducerInvoke.symbol.owner.typeParameters.size,
+                            executeImplProducerInvoke.symbol.owner.valueParameters.size,
+                            STATEMENT_ORIGIN_PRODUCER_INVOCATION)
+                    producerInvocation.dispatchReceiver = expression.getValueArgument(2)
+
+                    expressions += producerInvocation to currentLoop
+
+                    val jobFunctionReference = expression.getValueArgument(3) as? IrFunctionReference
+                            ?: error("A function reference expected")
+                    val jobInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
+                            jobFunctionReference.symbol.owner.returnType,
+                            jobFunctionReference.symbol as IrSimpleFunctionSymbol,
+                            jobFunctionReference.symbol.owner.typeParameters.size,
+                            jobFunctionReference.symbol.owner.valueParameters.size,
+                            STATEMENT_ORIGIN_JOB_INVOCATION)
+                    jobInvocation.putValueArgument(0, producerInvocation)
+
+                    expressions += jobInvocation to currentLoop
+                }
+                val intrinsicType = tryGetIntrinsicType(expression)
+                if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_SWAP) {
+                    expressions += IrSetFieldImpl(
+                            expression.startOffset, expression.endOffset,
+                            context.mapping.functionToVolatileField[expression.symbol.owner]!!.symbol,
+                            expression.dispatchReceiver,
+                            expression.getValueArgument(1)!!,
+                            context.irBuiltIns.unitType
+                    ) to currentLoop
+                }
+                if (intrinsicType == IntrinsicType.GET_AND_SET) {
+                    expressions += IrSetFieldImpl(
+                            expression.startOffset, expression.endOffset,
+                            context.mapping.functionToVolatileField[expression.symbol.owner]!!.symbol,
+                            expression.dispatchReceiver,
+                            expression.getValueArgument(0)!!,
+                            context.irBuiltIns.unitType
+                    ) to currentLoop
+                }
             }
 
-            if (expression is IrCall && expression.symbol == executeImplSymbol) {
-                // Producer and job of executeImpl are called externally, we need to reflect this somehow.
-                val producerInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
-                        executeImplProducerInvoke.returnType,
-                        executeImplProducerInvoke.symbol,
-                        executeImplProducerInvoke.symbol.owner.typeParameters.size,
-                        executeImplProducerInvoke.symbol.owner.valueParameters.size,
-                        STATEMENT_ORIGIN_PRODUCER_INVOCATION)
-                producerInvocation.dispatchReceiver = expression.getValueArgument(2)
 
-                expressions += producerInvocation to currentLoop
-
-                val jobFunctionReference = expression.getValueArgument(3) as? IrFunctionReference
-                        ?: error("A function reference expected")
-                val jobInvocation = IrCallImpl.fromSymbolDescriptor(expression.startOffset, expression.endOffset,
-                        jobFunctionReference.symbol.owner.returnType,
-                        jobFunctionReference.symbol as IrSimpleFunctionSymbol,
-                        jobFunctionReference.symbol.owner.typeParameters.size,
-                        jobFunctionReference.symbol.owner.valueParameters.size,
-                        STATEMENT_ORIGIN_JOB_INVOCATION)
-                jobInvocation.putValueArgument(0, producerInvocation)
-
-                expressions += jobInvocation to currentLoop
-            }
 
             // TODO: A little bit hacky but it is the simplest solution.
             // See ObjC instanceOf code generation for details.

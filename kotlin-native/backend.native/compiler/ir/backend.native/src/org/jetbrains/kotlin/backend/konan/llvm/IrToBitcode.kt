@@ -228,6 +228,9 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
         override fun evaluateExpression(value: IrExpression, resultSlot: LLVMValueRef?): LLVMValueRef =
                 this@CodeGeneratorVisitor.evaluateExpression(value, resultSlot)
+
+        override fun getObjectFieldPointer(thisRef: LLVMValueRef, field: IrField): LLVMValueRef =
+                this@CodeGeneratorVisitor.fieldPtrOfClass(thisRef, field)
     }
 
     private val intrinsicGenerator = IntrinsicGenerator(intrinsicGeneratorEnvironment)
@@ -1660,35 +1663,46 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
     private fun evaluateGetField(value: IrGetField, resultSlot: LLVMValueRef?): LLVMValueRef {
         context.log { "evaluateGetField               : ${ir2string(value)}" }
-        return if (!value.symbol.owner.isStatic) {
-            val thisPtr = evaluateExpression(value.receiver!!)
-            functionGenerationContext.loadSlot(
-                    fieldPtrOfClass(thisPtr, value.symbol.owner), !value.symbol.owner.isFinal, resultSlot)
-        } else {
-            assert(value.receiver == null)
-            if (value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
-                evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>).llvm
-            } else {
+        val alignment = when {
+            value.type.classifierOrNull?.isClassWithFqName(vectorType) == true -> 8
+            else -> null
+        }
+        val order = when {
+            value.symbol.owner.hasAnnotation(KonanFqNames.volatile) ->
+                LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent
+            else -> null
+        }
+
+        val fieldAddress = when {
+            !value.symbol.owner.isStatic -> {
+                fieldPtrOfClass(evaluateExpression(value.receiver!!), value.symbol.owner)
+            }
+            value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true -> {
+                // TODO: probably can be removed, as they are inlined.
+                return evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>).llvm
+            }
+            else -> {
                 if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive(context)) {
                     functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
                 }
-                val ptr = generationState.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
-                        functionGenerationContext
-                )
-                functionGenerationContext.loadSlot(ptr, !value.symbol.owner.isFinal, resultSlot)
+                generationState.llvmDeclarations
+                        .forStaticField(value.symbol.owner)
+                        .storageAddressAccess
+                        .getAddress(functionGenerationContext)
             }
-        }.also {
-            if (value.type.classifierOrNull?.isClassWithFqName(vectorType) == true)
-                LLVMSetAlignment(it, 8)
-
         }
+        return functionGenerationContext.loadSlot(
+                fieldAddress, !value.symbol.owner.isFinal, resultSlot,
+                memoryOrder = order,
+                alignment = alignment
+        )
     }
 
     //-------------------------------------------------------------------------//
-    private fun needMutationCheck(irClass: IrClass): Boolean {
+    private fun needMutationCheck(irField: IrField): Boolean {
         // For now we omit mutation checks on immutable types, as this allows initialization in constructor
         // and it is assumed that API doesn't allow to change them.
-        return context.config.freezing.enableFreezeChecks && !irClass.isFrozen(context)
+        return context.config.freezing.enableFreezeChecks && !irField.parentAsClass.isFrozen(context) && !irField.hasAnnotation(KonanFqNames.volatile)
     }
 
     private fun needLifetimeConstraintsCheck(valueToAssign: LLVMValueRef, irClass: IrClass): Boolean {
@@ -1724,13 +1738,14 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         }
 
         val valueToAssign = evaluateExpression(value.value)
-        val store = if (!value.symbol.owner.isStatic) {
+        val address: LLVMValueRef
+        if (!value.symbol.owner.isStatic) {
             val thisPtr = evaluateExpression(value.receiver!!)
             assert(thisPtr.type == codegen.kObjHeaderPtr) {
                 LLVMPrintTypeToString(thisPtr.type)?.toKString().toString()
             }
             val parentAsClass = value.symbol.owner.parentAsClass
-            if (needMutationCheck(parentAsClass)) {
+            if (needMutationCheck(value.symbol.owner)) {
                 functionGenerationContext.call(llvm.mutationCheck,
                         listOf(functionGenerationContext.bitcast(codegen.kObjHeaderPtr, thisPtr)),
                         Lifetime.IRRELEVANT, currentCodeContext.exceptionHandler)
@@ -1738,21 +1753,26 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
             if (needLifetimeConstraintsCheck(valueToAssign, parentAsClass)) {
                 functionGenerationContext.call(llvm.checkLifetimesConstraint, listOf(thisPtr, valueToAssign))
             }
-            functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.symbol.owner), false)
+            address = fieldPtrOfClass(thisPtr, value.symbol.owner)
         } else {
             assert(value.receiver == null)
-            val globalAddress = generationState.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
-                    functionGenerationContext
-            )
             if (context.config.threadsAreAllowed && value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.shouldBeFrozen(context) && value.origin != ObjectClassLowering.IrStatementOriginFieldPreInit)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
-            functionGenerationContext.storeAny(valueToAssign, globalAddress, false)
+            address = generationState.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
+                    functionGenerationContext
+            )
         }
-        if (store != null && value.value.type.classifierOrNull?.isClassWithFqName(vectorType) == true) {
-            LLVMSetAlignment(store, 8)
+        val alignment = when {
+            value.value.type.classifierOrNull?.isClassWithFqName(vectorType) == true -> 8
+            else -> null
         }
+        functionGenerationContext.storeAny(
+                valueToAssign, address, false,
+                isVolatile = value.symbol.owner.hasAnnotation(KonanFqNames.volatile),
+                alignment = alignment,
+        )
 
         assert (value.type.isUnit())
         return codegen.theUnitInstanceRef.llvm
@@ -2379,8 +2399,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         val bbExit = basicBlock("label_continue", null)
         moveBlockAfterEntry(bbExit)
         moveBlockAfterEntry(bbInit)
-        val state = load(statePtr)
-        LLVMSetOrdering(state, LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
+        val state = load(statePtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
         condBr(icmpEq(state, llvm.int32(FILE_INITIALIZED)), bbExit, bbInit)
         positionAtEnd(bbInit)
         call(llvm.callInitGlobalPossiblyLock, listOf(statePtr, initializerPtr),

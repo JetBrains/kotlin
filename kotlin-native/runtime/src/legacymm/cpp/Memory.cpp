@@ -3343,6 +3343,20 @@ RUNTIME_NOTHROW void UpdateHeapRefRelaxed(ObjHeader** location, const ObjHeader*
   updateHeapRef<false>(location, object);
 }
 
+ALWAYS_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
+    RuntimeFail("Shouldn't be used");
+}
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    RuntimeFail("Shouldn't be used");
+}
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    RuntimeFail("Shouldn't be used");
+}
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
+    RuntimeFail("Shouldn't be used");
+}
+
+
 RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArrayStrict(const ArrayHeader* array, int fromIndex, int toIndex,
                                                         int count) {
   updateHeapRefsInsideOneArray<true>(array, fromIndex, toIndex, count);

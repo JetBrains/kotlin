@@ -50,6 +50,10 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 internal class NativeMapping : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
+    enum class AtomicFunctionType {
+        COMPARE_AND_SWAP, COMPARE_AND_SET, GET_AND_SET, GET_AND_ADD;
+    }
+    data class AtomicFunctionKey(val field: IrField, val type: AtomicFunctionType)
 
     val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
     val enumValueGetters = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
@@ -62,6 +66,8 @@ internal class NativeMapping : DefaultMapping() {
     val boxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val unboxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val loweredInlineClassConstructors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
+    val volatileFieldToAtomicFunction = mutableMapOf<AtomicFunctionKey, IrSimpleFunction>()
+    val functionToVolatileField = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrSimpleFunction, IrField>()
 }
 
 internal class Context(

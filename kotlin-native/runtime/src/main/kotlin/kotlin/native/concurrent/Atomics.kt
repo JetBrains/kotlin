@@ -7,6 +7,8 @@ package kotlin.native.concurrent
 
 import kotlinx.cinterop.NativePtr
 import kotlin.native.internal.*
+import kotlin.reflect.*
+import kotlin.concurrent.*
 
 /**
  * Wrapper around [Int] with atomic synchronized operations.
@@ -16,23 +18,15 @@ import kotlin.native.internal.*
  * So shared frozen objects can have mutable fields of [AtomicInt] type.
  */
 @Frozen
-@OptIn(FreezingIsDeprecated::class)
-public class AtomicInt(private var value_: Int) {
-    /**
-     * The value being held by this class.
-     */
-    public var value: Int
-            get() = getImpl()
-            set(new) = setImpl(new)
-
+@OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
+public class AtomicInt(public @Volatile var value: Int) {
     /**
      * Increments the value by [delta] and returns the new value.
      *
      * @param delta the value to add
      * @return the new value
      */
-    @GCUnsafeCall("Kotlin_AtomicInt_addAndGet")
-    external public fun addAndGet(delta: Int): Int
+    public fun addAndGet(delta: Int): Int = getAndAddField(AtomicInt::value, delta) + delta
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -41,8 +35,7 @@ public class AtomicInt(private var value_: Int) {
      * @param new the new value
      * @return the old value
      */
-    @GCUnsafeCall("Kotlin_AtomicInt_compareAndSwap")
-    external public fun compareAndSwap(expected: Int, new: Int): Int
+    public fun compareAndSwap(expected: Int, new: Int): Int = compareAndSwapField(AtomicInt::value, expected, new)
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -51,8 +44,7 @@ public class AtomicInt(private var value_: Int) {
      * @param new the new value
      * @return true if successful
      */
-    @GCUnsafeCall("Kotlin_AtomicInt_compareAndSet")
-    external public fun compareAndSet(expected: Int, new: Int): Boolean
+    public fun compareAndSet(expected: Int, new: Int): Boolean = compareAndSetField(AtomicInt::value, expected, new)
 
     /**
      * Increments value by one.
@@ -74,13 +66,6 @@ public class AtomicInt(private var value_: Int) {
      * @return the string representation
      */
     public override fun toString(): String = value.toString()
-
-    // Implementation details.
-    @GCUnsafeCall("Kotlin_AtomicInt_set")
-    private external fun setImpl(new: Int): Unit
-
-    @GCUnsafeCall("Kotlin_AtomicInt_get")
-    private external fun getImpl(): Int
 }
 
 /**
@@ -91,14 +76,8 @@ public class AtomicInt(private var value_: Int) {
  * So shared frozen objects can have mutable fields of [AtomicLong] type.
  */
 @Frozen
-@OptIn(FreezingIsDeprecated::class)
-public class AtomicLong(private var value_: Long = 0)  {
-    /**
-     * The value being held by this class.
-     */
-    public var value: Long
-        get() = getImpl()
-        set(new) = setImpl(new)
+@OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
+public class AtomicLong(public @Volatile var value: Long = 0)  {
 
     /**
      * Increments the value by [delta] and returns the new value.
@@ -106,8 +85,7 @@ public class AtomicLong(private var value_: Long = 0)  {
      * @param delta the value to add
      * @return the new value
      */
-    @GCUnsafeCall("Kotlin_AtomicLong_addAndGet")
-    external public fun addAndGet(delta: Long): Long
+    public fun addAndGet(delta: Long): Long = getAndAddField(AtomicLong::value, delta) + delta
 
     /**
      * Increments the value by [delta] and returns the new value.
@@ -124,8 +102,7 @@ public class AtomicLong(private var value_: Long = 0)  {
      * @param new the new value
      * @return the old value
      */
-    @GCUnsafeCall("Kotlin_AtomicLong_compareAndSwap")
-    external public fun compareAndSwap(expected: Long, new: Long): Long
+    public fun compareAndSwap(expected: Long, new: Long): Long = compareAndSwapField(AtomicLong::value, expected, new)
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -134,8 +111,7 @@ public class AtomicLong(private var value_: Long = 0)  {
      * @param new the new value
      * @return true if successful, false if state is unchanged
      */
-    @GCUnsafeCall("Kotlin_AtomicLong_compareAndSet")
-    external public fun compareAndSet(expected: Long, new: Long): Boolean
+    public fun compareAndSet(expected: Long, new: Long): Boolean = compareAndSetField(AtomicLong::value, expected, new)
 
     /**
      * Increments value by one.
@@ -157,13 +133,6 @@ public class AtomicLong(private var value_: Long = 0)  {
      * @return the string representation of this object
      */
     public override fun toString(): String = value.toString()
-
-    // Implementation details.
-    @GCUnsafeCall("Kotlin_AtomicLong_set")
-    private external fun setImpl(new: Long): Unit
-
-    @GCUnsafeCall("Kotlin_AtomicLong_get")
-    private external fun getImpl(): Long
 }
 
 /**
@@ -174,14 +143,8 @@ public class AtomicLong(private var value_: Long = 0)  {
  * So shared frozen objects can have mutable fields of [AtomicNativePtr] type.
  */
 @Frozen
-@OptIn(FreezingIsDeprecated::class)
-public class AtomicNativePtr(private var value_: NativePtr) {
-    /**
-     * The value being held by this class.
-     */
-    public var value: NativePtr
-        get() = getImpl()
-        set(new) = setImpl(new)
+@OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
+public class AtomicNativePtr(public @Volatile var value: NativePtr) {
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -190,8 +153,8 @@ public class AtomicNativePtr(private var value_: NativePtr) {
      * @param new the new value
      * @return the old value
      */
-    @GCUnsafeCall("Kotlin_AtomicNativePtr_compareAndSwap")
-    external public fun compareAndSwap(expected: NativePtr, new: NativePtr): NativePtr
+    public fun compareAndSwap(expected: NativePtr, new: NativePtr): NativePtr =
+            compareAndSwapField(AtomicNativePtr::value, expected, new)
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
@@ -200,8 +163,8 @@ public class AtomicNativePtr(private var value_: NativePtr) {
      * @param new the new value
      * @return true if successful
      */
-    @GCUnsafeCall("Kotlin_AtomicNativePtr_compareAndSet")
-    external public fun compareAndSet(expected: NativePtr, new: NativePtr): Boolean
+    public fun compareAndSet(expected: NativePtr, new: NativePtr): Boolean =
+            compareAndSetField(AtomicNativePtr::value, expected, new)
 
     /**
      * Returns the string representation of this object.
@@ -209,13 +172,6 @@ public class AtomicNativePtr(private var value_: NativePtr) {
      * @return string representation of this object
      */
     public override fun toString(): String = value.toString()
-
-    // Implementation details.
-    @GCUnsafeCall("Kotlin_AtomicNativePtr_set")
-    private external fun setImpl(new: NativePtr): Unit
-
-    @GCUnsafeCall("Kotlin_AtomicNativePtr_get")
-    private external fun getImpl(): NativePtr
 }
 
 
@@ -431,3 +387,134 @@ public class FreezableAtomicReference<T>(private var value_: T) {
     @GCUnsafeCall("Kotlin_AtomicReference_compareAndSet")
     private external fun compareAndSetImpl(expected: Any?, new: Any?): Boolean
 }
+
+
+/**
+ * Compares the value of the field referenced by [fieldRef] from [this] object to [expectedValue], and if they are equal,
+ * atomically replaces it with [newValue].
+ *
+ * For now, it can be used only within the same file, where class [T] is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * Comparison is done by reference or value depending on field representation.
+ *
+ * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ *
+ * Returns true if the actual field value matched [expectedValue]
+ *
+ * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.COMPARE_AND_SET_FIELD)
+internal external fun <T, S> T.compareAndSetField(filedRef: KMutableProperty1<T, S>, expectedValue: S, newValue: S): Boolean
+
+/**
+ * Compares the value of the field referenced by [fieldRef] from [this] object to [expectedValue], and if they are equal,
+ * atomically replaces it with [newValue].
+ *
+ * For now, it can be used only within the same file, where class [T] is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * Comparison is done by reference or value depending on field representation.
+ *
+ * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ *
+ * Returns true if the actual field value before operation.
+ *
+ * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.COMPARE_AND_SWAP_FIELD)
+internal external fun <T, S> T.compareAndSwapField(filedRef: KMutableProperty1<T, S>, expectedValue: S, newValue: S): S
+
+/**
+ * Atomically sets value of the field referenced by [fieldRef] from [this] object to [newValue] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where class [T] is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_SET_FIELD)
+internal external fun <T, S> T.getAndSetField(filedRef: KMutableProperty1<T, S>, newValue: S): S
+
+
+/**
+ * Atomically increments value of the field referenced by [fieldRef] from [this] object by [delta] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where class [T] is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun <T> T.getAndAddField(filedRef: KMutableProperty1<T, Short>, delta: Short): Short
+
+/**
+ * Atomically increments value of the field referenced by [fieldRef] from [this] object by [delta] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where class [T] is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun <T> T.getAndAddField(filedRef: KMutableProperty1<T, Int>, newValue: Int): Int
+
+/**
+ * Atomically increments value of the field referenced by [fieldRef] from [this] object by [delta] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where class [T] is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun <T> T.getAndAddField(filedRef: KMutableProperty1<T, Long>, newValue: Long): Long
+
+/**
+ * Atomically increments value of the field referenced by [fieldRef] from [this] object by [delta] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where class [T] is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [fieldRef] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [fieldRef] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [fieldRef] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun <T> T.getAndAddField(filedRef: KMutableProperty1<T, Byte>, newValue: Byte): Byte

@@ -274,6 +274,13 @@ internal val tailrecPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(localFunctionsPhase)
 )
 
+internal val volatilePhase = makeKonanFileLoweringPhase(
+        ::VolatileFieldsLowering,
+        name = "VolatileFields",
+        description = "Volatile fields processing",
+        prerequisite = setOf(localFunctionsPhase)
+)
+
 internal val defaultParameterExtentPhase = makeKonanFileOpPhase(
         { context, irFile ->
             KonanDefaultArgumentStubGenerator(context).lower(irFile)
@@ -335,7 +342,8 @@ internal val testProcessorPhase = makeKonanFileOpPhase(
 internal val delegationPhase = makeKonanFileLoweringPhase(
         { PropertyDelegationLowering(it.generationState) },
         name = "Delegation",
-        description = "Delegation lowering"
+        description = "Delegation lowering",
+        prerequisite = setOf(volatilePhase)
 )
 
 internal val functionReferencePhase = makeKonanFileLoweringPhase(

@@ -80,5 +80,15 @@ class IntrinsicType {
 
         // Worker
         const val WORKER_EXECUTE                = "WORKER_EXECUTE"
+
+        // Atomic
+        const val COMPARE_AND_SET_FIELD         = "COMPARE_AND_SET_FIELD"
+        const val COMPARE_AND_SWAP_FIELD        = "COMPARE_AND_SWAP_FIELD"
+        const val GET_AND_SET_FIELD             = "GET_AND_SET_FIELD"
+        const val GET_AND_ADD_FIELD             = "GET_AND_ADD_FIELD"
+        const val COMPARE_AND_SET               = "COMPARE_AND_SET"
+        const val COMPARE_AND_SWAP              = "COMPARE_AND_SWAP"
+        const val GET_AND_SET                   = "GET_AND_SET"
+        const val GET_AND_ADD                   = "GET_AND_ADD"
     }
 }

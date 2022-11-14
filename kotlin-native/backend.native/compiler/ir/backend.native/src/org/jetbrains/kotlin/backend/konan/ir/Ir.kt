@@ -99,6 +99,7 @@ internal abstract class KonanSymbols(
     val symbolName = topLevelClass(RuntimeNames.symbolNameAnnotation)
     val filterExceptions = topLevelClass(RuntimeNames.filterExceptions)
     val exportForCppRuntime = topLevelClass(RuntimeNames.exportForCppRuntime)
+    val typedIntrinsic = topLevelClass(RuntimeNames.typedIntrinsicAnnotation)
 
     val objCMethodImp = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCMethodImp)
 
@@ -414,6 +415,8 @@ internal abstract class KonanSymbols(
     val threadLocal = topLevelClass(KonanFqNames.threadLocal)
 
     val sharedImmutable = topLevelClass(KonanFqNames.sharedImmutable)
+
+    val volatile = topLevelClass(KonanFqNames.volatile)
 
     val eagerInitialization = topLevelClass(KonanFqNames.eagerInitialization)
 

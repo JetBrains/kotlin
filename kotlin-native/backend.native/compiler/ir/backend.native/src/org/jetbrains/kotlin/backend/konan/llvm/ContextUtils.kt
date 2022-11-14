@@ -457,6 +457,12 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
     val Kotlin_processFieldInMark by lazyRtFunction
     val Kotlin_processEmptyObjectInMark by lazyRtFunction
 
+    val UpdateVolatileHeapRef by lazyRtFunction
+    val CompareAndSetVolatileHeapRef by lazyRtFunction
+    val CompareAndSwapVolatileHeapRef by lazyRtFunction
+    val GetAndSetVolatileHeapRef by lazyRtFunction
+
+
     val tlsMode by lazy {
         when (target) {
             KonanTarget.WASM32,

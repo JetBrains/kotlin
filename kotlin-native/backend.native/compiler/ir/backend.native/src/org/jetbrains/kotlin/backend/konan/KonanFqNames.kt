@@ -25,6 +25,7 @@ object KonanFqNames {
     val cancellationException = FqName("kotlin.coroutines.cancellation.CancellationException")
     val threadLocal = FqName("kotlin.native.concurrent.ThreadLocal")
     val sharedImmutable = FqName("kotlin.native.concurrent.SharedImmutable")
+    val volatile = FqName("kotlin.concurrent.Volatile")
     val frozen = FqName("kotlin.native.internal.Frozen")
     val frozenLegacyMM = FqName("kotlin.native.internal.FrozenLegacyMM")
     val leakDetectorCandidate = FqName("kotlin.native.internal.LeakDetectorCandidate")
