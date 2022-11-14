@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -95,4 +95,28 @@ fun FirSimpleFunction.isEquals(): Boolean {
     if (receiverTypeRef != null) return false
     val parameter = valueParameters.first()
     return parameter.returnTypeRef.isNullableAny
+}
+
+private val FirBasedSymbol<*>.isExternal
+    get() = when (this) {
+        is FirCallableSymbol<*> -> isExternal
+        is FirClassSymbol<*> -> isExternal
+        else -> false
+    }
+
+fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
+    if (fir is FirMemberDeclaration && isExternal) return true
+
+    if (this is FirPropertyAccessorSymbol) {
+        val property = propertySymbol
+        if (property.isEffectivelyExternal(session)) return true
+    }
+
+    if (this is FirPropertySymbol) {
+        if (getterSymbol?.isExternal == true && (!isVar || setterSymbol?.isExternal == true)) {
+            return true
+        }
+    }
+
+    return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
 }
