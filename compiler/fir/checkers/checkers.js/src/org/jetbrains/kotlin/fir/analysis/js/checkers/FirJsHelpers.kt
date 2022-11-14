@@ -6,9 +6,15 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.getAnnotationStringParameter
 import org.jetbrains.kotlin.fir.declarations.isNativeObject
 import org.jetbrains.kotlin.fir.declarations.isPredefinedObject
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.name.JsStandardClassIds
+
+fun FirBasedSymbol<*>.getJsName(): String? {
+    return getAnnotationStringParameter(JsStandardClassIds.Annotations.JsName)
+}
 
 fun FirBasedSymbol<*>.isNativeObject(context: CheckerContext) = isNativeObject(context.session)
 
