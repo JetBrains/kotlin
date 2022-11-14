@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_SETTE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED
@@ -130,6 +131,11 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NATIVE_INDEXER_WRONG_PARAMETER_COUNT, "Expected {0} parameters for native {1}",
             KtDiagnosticRenderers.TO_STRING,
             CommonRenderers.STRING
+        )
+        map.put(
+            NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
+            "Can''t put non-external declarations in file marked with {0} annotation",
+            FirDiagnosticRenderers.RENDER_TYPE
         )
 
         map.checkMissingMessages(FirJsErrors)
