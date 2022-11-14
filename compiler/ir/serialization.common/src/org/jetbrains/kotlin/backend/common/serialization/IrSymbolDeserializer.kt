@@ -26,10 +26,9 @@ class IrSymbolDeserializer(
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
-    private val fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
+    fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
-
     val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = mutableMapOf()
 
     fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
@@ -112,8 +111,7 @@ internal fun referenceDeserializedSymbol(
         BinarySymbolData.SymbolKind.VARIABLE_SYMBOL -> IrVariableSymbolImpl()
         BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
         BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
-        BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
-            IrLocalDelegatedPropertySymbolImpl()
+        BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL -> IrLocalDelegatedPropertySymbolImpl()
         BinarySymbolData.SymbolKind.FILE_SYMBOL -> fileSymbol ?: error("File symbol is not provided")
         else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
     }
