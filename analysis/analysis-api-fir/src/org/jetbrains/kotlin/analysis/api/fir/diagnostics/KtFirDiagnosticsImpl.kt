@@ -3993,6 +3993,12 @@ internal class NonAbstractMemberOfExternalInterfaceImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NonAbstractMemberOfExternalInterface(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class NonExternalDeclarationInInappropriateFileImpl(
+    override val type: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NonExternalDeclarationInInappropriateFile(), KtAbstractFirDiagnostic<KtElement>
+
 internal class DelegationByDynamicImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
