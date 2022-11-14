@@ -53,7 +53,7 @@ abstract class KotlinIrLinker(
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    protected val partialLinkageSupport: PartialLinkageSupport = if (partialLinkageEnabled)
+    val partialLinkageSupport: PartialLinkageSupport = if (partialLinkageEnabled)
         PartialLinkageSupportImpl(builtIns, messageLogger)
     else
         PartialLinkageSupport.DISABLED
@@ -160,9 +160,7 @@ abstract class KotlinIrLinker(
                     ?: tryResolveCustomDeclaration(symbol)
                     ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
-                if (!partialLinkageSupport.partialLinkageEnabled) {
-                    SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
-                }
+                SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
             }
         }
 

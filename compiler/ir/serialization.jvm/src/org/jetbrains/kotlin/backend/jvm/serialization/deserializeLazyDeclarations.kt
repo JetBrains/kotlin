@@ -85,6 +85,7 @@ fun deserializeFromByteArray(
         DefaultFakeOverrideClassFilter,
         fakeOverrideBuilder,
         compatibilityMode = CompatibilityMode.CURRENT,
+        partialLinkageEnabled = false
     )
     for (declarationProto in irProto.declarationList) {
         deserializer.deserializeDeclaration(declarationProto, setParent = false)

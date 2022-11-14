@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.IrSymbolTypeMismatchException
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
@@ -75,7 +78,7 @@ class IrBodyDeserializer(
     private val allowErrorNodes: Boolean,
     private val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
-    private val declarationDeserializer: IrDeclarationDeserializer,
+    private val declarationDeserializer: IrDeclarationDeserializer
 ) {
 
     private val fileLoops = mutableMapOf<Int, IrLoop>()
@@ -185,7 +188,10 @@ class IrBodyDeserializer(
         end: Int,
         type: IrType
     ): IrClassReference {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.classSymbol) as IrClassifierSymbol
+        val symbol = deserializeTypedSymbol<IrClassifierSymbol>(
+            proto.classSymbol,
+            fallbackSymbolKind = /* just the first possible option */ CLASS_SYMBOL
+        )
         val classType = declarationDeserializer.deserializeIrType(proto.classType)
         /** TODO: [createClassifierSymbolForClassReference] is internal function */
         return IrClassReferenceImpl(start, end, type, symbol, classType)
@@ -240,7 +246,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeConstructorCall(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrConstructorCall {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrConstructorSymbol
+        val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
         return IrConstructorCallImpl(
             start, end, type,
             symbol, typeArgumentsCount = proto.memberAccess.typeArgumentCount,
@@ -253,11 +259,8 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeCall(proto: ProtoCall, start: Int, end: Int, type: IrType): IrCall {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrSimpleFunctionSymbol
-
-        val superSymbol = if (proto.hasSuper()) {
-            declarationDeserializer.deserializeIrSymbolAndRemap(proto.`super`) as IrClassSymbol
-        } else null
+        val symbol = deserializeTypedSymbol<IrSimpleFunctionSymbol>(proto.symbol, FUNCTION_SYMBOL)
+        val superSymbol = deserializeTypedSymbolWhen<IrClassSymbol>(proto.hasSuper(), CLASS_SYMBOL) { proto.`super` }
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         val call: IrCall =
@@ -289,7 +292,7 @@ class IrBodyDeserializer(
         start: Int,
         end: Int
     ): IrDelegatingConstructorCall {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrConstructorSymbol
+        val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
         val call = IrDelegatingConstructorCallImpl(
             start,
             end,
@@ -309,7 +312,7 @@ class IrBodyDeserializer(
         start: Int,
         end: Int,
     ): IrEnumConstructorCall {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrConstructorSymbol
+        val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
         val call = IrEnumConstructorCallImpl(
             start,
             end,
@@ -367,10 +370,15 @@ class IrBodyDeserializer(
         start: Int, end: Int, type: IrType
     ): IrFunctionReference {
 
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrFunctionSymbol
+        val symbol = deserializeTypedSymbol<IrFunctionSymbol>(
+            proto.symbol,
+            fallbackSymbolKind = /* just the first possible option */ FUNCTION_SYMBOL
+        )
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
-        val reflectionTarget =
-            if (proto.hasReflectionTargetSymbol()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.reflectionTargetSymbol) as IrFunctionSymbol else null
+        val reflectionTarget = deserializeTypedSymbolWhen<IrFunctionSymbol>(
+            proto.hasReflectionTargetSymbol(),
+            fallbackSymbolKind = /* just the first possible option */ FUNCTION_SYMBOL
+        ) { proto.reflectionTargetSymbol }
         val callable = IrFunctionReferenceImpl(
             start,
             end,
@@ -393,12 +401,9 @@ class IrBodyDeserializer(
 
     private fun deserializeGetField(proto: ProtoGetField, start: Int, end: Int, type: IrType): IrGetField {
         val access = proto.fieldAccess
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(access.symbol) as IrFieldSymbol
+        val symbol = deserializeTypedSymbol<IrFieldSymbol>(access.symbol, FIELD_SYMBOL)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
-
-        val superQualifier = if (access.hasSuper()) {
-            declarationDeserializer.deserializeIrSymbolAndRemap(access.`super`) as IrClassSymbol
-        } else null
+        val superQualifier = deserializeTypedSymbolWhen<IrClassSymbol>(access.hasSuper(), CLASS_SYMBOL) { access.`super` }
         val receiver = if (access.hasReceiver()) {
             deserializeExpression(access.receiver)
         } else null
@@ -407,7 +412,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeGetValue(proto: ProtoGetValue, start: Int, end: Int, type: IrType): IrGetValue {
-        val symbol = declarationDeserializer.deserializeIrSymbol(proto.symbol) as IrValueSymbol
+        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null, remap = false)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         // TODO: origin!
         return IrGetValueImpl(start, end, type, symbol, origin)
@@ -419,7 +424,7 @@ class IrBodyDeserializer(
         end: Int,
         type: IrType
     ): IrGetEnumValue {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrEnumEntrySymbol
+        val symbol = deserializeTypedSymbol<IrEnumEntrySymbol>(proto.symbol, ENUM_ENTRY_SYMBOL)
         return IrGetEnumValueImpl(start, end, type, symbol)
     }
 
@@ -429,7 +434,7 @@ class IrBodyDeserializer(
         end: Int,
         type: IrType
     ): IrGetObjectValue {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrClassSymbol
+        val symbol = deserializeTypedSymbol<IrClassSymbol>(proto.symbol, CLASS_SYMBOL)
         return IrGetObjectValueImpl(start, end, type, symbol)
     }
 
@@ -438,7 +443,7 @@ class IrBodyDeserializer(
         start: Int,
         end: Int
     ): IrInstanceInitializerCall {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrClassSymbol
+        val symbol = deserializeTypedSymbol<IrClassSymbol>(proto.symbol, CLASS_SYMBOL)
         return IrInstanceInitializerCallImpl(start, end, symbol, builtIns.unitType)
     }
 
@@ -449,11 +454,11 @@ class IrBodyDeserializer(
         type: IrType
     ): IrLocalDelegatedPropertyReference {
 
-        val delegate = declarationDeserializer.deserializeIrSymbolAndRemap(proto.delegate) as IrVariableSymbol
-        val getter = declarationDeserializer.deserializeIrSymbolAndRemap(proto.getter) as IrSimpleFunctionSymbol
+        val delegate = deserializeTypedSymbol<IrVariableSymbol>(proto.delegate, fallbackSymbolKind = null)
+        val getter = deserializeTypedSymbol<IrSimpleFunctionSymbol>(proto.getter, FUNCTION_SYMBOL)
         val setter =
-            if (proto.hasSetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrLocalDelegatedPropertySymbol
+            deserializeTypedSymbolWhen<IrSimpleFunctionSymbol>(proto.hasSetter(), FUNCTION_SYMBOL) { proto.setter }
+        val symbol = deserializeTypedSymbol<IrLocalDelegatedPropertySymbol>(proto.symbol, fallbackSymbolKind = null)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         return IrLocalDelegatedPropertyReferenceImpl(
@@ -467,14 +472,11 @@ class IrBodyDeserializer(
     }
 
     private fun deserializePropertyReference(proto: ProtoPropertyReference, start: Int, end: Int, type: IrType): IrPropertyReference {
+        val symbol = deserializeTypedSymbol<IrPropertySymbol>(proto.symbol, PROPERTY_SYMBOL)
+        val field = deserializeTypedSymbolWhen<IrFieldSymbol>(proto.hasField(), FIELD_SYMBOL) { proto.field }
+        val getter = deserializeTypedSymbolWhen<IrSimpleFunctionSymbol>(proto.hasGetter(), FUNCTION_SYMBOL) { proto.getter }
+        val setter = deserializeTypedSymbolWhen<IrSimpleFunctionSymbol>(proto.hasSetter(), FUNCTION_SYMBOL) { proto.setter }
 
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrPropertySymbol
-
-        val field = if (proto.hasField()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.field) as IrFieldSymbol else null
-        val getter =
-            if (proto.hasGetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.getter) as IrSimpleFunctionSymbol else null
-        val setter =
-            if (proto.hasSetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         val callable = IrPropertyReferenceImpl(
@@ -491,17 +493,18 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeReturn(proto: ProtoReturn, start: Int, end: Int): IrReturn {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.returnTarget) as IrReturnTargetSymbol
+        val symbol = deserializeTypedSymbol<IrReturnTargetSymbol>(
+            proto.returnTarget,
+            fallbackSymbolKind = /* just the first possible option */ FUNCTION_SYMBOL
+        )
         val value = deserializeExpression(proto.value)
         return IrReturnImpl(start, end, builtIns.nothingType, symbol, value)
     }
 
     private fun deserializeSetField(proto: ProtoSetField, start: Int, end: Int): IrSetField {
         val access = proto.fieldAccess
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(access.symbol) as IrFieldSymbol
-        val superQualifier = if (access.hasSuper()) {
-            declarationDeserializer.deserializeIrSymbolAndRemap(access.`super`) as IrClassSymbol
-        } else null
+        val symbol = deserializeTypedSymbol<IrFieldSymbol>(access.symbol, FIELD_SYMBOL)
+        val superQualifier = deserializeTypedSymbolWhen<IrClassSymbol>(access.hasSuper(), CLASS_SYMBOL) { access.`super` }
         val receiver = if (access.hasReceiver()) {
             deserializeExpression(access.receiver)
         } else null
@@ -512,7 +515,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeSetValue(proto: ProtoSetValue, start: Int, end: Int): IrSetValue {
-        val symbol = declarationDeserializer.deserializeIrSymbol(proto.symbol) as IrValueSymbol
+        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null, remap = false)
         val value = deserializeExpression(proto.value)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         return IrSetValueImpl(start, end, builtIns.unitType, symbol, value, origin)
@@ -829,6 +832,29 @@ class IrBodyDeserializer(
 
     private inline fun deserializeIrStatementOrigin(hasOriginName: Boolean, protoName: () -> Int): IrStatementOrigin? =
         if (hasOriginName) deserializeIrStatementOrigin(protoName()) else null
+
+    /**
+     * [fallbackSymbolKind] must not completely match [S], but it should represent a subclass of [S].
+     *
+     * Example: [S] is [IrClassifierSymbol] and [fallbackSymbolKind] is [CLASS_SYMBOL],
+     * which is only one possible option along with [TYPE_PARAMETER_SYMBOL].
+     *
+     * Note, that for local IR declarations such as [IrValueDeclaration] [fallbackSymbolKind] can be left null.
+     */
+    private inline fun <reified S : IrSymbol> deserializeTypedSymbol(
+        code: Long,
+        fallbackSymbolKind: SymbolKind?,
+        remap: Boolean = true
+    ): S = with(declarationDeserializer) {
+        val symbol = if (remap) deserializeIrSymbolAndRemap(code) else deserializeIrSymbol(code)
+        symbol.checkSymbolType(fallbackSymbolKind)
+    }
+
+    private inline fun <reified S : IrSymbol> deserializeTypedSymbolWhen(
+        condition: Boolean,
+        fallbackSymbolKind: SymbolKind?,
+        code: () -> Long
+    ): S? = if (condition) deserializeTypedSymbol(code(), fallbackSymbolKind, remap = true) else null
 
     companion object {
 
