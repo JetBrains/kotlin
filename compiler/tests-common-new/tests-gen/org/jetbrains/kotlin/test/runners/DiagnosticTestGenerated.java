@@ -21011,6 +21011,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt54827.kt")
+            public void testKt54827() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/kt54827.kt");
+            }
+
+            @Test
             @TestMetadata("modifierApplicability.kt")
             public void testModifierApplicability() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/modifierApplicability.kt");

@@ -80,9 +80,10 @@ object ExpectedActualResolver {
                         if (container is ClassDescriptor) {
                             val expectedClass = declaration.containingDeclaration as ClassDescriptor
                             // TODO: this might not work for members of inner generic classes
-                            Substitutor(expectedClass.declaredTypeParameters, container.declaredTypeParameters)
-                        }
-                        else null
+                            if (expectedClass.declaredTypeParameters.size == container.declaredTypeParameters.size) {
+                                Substitutor(expectedClass.declaredTypeParameters, container.declaredTypeParameters)
+                            } else null
+                        } else null
                     areCompatibleCallables(declaration, actual, parentSubstitutor = substitutor)
                 }
             }
