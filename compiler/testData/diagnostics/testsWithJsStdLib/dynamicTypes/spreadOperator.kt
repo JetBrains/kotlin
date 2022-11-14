@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 fun test(d: dynamic) {
     val a = arrayOf(1, 2, 3)
 
