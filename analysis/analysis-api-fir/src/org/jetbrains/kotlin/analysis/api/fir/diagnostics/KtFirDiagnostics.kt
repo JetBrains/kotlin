@@ -1399,6 +1399,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DynamicUpperBound::class
     }
 
+    abstract class DynamicReceiverNotAllowed : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = DynamicReceiverNotAllowed::class
+    }
+
     abstract class IncompatibleTypes : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = IncompatibleTypes::class
         abstract val typeA: KtType
