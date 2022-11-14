@@ -3852,6 +3852,11 @@ internal class JavaSamInterfaceConstructorReferenceImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.JavaSamInterfaceConstructorReference(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class DynamicImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.Dynamic(), KtAbstractFirDiagnostic<KtElement>
+
 internal class SyntaxImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
