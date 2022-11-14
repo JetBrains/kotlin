@@ -120,3 +120,7 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
 
     return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
 }
+
+fun FirBasedSymbol<*>.isEffectivelyExternalMember(session: FirSession): Boolean {
+    return fir is FirMemberDeclaration && isEffectivelyExternal(session)
+}
