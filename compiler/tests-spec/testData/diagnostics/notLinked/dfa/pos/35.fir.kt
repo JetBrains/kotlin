@@ -70,7 +70,7 @@ fun case_6(x: Any?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     } while (false)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
 }
 
 // TESTCASE NUMBER: 7

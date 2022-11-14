@@ -324,7 +324,7 @@ digraph tryCatch_kt {
     96 -> {97};
     97 -> {98};
     98 -> {99} [style=dotted];
-    98 -> {46} [color=green style=dashed];
+    98 -> {47} [color=green style=dashed];
     99 -> {100} [style=dotted];
     100 -> {101} [style=dotted];
     101 -> {102} [style=dotted];

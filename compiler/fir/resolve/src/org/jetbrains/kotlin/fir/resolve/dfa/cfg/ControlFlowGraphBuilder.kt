@@ -85,7 +85,7 @@ class ControlFlowGraphBuilder {
     private val exitsFromPostponedAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, PostponedLambdaExitNode> = mutableMapOf()
     private val parentGraphForAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, ControlFlowGraph> = mutableMapOf()
 
-    private val loopEnterNodes: NodeStorage<FirElement, CFGNode<FirElement>> = NodeStorage()
+    private val loopConditionEnterNodes: NodeStorage<FirElement, LoopConditionEnterNode> = NodeStorage()
     private val loopExitNodes: NodeStorage<FirLoop, LoopExitNode> = NodeStorage()
 
     private val exitsFromCompletedPostponedAnonymousFunctions: MutableList<MutableList<CFGNode<*>>> = mutableListOf()
@@ -670,7 +670,7 @@ class ControlFlowGraphBuilder {
         val node = createJumpNode(jump)
         val nextNode = when (jump) {
             is FirReturnExpression -> exitTargetsForReturn[jump.target.labeledElement.symbol]
-            is FirContinueExpression -> loopEnterNodes[jump.target.labeledElement]
+            is FirContinueExpression -> loopConditionEnterNodes[jump.target.labeledElement.condition]
             is FirBreakExpression -> loopExitNodes[jump.target.labeledElement]
             else -> throw IllegalArgumentException("Unknown jump type: ${jump.render()}")
         }
@@ -681,12 +681,17 @@ class ControlFlowGraphBuilder {
             else -> NormalPath
         }
 
+        // while (...) continue // <- jump back
+        // do continue while (...) // <- jump forward (block exit node not created yet)
+        // do ... while (continue) // <- jump back (to itself), believe it or not
+        val isBack = nextNode is LoopConditionEnterNode &&
+                (nextNode.loop !is FirDoWhileLoop || nextNode.previousNodes.any { it is LoopBlockExitNode })
         addNodeWithJump(
             node,
             nextNode,
-            isBack = jump is FirContinueExpression,
+            isBack = isBack,
             trackJump = jump is FirReturnExpression,
-            label = NormalPath,
+            label = if (isBack) LoopBackPath else NormalPath,
             labelForFinallyBLock = labelForFinallyBLock
         )
         return node
@@ -758,14 +763,12 @@ class ControlFlowGraphBuilder {
     fun enterWhileLoop(loop: FirLoop): Pair<LoopEnterNode, LoopConditionEnterNode> {
         val loopEnterNode = createLoopEnterNode(loop).also {
             addNewSimpleNode(it)
-            loopEnterNodes.push(it)
         }
         loopExitNodes.push(createLoopExitNode(loop))
         levelCounter++
         val conditionEnterNode = createLoopConditionEnterNode(loop.condition, loop).also {
             addNewSimpleNode(it)
-            // put conditional node twice so we can refer it after exit from loop block
-            lastNodes.push(it)
+            loopConditionEnterNodes.push(it)
         }
         levelCounter++
         return loopEnterNode to conditionEnterNode
@@ -784,15 +787,11 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitWhileLoop(loop: FirLoop): Pair<LoopBlockExitNode, LoopExitNode> {
-        loopEnterNodes.pop()
         levelCounter--
         val loopBlockExitNode = createLoopBlockExitNode(loop)
         popAndAddEdge(loopBlockExitNode)
-        if (lastNodes.isNotEmpty) {
-            val conditionEnterNode = lastNodes.pop()
-            require(conditionEnterNode is LoopConditionEnterNode) { loop.render() }
-            addBackEdge(loopBlockExitNode, conditionEnterNode, label = LoopBackPath)
-        }
+        val conditionEnterNode = loopConditionEnterNodes.pop()
+        addBackEdge(loopBlockExitNode, conditionEnterNode, label = LoopBackPath)
         val loopExitNode = loopExitNodes.pop()
         loopExitNode.updateDeadStatus()
         lastNodes.push(loopExitNode)
@@ -811,7 +810,7 @@ class ControlFlowGraphBuilder {
         addNewSimpleNode(blockEnterNode)
         // put block enter node twice so we can refer it after exit from loop condition
         lastNodes.push(blockEnterNode)
-        loopEnterNodes.push(blockEnterNode)
+        loopConditionEnterNodes.push(createLoopConditionEnterNode(loop.condition, loop))
         levelCounter++
         return loopEnterNode to blockEnterNode
     }
@@ -819,13 +818,15 @@ class ControlFlowGraphBuilder {
     fun enterDoWhileLoopCondition(loop: FirLoop): Pair<LoopBlockExitNode, LoopConditionEnterNode> {
         levelCounter--
         val blockExitNode = createLoopBlockExitNode(loop).also { addNewSimpleNode(it) }
-        val conditionEnterNode = createLoopConditionEnterNode(loop.condition, loop).also { addNewSimpleNode(it) }
+        // This may sound shocking, but `do...while` conditions can `continue` to themselves,
+        // so we can't pop the node off the stack here.
+        val conditionEnterNode = loopConditionEnterNodes.top().also { addNewSimpleNode(it) }
         levelCounter++
         return blockExitNode to conditionEnterNode
     }
 
     fun exitDoWhileLoop(loop: FirLoop): Pair<LoopConditionExitNode, LoopExitNode> {
-        loopEnterNodes.pop()
+        loopConditionEnterNodes.pop()
         levelCounter--
         val conditionExitNode = createLoopConditionExitNode(loop.condition)
         val conditionBooleanValue = conditionExitNode.booleanConstValue
@@ -1556,12 +1557,7 @@ class ControlFlowGraphBuilder {
         popAndAddEdge(node, preferredKind)
         if (targetNode != null) {
             if (isBack) {
-                if (targetNode is LoopEnterNode) {
-                    // `continue` to the loop header
-                    addBackEdge(node, targetNode, label = LoopBackPath)
-                } else {
-                    addBackEdge(node, targetNode, label = label)
-                }
+                addBackEdge(node, targetNode, label = label)
             } else {
                 // go through all final nodes between node and target
                 val finallyNodes = finallyBefore(targetNode)
