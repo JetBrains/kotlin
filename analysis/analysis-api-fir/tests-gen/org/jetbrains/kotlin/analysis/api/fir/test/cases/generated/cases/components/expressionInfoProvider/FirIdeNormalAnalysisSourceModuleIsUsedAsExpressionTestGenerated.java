@@ -959,6 +959,18 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
     }
 
     @Test
+    @TestMetadata("function_body_with_if.kt")
+    public void testFunction_body_with_if() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/function_body_with_if.kt");
+    }
+
+    @Test
+    @TestMetadata("function_equal_block_with_if.kt")
+    public void testFunction_equal_block_with_if() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/function_equal_block_with_if.kt");
+    }
+
+    @Test
     @TestMetadata("ifBranches_unused.kt")
     public void testIfBranches_unused() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/ifBranches_unused.kt");
@@ -1511,9 +1523,21 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
     }
 
     @Test
+    @TestMetadata("return_inside_if.kt")
+    public void testReturn_inside_if() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return_inside_if.kt");
+    }
+
+    @Test
     @TestMetadata("return_value.kt")
     public void testReturn_value() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return_value.kt");
+    }
+
+    @Test
+    @TestMetadata("return_with_if.kt")
+    public void testReturn_with_if() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return_with_if.kt");
     }
 
     @Test
