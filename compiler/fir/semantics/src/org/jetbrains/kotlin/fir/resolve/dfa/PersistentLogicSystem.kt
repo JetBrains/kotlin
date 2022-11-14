@@ -22,7 +22,7 @@ typealias PersistentImplications = PersistentMap<DataFlowVariable, PersistentLis
 
 class PersistentFlow : Flow {
     val previousFlow: PersistentFlow?
-    override var approvedTypeStatements: PersistentApprovedTypeStatements
+    var approvedTypeStatements: PersistentApprovedTypeStatements
     var logicStatements: PersistentImplications
     val level: Int
 
@@ -59,6 +59,9 @@ class PersistentFlow : Flow {
         backwardsAliasMap = persistentMapOf()
         assignmentIndex = persistentMapOf()
     }
+
+    override val knownVariables: Set<RealVariable>
+        get() = approvedTypeStatements.keys + directAliasMap.keys
 
     override fun unwrapVariable(variable: RealVariable): RealVariable =
         directAliasMap[variable] ?: variable
@@ -126,8 +129,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
 
         val approvedTypeStatements = result.approvedTypeStatements.builder()
-        val allVariablesWithStatements = flows.flatMapTo(mutableSetOf()) { it.approvedTypeStatements.keys + it.directAliasMap.keys }
-        allVariablesWithStatements.forEach computeStatement@{ variable ->
+        flows.flatMapTo(mutableSetOf()) { it.knownVariables }.forEach computeStatement@{ variable ->
             val statement = if (variable in result.directAliasMap) {
                 return@computeStatement // statements about alias == statements about aliased variable
             } else if (!allExecute) {
@@ -321,6 +323,9 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         removeAllAboutVariable(flow, variable)
         flow.assignmentIndex = flow.assignmentIndex.put(variable, index)
     }
+
+    override fun isSameValueIn(a: PersistentFlow, b: PersistentFlow, variable: RealVariable): Boolean =
+        a.assignmentIndex[variable] == b.assignmentIndex[variable]
 }
 
 private fun lowestCommonFlow(left: PersistentFlow, right: PersistentFlow): PersistentFlow {

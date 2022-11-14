@@ -87,9 +87,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        val flow = dataFlowInfo.flowOnNodes.getValue(node) as PersistentFlow
-        var typeStatements: TypeStatements = flow.approvedTypeStatements
-
+        var flow = dataFlowInfo.flowOnNodes.getValue(node) as PersistentFlow
         val operation = effect.value.toOperation()
         if (operation != null) {
             if (resultExpression is FirConstExpression<*>) {
@@ -100,17 +98,17 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
                 val variableStorage = dataFlowInfo.variableStorage as VariableStorageImpl
                 val resultVar = variableStorage.getOrCreateIfReal(flow, resultExpression)
                 if (resultVar != null) {
-                    typeStatements = logicSystem.andForTypeStatements(
-                        typeStatements,
-                        logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
-                    )
+                    val impliedByReturnValue = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
+                    if (impliedByReturnValue.isNotEmpty()) {
+                        flow = logicSystem.forkFlow(flow).also { logicSystem.addTypeStatements(it, impliedByReturnValue) }
+                    }
                 }
             }
         }
 
         // TODO: if this is not a top-level function, `FirDataFlowAnalyzer` has erased its value parameters
         //  from `dataFlowInfo.variableStorage` for some reason, so its `getLocalVariable` doesn't work.
-        val knownVariables = typeStatements.keys.associateBy { it.identifier }
+        val knownVariables = flow.knownVariables.associateBy { it.identifier }
         val argumentVariables = Array(function.valueParameters.size + 1) { i ->
             val parameterSymbol = if (i > 0) {
                 function.valueParameters[i - 1].symbol
@@ -134,7 +132,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         return !conditionStatements.values.all { requirement ->
             val originalType = requirement.variable.identifier.symbol.correspondingParameterType ?: return@all true
             val requiredType = requirement.smartCastedType(typeContext, originalType)
-            val actualType = typeStatements[requirement.variable].smartCastedType(typeContext, originalType)
+            val actualType = flow.getTypeStatement(requirement.variable).smartCastedType(typeContext, originalType)
             actualType.isSubtypeOf(typeContext, requiredType)
         }
     }

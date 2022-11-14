@@ -515,9 +515,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         val flow = node.flow
-        // TODO: should be flow from the left operand, otherwise statements below will affect
-        //  aliases that were established in the right operand and were not true at the time
-        //  the left operand was evaluated.
+        // TODO: should be `getOrCreateIfRealAndUnchanged(flow from LHS, flow, leftOperand)`, otherwise the statement will
+        //  be added even if the value has changed in the RHS. Currently the only previous node is the RHS.
         val leftOperandVariable = variableStorage.getOrCreateIfReal(flow, leftOperand)
         val rightOperandVariable = variableStorage.getOrCreateIfReal(flow, rightOperand)
         if (leftOperandVariable == null && rightOperandVariable == null) return
@@ -787,7 +786,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (flowFromPreviousSafeCall != null) {
             flow.copyAllInformationFrom(flowFromPreviousSafeCall)
         }
-        val receiverVariable = variableStorage.getOrCreateIfReal(node.flow, safeCall.receiver) ?: return
+        val receiverVariable = variableStorage.getOrCreateIfReal(flow, safeCall.receiver) ?: return
         flow.commitOperationStatement(receiverVariable notEq null)
     }
 
@@ -796,7 +795,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val flow = node.mergeIncomingFlow()
         mergePostponedLambdaExitsNode?.mergeIncomingFlow()
 
-        val receiverVariable = variableStorage.getOrCreateIfReal(flow, safeCall.receiver) ?: return
+        val receiverLastNode = node.firstPreviousNode
+        val receiverVariable = variableStorage.getOrCreateIfRealAndUnchanged(receiverLastNode.flow, flow, safeCall.receiver) ?: return
         val expressionVariable = variableStorage.getOrCreate(flow, safeCall)
         // TODO? if the callee has non-null return type, then safe-call == null => receiver == null
         //   if (x?.toString() == null) { /* x == null */ }
@@ -898,6 +898,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (conditionalEffects.isEmpty()) return
 
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return
+        // TODO: should be `getOrCreateIfRealAndUnchanged(last flow of argument i, flow, it)`
+        //                                                ^-- good luck finding that
         val argumentVariables = Array(arguments.size) { i -> arguments[i]?.let { variableStorage.getOrCreateIfReal(flow, it) } }
         if (argumentVariables.all { it == null }) return
 
@@ -1059,6 +1061,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             // If the right operand does not terminate, then we know that the value of the entire expression
             // has to be saturating (true for or, false for and), and it has to be produced by the left operand.
             if (leftIsBoolean) {
+                // Not checking for reassignments is safe since RHS did not execute.
                 flow.commitOperationStatement(leftVariable!! eq !isAnd)
             }
         } else {
@@ -1070,7 +1073,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             val bothEvaluated = operatorVariable eq isAnd
             // TODO? `bothEvaluated` also implies all implications from RHS. This requires a second level
             //  of implications, which the logic system currently doesn't support. See also safe calls.
-            flow.addAllConditionally(bothEvaluated, flowFromRight.approvedTypeStatements)
+            flow.addAllConditionally(bothEvaluated, flowFromRight)
             if (rightIsBoolean) {
                 flow.addAllConditionally(bothEvaluated, logicSystem.approveOperationStatement(flowFromRight, rightVariable!! eq isAnd))
             }
@@ -1080,6 +1083,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 flow.addAllConditionally(
                     operatorVariable eq !isAnd,
                     logicSystem.orForTypeStatements(
+                        // Not checking for reassignments is safe since we will only take statements that are also true in RHS
+                        // (so they're true regardless of whether the variable ends up being reassigned or not).
                         logicSystem.approveOperationStatement(flowFromLeft, leftVariable!! eq !isAnd),
                         // TODO: and(approved from right, ...)? FE1.0 doesn't seem to handle that correctly either.
                         //   if (x is A || whatever(x as B)) { /* x is (A | B) */ }
@@ -1159,7 +1164,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         mergePostponedLambdaExitsNode?.mergeIncomingFlow()
 
         val rhs = elvisExpression.rhs
-        val lhsVariable = variableStorage.getOrCreateIfReal(node.previousFlow, elvisExpression.lhs) ?: return
+        // No need to check for reassignments - if we can make any statements about LHS, then RHS has not executed.
+        val lhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.lhs) ?: return
         if (isLhsNotNull) {
             flow.commitOperationStatement(lhsVariable notEq null)
         } else if (
@@ -1283,9 +1289,15 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private fun FLOW.addAllConditionally(condition: OperationStatement, statements: TypeStatements) =
         statements.values.forEach { addImplication(condition implies it) }
 
+    private fun FLOW.addAllConditionally(condition: OperationStatement, from: FLOW) =
+        from.knownVariables.forEach {
+            // Only add the statement if this variable is not aliasing another in `this` (but it could be aliasing in `from`).
+            if (unwrapVariable(it) == it) addImplication(condition implies (from.getTypeStatement(it) ?: return@forEach))
+        }
+
     private fun FLOW.commitOperationStatement(statement: OperationStatement) =
         addAllStatements(logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true))
 
-    private val CFGNode<*>.previousFlow: FLOW
-        get() = firstPreviousNode.flow
+    private fun VariableStorageImpl.getOrCreateIfRealAndUnchanged(originalFlow: FLOW, currentFlow: FLOW, fir: FirElement) =
+        getOrCreateIfReal(originalFlow, fir)?.takeIf { !it.isReal() || logicSystem.isSameValueIn(originalFlow, currentFlow, it) }
 }
