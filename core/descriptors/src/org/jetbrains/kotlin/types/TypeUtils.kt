@@ -32,12 +32,6 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-enum class TypeNullability {
-    NOT_NULL,
-    NULLABLE,
-    FLEXIBLE
-}
-
 fun KotlinType.nullability(): TypeNullability {
     return when {
         isNullabilityFlexible() -> TypeNullability.FLEXIBLE
