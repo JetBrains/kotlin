@@ -378,17 +378,5 @@ public external fun wasm_i64_ctz(a: Long): Long
 
 // Reference type operators
 
-@WasmOp(WasmOp.REF_IS_DATA)
-internal external fun wasm_ref_is_data(x: anyref): Boolean
-
-@WasmOp(WasmOp.REF_IS_I31)
-internal external fun wasm_ref_is_i31(x: anyref): Boolean
-
-@WasmOp(WasmOp.REF_AS_DATA)
-internal external fun wasm_ref_as_data(x: anyref): dataref
-
-@WasmOp(WasmOp.REF_AS_I31)
-internal external fun wasm_ref_as_i31(x: anyref): i31ref
-
 @WasmOp(WasmOp.REF_IS_NULL)
 internal external fun wasm_externref_is_null(a: ExternalInterfaceType?): Boolean

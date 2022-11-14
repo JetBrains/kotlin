@@ -361,31 +361,30 @@ enum class WasmOp(
     ARRAY_GET_S("array.get_s", 0xFB_14, listOf(STRUCT_TYPE_IDX)),
     ARRAY_GET_U("array.get_u", 0xFB_15, listOf(STRUCT_TYPE_IDX)),
     ARRAY_SET("array.set", 0xFB_16, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_LEN("array.len", 0xFB_17, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_LEN("array.len", 0xFB_19),
     ARRAY_COPY("array.copy", 0xFB_18, listOf(STRUCT_TYPE_IDX, STRUCT_TYPE_IDX)),
     ARRAY_NEW_DATA("array.new_data", 0xFB_1D, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
     ARRAY_NEW_FIXED("array.new_fixed", 0xFB_1A, listOf(STRUCT_TYPE_IDX, CONST_I32)),
+    ARRAY_NEW_ELEM("array.new_elem", 0xFB_1F, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
 
     I31_NEW("i31.new", 0xFB_20),
     I31_GET_S("i31.get_s", 0xFB_21),
     I31_GET_U("i31.get_u", 0xFB_22),
 
     REF_EQ("ref.eq", 0xD5),
-    REF_TEST("ref.test", 0xFB_44, STRUCT_TYPE_IDX),
-    REF_CAST("ref.cast", 0xFB_45, STRUCT_TYPE_IDX),
+    REF_TEST("ref.test", 0xFB_40, STRUCT_TYPE_IDX),
+    REF_TEST_NULL("ref.test null", 0xFB_48, STRUCT_TYPE_IDX),
+    REF_CAST("ref.cast", 0xFB_41, STRUCT_TYPE_IDX),
+    REF_CAST_NULL("ref.cast null", 0xFB_49, STRUCT_TYPE_IDX),
 
+    // TODO remove as soon as V8 support new instructions, see below
     BR_ON_CAST_FAIL("br_on_cast_fail", 0xfb47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
 
-    REF_IS_DATA("ref.is_data", 0xfb51),
-    REF_IS_I31("ref.is_i31", 0xfb52),
-    REF_AS_DATA("ref.as_data", 0xfb59),
-    REF_AS_I31("ref.as_i31", 0xfb5a),
-
-    BR_ON_DATA("br_on_data", 0xfb61, listOf(LABEL_IDX)),
-    BR_ON_I31("br_on_i31", 0xfb62, listOf(LABEL_IDX)),
-
-    BR_ON_NON_DATA("br_on_non_data", 0xfb64, listOf(LABEL_IDX)),
-    BR_ON_NON_I31("br_on_non_i31", 0xfb65, listOf(LABEL_IDX)),
+// Not yet supported by V8
+//    BR_ON_CAST("br_on_cast", 0xFB42, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
+//    BR_ON_CAST_NULL("br_on_cast null", 0xFB4A, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
+//    BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB43, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
+//    BR_ON_CAST_FAIL_NULL("br_on_cast_fail null", 0xFB4B, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
 
     EXTERN_INTERNALIZE("extern.internalize", 0xfb70), // externref -> anyref
     EXTERN_EXTERNALIZE("extern.externalize", 0xfb71), // anyref -> externref
