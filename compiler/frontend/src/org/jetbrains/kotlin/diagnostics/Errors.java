@@ -1272,6 +1272,7 @@ public interface Errors {
     //Inline and inlinable parameters
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> NON_PUBLIC_CALL_FROM_PUBLIC_INLINE =
             DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
+    DiagnosticFactory0<KtElement> DEPRECATED_IMPLICIT_NON_PUBLIC_API_ACCESS = DiagnosticFactory0.create(WARNING, CALL_ELEMENT);
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> PRIVATE_CLASS_MEMBER_FROM_INLINE =
             DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory1<KtElement, KtElement> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, CALL_ELEMENT);
