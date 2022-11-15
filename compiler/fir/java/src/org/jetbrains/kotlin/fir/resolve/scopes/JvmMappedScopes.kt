@@ -81,7 +81,7 @@ private fun wrapSubstitutionScopeIfNeed(
             session, useSiteMemberScope, PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY, substitutor,
             dispatchReceiverTypeForSubstitutedMembers = derivedClass.defaultType(),
             skipPrivateMembers = true,
-            derivedClass = derivedClass.symbol.toLookupTag()
+            derivedClassLookupTag = derivedClass.symbol.toLookupTag()
         )
     }
 }

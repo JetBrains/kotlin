@@ -108,14 +108,14 @@ fun FirClass.scopeForClass(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    derivedClass: ConeClassLikeLookupTag?
+    derivedClassLookupTag: ConeClassLikeLookupTag?
 ): FirTypeScope = scopeForClassImpl(
     substitutor, useSiteSession, scopeSession,
     skipPrivateMembers = false,
     classFirDispatchReceiver = this,
     // TODO: why it's always false?
     isFromExpectClass = false,
-    derivedClass = derivedClass
+    derivedClassLookupTag = derivedClassLookupTag
 )
 
 fun ConeKotlinType.scopeForSupertype(
@@ -140,7 +140,7 @@ fun ConeKotlinType.scopeForSupertype(
         skipPrivateMembers = true,
         classFirDispatchReceiver = derivedClass,
         isFromExpectClass = (derivedClass as? FirRegularClass)?.isExpect == true,
-        derivedClass = derivedClass.symbol.toLookupTag()
+        derivedClassLookupTag = derivedClass.symbol.toLookupTag()
     )
 }
 
@@ -157,7 +157,7 @@ private fun FirClass.scopeForClassImpl(
     skipPrivateMembers: Boolean,
     classFirDispatchReceiver: FirClass,
     isFromExpectClass: Boolean,
-    derivedClass: ConeClassLikeLookupTag?
+    derivedClassLookupTag: ConeClassLikeLookupTag?
 ): FirTypeScope {
     val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
@@ -173,7 +173,7 @@ private fun FirClass.scopeForClassImpl(
             substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()).lowerBoundIfFlexible() as ConeClassLikeType,
             skipPrivateMembers,
             makeExpect = isFromExpectClass,
-            derivedClass ?: classFirDispatchReceiver.symbol.toLookupTag()
+            derivedClassLookupTag ?: classFirDispatchReceiver.symbol.toLookupTag()
         )
     }
 }

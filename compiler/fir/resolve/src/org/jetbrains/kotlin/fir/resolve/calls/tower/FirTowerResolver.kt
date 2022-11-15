@@ -91,11 +91,11 @@ class FirTowerResolver(
     fun runResolverForDelegatingConstructor(
         info: CallInfo,
         constructedType: ConeClassLikeType,
-        derivedClass: ConeClassLikeLookupTag,
+        derivedClassLookupTag: ConeClassLikeLookupTag,
         context: ResolutionContext
     ): CandidateCollector {
         val outerType = components.outerClassManager.outerType(constructedType)
-        val scope = constructedType.delegatingConstructorScope(components.session, components.scopeSession, derivedClass)
+        val scope = constructedType.delegatingConstructorScope(components.session, components.scopeSession, derivedClassLookupTag)
             ?: return collector
 
         val dispatchReceiver =

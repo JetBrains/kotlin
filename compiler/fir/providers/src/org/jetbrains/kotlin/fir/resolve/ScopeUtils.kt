@@ -47,9 +47,9 @@ fun FirSmartCastExpression.smartcastScope(
 fun ConeClassLikeType.delegatingConstructorScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    derivedClass: ConeClassLikeLookupTag?
+    derivedClassLookupTag: ConeClassLikeLookupTag?
 ): FirTypeScope? {
-    return classScope(useSiteSession, scopeSession, FirResolvePhase.DECLARATIONS, derivedClass)
+    return classScope(useSiteSession, scopeSession, FirResolvePhase.DECLARATIONS, derivedClassLookupTag)
 }
 
 fun ConeKotlinType.scope(
@@ -65,7 +65,7 @@ fun ConeKotlinType.scope(
 private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession, requiredPhase: FirResolvePhase): FirTypeScope? {
     return when (this) {
         is ConeErrorType -> null
-        is ConeClassLikeType -> classScope(useSiteSession, scopeSession, requiredPhase, derivedClass = null)
+        is ConeClassLikeType -> classScope(useSiteSession, scopeSession, requiredPhase, derivedClassLookupTag = null)
         is ConeTypeParameterType -> {
             val symbol = lookupTag.symbol
             scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
@@ -100,7 +100,7 @@ private fun ConeClassLikeType.classScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     requiredPhase: FirResolvePhase,
-    derivedClass: ConeClassLikeLookupTag?
+    derivedClassLookupTag: ConeClassLikeLookupTag?
 ): FirTypeScope? {
     val fullyExpandedType = fullyExpandedType(useSiteSession)
     val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
@@ -115,7 +115,7 @@ private fun ConeClassLikeType.classScope(
         )
     }
 
-    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, derivedClass)
+    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, derivedClassLookupTag)
 }
 
 private fun ConeClassLikeType.obtainFirOfClass(useSiteSession: FirSession, requiredPhase: FirResolvePhase): FirClass? {

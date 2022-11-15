@@ -80,7 +80,7 @@ class JvmMappedScope(
             FirFakeOverrideGenerator.createCopyForFirFunction(
                 newSymbol,
                 baseFunction = symbol.fir,
-                derivedClass = firKotlinClass.symbol.toLookupTag(),
+                derivedClassLookupTag = firKotlinClass.symbol.toLookupTag(),
                 session,
                 symbol.fir.origin,
                 newDispatchReceiverType = kotlinDispatchReceiverType,
@@ -125,7 +125,7 @@ class JvmMappedScope(
                 newSymbol,
                 session,
                 oldConstructor,
-                derivedClass = firKotlinClass.symbol.toLookupTag(),
+                derivedClassLookupTag = firKotlinClass.symbol.toLookupTag(),
                 symbol.fir.origin,
                 newDispatchReceiverType = null,
                 newReturnType = substitutor.substituteOrSelf(oldConstructor.returnTypeRef.coneType),

@@ -92,7 +92,7 @@ class FirDelegatedMemberScope(
                         functionSymbol.callableId,
                     ),
                     original,
-                    derivedClass = null,
+                    derivedClassLookupTag = null,
                     session,
                     FirDeclarationOrigin.Delegated,
                     newDispatchReceiverType = dispatchReceiverType,
@@ -162,7 +162,7 @@ class FirDelegatedMemberScope(
                         propertySymbol.callableId
                     ),
                     original,
-                    derivedClass = null,
+                    derivedClassLookupTag = null,
                     session,
                     FirDeclarationOrigin.Delegated,
                     newModality = Modality.OPEN,
