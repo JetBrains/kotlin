@@ -74,13 +74,9 @@ open class RawFirBuilder(
         }
     }
 
-    fun buildFirFile(file: KtFile): FirFile {
-        return runOnStabs { file.accept(Visitor(), Unit) as FirFile }
-    }
+    fun buildFirFile(file: KtFile): FirFile = file.accept(Visitor(), Unit) as FirFile
 
-    fun buildTypeReference(reference: KtTypeReference): FirTypeRef {
-        return runOnStabs { reference.accept(Visitor(), Unit) as FirTypeRef }
-    }
+    fun buildTypeReference(reference: KtTypeReference): FirTypeRef = reference.accept(Visitor(), Unit) as FirTypeRef
 
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
         val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind

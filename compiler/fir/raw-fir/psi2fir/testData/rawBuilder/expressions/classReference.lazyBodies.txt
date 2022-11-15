@@ -1,7 +1,7 @@
 FILE: classReference.kt
     public? final? class A : R|kotlin/Any| {
         public? constructor(): R|test/A| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Any|>()
         }
 
     }

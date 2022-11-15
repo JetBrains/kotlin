@@ -5,7 +5,7 @@ FILE: where.kt
     }
     public? final? class C<T : A, B> : R|kotlin/Any| {
         public? constructor<T : A, B>(): R|C<T>| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Any|>()
         }
 
     }

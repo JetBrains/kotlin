@@ -1,7 +1,7 @@
 FILE: typeAliasWithGeneric.kt
     public? open class A : R|kotlin/Any| {
         public? constructor(): R|A| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -10,7 +10,7 @@ FILE: typeAliasWithGeneric.kt
     public? final typealias C<T> = B<T, A>
     public? final? class D : C<A> {
         public? constructor(): R|D| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<<implicit>>()
         }
 
     }

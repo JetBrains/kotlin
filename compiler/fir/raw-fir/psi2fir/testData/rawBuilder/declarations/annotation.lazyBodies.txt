@@ -1,13 +1,13 @@
 FILE: annotation.kt
     @Target(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? annotation class base : R|kotlin/Annotation| {
         public? constructor(): R|base| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Any|>()
         }
 
     }
     @base() public? final? annotation class derived : R|kotlin/Annotation| {
         public? constructor(): R|derived| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -26,7 +26,7 @@ FILE: annotation.kt
     }
     @base() public? final? enum class My : R|kotlin/Enum<My>| {
         private constructor(): R|My| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Enum<My>|>()
         }
 
         @base() public final static enum entry FIRST: R|My| = LAZY_EXPRESSION

@@ -6,7 +6,7 @@ FILE: expectActual.kt
         public? get(): Int
     public? final? actual class MyClass : R|kotlin/Any| {
         public? constructor(): R|MyClass| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Any|>()
         }
 
     }

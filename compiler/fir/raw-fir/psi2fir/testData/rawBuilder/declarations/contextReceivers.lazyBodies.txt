@@ -7,7 +7,7 @@ FILE: contextReceivers.kt
     context(A, b@B)
     public? final? class C : R|kotlin/Any| {
         public? constructor(): R|C| {
-            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
+            super<R|kotlin/Any|>()
         }
 
     }
