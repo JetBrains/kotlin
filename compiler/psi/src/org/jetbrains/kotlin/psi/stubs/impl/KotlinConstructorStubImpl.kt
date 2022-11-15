@@ -16,7 +16,6 @@ class KotlinConstructorStubImpl<T : KtConstructor<T>>(
     parent: StubElement<out PsiElement>?,
     elementType: KtConstructorElementType<T>,
     private val containingClassName: StringRef?,
-    private val hasBlockBody: Boolean,
     private val hasBody: Boolean,
     private val isDelegatedCallToThis: Boolean,
 ) : KotlinStubBaseImpl<T>(parent, elementType), KotlinConstructorStub<T> {
@@ -24,7 +23,6 @@ class KotlinConstructorStubImpl<T : KtConstructor<T>>(
     override fun getName() = StringRef.toString(containingClassName)
     override fun isTopLevel() = false
     override fun isExtension() = false
-    override fun hasBlockBody() = hasBlockBody
     override fun hasBody() = hasBody
     override fun isDelegatedCallToThis() = isDelegatedCallToThis
 }

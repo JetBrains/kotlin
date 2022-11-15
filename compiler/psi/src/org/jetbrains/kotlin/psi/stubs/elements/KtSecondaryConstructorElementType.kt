@@ -15,12 +15,11 @@ class KtSecondaryConstructorElementType(debugName: String) :
     override fun newStub(
         parentStub: StubElement<*>,
         nameRef: StringRef?,
-        hasBlockBody: Boolean,
         hasBody: Boolean,
         isDelegatedCallToThis: Boolean,
     ): KotlinConstructorStub<KtSecondaryConstructor> {
         return KotlinConstructorStubImpl(
-            parentStub, KtStubElementTypes.SECONDARY_CONSTRUCTOR, nameRef, hasBlockBody, hasBody, isDelegatedCallToThis
+            parentStub, KtStubElementTypes.SECONDARY_CONSTRUCTOR, nameRef, hasBody, isDelegatedCallToThis
         )
     }
 

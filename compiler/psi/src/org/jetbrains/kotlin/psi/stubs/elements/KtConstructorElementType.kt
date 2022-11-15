@@ -23,7 +23,6 @@ abstract class KtConstructorElementType<T : KtConstructor<T>>(
     protected abstract fun newStub(
         parentStub: StubElement<*>,
         nameRef: StringRef?,
-        hasBlockBody: Boolean,
         hasBody: Boolean,
         isDelegatedCallToThis: Boolean,
     ): KotlinConstructorStub<T>
@@ -31,16 +30,14 @@ abstract class KtConstructorElementType<T : KtConstructor<T>>(
     protected abstract fun isDelegatedCallToThis(constructor: T): Boolean
 
     override fun createStub(psi: T, parentStub: StubElement<*>): KotlinConstructorStub<T> {
-        val hasBlockBody = psi.hasBlockBody()
         val hasBody = psi.hasBody()
         val isDelegatedCallToThis = isDelegatedCallToThis(psi)
-        return newStub(parentStub, StringRef.fromString(psi.name), hasBlockBody, hasBody, isDelegatedCallToThis)
+        return newStub(parentStub, StringRef.fromString(psi.name), hasBody, isDelegatedCallToThis)
     }
 
     @Throws(IOException::class)
     override fun serialize(stub: KotlinConstructorStub<T>, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
-        dataStream.writeBoolean(stub.hasBlockBody())
         dataStream.writeBoolean(stub.hasBody())
         dataStream.writeBoolean(stub.isDelegatedCallToThis())
     }
@@ -48,10 +45,9 @@ abstract class KtConstructorElementType<T : KtConstructor<T>>(
     @Throws(IOException::class)
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinConstructorStub<T> {
         val name = dataStream.readName()
-        val hasBlockBody = dataStream.readBoolean()
         val hasBody = dataStream.readBoolean()
         val isDelegatedCallToThis = dataStream.readBoolean()
-        return newStub(parentStub, name, hasBlockBody, hasBody, isDelegatedCallToThis)
+        return newStub(parentStub, name, hasBody, isDelegatedCallToThis)
     }
 
     override fun indexStub(stub: KotlinConstructorStub<T>, sink: IndexSink) {

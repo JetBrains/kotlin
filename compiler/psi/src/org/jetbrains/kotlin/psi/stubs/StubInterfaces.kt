@@ -89,9 +89,7 @@ interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
 
 interface KotlinConstructorStub<T : KtConstructor<T>> :
     KotlinCallableStubBase<T> {
-    fun hasBlockBody(): Boolean
     fun hasBody(): Boolean
-
     fun isDelegatedCallToThis(): Boolean
 }
 
