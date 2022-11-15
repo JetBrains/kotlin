@@ -155,6 +155,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.contains
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -196,6 +197,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.containsAll
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -237,6 +239,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.get
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -278,6 +281,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -319,6 +323,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.isEmpty
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -342,6 +347,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.iterator
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -365,6 +371,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -406,6 +413,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -429,6 +437,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -470,6 +479,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.subList
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -571,6 +581,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -612,6 +623,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -635,6 +647,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

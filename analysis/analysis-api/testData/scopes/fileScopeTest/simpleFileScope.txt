@@ -13,6 +13,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /test
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
