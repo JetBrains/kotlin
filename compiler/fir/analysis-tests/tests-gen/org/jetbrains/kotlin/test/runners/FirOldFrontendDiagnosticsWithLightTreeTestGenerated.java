@@ -37851,6 +37851,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("callOfBaseFunctionFromGeneric.kt")
+            public void testCallOfBaseFunctionFromGeneric() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/callOfBaseFunctionFromGeneric.kt");
+            }
+
+            @Test
             @TestMetadata("classMembers.kt")
             public void testClassMembers() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/classMembers.kt");

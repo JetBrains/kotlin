@@ -159,16 +159,20 @@ object FirOptInUsageBaseChecker {
                 if (this is FirNamedFunctionSymbol) {
                     parentClassScope?.processDirectlyOverriddenFunctions(this) {
                         it.loadExperimentalities(
-                            context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
+                            context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
                         )
                         ProcessorAction.NEXT
                     }
                 } else if (this is FirPropertySymbol) {
                     parentClassScope?.processDirectlyOverriddenProperties(this) {
-                        it.loadExperimentalities(context, result, visited, fromSetter, dispatchReceiverType = null, fromSupertype = false)
+                        it.loadExperimentalities(context, result, visited, fromSetter, dispatchReceiverType, fromSupertype = false)
                         ProcessorAction.NEXT
                     }
                 }
+            } else if (dispatchReceiverType == null) {
+                parentClassSymbol?.loadExperimentalities(
+                    context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
+                )
             }
             if (fir !is FirConstructor) {
                 // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
@@ -180,13 +184,7 @@ object FirOptInUsageBaseChecker {
                     }
                 }
             }
-            if (dispatchReceiverType == null) {
-                parentClassSymbol?.loadExperimentalities(
-                    context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
-                )
-            } else {
-                dispatchReceiverType.addExperimentalities(context, result, visited)
-            }
+            dispatchReceiverType?.addExperimentalities(context, result, visited)
             if (fromSetter && this is FirPropertySymbol) {
                 setterSymbol?.loadExperimentalities(
                     context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
