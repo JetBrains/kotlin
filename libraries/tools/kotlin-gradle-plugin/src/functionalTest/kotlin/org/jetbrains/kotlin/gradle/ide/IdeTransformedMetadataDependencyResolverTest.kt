@@ -39,8 +39,6 @@ class IdeTransformedMetadataDependencyResolverTest {
 
         commonMain.dependencies {
             implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
-            implementation("com.arkivanov.essenty:lifecycle:0.4.2")
-            implementation("com.arkivanov.essenty:instance-keeper:0.4.2")
         }
 
         project.evaluate()
