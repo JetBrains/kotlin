@@ -60,6 +60,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
                 val lhs = call.getValueArgument(0)!!
                 val rhs = call.getValueArgument(1)!!
+
+                if (lhs.isNullConst()) return callRefIsNull(rhs)
+
+                if (rhs.isNullConst()) return callRefIsNull(lhs)
+
                 val lhsType = lhs.type
                 val rhsType = rhs.type
                 if (lhsType == rhsType) {
@@ -68,9 +73,6 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                         return irCall(call, newSymbol)
                     }
                 }
-                if (lhs.isNullConst()) return callRefIsNull(rhs)
-
-                if (rhs.isNullConst()) return callRefIsNull(lhs)
 
                 if (!lhsType.isNullable()) {
                     return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
