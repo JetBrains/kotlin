@@ -89,9 +89,9 @@ class Fir2IrConverter(
         //   5. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
         delegatedMemberGenerator.generateBodies()
-        allFirFiles.forEach {
-            withFileAnalysisExceptionWrapping(it) {
-                it.accept(fir2irVisitor, null)
+        for (firFile in allFirFiles) {
+            withFileAnalysisExceptionWrapping(firFile) {
+                firFile.accept(fir2irVisitor, null)
             }
         }
 

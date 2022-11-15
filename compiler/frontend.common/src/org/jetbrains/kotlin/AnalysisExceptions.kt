@@ -16,15 +16,18 @@ class SourceCodeAnalysisException(val source: KtSourceElement, override val caus
 inline fun <R> whileAnalysing(element: KtSourceElement?, block: () -> R): R {
     return try {
         block()
-    } catch (exception: SourceCodeAnalysisException) {
-        throw exception
-    } catch (exception: ProcessCanceledException) {
-        throw exception // KT-38483
-    } catch (error: VirtualMachineError) {
-        throw error
     } catch (throwable: Throwable) {
-        val source = element?.takeIf { it is KtRealPsiSourceElement } ?: throw throwable
-        throw SourceCodeAnalysisException(source, throwable)
+        throw throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element)
+    }
+}
+
+fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
+    is SourceCodeAnalysisException -> this
+    is ProcessCanceledException -> this // KT-38483
+    is VirtualMachineError -> this
+    else -> when (element) {
+        is KtRealPsiSourceElement -> SourceCodeAnalysisException(element, this)
+        else -> this
     }
 }
 
@@ -43,26 +46,29 @@ class FileAnalysisException(
 inline fun <R> withFileAnalysisExceptionWrapping(
     filePath: String?,
     fileSource: AbstractKtSourceElement?,
-    linesMapping: (Int) -> Pair<Int, Int>?,
+    crossinline linesMapping: (Int) -> Pair<Int, Int>?,
     block: () -> R,
 ): R {
     return try {
         block()
-    } catch (exception: SourceCodeAnalysisException) {
-        val path = filePath ?: throw exception
-
-        if (fileSource == exception.source) {
-            throw FileAnalysisException(path, exception.cause)
-        }
-
-        val lineAndOffset = linesMapping(exception.source.startOffset)
-        throw FileAnalysisException(path, exception.cause, lineAndOffset)
-    } catch (exception: ProcessCanceledException) {
-        throw exception // KT-38483
-    } catch (error: VirtualMachineError) {
-        throw error
     } catch (throwable: Throwable) {
-        val path = filePath ?: throw throwable
-        throw FileAnalysisException(path, throwable)
+        throw throwable.wrapIntoFileAnalysisExceptionIfNeeded(filePath, fileSource) { linesMapping(it) }
     }
+}
+
+fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
+    filePath: String?,
+    fileSource: AbstractKtSourceElement?,
+    linesMapping: (Int) -> Pair<Int, Int>?,
+) = when {
+    filePath == null -> this
+
+    this is SourceCodeAnalysisException -> when (fileSource) {
+        source -> FileAnalysisException(filePath, cause)
+        else -> FileAnalysisException(filePath, cause, linesMapping(source.startOffset))
+    }
+
+    this is ProcessCanceledException -> this // KT-38483
+    this is VirtualMachineError -> this
+    else -> FileAnalysisException(filePath, this)
 }

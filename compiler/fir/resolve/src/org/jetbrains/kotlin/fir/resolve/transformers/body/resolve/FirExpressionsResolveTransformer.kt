@@ -86,7 +86,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
     ): FirStatement = whileAnalysing(qualifiedAccessExpression) {
-        return transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false)
+        transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false)
     }
 
     fun transformQualifiedAccessExpression(
@@ -319,24 +319,26 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformSafeCallExpression(
         safeCallExpression: FirSafeCallExpression,
         data: ResolutionMode
-    ): FirStatement = whileAnalysing(safeCallExpression) {
-        withContainingSafeCallExpression(safeCallExpression) {
-            safeCallExpression.transformAnnotations(this, ResolutionMode.ContextIndependent)
-            safeCallExpression.transformReceiver(this, ResolutionMode.ContextIndependent)
+    ): FirStatement {
+        whileAnalysing(safeCallExpression) {
+            withContainingSafeCallExpression(safeCallExpression) {
+                safeCallExpression.transformAnnotations(this, ResolutionMode.ContextIndependent)
+                safeCallExpression.transformReceiver(this, ResolutionMode.ContextIndependent)
 
-            val receiver = safeCallExpression.receiver
+                val receiver = safeCallExpression.receiver
 
-            dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
+                dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
 
-            safeCallExpression.apply {
-                checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, components.session, components.file)
-                transformSelector(this@FirExpressionsResolveTransformer, data)
-                propagateTypeFromQualifiedAccessAfterNullCheck(receiver, session, context.file)
+                safeCallExpression.apply {
+                    checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, components.session, components.file)
+                    transformSelector(this@FirExpressionsResolveTransformer, data)
+                    propagateTypeFromQualifiedAccessAfterNullCheck(receiver, session, context.file)
+                }
+
+                dataFlowAnalyzer.exitSafeCall(safeCallExpression)
+
+                return safeCallExpression
             }
-
-            dataFlowAnalyzer.exitSafeCall(safeCallExpression)
-
-            return safeCallExpression
         }
     }
 

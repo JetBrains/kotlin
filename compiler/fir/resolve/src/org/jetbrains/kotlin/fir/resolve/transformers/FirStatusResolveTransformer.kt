@@ -186,7 +186,7 @@ open class FirDesignatedStatusResolveTransformer(
                 statusComputationSession.computeOnlyClassStatus(regularClass)
             }
         }
-        transformClass(regularClass, data).also {
+        return transformClass(regularClass, data).also {
             if (classLocated) statusComputationSession.endComputing(regularClass)
         }
     }

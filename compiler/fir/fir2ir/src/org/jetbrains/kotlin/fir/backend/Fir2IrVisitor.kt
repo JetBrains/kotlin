@@ -207,7 +207,7 @@ class Fir2IrVisitor(
 
     override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement = whileAnalysing(constructor) {
         val irConstructor = declarationStorage.getCachedIrConstructor(constructor)!!
-        conversionScope.withFunction(irConstructor) {
+        return conversionScope.withFunction(irConstructor) {
             memberGenerator.convertFunctionContent(irConstructor, constructor, containingClass = conversionScope.containerFirClass())
         }
     }

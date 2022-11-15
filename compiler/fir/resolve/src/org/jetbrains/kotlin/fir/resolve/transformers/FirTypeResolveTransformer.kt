@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import kotlinx.collections.immutable.toImmutableList
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
@@ -75,17 +74,19 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement = whileAnalysing(regularClass) {
-        return withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
-            withScopeCleanup {
-                regularClass.addTypeParametersScope()
-                regularClass.typeParameters.forEach {
-                    it.accept(this, data)
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
+        whileAnalysing(regularClass) {
+            withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
+                withScopeCleanup {
+                    regularClass.addTypeParametersScope()
+                    regularClass.typeParameters.forEach {
+                        it.accept(this, data)
+                    }
+                    unboundCyclesInTypeParametersSupertypes(regularClass)
                 }
-                unboundCyclesInTypeParametersSupertypes(regularClass)
-            }
 
-            resolveClassContent(regularClass, data)
+                return resolveClassContent(regularClass, data)
+            }
         }
     }
 
