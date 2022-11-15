@@ -13,7 +13,7 @@ data class IdeaKotlinBinaryCoordinates(
     val group: String,
     val module: String,
     val version: String?,
-    val sourceSetName: String?
+    val sourceSetName: String? = null,
 ) : IdeaKotlinDependencyCoordinates {
     override fun toString(): String {
         return "$group:$module:$version${sourceSetName?.let { ":$it" }.orEmpty()}"

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Default
@@ -139,6 +141,10 @@ interface IdeMultiplatformImport {
             val unconstrained = SourceSetConstraint { true }
             val isNative = SourceSetConstraint { sourceSet -> isNativeSourceSet(sourceSet) }
             val isMetadata = SourceSetConstraint { sourceSet -> sourceSet.internal.compilations.any { it is KotlinMetadataCompilation } }
+            val isPlatform = !isMetadata and SourceSetConstraint { sourceSet -> sourceSet.internal.compilations.any() }
+            val isJvmAndAndroid = SourceSetConstraint { sourceSet ->
+                sourceSet.internal.compilations.map { it.platformType }.toSet() == setOf(jvm, androidJvm)
+            }
         }
     }
 
@@ -159,4 +165,20 @@ fun IdeMultiplatformImport.registerExtrasSerializationExtension(
     builder: IdeaKotlinExtrasSerializationExtensionBuilder.() -> Unit
 ) {
     registerExtrasSerializationExtension(IdeaKotlinExtrasSerializationExtension(builder))
+}
+
+infix fun SourceSetConstraint.or(
+    other: SourceSetConstraint
+) = SourceSetConstraint { sourceSet ->
+    this@or(sourceSet) || other(sourceSet)
+}
+
+infix fun SourceSetConstraint.and(
+    other: SourceSetConstraint
+) = SourceSetConstraint { sourceSet ->
+    this@and(sourceSet) && other(sourceSet)
+}
+
+operator fun SourceSetConstraint.not() = SourceSetConstraint { sourceSet ->
+    this@not(sourceSet).not()
 }
