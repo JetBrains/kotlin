@@ -40,6 +40,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.hash32
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -140,6 +141,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.isEmpty
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -167,6 +169,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointAt
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -214,6 +217,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointBefore
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -261,6 +265,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointCount
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -327,6 +332,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.offsetByCodePoints
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -393,6 +399,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getChars
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -459,6 +466,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getChars
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -566,6 +574,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: java/lang/String.getBytes
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -670,6 +679,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -717,6 +727,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -764,6 +775,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -791,6 +803,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.equals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -838,6 +851,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contentEquals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -885,6 +899,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contentEquals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -932,6 +947,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.equalsIgnoreCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -979,6 +995,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1026,6 +1043,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.compareToIgnoreCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1073,6 +1091,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.regionMatches
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1177,6 +1196,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.regionMatches
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1300,6 +1320,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.startsWith
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1366,6 +1387,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.startsWith
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1413,6 +1435,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.endsWith
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1460,6 +1483,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.hashCode
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1487,6 +1511,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1534,6 +1559,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1600,6 +1626,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1647,6 +1674,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1713,6 +1741,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOfSupplementary
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1779,6 +1808,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1826,6 +1856,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1892,6 +1923,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1939,6 +1971,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2005,6 +2038,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOfSupplementary
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2071,6 +2105,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.substring
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2118,6 +2153,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.substring
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2184,6 +2220,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.subSequence
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2250,6 +2287,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.concat
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2297,6 +2335,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replace
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2363,6 +2402,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replace
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2429,6 +2469,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.matches
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2476,6 +2517,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contains
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2523,6 +2565,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replaceFirst
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2589,6 +2632,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replaceAll
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2655,6 +2699,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.split
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2721,6 +2766,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.split
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2768,6 +2814,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2815,6 +2862,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2842,6 +2890,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2889,6 +2938,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2916,6 +2966,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.trim
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2943,6 +2994,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toString
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2970,6 +3022,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toCharArray
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2997,6 +3050,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.intern
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -3024,6 +3078,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.get
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false

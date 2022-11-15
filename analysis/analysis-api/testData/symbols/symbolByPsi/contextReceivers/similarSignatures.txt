@@ -50,6 +50,7 @@ KtFunctionSymbol:
   contextReceivers: [
     ContextReceiver(A)
   ]
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -78,6 +79,7 @@ KtFunctionSymbol:
   contextReceivers: [
     ContextReceiver(B)
   ]
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -107,6 +109,7 @@ KtFunctionSymbol:
     ContextReceiver(A)
     ContextReceiver(B)
   ]
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -136,6 +139,7 @@ KtFunctionSymbol:
     ContextReceiver(B)
     ContextReceiver(A)
   ]
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

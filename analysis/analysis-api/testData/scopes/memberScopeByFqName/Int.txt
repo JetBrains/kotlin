@@ -5,6 +5,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.and
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -55,6 +56,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -105,6 +107,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -155,6 +158,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -205,6 +209,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -255,6 +260,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -305,6 +311,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -352,6 +359,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.dec
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -382,6 +390,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -432,6 +441,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -482,6 +492,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -532,6 +543,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -582,6 +594,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -632,6 +645,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -682,6 +696,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.equals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -729,6 +744,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.inc
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -759,6 +775,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.inv
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -789,6 +806,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -839,6 +857,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -889,6 +908,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -939,6 +959,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -989,6 +1010,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1039,6 +1061,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1089,6 +1112,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.or
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1139,6 +1163,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1189,6 +1214,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1239,6 +1265,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1289,6 +1316,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1339,6 +1367,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1389,6 +1418,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1436,6 +1466,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1483,6 +1514,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1530,6 +1562,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1577,6 +1610,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1629,6 +1663,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1681,6 +1716,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1733,6 +1769,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1785,6 +1822,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1837,6 +1875,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1889,6 +1928,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1941,6 +1981,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1993,6 +2034,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2045,6 +2087,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2097,6 +2140,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2147,6 +2191,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.shl
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2197,6 +2242,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.shr
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2247,6 +2293,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2297,6 +2344,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2347,6 +2395,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2397,6 +2446,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2447,6 +2497,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2497,6 +2548,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2547,6 +2599,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.toByte
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2577,6 +2630,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.toChar
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2607,6 +2661,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.toDouble
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2637,6 +2692,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.toFloat
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2667,6 +2723,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.toInt
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2697,6 +2754,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.toLong
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2727,6 +2785,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.toShort
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2757,6 +2816,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.toString
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2787,6 +2847,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.unaryMinus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2817,6 +2878,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.unaryPlus
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2847,6 +2909,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.ushr
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2897,6 +2960,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.xor
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2944,6 +3008,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
