@@ -35,7 +35,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         return klass.functions.single { it.isEqualsInheritedFromAny() }
     }
 
-    fun transformCall(
+    private fun transformCall(
         call: IrCall,
         builder: DeclarationIrBuilder
     ): IrExpression {
@@ -52,7 +52,8 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 }
                 return irCall(call, symbols.floatEqualityFunctions.getValue(irBuiltins.doubleType))
             }
-            irBuiltins.eqeqSymbol -> {
+            irBuiltins.eqeqSymbol,
+            irBuiltins.eqeqeqSymbol -> {
                 fun callRefIsNull(expr: IrExpression): IrCall {
                     val refIsNull = if (expr.type.erasedUpperBound?.isExternal == true) symbols.externRefIsNull else symbols.refIsNull
                     return builder.irCall(refIsNull).apply { putValueArgument(0, expr) }
@@ -67,23 +68,26 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
                 val lhsType = lhs.type
                 val rhsType = rhs.type
+
                 if (lhsType == rhsType) {
-                    val newSymbol = symbols.equalityFunctions[lhsType]
+                    val newSymbol =
+                        symbols.equalityFunctions[lhsType]
+                            // For eqeqeqSymbol try to use more efficient comparison if type is Double or Float.
+                            // But for eqeqSymbol we have to use generic comparison for floating point numbers.
+                            ?: if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.floatEqualityFunctions[lhsType] else null
+
                     if (newSymbol != null) {
                         return irCall(call, newSymbol)
                     }
                 }
 
-                if (!lhsType.isNullable()) {
+                // For eqeqSymbol use overridden `Any.equals(Any?)` if there is any.
+                if (call.symbol === irBuiltins.eqeqSymbol && !lhsType.isNullable()) {
                     return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
                 }
-                return irCall(call, symbols.nullableEquals)
-            }
 
-            irBuiltins.eqeqeqSymbol -> {
-                val type = call.getValueArgument(0)!!.type
-                val newSymbol = symbols.equalityFunctions[type] ?: symbols.floatEqualityFunctions[type] ?: symbols.refEq
-                return irCall(call, newSymbol)
+                val fallbackEqFun = if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.refEq else symbols.nullableEquals
+                return irCall(call, fallbackEqFun)
             }
 
             irBuiltins.checkNotNullSymbol -> {
