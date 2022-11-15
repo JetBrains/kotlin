@@ -47,8 +47,8 @@ object TestIdeaKotlinInstances {
     )
 
     val simpleSourceDependency = IdeaKotlinSourceDependency(
-        coordinates = TestIdeaKotlinInstances.simpleSourceCoordinates,
+        coordinates = simpleSourceCoordinates,
         type = IdeaKotlinSourceDependency.Type.Regular,
-        extras = TestIdeaKotlinInstances.extrasWithIntAndStrings.toMutableExtras()
+        extras = extrasWithIntAndStrings.toMutableExtras()
     )
 }
