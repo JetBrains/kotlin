@@ -41,6 +41,30 @@ public inline fun <reified PSI : PsiElement> KtSymbol.psiSafe(): PSI? =
     psi as? PSI
 
 /**
+ * Get symbol [PsiElement]. **null** if its [KtSymbol.origin] !is [KtSymbolOrigin.SOURCE]. throws **ClassCastException** if its type !is [PSI]
+ *
+ * @see KtSymbol.psi
+ */
+public inline fun <reified PSI : PsiElement> KtSymbol.sourcePsi(): PSI? {
+    // TODO: support Java sources after KT-53669
+    if (origin != KtSymbolOrigin.SOURCE) return null
+
+    return psi as PSI
+}
+
+/**
+ * Get symbol [PsiElement] if its type is [PSI] and [KtSymbol.origin] is [KtSymbolOrigin.SOURCE], otherwise null
+ *
+ * @see KtSymbol.psiSafe
+ */
+public inline fun <reified PSI : PsiElement> KtSymbol.sourcePsiSafe(): PSI? {
+    // TODO: support Java sources after KT-53669
+    if (origin != KtSymbolOrigin.SOURCE) return null
+
+    return psi as? PSI
+}
+
+/**
  * A place where [KtSymbol] came from
  */
 public enum class KtSymbolOrigin {

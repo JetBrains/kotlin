@@ -354,7 +354,8 @@ internal fun SymbolLightClassBase.createField(
             lightMemberOrigin = null,
             isTopLevel = isTopLevel,
             forceStatic = forceStatic,
-            takePropertyVisibility = takePropertyVisibility
+            takePropertyVisibility = takePropertyVisibility,
+            ktModule = ktModule,
         )
     )
 }
