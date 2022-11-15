@@ -87,6 +87,14 @@ interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
     fun mayHaveContract(): Boolean
 }
 
+interface KotlinConstructorStub<T : KtConstructor<T>> :
+    KotlinCallableStubBase<T> {
+    fun hasBlockBody(): Boolean
+    fun hasBody(): Boolean
+
+    fun isDelegatedCallToThis(): Boolean
+}
+
 interface KotlinImportAliasStub : StubElement<KtImportAlias> {
     fun getName(): String?
 }
@@ -162,4 +170,8 @@ interface KotlinUserTypeStub : StubElement<KtUserType>
 
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     override fun getFqName(): FqName
+}
+
+interface KotlinContextReceiverStub : StubElement<KtContextReceiver> {
+    fun getLabel(): String?
 }
