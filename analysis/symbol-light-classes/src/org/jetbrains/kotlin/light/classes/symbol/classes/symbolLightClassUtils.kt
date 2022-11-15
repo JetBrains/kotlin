@@ -126,7 +126,6 @@ private fun SymbolLightClassBase.shouldGenerateNoArgOverload(
             !primaryConstructor.hasJvmOverloadsAnnotation()
 }
 
-context(KtAnalysisSession)
 private fun SymbolLightClassForClassOrObject.defaultConstructor(): KtLightMethod {
     val classOrObject = kotlinOrigin
     val visibility = when {
@@ -139,7 +138,6 @@ private fun SymbolLightClassForClassOrObject.defaultConstructor(): KtLightMethod
     return noArgConstructor(visibility, METHOD_INDEX_FOR_DEFAULT_CTOR)
 }
 
-context(KtAnalysisSession)
 private fun SymbolLightClassForClassOrObject.noArgConstructor(
     visibility: String,
     methodIndex: Int,
@@ -147,7 +145,6 @@ private fun SymbolLightClassForClassOrObject.noArgConstructor(
     LightMemberOriginForDeclaration(
         originalElement = kotlinOrigin,
         originKind = JvmDeclarationOriginKind.OTHER,
-        auxiliaryOriginalElement = kotlinOrigin as? KtDeclaration
     ),
     this,
     visibility,
