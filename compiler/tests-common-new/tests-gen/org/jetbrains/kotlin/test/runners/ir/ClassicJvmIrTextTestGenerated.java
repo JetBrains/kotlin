@@ -3097,6 +3097,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         }
 
         @Test
+        @TestMetadata("arraysFromBuiltins.kt")
+        public void testArraysFromBuiltins() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/arraysFromBuiltins.kt");
+        }
+
+        @Test
         @TestMetadata("builtinMap.kt")
         public void testBuiltinMap() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/builtinMap.kt");
