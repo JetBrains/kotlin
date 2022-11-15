@@ -44,9 +44,7 @@ internal class SymbolLightFieldForProperty(
     private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol> = propertySymbol.createPointer()
 
     private fun <T> withPropertySymbol(action: KtAnalysisSession.(KtPropertySymbol) -> T): T = analyzeForLightClasses(ktModule) {
-        val restoreSymbol = propertySymbolPointer.restoreSymbol()
-        requireNotNull(restoreSymbol) { "pointer already disposed" }
-        action(restoreSymbol)
+        action(propertySymbolPointer.restoreSymbolOrThrowIfDisposed())
     }
 
     private val _returnedType: PsiType by lazyPub {

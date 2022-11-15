@@ -44,15 +44,12 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     protected fun <T> withClassOrObjectSymbol(action: KtAnalysisSession.(KtClassOrObjectSymbol) -> T): T =
         analyzeForLightClasses(ktModule) {
-            action(classOrObject.getClassOrObjectSymbol()!!)
+            action(requireNotNull(classOrObject.getClassOrObjectSymbol()))
         }
 
     protected fun <T> withNamedClassOrObjectSymbol(action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
         analyzeForLightClasses(ktModule) {
-            val namedClassOrObjectSymbol = classOrObject.getNamedClassOrObjectSymbol()
-            require(namedClassOrObjectSymbol != null)
-
-            action(namedClassOrObjectSymbol)
+            action(requireNotNull(classOrObject.getNamedClassOrObjectSymbol()))
         }
 
     override val isTopLevel: Boolean get() = classOrObject.isTopLevel()

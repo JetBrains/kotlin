@@ -29,9 +29,7 @@ internal class SymbolLightFieldForObject(
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     private fun <T> withObjectDeclarationSymbol(action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
         analyzeForLightClasses(objectDeclaration) {
-            val namedClassOrObjectSymbol = objectDeclaration.getNamedClassOrObjectSymbol()
-            require(namedClassOrObjectSymbol != null)
-            action(namedClassOrObjectSymbol)
+            action(requireNotNull(objectDeclaration.getNamedClassOrObjectSymbol()))
         }
 
     override val kotlinOrigin: KtObjectDeclaration = objectDeclaration
