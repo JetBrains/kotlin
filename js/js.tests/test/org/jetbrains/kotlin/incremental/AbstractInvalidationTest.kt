@@ -92,10 +92,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         return File(File(buildDir, moduleName), "$moduleName.klib")
     }
 
-    private fun resolveModuleCache(moduleName: String, buildDir: File): File {
-        return File(File(buildDir, moduleName), "cache")
-    }
-
     private fun createConfiguration(moduleName: String, language: List<String>): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
@@ -127,7 +123,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private inner class TestStepInfo(
             val moduleName: String,
             val modulePath: String,
-            val icCacheDir: String,
             val expectedFileStats: Map<String, Set<String>>
         )
 
@@ -157,7 +152,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             return TestStepInfo(
                 module.safeModuleName,
                 outputKlibFile.canonicalPath,
-                resolveModuleCache(module, buildDir).canonicalPath,
                 expectedFileStats
             )
         }
@@ -229,7 +223,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         }
 
         fun execute() {
-            val stdlibCacheDir = resolveModuleCache(STDLIB_ALIAS, buildDir).canonicalPath
             for (projStep in projectInfo.steps) {
                 val testInfo = projStep.order.map { setupTestStep(projStep, it) }
 
@@ -237,7 +230,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val cacheUpdater = CacheUpdater(
                     mainModule = testInfo.last().modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },
-                    icCachePaths = testInfo.mapTo(mutableListOf(stdlibCacheDir)) { it.icCacheDir },
+                    icCacheRootDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                     mainArguments = null,

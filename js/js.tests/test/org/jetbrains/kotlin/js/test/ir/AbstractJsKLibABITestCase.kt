@@ -189,13 +189,11 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         mainModuleKlibFile: File,
         allDependencies: KlibABITestUtils.Dependencies
     ): CompilationOutputs {
-        fun cacheDir(library: File): File = buildDir.resolve("libs-cache").resolve(library.name).apply { mkdirs() }
-
         // TODO: what about friend dependencies?
         val cacheUpdater = CacheUpdater(
             mainModule = mainModuleKlibFile.absolutePath,
             allModules = allDependencies.regularDependencies.map { it.path },
-            icCachePaths = allDependencies.regularDependencies.map { cacheDir(it).path },
+            icCacheRootDir = buildDir.resolve("libs-cache").absolutePath,
             compilerConfiguration = configuration,
             irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
             mainArguments = null,
