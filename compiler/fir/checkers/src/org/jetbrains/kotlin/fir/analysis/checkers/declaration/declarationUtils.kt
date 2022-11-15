@@ -125,7 +125,7 @@ fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
             contextReceivers.isEmpty() && receiverTypeRef == null
                     && name == OperatorNameConventions.EQUALS
                     && this@run.isInline && valueParameters.size == 1
-                    && (returnTypeRef.coneType.isBoolean || returnTypeRef.coneType.isNothing)
+                    && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
                     && valueParameters[0].returnTypeRef.coneType == inlineClassStarProjection
         }
     } ?: false
