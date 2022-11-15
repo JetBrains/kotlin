@@ -324,6 +324,7 @@ tasks.withType<Test> {
     dependsOnKotlinGradlePluginInstall()
     dependsOn(":gradle:android-test-fixes:install")
     dependsOn(":examples:annotation-processor-example:install")
+    dependsOn(":kotlin-dom-api-compat:install")
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
