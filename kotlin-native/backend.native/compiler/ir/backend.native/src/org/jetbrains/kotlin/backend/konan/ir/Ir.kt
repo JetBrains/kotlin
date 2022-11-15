@@ -351,6 +351,12 @@ internal class KonanSymbols(
     val invokeSuspendFunction =
             irBuiltIns.findBuiltInClassMemberFunctions(baseContinuationImpl, Name.identifier("invokeSuspend")).single()
 
+    val completionGetter = symbolTable.referenceSimpleFunction(
+            baseContinuationImpl.descriptor.unsubstitutedMemberScope
+                    .getContributedVariables(Name.identifier("completion"), NoLookupLocation.FROM_BACKEND).single()
+                    .getter!!
+    )
+
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
             coroutinesIntrinsicsPackage
                     .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND)

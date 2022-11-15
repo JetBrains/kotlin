@@ -1,11 +1,9 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.TailSuspendCalls
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -62,6 +60,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context) : AbstractSuspendFun
     }
 
     private val getContinuation = context.ir.symbols.getContinuation
+    private val completionGetter = context.ir.symbols.completionGetter
 
     override fun buildStateMachine(stateMachineFunction: IrFunction,
                                    transformingFunction: IrFunction,
@@ -82,8 +81,6 @@ internal class NativeSuspendFunctionsLowering(ctx: Context) : AbstractSuspendFun
         val irBuilder = context.createIrBuilder(stateMachineFunction.symbol, startOffset, endOffset)
         stateMachineFunction.body = irBuilder.irBlockBody(startOffset, endOffset) {
             if (tailSuspendCalls.isNotEmpty()) {
-                val completionGetter = coroutineClass.getSuperClassNotAny()!!.getPropertyGetter("completion")!!
-
                 /*
                  * Usual suspend call of, say, function foo will be transformed to something like this:
                  * val result = foo(.., continuation = this)
