@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /x
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -28,6 +29,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /y
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

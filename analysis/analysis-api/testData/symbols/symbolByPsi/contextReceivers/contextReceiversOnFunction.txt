@@ -5,6 +5,7 @@ KtFunctionSymbol:
     ContextReceiver(kotlin/Int)
     ContextReceiver(s@kotlin/String)
   ]
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

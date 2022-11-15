@@ -216,6 +216,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /destruct
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

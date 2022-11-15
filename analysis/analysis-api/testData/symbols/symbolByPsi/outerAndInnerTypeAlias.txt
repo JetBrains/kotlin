@@ -110,6 +110,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -160,6 +161,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -210,6 +212,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /A.check
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

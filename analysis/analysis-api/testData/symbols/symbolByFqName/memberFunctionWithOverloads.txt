@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -29,6 +30,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

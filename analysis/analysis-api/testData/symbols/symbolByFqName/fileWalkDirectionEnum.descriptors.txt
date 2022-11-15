@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/listOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -54,6 +55,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/collections/listOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -82,6 +84,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/listOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

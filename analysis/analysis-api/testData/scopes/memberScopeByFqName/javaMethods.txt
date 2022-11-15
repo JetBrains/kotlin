@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /JavaClass.foo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -29,6 +30,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /JavaClass.doo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -76,6 +78,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /JavaClass.getStringValue
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -103,6 +106,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -150,6 +154,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -177,6 +182,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
