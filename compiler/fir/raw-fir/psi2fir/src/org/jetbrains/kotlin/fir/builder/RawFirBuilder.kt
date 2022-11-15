@@ -189,12 +189,6 @@ open class RawFirBuilder(
                 source = this@toFirOrImplicitType?.toFirSourceElement(KtFakeSourceElementKind.ImplicitTypeRef)
             }
 
-        private fun KtTypeReference.receiverAnnotations(): List<FirAnnotationCall> {
-            return annotationEntries
-                .filter { it.useSiteTarget?.getAnnotationUseSiteTarget() == RECEIVER }
-                .map { it.convert<FirAnnotationCall>() }
-        }
-
         private fun KtTypeReference?.toFirOrUnitType(): FirTypeRef =
             convertSafe() ?: implicitUnitType
 
@@ -1301,19 +1295,13 @@ open class RawFirBuilder(
             } else {
                 typeReference.toFirOrImplicitType()
             }
-
             val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
-            val receiverAnnotations = if (receiverType != null) {
-                function.receiverTypeReference?.receiverAnnotations()
-            } else {
-                null
-            }
 
             val labelName: String?
             val isAnonymousFunction = function.name == null && !function.parent.let { it is KtFile || it is KtClassBody }
             val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
-                    receiverParameter = receiverType?.asReceiverParameter(receiverAnnotations)
+                    receiverParameter = receiverType?.convertToReceiverParameter()
                     symbol = FirAnonymousFunctionSymbol()
                     isLambda = false
                     hasExplicitParameterList = true
@@ -1322,7 +1310,7 @@ open class RawFirBuilder(
                 }
             } else {
                 FirSimpleFunctionBuilder().apply {
-                    receiverParameter = receiverType?.asReceiverParameter(receiverAnnotations)
+                    receiverParameter = receiverType?.convertToReceiverParameter()
                     name = function.nameAsSafeName
                     labelName = runIf(!name.isSpecial) { name.identifier }
                     symbol = FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName))
@@ -1654,14 +1642,7 @@ open class RawFirBuilder(
                     }
                 } else {
                     isLocal = false
-                    val receiverType = receiverTypeReference.convertSafe<FirTypeRef>()
-                    val receiverAnnotations = if (receiverType != null) {
-                        receiverTypeReference?.receiverAnnotations()
-                    } else {
-                        null
-                    }
-
-                    receiverParameter = receiverType?.asReceiverParameter(receiverAnnotations)
+                    receiverParameter = receiverTypeReference.convertSafe<FirTypeRef>()?.convertToReceiverParameter()
                     symbol = FirPropertySymbol(callableIdForName(propertyName))
                     dispatchReceiverType = currentDispatchReceiverType()
                     extractTypeParametersTo(this, symbol)
@@ -1859,11 +1840,9 @@ open class RawFirBuilder(
 
             for (modifierList in allModifierLists) {
                 for (annotationEntry in modifierList.annotationEntries) {
-                    if (annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget() == RECEIVER) continue
                     firTypeBuilder.annotations += annotationEntry.convert<FirAnnotation>()
                 }
             }
-
             return firTypeBuilder.build()
         }
 
