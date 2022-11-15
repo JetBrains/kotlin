@@ -185,20 +185,20 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         return null
     }
 
-    fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirNamedFunctionSymbol>> {
+    fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<Pair<AvailableSymbol<FirNamedFunctionSymbol>, FirScope>> {
         return scopes.flatMap { scope ->
             val importKind = ImportKind.fromScope(scope)
             scope.getFunctions(name).map {
-                AvailableSymbol(it, importKind)
+                Pair(AvailableSymbol(it, importKind), scope)
             }
         }
     }
 
-    fun findPropertiesInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirVariableSymbol<*>>> {
+    fun findPropertiesInScopes(scopes: List<FirScope>, name: Name): List<Pair<AvailableSymbol<FirVariableSymbol<*>>, FirScope>> {
         return scopes.flatMap { scope ->
             val importKind = ImportKind.fromScope(scope)
             scope.getProperties(name).map {
-                AvailableSymbol(it, importKind)
+                Pair(AvailableSymbol(it, importKind), scope)
             }
         }
     }
@@ -573,11 +573,44 @@ private class ElementsToShortenCollector(
         }
     }
 
+    private fun FirScope.isClassUseSiteMemberScopeCloserThan(anotherClassUseSiteMemberScope: FirClassUseSiteMemberScope): Boolean {
+        if (this == anotherClassUseSiteMemberScope) return false
+
+        val thisClassUseSiteMemberScope = this as? FirClassUseSiteMemberScope ?: return false
+        val isThisScopeForCompanion = thisClassUseSiteMemberScope.classId.shortClassName.asString() == "Companion"
+        val isAnotherScopeForCompanion = anotherClassUseSiteMemberScope.classId.shortClassName.asString() == "Companion"
+        return when {
+            isThisScopeForCompanion && isAnotherScopeForCompanion -> anotherClassUseSiteMemberScope.classId.outerClassId?.asSingleFqName()
+                ?.asString()?.startsWith(thisClassUseSiteMemberScope.classId.asSingleFqName().asString()) == true
+
+            isThisScopeForCompanion -> false
+            isAnotherScopeForCompanion -> true
+            else -> anotherClassUseSiteMemberScope.classId.asSingleFqName().asString()
+                .startsWith(thisClassUseSiteMemberScope.classId.asSingleFqName().asString())
+        }
+    }
+
+    private fun List<Pair<AvailableSymbol<FirCallableSymbol<*>>, FirScope>>.filterSymbolsWithScopesCloserThan(base: FirScope) =
+        when (base) {
+            is FirLocalScope -> emptyList()
+            is FirClassUseSiteMemberScope -> filter {
+                val scopeForAvailableSymbol = it.second
+                scopeForAvailableSymbol is FirLocalScope || scopeForAvailableSymbol.isClassUseSiteMemberScopeCloserThan(base)
+            }.map { it.first }
+
+            is FirPackageMemberScope -> filter {
+                val scopeForAvailableSymbol = it.second
+                scopeForAvailableSymbol is FirLocalScope || scopeForAvailableSymbol is FirClassUseSiteMemberScope
+            }.map { it.first }
+
+            else -> emptyList()
+        }
+
     private fun processCallableQualifiedAccess(
         calledSymbol: FirCallableSymbol<*>,
         qualifiedCallExpression: KtDotQualifiedExpression,
         expressionToGetScope: KtExpression,
-        findCallableInScopes: (List<FirScope>, Name) -> List<AvailableSymbol<FirCallableSymbol<*>>>,
+        findCallableInScopes: (List<FirScope>, Name) -> List<Pair<AvailableSymbol<FirCallableSymbol<*>>, FirScope>>,
     ) {
         val option = callableShortenOption(calledSymbol)
         if (option == ShortenOption.DO_NOT_SHORTEN) return
@@ -603,14 +636,29 @@ private class ElementsToShortenCollector(
         if (calledSymbol.resolvedReceiverTypeRef != null) return
 
         val scopes = shorteningContext.findScopesAtPosition(expressionToGetScope, namesToImport, towerContextProvider) ?: return
-        val availableCallables = findCallableInScopes(scopes, calledSymbol.name).filter {
-            if (calledSymbol.resolvedReturnType != it.symbol.resolvedReturnType) return@filter false
-            it.symbol.hasSameSignatureWith(calledSymbol)
+        val availableCallablesWithScopes = findCallableInScopes(scopes, calledSymbol.name).filter { symbolAndScope ->
+            val (availableSymbol, _) = symbolAndScope
+            if (calledSymbol.resolvedReturnType != availableSymbol.symbol.resolvedReturnType) return@filter false
+            availableSymbol.symbol.hasSameSignatureWith(calledSymbol)
         }
+        val scopeForCalledSymbol = availableCallablesWithScopes.singleOrNull {
+            val (availableSymbol, _) = it
+            availableSymbol.symbol.callableId == calledSymbol.callableId
+        }?.second ?: return
+        val callablesWithinHighPriorityScopes = availableCallablesWithScopes.filterSymbolsWithScopesCloserThan(scopeForCalledSymbol)
 
         val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
 
-        val (matchedCallables, otherCallables) = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
+        if (option == ShortenOption.SHORTEN_IF_ALREADY_IMPORTED) {
+            if (callablesWithinHighPriorityScopes.isEmpty()) {
+                addElementToShorten(ShortenQualifier(qualifiedCallExpression))
+            }
+            return
+        }
+
+        val (matchedCallables, otherCallables) = callablesWithinHighPriorityScopes.partition {
+            it.symbol.callableId == calledSymbol.callableId
+        }
         val callToShorten = when {
             // TODO: instead of allowing import only if the other callables are all with kind `DEFAULT_STAR`, we should allow import if
             //  the requested import kind has higher priority than the available symbols.
