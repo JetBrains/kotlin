@@ -95,10 +95,7 @@ internal abstract class LLFirResolvableResolveSession(
         return findSourceFirDeclarationByExpression(ktDeclaration.originalDeclaration ?: ktDeclaration, module)
     }
 
-    /**
-     * [ktDeclaration] should be either [KtDeclaration] or [KtLambdaExpression]
-     */
-    private fun findSourceFirDeclarationByExpression(ktDeclaration: KtExpression, module: KtModule): FirBasedSymbol<*> {
+    private fun findSourceFirDeclarationByExpression(ktDeclaration: KtDeclaration, module: KtModule): FirBasedSymbol<*> {
         require(getModuleKind(module) == ModuleKind.RESOLVABLE_MODULE) {
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
