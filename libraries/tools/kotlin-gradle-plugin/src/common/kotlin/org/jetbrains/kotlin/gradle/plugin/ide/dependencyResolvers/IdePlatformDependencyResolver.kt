@@ -9,7 +9,6 @@ import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logging
 import org.gradle.internal.resolve.ModuleVersionResolveException
@@ -109,7 +108,7 @@ internal class IdePlatformDependencyResolver(
 
         return compilation.internal.configurations.compileDependencyConfiguration.incoming.artifactView { view ->
             view.isLenient = true
-            view.componentFilter { id -> id !is ProjectComponentIdentifier }
+            view.componentFilter { id -> id is ModuleComponentIdentifier }
             view.attributes.setupArtifactViewAttributes(sourceSet)
         }
     }
@@ -140,7 +139,7 @@ internal class IdePlatformDependencyResolver(
 
         return sourceSetCompileDependencies.incoming.artifactView { view ->
             view.isLenient = true
-            view.componentFilter { id -> id !is ProjectComponentIdentifier }
+            view.componentFilter { id -> id is ModuleComponentIdentifier }
             view.attributes.setupArtifactViewAttributes(sourceSet)
         }
     }

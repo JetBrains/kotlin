@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import kotlin.test.fail
 
-fun Iterable<IdeaKotlinDependency>.assertMatches(vararg notation: Any?) {
+fun Iterable<IdeaKotlinDependency>.assertMatches(vararg notation: Any?): Iterable<IdeaKotlinDependency> {
     val thisList = toList()
     val matchers = notation.flatMap { buildIdeaKotlinDependencyMatchers(it) }
 
@@ -16,7 +16,7 @@ fun Iterable<IdeaKotlinDependency>.assertMatches(vararg notation: Any?) {
     val missingDependencies = matchers.filter { matcher -> thisList.none { dependency -> matcher.matches(dependency) } }
 
     if (unexpectedDependencies.isEmpty() && missingDependencies.isEmpty()) {
-        return
+        return this
     }
 
     fail(
@@ -41,6 +41,12 @@ fun Iterable<IdeaKotlinDependency>.assertMatches(vararg notation: Any?) {
             appendLine("Dependencies:")
             thisList.forEach { dependency ->
                 appendLine("\"${dependency}\",")
+            }
+
+            appendLine()
+            appendLine("Dependencies (coordinates):")
+            thisList.forEach { dependency ->
+                appendLine("\"${dependency.coordinates}\"")
             }
         }
     )
