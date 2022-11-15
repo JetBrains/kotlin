@@ -25,8 +25,8 @@ fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceEleme
     is SourceCodeAnalysisException -> this
     is ProcessCanceledException -> this // KT-38483
     is VirtualMachineError -> this
-    else -> when (element) {
-        is KtRealPsiSourceElement -> SourceCodeAnalysisException(element, this)
+    else -> when (element?.kind) {
+        is KtRealSourceElementKind -> SourceCodeAnalysisException(element, this)
         else -> this
     }
 }

@@ -245,9 +245,13 @@ object CodegenUtil {
         // to have all information about the context.
         if (exception is KotlinExceptionWithAttachments) throw exception
         if (exception is ProcessCanceledException) throw exception
-        val lineAndOffset = (exception as? SourceCodeAnalysisException)?.let { linesMapping(it.source.startOffset) }
+        val locationWithLineAndOffset = location
+            ?.let { exception as? SourceCodeAnalysisException }
+            ?.let { linesMapping(it.source.startOffset) }
+            ?.let { (line, offset) -> "$location\nLine: ${line + 1}\nOffset: ${offset + 1}" }
+            ?: location
         throw BackendException(
-            getExceptionMessage("Backend", "Exception during $phase", exception, location, lineAndOffset) +
+            getExceptionMessage("Backend", "Exception during $phase", exception, locationWithLineAndOffset) +
                     additionalMessage?.let { "\n" + it }.orEmpty(),
             exception
         )
