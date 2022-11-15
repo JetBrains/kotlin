@@ -44,6 +44,12 @@ object GC {
     external fun collect()
 
     /**
+     * Trigger new collection without waiting for its completion.
+     */
+     @GCUnsafeCall("Kotlin_native_internal_GC_schedule")
+     external fun schedule()
+
+    /**
      * Deprecated and unused.
      *
      * Legacy MM: Request global cyclic collector, operation is async and just triggers the collection.

@@ -35,6 +35,7 @@ public:
         void SafePointFunctionPrologue() noexcept;
         void SafePointLoopBody() noexcept;
 
+        void Schedule() noexcept;
         void ScheduleAndWaitFullGC() noexcept;
         void ScheduleAndWaitFullGCWithFinalizers() noexcept;
 
