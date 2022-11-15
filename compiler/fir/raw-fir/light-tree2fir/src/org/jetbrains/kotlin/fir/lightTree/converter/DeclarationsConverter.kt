@@ -1173,6 +1173,7 @@ class DeclarationsConverter(
                     isLateInit = modifiers.hasLateinit()
                 }
 
+                typeParameters += firTypeParameters
                 generateAccessorsByDelegate(
                     delegateBuilder,
                     baseModuleData,

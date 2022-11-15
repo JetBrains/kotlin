@@ -120,6 +120,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             property.getter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.setter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.backingField?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
+            context.withProperty(property) {
+                doTransformTypeParameters(property)
+            }
             return transformLocalVariable(property)
         }
 

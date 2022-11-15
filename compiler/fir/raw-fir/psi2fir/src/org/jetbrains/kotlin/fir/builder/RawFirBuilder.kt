@@ -1611,6 +1611,7 @@ open class RawFirBuilder(
                     isLocal = true
                     symbol = FirPropertySymbol(propertyName)
 
+                    extractTypeParametersTo(this, symbol)
                     backingField = this@toFirProperty.fieldDeclaration.toFirBackingField(
                         this@toFirProperty,
                         propertySymbol = symbol,

@@ -32,8 +32,10 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker() {
         declaration.contextReceivers.forEach { collectAllTypes(it.typeRef.coneType) }
 
         val usedNames = usedTypes.filterIsInstance<ConeTypeParameterType>().map { it.lookupTag.name }
-        declaration.typeParameters.filterNot { usedNames.contains(it.name) }.forEach { danglingParam ->
-            reporter.reportOn(danglingParam.source, FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, context)
+        if (!declaration.isLocal) {
+            declaration.typeParameters.filterNot { usedNames.contains(it.name) }.forEach { danglingParam ->
+                reporter.reportOn(danglingParam.source, FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, context)
+            }
         }
     }
 

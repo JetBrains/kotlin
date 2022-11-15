@@ -269,6 +269,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("typeParameters.kt")
+    public void testTypeParameters() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/typeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("varargFunctions.kt")
     public void testVarargFunctions() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/varargFunctions.kt");
