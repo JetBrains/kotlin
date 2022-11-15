@@ -23,3 +23,5 @@ internal interface InternalKotlinSourceSet : KotlinSourceSet {
     val withDependsOnClosure: ObservableSet<KotlinSourceSet>
     val compilations: MutableObservableSet<KotlinCompilation<*>>
 }
+
+internal val KotlinSourceSet.project: Project get() = this.internal.project

@@ -34,6 +34,7 @@ class IdeTransformedMetadataDependencyResolverTest {
         kotlin.linuxArm64()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
+        val commonTest = kotlin.sourceSets.getByName("commonTest")
         val linuxMain = kotlin.sourceSets.getByName("linuxMain")
 
         commonMain.dependencies {
@@ -45,6 +46,13 @@ class IdeTransformedMetadataDependencyResolverTest {
         project.evaluate()
 
         IdeTransformedMetadataDependencyResolver.resolve(commonMain)
+            .assertMatches(
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain")
+            )
+
+        IdeTransformedMetadataDependencyResolver.resolve(commonTest)
             .assertMatches(
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
