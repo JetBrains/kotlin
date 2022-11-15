@@ -145,7 +145,7 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public final [STATUS] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
