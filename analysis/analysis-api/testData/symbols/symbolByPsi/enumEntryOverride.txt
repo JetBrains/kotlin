@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -29,6 +30,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -71,6 +73,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -166,6 +169,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -193,6 +197,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -255,6 +260,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /MyEnumClass.foo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -282,6 +288,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /MyEnumClass.foo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

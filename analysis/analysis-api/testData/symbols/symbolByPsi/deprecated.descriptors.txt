@@ -346,6 +346,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: /f
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -458,6 +459,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: /Foo.f2
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

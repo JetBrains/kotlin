@@ -129,6 +129,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.f
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

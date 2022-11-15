@@ -164,6 +164,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /Abc.check
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -256,6 +257,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /Abc.component1
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -283,6 +285,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /Abc.component2
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -310,6 +313,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /Abc.component3
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -337,6 +341,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /Abc.copy
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -422,6 +427,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -469,6 +475,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -496,6 +503,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
