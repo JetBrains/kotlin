@@ -461,7 +461,7 @@ class BodyGenerator(
         call: IrFunctionAccessExpression,
         function: IrFunction
     ): Boolean {
-        if (tryToGenerateWasmOpIntrinsicCall(function)) {
+        if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
             return true
         }
 
@@ -840,7 +840,7 @@ class BodyGenerator(
     }
 
     // Return true if function is recognized as intrinsic.
-    private fun tryToGenerateWasmOpIntrinsicCall(function: IrFunction): Boolean {
+    private fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
         if (function.hasWasmNoOpCastAnnotation()) {
             return true
         }
@@ -853,14 +853,19 @@ class BodyGenerator(
                     body.buildInstr(op)
                 }
                 1 -> {
+                    fun getReferenceGcType(): WasmSymbol<WasmTypeDeclaration> {
+                        val type = function.dispatchReceiverParameter?.type ?: call.getTypeArgument(0)!!
+                        return context.referenceGcType(type.classOrNull!!)
+                    }
+
                     val immediates = arrayOf(
                         when (val imm = op.immediates[0]) {
                             WasmImmediateKind.MEM_ARG ->
                                 WasmImmediate.MemArg(0u, 0u)
                             WasmImmediateKind.STRUCT_TYPE_IDX ->
-                                WasmImmediate.GcType(context.referenceGcType(function.dispatchReceiverParameter!!.type.classOrNull!!))
+                                WasmImmediate.GcType(getReferenceGcType())
                             WasmImmediateKind.TYPE_IDX ->
-                                WasmImmediate.TypeIdx(context.referenceGcType(function.dispatchReceiverParameter!!.type.classOrNull!!))
+                                WasmImmediate.TypeIdx(getReferenceGcType())
 
                             else ->
                                 error("Immediate $imm is unsupported")

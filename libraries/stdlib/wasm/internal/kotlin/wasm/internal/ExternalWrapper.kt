@@ -141,13 +141,13 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // TODO rewrite it so to get something like:
     // block {
     //     refAsAnyref
-    //     br_on_cast_fail 0 $kotlin.Any
+    //     br_on_cast_fail null 0 $kotlin.Any
     //     return
     // }
     // If ref is an instance of kotlin class -- return it casted to Any
     val refAsAnyref = ref.externAsWasmAnyref()
-    if (wasm_ref_test<Any>(refAsAnyref)) {
-        return wasm_ref_cast<Any>(refAsAnyref)
+    if (wasm_ref_test_null<Any>(refAsAnyref)) {
+        return wasm_ref_cast_null<Any>(refAsAnyref)
     }
 
     // If we have Null in notNullRef -- return null

@@ -109,8 +109,8 @@ fun WasmCompiledModuleFragment.generateJs(): String {
     //language=js
     val runtime = """
     const externrefBoxes = new WeakMap();
+    // ref must be non-null
     function tryGetOrSetExternrefBox(ref, ifNotCached) {
-        if (ref == null) return null;
         if (typeof ref !== 'object') return ifNotCached;
         const cachedBox = externrefBoxes.get(ref);
         if (cachedBox !== void 0) return cachedBox;
