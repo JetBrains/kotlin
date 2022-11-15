@@ -42,9 +42,15 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGe
     }
 
     @Test
-    @TestMetadata("actual_jvmInline_typealias.kt")
-    public void testActual_jvmInline_typealias() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_jvmInline_typealias.kt");
+    @TestMetadata("actual_jvmInline_typealias_multiModules.kt")
+    public void testActual_jvmInline_typealias_multiModules() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_jvmInline_typealias_multiModules.kt");
+    }
+
+    @Test
+    @TestMetadata("actual_jvminline_typealias_singleModule.kt")
+    public void testActual_jvminline_typealias_singleModule() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_jvminline_typealias_singleModule.kt");
     }
 
     @Test
