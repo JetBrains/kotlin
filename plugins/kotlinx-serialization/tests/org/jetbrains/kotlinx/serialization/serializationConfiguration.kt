@@ -36,7 +36,6 @@ class SerializationEnvironmentConfigurator(
         configuration: CompilerConfiguration
     ) {
         SerializationComponentRegistrar.registerExtensions(this, SerializationIntrinsicsState.FORCE_ENABLED)
-        FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
     }
 }
 

@@ -8,16 +8,12 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 
-object KtDefaultErrorMessagesSerialization {
-    fun getRendererForDiagnostic(diagnostic: KtDiagnostic): KtDiagnosticRenderer {
-        val factory = diagnostic.factory
-        return MAP[factory] ?: factory.ktRenderer
-    }
-
-    val MAP = KtDiagnosticFactoryToRendererMap("Serialization").apply {
+object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
+    override val MAP = KtDiagnosticFactoryToRendererMap("Serialization").apply {
         put(
             FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
             "Inline classes require runtime serialization library version at least {0}, while your classpath has {1}.",
