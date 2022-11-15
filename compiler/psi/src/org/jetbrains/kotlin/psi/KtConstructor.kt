@@ -53,10 +53,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
 
     override fun getEqualsToken() = null
 
-    override fun hasBlockBody(): Boolean {
-        stub?.let { return it.hasBlockBody() }
-        return bodyExpression != null
-    }
+    override fun hasBlockBody() = hasBody()
 
     fun isDelegatedCallToThis(): Boolean {
         stub?.let { return it.isDelegatedCallToThis() }

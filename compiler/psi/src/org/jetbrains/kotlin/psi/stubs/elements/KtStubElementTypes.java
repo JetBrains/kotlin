@@ -152,11 +152,11 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtContextReceiverList> CONTEXT_RECEIVER_LIST =
             new KtPlaceHolderStubElementType<>("CONTEXT_RECEIVER_LIST", KtContextReceiverList.class);
 
-    KtConstantExpressionElementType NULL = new KtConstantExpressionElementType("NULL");
-    KtConstantExpressionElementType BOOLEAN_CONSTANT = new KtConstantExpressionElementType("BOOLEAN_CONSTANT");
-    KtConstantExpressionElementType FLOAT_CONSTANT = new KtConstantExpressionElementType("FLOAT_CONSTANT");
-    KtConstantExpressionElementType CHARACTER_CONSTANT = new KtConstantExpressionElementType("CHARACTER_CONSTANT");
-    KtConstantExpressionElementType INTEGER_CONSTANT = new KtConstantExpressionElementType("INTEGER_CONSTANT");
+    KtConstantExpressionElementType NULL                = new KtConstantExpressionElementType("NULL");
+    KtConstantExpressionElementType BOOLEAN_CONSTANT    = new KtConstantExpressionElementType("BOOLEAN_CONSTANT");
+    KtConstantExpressionElementType FLOAT_CONSTANT      = new KtConstantExpressionElementType("FLOAT_CONSTANT");
+    KtConstantExpressionElementType CHARACTER_CONSTANT  = new KtConstantExpressionElementType("CHARACTER_CONSTANT");
+    KtConstantExpressionElementType INTEGER_CONSTANT    = new KtConstantExpressionElementType("INTEGER_CONSTANT");
 
     KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
             new KtStringTemplateExpressionElementType("STRING_TEMPLATE");
