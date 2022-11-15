@@ -272,7 +272,6 @@ enum class LanguageFeature(
     KeepNullabilityWhenApproximatingLocalType(KOTLIN_1_9, kind = BUG_FIX), // KT-53982
     SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_9, kind = BUG_FIX), // KT-49264
-    BreakContinueInInlineLambdas(KOTLIN_1_9), // KT-1436
     EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-48872
     EnableDfaWarningsInK2(KOTLIN_1_9, kind = OTHER), // KT-50965
     ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_9, kind = BUG_FIX), // KT-49017
@@ -298,6 +297,7 @@ enum class LanguageFeature(
 
     // Experimental features
 
+    BreakContinueInInlineLambdas(null), // KT-1436
     ReferencesToSyntheticJavaProperties(null), // KT-8575
     LightweightLambdas(null),
     JsEnableExtensionFunctionInExternals(null, kind = OTHER),
