@@ -102,7 +102,7 @@ internal class KtFirPropertySetterSymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertySetterSymbol>(this)?.let { return it }
 
         @Suppress("UNCHECKED_CAST")
-        KtFirPropertyAccessorSymbolPointer(requireOwnerPointer(), true) as KtSymbolPointer<KtPropertySetterSymbol>
+        KtFirPropertyAccessorSymbolPointer(requireOwnerPointer(), isGetter = false) as KtSymbolPointer<KtPropertySetterSymbol>
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
