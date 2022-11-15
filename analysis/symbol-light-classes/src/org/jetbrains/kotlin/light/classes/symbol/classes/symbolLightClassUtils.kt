@@ -262,7 +262,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
         return true
     }
 
-    val originalElement = declaration.psi as? KtDeclaration
+    val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
 
     val getter = declaration.getter?.takeIf {
         it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_GETTER)
@@ -273,7 +273,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
             LightMemberOriginForDeclaration(
                 originalElement = it,
                 originKind = JvmDeclarationOriginKind.OTHER,
-                auxiliaryOriginalElement = getter.psi as? KtDeclaration
+                auxiliaryOriginalElement = getter.sourcePsiSafe<KtDeclaration>()
             )
         }
 
@@ -285,6 +285,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
                 containingClass = this@createPropertyAccessors,
                 isTopLevel = isTopLevel,
                 suppressStatic = suppressStatic,
+                ktModule = ktModule,
             )
         )
     }
@@ -298,9 +299,10 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
             LightMemberOriginForDeclaration(
                 originalElement = it,
                 originKind = JvmDeclarationOriginKind.OTHER,
-                auxiliaryOriginalElement = setter.psi as? KtDeclaration
+                auxiliaryOriginalElement = setter.sourcePsiSafe<KtDeclaration>()
             )
         }
+
         result.add(
             SymbolLightAccessorMethod(
                 propertyAccessorSymbol = setter,
@@ -309,6 +311,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
                 containingClass = this@createPropertyAccessors,
                 isTopLevel = isTopLevel,
                 suppressStatic = suppressStatic,
+                ktModule = ktModule,
             )
         )
     }
