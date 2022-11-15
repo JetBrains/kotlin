@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal class IdePlatformDependencyResolver(
+internal class IdePlatformBinaryDependencyResolver(
     private val binaryType: String = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
     private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation()
 ) : IdeDependencyResolver {
@@ -152,6 +152,6 @@ internal class IdePlatformDependencyResolver(
     }
 
     private companion object {
-        val logger = Logging.getLogger(IdePlatformDependencyResolver::class.java)
+        val logger = Logging.getLogger(IdePlatformBinaryDependencyResolver::class.java)
     }
 }

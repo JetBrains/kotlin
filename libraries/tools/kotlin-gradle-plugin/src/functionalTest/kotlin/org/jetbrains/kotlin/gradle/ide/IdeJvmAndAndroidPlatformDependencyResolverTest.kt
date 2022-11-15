@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformBinaryDependencyResolver
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -66,10 +66,10 @@ class IdeJvmAndAndroidPlatformDependencyResolverTest {
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10")
         )
 
-        IdeJvmAndAndroidPlatformDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidMain"))
+        IdeJvmAndAndroidPlatformBinaryDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidMain"))
             .assertMatches(jvmAndAndroidDependencies)
 
-        IdeJvmAndAndroidPlatformDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidTest"))
+        IdeJvmAndAndroidPlatformBinaryDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidTest"))
             .assertMatches(jvmAndAndroidDependencies)
     }
 }
