@@ -45,6 +45,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         }
 
         @Test
+        @TestMetadata("externalSerialierJava.kt")
+        public void testExternalSerialierJava() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/externalSerialierJava.kt");
+        }
+
+        @Test
         @TestMetadata("ExternalSerializers.kt")
         public void testExternalSerializers() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/ExternalSerializers.kt");
