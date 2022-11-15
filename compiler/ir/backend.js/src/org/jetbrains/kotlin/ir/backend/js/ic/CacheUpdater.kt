@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
+import java.security.MessageDigest
 import java.util.EnumSet
 
 fun interface JsIrCompilerICInterface {
@@ -48,7 +49,7 @@ enum class DirtyFileState(val str: String) {
 class CacheUpdater(
     mainModule: String,
     allModules: Collection<String>,
-    icCachePaths: Collection<String>,
+    private val icCacheRootDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     private val irFactory: () -> IrFactory,
     private val mainArguments: List<String>?,
@@ -59,8 +60,6 @@ class CacheUpdater(
     private val libraries = loadLibraries(allModules)
     private val dependencyGraph = buildDependenciesGraph(libraries)
     private val configHash = compilerConfiguration.configHashForIC()
-
-    private val cacheMap = libraries.values.zip(icCachePaths).toMap()
 
     private val mainLibraryFile = KotlinLibraryFile(File(mainModule).canonicalPath)
     private val mainLibrary = libraries[mainLibraryFile] ?: notFoundIcError("main library", mainLibraryFile)
@@ -114,9 +113,13 @@ class CacheUpdater(
     private inner class CacheUpdaterInternal {
         val signatureHashCalculator = IdSignatureHashCalculator()
 
-        private val incrementalCaches = libraries.entries.associate { (libFile, lib) ->
-            val cachePath = cacheMap[lib] ?: notFoundIcError("cache path", KotlinLibraryFile(lib))
-            libFile to IncrementalCache(lib, cachePath)
+        private val incrementalCaches = run {
+            val md5 = MessageDigest.getInstance("MD5")
+            libraries.entries.associate { (libFile, lib) ->
+                val file = File(libFile.path)
+                val hash = md5.digest(file.absolutePath.encodeToByteArray()).joinToString("", transform = { "%02x".format(it) })
+                libFile to IncrementalCache(lib, File(icCacheRootDir, "${file.name}.$hash"))
+            }
         }
 
         private fun getLibIncrementalCache(libFile: KotlinLibraryFile) =

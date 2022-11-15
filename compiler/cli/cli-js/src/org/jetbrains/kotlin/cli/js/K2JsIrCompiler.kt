@@ -650,7 +650,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val cacheUpdater = CacheUpdater(
                 mainModule = arguments.includes!!,
                 allModules = libraries,
-                icCachePaths = cacheDirectories,
+                icCacheRootDir = cacheDirectories.last(),
                 compilerConfiguration = configurationJs,
                 irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                 mainArguments = mainCallArguments,

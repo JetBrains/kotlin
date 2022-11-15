@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import java.io.File
 
 
-internal class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
+internal class IncrementalCache(private val library: KotlinLibrary, private val cacheDir: File) {
     companion object {
         private const val CACHE_HEADER = "ic.header.bin"
 
@@ -24,7 +24,6 @@ internal class IncrementalCache(private val library: KotlinLibrary, cachePath: S
     }
 
     private var forceRebuildJs = false
-    private val cacheDir = File(cachePath)
     private val signatureToIndexMappingFromMetadata = hashMapOf<KotlinSourceFile, MutableMap<IdSignature, Int>>()
 
     private val libraryFile = KotlinLibraryFile(library)
