@@ -53,6 +53,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return irCall(call, symbols.floatEqualityFunctions.getValue(irBuiltins.doubleType))
             }
             irBuiltins.eqeqSymbol -> {
+                fun callRefIsNull(expr: IrExpression): IrCall {
+                    val refIsNull = if (expr.type.erasedUpperBound?.isExternal == true) symbols.externRefIsNull else symbols.refIsNull
+                    return builder.irCall(refIsNull).apply { putValueArgument(0, expr) }
+                }
+
                 val lhs = call.getValueArgument(0)!!
                 val rhs = call.getValueArgument(1)!!
                 val lhsType = lhs.type
@@ -63,14 +68,10 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                         return irCall(call, newSymbol)
                     }
                 }
-                if (lhs.isNullConst()) {
-                    val refIsNull = if (rhsType.erasedUpperBound?.isExternal == true) symbols.externRefIsNull else symbols.refIsNull
-                    return builder.irCall(refIsNull).apply { putValueArgument(0, rhs) }
-                }
-                if (rhs.isNullConst()) {
-                    val refIsNull = if (lhsType.erasedUpperBound?.isExternal == true) symbols.externRefIsNull else symbols.refIsNull
-                    return builder.irCall(refIsNull).apply { putValueArgument(0, lhs) }
-                }
+                if (lhs.isNullConst()) return callRefIsNull(rhs)
+
+                if (rhs.isNullConst()) return callRefIsNull(lhs)
+
                 if (!lhsType.isNullable()) {
                     return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
                 }
