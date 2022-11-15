@@ -3882,6 +3882,77 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
             }
         """
     )
+
+    @Test // regression test for 204897513
+    fun test_InlineForLoop() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                Bug(listOf(1, 2, 3)) {
+                    Text(it.toString())
+                }
+            }
+
+            @Composable
+            inline fun <T> Bug(items: List<T>, content: @Composable (item: T) -> Unit) {
+                for (item in items) content(item)
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            fun Test(%composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<Bug(li...>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                Bug(listOf(1, 2, 3), { it: Int, %composer: Composer?, %changed: Int ->
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<Text(i...>:Test.kt")
+                  val %dirty = %changed
+                  if (%changed and 0b1110 === 0) {
+                    %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
+                  }
+                  if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
+                    Text(it.toString(), %composer, 0)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endReplaceableGroup()
+                }, %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
+              }
+            }
+            @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
+            fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Bug)P(1)*<conten...>:Test.kt")
+              val tmp0_iterator = items.iterator()
+              while (tmp0_iterator.hasNext()) {
+                val item = tmp0_iterator.next()
+                content(item, %composer, 0b01110000 and %changed)
+              }
+              %composer.endReplaceableGroup()
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Text(value: String) {}
+        """
+    )
 }
 
 class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransformTestsBase() {
@@ -3943,6 +4014,74 @@ class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransform
               }
               return tmp0
             }
+        """
+    )
+
+    @Test // regression test for 204897513
+    fun test_InlineForLoop_no_source_info() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            private fun Test() {
+                Bug(listOf(1, 2, 3)) {
+                    Text(it.toString())
+                }
+            }
+
+            @Composable
+            private inline fun <T> Bug(items: List<T>, content: @Composable (item: T) -> Unit) {
+                for (item in items) content(item)
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            private fun Test(%composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                Bug(listOf(1, 2, 3), { it: Int, %composer: Composer?, %changed: Int ->
+                  %composer.startReplaceableGroup(<>)
+                  val %dirty = %changed
+                  if (%changed and 0b1110 === 0) {
+                    %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
+                  }
+                  if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
+                    Text(it.toString(), %composer, 0)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endReplaceableGroup()
+                }, %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
+              }
+            }
+            @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
+            private fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              val tmp0_iterator = items.iterator()
+              while (tmp0_iterator.hasNext()) {
+                val item = tmp0_iterator.next()
+                content(item, %composer, 0b01110000 and %changed)
+              }
+              %composer.endReplaceableGroup()
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Text(value: String) {}
         """
     )
 }
