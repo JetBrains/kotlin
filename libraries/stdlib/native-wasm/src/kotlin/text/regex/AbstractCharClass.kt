@@ -58,9 +58,12 @@ internal abstract class AbstractCharClass : SpecialToken() {
     internal var alt: Boolean = false
     internal var altSurrogates: Boolean = false
 
+    /**
+     * For each unpaired surrogate char indicates whether it is contained in this char class.
+     */
     internal val lowHighSurrogates = BitSet(SURROGATE_CARDINALITY) // Bit set for surrogates?
 
-    /*
+    /**
      * Indicates if this class may contain supplementary Unicode codepoints.
      * If this flag is specified it doesn't mean that this class contains supplementary characters but may contain.
      */
@@ -92,6 +95,20 @@ internal abstract class AbstractCharClass : SpecialToken() {
 
 
     private val surrogates_ = AtomicReference<AbstractCharClass?>(null)
+    /**
+     * Returns a char class that contains only unpaired surrogate chars from this char class.
+     *
+     * Consider the following char class: `[a\uD801\uDC00\uD800]`.
+     * This function returns a char class that contains only `\uD800`: `[\uD800]`.
+     * [classWithoutSurrogates] returns a char class that does not contain `\uD800`: `[a\uD801\uDC00]`.
+     *
+     * The returned char class is used to create [SurrogateRangeSet] node
+     * that matches any unpaired surrogate from this char class. [SurrogateRangeSet]
+     * doesn't match a surrogate that is paired with the char before or after it.
+     * The result of [classWithoutSurrogates] is used to create [SupplementaryRangeSet]
+     * or [RangeSet] depending on [mayContainSupplCodepoints].
+     * The two nodes are then combined in [CompositeRangeSet] node to fully represent this char class.
+     */
     fun classWithSurrogates(): AbstractCharClass {
         surrogates_.value?.let {
             return it
@@ -108,12 +125,19 @@ internal abstract class AbstractCharClass : SpecialToken() {
                 }
             }
         }
-        result.setNegative(this.altSurrogates)
+        result.alt = this.alt
+        result.altSurrogates = this.altSurrogates
+        result.mayContainSupplCodepoints = this.mayContainSupplCodepoints
         surrogates_.compareAndSet(null, result.freeze())
         return surrogates_.value!!
     }
 
 
+    /**
+     * Returns a char class that contains all chars from this char class excluding the unpaired surrogate chars.
+     *
+     * See [classWithSurrogates] for details.
+     */
     // We cannot cache this class as we've done with surrogates above because
     // here is a circular reference between it and AbstractCharClass.
     fun classWithoutSurrogates(): AbstractCharClass {
@@ -129,8 +153,9 @@ internal abstract class AbstractCharClass : SpecialToken() {
                 return this@AbstractCharClass.contains(ch) && !containslHS
             }
         }
-        result.setNegative(isNegative())
-        result.mayContainSupplCodepoints = mayContainSupplCodepoints
+        result.alt = this.alt
+        result.altSurrogates = this.altSurrogates
+        result.mayContainSupplCodepoints = this.mayContainSupplCodepoints
         return result
     }
 
@@ -145,9 +170,10 @@ internal abstract class AbstractCharClass : SpecialToken() {
         if (alt xor value) {
             alt = !alt
             altSurrogates = !altSurrogates
-        }
-        if (!mayContainSupplCodepoints) {
-            mayContainSupplCodepoints = true
+
+            if (!mayContainSupplCodepoints) {
+                mayContainSupplCodepoints = true
+            }
         }
         return this
     }
