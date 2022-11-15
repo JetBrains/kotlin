@@ -245,6 +245,7 @@ abstract class FirJavaFacade(
         val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
         val moduleData = getModuleDataForClass(javaClass)
         return buildJavaClass {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             source = javaClass.toSourceElement()
             this.moduleData = moduleData
             symbol = classSymbol

@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -55,7 +57,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
             isExpect = makeExpect
         }
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
-        resolvePhase = FirResolvePhase.BODY_RESOLVE
+        resolvePhase = this@generateValuesFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
             it.replaceTypeRef(returnTypeRef)
         }
@@ -104,9 +106,9 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             isCrossinline = false
             isNoinline = false
             isVararg = false
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            resolvePhase = this@generateValueOfFunction.resolvePhase
         }
-        resolvePhase = FirResolvePhase.BODY_RESOLVE
+        resolvePhase = this@generateValueOfFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
             it.replaceTypeRef(returnTypeRef)
         }
@@ -141,7 +143,7 @@ fun FirRegularClassBuilder.generateEntriesGetter(
             isExpect = makeExpect
         }
         symbol = FirPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
-        resolvePhase = FirResolvePhase.BODY_RESOLVE
+        resolvePhase = this@generateEntriesGetter.resolvePhase
         getter = FirDefaultPropertyGetter(
             sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
             moduleData, FirDeclarationOrigin.Source, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
