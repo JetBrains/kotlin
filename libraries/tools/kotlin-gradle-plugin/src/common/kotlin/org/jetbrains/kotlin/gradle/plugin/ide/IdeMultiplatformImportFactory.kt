@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.kpm.idea.kotlinDebugKey
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeDependsOnDependencyResolver
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformDependencyResolver
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdePlatformDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformBinaryDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdePlatformBinaryDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeTransformedMetadataDependencyResolver
 
 fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultiplatformImport {
@@ -31,7 +31,7 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
         )
 
         registerDependencyResolver(
-            resolver = IdePlatformDependencyResolver(),
+            resolver = IdePlatformBinaryDependencyResolver(),
             constraint = IdeMultiplatformImport.SourceSetConstraint.isPlatform,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
@@ -42,7 +42,7 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
         This resolver will resolve dependencies visible to the source set from a 'jvm' perspective.
          */
         registerDependencyResolver(
-            resolver = IdeJvmAndAndroidPlatformDependencyResolver(extension.project),
+            resolver = IdeJvmAndAndroidPlatformBinaryDependencyResolver(extension.project),
             constraint = IdeMultiplatformImport.SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
