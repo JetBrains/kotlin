@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
 context(KtAnalysisSession)
 internal class SymbolLightNoArgConstructor(
     lightMemberOrigin: LightMemberOrigin?,
-    containingClass: SymbolLightClassBase,
+    containingClass: SymbolLightClassForClassOrObject,
     visibility: String,
     methodIndex: Int,
 ) : SymbolLightMethodBase(lightMemberOrigin, containingClass, methodIndex) {
