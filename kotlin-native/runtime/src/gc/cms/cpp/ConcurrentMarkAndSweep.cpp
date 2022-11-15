@@ -53,6 +53,12 @@ void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
     gcScheduler_.OnSafePointAllocation(size);
     mm::SuspendIfRequested();
 }
+
+void gc::ConcurrentMarkAndSweep::ThreadData::Schedule() noexcept {
+    ThreadStateGuard guard(ThreadState::kNative);
+    gc_.state_.schedule();
+}
+
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
     ThreadStateGuard guard(ThreadState::kNative);
     auto scheduled_epoch = gc_.state_.schedule();

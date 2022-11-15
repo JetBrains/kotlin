@@ -3526,6 +3526,12 @@ void Kotlin_native_internal_GC_collect(KRef) {
 #endif
 }
 
+void Kotlin_native_internal_GC_schedule(KRef) {
+#if USE_GC
+    garbageCollect();
+#endif
+}
+
 extern "C" void Kotlin_Internal_GC_GCInfoBuilder_Fill(KRef builder, int id) {
 }
 

@@ -80,6 +80,7 @@ public:
         void SafePointSlowPath(SafepointFlag flag) noexcept;
         void SafePointAllocation(size_t size) noexcept;
 
+        void Schedule() noexcept { ScheduleAndWaitFullGC(); }
         void ScheduleAndWaitFullGC() noexcept;
         void ScheduleAndWaitFullGCWithFinalizers() noexcept { ScheduleAndWaitFullGC(); }
 

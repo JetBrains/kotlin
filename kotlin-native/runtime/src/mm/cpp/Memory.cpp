@@ -310,6 +310,12 @@ extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
     threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
 }
 
+extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->gc().Schedule();
+}
+
 extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
     // TODO: Remove when legacy MM is gone.
     // Nothing to do

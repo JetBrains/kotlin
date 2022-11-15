@@ -34,6 +34,10 @@ ALWAYS_INLINE void gc::GC::ThreadData::SafePointLoopBody() noexcept {
     SafePointRegular(*this, GCSchedulerThreadData::kLoopBodyWeight);
 }
 
+void gc::GC::ThreadData::Schedule() noexcept {
+    impl_->gc().Schedule();
+}
+
 void gc::GC::ThreadData::ScheduleAndWaitFullGC() noexcept {
     impl_->gc().ScheduleAndWaitFullGC();
 }
