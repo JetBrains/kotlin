@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     @Test
+    @TestMetadata("addEnumEntry")
+    public void testAddEnumEntry() throws Exception {
+        runTest("compiler/testData/klibABI/addEnumEntry/");
+    }
+
+    @Test
     public void testAllFilesPresentInKlibABI() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, false);
     }
@@ -130,6 +136,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     @TestMetadata("removeClassAsVariableType")
     public void testRemoveClassAsVariableType() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsVariableType/");
+    }
+
+    @Test
+    @TestMetadata("removeEnumEntry")
+    public void testRemoveEnumEntry() throws Exception {
+        runTest("compiler/testData/klibABI/removeEnumEntry/");
     }
 
     @Test
