@@ -96,6 +96,12 @@ open internal class SupplementaryRangeSet(charClass: AbstractCharClass, val igno
 
     val chars = charClass.instance
 
+    // This node can consume a single char or a supplementary code point consisting of two surrogate chars.
+    // But this node can't match an unpaired surrogate char.
+    // Thus, for a given [testString] and [startIndex] a fixed amount of chars are consumed.
+    override val consumesFixedLength: Boolean
+        get() = true
+
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         val rightBound = testString.length
         if (startIndex >= rightBound) {

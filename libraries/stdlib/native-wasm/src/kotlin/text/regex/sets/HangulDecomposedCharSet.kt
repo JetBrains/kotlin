@@ -38,7 +38,8 @@ internal class HangulDecomposedCharSet(
          * Length of useful part of decomposedChar
          * decomposedCharLength <= decomposedChar.length
          */
-        private val decomposedCharLength: Int) : SimpleSet() {
+        private val decomposedCharLength: Int
+) : SimpleSet() {
 
     /**
      * String representing syllable
@@ -49,6 +50,9 @@ internal class HangulDecomposedCharSet(
 
     override val name: String
             get() = "decomposed Hangul syllable: $decomposedCharUTF16"
+
+    override val consumesFixedLength: Boolean
+        get() = true
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         var index = startIndex

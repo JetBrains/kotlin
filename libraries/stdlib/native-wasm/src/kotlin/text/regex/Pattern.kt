@@ -349,115 +349,68 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         return cur
     }
 
+    private fun quantifierFromLexerToken(quant: Int): Quantifier {
+        return when (quant) {
+            Lexer.QUANT_COMP, Lexer.QUANT_COMP_R, Lexer.QUANT_COMP_P -> {
+                lexemes.nextSpecial() as Quantifier
+            }
+            else -> {
+                lexemes.next()
+                Quantifier.fromLexerToken(quant)
+            }
+        }
+    }
+
     /**
      * Q->T(*|+|?...) also do some optimizations.
      */
     private fun processQuantifier(last: AbstractSet, term: AbstractSet): AbstractSet {
         val quant = lexemes.currentChar
 
-        if (term !is LeafSet) {
-            return when (quant) {
-                Lexer.QUANT_STAR, Lexer.QUANT_PLUS -> {
-                    val q: QuantifierSet
+        if (term.type == AbstractSet.TYPE_DOTSET && (quant == Lexer.QUANT_STAR || quant == Lexer.QUANT_PLUS)) {
+            lexemes.next()
+            return DotQuantifierSet(term, last, quant, AbstractLineTerminator.getInstance(flags), hasFlag(Pattern.DOTALL))
+        }
 
-                    lexemes.next()
-                    if (term.type == AbstractSet.TYPE_DOTSET) {
-                        q = DotQuantifierSet(term, last, quant, AbstractLineTerminator.getInstance(flags), hasFlag(Pattern.DOTALL))
-                    } else {
-                        q = GroupQuantifierSet(Quantifier.fromLexerToken(quant), term, last, quant, groupQuantifierCount++)
-                    }
-                    term.next = q
-                    q
+        return when (quant) {
+
+            Lexer.QUANT_STAR, Lexer.QUANT_PLUS, Lexer.QUANT_ALT, Lexer.QUANT_COMP -> {
+                val quantifier = quantifierFromLexerToken(quant)
+                when {
+                    term is LeafSet ->
+                        LeafQuantifierSet(quantifier, term, last, quant)
+                    term.consumesFixedLength ->
+                        FixedLengthQuantifierSet(quantifier, term, last, quant)
+                    else ->
+                        GroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
                 }
-
-                Lexer.QUANT_ALT -> {
-                    lexemes.next()
-                    val q = GroupQuantifierSet(Quantifier.fromLexerToken(quant), term, last, quant, groupQuantifierCount++)
-                    term.next = q
-                    q
-                }
-
-                Lexer.QUANT_STAR_R, Lexer.QUANT_PLUS_R, Lexer.QUANT_ALT_R -> {
-                    lexemes.next()
-                    val q = ReluctantGroupQuantifierSet(Quantifier.fromLexerToken(quant), term, last, quant, groupQuantifierCount++)
-                    term.next = q
-                    q
-                }
-
-                Lexer.QUANT_PLUS_P, Lexer.QUANT_STAR_P, Lexer.QUANT_ALT_P  -> {
-                    lexemes.next()
-                    PossessiveGroupQuantifierSet(Quantifier.fromLexerToken(quant), term, last, quant, groupQuantifierCount++)
-                }
-
-                Lexer.QUANT_COMP -> {
-                    val q = GroupQuantifierSet(lexemes.nextSpecial() as Quantifier, term, last, Lexer.QUANT_ALT, groupQuantifierCount++)
-                    term.next = q
-                    q
-                }
-
-                Lexer.QUANT_COMP_R -> {
-                    val q = ReluctantGroupQuantifierSet(lexemes.nextSpecial() as Quantifier, term, last, Lexer.QUANT_ALT, groupQuantifierCount++)
-                    term.next = q
-                    q
-                }
-
-                Lexer.QUANT_COMP_P -> {
-                    return PossessiveGroupQuantifierSet(lexemes.nextSpecial() as Quantifier, term, last, Lexer.QUANT_ALT, groupQuantifierCount++)
-                }
-
-                else -> term
             }
-        } else {
-            val leaf: LeafSet = term
-            return when (quant) {
-                Lexer.QUANT_STAR, Lexer.QUANT_PLUS -> {
-                    lexemes.next()
-                    val q = LeafQuantifierSet(Quantifier.fromLexerToken(quant), leaf, last, quant)
-                    leaf.next = q
-                    q
-                }
 
-                Lexer.QUANT_STAR_R, Lexer.QUANT_PLUS_R -> {
-                    lexemes.next()
-                    val q = ReluctantLeafQuantifierSet(Quantifier.fromLexerToken(quant), leaf, last, quant)
-                    leaf.next = q
-                    q
+            Lexer.QUANT_STAR_R, Lexer.QUANT_PLUS_R, Lexer.QUANT_ALT_R, Lexer.QUANT_COMP_R -> {
+                val quantifier = quantifierFromLexerToken(quant)
+                when {
+                    term is LeafSet ->
+                        ReluctantLeafQuantifierSet(quantifier, term, last, quant)
+                    term.consumesFixedLength ->
+                        ReluctantFixedLengthQuantifierSet(quantifier, term, last, quant)
+                    else ->
+                        ReluctantGroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
                 }
-
-                Lexer.QUANT_PLUS_P, Lexer.QUANT_STAR_P -> {
-                    lexemes.next()
-                    val q = PossessiveLeafQuantifierSet(Quantifier.fromLexerToken(quant), leaf, last, quant)
-                    leaf.next = q
-                    q
-                }
-
-                Lexer.QUANT_ALT -> {
-                    lexemes.next()
-                    LeafQuantifierSet(Quantifier.altQuantifier, leaf, last, Lexer.QUANT_ALT)
-                }
-
-                Lexer.QUANT_ALT_R -> {
-                    lexemes.next()
-                    ReluctantLeafQuantifierSet(Quantifier.altQuantifier, leaf, last, Lexer.QUANT_ALT_R)
-                }
-
-                Lexer.QUANT_ALT_P -> {
-                    lexemes.next()
-                    PossessiveLeafQuantifierSet(Quantifier.altQuantifier, leaf, last, Lexer.QUANT_ALT_P)
-                }
-
-                Lexer.QUANT_COMP -> {
-                    LeafQuantifierSet(lexemes.nextSpecial() as Quantifier, leaf, last, Lexer.QUANT_COMP)
-                }
-                Lexer.QUANT_COMP_R -> {
-                    ReluctantLeafQuantifierSet(lexemes.nextSpecial() as Quantifier, leaf, last, Lexer.QUANT_COMP_R)
-                }
-                Lexer.QUANT_COMP_P -> {
-                    ReluctantLeafQuantifierSet(lexemes.nextSpecial() as Quantifier, leaf, last, Lexer.QUANT_COMP_P)
-                }
-
-                else -> term
             }
+
+            Lexer.QUANT_PLUS_P, Lexer.QUANT_STAR_P, Lexer.QUANT_ALT_P, Lexer.QUANT_COMP_P -> {
+                val quantifier = quantifierFromLexerToken(quant)
+                when {
+                    term is LeafSet ->
+                        PossessiveLeafQuantifierSet(quantifier, term, last, quant)
+                    term.consumesFixedLength ->
+                        PossessiveFixedLengthQuantifierSet(quantifier, term, last, quant)
+                    else ->
+                        PossessiveGroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
+                }
+            }
+
+            else -> term
         }
     }
 
