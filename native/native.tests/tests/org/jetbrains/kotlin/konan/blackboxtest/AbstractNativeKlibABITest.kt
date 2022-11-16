@@ -30,6 +30,16 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         override val buildDir get() = this@AbstractNativeKlibABITest.buildDir
         override val stdlibFile get() = this@AbstractNativeKlibABITest.stdlibFile
 
+        override val testModeName = with(testRunSettings.get<CacheMode>()) {
+            val cacheModeAlias = when {
+                staticCacheRootDir == null -> CacheMode.Alias.NO
+                !staticCacheRequiredForEveryLibrary -> CacheMode.Alias.STATIC_ONLY_DIST
+                else -> CacheMode.Alias.STATIC_EVERYWHERE
+            }
+
+            "NATIVE_CACHE_${cacheModeAlias}"
+        }
+
         override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: KlibABITestUtils.Dependencies, klibFile: File) =
             this@AbstractNativeKlibABITest.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
 

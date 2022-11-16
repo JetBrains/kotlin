@@ -74,6 +74,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         override val testDir: File = File(testPath).absoluteFile
         override val buildDir: File get() = this@AbstractJsKLibABITestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
+        override val testModeName = if (this@AbstractJsKLibABITestCase.useIncrementalCompiler) "JS_WITH_IC" else "JS_NO_IC"
 
         override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: KlibABITestUtils.Dependencies, klibFile: File) =
             this@AbstractJsKLibABITestCase.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
