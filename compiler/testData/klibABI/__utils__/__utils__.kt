@@ -14,6 +14,7 @@ interface TestBuilder {
     fun nonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String): ErrorMessagePattern
 
     fun expectFailure(errorMessagePattern: ErrorMessagePattern, block: Block<Any?>)
+    fun expectNoWhenBranchFailure(block: Block<Any?>)
     fun expectSuccess(block: Block<String>) // OK is expected
     fun <T : Any> expectSuccess(expectedOutcome: T, block: Block<T>)
 }
@@ -52,7 +53,11 @@ private class TestBuilderImpl : TestBuilder {
         NonImplementedCallable(callableTypeAndName, classifierTypeAndName)
 
     override fun expectFailure(errorMessagePattern: ErrorMessagePattern, block: Block<Any?>) {
-        tests += FailingTest(errorMessagePattern, block)
+        tests += FailingWithLinkageErrorTest(errorMessagePattern, block)
+    }
+
+    override fun expectNoWhenBranchFailure(block: Block<Any?>) {
+        tests += FailingWithNoWhenBranchErrorTest(block)
     }
 
     override fun expectSuccess(block: Block<String>) = expectSuccess(OK_STATUS, block)
@@ -68,14 +73,27 @@ private class TestBuilderImpl : TestBuilder {
     fun runTests(): String {
         val testFailures: List<TestFailure> = tests.mapIndexedNotNull { serialNumber, test ->
             val testFailureDetails: TestFailureDetails? = when (test) {
-                is FailingTest -> {
+                is FailingWithLinkageErrorTest -> {
                     try {
                         test.block()
                         TestSuccessfulButMustFail
                     } catch (t: Throwable) {
                         when (t.throwableKind) {
                             IR_LINKAGE_ERROR -> test.checkIrLinkageErrorMessage(t)
-                            EXCEPTION -> TestFailedWithException(t)
+                            NO_WHEN_BRANCH_ERROR, EXCEPTION -> TestFailedWithException(t)
+                            NON_EXCEPTION -> throw t // Something totally unexpected. Rethrow.
+                        }
+                    }
+                }
+
+                is FailingWithNoWhenBranchErrorTest -> {
+                    try {
+                        test.block()
+                        TestSuccessfulButMustFail
+                    } catch (t: Throwable) {
+                        when (t.throwableKind) {
+                            NO_WHEN_BRANCH_ERROR -> null // Success.
+                            IR_LINKAGE_ERROR, EXCEPTION -> TestFailedWithException(t)
                             NON_EXCEPTION -> throw t // Something totally unexpected. Rethrow.
                         }
                     }
@@ -140,7 +158,8 @@ private class NonImplementedCallable(callableTypeAndName: String, classifierType
 }
 
 private sealed interface Test
-private class FailingTest(val errorMessagePattern: ErrorMessagePattern, val block: Block<Any?>) : Test
+private class FailingWithLinkageErrorTest(val errorMessagePattern: ErrorMessagePattern, val block: Block<Any?>) : Test
+private class FailingWithNoWhenBranchErrorTest(val block: Block<Any?>) : Test
 private class SuccessfulTest(val expectedOutcome: Any, val block: Block<Any>) : Test
 
 private class TestFailure(val serialNumber: Int, val details: TestFailureDetails) {
@@ -153,14 +172,15 @@ private class TestFailedWithException(t: Throwable) : TestFailureDetails("Test u
 private class TestMismatchedExpectation(expectedOutcome: Any, actualOutcome: Any?) :
     TestFailureDetails("EXPECTED: $expectedOutcome, ACTUAL: $actualOutcome")
 
-private enum class ThrowableKind { IR_LINKAGE_ERROR, EXCEPTION, NON_EXCEPTION }
+private enum class ThrowableKind { NO_WHEN_BRANCH_ERROR, IR_LINKAGE_ERROR, EXCEPTION, NON_EXCEPTION }
 
 private val Throwable.throwableKind: ThrowableKind
     get() = when {
+        this is NoWhenBranchMatchedException -> NO_WHEN_BRANCH_ERROR
         this::class.simpleName == "IrLinkageError" -> IR_LINKAGE_ERROR
         this is Exception -> EXCEPTION
         else -> NON_EXCEPTION
     }
 
-private fun FailingTest.checkIrLinkageErrorMessage(t: Throwable) =
+private fun FailingWithLinkageErrorTest.checkIrLinkageErrorMessage(t: Throwable) =
     (errorMessagePattern as AbstractErrorMessagePattern).checkIrLinkageErrorMessage(t.message)
