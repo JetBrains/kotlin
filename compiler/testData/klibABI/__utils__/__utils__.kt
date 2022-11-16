@@ -2,11 +2,14 @@
 
 package abitestutils
 
+import abitestutils.TestMode.*
 import abitestutils.ThrowableKind.*
 
 /** API **/
 
 interface TestBuilder {
+    val testMode: TestMode
+
     fun skipHashes(message: String): ErrorMessagePattern
     fun nonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String): ErrorMessagePattern
 
@@ -18,6 +21,14 @@ interface TestBuilder {
 sealed interface ErrorMessagePattern
 
 private typealias Block<T> = () -> T
+
+enum class TestMode {
+    JS_NO_IC,
+    JS_WITH_IC,
+    NATIVE_CACHE_NO,
+    NATIVE_CACHE_STATIC_ONLY_DIST,
+    NATIVE_CACHE_STATIC_EVERYWHERE,
+}
 
 fun abiTest(init: TestBuilder.() -> Unit): String {
     val builder = TestBuilderImpl()
@@ -31,6 +42,8 @@ fun abiTest(init: TestBuilder.() -> Unit): String {
 private const val OK_STATUS = "OK"
 
 private class TestBuilderImpl : TestBuilder {
+    override val testMode = TestMode.__UNKNOWN__
+
     private val tests = mutableListOf<Test>()
 
     override fun skipHashes(message: String) = ErrorMessageWithSkippedSignatureHashes(message)
