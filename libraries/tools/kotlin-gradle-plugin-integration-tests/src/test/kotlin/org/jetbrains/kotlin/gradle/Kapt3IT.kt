@@ -33,6 +33,7 @@ import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.appendText
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
@@ -135,6 +136,17 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildJdk = jdk.location
         ) {
+            //language=Groovy
+            buildGradle.appendText(
+                """
+                |
+                |java {
+                |    sourceCompatibility = JavaVersion.VERSION_1_8
+                |    targetCompatibility = JavaVersion.VERSION_1_8
+                |}
+                """.trimMargin()
+            )
+
             build("assemble") {
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin")
                 // Check added because of https://youtrack.jetbrains.com/issue/KT-33056.
@@ -893,16 +905,11 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("Works with JPMS on JDK 9+")
-    @JdkVersions(versions = [JavaVersion.VERSION_11])
-    @GradleWithJdkTest
-    fun testJpmsModule(
-        gradleVersion: GradleVersion,
-        jdk: JdkVersions.ProvidedJdk
-    ) {
+    @GradleTest
+    fun testJpmsModule(gradleVersion: GradleVersion, ) {
         project(
             "jpms-module".withPrefix,
             gradleVersion,
-            buildJdk = jdk.location
         ) {
             build("assemble") {
                 assertTasksExecuted(":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileJava")

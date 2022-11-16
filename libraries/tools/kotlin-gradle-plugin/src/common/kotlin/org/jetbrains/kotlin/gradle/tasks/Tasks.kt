@@ -630,9 +630,6 @@ abstract class KotlinCompile @Inject constructor(
     internal abstract val associatedJavaCompileTaskTargetCompatibility: Property<String>
 
     @get:Internal
-    internal abstract val associatedJavaCompileTaskSources: ConfigurableFileCollection
-
-    @get:Internal
     internal abstract val associatedJavaCompileTaskName: Property<String>
 
     @get:Internal
@@ -721,7 +718,7 @@ abstract class KotlinCompile @Inject constructor(
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
-        validateKotlinAndJavaHasSameTargetCompatibility(args, kotlinSources)
+        validateKotlinAndJavaHasSameTargetCompatibility(args)
 
         val scriptSources = scriptSources.asFileTree.files
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
@@ -770,31 +767,27 @@ abstract class KotlinCompile @Inject constructor(
 
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
         args: K2JVMCompilerArguments,
-        kotlinSources: Set<File>
     ) {
-        val mixedSourcesArePresent = !associatedJavaCompileTaskSources.isEmpty &&
-                kotlinSources.isNotEmpty()
-        if (mixedSourcesArePresent) {
-            associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
-                val normalizedJavaTarget = when (targetCompatibility) {
-                    "6" -> "1.6"
-                    "7" -> "1.7"
-                    "8" -> "1.8"
-                    "1.9" -> "9"
-                    else -> targetCompatibility
-                }
+        associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
+            val normalizedJavaTarget = when (targetCompatibility) {
+                "6" -> "1.6"
+                "7" -> "1.7"
+                "8" -> "1.8"
+                "1.9" -> "9"
+                else -> targetCompatibility
+            }
 
-                val jvmTarget = args.jvmTarget ?: JvmTarget.DEFAULT.toString()
-                if (normalizedJavaTarget != jvmTarget) {
-                    val javaTaskName = associatedJavaCompileTaskName.get()
-                    val errorMessage = "'$javaTaskName' task (current target is $targetCompatibility) and " +
-                            "'$name' task (current target is $jvmTarget) " +
-                            "jvm target compatibility should be set to the same Java version."
-                    when (jvmTargetValidationMode.get()) {
-                        PropertiesProvider.JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
-                        PropertiesProvider.JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
-                        else -> Unit
-                    }
+            val jvmTarget = args.jvmTarget ?: JvmTarget.DEFAULT.toString()
+            if (normalizedJavaTarget != jvmTarget) {
+                val javaTaskName = associatedJavaCompileTaskName.get()
+                val errorMessage = "'$javaTaskName' task (current target is $targetCompatibility) and " +
+                        "'$name' task (current target is $jvmTarget) " +
+                        "jvm target compatibility should be set to the same Java version.\n" +
+                        "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
+                when (jvmTargetValidationMode.get()) {
+                    PropertiesProvider.JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
+                    PropertiesProvider.JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
+                    else -> Unit
                 }
             }
         }

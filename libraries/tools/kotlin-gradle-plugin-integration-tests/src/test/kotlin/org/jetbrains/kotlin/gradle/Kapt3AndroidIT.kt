@@ -34,6 +34,12 @@ open class Kapt3Android41IT : Kapt3AndroidIT() {
     fun testKotlinProcessorUsingFiler() {
         val project = Project("AndroidLibraryKotlinProject").apply {
             setupWorkingDir()
+            gradleProperties().appendText(
+                """
+                |
+                |kotlin.jvm.target.validation.mode = warning
+                """.trimMargin()
+            )
             gradleBuildScript().appendText(
                 """
                 apply plugin: 'kotlin-kapt'

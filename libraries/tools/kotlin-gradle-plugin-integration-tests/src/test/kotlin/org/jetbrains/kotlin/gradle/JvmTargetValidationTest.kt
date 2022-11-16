@@ -21,9 +21,9 @@ import kotlin.io.path.writeText
 @JvmGradlePluginTests
 class JvmTargetValidationTest : KGPBaseTest() {
 
-    @DisplayName("Should produce warning if java and kotlin jvm targets are different")
+    @DisplayName("Should produce error if java and kotlin jvm targets are different")
     @GradleTest
-    internal fun shouldWarnIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
+    internal fun shouldFailIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
             gradleVersion = gradleVersion,
@@ -32,18 +32,19 @@ class JvmTargetValidationTest : KGPBaseTest() {
             setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
             useToolchainToCompile(11)
 
-            build("assemble") {
+            buildAndFail("assemble") {
                 assertOutputContains(
                     "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
+                            "should be set to the same Java version.\n" +
+                            "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
                 )
             }
         }
     }
 
-    @DisplayName("Should fail the build if verification mode is 'error' and kotlin and java targets are different")
+    @DisplayName("Should warn in the build log if verification mode is 'warning' and kotlin and java targets are different")
     @GradleTest
-    internal fun shouldFailBuildIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
+    internal fun shouldWarnBuildIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
             gradleVersion = gradleVersion
@@ -54,14 +55,15 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleProperties.append(
                 """
                 # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
+                kotlin.jvm.target.validation.mode = warning
                 """.trimIndent()
             )
 
-            buildAndFail("assemble") {
+            build("assemble") {
                 assertOutputContains(
                     "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
+                            "should be set to the same Java version.\n" +
+                            "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
                 )
             }
         }
@@ -124,7 +126,14 @@ class JvmTargetValidationTest : KGPBaseTest() {
         ) {
             useToolchainToCompile(11)
 
-            JavaVersion.VERSION_1_8
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             //language=Groovy
             buildGradle.append(
                 """
@@ -173,13 +182,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 
                 """.trimIndent()
             )
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
 
             build("build")
         }
@@ -194,13 +196,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         ) {
             setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
             useToolchainToCompile(11)
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
+
             kotlinSourcesDir().toFile().deleteRecursively()
             javaSourcesDir().resolve("demo/HelloWorld.java").deleteExisting()
 
@@ -224,9 +220,9 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Should skip JVM target validation if no java sources are available")
+    @DisplayName("Should still do JVM target validation if no java sources are available")
     @GradleTest
-    internal fun shouldSkipJvmTargetValidationNoJavaSources(gradleVersion: GradleVersion) {
+    internal fun shouldDoJvmTargetValidationOnNoJavaSources(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
@@ -236,11 +232,17 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleProperties.append(
                 """
                 # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
+                kotlin.jvm.target.validation.mode = warning
                 """.trimIndent()
             )
 
-            build("assemble")
+            build("assemble") {
+                assertOutputContains(
+                    "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility " +
+                            "should be set to the same Java version.\n" +
+                            "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
+                )
+            }
         }
     }
 
@@ -264,7 +266,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputDoesNotContain(
+                assertOutputContains(
                     "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version."
                 )
             }
@@ -302,14 +304,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = getJdk11().javaHome
         ) {
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
-
             val toolchainJavaVersion = if (gradleVersion < GradleVersion.version("6.9")) {
                 15
             } else {

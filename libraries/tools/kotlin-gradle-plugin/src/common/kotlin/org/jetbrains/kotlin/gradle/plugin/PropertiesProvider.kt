@@ -439,7 +439,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     }
 
     val jvmTargetValidationMode: JvmTargetValidationMode
-        get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.WARNING)
+        get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.ERROR)
 
     val kotlinDaemonJvmArgs: String?
         get() = this.property("kotlin.daemon.jvmargs")

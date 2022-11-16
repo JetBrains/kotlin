@@ -110,6 +110,11 @@ task testJdk6Tests(type: Test) { thisTask ->
     })
 }
 
+tasks.named("compileModuleTestJava", JavaCompile) {
+    sourceCompatibility = JavaVersion.VERSION_1_9
+    targetCompatibility = JavaVersion.VERSION_1_9
+}
+
 compileModuleTestKotlin {
     kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9))
 }

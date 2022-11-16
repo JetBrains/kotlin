@@ -362,6 +362,14 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 JavaVersion.VERSION_11
             )
 
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             build("build") {
                 assertOutputContains("-jvm-target 11")
                 assertOutputDoesNotContain("-jvm-target 1.8")
@@ -420,6 +428,14 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         ) {
             setJvmTarget("1.8")
             useToolchainToCompile(11)
+
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
 
             build("build") {
                 assertOutputContains("-jvm-target 1.8")
@@ -579,6 +595,14 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = getJdk11().javaHome
         ) {
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             //language=Groovy
             buildGradle.append(
                 """
