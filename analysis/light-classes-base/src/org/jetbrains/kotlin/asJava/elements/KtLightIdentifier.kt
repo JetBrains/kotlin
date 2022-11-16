@@ -20,12 +20,15 @@ abstract class KtLightIdentifierBase(
     override fun getContainingFile() = lightOwner.containingFile
     override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
     override fun getTextOffset(): Int = origin?.textOffset ?: -1
+    abstract override fun copy(): PsiElement
 }
 
 open class KtLightIdentifier(
     lightOwner: PsiElement,
     private val ktDeclaration: KtDeclaration?
 ) : KtLightIdentifierBase(lightOwner, ktDeclaration?.name) {
+    override fun copy(): PsiElement = KtLightIdentifier(parent, ktDeclaration)
+
     override val origin: PsiElement?
         get() = when (ktDeclaration) {
             is KtSecondaryConstructor -> ktDeclaration.getConstructorKeyword()

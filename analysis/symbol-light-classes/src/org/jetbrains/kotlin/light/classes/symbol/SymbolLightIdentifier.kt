@@ -19,6 +19,7 @@ internal class SymbolLightIdentifier(
     lightOwner: PsiElement,
     private val ktSymbol: KtSymbol?
 ) : KtLightIdentifierBase(lightOwner, (ktSymbol as? KtNamedSymbol)?.name?.identifierOrNullIfSpecial) {
+    override fun copy(): PsiElement = SymbolLightIdentifier(parent, ktSymbol)
 
     override val origin: PsiElement?
         get() = when (val ktDeclaration = ktSymbol?.psi) {
