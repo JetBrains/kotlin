@@ -17,6 +17,7 @@ object KlibABITestUtils {
         val testDir: File
         val buildDir: File
         val stdlibFile: File
+        val testModeName: String
 
         fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File)
         fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies)
@@ -64,7 +65,9 @@ object KlibABITestUtils {
                     val utilsDir = testDir.parentFile.resolve(ABI_UTILS_DIR)
                     KtUsefulTestCase.assertExists(utilsDir)
 
-                    copySources(from = utilsDir, to = moduleBuildDirs.sourceDir)
+                    copySources(from = utilsDir, to = moduleBuildDirs.sourceDir) { contents ->
+                        contents.replace(TEST_MODE_PLACEHOLDER, testModeName)
+                    }
                 }
 
                 val moduleOutputDir = moduleBuildDirs.outputDir.apply { mkdirs() }
@@ -123,12 +126,25 @@ object KlibABITestUtils {
         buildBinaryAndRun(mainModuleKlibFile, binaryDependencies)
     }
 
-    private fun copySources(from: File, to: File) {
+    private fun copySources(from: File, to: File, patchSourceFile: ((String) -> String)? = null) {
+        var anyFilePatched = false
+
         from.walk().filter { it.isFile && it.extension == "kt" }.forEach { sourceFile ->
             val destFile = to.resolve(sourceFile.relativeTo(from))
             destFile.parentFile.mkdirs()
             sourceFile.copyTo(destFile)
+
+            if (patchSourceFile != null) {
+                val originalContents = destFile.readText()
+                val patchedContents = patchSourceFile(originalContents)
+                if (originalContents != patchedContents) {
+                    anyFilePatched = true
+                    destFile.writeText(patchedContents)
+                }
+            }
         }
+
+        check(patchSourceFile == null || anyFilePatched) { "No source files have been patched" }
     }
 
     fun createModuleDirs(buildDir: File, moduleName: String): ModuleBuildDirs {
@@ -156,4 +172,5 @@ object KlibABITestUtils {
 
     const val MAIN_MODULE_NAME = "main"
     private const val ABI_UTILS_DIR = "__utils__"
+    private const val TEST_MODE_PLACEHOLDER = "TestMode.__UNKNOWN__"
 }
