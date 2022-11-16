@@ -95,16 +95,17 @@ internal class NativeSuspendFunctionsLowering(ctx: Context) : AbstractSuspendFun
                  * The visitor below does exactly this.
                  */
                 originalBody.transformChildren(object : IrElementTransformer<Boolean> {
+                    fun IrBuilderWithScope.irGetCompletion() = irCall(completionGetter).apply { dispatchReceiver = irGet(thisReceiver) }
+
                     override fun visitCall(expression: IrCall, /* substituteContinuation */ data: Boolean): IrExpression {
                         val isTailSuspendCall = expression in tailSuspendCalls
 
                         return when {
                             expression.symbol == getContinuation -> {
-                                if (!data)
+                                if (data)
+                                    irBuilder.at(expression).irGetCompletion()
+                                else
                                     expression
-                                else {
-                                    irBuilder.at(expression).irCall(completionGetter).apply { dispatchReceiver = irGet(thisReceiver) }
-                                }
                             }
 
                             expression.isReturnIfSuspendedCall() -> {
@@ -118,7 +119,9 @@ internal class NativeSuspendFunctionsLowering(ctx: Context) : AbstractSuspendFun
                             }
 
                             else -> {
-                                expression.transformChildren(this, /* substituteContinuation = */ data)
+                                // Only the top-most call should have its continuation substituted.
+                                val substituteContinuation = data && !expression.isSuspendCall
+                                expression.transformChildren(this, substituteContinuation)
 
                                 if (!isTailSuspendCall)
                                     expression
@@ -133,9 +136,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context) : AbstractSuspendFun
                                                     newReturnType = newFun.returnType,
                                                     newSuperQualifierSymbol = expression.superQualifierSymbol
                                             ).also {
-                                                it.putValueArgument(it.valueArgumentsCount - 1, irCall(completionGetter).apply {
-                                                    dispatchReceiver = irGet(thisReceiver)
-                                                })
+                                                it.putValueArgument(it.valueArgumentsCount - 1, irGetCompletion())
                                             }
                                     )
                                 }
