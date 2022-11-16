@@ -569,6 +569,7 @@ fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget)
         }
     }
 
+// TODO: avoid mutability KT-55002
 fun FirTypeRef.convertToReceiverParameter(): FirReceiverParameter {
     val typeRef = this
     return buildReceiverParameter {
