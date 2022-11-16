@@ -259,7 +259,7 @@ class IncrementalFirJvmCompilerRunner(
                             else -> it + newDirtyFilesOutputsScope
                         }
                     }
-                    caches.inputsCache.removeOutputForSourceFiles(newDirtySources)
+                    caches.inputsCache.removeOutputForSourceFiles(newDirtySources, DummyCompilationTransaction())
                     newDirtySources.forEach {
                         dirtySources.add(KtIoFileSourceFile(it))
                     }

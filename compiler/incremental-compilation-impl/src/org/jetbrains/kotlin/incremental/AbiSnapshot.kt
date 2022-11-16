@@ -144,7 +144,8 @@ class AbiSnapshotImpl(override val protos: MutableMap<FqName, ProtoData>) : AbiS
             writeStringArray(nameResolver.strings)
         }
 
-        fun write(buildInfo: AbiSnapshot, file: File) {
+        fun write(icContext: IncrementalCompilationContext, buildInfo: AbiSnapshot, file: File) {
+            icContext.transaction.registerAddedOrChangedFile(file.toPath())
             ObjectOutputStream(FileOutputStream(file)).use {
                 it.writeAbiSnapshot(buildInfo)
             }

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import java.io.File
+import java.nio.file.Files
 
 abstract class IncrementalCompilerRunner<
         Args : CommonCompilerArguments,
@@ -381,7 +382,9 @@ abstract class IncrementalCompilerRunner<
         performWorkBeforeCompilation(compilationMode, args)
 
         val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
-        val exitCode = doCompile(compilationMode, allKotlinFiles, args, caches, abiSnapshotData, messageCollector)
+        val exitCode = RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups")).use { transaction ->
+            doCompile(compilationMode, allKotlinFiles, args, caches, abiSnapshotData, messageCollector, transaction)
+        }
 
         performWorkAfterCompilation(compilationMode, exitCode, caches)
         return exitCode
@@ -409,7 +412,8 @@ abstract class IncrementalCompilerRunner<
         args: Args,
         caches: CacheManager,
         abiSnapshotData: AbiSnapshotData?, // Not null iff withAbiSnapshot = true
-        originalMessageCollector: MessageCollector
+        originalMessageCollector: MessageCollector,
+        transaction: CompilationTransaction,
     ): ExitCode {
         val dirtySources = when (compilationMode) {
             is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableLinkedSet()
@@ -431,7 +435,7 @@ abstract class IncrementalCompilerRunner<
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
             caches.platformCache.markDirty(dirtySources)
-            caches.inputsCache.removeOutputForSourceFiles(dirtySources)
+            caches.inputsCache.removeOutputForSourceFiles(dirtySources, transaction)
 
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
             val expectActualTracker = ExpectActualTrackerImpl()
@@ -445,8 +449,9 @@ abstract class IncrementalCompilerRunner<
 
             args.reportOutputFiles = true
             val outputItemsCollector = OutputItemsCollectorImpl()
+            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
             val bufferingMessageCollector = BufferingMessageCollector()
-            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, outputItemsCollector)
+            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, transactionOutputsRegistrar)
 
             val compiledSources = reporter.measure(BuildTime.COMPILATION_ROUND) {
                 runCompiler(
@@ -461,6 +466,7 @@ abstract class IncrementalCompilerRunner<
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
             val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.normalize().absolutePath }
+            transaction.registerAddedOrChangedFile(dirtySourcesSinceLastTimeFile.toPath())
             dirtySourcesSinceLastTimeFile.writeText(text)
 
             val generatedFiles = outputItemsCollector.outputs.map {
@@ -472,7 +478,7 @@ abstract class IncrementalCompilerRunner<
                 val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
-                    generatedFiles.forEach { it.outputFile.delete() }
+                    generatedFiles.forEach { transaction.deleteFile(it.outputFile.toPath()) }
                     continue
                 }
             }
@@ -482,7 +488,7 @@ abstract class IncrementalCompilerRunner<
 
             if (exitCode != ExitCode.OK) break
 
-            dirtySourcesSinceLastTimeFile.delete()
+            transaction.deleteFile(dirtySourcesSinceLastTimeFile.toPath())
 
             val changesCollector = ChangesCollector()
             reporter.measure(BuildTime.IC_UPDATE_CACHES) {
@@ -533,13 +539,14 @@ abstract class IncrementalCompilerRunner<
         }
 
         if (exitCode == ExitCode.OK) {
+            transaction.markAsSuccessful()
             reporter.measure(BuildTime.STORE_BUILD_INFO) {
                 BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
 
                 //write abi snapshot
                 if (withAbiSnapshot) {
                     //TODO(valtman) check method/class remove
-                    AbiSnapshotImpl.write(abiSnapshotData!!.snapshot, abiSnapshotFile)
+                    AbiSnapshotImpl.write(icContext, abiSnapshotData!!.snapshot, abiSnapshotFile)
                 }
             }
         }
@@ -548,7 +555,7 @@ abstract class IncrementalCompilerRunner<
         }
 
         val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
-        processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
+        processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData, transaction)
 
         return exitCode
     }
@@ -582,7 +589,8 @@ abstract class IncrementalCompilerRunner<
     private fun processChangesAfterBuild(
         compilationMode: CompilationMode,
         currentBuildInfo: BuildInfo,
-        dirtyData: DirtyData
+        dirtyData: DirtyData,
+        transaction: CompilationTransaction,
     ) = reporter.measure(BuildTime.IC_WRITE_HISTORY_FILE) {
         val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: emptyList()
         val newDiff = if (compilationMode is CompilationMode.Incremental) {
@@ -592,7 +600,7 @@ abstract class IncrementalCompilerRunner<
             BuildDifference(currentBuildInfo.startTS, false, emptyDirtyData)
         }
 
-        //TODO(valtman) old history build should be restored in case of build fail
+        transaction.registerAddedOrChangedFile(buildHistoryFile.toPath())
         BuildDiffsStorage.writeToFile(buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff), reporter)
     }
 

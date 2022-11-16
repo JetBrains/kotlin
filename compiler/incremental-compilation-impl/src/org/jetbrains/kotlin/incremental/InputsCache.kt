@@ -39,11 +39,14 @@ class InputsCache(
     internal val sourceSnapshotMap = registerMap(FileSnapshotMap(SOURCE_SNAPSHOTS.storageFile, pathConverter))
     private val sourceToOutputMap = registerMap(SourceToOutputFilesMap(SOURCE_TO_OUTPUT_FILES.storageFile, pathConverter))
 
-    fun removeOutputForSourceFiles(sources: Iterable<File>) {
+    fun removeOutputForSourceFiles(
+        sources: Iterable<File>,
+        transaction: CompilationTransaction,
+    ) {
         for (sourceFile in sources) {
             sourceToOutputMap.remove(sourceFile).forEach {
                 reporter.debug { "Deleting $it on clearing cache for $sourceFile" }
-                it.delete()
+                transaction.deleteFile(it.toPath())
             }
         }
     }
