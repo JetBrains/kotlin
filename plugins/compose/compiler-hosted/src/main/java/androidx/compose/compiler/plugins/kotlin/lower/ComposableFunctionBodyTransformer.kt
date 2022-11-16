@@ -616,9 +616,8 @@ class ComposableFunctionBodyTransformer(
             }
     }
 
-    private val rollbackGroupMarkerEnabled get() = false
-        // Temporarily disabled for b/255722247
-        // currentMarkerProperty != null && endToMarkerFunction != null
+    private val rollbackGroupMarkerEnabled get() =
+        currentMarkerProperty != null && endToMarkerFunction != null
 
     private val endRestartGroupFunction by guardedLazy {
         composerIrClass
@@ -2631,7 +2630,8 @@ class ComposableFunctionBodyTransformer(
 
                         break@loop
                     }
-                    if (scope.isInlinedLambda) leavingInlinedLambda = true
+                    if (scope.isInlinedLambda && scope.inComposableCall)
+                        leavingInlinedLambda = true
                 }
                 is Scope.BlockScope -> {
                     blockScopeMarks.add(scope)
