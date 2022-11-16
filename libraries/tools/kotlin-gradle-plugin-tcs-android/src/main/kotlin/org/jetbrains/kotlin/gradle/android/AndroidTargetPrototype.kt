@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.android
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
-import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
 import org.gradle.kotlin.dsl.getByType
@@ -46,8 +45,22 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
     val androidTarget = createExternalKotlinTarget<PrototypeAndroidTarget> {
         targetName = "android"
         platformType = KotlinPlatformType.jvm
-        targetFactory = TargetFactory { delegate ->
-            PrototypeAndroidTarget(delegate, PrototypeAndroidDsl(31))
+        targetFactory = TargetFactory { delegate -> PrototypeAndroidTarget(delegate, PrototypeAndroidDsl(31)) }
+
+        apiElements.configure { _, configuration ->
+            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+        }
+
+        runtimeElements.configure { _, configuration ->
+            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+        }
+
+        apiElementsPublished.configure { _, configuration ->
+            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+        }
+
+        runtimeElementsPublished.configure { _, configuration ->
+            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
         }
     }
 
@@ -111,43 +124,29 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
 
         /*
         Setup apiElements configuration:
-        Usage: JAVA_API
-        jvmEnvironment: Android
         variants:
             - classes (provides access to the compiled .class files)
                 artifactType: CLASSES_JAR
          */
-        project.configurations.getByName(androidTarget.apiElementsConfigurationName).apply {
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_API))
-            attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-            outgoing.variants.create("classes").let { variant ->
-                variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
-                variant.artifact(mainCompilation.output.classesDirs.singleFile) {
-                    it.builtBy(mainCompilation.output.classesDirs)
-                }
+        androidTarget.apiElementsConfiguration.outgoing.variants.create("classes").let { variant ->
+            variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+            variant.artifact(mainCompilation.output.classesDirs.singleFile) {
+                it.builtBy(mainCompilation.output.classesDirs)
             }
         }
-
 
         /*
         Setup runtimeElements configuration:
-        Usage: JAVA_RUNTIME
-        jvmEnvironment: Android
         variants:
             - classes (provides access to the compiled .class files)
                 artifactType: CLASSES_JAR
          */
-        project.configurations.getByName(androidTarget.runtimeElementsConfigurationName).apply {
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
-            attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-            outgoing.variants.create("classes").let { variant ->
-                variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
-                variant.artifact(mainCompilation.output.classesDirs.singleFile) {
-                    it.builtBy(mainCompilation.output.classesDirs)
-                }
+        androidTarget.runtimeElementsConfiguration.outgoing.variants.create("classes").let { variant ->
+            variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+            variant.artifact(mainCompilation.output.classesDirs.singleFile) {
+                it.builtBy(mainCompilation.output.classesDirs)
             }
         }
-
 
         /*
         "Disable" configurations from plain Android plugin
