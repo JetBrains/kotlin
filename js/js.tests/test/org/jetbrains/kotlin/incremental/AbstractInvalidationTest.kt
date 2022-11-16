@@ -42,7 +42,7 @@ import java.util.EnumSet
 
 abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     companion object {
-        private const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
+        private val TEST_DATA_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         private const val BOX_FUNCTION_NAME = "box"
         private const val STDLIB_ALIAS = "stdlib"
 
