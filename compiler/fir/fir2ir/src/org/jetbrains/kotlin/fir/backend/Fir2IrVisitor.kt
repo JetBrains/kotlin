@@ -192,6 +192,25 @@ class Fir2IrVisitor(
         }
     }
 
+    override fun visitScript(script: FirScript, data: Any?): IrElement {
+        return declarationStorage.getCachedIrScript(script)!!.also { irScript ->
+            irScript.parent = conversionScope.parentFromStack()
+            symbolTable.enterScope(irScript)
+            conversionScope.withParent(irScript) {
+                for (statement in script.statements) {
+                    if (statement is FirDeclaration) {
+                        val irDeclaration = statement.accept(this@Fir2IrVisitor, null) as IrDeclaration
+                        irScript.statements.add(irDeclaration)
+                    } else {
+                        val irStatement = statement.toIrStatement()!!
+                        irScript.statements.add(irStatement)
+                    }
+                }
+            }
+            symbolTable.leaveScope(irScript)
+        }
+    }
+
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: Any?): IrElement {
         return visitAnonymousObject(anonymousObjectExpression.anonymousObject, data)
     }

@@ -45,7 +45,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
     fun generateScriptDeclaration(ktScript: KtScript): IrDeclaration? {
         val descriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktScript) as ScriptDescriptor
 
-        return context.symbolTable.declareScript(descriptor).buildWithScope { irScript ->
+        return context.symbolTable.declareScript(ktScript.startOffsetSkippingComments, ktScript.endOffset, descriptor).buildWithScope { irScript ->
 
             irScript.metadata = DescriptorMetadataSource.Script(descriptor)
 

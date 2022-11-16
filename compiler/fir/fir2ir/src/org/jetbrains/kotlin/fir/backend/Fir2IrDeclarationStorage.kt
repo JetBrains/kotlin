@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
+import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -72,6 +73,8 @@ class Fir2IrDeclarationStorage(
     private val builtInsFragmentCache = ConcurrentHashMap<FqName, IrExternalPackageFragment>()
 
     private val fileCache = ConcurrentHashMap<FirFile, IrFile>()
+
+    private val scriptCache = ConcurrentHashMap<FirScript, IrScript>()
 
     private val functionCache = ConcurrentHashMap<FirFunction, IrSimpleFunction>()
 
@@ -1529,6 +1532,24 @@ class Fir2IrDeclarationStorage(
     fun getIrDelegateFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return getIrPropertyForwardedSymbol(firVariableSymbol.fir)
     }
+
+    fun getCachedIrScript(script: FirScript): IrScript? = scriptCache[script]
+
+    fun getOrCreateIrScript(script: FirScript): IrScript =
+        getCachedIrScript(script) ?: script.convertWithOffsets { startOffset, endOffset ->
+            val signature = signatureComposer.composeSignature(script)!!
+            symbolTable.declareScript(signature, { Fir2IrScriptSymbol(signature) }) { symbol ->
+                IrScriptImpl(symbol, script.name, irFactory, startOffset, endOffset).also { irScript ->
+                    irScript.metadata = FirMetadataSource.Script(script)
+                    irScript.explicitCallParameters = emptyList()
+                    irScript.implicitReceiversParameters = emptyList()
+                    irScript.providedProperties = emptyList()
+                    irScript.providedPropertiesParameters = emptyList()
+                    scriptCache[script] = irScript
+                }
+            }
+        }
+
 
     private fun getIrPropertyForwardedSymbol(fir: FirVariable): IrSymbol {
         return when (fir) {

@@ -24,9 +24,9 @@ class IrScriptImpl(
     override val symbol: IrScriptSymbol,
     override var name: Name,
     override val factory: IrFactory,
+    override val startOffset: Int,
+    override val endOffset: Int,
 ) : IrScript() {
-    override val startOffset: Int get() = UNDEFINED_OFFSET
-    override val endOffset: Int get() = UNDEFINED_OFFSET
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
 
     private var _parent: IrDeclarationParent? = null

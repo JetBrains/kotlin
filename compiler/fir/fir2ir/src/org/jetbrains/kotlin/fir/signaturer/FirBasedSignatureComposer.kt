@@ -52,6 +52,9 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             //platformSpecificClass(descriptor)
         }
 
+        override fun visitScript(script: FirScript, data: Any?) {
+        }
+
         override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
             setExpected(typeAlias.isExpect)
         }
@@ -137,6 +140,13 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
                 IdSignature.CommonSignature(
                     packageName.asString(),
                     classId?.relativeClassName?.child(callableName)?.asString() ?: callableName.asString(),
+                    builder.hashId, builder.mask
+                )
+            }
+            is FirScript -> {
+                IdSignature.CommonSignature(
+                    declaration.name.asString(), // TODO: find package id
+                    declaration.name.asString(),
                     builder.hashId, builder.mask
                 )
             }

@@ -356,6 +356,10 @@ class Fir2IrConverter(
             is FirRegularClass -> {
                 processClassMembers(declaration)
             }
+            is FirScript -> {
+                assert(parent is IrFile)
+                declarationStorage.getOrCreateIrScript(declaration)
+            }
             is FirSimpleFunction -> {
                 declarationStorage.getOrCreateIrFunction(
                     declaration, parent, isLocal = isLocal

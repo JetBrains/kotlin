@@ -127,6 +127,8 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRemapper.getDeclaredScript(declaration.symbol),
             declaration.name,
             declaration.factory,
+            declaration.startOffset,
+            declaration.endOffset
         ).also { scriptCopy ->
             scriptCopy.thisReceiver = declaration.thisReceiver.transform()
             declaration.statements.mapTo(scriptCopy.statements) { it.transform() }

@@ -429,14 +429,28 @@ open class SymbolTable(
 
     @ObsoleteDescriptorBasedAPI
     fun declareScript(
+        startOffset: Int,
+        endOffset: Int,
         descriptor: ScriptDescriptor,
         scriptFactory: (IrScriptSymbol) -> IrScript = { symbol: IrScriptSymbol ->
-            IrScriptImpl(symbol, nameProvider.nameForDeclaration(descriptor), irFactory)
+            IrScriptImpl(symbol, nameProvider.nameForDeclaration(descriptor), irFactory, startOffset, endOffset)
         }
     ): IrScript {
         return scriptSymbolTable.declare(
             descriptor,
             { IrScriptSymbolImpl(descriptor) },
+            scriptFactory
+        )
+    }
+
+    fun declareScript(
+        sig: IdSignature,
+        symbolFactory: () -> IrScriptSymbol,
+        scriptFactory: (IrScriptSymbol) -> IrScript
+    ): IrScript {
+        return scriptSymbolTable.declare(
+            sig,
+            symbolFactory,
             scriptFactory
         )
     }
