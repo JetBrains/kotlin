@@ -24,8 +24,8 @@ class FirModuleDescriptor(
         return false
     }
 
-    override val platform: TargetPlatform?
-        get() = null
+    override val platform: TargetPlatform
+        get() = session.moduleData.platform
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         val symbolProvider = session.symbolProvider
