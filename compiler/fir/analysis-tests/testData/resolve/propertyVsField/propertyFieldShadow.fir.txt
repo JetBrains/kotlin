@@ -1,0 +1,20 @@
+FILE: test.kt
+    public final class Test2 : R|Test| {
+        public constructor(): R|Test2| {
+            super<R|Test|>()
+        }
+
+        private final val text: R|kotlin/String| = String(BCDE)
+            private get(): R|kotlin/String|
+
+        private final val publicPrivateText: R|kotlin/String| = String(YXWV)
+            private get(): R|kotlin/String|
+
+        public final fun check(): R|kotlin/String| {
+            ^check this@R|/Test2|.R|/Test2.text|
+        }
+
+    }
+    public final fun check(): R|kotlin/String!| {
+        ^check R|/Test2.Test2|().R|/Test.publicPrivateText|
+    }

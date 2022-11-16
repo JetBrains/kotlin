@@ -194,7 +194,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 if (isStatic && containingClass != null) {
                     containingUseSiteDeclarations.firstNotNullOfOrNull {
                         if (it !is FirClass) return@firstNotNullOfOrNull null
-                        it.takeIf { it.isSubClass(containingLookupTag, session, supertypeSupplier) }
+                        it.takeIf { it.isSubclassOf(containingLookupTag, session, isStrict = false, supertypeSupplier) }
                     }?.let { return it }
                 }
 
@@ -380,10 +380,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         return false
     }
 
-    // 'local' isn't taken into account here
-    private fun ClassId.isSame(other: ClassId): Boolean =
-        packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
-
     private fun ConeClassLikeLookupTag.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? {
         if (classId.isLocal) return null
         val outerClassId = classId.outerClassId ?: return null
@@ -405,11 +401,11 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         supertypeSupplier: SupertypeSupplier
     ): Boolean {
         dispatchReceiver?.ownerIfCompanion(session)?.let { companionOwnerLookupTag ->
-            if (containingUseSiteClass.isSubClass(companionOwnerLookupTag, session, supertypeSupplier)) return true
+            if (containingUseSiteClass.isSubclassOf(companionOwnerLookupTag, session, isStrict = false, supertypeSupplier)) return true
         }
 
         return when {
-            !containingUseSiteClass.isSubClass(ownerLookupTag, session, supertypeSupplier) -> false
+            !containingUseSiteClass.isSubclassOf(ownerLookupTag, session, isStrict = false, supertypeSupplier) -> false
             isVariableOrNamedFunction -> doesReceiverFitForProtectedVisibility(
                 dispatchReceiver,
                 containingUseSiteClass,
@@ -458,26 +454,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
 
         return false
-    }
-
-    private fun FirClass.isSubClass(
-        ownerLookupTag: ConeClassLikeLookupTag,
-        session: FirSession,
-        supertypeSupplier: SupertypeSupplier
-    ): Boolean {
-        if (classId.isSame(ownerLookupTag.classId)) return true
-
-        return lookupSuperTypes(
-            this,
-            lookupInterfaces = true,
-            deep = true,
-            session,
-            substituteTypes = false,
-            supertypeSupplier
-        ).any { superType ->
-            // Note: We check just classId here, so type substitution isn't needed   ^ (we aren't interested in type arguments)
-            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isSame(ownerLookupTag.classId) == true
-        }
     }
 
     private fun ReceiverValue?.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? =

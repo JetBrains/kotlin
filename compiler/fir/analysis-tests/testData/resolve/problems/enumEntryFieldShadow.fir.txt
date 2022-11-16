@@ -1,0 +1,28 @@
+FILE: DerivedEnum.kt
+    public final enum class DerivedEnum : R|BaseJava|, R|kotlin/Enum<DerivedEnum>| {
+        private constructor(): R|DerivedEnum| {
+            super<R|kotlin/Enum<DerivedEnum>|>()
+        }
+
+        public final static enum entry x: R|DerivedEnum|
+        public final fun foo(): R|kotlin/Unit| {
+            R|/bar|(R|/DerivedEnum.x|)
+            R|/baz|(<Unresolved name: y>#)
+            R|/baz|(Q|BaseJava|.R|/BaseJava.y|)
+        }
+
+        public final static fun values(): R|kotlin/Array<DerivedEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|DerivedEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<DerivedEnum>|
+            public get(): R|kotlin/enums/EnumEntries<DerivedEnum>|
+
+    }
+    public final fun bar(e: R|DerivedEnum|): R|kotlin/Unit| {
+    }
+    public final fun baz(s: R|kotlin/String|): R|kotlin/Unit| {
+        Q|DerivedEnum|.R|/DerivedEnum.x|
+    }

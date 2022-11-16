@@ -1,0 +1,30 @@
+FILE: KotlinBase.kt
+    public open class KotlinBase : R|kotlin/Any| {
+        public constructor(): R|KotlinBase| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val abcd: R|kotlin/String| = String(abcd)
+            public get(): R|kotlin/String|
+
+    }
+FILE: KotlinProxy.kt
+    public abstract interface KotlinProxy : R|kotlin/Any| {
+        public open val zyxw: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(zyxw)
+            }
+
+    }
+FILE: test.kt
+    public final class Derived : R|Test|, R|KotlinProxy| {
+        public constructor(): R|Derived| {
+            super<R|Test|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/Derived|.R|/Test.abcd|
+            this@R|/Derived|.R|/Test.zyxw|
+        }
+
+    }
