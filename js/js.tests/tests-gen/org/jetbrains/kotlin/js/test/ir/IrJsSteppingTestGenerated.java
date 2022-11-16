@@ -488,6 +488,18 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
     }
 
     @Test
+    @TestMetadata("tryCatchExpression.kt")
+    public void testTryCatchExpression() throws Exception {
+        runTest("compiler/testData/debug/stepping/tryCatchExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchFinally.kt")
+    public void testTryCatchFinally() throws Exception {
+        runTest("compiler/testData/debug/stepping/tryCatchFinally.kt");
+    }
+
+    @Test
     @TestMetadata("tryFinally.kt")
     public void testTryFinally() throws Exception {
         runTest("compiler/testData/debug/stepping/tryFinally.kt");
