@@ -682,4 +682,192 @@ digraph flowFromTwoInplaceLambdas_kt {
     248 -> {220} [color=red];
     248 -> {223} [color=green];
 
+    subgraph cluster_48 {
+        color=red
+        249 [label="Enter function test6" style="filled" fillcolor=red];
+        subgraph cluster_49 {
+            color=blue
+            250 [label="Enter block"];
+            251 [label="Variable declaration: lval x: R|kotlin/String|"];
+            252 [label="Postponed enter to lambda"];
+            subgraph cluster_50 {
+                color=blue
+                262 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_51 {
+                    color=blue
+                    263 [label="Enter block"];
+                    264 [label="Const: String()"];
+                    265 [label="Assignment: R|<local>/x|"];
+                    266 [label="Access variable R|<local>/x|"];
+                    267 [label="Access variable R|kotlin/String.length|"];
+                    268 [label="Exit block"];
+                }
+                269 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            254 [label="Postponed exit from lambda"];
+            255 [label="Postponed enter to lambda"];
+            subgraph cluster_52 {
+                color=blue
+                270 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_53 {
+                    color=blue
+                    271 [label="Enter block"];
+                    272 [label="Access variable R|<local>/x|"];
+                    273 [label="Access variable R|kotlin/String.length|"];
+                    274 [label="Exit block"];
+                }
+                275 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            253 [label="Call arguments union" style="filled" fillcolor=yellow];
+            256 [label="Postponed exit from lambda"];
+            257 [label="Function call: R|/run2|<R|kotlin/Int|>(...)"];
+            258 [label="Access variable R|<local>/x|"];
+            259 [label="Access variable R|kotlin/String.length|"];
+            260 [label="Exit block"];
+        }
+        261 [label="Exit function test6" style="filled" fillcolor=red];
+    }
+    249 -> {250};
+    250 -> {251};
+    251 -> {252};
+    252 -> {262};
+    252 -> {254} [color=red];
+    252 -> {262} [style=dashed];
+    253 -> {257} [color=red];
+    254 -> {255};
+    255 -> {270};
+    255 -> {256} [color=red];
+    255 -> {270} [style=dashed];
+    256 -> {257} [color=green];
+    257 -> {258};
+    258 -> {259};
+    259 -> {260};
+    260 -> {261};
+    262 -> {263};
+    263 -> {264};
+    264 -> {265};
+    265 -> {266};
+    266 -> {267};
+    267 -> {268};
+    268 -> {269};
+    269 -> {253} [color=red];
+    269 -> {254} [color=green];
+    270 -> {271};
+    271 -> {272};
+    272 -> {273};
+    273 -> {274};
+    274 -> {275};
+    275 -> {253} [color=red];
+    275 -> {256} [color=green];
+
+    subgraph cluster_54 {
+        color=red
+        276 [label="Enter function test7" style="filled" fillcolor=red];
+        subgraph cluster_55 {
+            color=blue
+            277 [label="Enter block"];
+            278 [label="Const: String()"];
+            279 [label="Variable declaration: lval x: R|kotlin/Any?|"];
+            280 [label="Variable declaration: lval y: R|kotlin/Any?|"];
+            281 [label="Postponed enter to lambda"];
+            subgraph cluster_56 {
+                color=blue
+                302 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_57 {
+                    color=blue
+                    303 [label="Enter block"];
+                    304 [label="Access variable R|<local>/x|"];
+                    305 [label="Assignment: R|<local>/y|"];
+                    306 [label="Exit block"];
+                }
+                307 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            283 [label="Postponed exit from lambda"];
+            284 [label="Postponed enter to lambda"];
+            subgraph cluster_58 {
+                color=blue
+                308 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_59 {
+                    color=blue
+                    309 [label="Enter block"];
+                    310 [label="Jump: ^@run2 Unit"];
+                    311 [label="Stub" style="filled" fillcolor=gray];
+                    312 [label="Exit block" style="filled" fillcolor=gray];
+                }
+                313 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            282 [label="Call arguments union" style="filled" fillcolor=yellow];
+            285 [label="Postponed exit from lambda"];
+            286 [label="Function call: R|/run2|<R|kotlin/Unit|>(...)"];
+            subgraph cluster_60 {
+                color=blue
+                287 [label="Enter when"];
+                subgraph cluster_61 {
+                    color=blue
+                    288 [label="Enter when branch condition "];
+                    289 [label="Access variable R|<local>/y|"];
+                    290 [label="Type operator: (R|<local>/y| is R|kotlin/String|)"];
+                    291 [label="Exit when branch condition"];
+                }
+                292 [label="Synthetic else branch"];
+                293 [label="Enter when branch result"];
+                subgraph cluster_62 {
+                    color=blue
+                    294 [label="Enter block"];
+                    295 [label="Access variable R|<local>/x|"];
+                    296 [label="Access variable <Unresolved name: length>#"];
+                    297 [label="Exit block"];
+                }
+                298 [label="Exit when branch result"];
+                299 [label="Exit when"];
+            }
+            300 [label="Exit block"];
+        }
+        301 [label="Exit function test7" style="filled" fillcolor=red];
+    }
+    276 -> {277};
+    277 -> {278};
+    278 -> {279};
+    279 -> {280};
+    280 -> {281};
+    281 -> {302};
+    281 -> {283} [color=red];
+    281 -> {302} [style=dashed];
+    282 -> {286} [color=red];
+    283 -> {284};
+    284 -> {308};
+    284 -> {285} [color=red];
+    284 -> {308} [style=dashed];
+    285 -> {286} [color=green];
+    286 -> {287};
+    287 -> {288};
+    288 -> {289};
+    289 -> {290};
+    290 -> {291};
+    291 -> {293 292};
+    292 -> {299};
+    293 -> {294};
+    294 -> {295};
+    295 -> {296};
+    296 -> {297};
+    297 -> {298};
+    298 -> {299};
+    299 -> {300};
+    300 -> {301};
+    302 -> {303};
+    303 -> {304};
+    304 -> {305};
+    305 -> {306};
+    306 -> {307};
+    307 -> {282} [color=red];
+    307 -> {283} [color=green];
+    308 -> {309};
+    309 -> {310};
+    310 -> {313};
+    310 -> {311} [style=dotted];
+    311 -> {312} [style=dotted];
+    312 -> {313} [style=dotted];
+    313 -> {282} [color=red];
+    313 -> {285} [color=green];
+
 }

@@ -1,5 +1,42 @@
 FILE: flowFromInplaceLambda.kt
-    public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+    public final fun <T> unknown(x: R|() -> T|): R|T|
+        [R|Contract description]
+         <
+            CallsInPlace(x, UNKNOWN)
+        >
+     {
+        [StubStatement]
+        ^unknown R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final fun <T> atLeastOnce(x: R|() -> T|): R|T|
+        [R|Contract description]
+         <
+            CallsInPlace(x, AT_LEAST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^atLeastOnce R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final fun <T> exactlyOnce(x: R|() -> T|): R|T|
+        [R|Contract description]
+         <
+            CallsInPlace(x, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        ^exactlyOnce R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final fun <T> atMostOnce(x: R|() -> T|): R|T|
+        [R|Contract description]
+         <
+            CallsInPlace(x, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^atMostOnce R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final fun <T> noContract(x: R|() -> T|): R|T| {
+        ^noContract R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
     }
     public final fun <K> select(vararg x: R|kotlin/Array<out K>|): R|K| {
         ^select R|<local>/x|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))
@@ -10,64 +47,169 @@ FILE: flowFromInplaceLambda.kt
     public final fun <K> materialize(): R|K| {
         ^materialize Null(null)!!
     }
-    public final fun <R> myRun(block: R|() -> R|): R|R| {
-        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
-    }
-    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
-        R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final fun basic(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        R|/exactlyOnce|<R|kotlin/Int|>(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=EXACTLY_ONCE>  {
             ^ (R|<local>/x| as R|kotlin/Int|)
         }
         )
-        R|/takeInt|(R|<local>/x|)
+        R|<local>/x|.R|kotlin/Int.inc|()
     }
-    public final fun test_2(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
-        lval a: R|kotlin/Int| = R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final fun completedCallExactlyOnce(x: R|kotlin/Any?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/exactlyOnce|<R|kotlin/Int|>(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=EXACTLY_ONCE>  {
             R|<local>/y|.<Unresolved name: inc>#()
             ^ (R|<local>/x| as R|kotlin/Int|)
         }
-        )), (R|<local>/y| as R|kotlin/Int|), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        )), (R|<local>/y| as R|kotlin/Int|), R|/exactlyOnce|<R|kotlin/Int|>(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=EXACTLY_ONCE>  {
             R|<local>/x|.R|kotlin/Int.inc|()
             R|<local>/y|.R|kotlin/Int.inc|()
             ^ Int(1)
         }
-        )))
-        R|/takeInt|(R|<local>/x|)
-        R|/takeInt|(R|<local>/y|)
-        R|/takeInt|(R|<local>/a|)
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/y|.R|kotlin/Int.inc|()
     }
-    public final fun test_3(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
-        lval a: R|kotlin/Int| = R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final fun completedCallAtLeastOnce(x: R|kotlin/Any?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/atLeastOnce|<R|kotlin/Int|>(<L> = atLeastOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_LEAST_ONCE>  {
             R|<local>/y|.<Unresolved name: inc>#()
+            ^ (R|<local>/x| as R|kotlin/Int|)
+        }
+        )), (R|<local>/y| as R|kotlin/Int|), R|/atLeastOnce|<R|kotlin/Int|>(<L> = atLeastOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_LEAST_ONCE>  {
+            R|<local>/x|.R|kotlin/Int.inc|()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/y|.R|kotlin/Int.inc|()
+    }
+    public final fun completedCallAtMostOnce(x: R|kotlin/Any?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/atMostOnce|<R|kotlin/Int|>(<L> = atMostOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_MOST_ONCE>  {
+            R|<local>/y|.<Unresolved name: inc>#()
+            ^ (R|<local>/x| as R|kotlin/Int|)
+        }
+        )), (R|<local>/y| as R|kotlin/Int|), R|/atMostOnce|<R|kotlin/Int|>(<L> = atMostOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_MOST_ONCE>  {
+            R|<local>/x|.<Unresolved name: inc>#()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
+        R|<local>/y|.R|kotlin/Int.inc|()
+    }
+    public final fun completedCallUnknown(x: R|kotlin/Any?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/unknown|<R|kotlin/Int|>(<L> = unknown@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            R|<local>/y|.<Unresolved name: inc>#()
+            ^ (R|<local>/x| as R|kotlin/Int|)
+        }
+        )), (R|<local>/y| as R|kotlin/Int|), R|/unknown|<R|kotlin/Int|>(<L> = unknown@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            R|<local>/x|.<Unresolved name: inc>#()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
+        R|<local>/y|.R|kotlin/Int.inc|()
+    }
+    public final fun completedCallNoContract(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/noContract|<R|kotlin/Int|>(<L> = noContract@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            R|<local>/y|.<Unresolved name: inc>#()
+            ^ (R|<local>/x| as R|kotlin/Int|)
+        }
+        )), (R|<local>/y| as R|kotlin/Int|), R|/noContract|<R|kotlin/Int|>(<L> = noContract@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            R|<local>/x|.<Unresolved name: inc>#()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
+        R|<local>/y|.R|kotlin/Int.inc|()
+    }
+    public final fun incompleteCallExactlyOnce(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/exactlyOnce|<R|kotlin/Int|>(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=EXACTLY_ONCE>  {
             (R|<local>/x| as R|kotlin/Int|)
+            R|<local>/y|.<Unresolved name: inc>#()
+            R|<local>/x|.R|kotlin/Int.inc|()
             ^ R|/materialize|<R|kotlin/Int|>()
         }
-        )), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        )), R|/exactlyOnce|<R|kotlin/Int|>(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=EXACTLY_ONCE>  {
             (R|<local>/y| as R|kotlin/Int|)
             R|<local>/x|.<Unresolved name: inc>#()
             R|<local>/y|.R|kotlin/Int.inc|()
             ^ Int(1)
         }
-        )))
-        R|/takeInt|(R|<local>/x|)
-        R|/takeInt|(R|<local>/y|)
-        R|/takeInt|(R|<local>/a|)
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/y|.R|kotlin/Int.inc|()
     }
-    public final fun test_4(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
-        lval a: R|kotlin/Int| = R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+    public final fun incompleteCallAtLeastOnce(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/atLeastOnce|<R|kotlin/Int|>(<L> = atLeastOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_LEAST_ONCE>  {
+            (R|<local>/x| as R|kotlin/Int|)
             R|<local>/y|.<Unresolved name: inc>#()
-            ^ (R|<local>/x| as R|kotlin/Int|)
+            R|<local>/x|.R|kotlin/Int.inc|()
+            ^ R|/materialize|<R|kotlin/Int|>()
         }
-        )), (R|<local>/y| as R|kotlin/Int|), R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+        )), R|/atLeastOnce|<R|kotlin/Int|>(<L> = atLeastOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_LEAST_ONCE>  {
+            (R|<local>/y| as R|kotlin/Int|)
             R|<local>/x|.<Unresolved name: inc>#()
             R|<local>/y|.R|kotlin/Int.inc|()
             ^ Int(1)
         }
-        )))
-        <Inapplicable(INAPPLICABLE): /takeInt>#(R|<local>/x|)
-        R|/takeInt|(R|<local>/y|)
-        R|/takeInt|(R|<local>/a|)
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/y|.R|kotlin/Int.inc|()
     }
-    public final fun test_5(): R|kotlin/Unit| {
+    public final fun incompleteCallAtMostOnce(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/atMostOnce|<R|kotlin/Int|>(<L> = atMostOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_MOST_ONCE>  {
+            (R|<local>/x| as R|kotlin/Int|)
+            R|<local>/y|.<Unresolved name: inc>#()
+            R|<local>/x|.R|kotlin/Int.inc|()
+            ^ R|/materialize|<R|kotlin/Int|>()
+        }
+        )), R|/atMostOnce|<R|kotlin/Int|>(<L> = atMostOnce@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=AT_MOST_ONCE>  {
+            (R|<local>/y| as R|kotlin/Int|)
+            R|<local>/x|.<Unresolved name: inc>#()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
+        R|<local>/y|.<Unresolved name: inc>#()
+    }
+    public final fun incompleteCallUnknown(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/unknown|<R|kotlin/Int|>(<L> = unknown@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            (R|<local>/x| as R|kotlin/Int|)
+            R|<local>/y|.<Unresolved name: inc>#()
+            R|<local>/x|.R|kotlin/Int.inc|()
+            ^ R|/materialize|<R|kotlin/Int|>()
+        }
+        )), R|/unknown|<R|kotlin/Int|>(<L> = unknown@fun <anonymous>(): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            (R|<local>/y| as R|kotlin/Int|)
+            R|<local>/x|.<Unresolved name: inc>#()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
+        R|<local>/y|.<Unresolved name: inc>#()
+    }
+    public final fun incompleteCallNoContract(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/noContract|<R|kotlin/Int|>(<L> = noContract@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            (R|<local>/x| as R|kotlin/Int|)
+            R|<local>/y|.<Unresolved name: inc>#()
+            R|<local>/x|.R|kotlin/Int.inc|()
+            ^ R|/materialize|<R|kotlin/Int|>()
+        }
+        )), R|/noContract|<R|kotlin/Int|>(<L> = noContract@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            (R|<local>/y| as R|kotlin/Int|)
+            R|<local>/x|.<Unresolved name: inc>#()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        ))).R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
+        R|<local>/y|.<Unresolved name: inc>#()
+    }
+    public final fun expectedType(): R|kotlin/Unit| {
         lval x: R|kotlin/Int| = R|/select|<R|kotlin/Int|>(vararg(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ R|/materialize|<R|kotlin/Int|>()
         }
@@ -75,14 +217,15 @@ FILE: flowFromInplaceLambda.kt
             ^ R|/materialize|<R|kotlin/Int|>()
         }
         )))
-        R|/takeInt|(R|<local>/x|)
+        R|<local>/x|.R|kotlin/Int.inc|()
     }
-    public final fun test_6(): R|kotlin/Unit| {
-        lval x: R|kotlin/String| = R|/id|<R|kotlin/String|>(R|/myRun|<R|kotlin/String|>(<L> = myRun@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
-            ^ R|kotlin/run|<R|kotlin/String|>(<L> = run@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                ^ R|/materialize|<R|kotlin/String|>()
+    public final fun expectedTypeNested(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = R|/id|<R|kotlin/Int|>(R|/noContract|<R|kotlin/Int|>(<L> = noContract@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ R|/materialize|<R|kotlin/Int|>()
             }
             )
         }
         ))
+        R|<local>/x|.R|kotlin/Int.inc|()
     }
