@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
@@ -89,14 +88,6 @@ internal class SymbolLightFieldForEnumEntry(
 
     override fun getType(): PsiType = _type
     override fun getInitializer(): PsiExpression? = null
-
-    private val _identifier: PsiIdentifier by lazyPub {
-        withEnumEntrySymbol { enumEntrySymbol ->
-            SymbolLightIdentifier(this@SymbolLightFieldForEnumEntry, enumEntrySymbol)
-        }
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     override fun isValid(): Boolean = enumEntry.isValid
 

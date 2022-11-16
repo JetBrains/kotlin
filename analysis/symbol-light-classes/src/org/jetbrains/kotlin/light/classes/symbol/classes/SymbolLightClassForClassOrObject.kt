@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
@@ -72,9 +72,7 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
     abstract override fun getOwnMethods(): List<PsiMethod>
 
     private val _identifier: PsiIdentifier by lazyPub {
-        withClassOrObjectSymbol {
-            SymbolLightIdentifier(this@SymbolLightClassForClassOrObject, it)
-        }
+        KtLightIdentifier(this, classOrObject)
     }
 
     override fun getNameIdentifier(): PsiIdentifier? = _identifier

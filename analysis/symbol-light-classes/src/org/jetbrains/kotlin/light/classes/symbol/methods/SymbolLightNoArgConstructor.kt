@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
+import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -29,7 +29,7 @@ internal class SymbolLightNoArgConstructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     private val _identifier: PsiIdentifier by lazyPub {
-        SymbolLightIdentifier(this, ktSymbol = null)
+        KtLightIdentifier(this, ktDeclaration = null)
     }
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier

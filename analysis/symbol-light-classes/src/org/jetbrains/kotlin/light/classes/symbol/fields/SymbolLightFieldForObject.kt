@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiType
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
@@ -60,14 +62,6 @@ internal class SymbolLightFieldForObject(
             objectSymbol.buildSelfClassType().asPsiType(this@SymbolLightFieldForObject)
         } ?: nonExistentType()
     }
-
-    private val _identifier: PsiIdentifier by lazyPub {
-        withObjectDeclarationSymbol { objectSymbol ->
-            SymbolLightIdentifier(this@SymbolLightFieldForObject, objectSymbol)
-        }
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     override fun getType(): PsiType = _type
 

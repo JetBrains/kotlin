@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
@@ -68,14 +71,6 @@ internal class SymbolLightFieldForProperty(
     }
 
     override fun isDeprecated(): Boolean = _isDeprecated
-
-    private val _identifier: PsiIdentifier by lazyPub {
-        withPropertySymbol { propertySymbol ->
-            SymbolLightIdentifier(this@SymbolLightFieldForProperty, propertySymbol)
-        }
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     override fun getType(): PsiType = _returnedType
 

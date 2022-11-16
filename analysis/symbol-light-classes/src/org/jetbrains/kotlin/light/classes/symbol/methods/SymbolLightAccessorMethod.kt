@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
@@ -190,9 +191,7 @@ internal class SymbolLightAccessorMethod(
     override fun isDeprecated(): Boolean = _isDeprecated
 
     private val _identifier: PsiIdentifier by lazyPub {
-        analyzeForLightClasses(ktModule) {
-            SymbolLightIdentifier(this@SymbolLightAccessorMethod, propertySymbol())
-        }
+        KtLightIdentifier(this, containingPropertyDeclaration)
     }
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
