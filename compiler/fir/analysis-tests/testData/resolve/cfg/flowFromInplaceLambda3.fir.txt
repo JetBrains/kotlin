@@ -20,7 +20,7 @@ FILE: flowFromInplaceLambda3.kt
     public final fun exactlyOnce(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
-            CallsInPlace(x, AT_LEAST_ONCE)
+            CallsInPlace(x, EXACTLY_ONCE)
         >
      {
         [StubStatement]
@@ -45,6 +45,16 @@ FILE: flowFromInplaceLambda3.kt
         R|<local>/x|.<Unresolved name: length>#
         R|<local>/x|.<Unresolved name: inc>#()
     }
+    public final fun test1m(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Any?|
+        R|<local>/x| = String()
+        R|<local>/x|.R|kotlin/String.length|
+        R|/unknown|(<L> = unknown@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=UNKNOWN>  {
+            R|<local>/x| = String()
+        }
+        )
+        R|<local>/x|.<Unresolved name: length>#
+    }
     public final fun test2(): R|kotlin/Unit| {
         lvar x: R|kotlin/Any?|
         R|<local>/x| = String()
@@ -60,7 +70,7 @@ FILE: flowFromInplaceLambda3.kt
         lvar x: R|kotlin/Any?|
         R|<local>/x| = String()
         R|<local>/x|.R|kotlin/String.length|
-        R|/exactlyOnce|(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=AT_LEAST_ONCE>  {
+        R|/exactlyOnce|(<L> = exactlyOnce@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=EXACTLY_ONCE>  {
             R|<local>/x| = Int(1)
         }
         )
