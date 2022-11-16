@@ -26,6 +26,11 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
     }
 
+    @TestMetadata("addEnumEntry")
+    public void testAddEnumEntry() throws Exception {
+        runTest("compiler/testData/klibABI/addEnumEntry/");
+    }
+
     public void testAllFilesPresentInKlibABI() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
     }
@@ -118,6 +123,11 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
     @TestMetadata("removeClassAsVariableType")
     public void testRemoveClassAsVariableType() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsVariableType/");
+    }
+
+    @TestMetadata("removeEnumEntry")
+    public void testRemoveEnumEntry() throws Exception {
+        runTest("compiler/testData/klibABI/removeEnumEntry/");
     }
 
     @TestMetadata("removeFunction")
