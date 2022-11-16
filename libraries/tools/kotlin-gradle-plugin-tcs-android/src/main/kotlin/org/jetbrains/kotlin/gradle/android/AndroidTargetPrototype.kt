@@ -7,7 +7,8 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import com.android.build.gradle.AppExtension
+import com.android.build.api.attributes.AgpVersionAttr
+import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescr
 @OptIn(ExternalVariantApi::class)
 fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarget {
     val project = this.project
-    val androidExtension = project.extensions.getByType<AppExtension>()
+    val androidExtension = project.extensions.getByType<LibraryExtension>()
 
     /*
     Set a variant filter and only allow 'debug'.
@@ -47,19 +48,37 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         platformType = KotlinPlatformType.jvm
         targetFactory = TargetFactory { delegate -> PrototypeAndroidTarget(delegate, PrototypeAndroidDsl(31)) }
 
+        /*
+        Configure apiElements configuration attributes (project to project dependency)
+        In this example we hardcoded AGP version 7.4.0-beta02 as demo
+        */
         apiElements.configure { _, configuration ->
             configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
         }
 
+        /*
+        Configure runtimeElements configuration attributes (project to project dependency)
+        In this example we hardcoded AGP version 7.4.0-beta02 as demo
+        */
         runtimeElements.configure { _, configuration ->
             configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
         }
 
+        /*
+        Configure published configurations (maven publication):
+        We override KotlinPlatformType to be androidJvm for now (to be discussed w/ Google later)
+         */
         apiElementsPublished.configure { _, configuration ->
+            /* TODO w/ Google: Find a way to deprecate this attribute */
+            configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
             configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
         }
 
         runtimeElementsPublished.configure { _, configuration ->
+            /* TODO w/ Google: Find a way to deprecate this attribute */
+            configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
             configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
         }
     }
@@ -67,8 +86,8 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
     /*
     Whilst using the .all hook, we only expect the single 'debug' variant to be available through this API.
      */
-    androidExtension.applicationVariants.all { applicationVariant ->
-        project.logger.quiet("Setting up applicationVariant: ${applicationVariant.name}")
+    androidExtension.libraryVariants.all { androidVariant ->
+        project.logger.quiet("Setting up applicationVariant: ${androidVariant.name}")
 
         /*
         Create Compilations: main, unitTest and instrumentedTest
@@ -97,21 +116,21 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         Wire the Kotlin Compilations output (.class files) into the Android artifacts
         by using the 'registerPreJavacGeneratedBytecode' function
          */
-        applicationVariant.registerPreJavacGeneratedBytecode(mainCompilation.output.classesDirs)
-        applicationVariant.unitTestVariant.registerPreJavacGeneratedBytecode(unitTestCompilation.output.classesDirs)
-        applicationVariant.testVariant.registerPreJavacGeneratedBytecode(instrumentedTestCompilation.output.classesDirs)
+        androidVariant.registerPreJavacGeneratedBytecode(mainCompilation.output.classesDirs)
+        androidVariant.unitTestVariant.registerPreJavacGeneratedBytecode(unitTestCompilation.output.classesDirs)
+        androidVariant.testVariant.registerPreJavacGeneratedBytecode(instrumentedTestCompilation.output.classesDirs)
 
 
         /*
         Add dependencies coming from Kotlin to Android by adding all dependencies from Kotlin to the variants
         compileConfiguration or runtimeConfiguration
          */
-        applicationVariant.compileConfiguration.extendsFrom(mainCompilation.configurations.compileDependencyConfiguration)
-        applicationVariant.runtimeConfiguration.extendsFrom(mainCompilation.configurations.runtimeDependencyConfiguration)
-        applicationVariant.unitTestVariant.compileConfiguration.extendsFrom(unitTestCompilation.configurations.compileDependencyConfiguration)
-        applicationVariant.unitTestVariant.runtimeConfiguration.extendsFrom(unitTestCompilation.configurations.runtimeDependencyConfiguration)
-        applicationVariant.testVariant.compileConfiguration.extendsFrom(instrumentedTestCompilation.configurations.compileDependencyConfiguration)
-        applicationVariant.testVariant.runtimeConfiguration.extendsFrom(instrumentedTestCompilation.configurations.runtimeDependencyConfiguration)
+        androidVariant.compileConfiguration.extendsFrom(mainCompilation.configurations.compileDependencyConfiguration)
+        androidVariant.runtimeConfiguration.extendsFrom(mainCompilation.configurations.runtimeDependencyConfiguration)
+        androidVariant.unitTestVariant.compileConfiguration.extendsFrom(unitTestCompilation.configurations.compileDependencyConfiguration)
+        androidVariant.unitTestVariant.runtimeConfiguration.extendsFrom(unitTestCompilation.configurations.runtimeDependencyConfiguration)
+        androidVariant.testVariant.compileConfiguration.extendsFrom(instrumentedTestCompilation.configurations.compileDependencyConfiguration)
+        androidVariant.testVariant.runtimeConfiguration.extendsFrom(instrumentedTestCompilation.configurations.runtimeDependencyConfiguration)
 
 
         /*
@@ -149,11 +168,17 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         }
 
         /*
+        Add .aar artifacts to publications!
+         */
+        androidTarget.apiElementsPublishedConfiguration.outgoing.artifact(androidVariant.packageLibraryProvider)
+        androidTarget.runtimeElementsPublishedConfiguration.outgoing.artifact(androidVariant.packageLibraryProvider)
+
+        /*
         "Disable" configurations from plain Android plugin
         This hack will not be necessary in the final implementation
         */
-        project.configurations.findByName("${applicationVariant.name}ApiElements")?.isCanBeConsumed = false
-        project.configurations.findByName("${applicationVariant.name}RuntimeElements")?.isCanBeConsumed = false
+        project.configurations.findByName("${androidVariant.name}ApiElements")?.isCanBeConsumed = false
+        project.configurations.findByName("${androidVariant.name}RuntimeElements")?.isCanBeConsumed = false
     }
 
     return androidTarget

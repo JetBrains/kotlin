@@ -19,14 +19,12 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.*
-import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.targets.metadata.getCommonSourceSetsForMetadataCompilation
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.setProperty
 
 abstract class KotlinSoftwareComponent(
@@ -40,11 +38,12 @@ abstract class KotlinSoftwareComponent(
     override fun getVariants(): Set<SoftwareComponent> = kotlinTargets
         .filter { target -> target !is KotlinMetadataTarget }
         .flatMap { target ->
-            val targetPublishableComponentNames =
-                (target as? AbstractKotlinTarget)?.kotlinComponents?.mapNotNullTo(mutableSetOf()) { component ->
-                    component.name.takeIf { component.publishable }
-                }
-            target.components.filter { targetPublishableComponentNames?.contains(it.name) ?: true }
+            val targetPublishableComponentNames = target.internal.kotlinComponents
+                .filter { component -> component.publishable }
+                .map { component -> component.name }
+                .toSet()
+
+            target.components.filter { it.name in targetPublishableComponentNames }
         }.toSet()
 
     private val _usages: Set<UsageContext> by lazy {

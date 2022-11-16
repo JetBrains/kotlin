@@ -20,6 +20,7 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -58,7 +59,8 @@ abstract class AbstractKotlinTarget(
     override val publishable: Boolean
         get() = true
 
-    internal open val kotlinComponents: Set<KotlinTargetComponent> by lazy {
+    @InternalKotlinGradlePluginApi
+    override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         val usageContexts = createUsageContexts(mainCompilation)
 
@@ -144,12 +146,16 @@ abstract class AbstractKotlinTarget(
     }
 
     @Suppress("UNCHECKED_CAST")
-    internal val publicationConfigureActions: DomainObjectSet<Action<MavenPublication>> = project
-        .objects
+    private val publicationConfigureActions: DomainObjectSet<Action<MavenPublication>> = project.objects
         .domainObjectSet(Action::class.java) as DomainObjectSet<Action<MavenPublication>>
 
     override fun mavenPublication(action: Action<MavenPublication>) {
         publicationConfigureActions.add(action)
+    }
+
+    @InternalKotlinGradlePluginApi
+    override fun onPublicationCreated(publication: MavenPublication) {
+        publicationConfigureActions.all { action -> action.execute(publication) }
     }
 
     override var preset: KotlinTargetPreset<out KotlinTarget>? = null
