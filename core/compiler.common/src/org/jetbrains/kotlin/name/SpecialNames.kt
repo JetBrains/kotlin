@@ -101,4 +101,14 @@ object SpecialNames {
     fun isSafeIdentifier(name: Name): Boolean {
         return name.asString().isNotEmpty() && !name.isSpecial
     }
+
+    @JvmStatic
+    fun delegateFieldName(index: Int): Name {
+        return Name.identifier("\$\$delegate_$index")
+    }
+
+    @JvmStatic
+    fun propertyDelegateName(propertyName: Name): Name {
+        return Name.identifier("${propertyName.asString()}\$delegate")
+    }
 }

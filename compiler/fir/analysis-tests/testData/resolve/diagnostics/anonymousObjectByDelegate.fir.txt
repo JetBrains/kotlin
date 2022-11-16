@@ -13,7 +13,7 @@ FILE: anonymousObjectByDelegate.kt
                 super<R|kotlin/Any|>()
             }
 
-            local final field <$$delegate_0>: R|B| = this@R|/test_1|.R|/A.b|
+            private final field $$delegate_0: R|B| = this@R|/test_1|.R|/A.b|
 
         }
 
@@ -24,7 +24,7 @@ FILE: anonymousObjectByDelegate.kt
                 super<R|kotlin/Any|>()
             }
 
-            local final field <$$delegate_0>: R|B| = this@R|/test_2|.R|/A.b|
+            private final field $$delegate_0: R|B| = this@R|/test_2|.R|/A.b|
 
         }
 

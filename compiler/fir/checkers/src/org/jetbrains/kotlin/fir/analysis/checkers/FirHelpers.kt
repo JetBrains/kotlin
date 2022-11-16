@@ -423,7 +423,7 @@ private val FirNamedFunctionSymbol.matchesHashCodeSignature: Boolean
 private val FirNamedFunctionSymbol.matchesToStringSignature: Boolean
     get() = valueParameterSymbols.isEmpty()
 
-val Name.isDelegated: Boolean get() = asString().startsWith("<\$\$delegate_")
+val Name.isDelegated: Boolean get() = asString().startsWith("\$\$delegate_")
 
 val ConeTypeProjection.isConflictingOrNotInvariant: Boolean get() = kind != ProjectionKind.INVARIANT || this is ConeKotlinTypeConflictingProjection
 

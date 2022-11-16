@@ -169,10 +169,7 @@ object FirSupertypesChecker : FirClassChecker() {
     ) {
         for (subDeclaration in declaration.declarations) {
             if (subDeclaration is FirField) {
-                if (subDeclaration.visibility == Visibilities.Local &&
-                    subDeclaration.name.isSpecial &&
-                    subDeclaration.name.isDelegated
-                ) {
+                if (subDeclaration.visibility == Visibilities.Private && subDeclaration.name.isDelegated) {
                     val delegatedClassSymbol = subDeclaration.returnTypeRef.toRegularClassSymbol(context.session)
                     if (delegatedClassSymbol != null && delegatedClassSymbol.classKind != ClassKind.INTERFACE) {
                         reporter.reportOn(subDeclaration.returnTypeRef.source, FirErrors.DELEGATION_NOT_TO_INTERFACE, context)
