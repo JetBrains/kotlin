@@ -4,5 +4,5 @@ STEP 0:
     libs: lib1, lib2, main
     dirty js: lib1, lib2, main
 STEP 1:
-    libs: lib1, lib2, main
+    libs: lib2, main
     dirty js: lib2

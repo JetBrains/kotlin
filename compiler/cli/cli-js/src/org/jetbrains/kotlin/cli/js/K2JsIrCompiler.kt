@@ -659,12 +659,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val artifacts = cacheUpdater.actualizeCaches()
             messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
-            for ((event, duration) in cacheUpdater.getStopwatchLaps()) {
+            for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
                 messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
             }
 
             var libIndex = 0
-            for ((libFile, srcFiles) in cacheUpdater.getDirtyFileStats()) {
+            for ((libFile, srcFiles) in cacheUpdater.getDirtyFileLastStats()) {
                 val (msg, showFiles) = when {
                     srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) } -> "fully rebuilt due to clean build" to false
                     srcFiles.values.all { it.contains(DirtyFileState.MODIFIED_CONFIG) } -> "fully rebuilt due to config modification" to false

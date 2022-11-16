@@ -54,11 +54,11 @@ internal sealed class SourceFileCacheArtifact(val srcFile: KotlinSourceFile, val
 internal class IncrementalCacheArtifact(
     private val artifactsDir: File,
     private val forceRebuildJs: Boolean,
-    private val srcCacheActions: List<SourceFileCacheArtifact>
+    private val srcCacheActions: List<SourceFileCacheArtifact>,
+    private val externalModuleName: String?
 ) {
     fun buildModuleArtifactAndCommitCache(
         moduleName: String,
-        externalModuleName: String?,
         rebuiltFileFragments: Map<KotlinSourceFile, JsIrProgramFragment>,
     ): ModuleArtifact {
         val serializer = JsIrAstSerializer()

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
+import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.javaFile
@@ -85,7 +86,7 @@ internal class IncrementalCache(private val library: KotlinLibrary, private val 
         val fileArtifacts = kotlinLibraryHeader.sourceFiles.map { srcFile ->
             commitSourceFileMetadata(srcFile.getCacheFile(BINARY_AST_SUFFIX), srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
         }
-        return IncrementalCacheArtifact(cacheDir, forceRebuildJs, fileArtifacts)
+        return IncrementalCacheArtifact(cacheDir, forceRebuildJs, fileArtifacts, library.jsOutputName)
     }
 
     data class ModifiedFiles(

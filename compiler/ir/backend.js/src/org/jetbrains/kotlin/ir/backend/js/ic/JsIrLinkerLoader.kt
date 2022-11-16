@@ -39,7 +39,6 @@ internal fun JsIrLinker.loadUnboundSymbols(checkNoUnbound: Boolean) {
 
 internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
-    private val library: KotlinLibrary,
     private val dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
     private val irFactory: IrFactory
 ) {
@@ -87,11 +86,12 @@ internal class JsIrLinkerLoader(
         val loadedModules = loadModules()
         val jsIrLinker = createLinker(loadedModules)
 
+        val mainLibrary = dependencyGraph.keys.lastOrNull() ?: notFoundIcError("main library")
         val irModules = loadedModules.entries.associate { (descriptor, module) ->
             val libraryFile = KotlinLibraryFile(module)
             val modifiedStrategy = when {
                 loadAllIr -> DeserializationStrategy.ALL
-                module == library -> DeserializationStrategy.ALL
+                module == mainLibrary -> DeserializationStrategy.ALL
                 else -> DeserializationStrategy.EXPLICITLY_EXPORTED
             }
             val modified = modifiedFiles[libraryFile] ?: emptyMap()
