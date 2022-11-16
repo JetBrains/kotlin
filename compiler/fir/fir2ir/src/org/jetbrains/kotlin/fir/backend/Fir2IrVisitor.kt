@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -189,6 +191,25 @@ class Fir2IrVisitor(
             conversionScope.withContainingFirClass(regularClass) {
                 memberGenerator.convertClassContent(irClass, regularClass)
             }
+        }
+    }
+
+    override fun visitScript(script: FirScript, data: Any?): IrElement {
+        return declarationStorage.getCashedIrScript(script)!!.also { irScript ->
+            irScript.parent = conversionScope.parentFromStack()
+            symbolTable.enterScope(irScript)
+            conversionScope.withParent(irScript) {
+                for (statement in script.statements) {
+                    if (statement is FirDeclaration) {
+                        val irDeclaration = statement.accept(this@Fir2IrVisitor, null) as IrDeclaration
+                        irScript.statements.add(irDeclaration)
+                    } else {
+                        val irStatement = statement.toIrStatement()!!
+                        irScript.statements.add(irStatement)
+                    }
+                }
+            }
+            symbolTable.leaveScope(irScript)
         }
     }
 
