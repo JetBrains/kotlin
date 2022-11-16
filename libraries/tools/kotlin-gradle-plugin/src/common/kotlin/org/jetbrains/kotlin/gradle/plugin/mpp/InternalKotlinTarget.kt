@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 
-internal interface InternalKotlinTarget : KotlinTarget
+internal interface InternalKotlinTarget : KotlinTarget {
+    val kotlinComponents: Set<KotlinTargetComponent>
+    fun onPublicationCreated(publication: MavenPublication)
+}
 
 internal val KotlinTarget.internal: InternalKotlinTarget
     get() = (this as? InternalKotlinTarget) ?: throw IllegalArgumentException(

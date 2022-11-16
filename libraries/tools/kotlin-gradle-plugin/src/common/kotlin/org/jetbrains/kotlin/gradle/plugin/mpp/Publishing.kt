@@ -62,7 +62,7 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
     val kotlin = project.multiplatformExtension
     // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
     kotlin.targets
-        .withType(AbstractKotlinTarget::class.java)
+        .withType(InternalKotlinTarget::class.java)
         .matching { it.publishable }
         .all { kotlinTarget ->
             if (kotlinTarget is KotlinAndroidTarget)
@@ -73,7 +73,7 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
         }
 }
 
-private fun AbstractKotlinTarget.createMavenPublications(publications: PublicationContainer) {
+private fun InternalKotlinTarget.createMavenPublications(publications: PublicationContainer) {
     components
         .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
         .filter { (_, kotlinComponent) -> kotlinComponent.publishableOnCurrentHost }
@@ -102,7 +102,7 @@ private fun AbstractKotlinTarget.createMavenPublications(publications: Publicati
             }
 
             (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
-            publicationConfigureActions.all { it.execute(componentPublication) }
+            onPublicationCreated(componentPublication)
         }
 }
 
@@ -124,7 +124,7 @@ private fun rewritePom(
  * can't read Gradle module metadata won't resolve a dependency on an MPP to the granular metadata variant and won't then choose the
  * right dependencies for each source set, we put only the dependencies of the legacy common variant into the POM, i.e. commonMain API.
  */
-private fun dependenciesForPomRewriting(target: AbstractKotlinTarget): Provider<Set<ModuleCoordinates>>? =
+private fun dependenciesForPomRewriting(target: InternalKotlinTarget): Provider<Set<ModuleCoordinates>>? =
     if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled)
         null
     else {
