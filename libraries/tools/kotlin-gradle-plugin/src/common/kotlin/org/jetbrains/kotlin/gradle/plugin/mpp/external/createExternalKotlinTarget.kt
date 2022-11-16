@@ -42,10 +42,14 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         artifactsTaskLocator = artifactsTaskLocator
     )
 
+    apiElementsConfiguration.isCanBeConsumed = true
+    apiElementsConfiguration.isCanBeResolved = false
     apiElementsConfiguration.usesPlatformOf(target)
     apiElementsConfiguration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
     apiElementsConfiguration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
 
+    runtimeElementsConfiguration.isCanBeConsumed = true
+    runtimeElementsConfiguration.isCanBeResolved = false
     runtimeElementsConfiguration.usesPlatformOf(target)
     runtimeElementsConfiguration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
     runtimeElementsConfiguration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
