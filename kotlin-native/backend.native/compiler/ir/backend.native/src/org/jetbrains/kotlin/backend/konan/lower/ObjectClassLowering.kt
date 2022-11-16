@@ -19,33 +19,45 @@ import org.jetbrains.kotlin.backend.konan.ir.isUnit
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.name.Name
 
 internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = mapping.objectInstanceGetter.getOrPut(clazz) {
     when {
         clazz.isUnit() -> ir.symbols.theUnitInstance.owner
         clazz.isCompanion -> {
             require((clazz.parent as? IrClass)?.isExternalObjCClass() != true) { "External objc Classes can't be used this way"}
-            irFactory.buildFun {
+            val property = irFactory.buildProperty {
+                startOffset = clazz.startOffset
+                endOffset = clazz.endOffset
                 name = "companion".synthesizedName
-                returnType = clazz.defaultType
             }.apply {
                 parent = clazz.parent
+                addGetter {
+                    startOffset = clazz.startOffset
+                    endOffset = clazz.endOffset
+                    returnType = clazz.defaultType
+                }
             }
+            property.getter!!
         }
         else -> {
-            irFactory.buildFun {
+            val property = irFactory.buildProperty {
+                startOffset = clazz.startOffset
+                endOffset = clazz.endOffset
                 name = "instance".synthesizedName
-                returnType = clazz.defaultType
             }.apply {
                 parent = clazz
+                addGetter {
+                    startOffset = clazz.startOffset
+                    endOffset = clazz.endOffset
+                    returnType = clazz.defaultType
+                }
             }
+            property.getter!!
         }
     }
 }
@@ -60,15 +72,13 @@ internal class ObjectClassLowering(val context: Context) : FileLoweringPass {
                 if (declaration.isObject && !declaration.isCompanion && !declaration.isUnit()) {
                     processObjectClass(
                             declaration,
-                            declaration,
-                            instanceFieldName
+                            declaration
                     )
                 }
                 declaration.declarations.singleOrNull { (it as? IrClass)?.isCompanion == true }?.let {
                     processObjectClass(
                             it as IrClass,
-                            declaration,
-                            companionFieldName
+                            declaration
                     )
                 }
                 return declaration
@@ -94,21 +104,20 @@ internal class ObjectClassLowering(val context: Context) : FileLoweringPass {
 
     fun processObjectClass(
             declaration: IrClass,
-            classToAdd: IrClass,
-            fieldName: Name
+            classToAdd: IrClass
     ) {
         val function = context.getObjectClassInstanceFunction(declaration)
-        classToAdd.declarations.add(function)
+        val property = function.correspondingPropertySymbol!!.owner
+        classToAdd.declarations.add(property)
 
-        val primaryConstructor = declaration.constructors.single { it.isPrimary }
-        require(primaryConstructor.valueParameters.isEmpty())
-        val instanceField = classToAdd.addField {
-            name = fieldName
+        property.addBackingField {
             isFinal = true
             isStatic = true
             type = declaration.defaultType
             visibility = DescriptorVisibilities.PRIVATE
         }.also { field ->
+            val primaryConstructor = declaration.constructors.single { it.isPrimary }
+            require(primaryConstructor.valueParameters.isEmpty())
             val builder = context.createIrBuilder(field.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
             val initializer = if (declaration.isCompanion && classToAdd.isObjCClass()) {
                 builder.irGetObjCClassCompanion(declaration)
@@ -131,15 +140,14 @@ internal class ObjectClassLowering(val context: Context) : FileLoweringPass {
                 }
             }
             field.initializer = builder.irExprBody(initializer)
-            if (declaration.annotations.hasAnnotation(KonanFqNames.threadLocal)) {
-                field.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.threadLocal.owner)
-            } else if (declaration.annotations.hasAnnotation(KonanFqNames.sharedImmutable) || context.memoryModel != MemoryModel.EXPERIMENTAL){
-                field.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.sharedImmutable.owner)
-            }
+        }
+        if (declaration.annotations.hasAnnotation(KonanFqNames.threadLocal)) {
+            property.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.threadLocal.owner)
+        } else if (declaration.annotations.hasAnnotation(KonanFqNames.sharedImmutable) || context.memoryModel != MemoryModel.EXPERIMENTAL){
+            property.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.sharedImmutable.owner)
         }
         function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-            val value = irGetField(null, instanceField)
-            +irReturn(value)
+            +irReturn(irGetField(null, property.backingField!!))
         }
     }
 
@@ -162,11 +170,6 @@ internal class ObjectClassLowering(val context: Context) : FileLoweringPass {
         return fields.all { it.isConst } && this.constructors.all { it.isAutogeneratedSimpleConstructor() }
     }
 
-    companion object {
-        val companionFieldName = "companionField".synthesizedName
-        val instanceFieldName = "instanceField".synthesizedName
-
-    }
 
     // This is a hack to avoid early freezing. Should be removed when freezing is removed
     object IrStatementOriginFieldPreInit : IrStatementOriginImpl("FIELD_PRE_INIT")

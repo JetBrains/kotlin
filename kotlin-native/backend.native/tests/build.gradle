@@ -6262,6 +6262,11 @@ fileCheckTest("filecheck_replace_invoke_with_call") {
     annotatedSource = project.file('filecheck/replace_invoke_with_call.kt')
 }
 
+fileCheckTest("filecheck_no_frame_on_constant_object_access") {
+    annotatedSource = project.file('filecheck/no_frame_on_constant_object_access.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
 fileCheckTest("filecheck_kt49847_simple_function_reference") {
     annotatedSource = project.file('filecheck/kt49847_simple_function_reference.kt')
     enabled = project.globalTestArgs.contains('-opt')

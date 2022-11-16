@@ -502,7 +502,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     }
 
     private fun getInlineClassBackingField(irClass: IrClass): IrField =
-            irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField }.single()
+            irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField?.takeUnless { it.isStatic } }.single()
 }
 
 private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpleFunction by Context.lazyMapMember { irConstructor ->
