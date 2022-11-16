@@ -248,7 +248,7 @@ object CodegenUtil {
         val locationWithLineAndOffset = location
             ?.let { exception as? SourceCodeAnalysisException }
             ?.let { linesMapping(it.source.startOffset) }
-            ?.let { (line, offset) -> "$location\nLine: ${line + 1}\nOffset: ${offset + 1}" }
+            ?.let { (line, offset) -> "$location:${line + 1}:${offset + 1}" }
             ?: location
         throw BackendException(
             getExceptionMessage("Backend", "Exception during $phase", exception, locationWithLineAndOffset) +

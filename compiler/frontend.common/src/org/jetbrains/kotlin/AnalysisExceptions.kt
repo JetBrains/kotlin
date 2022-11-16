@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin
 
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.IndexNotReadyException
 
 val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $message"
 
@@ -24,6 +26,8 @@ inline fun <R> whileAnalysing(element: KtSourceElement?, block: () -> R): R {
 fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
     is SourceCodeAnalysisException -> this
     is ProcessCanceledException -> this // KT-38483
+    is IndexNotReadyException -> this
+    is ControlFlowException -> this
     is VirtualMachineError -> this
     else -> when (element?.kind) {
         is KtRealSourceElementKind -> SourceCodeAnalysisException(element, this)
@@ -69,6 +73,8 @@ fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
     }
 
     this is ProcessCanceledException -> this // KT-38483
+    this is IndexNotReadyException -> this
+    this is ControlFlowException -> this
     this is VirtualMachineError -> this
     else -> FileAnalysisException(filePath, this)
 }
