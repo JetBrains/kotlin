@@ -6,6 +6,8 @@
 package kotlin.jvm
 
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.internal.RequireKotlin
+import kotlin.internal.RequireKotlinVersionKind
 
 /**
  * Instructs the Kotlin compiler to generate overloads for this function that substitute default parameter values.
@@ -180,3 +182,14 @@ internal expect annotation class JvmPackageName(val name: String)
 @SinceKotlin("1.8")
 @OptionalExpectation
 public expect annotation class JvmSerializableLambda
+
+/**
+ * Instructs compiler to ignores overrides in the delegate's class and delegate to Java default methods when present. See KT-36902.
+ */
+@Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.8")
+@RequireKotlin("1.8", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@OptionalExpectation
+public expect annotation class JvmDelegateToDefaults

@@ -8709,6 +8709,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("javaDefaultMethod.kt")
+            public void testJavaDefaultMethod() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegation/javaDefaultMethod.kt");
+            }
+
+            @Test
             @TestMetadata("kt40510.kt")
             public void testKt40510() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegation/kt40510.kt");

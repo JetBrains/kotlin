@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.analysis.checkers.*
@@ -18,16 +19,19 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRAC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.util.ImplementationStatus
 
@@ -52,6 +56,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val delegationOverrideOfFinal = mutableListOf<Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>>()
         val delegationOverrideOfOpen = mutableListOf<Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>>()
         val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()
+        val nonOverriddenDefaultInterfaceMethods = mutableListOf<FirCallableSymbol<*>>()
 
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
             val delegatedWrapperData = symbol.delegatedWrapperData
@@ -75,6 +80,12 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
 
                 val firstFinal = filteredOverriddenMembers.firstOrNull { it.isFinal }
                 val firstOpen = filteredOverriddenMembers.firstOrNull { it.isOpen && delegatedTo != it.unwrapFakeOverrides() }
+                val delegateToDefaults = context.languageVersionSettings.getFlag(AnalysisFlags.ignoreImplicitDelegationToDefaults)
+                        || delegatedWrapperData.delegateField.initializer?.annotations?.any {
+                    it.typeRef.toRegularClassSymbol(context.session)?.classId?.asFqNameString() == "kotlin.jvm.JvmDelegateToDefaults"
+                } ?: false
+                val firstFromDefault =
+                    if (delegateToDefaults) null else filteredOverriddenMembers.firstOrNull { context.session.isDefaultJavaMethod(it) }
 
                 when {
                     firstFinal != null ->
@@ -82,6 +93,9 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
 
                     firstOpen != null ->
                         delegationOverrideOfOpen.add(symbol to firstOpen)
+
+                    firstFromDefault != null ->
+                        nonOverriddenDefaultInterfaceMethods.add(firstFromDefault)
                 }
 
                 return
@@ -142,6 +156,15 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             )
         }
 
+        nonOverriddenDefaultInterfaceMethods.firstOrNull()?.let { delegated ->
+            reporter.reportOn(
+                source,
+                NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD,
+                delegated,
+                context
+            )
+        }
+
         if (manyImplementationsDelegationSymbols.isEmpty() && notImplementedIntersectionSymbols.isNotEmpty()) {
             val notImplementedIntersectionSymbol = notImplementedIntersectionSymbols.first()
             val (abstractIntersections, implIntersections) =
@@ -168,3 +191,15 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
     private fun FirCallableSymbol<*>.isFromInterfaceOrEnum(context: CheckerContext): Boolean =
         (getContainingClassSymbol(context.session) as? FirRegularClassSymbol)?.let { it.isInterface || it.isEnumClass } == true
 }
+
+fun FirSession.isDefaultJavaMethod(callable: FirCallableSymbol<*>): Boolean =
+    when {
+        callable.isIntersectionOverride ->
+            isDefaultJavaMethod(callable.baseForIntersectionOverride!!)
+
+        callable.isSubstitutionOverride ->
+            isDefaultJavaMethod(callable.originalForSubstitutionOverride!!)
+
+        else ->
+            callable.dispatchReceiverType?.toRegularClassSymbol(this)?.classKind == ClassKind.INTERFACE && callable.origin == FirDeclarationOrigin.Enhancement && callable.modality == Modality.OPEN
+    }

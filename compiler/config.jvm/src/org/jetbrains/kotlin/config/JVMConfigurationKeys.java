@@ -168,4 +168,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> OLD_INNER_CLASSES_LOGIC =
             CompilerConfigurationKey.create("Use old logic for generation of InnerClasses attributes");
+
+    public static final CompilerConfigurationKey<Boolean> NO_WARNING_ON_IMPLICIT_DELEGATION_TO_DEFAULTS =
+            CompilerConfigurationKey.create("No warning on implicit delegation to default Java interface methods");
 }

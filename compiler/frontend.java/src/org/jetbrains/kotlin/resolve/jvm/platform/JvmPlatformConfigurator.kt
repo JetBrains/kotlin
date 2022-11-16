@@ -44,6 +44,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         FunctionDelegateMemberNameClashChecker,
         ClassInheritsJavaSealedClassChecker,
         JavaOverrideWithWrongNullabilityOverrideChecker,
+        DelegatedDefaultInterfaceMethodsAreOverriddenChecker
     ),
 
     additionalCallCheckers = listOf(

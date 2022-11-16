@@ -212,6 +212,8 @@ public interface ErrorsJvm {
     DiagnosticFactoryForDeprecation0<PsiElement> ENUM_DECLARING_CLASS_DEPRECATED =
             DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitEnumDeclaringClass);
 
+    DiagnosticFactory1<KtClassOrObject, String> NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD = DiagnosticFactory1.create(WARNING, DECLARATION_SIGNATURE);
+
     DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REDUNDANT_REPEATABLE_ANNOTATION = DiagnosticFactory2.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")

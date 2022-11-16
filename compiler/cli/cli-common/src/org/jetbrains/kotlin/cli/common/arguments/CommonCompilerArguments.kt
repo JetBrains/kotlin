@@ -437,6 +437,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xallow-any-scripts-in-source-roots", description = "Allow to compile any scripts along with regular Kotlin sources")
     var allowAnyScriptsInSourceRoots: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xignore-implicit-delegation-to-defaults", description = "Allow implicit delegation to default Java interface methods")
+    val ignoreImplicitDelegationToDefaults: Boolean by FreezableVar(false)
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -461,6 +464,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.builtInsFromSources, builtInsFromSources)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
+            put(AnalysisFlags.ignoreImplicitDelegationToDefaults, ignoreImplicitDelegationToDefaults)
         }
     }
 

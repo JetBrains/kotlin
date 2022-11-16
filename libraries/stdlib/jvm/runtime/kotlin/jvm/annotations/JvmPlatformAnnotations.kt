@@ -5,6 +5,8 @@
 
 package kotlin.jvm
 
+import kotlin.internal.RequireKotlin
+import kotlin.internal.RequireKotlinVersionKind
 import kotlin.reflect.KClass
 
 /**
@@ -154,3 +156,13 @@ public actual annotation class JvmInline
 @MustBeDocumented
 @SinceKotlin("1.5")
 public actual annotation class JvmRecord
+
+/**
+ * Instructs compiler to ignores overrides in the delegate's class and delegate to Java default methods when present. See KT-36902.
+ */
+@Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.8")
+@RequireKotlin("1.8", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+public actual annotation class JvmDelegateToDefaults
