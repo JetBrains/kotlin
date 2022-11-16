@@ -131,6 +131,14 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             buildGradle.appendText(
                 """
                 apply plugin: 'kotlin-kapt'

@@ -65,6 +65,14 @@ class UpToDateIT : KGPBaseTest() {
         mutations: Set<ProjectMutation>
     ) {
         project("kotlinProject", gradleVersion) {
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             mutations.forEach { mutation ->
                 mutation.initProject(this)
                 build("classes")

@@ -72,7 +72,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             taskProvider.configure { task ->
                 javaTaskProvider?.let {
                     task.associatedJavaCompileTaskTargetCompatibility.value(javaTaskProvider.map { it.targetCompatibility })
-                    task.associatedJavaCompileTaskSources.from(javaTaskProvider.map { it.source })
                     task.associatedJavaCompileTaskName.value(javaTaskProvider.name)
                 }
 
