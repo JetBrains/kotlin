@@ -183,8 +183,7 @@ class Fir2IrConverter(
     private fun processFileAndClassMembers(file: FirFile) {
         val irFile = declarationStorage.getIrFile(file)
         for (declaration in file.declarations) {
-            val irDeclaration = processMemberDeclaration(declaration, null, irFile) ?: continue
-            irFile.declarations += irDeclaration
+            processMemberDeclaration(declaration, null, irFile)
         }
     }
 
@@ -203,8 +202,7 @@ class Fir2IrConverter(
             )
         }
         for (declaration in syntheticPropertiesLast(anonymousObject.declarations)) {
-            val irDeclaration = processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
-            irClass.declarations += irDeclaration
+            processMemberDeclaration(declaration, anonymousObject, irClass)
         }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
@@ -236,8 +234,7 @@ class Fir2IrConverter(
         }
         // At least on enum entry creation we may need a default constructor, so ctors should be converted first
         for (declaration in syntheticPropertiesLast(allDeclarations)) {
-            val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
-            irClass.declarations += irDeclaration
+            processMemberDeclaration(declaration, regularClass, irClass)
         }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
@@ -345,59 +342,53 @@ class Fir2IrConverter(
         }
     }
 
+    // Process `declaration` and add the results to `parent`.
     private fun processMemberDeclaration(
         declaration: FirDeclaration,
         containingClass: FirClass?,
-        parent: IrDeclarationParent
-    ): IrDeclaration? {
+        parent: IrDeclarationContainer
+    ) {
         val isLocal = containingClass != null &&
                 (containingClass !is FirRegularClass || containingClass.isLocal)
-        return when (declaration) {
+        when (declaration) {
             is FirRegularClass -> {
-                processClassMembers(declaration)
+                parent.declarations += processClassMembers(declaration)
             }
             is FirSimpleFunction -> {
-                declarationStorage.getOrCreateIrFunction(
+                parent.declarations += declarationStorage.getOrCreateIrFunction(
                     declaration, parent, isLocal = isLocal
                 )
             }
             is FirProperty -> {
-                if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration &&
-                    declaration.name == StandardNames.ENUM_ENTRIES &&
-                    !session.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
-                ) {
-                    // Note: we have to do it, because backend without the feature
-                    // cannot process Enum.entries properly
-                    null
-                } else {
-                    declarationStorage.getOrCreateIrProperty(
+                if (declaration.source?.kind != KtFakeSourceElementKind.EnumGeneratedDeclaration ||
+                    declaration.name != StandardNames.ENUM_ENTRIES ||
+                    session.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
+                    parent.declarations += declarationStorage.getOrCreateIrProperty(
                         declaration, parent, isLocal = isLocal
                     )
                 }
             }
             is FirField -> {
-                if (declaration.isSynthetic) {
-                    declarationStorage.createIrFieldAndDelegatedMembers(declaration, containingClass!!, parent as IrClass)
-                } else {
-                    throw AssertionError("Unexpected non-synthetic field: ${declaration::class}")
+                require(declaration.isSynthetic) {
+                    "Unexpected non-synthetic field: ${declaration::class}"
+                }
+                declarationStorage.createIrFieldAndDelegatedMembers(declaration, containingClass!!, parent as IrClass)
+            }
+            is FirConstructor -> {
+                if (!declaration.isPrimary) {
+                    parent.declarations += declarationStorage.getOrCreateIrConstructor(
+                        declaration, parent as IrClass, isLocal = isLocal
+                    )
                 }
             }
-            is FirConstructor -> if (!declaration.isPrimary) {
-                declarationStorage.getOrCreateIrConstructor(
-                    declaration, parent as IrClass, isLocal = isLocal
-                )
-            } else {
-                null
-            }
             is FirEnumEntry -> {
-                classifierStorage.createIrEnumEntry(declaration, parent as IrClass)
+                parent.declarations += classifierStorage.createIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
-                declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)
+                parent.declarations += declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)
             }
             is FirTypeAlias -> {
                 // DO NOTHING
-                null
             }
             else -> {
                 error("Unexpected member: ${declaration::class}")

@@ -44,38 +44,37 @@ class KRaw : JRaw {
 
   }
 
+  private /* final field */ val $$delegate_0: JRaw = j
   override fun takesRawList(list: @FlexibleNullability @RawType MutableList<Any?>) {
-    <this>.#<$$delegate_0>.takesRawList(list = list)
+    <this>.#$$delegate_0.takesRawList(list = list)
   }
 
   override fun returnsRawList(): @FlexibleNullability @RawType MutableList<Any?> {
-    return <this>.#<$$delegate_0>.returnsRawList() /*!! @RawType MutableList<Any?> */
+    return <this>.#$$delegate_0.returnsRawList() /*!! @RawType MutableList<Any?> */
   }
 
   override fun takesRawGenericInv(g: @FlexibleNullability @RawType GenericInv<Number>) {
-    <this>.#<$$delegate_0>.takesRawGenericInv(g = g)
+    <this>.#$$delegate_0.takesRawGenericInv(g = g)
   }
 
   override fun returnsRawGenericInv(): @FlexibleNullability @RawType GenericInv<Number> {
-    return <this>.#<$$delegate_0>.returnsRawGenericInv() /*!! @RawType GenericInv<Number> */
+    return <this>.#$$delegate_0.returnsRawGenericInv() /*!! @RawType GenericInv<Number> */
   }
 
   override fun takesRawGenericIn(g: @FlexibleNullability @RawType GenericIn<Number>) {
-    <this>.#<$$delegate_0>.takesRawGenericIn(g = g)
+    <this>.#$$delegate_0.takesRawGenericIn(g = g)
   }
 
   override fun returnsRawGenericIn(): @FlexibleNullability @RawType GenericIn<Number> {
-    return <this>.#<$$delegate_0>.returnsRawGenericIn() /*!! @RawType GenericIn<Number> */
+    return <this>.#$$delegate_0.returnsRawGenericIn() /*!! @RawType GenericIn<Number> */
   }
 
   override fun takesRawGenericOut(g: @FlexibleNullability @RawType GenericOut<Number>) {
-    <this>.#<$$delegate_0>.takesRawGenericOut(g = g)
+    <this>.#$$delegate_0.takesRawGenericOut(g = g)
   }
 
   override fun returnsRawGenericOut(): @FlexibleNullability @RawType GenericOut<Number> {
-    return <this>.#<$$delegate_0>.returnsRawGenericOut() /*!! @RawType GenericOut<Number> */
+    return <this>.#$$delegate_0.returnsRawGenericOut() /*!! @RawType GenericOut<Number> */
   }
-
-  local /* final field */ val <$$delegate_0>: JRaw = j
 
 }

@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -1838,18 +1837,17 @@ class DeclarationsConverter(
             explicitDelegation.toFirSourceElement(), ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.Syntax)
         )
 
-        val delegateName = Name.special("<\$\$delegate_${delegateFieldsMap.size}>")
         delegateFieldsMap.put(
             index,
             buildField {
                 source = calculatedFirExpression.source?.fakeElement(KtFakeSourceElementKind.ClassDelegationField)
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Synthetic
-                name = delegateName
+                name = SpecialNames.delegateFieldName(delegateFieldsMap.size)
                 returnTypeRef = firTypeRef
                 symbol = FirFieldSymbol(CallableId(name))
                 isVar = false
-                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
                 initializer = calculatedFirExpression
             }.symbol
         )
@@ -2009,7 +2007,7 @@ class DeclarationsConverter(
     private fun convertIntersectionType(typeRefSource: KtSourceElement, intersectionType: LighterASTNode, isNullable: Boolean): FirTypeRef {
         val children = arrayListOf<FirTypeRef>()
         intersectionType.forEachChildren {
-            if (it.tokenType != KtTokens.AND) { //skip in forEachChildren?
+            if (it.tokenType != AND) { //skip in forEachChildren?
                 children.add(convertType(it))
             }
         }
