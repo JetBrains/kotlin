@@ -30,13 +30,14 @@ abstract class BasicMap<K : Comparable<K>, V>(
 ) {
     protected val storage: LazyStorage<K, V>
     private val nonCachingStorage = System.getProperty("kotlin.jps.non.caching.storage")?.toBoolean() ?: false
+    private val keepChangesInMemory = true
 
     init {
-        storage = if (nonCachingStorage) {
+        storage = (if (nonCachingStorage) {
             NonCachingLazyStorage(storageFile, keyDescriptor, valueExternalizer)
         } else {
             CachingLazyStorage(storageFile, keyDescriptor, valueExternalizer)
-        }
+        }).let { if (keepChangesInMemory) InMemoryStorageWrapper(it) else it }
     }
 
     fun clean() {
