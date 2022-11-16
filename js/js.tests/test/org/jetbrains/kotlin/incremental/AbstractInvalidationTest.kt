@@ -162,7 +162,7 @@ abstract class AbstractInvalidationTest(
             val moduleTestDir = File(testDir, module)
             val moduleSourceDir = File(sourceDir, module)
             val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
-            val moduleStep = moduleInfo.steps[projStepId]
+            val moduleStep = moduleInfo.steps.getValue(projStepId)
             val deletedFiles = mutableSetOf<String>()
             for (modification in moduleStep.modifications) {
                 modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it.name) }
