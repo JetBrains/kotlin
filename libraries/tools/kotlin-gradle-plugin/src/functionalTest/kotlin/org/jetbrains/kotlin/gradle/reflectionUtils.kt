@@ -16,11 +16,11 @@ fun assertAllImplementationsAlsoImplement(
     baseInterface: KClass<*>,
     requiredInterface: KClass<*>
 ) {
-    reflections.getSubTypesOf(baseInterface.java)
+    val badImplementations = reflections.getSubTypesOf(baseInterface.java)
         .filter { subtype -> !subtype.isInterface }
-        .forEach { implementation ->
-            if (!implementation.kotlin.isSubclassOf(requiredInterface)) {
-                fail("${implementation.kotlin} does not implement $requiredInterface")
-            }
-        }
+        .filter { implementation -> !implementation.kotlin.isSubclassOf(requiredInterface) }
+
+    if (badImplementations.isNotEmpty()) {
+        fail("${badImplementations.map { it.kotlin }} does not implement $requiredInterface")
+    }
 }
