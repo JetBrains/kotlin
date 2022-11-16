@@ -92,6 +92,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
         }
 
         @Test
+        @TestMetadata("onProperty_javaAnnotation_targets.kt")
+        public void testOnProperty_javaAnnotation_targets() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onProperty_javaAnnotation_targets.kt");
+        }
+
+        @Test
         @TestMetadata("onTypeAlias.kt")
         public void testOnTypeAlias() throws Exception {
             runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onTypeAlias.kt");

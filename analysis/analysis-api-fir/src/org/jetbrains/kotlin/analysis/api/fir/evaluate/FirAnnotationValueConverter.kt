@@ -130,6 +130,10 @@ internal object FirAnnotationValueConverter {
                         else null
                     }
 
+                    is FirEnumEntrySymbol -> {
+                        KtEnumEntryAnnotationValue(resolvedSymbol.callableId, sourcePsi)
+                    }
+
                     else -> null
                 }
             }
