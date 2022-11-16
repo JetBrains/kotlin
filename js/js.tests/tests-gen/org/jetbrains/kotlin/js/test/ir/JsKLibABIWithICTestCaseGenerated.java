@@ -31,6 +31,11 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         runTest("compiler/testData/klibABI/addEnumEntry/");
     }
 
+    @TestMetadata("addSealedSubclass")
+    public void testAddSealedSubclass() throws Exception {
+        runTest("compiler/testData/klibABI/addSealedSubclass/");
+    }
+
     public void testAllFilesPresentInKlibABI() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
     }
@@ -163,6 +168,11 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
     @TestMetadata("removeProperty")
     public void testRemoveProperty() throws Exception {
         runTest("compiler/testData/klibABI/removeProperty/");
+    }
+
+    @TestMetadata("removeSealedSubclass")
+    public void testRemoveSealedSubclass() throws Exception {
+        runTest("compiler/testData/klibABI/removeSealedSubclass/");
     }
 
     @TestMetadata("replaceCallableReturnType")
