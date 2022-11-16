@@ -609,6 +609,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("typeParameterInBoundsLocalFunction.kt")
+        public void testTypeParameterInBoundsLocalFunction() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/typeParameterInBoundsLocalFunction.kt");
+        }
+
+        @Test
         @TestMetadata("typeParameterInPropertyReceiver.kt")
         public void testTypeParameterInPropertyReceiver() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/typeParameterInPropertyReceiver.kt");

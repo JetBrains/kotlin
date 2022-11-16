@@ -514,6 +514,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/typeFromGetter.kt");
     }
 
+    @TestMetadata("typeParameterInBoundsLocalFunction.kt")
+    public void testTypeParameterInBoundsLocalFunction() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/typeParameterInBoundsLocalFunction.kt");
+    }
+
     @TestMetadata("typeParameterInPropertyReceiver.kt")
     public void testTypeParameterInPropertyReceiver() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/typeParameterInPropertyReceiver.kt");

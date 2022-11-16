@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ForbidInferringTypeVariablesIntoEmptyIntersection
 // WITH_STDLIB
 

@@ -611,10 +611,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             return simpleFunction
         }
 
-        doTransformTypeParameters(simpleFunction)
-
         val containingDeclaration = context.containerIfAny
         return context.withSimpleFunction(simpleFunction, session) {
+            doTransformTypeParameters(simpleFunction)
+
             // TODO: I think it worth creating something like runAllPhasesForLocalFunction
             if (containingDeclaration != null && containingDeclaration !is FirClass) {
                 // For class members everything should be already prepared
