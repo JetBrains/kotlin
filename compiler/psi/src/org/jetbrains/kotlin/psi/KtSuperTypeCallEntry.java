@@ -49,7 +49,7 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
     @Override
     @Nullable
     public KtValueArgumentList getValueArgumentList() {
-        return getStubOrPsiChild(KtStubElementTypes.VALUE_ARGUMENT_LIST);
+        return (KtValueArgumentList) findChildByType(KtNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
     @Override
