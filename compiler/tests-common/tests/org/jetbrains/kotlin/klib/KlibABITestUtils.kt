@@ -90,7 +90,7 @@ object KlibABITestUtils {
                 val (moduleInfo, moduleTestDir, moduleBuildDirs, klibFile) = modulesMap[moduleName]
                     ?: fail { "No module $moduleName found on step ${projectStep.id}" }
 
-                val moduleStep = moduleInfo.steps[projectStep.id]
+                val moduleStep = moduleInfo.steps.getValue(projectStep.id)
 
                 moduleStep.modifications.forEach { modification ->
                     modification.execute(moduleTestDir, moduleBuildDirs.sourceDir)
