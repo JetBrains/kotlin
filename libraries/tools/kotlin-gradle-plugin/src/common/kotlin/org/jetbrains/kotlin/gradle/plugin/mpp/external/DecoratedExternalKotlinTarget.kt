@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
@@ -17,6 +18,10 @@ abstract class DecoratedExternalKotlinTarget internal constructor(
     constructor(delegate: Delegate) : this(delegate.impl)
 
     class Delegate internal constructor(internal val impl: ExternalKotlinTargetImpl)
+
+    val apiElementsConfiguration: Configuration = delegate.apiElementsConfiguration
+
+    val runtimeElementsConfiguration: Configuration = delegate.runtimeElementsConfiguration
 
     internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
 }

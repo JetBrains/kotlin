@@ -7,11 +7,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.Usage
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.named
 
 @ExternalKotlinTargetApi
 fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExternalKotlinTarget(
@@ -20,6 +25,7 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     val defaultConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "default"))
     val apiElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "apiElements"))
     val runtimeElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "runtimeElements"))
+
     val artifactsTaskLocator = ExternalKotlinTargetImpl.ArtifactsTaskLocator { target ->
         target.project.locateOrRegisterTask<Jar>(lowerCamelCaseName(descriptor.targetName, "jar"))
     }
@@ -36,9 +42,21 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         artifactsTaskLocator = artifactsTaskLocator
     )
 
+    apiElementsConfiguration.usesPlatformOf(target)
+    apiElementsConfiguration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+    apiElementsConfiguration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+
+    runtimeElementsConfiguration.usesPlatformOf(target)
+    runtimeElementsConfiguration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
+    runtimeElementsConfiguration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+
     val decorated = descriptor.targetFactory.create(DecoratedExternalKotlinTarget.Delegate(target))
     target.onCreated()
+
     descriptor.configure?.invoke(decorated)
+    descriptor.apiElements.configure?.invoke(decorated, apiElementsConfiguration)
+    descriptor.runtimeElements.configure?.invoke(decorated, runtimeElementsConfiguration)
+
     targets.add(decorated)
     decorated.logger.info("Created ${descriptor.platformType} target")
     return decorated
