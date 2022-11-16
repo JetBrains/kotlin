@@ -52,7 +52,7 @@ import java.util.*
  * set after evaluating that expression.
  */
 
-internal object FileInitializersOptimization {
+internal object StaticInitializersOptimization {
     private class AnalysisResult(val functionsRequiringGlobalInitializerCall: Set<IrFunction>,
                                  val functionsRequiringThreadLocalInitializerCall: Set<IrFunction>,
                                  val callSitesRequiringGlobalInitializerCall: Set<IrFunctionAccessExpression>,

@@ -170,9 +170,9 @@ internal val dcePhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val removeRedundantCallsToFileInitializersPhase = makeKonanModuleOpPhase(
-        name = "RemoveRedundantCallsToFileInitializersPhase",
-        description = "Redundant file initializers calls removal",
+internal val removeRedundantCallsToStaticInitializersPhase = makeKonanModuleOpPhase(
+        name = "RemoveRedundantCallsToStaticInitializersPhase",
+        description = "Redundant static initializers calls removal",
         prerequisite = setOf(devirtualizationAnalysisPhase),
         op = { context, _ ->
             val moduleDFG = context.moduleDFG!!
@@ -189,7 +189,7 @@ internal val removeRedundantCallsToFileInitializersPhase = makeKonanModuleOpPhas
                     .mapNotNull { it.irFunction }
                     .toSet()
 
-            FileInitializersOptimization.removeRedundantCalls(context, callGraph, rootSet)
+            StaticInitializersOptimization.removeRedundantCalls(context, callGraph, rootSet)
         }
 )
 

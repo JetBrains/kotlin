@@ -44,7 +44,7 @@ internal val IrField.shouldBeInitializedEagerly: Boolean
     }
 
 // TODO: ExplicitlyExported for IR proto are not longer needed.
-internal class FileInitializersLowering(val context: Context) : FileLoweringPass {
+internal class StaticInitializersLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         var requireGlobalInitializer = false
         var requireThreadLocalInitializer = false
