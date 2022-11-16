@@ -30,7 +30,7 @@ internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
 abstract class AbstractKotlinTarget(
     final override val project: Project
-) : KotlinTarget {
+) : InternalKotlinTarget {
     private val attributeContainer = HierarchyAttributeContainer(parent = null)
 
     override fun getAttributes(): AttributeContainer = attributeContainer

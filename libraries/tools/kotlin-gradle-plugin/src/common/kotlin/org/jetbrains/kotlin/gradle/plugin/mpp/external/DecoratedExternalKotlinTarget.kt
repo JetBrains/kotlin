@@ -9,12 +9,12 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 
 @ExternalKotlinTargetApi
 abstract class DecoratedExternalKotlinTarget internal constructor(
     internal val delegate: ExternalKotlinTargetImpl
-) : KotlinTarget by delegate {
+) : InternalKotlinTarget by delegate {
     constructor(delegate: Delegate) : this(delegate.impl)
 
     class Delegate internal constructor(internal val impl: ExternalKotlinTargetImpl)

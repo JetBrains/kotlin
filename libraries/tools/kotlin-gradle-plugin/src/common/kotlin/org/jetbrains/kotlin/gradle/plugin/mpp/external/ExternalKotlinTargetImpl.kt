@@ -16,8 +16,8 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.buildAdhocComponentsFromKotlinVariants
 
 internal class ExternalKotlinTargetImpl internal constructor(
@@ -30,7 +30,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val publishable: Boolean,
     internal val kotlinComponents: Set<KotlinTargetComponent>,
     private val artifactsTaskLocator: ArtifactsTaskLocator,
-) : KotlinTarget {
+) : InternalKotlinTarget {
 
     fun interface ArtifactsTaskLocator {
         fun locate(target: ExternalKotlinTargetImpl): TaskProvider<out Task>
