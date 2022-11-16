@@ -277,6 +277,7 @@ public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializ
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates : org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates {
 	public static final field serialVersionUID J
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
