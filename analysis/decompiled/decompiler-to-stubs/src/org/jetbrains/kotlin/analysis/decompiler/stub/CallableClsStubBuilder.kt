@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
@@ -287,9 +287,10 @@ private class ConstructorClsStubBuilder(
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
+        val name = (protoContainer as ProtoContainer.Class).classId.shortClassName.ref()
         return if (Flags.IS_SECONDARY.get(constructorProto.flags))
-            KotlinPlaceHolderStubImpl(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR)
+            KotlinConstructorStubImpl(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true, isDelegatedCallToThis = false)
         else
-            KotlinPlaceHolderStubImpl(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR)
+            KotlinConstructorStubImpl(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false, isDelegatedCallToThis = false)
     }
 }

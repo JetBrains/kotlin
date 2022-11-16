@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/FlexibleTypes, fqName=test.FlexibleTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleTypes, superNames=[]]
     MODIFIER_LIST[abstract public]
-    PRIMARY_CONSTRUCTOR
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=FlexibleTypes]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
