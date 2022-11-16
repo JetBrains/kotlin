@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.util.OperatorNameConventions.BOX
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -527,3 +528,18 @@ fun IrFunction.extensionReceiverName(state: GenerationState): String {
 
 fun IrFunction.isBridge(): Boolean =
     origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+
+fun IrFunction.isCustomBox(typeSystem: IrTypeSystemContext): Boolean {
+    if (name != BOX) return false
+    val companionObject = (parent as? IrClass)?.takeIf { it.isCompanion } ?: return false
+    val inlineClass = (companionObject.parent as? IrClass)?.takeIf { it.isSingleFieldValueClass } ?: return false
+    if (!returnType.isSubtypeOf(inlineClass.defaultType, typeSystem)) return false
+    if (valueParameters.size != 1 || contextReceiverParametersCount != 0 || extensionReceiverParameter != null) return false
+    val underlyingType = inlineClass.inlineClassRepresentation!!.underlyingType
+    if (valueParameters[0].type != underlyingType) return false
+    return true
+}
+
+fun IrFunction.isCustomBoxOrReplacement(context: JvmBackendContext) =
+    isCustomBox(context.typeSystem)
+            || context.inlineClassReplacements.originalFunctionForMethodReplacement[this]?.isCustomBox(context.typeSystem) == true

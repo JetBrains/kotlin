@@ -262,8 +262,6 @@ fun AbstractInsnNode.isPrimitiveBoxing() =
                 isBoxingMethodDescriptor()
     }
 
-fun AbstractInsnNode.isInlineClassBoxing() = isMethodInsnWith(Opcodes.INVOKESTATIC) { name == KotlinTypeMapper.BOX_JVM_METHOD_NAME }
-
 private val BOXING_CLASS_INTERNAL_NAME =
     StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("Boxing")).topLevelClassInternalName()
 

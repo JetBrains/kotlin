@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.isBoxOperator
+import org.jetbrains.kotlin.backend.jvm.ir.isCustomBoxOrReplacement
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -485,9 +484,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
      * If inline class doesn't declare custom boxing, the only function "box-impl" will be created.
      */
     fun buildBoxFunctions(valueClass: IrClass) {
-        val customBoxFunction = valueClass.companionObject()?.functions?.singleOrNull {
-            context.inlineClassReplacements.originalFunctionForMethodReplacement[it]?.isBoxOperator ?: false
-        }
+        val customBoxFunction = valueClass.companionObject()?.functions?.singleOrNull { it.isCustomBoxOrReplacement(context) }
         if (customBoxFunction != null) {
             buildDefaultBoxFunction(valueClass, withDefaultSuffix = true)
             buildCustomBoxFunction(valueClass, customBoxFunction)

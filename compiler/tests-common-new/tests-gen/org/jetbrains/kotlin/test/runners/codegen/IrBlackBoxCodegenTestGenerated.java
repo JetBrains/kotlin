@@ -21042,21 +21042,9 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
-        @TestMetadata("customBoxingBug.kt")
-        public void testCustomBoxingBug() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/customBoxingBug.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
         @TestMetadata("customIterator.kt")
         public void testCustomIterator() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/customIterator.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("debug.kt")
-        public void testDebug() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/debug.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test

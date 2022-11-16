@@ -173,9 +173,4 @@ val IrTypeParameter.representativeUpperBound: IrType
         } ?: superTypes.first()
     }
 
-val IrFunction.isBoxOperator: Boolean
-    get() {
-        if (this !is IrSimpleFunction) return false
-        return name == BOX && isOperator
-    }
 

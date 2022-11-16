@@ -143,6 +143,8 @@ class JvmBackendContext(
 
     val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
+    val localFunctionsInInlineCustomBox = ConcurrentHashMap.newKeySet<IrFunction>()
+
     val multiFieldValueClassReplacements =
         MemoizedMultiFieldValueClassReplacements(irFactory, this)
 

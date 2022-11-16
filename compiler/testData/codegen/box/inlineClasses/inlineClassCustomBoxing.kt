@@ -4,77 +4,90 @@
 // TARGET_BACKEND: JVM_IR
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class IC(val x: Int) {
+value class IC1(val x: Int) {
     companion object {
-        operator fun box(x: Int) = boxByDefault<IC>(42)
+        operator fun box(x: Int) = IC1(42)
     }
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class IC2(val x: IC) {
+value class IC2(val x: IC1) {
     companion object {
-        operator fun box(x: IC) = boxByDefault<IC2>(x)
+        operator fun box(x: IC1) = IC2(forceBoxing(x))
     }
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class IC3(val x: String)
-
-OPTIONAL_JVM_INLINE_ANNOTATION
-value class IC4(val x: String) {
+value class IC3(val x: Int) {
     companion object {
-
-        private val cache = mutableMapOf<String, IC4>()
-
-        operator fun box(x: String): IC4 {
-            if (!cache.containsKey(x)) cache[x] = boxByDefault(x)
-            return cache[x]!!
+        private val hotValues = mapOf(0 to IC3(0), 1 to IC3(1), 2 to IC3(2))
+        operator fun box(x: Int): IC3 {
+            return (hotValues?.get(x) ?: (IC3(x) as IC3?))!! // the weird cast to nullable is a temporary solution to avoid redundant boxing
         }
+    }
+}
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC4(val x: Int) {
+    companion object {
+        private val cache = mutableMapOf<Int, IC4>()
+        operator fun box(x: Int) = cache.myComputeIfAbsent(x) { IC4(x) }
     }
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC5(val x: Int) {
     companion object {
-        private val storage = mapOf<Int, IC5>(
-            0 to boxByDefault(0),
-            1 to boxByDefault(1),
-            2 to boxByDefault(2)
-        )
-
-        operator fun box(x: Int) = storage.getOrElse(x) { boxByDefault(x) }
-    }
-}
-
-OPTIONAL_JVM_INLINE_ANNOTATION
-value class IC6(val x: Int) {
-    companion object {
         operator fun box(x: Int): Nothing = TODO()
     }
 }
 
-fun foo(a: IC?) = a?.x ?: 0
-fun bar(a: IC2?) = a?.x?.x ?: 0
-fun refEquals(a: Any?, b: Any?) = a === b
-fun forceBox(x: Any?) {}
+@JvmInline
+value class IC6(val x: Int) {
+    companion object {
+        private val hotValues = mapOf(0 to Boxed(IC6(0)), 1 to Boxed(IC6(1)), 2 to Boxed(IC6(2)))
+        operator fun box(x: Int): IC6 {
+            return (hotValues?.get(x) ?: Boxed(IC6(x))).value
+        }
+    }
+}
 
-inline fun <reified T : Throwable> assertFailsWith(func: () -> Unit): Boolean {
+inline fun <reified T> assertThrows(block: () -> Unit): Boolean {
     try {
-        func.invoke()
+        block.invoke()
     } catch (t: Throwable) {
         return t is T
     }
     return false
 }
 
+
+fun <T, R> MutableMap<T, R>.myComputeIfAbsent(key: T, computation: () -> R): R {
+    if (containsKey(key)) return this[key]!!
+    val value = computation()
+    this[key] = value
+    return value
+}
+
+fun <T> forceBoxing(x: T): T = x
+fun refEqualsBoxed(x: Any?, y: Any?) = x === y
+class Boxed<T>(val value: T)
+
+
 fun box(): String {
-    if (foo(IC(1)) != 42) return "Fail 1"
-    if (bar(IC2(IC(1))) != 1) return "Fail 2"
-    if (refEquals(IC3("a"), IC3("a"))) return "Fail 3"
-    if (!refEquals(IC4("a"), IC4("a"))) return "Fail 4"
-    if (!refEquals(IC5(0), IC5(0))) return "Fail 5"
-    if (refEquals(IC5(0), IC5(1))) return "Fail 6"
-    //if (refEquals(IC5(5), IC5(5))) return "Fail 7"
-    assertFailsWith<NotImplementedError> { forceBox(IC6(0)) }
+    if (forceBoxing(IC1(0)).x != 42) return "Fail 1"
+
+    if (forceBoxing(IC2(IC1(0))).x.x != 42) return "Fail 2"
+
+    if (!refEqualsBoxed(IC3(0), IC3(0))) return "Fail 3.1"
+    if (refEqualsBoxed(IC3(5), IC3(5))) return "Fail 3.2"
+
+    if (!refEqualsBoxed(IC4(0), IC4(0))) return "Fail 4.1"
+    if (!refEqualsBoxed(IC4(42), IC4(42))) return "Fail 4.2"
+
+    if (!assertThrows<NotImplementedError> { forceBoxing(IC5(0)) }) return "Fail 5"
+
+    if (!refEqualsBoxed(IC4(5), IC4(5))) return "Fail 6"
+
     return "OK"
 }

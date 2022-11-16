@@ -200,11 +200,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 forceFoxedReturnTypeOnOverride(function) ||
                 forceBoxedReturnTypeOnDefaultImplFun(function) ||
                 function.isFromJava() && function.returnType.isInlineClassType()
-                || isMangledCustomBoxFunction(function)
+                || function.isCustomBoxOrReplacement(context)
 
-
-    private fun isMangledCustomBoxFunction(function: IrFunction) =
-        context.inlineClassReplacements.originalFunctionForMethodReplacement[function]?.isBoxOperator ?: false
 
     private fun forceFoxedReturnTypeOnOverride(function: IrFunction) =
         function is IrSimpleFunction &&
