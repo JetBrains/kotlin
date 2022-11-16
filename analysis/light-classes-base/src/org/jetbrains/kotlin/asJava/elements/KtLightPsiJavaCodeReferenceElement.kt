@@ -16,8 +16,8 @@ class KtLightPsiJavaCodeReferenceElement(
     reference: () -> PsiReference?,
     private val customReferenceName: String? = null,
 ) :
-    PsiElement by ktElement,
-    PsiReference by LazyPsiReferenceDelegate(ktElement, reference),
+    PsiElement by @JvmDelegateToDefaults ktElement,
+    PsiReference by @JvmDelegateToDefaults LazyPsiReferenceDelegate(ktElement, reference),
     PsiJavaCodeReferenceElement {
 
     override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult = JavaResolveResult.EMPTY

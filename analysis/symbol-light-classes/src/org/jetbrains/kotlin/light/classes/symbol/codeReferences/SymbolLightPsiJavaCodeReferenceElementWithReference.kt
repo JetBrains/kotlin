@@ -10,7 +10,7 @@ import com.intellij.psi.PsiReference
 
 internal class SymbolLightPsiJavaCodeReferenceElementWithReference(private val ktElement: PsiElement, reference: PsiReference) :
     SymbolLightPsiJavaCodeReferenceElementBase(ktElement),
-    PsiReference by reference {
+    PsiReference by @JvmDelegateToDefaults reference {
 
     override fun getElement(): PsiElement = ktElement
 }
