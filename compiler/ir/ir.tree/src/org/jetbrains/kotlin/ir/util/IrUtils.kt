@@ -1316,9 +1316,3 @@ val IrFunction.isTypedEquals: Boolean
                 && (valueParameters[0].type.classFqName?.run { parentClass.hasEqualFqName(this) } ?: false)
                 && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && parentClass.isValue
     }
-
-val IrFunction.isIntrinsicInlineClassCreator: Boolean
-    get() = (parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-            && name == StandardNames.INTRINSIC_DEFAULT_BOXING_NAME
-            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
-            && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()

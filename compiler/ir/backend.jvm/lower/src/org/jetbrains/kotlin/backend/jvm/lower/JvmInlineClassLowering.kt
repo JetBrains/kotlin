@@ -241,27 +241,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
 
-        if (function.isIntrinsicInlineClassCreator) {
-            expression.transformChildrenVoid()
-            val inlineClass = expression.getTypeArgument(0)!!.getClass()!!
-            val constructorBridge = replacements.getReplacementFunction(inlineClass.primaryConstructor!!)!!
-            val boxFunction = context.inlineClassReplacements.getBoxFunction(inlineClass, withDefaultSuffix = true)
-            return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
-                irCall(boxFunction).apply {
-                    putValueArgument(
-                        0,
-                        coerceInlineClasses(
-                            irCall(constructorBridge).apply {
-                                putValueArgument(0, expression.getValueArgument(0))
-                            },
-                            constructorBridge.returnType,
-                            boxFunction.valueParameters[0].type
-                        )
-                    )
-                }
-            }
-        }
-
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)
 
