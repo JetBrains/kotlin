@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URI
 import java.net.URISyntaxException
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * This class is an analogue of the [DebugRunner][org.jetbrains.kotlin.test.backend.handlers.DebugRunner] from JVM stepping tests.
@@ -46,6 +48,9 @@ import java.net.URISyntaxException
  *
  */
 class JsDebugRunner(testServices: TestServices, private val localVariables: Boolean) : AbstractJsArtifactsCollector(testServices) {
+
+    private val logger = Logger.getLogger(this::class.java.name)
+
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (someAssertionWasFailed) return
 
@@ -66,7 +71,20 @@ class JsDebugRunner(testServices: TestServices, private val localVariables: Bool
             is SourceMapError -> error(parseResult.message)
         }
 
-        runGeneratedCode(jsFilePath, sourceMap, mainModule)
+        val numberOfAttempts = 5
+        retry(
+            numberOfAttempts,
+            action = { runGeneratedCode(jsFilePath, sourceMap, mainModule) },
+            predicate = { attempt, e ->
+                when (e) {
+                    is NodeExitedException -> {
+                        logger.log(Level.WARNING, "Node.js abruptly exited. Attempt $attempt out of $numberOfAttempts failed.", e)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        )
     }
 
     private fun runGeneratedCode(
@@ -363,4 +381,22 @@ private class ValueDescription(val isNull: Boolean, val isReferenceType: Boolean
             else -> LocalPrimitive(valueDescription, typeName)
         }
     )
+}
+
+/**
+ * Retries [action] the specified number of [times]. If [action] throws an exception, calls [predicate] to determine if
+ * another run should be attempted. If [predicate] returns `false`, rethrows the exception.
+ *
+ * If after the last attempt results in an exception, rethrows that exception without calling [predicate].
+ */
+internal inline fun <T> retry(times: Int, action: (Int) -> T, predicate: (Int, Throwable) -> Boolean): T {
+    if (times < 1) throw IllegalArgumentException("'times' argument must be at least 1")
+    for (i in 1..times) {
+        try {
+            return action(i)
+        } catch (e: Throwable) {
+            if (i == times || !predicate(i, e)) throw e
+        }
+    }
+    throw IllegalStateException("unreachable")
 }

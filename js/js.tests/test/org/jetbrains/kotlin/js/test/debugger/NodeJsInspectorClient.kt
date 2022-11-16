@@ -4,11 +4,11 @@
  */
 package org.jetbrains.kotlin.js.test.debugger
 
+import com.intellij.openapi.util.SystemInfo
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
@@ -34,28 +34,16 @@ class NodeJsInspectorClient(val scriptPath: String, val args: List<String>) {
      */
     fun <T> run(block: suspend NodeJsInspectorClientContext.() -> T): T = runBlocking {
         val context = NodeJsInspectorClientContextImpl(this@NodeJsInspectorClient)
+
         try {
             runWithContext(context, block)
-        } catch (e: ClosedReceiveChannelException) {
+        } catch (e: Throwable) {
             val nodeExitCode = try {
                 context.nodeProcess.exitValue()
             } catch (_: IllegalThreadStateException) {
                 throw e
             }
-            throw IllegalStateException(buildString {
-                append("Node process exited with exit code ")
-                append(nodeExitCode)
-                when (nodeExitCode) {
-                    134 -> {
-                        append(" (out of memory). Consider increasing ")
-                        append((::V8_MAX_OLD_SPACE_SIZE_MB).name)
-                    }
-                    139 -> {
-                        append(" (segmentation fault). Probably a bug in Node (see https://github.com/nodejs/node/issues/45410)")
-                    }
-                }
-                append('.')
-            }, e)
+            throw NodeExitedException(nodeExitCode, e)
         } finally {
             context.release()
         }
@@ -281,3 +269,27 @@ private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : 
 
 private fun ProcessBuilder.joinedCommand(): String =
     command().joinToString(" ") { "\"${it.replace("\"", "\\\"")}\"" }
+
+@Suppress("MemberVisibilityCanBePrivate", "CanBeParameter")
+internal class NodeExitedException(val exitCode: Int, cause: Throwable? = null) : IllegalStateException(createMessage(exitCode), cause) {
+
+    companion object {
+        private fun createMessage(exitCode: Int) = buildString {
+            append("Node process exited with exit code ")
+            append(exitCode)
+            when {
+                !SystemInfo.isWindows && exitCode == 134 -> {
+                    append(" (out of memory). Consider increasing ")
+                    append((::V8_MAX_OLD_SPACE_SIZE_MB).name)
+                }
+                !SystemInfo.isWindows && exitCode == 139 -> {
+                    append(" (segmentation fault). Probably a bug in Node (see https://github.com/nodejs/node/issues/45410)")
+                }
+                SystemInfo.isWindows && exitCode.toUInt() == 0xC0000005U -> {
+                    append(" (access violation). Probably a bug in Node (see https://github.com/nodejs/node/issues/45410)")
+                }
+            }
+            append('.')
+        }
+    }
+}
