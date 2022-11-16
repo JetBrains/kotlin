@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -77,7 +78,7 @@ val FirSession.contextualSerializersProvider: ContextualSerializersProvider by F
 context(CheckerContext)
 fun findTypeSerializerOrContextUnchecked(type: ConeKotlinType): FirClassSymbol<*>? {
     if (type.isTypeParameter) return null
-    val annotations = type.customAnnotations
+    val annotations = type.fullyExpandedType(session).customAnnotations
     annotations.serializableWith?.let { return it.toRegularClassSymbol(session) }
     val classSymbol = type.toRegularClassSymbol(session) ?: return null
     val currentFile = currentFile
