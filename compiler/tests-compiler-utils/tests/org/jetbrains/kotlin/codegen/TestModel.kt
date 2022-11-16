@@ -52,7 +52,7 @@ class ModuleInfo(val moduleName: String) {
         val rebuildKlib: Boolean
     )
 
-    val steps = mutableListOf<ModuleStep>()
+    val steps = hashMapOf</* step ID */ Int, ModuleStep>()
 }
 
 const val PROJECT_INFO_FILE = "project.info"
@@ -276,7 +276,9 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
             if (stepMatcher.matches()) {
                 val firstId = Integer.parseInt(stepMatcher.group(1))
                 val lastId = stepMatcher.group(2)?.let { Integer.parseInt(it) } ?: firstId
-                result.steps += parseSteps(firstId, lastId)
+                parseSteps(firstId, lastId).forEach { step ->
+                    result.steps[step.id] = step
+                }
             }
             false
         }
