@@ -141,29 +141,8 @@ internal val localDeclarationsPhase = makeIrFilePhase(
             },
             compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
             forceFieldsForInlineCaptures = true,
-            postLocalDeclarationLoweringCallback = { data ->
-
-                fun collectLocalFunctionsInCustomInlineBox() {
-                    val isInCustomInlineBox = mutableMapOf<IrFunction, Boolean>()
-
-                    fun isInCustomInlineBox(function: IrFunction): Boolean {
-                        if (function.isCustomBoxOrReplacement(context)) return true
-                        if (function in isInCustomInlineBox) return isInCustomInlineBox[function]!!
-                        if (function in context.localFunctionsInInlineCustomBox) return true
-                        isInCustomInlineBox[function] = (function.parent as? IrFunction)?.let { isInCustomInlineBox(it) } ?: false
-                        return isInCustomInlineBox[function]!!
-                    }
-
-                    data.localFunctions.forEach { (localFunction, localContext) ->
-                        if (isInCustomInlineBox(localFunction)) {
-                            context.localFunctionsInInlineCustomBox.add(localContext.transformedDeclaration)
-                        }
-                    }
-                }
-
-                collectLocalFunctionsInCustomInlineBox()
-
-                context.localDeclarationsLoweringData?.let {
+            postLocalDeclarationLoweringCallback = context.localDeclarationsLoweringData?.let {
+                { data ->
                     data.localFunctions.forEach { (localFunction, localContext) ->
                         it[localFunction] =
                             JvmBackendContext.LocalFunctionData(localContext, data.newParameterToOld, data.newParameterToCaptured)

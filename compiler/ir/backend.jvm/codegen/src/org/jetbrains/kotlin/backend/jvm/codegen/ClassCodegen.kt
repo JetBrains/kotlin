@@ -421,7 +421,6 @@ class ClassCodegen private constructor(
         }
 
         val (node, smap) = generateMethodNode(method)
-        postProcessInlineClassBoxingCalls(method, node)
         node.preprocessSuspendMarkers(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
@@ -464,38 +463,6 @@ class ClassCodegen private constructor(
             null -> Unit
             else -> error("Incorrect metadata source $metadata for:\n${method.dump()}")
         }
-    }
-
-    private fun postProcessInlineClassBoxingCalls(method: IrFunction, node: MethodNode) {
-
-        fun findEnclosingInlineClass(): IrClass? {
-            var currentDeclaration: IrDeclaration? = irClass
-            while (currentDeclaration != null) {
-                val companionObj = (currentDeclaration as? IrClass)?.takeIf { it.isCompanion }
-                val inlineClass = (companionObj?.parent as? IrClass)?.takeIf { it.isSingleFieldValueClass }
-                if (inlineClass != null) return inlineClass
-                currentDeclaration = currentDeclaration.parent as? IrDeclaration
-            }
-            return null
-        }
-
-        val enclosingInlineClass = findEnclosingInlineClass() ?: return
-        if (isFromCustomBoxingLexicalScope(method)) {
-            InlineClassBoxingTransformer(typeMapper.mapTypeAsDeclaration(enclosingInlineClass.defaultType).internalName)
-                .transform(type.internalName, node)
-        }
-    }
-
-    private fun isFromCustomBoxingLexicalScope(method: IrFunction): Boolean {
-        var currentDeclaration: IrDeclaration? = method
-        while (currentDeclaration != null) {
-            if (currentDeclaration is IrFunction) {
-                if (currentDeclaration.isCustomBoxOrReplacement(context)) return true
-                if (currentDeclaration in context.localFunctionsInInlineCustomBox) return true
-            }
-            currentDeclaration = currentDeclaration.parent as? IrDeclaration
-        }
-        return false
     }
 
     private fun generateInnerAndOuterClasses() {
