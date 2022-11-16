@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -34,10 +32,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
-    containingClass: KtLightClass,
-    private val methodIndex: Int
+    containingClass: SymbolLightClassBase,
+    private val methodIndex: Int,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
-
     override fun getBody(): PsiCodeBlock? = null
 
     override fun getReturnTypeElement(): PsiTypeElement? = null
@@ -105,7 +102,7 @@ internal abstract class SymbolLightMethodBase(
         if (containingClass is KtLightClassForFacade) return defaultName
         if (hasPublishedApiAnnotation(annotationUseSiteTarget)) return defaultName
 
-        val moduleName = (getKtModule(project) as? KtSourceModule)?.moduleName ?: return defaultName
+        val moduleName = (ktModule as? KtSourceModule)?.moduleName ?: return defaultName
         return mangleInternalName(defaultName, moduleName)
     }
 

@@ -163,7 +163,6 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
                     isTopLevel = false,
                     forceStatic = true,
                     takePropertyVisibility = it.isConstOrJvmField,
-                    ktModule = ktModule,
                 )
             }
 

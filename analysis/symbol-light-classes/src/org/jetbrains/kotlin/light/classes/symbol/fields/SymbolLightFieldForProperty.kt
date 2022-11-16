@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -41,7 +40,6 @@ internal class SymbolLightFieldForProperty(
     isTopLevel: Boolean,
     forceStatic: Boolean,
     takePropertyVisibility: Boolean,
-    private val ktModule: KtModule,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     override val kotlinOrigin: KtCallableDeclaration? = propertySymbol.sourcePsiSafe<KtCallableDeclaration>()
     private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol> = propertySymbol.createPointer()

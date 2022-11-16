@@ -10,22 +10,24 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.javadoc.PsiDocComment
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal abstract class SymbolLightMemberBase<T : PsiMember>(
     override val lightMemberOrigin: LightMemberOrigin?,
-    private val containingClass: KtLightClass,
+    private val containingClass: SymbolLightClassBase,
 ) : KtLightElementBase(containingClass), PsiMember, KtLightMember<T> {
+    protected val ktModule: KtModule get() = containingClass.ktModule
 
     override fun hasModifierProperty(name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
     override fun toString(): String = "${this::class.java.simpleName}:$name"
 
-    override fun getContainingClass() = containingClass
+    override fun getContainingClass(): SymbolLightClassBase = containingClass
 
     abstract override fun getNameIdentifier(): PsiIdentifier?
 

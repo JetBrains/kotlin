@@ -293,7 +293,6 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
                         enumEntryName = name,
                         containingClass = this@SymbolLightClass,
                         lightMemberOrigin = null,
-                        ktModule = ktModule,
                     )
                 }
         }

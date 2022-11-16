@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
@@ -48,7 +47,6 @@ internal class SymbolLightAccessorMethod(
     containingClass: SymbolLightClassBase,
     private val isTopLevel: Boolean,
     private val suppressStatic: Boolean = false,
-    private val ktModule: KtModule,
 ) : SymbolLightMethodBase(
     lightMemberOrigin,
     containingClass,

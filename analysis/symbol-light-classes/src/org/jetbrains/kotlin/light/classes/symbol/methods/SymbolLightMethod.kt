@@ -31,7 +31,7 @@ internal abstract class SymbolLightMethod(
 ) : SymbolLightMethodBase(
     lightMemberOrigin,
     containingClass,
-    methodIndex
+    methodIndex,
 ) {
     private var _isVarArgs: Boolean = functionSymbol.valueParameters.any { it.isVararg }
 
