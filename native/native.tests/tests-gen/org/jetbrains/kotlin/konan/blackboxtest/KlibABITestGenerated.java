@@ -26,6 +26,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("addSealedSubclass")
+    public void testAddSealedSubclass() throws Exception {
+        runTest("compiler/testData/klibABI/addSealedSubclass/");
+    }
+
+    @Test
     public void testAllFilesPresentInKlibABI() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, false);
     }
@@ -184,6 +190,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     @TestMetadata("removeProperty")
     public void testRemoveProperty() throws Exception {
         runTest("compiler/testData/klibABI/removeProperty/");
+    }
+
+    @Test
+    @TestMetadata("removeSealedSubclass")
+    public void testRemoveSealedSubclass() throws Exception {
+        runTest("compiler/testData/klibABI/removeSealedSubclass/");
     }
 
     @Test
