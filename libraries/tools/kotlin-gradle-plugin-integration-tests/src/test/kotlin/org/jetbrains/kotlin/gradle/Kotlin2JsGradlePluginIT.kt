@@ -176,18 +176,23 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     fun testJsIrIncrementalMultipleArtifacts(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
             build("compileDevelopmentExecutableKotlinJs") {
-                val cacheDir = projectPath.resolve("app/build/klib/cache/lib/")
-                    .toFile()
-                assertTrue("Lib cache size should be 2") {
-                    cacheDir
-                        .list()
-                        ?.size == 2
+                val cacheDir = projectPath.resolve("app/build/klib/cache/").toFile()
+                val cacheRootDirName = cacheDir.list()?.singleOrNull()
+                assertTrue("Lib cache root dir should contain 1 element 'version.hash'") {
+                    cacheRootDirName?.startsWith("version.") ?: false
                 }
+                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
+                val klibCacheDirs = cacheRootDir.list()
+                // 2 for lib.klib + 1 for stdlib + 1 for main
+                assertEquals(4, klibCacheDirs?.size, "cache should contain 4 dirs")
+
+                val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
+                assertEquals(2, libKlibCacheDirs?.size, "cache should contain 2 dirs for lib.klib")
 
                 var lib = false
                 var libOther = false
 
-                cacheDir.listFiles()!!
+                cacheRootDir.listFiles()!!
                     .forEach {
                         it.listFiles()!!
                             .filter { it.isFile }
