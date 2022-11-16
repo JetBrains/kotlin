@@ -44,7 +44,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     companion object {
         private val TEST_DATA_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         private const val BOX_FUNCTION_NAME = "box"
-        private const val STDLIB_ALIAS = "stdlib"
 
         private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
@@ -240,7 +239,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 )
 
                 val icCaches = cacheUpdater.actualizeCaches()
-                verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileStats(), testInfo)
+                verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo)
 
                 val mainModuleName = icCaches.last().moduleExternalName
                 val jsExecutableProducer = JsExecutableProducer(

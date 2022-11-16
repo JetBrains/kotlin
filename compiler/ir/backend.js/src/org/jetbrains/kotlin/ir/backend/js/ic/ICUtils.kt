@@ -69,6 +69,12 @@ internal class StopwatchIC {
     val laps: List<Pair<String, Long>>
         get() = lapsImpl
 
+    fun clear() {
+        lapStart = 0
+        lapDescription = null
+        lapsImpl.clear()
+    }
+
     fun startNext(description: String) {
         val now = System.nanoTime()
         stop(now)
@@ -81,5 +87,12 @@ internal class StopwatchIC {
             lapsImpl += description to ((stopTime ?: System.nanoTime()) - lapStart)
         }
         lapDescription = null
+    }
+
+    inline fun <T> measure(description: String, f: () -> T): T {
+        startNext(description)
+        val result = f()
+        stop()
+        return result
     }
 }
