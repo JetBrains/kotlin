@@ -34,18 +34,17 @@ object ExpectedActualResolver {
             is CallableMemberDescriptor -> {
                 expected.findNamesakesFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect &&
-                    // TODO: use some other way to determine that the declaration is from Kotlin.
-                    //       This way behavior differs between fast and PSI-based Java class reading mode
-                    // TODO: support non-source definitions (e.g. from Java)
-                    actual.couldHaveASource
+                            // TODO: use some other way to determine that the declaration is from Kotlin.
+                            //       This way behavior differs between fast and PSI-based Java class reading mode
+                            // TODO: support non-source definitions (e.g. from Java)
+                            actual.couldHaveASource
                 }.groupBy { actual ->
                     areCompatibleCallables(expected, actual, platformModule)
                 }
             }
             is ClassDescriptor -> {
                 expected.findClassifiersFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
-                    expected != actual && !actual.isExpect &&
-                    actual.couldHaveASource
+                    expected != actual && !actual.isExpect && actual.couldHaveASource
                 }.groupBy { actual ->
                     areCompatibleClassifiers(expected, actual)
                 }
@@ -89,8 +88,7 @@ object ExpectedActualResolver {
             }
             is ClassifierDescriptorWithTypeParameters -> {
                 actual.findClassifiersFromModule(actual.module, moduleFilter).filter { declaration ->
-                    actual != declaration &&
-                    declaration is ClassDescriptor && declaration.isExpect
+                    actual != declaration && declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->
                     areCompatibleClassifiers(expected as ClassDescriptor, actual)
                 }
@@ -119,14 +117,14 @@ object ExpectedActualResolver {
         }
 
         return when (this) {
-            is FunctionDescriptor -> scopes.flatMap {
-                it.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS) { it == name }
+            is FunctionDescriptor -> scopes.flatMap { scope ->
+                scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS) { it == name }
                     .filter { it.name == name }
                     .filterIsInstance<CallableMemberDescriptor>()
             }
 
-            is PropertyDescriptor -> scopes.flatMap {
-                it.getContributedDescriptors(DescriptorKindFilter.VARIABLES) { it == name }
+            is PropertyDescriptor -> scopes.flatMap { scope ->
+                scope.getContributedDescriptors(DescriptorKindFilter.VARIABLES) { it == name }
                     .filter { it.name == name }
                     .filterIsInstance<CallableMemberDescriptor>()
             }
@@ -175,7 +173,8 @@ object ExpectedActualResolver {
         }
 
         if (a is FunctionDescriptor && b !is FunctionDescriptor ||
-            a !is FunctionDescriptor && b is FunctionDescriptor) return Incompatible.CallableKind
+            a !is FunctionDescriptor && b is FunctionDescriptor
+        ) return Incompatible.CallableKind
 
         val aExtensionReceiver = a.extensionReceiverParameter
         val bExtensionReceiver = b.extensionReceiverParameter
@@ -194,11 +193,13 @@ object ExpectedActualResolver {
         val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
 
         if (!areCompatibleTypeLists(aParams.map { substitutor(it.type) }, bParams.map { it.type }, platformModule) ||
-            !areCompatibleTypes(aExtensionReceiver?.type?.let(substitutor), bExtensionReceiver?.type, platformModule))
-            return Incompatible.ParameterTypes
+            !areCompatibleTypes(aExtensionReceiver?.type?.let(substitutor), bExtensionReceiver?.type, platformModule)
+        ) return Incompatible.ParameterTypes
         if (!areCompatibleTypes(substitutor(a.returnType), b.returnType, platformModule)) return Incompatible.ReturnType
 
-        if (b.hasStableParameterNames() && !equalsBy(aParams, bParams, ValueParameterDescriptor::getName)) return Incompatible.ParameterNames
+        if (b.hasStableParameterNames() &&
+            !equalsBy(aParams, bParams, ValueParameterDescriptor::getName)
+        ) return Incompatible.ParameterNames
         if (!equalsBy(aTypeParams, bTypeParams, TypeParameterDescriptor::getName)) return Incompatible.TypeParameterNames
 
         if (!areCompatibleModalities(a.modality, b.modality)) return Incompatible.Modality
@@ -206,7 +207,7 @@ object ExpectedActualResolver {
 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
 
-        if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null) })) return Incompatible.ValueParameterVararg
+        if (!equalsBy(aParams, bParams) { p -> listOf(p.varargElementType != null) }) return Incompatible.ValueParameterVararg
 
         // Adding noinline/crossinline to parameters is disallowed, except if the expected declaration was not inline at all
         if (a is FunctionDescriptor && a.isInline) {
@@ -237,7 +238,6 @@ object ExpectedActualResolver {
             false
     }
 
-    @OptIn(TypeRefinement::class)
     private fun areCompatibleTypes(a: KotlinType?, b: KotlinType?, platformModule: ModuleDescriptor): Boolean {
         if (a == null) return b == null
         if (b == null) return false
@@ -356,7 +356,8 @@ object ExpectedActualResolver {
             a.isInfix && !b.isInfix ||
             a.isInline && !b.isInline ||
             a.isOperator && !b.isOperator ||
-            a.isTailrec && !b.isTailrec) return Incompatible.FunctionModifiersNotSubset
+            a.isTailrec && !b.isTailrec
+        ) return Incompatible.FunctionModifiersNotSubset
 
         return Compatible
     }
@@ -404,8 +405,9 @@ object ExpectedActualResolver {
         val aSupertypes = a.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
         val bSupertypes = b.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
         if (aSupertypes.map(substitutor).any { aSupertype ->
-            bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype, platformModule) }
-        }) return Incompatible.Supertypes
+                bSupertypes.none { bSupertype -> areCompatibleTypes(aSupertype, bSupertype, platformModule) }
+            }
+        ) return Incompatible.Supertypes
 
         areCompatibleClassScopes(a, b, platformModule, substitutor).let { if (it != Compatible) return it }
 
@@ -446,7 +448,7 @@ object ExpectedActualResolver {
 
             val bMembers = bMembersByName[aMember.name]?.filter { bMember ->
                 aMember is CallableMemberDescriptor && bMember is CallableMemberDescriptor ||
-                aMember is ClassDescriptor && bMember is ClassDescriptor
+                        aMember is ClassDescriptor && bMember is ClassDescriptor
             }.orEmpty()
 
             val mapping = bMembers.keysToMap { bMember ->
@@ -548,12 +550,12 @@ fun MemberDescriptor.findCompatibleExpectsForActual(
     ExpectedActualResolver.findExpectedForActual(this, moduleFilter)?.get(Compatible).orEmpty()
 
 fun DeclarationDescriptor.findExpects(): List<MemberDescriptor> {
-    if(this !is MemberDescriptor) return emptyList()
+    if (this !is MemberDescriptor) return emptyList()
     return this.findCompatibleExpectsForActual()
 }
 
 fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor): List<MemberDescriptor> {
-    if(this !is MemberDescriptor) return emptyList()
+    if (this !is MemberDescriptor) return emptyList()
     return this.findCompatibleActualsForExpected(inModule)
 }
 
