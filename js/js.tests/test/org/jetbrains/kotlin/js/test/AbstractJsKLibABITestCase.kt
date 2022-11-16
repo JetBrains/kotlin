@@ -193,7 +193,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         val cacheUpdater = CacheUpdater(
             mainModule = mainModuleKlibFile.absolutePath,
             allModules = allDependencies.regularDependencies.map { it.path },
-            icCacheRootDir = buildDir.resolve("libs-cache").absolutePath,
+            cacheDir = buildDir.resolve("libs-cache").absolutePath,
             compilerConfiguration = configuration,
             irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
             mainArguments = null,

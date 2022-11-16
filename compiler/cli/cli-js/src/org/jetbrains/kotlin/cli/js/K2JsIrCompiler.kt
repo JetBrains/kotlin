@@ -650,7 +650,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val cacheUpdater = CacheUpdater(
                 mainModule = arguments.includes!!,
                 allModules = libraries,
-                icCacheRootDir = cacheDirectories.last(),
+                cacheDir = cacheDirectories.last(),
                 compilerConfiguration = configurationJs,
                 irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                 mainArguments = mainCallArguments,
@@ -666,8 +666,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             var libIndex = 0
             for ((libFile, srcFiles) in cacheUpdater.getDirtyFileLastStats()) {
                 val (msg, showFiles) = when {
-                    srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) } -> "fully rebuilt due to clean build" to false
-                    srcFiles.values.all { it.contains(DirtyFileState.MODIFIED_CONFIG) } -> "fully rebuilt due to config modification" to false
+                    srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) } -> "fully rebuilt" to false
                     else -> "partially rebuilt" to true
                 }
                 messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")

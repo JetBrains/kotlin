@@ -37,7 +37,6 @@ fun interface JsIrCompilerICInterfaceFactory {
 
 enum class DirtyFileState(val str: String) {
     ADDED_FILE("added file"),
-    MODIFIED_CONFIG("modified config"),
     MODIFIED_IR("modified ir"),
     UPDATED_EXPORTS("updated exports"),
     UPDATED_IMPORTS("updated imports"),
@@ -49,7 +48,7 @@ enum class DirtyFileState(val str: String) {
 class CacheUpdater(
     mainModule: String,
     private val allModules: Collection<String>,
-    private val icCacheRootDir: String,
+    cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     private val irFactory: () -> IrFactory,
     private val mainArguments: List<String>?,
@@ -59,9 +58,9 @@ class CacheUpdater(
 
     private val dirtyFileStats = KotlinSourceFileMutableMap<EnumSet<DirtyFileState>>()
 
-    private val configHash = compilerConfiguration.configHashForIC()
-
     private val mainLibraryFile = KotlinLibraryFile(File(mainModule).canonicalPath)
+
+    private val cacheRootDir = File(cacheDir, "version.${compilerConfiguration.configHashForIC()}")
 
     fun getDirtyFileLastStats(): KotlinSourceFileMap<EnumSet<DirtyFileState>> = dirtyFileStats
 
@@ -104,12 +103,10 @@ class CacheUpdater(
             }
         }
 
-        private val incrementalCaches = stopwatch.measure("Incremental cache - initializing") {
-            libraryDependencies.keys.associate { lib ->
-                val libFile = KotlinLibraryFile(lib)
-                val file = File(libFile.path)
-                libFile to IncrementalCache(lib, File(icCacheRootDir, "${file.absolutePath.stringHashForIC()}.${file.name}"))
-            }
+        private val incrementalCaches = libraryDependencies.keys.associate { lib ->
+            val libFile = KotlinLibraryFile(lib)
+            val file = File(libFile.path)
+            libFile to IncrementalCache(lib, File(cacheRootDir, "${file.name}.${file.absolutePath.stringHashForIC()}"))
         }
 
         private fun getLibIncrementalCache(libFile: KotlinLibraryFile) =
@@ -159,14 +156,13 @@ class CacheUpdater(
             val removedFilesMetadata = hashMapOf<KotlinLibraryFile, Map<KotlinSourceFile, KotlinSourceFileMetadata>>()
 
             val modifiedFiles = KotlinSourceFileMap(incrementalCaches.entries.associate { (lib, cache) ->
-                val (dirtyFiles, removedFiles, newFiles, modifiedConfigFiles) = cache.collectModifiedFiles(configHash)
+                val (dirtyFiles, removedFiles, newFiles) = cache.collectModifiedFiles()
 
                 val fileStats by lazy(LazyThreadSafetyMode.NONE) { dirtyFileStats.getOrPutFiles(lib) }
                 newFiles.forEach { fileStats.addDirtFileStat(it, DirtyFileState.ADDED_FILE) }
-                modifiedConfigFiles.forEach { fileStats.addDirtFileStat(it, DirtyFileState.MODIFIED_CONFIG) }
                 removedFiles.forEach { fileStats.addDirtFileStat(it.key, DirtyFileState.REMOVED_FILE) }
                 dirtyFiles.forEach {
-                    if (it.key !in newFiles && it.key !in modifiedConfigFiles) {
+                    if (it.key !in newFiles) {
                         fileStats.addDirtFileStat(it.key, DirtyFileState.MODIFIED_IR)
                     }
                 }

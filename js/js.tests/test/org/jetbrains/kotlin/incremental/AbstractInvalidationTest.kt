@@ -229,7 +229,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val cacheUpdater = CacheUpdater(
                     mainModule = testInfo.last().modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },
-                    icCacheRootDir = buildDir.resolve("incremental-cache").absolutePath,
+                    cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                     mainArguments = null,
