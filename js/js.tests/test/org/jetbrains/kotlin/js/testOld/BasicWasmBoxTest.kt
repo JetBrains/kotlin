@@ -38,9 +38,11 @@ import java.io.File
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
     private val startUnitTests: Boolean = false
 ) : KotlinTestWithEnvironment() {
+
+    private val pathToRootOutputDir: String = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
 
     private val COMMON_FILES_NAME = "_common"
