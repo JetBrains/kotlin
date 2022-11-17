@@ -382,7 +382,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
     @get:Internal
-    protected open val taskOutputsBackupExcludes: List<File> = emptyList()
+    protected open val taskOutputsBackupExcludes: List<File>
+        get() = listOf(destinationDirectory.get().asFile)
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
@@ -630,7 +631,7 @@ abstract class KotlinCompile @Inject constructor(
         )
 
     override val taskOutputsBackupExcludes: List<File>
-        get() = classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { listOf(it) } ?: emptyList()
+        get() = (classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { listOf(it) } ?: emptyList()) + super.taskOutputsBackupExcludes
 
     @get:Internal
     final override val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
