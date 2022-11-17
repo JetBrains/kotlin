@@ -61,7 +61,7 @@ digraph when_kt {
                     21 [label="Enter block"];
                     22 [label="Access variable R|<local>/x|"];
                     23 [label="Smart cast: R|<local>/x|"];
-                    24 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    24 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     25 [label="Exit block"];
                 }
                 26 [label="Exit when branch result"];
@@ -71,7 +71,7 @@ digraph when_kt {
                     28 [label="Enter block"];
                     29 [label="Access variable R|<local>/x|"];
                     30 [label="Smart cast: R|<local>/x|"];
-                    31 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    31 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     32 [label="Exit block"];
                 }
                 33 [label="Exit when branch result"];
@@ -114,10 +114,10 @@ digraph when_kt {
                     53 [label="Enter block"];
                     54 [label="Access variable R|<local>/x|"];
                     55 [label="Smart cast: R|<local>/x|"];
-                    56 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    56 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     57 [label="Access variable R|<local>/x|"];
                     58 [label="Smart cast: R|<local>/x|"];
-                    59 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    59 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     60 [label="Exit block"];
                 }
                 61 [label="Exit when branch result"];
@@ -127,13 +127,13 @@ digraph when_kt {
                     63 [label="Enter block"];
                     64 [label="Access variable R|<local>/x|"];
                     65 [label="Smart cast: R|<local>/x|"];
-                    66 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    66 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     67 [label="Access variable R|<local>/x|"];
                     68 [label="Smart cast: R|<local>/x|"];
-                    69 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    69 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     70 [label="Access variable R|<local>/x|"];
                     71 [label="Smart cast: R|<local>/x|"];
-                    72 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+                    72 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
                     73 [label="Exit block"];
                 }
                 74 [label="Exit when branch result"];
@@ -143,7 +143,7 @@ digraph when_kt {
                     76 [label="Enter block"];
                     77 [label="Access variable R|<local>/x|"];
                     78 [label="Smart cast: R|<local>/x|"];
-                    79 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    79 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     80 [label="Exit block"];
                 }
                 81 [label="Exit when branch result"];
@@ -272,7 +272,7 @@ digraph when_kt {
                     103 [label="Enter block"];
                     104 [label="Access variable R|<local>/x|"];
                     105 [label="Smart cast: R|<local>/x|"];
-                    106 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    106 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     107 [label="Exit block"];
                 }
                 108 [label="Exit when branch result"];
@@ -282,7 +282,7 @@ digraph when_kt {
                     110 [label="Enter block"];
                     111 [label="Access variable R|<local>/x|"];
                     112 [label="Smart cast: R|<local>/x|"];
-                    113 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    113 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     114 [label="Exit block"];
                 }
                 115 [label="Exit when branch result"];
@@ -324,10 +324,10 @@ digraph when_kt {
                     134 [label="Enter block"];
                     135 [label="Access variable R|<local>/x|"];
                     136 [label="Smart cast: R|<local>/x|"];
-                    137 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    137 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     138 [label="Access variable R|<local>/x|"];
                     139 [label="Smart cast: R|<local>/x|"];
-                    140 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    140 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     141 [label="Exit block"];
                 }
                 142 [label="Exit when branch result"];
@@ -337,13 +337,13 @@ digraph when_kt {
                     144 [label="Enter block"];
                     145 [label="Access variable R|<local>/x|"];
                     146 [label="Smart cast: R|<local>/x|"];
-                    147 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    147 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     148 [label="Access variable R|<local>/x|"];
                     149 [label="Smart cast: R|<local>/x|"];
-                    150 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    150 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     151 [label="Access variable R|<local>/x|"];
                     152 [label="Smart cast: R|<local>/x|"];
-                    153 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+                    153 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
                     154 [label="Exit block"];
                 }
                 155 [label="Exit when branch result"];
@@ -353,7 +353,7 @@ digraph when_kt {
                     157 [label="Enter block"];
                     158 [label="Access variable R|<local>/x|"];
                     159 [label="Smart cast: R|<local>/x|"];
-                    160 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    160 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     161 [label="Exit block"];
                 }
                 162 [label="Exit when branch result"];
@@ -483,10 +483,10 @@ digraph when_kt {
                     185 [label="Enter block"];
                     186 [label="Access variable R|<local>/x|"];
                     187 [label="Smart cast: R|<local>/x|"];
-                    188 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    188 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     189 [label="Access variable R|<local>/y|"];
                     190 [label="Smart cast: R|<local>/y|"];
-                    191 [label="Function call: R|<local>/y|.R|/B.bar|()"];
+                    191 [label="Function call: R|<local>/y|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     192 [label="Exit block"];
                 }
                 193 [label="Exit when branch result"];
@@ -496,10 +496,10 @@ digraph when_kt {
                     195 [label="Enter block"];
                     196 [label="Access variable R|<local>/x|"];
                     197 [label="Smart cast: R|<local>/x|"];
-                    198 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    198 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     199 [label="Access variable R|<local>/y|"];
                     200 [label="Smart cast: R|<local>/y|"];
-                    201 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    201 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     202 [label="Exit block"];
                 }
                 203 [label="Exit when branch result"];
@@ -542,16 +542,16 @@ digraph when_kt {
                     223 [label="Enter block"];
                     224 [label="Access variable R|<local>/x|"];
                     225 [label="Smart cast: R|<local>/x|"];
-                    226 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    226 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     227 [label="Access variable R|<local>/x|"];
                     228 [label="Smart cast: R|<local>/x|"];
-                    229 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    229 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     230 [label="Access variable R|<local>/y|"];
                     231 [label="Smart cast: R|<local>/y|"];
-                    232 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    232 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     233 [label="Access variable R|<local>/y|"];
                     234 [label="Smart cast: R|<local>/y|"];
-                    235 [label="Function call: R|<local>/y|.R|/B.bar|()"];
+                    235 [label="Function call: R|<local>/y|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     236 [label="Exit block"];
                 }
                 237 [label="Exit when branch result"];
@@ -561,22 +561,22 @@ digraph when_kt {
                     239 [label="Enter block"];
                     240 [label="Access variable R|<local>/x|"];
                     241 [label="Smart cast: R|<local>/x|"];
-                    242 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    242 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     243 [label="Access variable R|<local>/x|"];
                     244 [label="Smart cast: R|<local>/x|"];
-                    245 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    245 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     246 [label="Access variable R|<local>/x|"];
                     247 [label="Smart cast: R|<local>/x|"];
-                    248 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+                    248 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
                     249 [label="Access variable R|<local>/y|"];
                     250 [label="Smart cast: R|<local>/y|"];
-                    251 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    251 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     252 [label="Access variable R|<local>/y|"];
                     253 [label="Smart cast: R|<local>/y|"];
-                    254 [label="Function call: R|<local>/y|.R|/B.bar|()"];
+                    254 [label="Function call: R|<local>/y|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     255 [label="Access variable R|<local>/y|"];
                     256 [label="Smart cast: R|<local>/y|"];
-                    257 [label="Function call: R|<local>/y|.R|kotlin/Int.inc|()"];
+                    257 [label="Function call: R|<local>/y|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
                     258 [label="Exit block"];
                 }
                 259 [label="Exit when branch result"];
@@ -586,10 +586,10 @@ digraph when_kt {
                     261 [label="Enter block"];
                     262 [label="Access variable R|<local>/x|"];
                     263 [label="Smart cast: R|<local>/x|"];
-                    264 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    264 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     265 [label="Access variable R|<local>/y|"];
                     266 [label="Smart cast: R|<local>/y|"];
-                    267 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    267 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     268 [label="Exit block"];
                 }
                 269 [label="Exit when branch result"];
@@ -739,7 +739,7 @@ digraph when_kt {
                     289 [label="Enter block"];
                     290 [label="Access variable R|<local>/x|"];
                     291 [label="Smart cast: R|<local>/x|"];
-                    292 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+                    292 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
                     293 [label="Exit block"];
                 }
                 294 [label="Exit when branch result"];
@@ -747,7 +747,7 @@ digraph when_kt {
             }
             296 [label="Access variable R|<local>/x|"];
             297 [label="Smart cast: R|<local>/x|"];
-            298 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+            298 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
             299 [label="Exit block"];
         }
         300 [label="Exit function test_4" style="filled" fillcolor=red];

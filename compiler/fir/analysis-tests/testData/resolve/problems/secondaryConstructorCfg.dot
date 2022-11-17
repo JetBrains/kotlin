@@ -6,7 +6,7 @@ digraph secondaryConstructorCfg_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -38,7 +38,7 @@ digraph secondaryConstructorCfg_kt {
         color=red
         10 [label="Enter function <init>" style="filled" fillcolor=red];
         11 [label="Access variable R|<local>/p0|"];
-        12 [label="Delegated constructor call: this<R|B|>(...)"];
+        12 [label="Delegated constructor call: this<R|B|>(...)" style="filled" fillcolor=yellow];
         subgraph cluster_4 {
             color=blue
             13 [label="Enter block"];

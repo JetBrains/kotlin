@@ -123,8 +123,8 @@ digraph loops_kt {
                 38 [label="Enter block"];
                 39 [label="Const: Int(0)"];
                 40 [label="Const: Int(5)"];
-                41 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)"];
-                42 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()"];
+                41 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)" style="filled" fillcolor=yellow];
+                42 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()" style="filled" fillcolor=yellow];
                 43 [label="Variable declaration: lval <iterator>: R|kotlin/collections/IntIterator|"];
                 subgraph cluster_15 {
                     color=blue
@@ -133,7 +133,7 @@ digraph loops_kt {
                         color=blue
                         45 [label="Enter loop condition"];
                         46 [label="Access variable R|<local>/<iterator>|"];
-                        47 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()"];
+                        47 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()" style="filled" fillcolor=yellow];
                         48 [label="Exit loop condition"];
                     }
                     subgraph cluster_17 {
@@ -143,7 +143,7 @@ digraph loops_kt {
                             color=blue
                             50 [label="Enter block"];
                             51 [label="Access variable R|<local>/<iterator>|"];
-                            52 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()"];
+                            52 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()" style="filled" fillcolor=yellow];
                             53 [label="Variable declaration: lval i: R|kotlin/Int|"];
                             54 [label="Access variable R|<local>/x|"];
                             55 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];

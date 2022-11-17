@@ -35,7 +35,7 @@ fun test1m() {
     x = ""
     x.length
     unknown { x = "" }
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
 }
 
 fun test2() {

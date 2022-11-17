@@ -241,9 +241,6 @@ fun ControlFlowGraphBuilder.createScriptEnterNode(fir: FirScript): ScriptEnterNo
 fun ControlFlowGraphBuilder.createScriptExitNode(fir: FirScript): ScriptExitNode =
     ScriptExitNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createUnionFunctionCallArgumentsNode(fir: FirElement): UnionFunctionCallArgumentsNode =
-    UnionFunctionCallArgumentsNode(currentGraph, fir, levelCounter, createId())
-
 fun ControlFlowGraphBuilder.createMergePostponedLambdaExitsNode(fir: FirElement): MergePostponedLambdaExitsNode =
     MergePostponedLambdaExitsNode(currentGraph, fir, levelCounter, createId())
 

@@ -6,7 +6,7 @@ digraph lambdaInWhenBranch_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -22,7 +22,7 @@ digraph lambdaInWhenBranch_kt {
     subgraph cluster_2 {
         color=red
         5 [label="Enter function <init>" style="filled" fillcolor=red];
-        6 [label="Delegated constructor call: super<R|Sealed|>()"];
+        6 [label="Delegated constructor call: super<R|Sealed|>()" style="filled" fillcolor=yellow];
         7 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     5 -> {6};
@@ -75,7 +75,7 @@ digraph lambdaInWhenBranch_kt {
     subgraph cluster_8 {
         color=red
         21 [label="Enter function <init>" style="filled" fillcolor=red];
-        22 [label="Delegated constructor call: super<R|Sealed|>()"];
+        22 [label="Delegated constructor call: super<R|Sealed|>()" style="filled" fillcolor=yellow];
         23 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     21 -> {22};
@@ -135,17 +135,17 @@ digraph lambdaInWhenBranch_kt {
                     48 [label="Postponed enter to lambda"];
                     subgraph cluster_18 {
                         color=blue
-                        83 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        82 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                         subgraph cluster_19 {
                             color=blue
-                            84 [label="Enter block"];
-                            85 [label="Access variable R|<local>/it|"];
-                            86 [label="Exit block"];
+                            83 [label="Enter block"];
+                            84 [label="Access variable R|<local>/it|"];
+                            85 [label="Exit block"];
                         }
-                        87 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                        86 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     49 [label="Postponed exit from lambda"];
-                    50 [label="Function call: String().R|kotlin/let|<R|kotlin/String|, R|kotlin/String|>(...)"];
+                    50 [label="Function call: String().R|kotlin/let|<R|kotlin/String|, R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
                     51 [label="Exit block"];
                 }
                 52 [label="Exit when branch result"];
@@ -196,7 +196,6 @@ digraph lambdaInWhenBranch_kt {
         }
         81 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    82 [label="Merge postponed lambda exits"];
     28 -> {29};
     29 -> {30};
     30 -> {31};
@@ -217,14 +216,14 @@ digraph lambdaInWhenBranch_kt {
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {83};
+    48 -> {82};
     48 -> {49} [color=red];
-    48 -> {83} [style=dashed];
+    48 -> {82} [style=dashed];
     49 -> {50};
     50 -> {51};
     51 -> {52};
     52 -> {53};
-    53 -> {82 54};
+    53 -> {54};
     54 -> {55};
     55 -> {56};
     56 -> {57};
@@ -252,11 +251,11 @@ digraph lambdaInWhenBranch_kt {
     78 -> {79};
     79 -> {80};
     80 -> {81};
+    82 -> {83};
     83 -> {84};
     84 -> {85};
     85 -> {86};
-    86 -> {87};
-    87 -> {82} [color=red];
-    87 -> {49} [color=green];
+    86 -> {53} [color=red];
+    86 -> {49} [color=green];
 
 }

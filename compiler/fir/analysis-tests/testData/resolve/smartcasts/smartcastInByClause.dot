@@ -6,7 +6,7 @@ digraph smartcastInByClause_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -57,7 +57,7 @@ digraph smartcastInByClause_kt {
     subgraph cluster_5 {
         color=red
         15 [label="Enter function <init>" style="filled" fillcolor=red];
-        16 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        16 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         17 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     15 -> {16};
@@ -105,7 +105,7 @@ digraph smartcastInByClause_kt {
             38 [label="Access variable R|<local>/a|"];
             39 [label="Smart cast: R|<local>/a|"];
             40 [label="Access variable R|/A.index|"];
-            41 [label="Function call: R|/takeInt|(...)"];
+            41 [label="Function call: R|/takeInt|(...)" style="filled" fillcolor=yellow];
             42 [label="Enter anonymous object"];
             subgraph cluster_10 {
                 color=blue
@@ -180,7 +180,7 @@ digraph smartcastInByClause_kt {
     subgraph cluster_11 {
         color=red
         53 [label="Enter function <init>" style="filled" fillcolor=red];
-        54 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        54 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         55 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     53 -> {54};
@@ -192,7 +192,7 @@ digraph smartcastInByClause_kt {
         57 [label="Access variable R|<local>/a|"];
         58 [label="Smart cast: R|<local>/a|"];
         59 [label="Access variable R|/A.index|"];
-        60 [label="Function call: R|/Derived.Derived|(...)"];
+        60 [label="Function call: R|/Derived.Derived|(...)" style="filled" fillcolor=yellow];
         61 [label="Exit field" style="filled" fillcolor=red];
     }
     56 -> {57};
@@ -225,7 +225,7 @@ digraph smartcastInByClause_kt {
             69 [label="Access variable R|<local>/a|"];
             70 [label="Smart cast: R|<local>/a|"];
             71 [label="Access variable R|/A.index|"];
-            72 [label="Function call: R|/takeInt|(...)"];
+            72 [label="Function call: R|/takeInt|(...)" style="filled" fillcolor=yellow];
             73 [label="Exit block"];
         }
         74 [label="Exit function foo" style="filled" fillcolor=red];

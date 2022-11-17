@@ -40,10 +40,10 @@ digraph equalsAndIdentity_kt {
                     color=blue
                     14 [label="Enter block"];
                     15 [label="Access variable R|<local>/x|"];
-                    16 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    16 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     17 [label="Access variable R|<local>/y|"];
                     18 [label="Smart cast: R|<local>/y|"];
-                    19 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    19 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     20 [label="Exit block"];
                 }
                 21 [label="Exit when branch result"];
@@ -66,10 +66,10 @@ digraph equalsAndIdentity_kt {
                     color=blue
                     31 [label="Enter block"];
                     32 [label="Access variable R|<local>/x|"];
-                    33 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    33 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     34 [label="Access variable R|<local>/y|"];
                     35 [label="Smart cast: R|<local>/y|"];
-                    36 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    36 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     37 [label="Exit block"];
                 }
                 38 [label="Exit when branch result"];
@@ -140,9 +140,9 @@ digraph equalsAndIdentity_kt {
                     color=blue
                     52 [label="Enter block"];
                     53 [label="Access variable R|<local>/x|"];
-                    54 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+                    54 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
                     55 [label="Access variable R|<local>/y|"];
-                    56 [label="Function call: R|<local>/y|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+                    56 [label="Function call: R|<local>/y|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
                     57 [label="Exit block"];
                 }
                 58 [label="Exit when branch result"];
@@ -165,9 +165,9 @@ digraph equalsAndIdentity_kt {
                     color=blue
                     68 [label="Enter block"];
                     69 [label="Access variable R|<local>/x|"];
-                    70 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+                    70 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
                     71 [label="Access variable R|<local>/y|"];
-                    72 [label="Function call: R|<local>/y|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+                    72 [label="Function call: R|<local>/y|.<Inapplicable(UNSAFE_CALL): /A.foo>#()" style="filled" fillcolor=yellow];
                     73 [label="Exit block"];
                 }
                 74 [label="Exit when branch result"];
@@ -261,10 +261,10 @@ digraph equalsAndIdentity_kt {
                     103 [label="Enter block"];
                     104 [label="Access variable R|<local>/x|"];
                     105 [label="Smart cast: R|<local>/x|"];
-                    106 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    106 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     107 [label="Access variable R|<local>/y|"];
                     108 [label="Smart cast: R|<local>/y|"];
-                    109 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    109 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     110 [label="Exit block"];
                 }
                 111 [label="Exit when branch result"];
@@ -289,10 +289,10 @@ digraph equalsAndIdentity_kt {
                     122 [label="Enter block"];
                     123 [label="Access variable R|<local>/x|"];
                     124 [label="Smart cast: R|<local>/x|"];
-                    125 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    125 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     126 [label="Access variable R|<local>/y|"];
                     127 [label="Smart cast: R|<local>/y|"];
-                    128 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    128 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     129 [label="Exit block"];
                 }
                 130 [label="Exit when branch result"];

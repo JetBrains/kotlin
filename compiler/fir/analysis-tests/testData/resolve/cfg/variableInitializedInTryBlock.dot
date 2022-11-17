@@ -19,7 +19,7 @@ digraph variableInitializedInTryBlock_kt {
                     subgraph cluster_4 {
                         color=blue
                         5 [label="Enter block"];
-                        6 [label="Function call: R|/getStringOrNull|()"];
+                        6 [label="Function call: R|/getStringOrNull|()" style="filled" fillcolor=yellow];
                         7 [label="Exit lhs of ?:"];
                         8 [label="Enter rhs of ?:"];
                         9 [label="Jump: ^test Unit"];
@@ -42,7 +42,7 @@ digraph variableInitializedInTryBlock_kt {
                     subgraph cluster_6 {
                         color=blue
                         22 [label="Enter block"];
-                        23 [label="Function call: R|/test|()"];
+                        23 [label="Function call: R|/test|()" style="filled" fillcolor=yellow];
                         24 [label="Exit block"];
                     }
                     25 [label="Exit finally"];
@@ -50,7 +50,7 @@ digraph variableInitializedInTryBlock_kt {
                 26 [label="Try expression exit"];
             }
             27 [label="Access variable R|<local>/b|"];
-            28 [label="Function call: R|/takeBoolean|(...)"];
+            28 [label="Function call: R|/takeBoolean|(...)" style="filled" fillcolor=yellow];
             29 [label="Exit block"];
         }
         30 [label="Exit function test" style="filled" fillcolor=red];

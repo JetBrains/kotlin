@@ -155,6 +155,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         override fun visitNode(node: CFGNode<*>, data: IllegalScopeContext) {}
 
+        override fun <T> visitUnionNode(node: T, data: IllegalScopeContext) where T : CFGNode<*>, T : UnionNodeMarker {}
+
         override fun visitFunctionEnterNode(node: FunctionEnterNode, data: IllegalScopeContext) {
             data.enterScope(node.fir === rootFunction || node.fir.isInPlaceLambda())
         }
@@ -235,22 +237,15 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
     private class InvocationDataCollector(
         val functionalTypeSymbols: Set<FirBasedSymbol<*>>
-    ) : ControlFlowGraphVisitor<PathAwareLambdaInvocationInfo, Collection<Pair<EdgeLabel, PathAwareLambdaInvocationInfo>>>() {
-
-        override fun visitNode(
-            node: CFGNode<*>,
-            data: Collection<Pair<EdgeLabel, PathAwareLambdaInvocationInfo>>
-        ): PathAwareLambdaInvocationInfo {
-            if (data.isEmpty()) return PathAwareLambdaInvocationInfo.EMPTY
-            return data.map { (label, info) -> info.applyLabel(node, label) }
-                .reduce(PathAwareLambdaInvocationInfo::merge)
-        }
+    ) : PathAwareControlFlowGraphVisitor<PathAwareLambdaInvocationInfo>() {
+        override val emptyInfo: PathAwareLambdaInvocationInfo
+            get() = PathAwareLambdaInvocationInfo.EMPTY
 
         override fun visitFunctionCallNode(
             node: FunctionCallNode,
             data: Collection<Pair<EdgeLabel, PathAwareLambdaInvocationInfo>>
         ): PathAwareLambdaInvocationInfo {
-            var dataForNode = visitNode(node, data)
+            var dataForNode = visitUnionNode(node, data)
 
             val functionSymbol = node.fir.toResolvedCallableSymbol() as? FirFunctionSymbol<*>?
             val contractDescription = functionSymbol?.resolvedContractDescription

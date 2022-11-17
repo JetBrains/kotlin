@@ -16,18 +16,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 class PropertyInitializationInfoCollector(
     private val localProperties: Set<FirPropertySymbol>,
     private val declaredVariableCollector: DeclaredVariableCollector = DeclaredVariableCollector(),
-) : ControlFlowGraphVisitor<PathAwarePropertyInitializationInfo, Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>>() {
-    override fun visitNode(
-        node: CFGNode<*>,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        var result: PathAwarePropertyInitializationInfo? = null
-        for ((label, info) in data) {
-            val resultItem = info.applyLabel(node, label)
-            result = result?.merge(resultItem) ?: resultItem
-        }
-        return result ?: PathAwarePropertyInitializationInfo.EMPTY
-    }
+) : PathAwareControlFlowGraphVisitor<PathAwarePropertyInitializationInfo>() {
+    override val emptyInfo: PathAwarePropertyInitializationInfo
+        get() = PathAwarePropertyInitializationInfo.EMPTY
 
     override fun visitVariableAssignmentNode(
         node: VariableAssignmentNode,

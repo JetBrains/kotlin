@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.contracts.description.isInPlace
+import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.random.Random
 
@@ -51,21 +49,6 @@ class ControlFlowGraphBuilder {
     private val modes: Stack<Mode> = stackOf(Mode.TopLevel)
     private val mode: Mode get() = modes.top()
 
-    /*
-     * TODO: it's temporary hack for anonymous functions resolved twice in delegate expressions
-     * Example: val x: Boolean by lazy { true }
-     *
-     * Note that this hack breaks passing data flow from inplace lambdas inside lambdas of delegates:
-     * val x: Boolean by lazy {
-     *     val b: Any = ...
-     *     run {
-     *         require(b is Boolean)
-     *     }
-     *     b // there will be no smartcast, but it should be
-     * }
-     */
-    private val shouldPassFlowFromInplaceLambda: Stack<Boolean> = stackOf(true)
-
     private enum class Mode {
         Function, TopLevel, Body, ClassInitializer, PropertyInitializer, FieldInitializer
     }
@@ -80,15 +63,12 @@ class ControlFlowGraphBuilder {
     //return jumps via finally blocks, target -> jumps
     private val nonDirectJumps: ListMultimap<CFGNode<*>, CFGNode<*>> = listMultimapOf()
 
-    private val postponedLambdas: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
-    private val entersToPostponedAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, PostponedLambdaEnterNode> = mutableMapOf()
-    private val exitsFromPostponedAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, PostponedLambdaExitNode> = mutableMapOf()
-    private val parentGraphForAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, ControlFlowGraph> = mutableMapOf()
+    private val postponedAnonymousFunctionNodes =
+        mutableMapOf<FirFunctionSymbol<*>, Pair<PostponedLambdaEnterNode, PostponedLambdaExitNode>>()
+    private val dataFlowSourcesForNextCompletedCall: Stack<MutableList<CFGNode<*>>> = stackOf()
 
     private val loopConditionEnterNodes: NodeStorage<FirElement, LoopConditionEnterNode> = NodeStorage()
     private val loopExitNodes: NodeStorage<FirLoop, LoopExitNode> = NodeStorage()
-
-    private val exitsFromCompletedPostponedAnonymousFunctions: MutableList<MutableList<CFGNode<*>>> = mutableListOf()
 
     private val whenExitNodes: NodeStorage<FirWhenExpression, WhenExitNode> = NodeStorage()
     private val whenBranchIndices: Stack<Map<FirWhenBranch, Int>> = stackOf()
@@ -110,25 +90,6 @@ class ControlFlowGraphBuilder {
     private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode> = stackOf()
 
     private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallNode>> = stackOf()
-
-    /*
-     * ignoredFunctionCalls is needed for resolve of += operator:
-     *   we have two different calls for resolve, but we left only one of them,
-     *   so we twice call `enterCall` and twice increase `levelCounter`, but
-     *   `exitFunctionCall` we call only once.
-     *
-     * So workflow looks like that:
-     *   Calls:
-     *     - a.plus(b) // (1)
-     *     - a.plusAssign(b) // (2)
-     *
-     * enterCall(a.plus(b)), increase counter
-     * exitIgnoredCall(a.plus(b)) // decrease counter
-     * enterCall(a.plusAssign(b)) // increase counter
-     * exitIgnoredCall(a.plusAssign(b)) // decrease counter
-     * exitFunctionCall(a.plus(b) | a.plusAssign(b)) // don't touch counter
-     */
-    private val ignoredFunctionCalls: MutableSet<FirFunctionCall> = mutableSetOf()
 
     // ----------------------------------- API for node builders -----------------------------------
 
@@ -245,89 +206,75 @@ class ControlFlowGraphBuilder {
     }
 
     // ----------------------------------- Anonymous function -----------------------------------
-
+    // TODO: this is ALL WRONG.
+    //
+    // There are two cases we need to distinguish.
+    //
+    //  1. Function calls can have contracts that specify lambdas as "called in place".
+    //     This only works on lambdas DIRECTLY used as function arguments. So `f({ a })`,
+    //     and not `f(if (p) { { a } } else { { b } })`.
+    //
+    //  2. Every other place where a lambda's type is context-dependent. In this case
+    //     we can't analyze the lambda just yet, but that doesn't matter since the lambda
+    //     is not "called in place" so neither control nor data flow will pass through it.
+    //
+    // So case 2 is simple: add a placeholder node, then when we analyze the lambda attach
+    // it as a subgraph to that node. If that node is an argument to a function call,
+    // it should only be placed after every other argument to have control flow pass through
+    // them before entering the lambda.
+    //
+    // Case 1 is where the fun, for some definition of "fun", happens.
+    //
+    // In the basic case (completed call), control and data flow should look like this:
+    //                 /---> [EXACTLY_ONCE] --\
+    //                 |--> [AT_LEAST_ONCE] --|
+    //                 |<-----------------/   |
+    //    [arguments] -+    /------------v    +-> function call
+    //                 |--> [AT_MOST_ONCE] ---|
+    //                 |<--------------\      |
+    //                 \-----> [UNKNOWN] -----/
+    //                        \----------^
+    // This is already problematic, since all these lambdas should share ONE entry node
+    // to which control can return after AT_LEAST_ONCE and UNKNOWN lambdas. To make
+    // matters worse, if the call is not complete, then the lambdas inside it *and*
+    // other lambdas in whatever expression this is a part of can be resolved in any order,
+    // so the data flow cannot look like this - until some call is finally completed, there
+    // will be holes in the graph where some lambdas' subgraphs should be. Instead, we
+    // should be collecting the lambdas as they are being resolved, filling gaps in the
+    // control flow graph, and then redirecting the outgoing data flow edges into the next
+    // completed call node. Unfortunately, I'm not sure how this fits into the subgraph
+    // design. Also, touching the `PostponedLambda{Enter,Exit}Node`s in any way seem to
+    // break random stuff that probably looks at `node.fir` with zero regard as to what
+    // the node even means.
     fun visitPostponedAnonymousFunction(anonymousFunctionExpression: FirAnonymousFunctionExpression): Pair<PostponedLambdaEnterNode, PostponedLambdaExitNode> {
         val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         val enterNode = createPostponedLambdaEnterNode(anonymousFunction)
         val exitNode = createPostponedLambdaExitNode(anonymousFunctionExpression)
         val symbol = anonymousFunction.symbol
-        postponedLambdas += symbol
-        entersToPostponedAnonymousFunctions[symbol] = enterNode
-        exitsFromPostponedAnonymousFunctions[symbol] = exitNode
-        parentGraphForAnonymousFunctions[symbol] = currentGraph
-        popAndAddEdge(enterNode, preferredKind = EdgeKind.Forward)
-        addEdge(enterNode, exitNode, preferredKind = EdgeKind.DfgForward)
-        lastNodes.push(exitNode)
+        postponedAnonymousFunctionNodes[symbol] = enterNode to exitNode
+        addNewSimpleNode(enterNode)
+        addNewSimpleNode(exitNode, preferredKind = EdgeKind.DfgForward)
         return enterNode to exitNode
     }
 
     fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction): Pair<PostponedLambdaEnterNode?, FunctionEnterNode> {
-        val invocationKind = anonymousFunction.invocationKind
-
-        var previousNodeIsNew = false
         val symbol = anonymousFunction.symbol
-        val previousNode = entersToPostponedAnonymousFunctions[symbol]
-            ?: createPostponedLambdaEnterNode(anonymousFunction).also {
-                addNewSimpleNode(it)
-                entersToPostponedAnonymousFunctions[symbol] = it
-                previousNodeIsNew = true
-            }
-
-        if (previousNodeIsNew) {
-            assert(symbol !in exitsFromPostponedAnonymousFunctions)
-            val lambdaExpression = buildAnonymousFunctionExpression {
-                source = anonymousFunction.source
-                this.anonymousFunction = anonymousFunction
-            }
-            val exitFromLambda = createPostponedLambdaExitNode(lambdaExpression).also {
-                exitsFromPostponedAnonymousFunctions[symbol] = it
-            }
-            addEdge(previousNode, exitFromLambda)
-        }
+        val preparedEnterNode = postponedAnonymousFunctionNodes[symbol]?.first
+        val outerEnterNode = preparedEnterNode ?: createPostponedLambdaEnterNode(anonymousFunction).also { addNewSimpleNode(it) }
 
         pushGraph(ControlFlowGraph(anonymousFunction, "<anonymous>", ControlFlowGraph.Kind.AnonymousFunction), Mode.Function)
-
-        val enterNode = createFunctionEnterNode(anonymousFunction).also {
-            if (previousNodeIsNew) {
-                addNewSimpleNode(it)
-            } else {
-                addEdge(previousNode, it)
-                lastNodes.push(it)
-            }
-        }
-        val exitNode = createFunctionExitNode(anonymousFunction).also {
-            exitsOfAnonymousFunctions[symbol] = it
-            exitTargetsForReturn.push(it)
-            if (!invocationKind.isInPlace) {
-                exitTargetsForTry.push(it)
-            }
+        val enterNode = createFunctionEnterNode(anonymousFunction)
+        val exitNode = createFunctionExitNode(anonymousFunction)
+        exitsOfAnonymousFunctions[symbol] = exitNode
+        exitTargetsForReturn.push(exitNode)
+        if (!anonymousFunction.invocationKind.isInPlace) {
+            exitTargetsForTry.push(exitNode)
         }
 
-        if (invocationKind.hasTowardEdge) {
-            addEdge(enterNode, exitNode)
-        }
-        if (invocationKind.hasBackEdge) {
-            addBackEdge(exitNode, enterNode)
-        }
-
-        return if (previousNodeIsNew) {
-            previousNode to enterNode
-        } else {
-            null to enterNode
-        }
+        addEdge(outerEnterNode, enterNode)
+        lastNodes.push(enterNode)
+        return outerEnterNode.takeIf { preparedEnterNode == null } to enterNode
     }
-
-    private val EventOccurrencesRange?.hasTowardEdge: Boolean
-        get() = when (this) {
-            EventOccurrencesRange.AT_MOST_ONCE, EventOccurrencesRange.UNKNOWN -> true
-            else -> false
-        }
-
-    private val EventOccurrencesRange?.hasBackEdge: Boolean
-        get() = when (this) {
-            EventOccurrencesRange.AT_LEAST_ONCE, EventOccurrencesRange.MORE_THAN_ONCE, EventOccurrencesRange.UNKNOWN -> true
-            else -> false
-        }
 
     fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): Triple<FunctionExitNode, PostponedLambdaExitNode?, ControlFlowGraph> {
         val symbol = anonymousFunction.symbol
@@ -344,56 +291,117 @@ class ControlFlowGraphBuilder {
             assert(graph.declaration == anonymousFunction)
             assert(graph.exitNode == exitNode)
             // TODO: disregarding the edges is probably not correct, though this should never find any nodes anyway
-            exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.removeAll { it.owner == graph }
+            dataFlowSourcesForNextCompletedCall.topOrNull()?.removeAll { it.owner == graph }
         }
 
-        val postponedEnterNode = entersToPostponedAnonymousFunctions.remove(symbol)!!
-        val postponedExitNode = exitsFromPostponedAnonymousFunctions.remove(symbol)!!
-
-        val lambdaIsPostponedFromCall = postponedLambdas.remove(symbol)
-        if (!lambdaIsPostponedFromCall) {
-            lastNodes.push(postponedExitNode)
-        }
+        val (postponedEnterNode, postponedExitNode) = postponedAnonymousFunctionNodes.remove(symbol)
+            ?: return Triple(exitNode, null, graph).also { (lastNode as PostponedLambdaEnterNode).owner.addSubGraph(graph) }
 
         val invocationKind = anonymousFunction.invocationKind
-        val maybeNonZero = invocationKind != null && invocationKind != EventOccurrencesRange.ZERO
-        val maybeZero = invocationKind != EventOccurrencesRange.AT_LEAST_ONCE &&
-                invocationKind != EventOccurrencesRange.EXACTLY_ONCE &&
-                invocationKind != EventOccurrencesRange.MORE_THAN_ONCE
-        // Four cases we handle differently here:
-        //  1. function not called in-place: data and control flow skips the function,
-        //     and any assignment inside the function invalidates smart casts
-        //  2. function never executed (EventOccurrencesRange.ZERO): same as above,
-        //     but without smart cast invalidation
-        //  3. function executed at least once (or exactly once or more than once):
-        //     control flow merged from postponedEnterNode and exitNode into postponedExitNode,
-        //     data flow goes from exitNode to the union of arguments of the call
-        //  4. function executed an unknown number of times (maybe zero, maybe not):
-        //     both control flow and data flow merged from postponedEnterNode and exitNode
-        //     into postponedExitNode
-        if (maybeZero) {
-            val kind = if (postponedExitNode.isDead) EdgeKind.DeadForward else EdgeKind.CfgForward
-            CFGNode.addJustKindEdge(postponedEnterNode, postponedExitNode, kind, propagateDeadness = true)
+        var changedExitDataFlow = false
+        // Lambdas not called in-place behave as if called never, but with extra invalidation of all smart casts
+        // for all variables that they reassign. That second part is handled by `FirDataFlowAnalyzer`.
+        if (invocationKind?.isDefinitelyVisited() != true) {
+            // Data flow from enter -> exit already exists, only need to also mark that edge as control flow.
+            CFGNode.addJustKindEdge(postponedEnterNode, postponedExitNode, EdgeKind.CfgForward, propagateDeadness = true)
         }
-        if (maybeNonZero) {
-            addEdge(exitNode, postponedExitNode, preferredKind = if (maybeZero) EdgeKind.Forward else EdgeKind.CfgForward)
-            if (!maybeZero && shouldPassFlowFromInplaceLambda.top()) {
-                exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.add(postponedExitNode)
+        if (invocationKind?.canBeVisited() == true) {
+            // TODO: existence of an `invocationKind` should imply that this is an argument to a call, and yet
+            //  replacing this with `top()` breaks things. Hmm.
+            val currentCallsPostponedLambdas = dataFlowSourcesForNextCompletedCall.topOrNull()
+            // Since the skipping edge goes to `postponedExitNode` rather than `exitNode`, if
+            // we try to merge data flow for not-definitely-called lambdas from `exitNode` into the next call
+            // we won't get a correct result. TODO: that seems hacky and points to the edges being wrong.
+            if (currentCallsPostponedLambdas != null && invocationKind.isDefinitelyVisited()) {
+                // When a call has lambda arguments that the function says it will call in place, control goes through
+                // all other arguments, then through the lambdas in parallel, then out of the function call. This parallel
+                // (in terms of ordering, not multi-threaded or w/e) execution is represented with the call being a union node.
+                // TODO: currently this is only done for data flow; control flow incorrectly pretends lambdas
+                //  are called in the order they are provided to the call, which is wrong. This needs to be fixed. Somehow.
+                addEdge(exitNode, postponedExitNode, preferredKind = EdgeKind.CfgForward, propagateDeadness = true)
+                currentCallsPostponedLambdas.add(postponedExitNode)
+            } else {
+                addEdge(exitNode, postponedExitNode, propagateDeadness = invocationKind.isDefinitelyVisited())
+                changedExitDataFlow = true
+            }
+            if (invocationKind.canBeRevisited()) {
+                addBackEdge(postponedExitNode, postponedEnterNode)
             }
         }
 
-        val containingGraph = parentGraphForAnonymousFunctions.remove(symbol) ?: currentGraph
-        containingGraph.addSubGraph(graph)
-        return if (lambdaIsPostponedFromCall && !(maybeNonZero && maybeZero)) {
-            Triple(exitNode, null, graph)
-        } else {
-            Triple(exitNode, postponedExitNode, graph)
-        }
+        postponedEnterNode.owner.addSubGraph(graph)
+        return Triple(exitNode, postponedExitNode.takeIf { changedExitDataFlow }, graph)
     }
 
     fun exitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression): AnonymousFunctionExpressionExitNode {
         return createAnonymousFunctionExpressionExitNode(anonymousFunctionExpression).also {
             addNewSimpleNode(it)
+        }
+    }
+
+    private fun splitDataFlowForPostponedLambdas() {
+        dataFlowSourcesForNextCompletedCall.push(mutableListOf())
+    }
+
+    private fun MutableList<CFGNode<*>>.addPostponedLambdaDataFlowEdgesTo(node: CFGNode<*>) {
+        for (exitNode in this) {
+            // To avoid storing nodes from subgraphs in the list, we have PostponedLambdaExitNode instead of the real
+            // exit node of the lambda subgraph. The latter is the previous node of the former. Everything else is
+            // already a join node in this graph.
+            val functionExitOrMerge = if (exitNode is PostponedLambdaExitNode) exitNode.lastPreviousNode else exitNode
+            addEdge(functionExitOrMerge, node, preferredKind = EdgeKind.DfgForward, propagateDeadness = false)
+        }
+    }
+
+    private fun <T> unifyDataFlowFromPostponedLambdas(node: T, callCompleted: Boolean) where T : CFGNode<*>, T : UnionNodeMarker {
+        val currentLevelExits = dataFlowSourcesForNextCompletedCall.pop()
+        if (currentLevelExits.isEmpty()) return
+        val nextLevelExits = dataFlowSourcesForNextCompletedCall.topOrNull().takeIf { !callCompleted }
+        if (nextLevelExits != null) {
+            // Call is incomplete, don't pass data flow from lambdas inside it to lambdas in the outer call.
+            nextLevelExits.addAll(currentLevelExits)
+        } else {
+            currentLevelExits.addPostponedLambdaDataFlowEdgesTo(node)
+        }
+    }
+
+    // There may be branching expressions on the way from a called-in-place lambda
+    // to the next completed call:
+    //
+    //   f(if (p) { x; run { a } else { y; run { b } }, c)
+    //
+    // which result in a hole-y control flow graph at the time when we need to resolve `c`:
+    //
+    //   p -+--> x ->  ??   -> run#1 --+-> c -> f
+    //       \-> y ->  ??   -> run#2 -/
+    //
+    // Ideally, we want to pretend that the lambdas are not called-in-place until we get
+    // to `f`, at which point the lambdas are guaranteed to be resolved and we should be
+    // able to reconstruct the entire data flow. The problem is that the call/when/etc.
+    // exit nodes on the way from the lambda to the function call exit node can have
+    // statements attached to them, so unless we want to re-do all the work, it's too late
+    // by the time we get there. And we can't just forever ignore the lambdas either, as
+    // they may reassign variables and so the data we've gathered about them should be
+    // invalidated. So what we do here is merge the data from the lambdas with the data
+    // obtained without them: this can only erase statements that are not provably correct.
+    private fun mergeDataFlowFromPostponedLambdas(node: CFGNode<*>, callCompleted: Boolean): MergePostponedLambdaExitsNode? {
+        val currentLevelExits = dataFlowSourcesForNextCompletedCall.pop()
+        if (currentLevelExits.isEmpty()) return null
+
+        val nextLevelExits = dataFlowSourcesForNextCompletedCall.topOrNull().takeIf { !callCompleted }
+        return if (nextLevelExits != null) {
+            // Call is incomplete, don't pass data flow from lambdas inside it to lambdas in the outer call.
+            // TODO: this is wrong, we don't necessarily have all the lambdas yet... Also,
+            //  the lambdas in the list can come from different branches, and this should be
+            //  more like merge(node, union(lambdas from branch 1), ..., union(from branch N)).
+            createMergePostponedLambdaExitsNode(node.fir).also {
+                addEdge(node, it)
+                currentLevelExits.addPostponedLambdaDataFlowEdgesTo(it)
+                nextLevelExits.add(it)
+            }
+        } else {
+            currentLevelExits.addPostponedLambdaDataFlowEdgesTo(node)
+            null
         }
     }
 
@@ -639,16 +647,6 @@ class ControlFlowGraphBuilder {
         return exitNode to graph
     }
 
-    // ----------------------------------- Delegate -----------------------------------
-
-    fun enterDelegateExpression() {
-        shouldPassFlowFromInplaceLambda.push(false)
-    }
-
-    fun exitDelegateExpression() {
-        shouldPassFlowFromInplaceLambda.pop()
-    }
-
     // ----------------------------------- Operator call -----------------------------------
 
     fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall): TypeOperatorCallNode {
@@ -709,6 +707,10 @@ class ControlFlowGraphBuilder {
         return node
     }
 
+    fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression): WhenSubjectExpressionExitNode {
+        return createWhenSubjectExpressionExitNode(expression).also { addNewSimpleNode(it) }
+    }
+
     fun enterWhenBranchCondition(whenBranch: FirWhenBranch): WhenBranchConditionEnterNode {
         levelCounter += whenBranchIndices.top().getValue(whenBranch)
         return createWhenBranchConditionEnterNode(whenBranch).also { addNewSimpleNode(it) }.also { levelCounter++ }
@@ -737,7 +739,8 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitWhenExpression(
-        whenExpression: FirWhenExpression
+        whenExpression: FirWhenExpression,
+        callCompleted: Boolean
     ): Triple<WhenExitNode, WhenSyntheticElseBranchNode?, MergePostponedLambdaExitsNode?> {
         val whenExitNode = whenExitNodes.pop()
         // exit from last condition node still on stack
@@ -754,7 +757,7 @@ class ControlFlowGraphBuilder {
         lastNodes.push(whenExitNode)
         levelCounter--
         whenBranchIndices.pop()
-        return Triple(whenExitNode, syntheticElseBranchNode, joinDataFlowFromPostponedLambdasWith(whenExitNode))
+        return Triple(whenExitNode, syntheticElseBranchNode, mergeDataFlowFromPostponedLambdas(whenExitNode, callCompleted))
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -1003,9 +1006,7 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    fun exitTryExpression(
-        callCompleted: Boolean
-    ): Pair<TryExpressionExitNode, UnionFunctionCallArgumentsNode?> {
+    fun exitTryExpression(callCompleted: Boolean): Pair<TryExpressionExitNode, MergePostponedLambdaExitsNode?> {
         levelCounter--
         catchNodeStorages.pop()
         val catchExitNodes = catchExitNodeStorages.pop()
@@ -1016,7 +1017,6 @@ class ControlFlowGraphBuilder {
         val node = tryExitNodes.pop()
         node.updateDeadStatus()
         lastNodes.push(node)
-        val (_, unionNode) = processUnionOfArguments(node, callCompleted)
 
         val allCatchesAreDead = tryMainExitNode.fir.catches.all { catch -> catchExitNodes[catch]!!.isDead }
         val tryMainBlockIsDead = tryMainExitNode.previousNodes.all { prev ->
@@ -1029,7 +1029,7 @@ class ControlFlowGraphBuilder {
             lastNodes.push(stub)
         }
 
-        return node to unionNode
+        return node to mergeDataFlowFromPostponedLambdas(node, callCompleted)
     }
 
     //this is a workaround to make function call dead when call is completed _after_ building its node in the graph
@@ -1088,49 +1088,36 @@ class ControlFlowGraphBuilder {
         splitDataFlowForPostponedLambdas()
     }
 
-    fun exitIgnoredCall(functionCall: FirFunctionCall) {
+    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallNode {
         levelCounter--
-        ignoredFunctionCalls += functionCall
-    }
-
-    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): Pair<FunctionCallNode, UnionFunctionCallArgumentsNode?> {
-        val callWasIgnored = ignoredFunctionCalls.remove(functionCall)
-        if (!callWasIgnored) {
-            levelCounter--
-        } else {
-            ignoredFunctionCalls.clear()
-        }
         val returnsNothing = functionCall.resultType.isNothing
         val node = createFunctionCallNode(functionCall)
-        val (kind, unionNode) = processUnionOfArguments(node, callCompleted)
+        unifyDataFlowFromPostponedLambdas(node, callCompleted)
         if (returnsNothing) {
-            addNodeThatReturnsNothing(node, preferredKind = kind)
+            addNodeThatReturnsNothing(node)
         } else {
-            addNewSimpleNode(node, preferredKind = kind)
+            addNewSimpleNode(node)
         }
         if (!returnsNothing && !callCompleted) {
             notCompletedFunctionCalls.topOrNull()?.add(node)
         }
-        return node to unionNode
+        return node
     }
 
-    fun exitDelegatedConstructorCall(
-        call: FirDelegatedConstructorCall,
-        callCompleted: Boolean
-    ): Pair<DelegatedConstructorCallNode, UnionFunctionCallArgumentsNode?> {
+    fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean): DelegatedConstructorCallNode {
         levelCounter--
         val node = createDelegatedConstructorCallNode(call)
-        val (kind, unionNode) = processUnionOfArguments(node, callCompleted)
-        addNewSimpleNode(node, preferredKind = kind)
-        return node to unionNode
+        unifyDataFlowFromPostponedLambdas(node, callCompleted)
+        addNewSimpleNode(node)
+        return node
     }
 
-    fun exitStringConcatenationCall(call: FirStringConcatenationCall): Pair<StringConcatenationCallNode, UnionFunctionCallArgumentsNode?> {
+    fun exitStringConcatenationCall(call: FirStringConcatenationCall): StringConcatenationCallNode {
         levelCounter--
         val node = createStringConcatenationCallNode(call)
-        val (kind, unionNode) = processUnionOfArguments(node, true)
-        addNewSimpleNode(node, preferredKind = kind)
-        return node to unionNode
+        unifyDataFlowFromPostponedLambdas(node, callCompleted = true)
+        addNewSimpleNode(node)
+        return node
     }
 
     fun exitConstExpression(constExpression: FirConstExpression<*>): ConstExpressionNode {
@@ -1149,111 +1136,16 @@ class ControlFlowGraphBuilder {
         return createThrowExceptionNode(throwExpression).also { addNodeThatReturnsNothing(it) }
     }
 
-    fun exitCheckNotNullCall(
-        checkNotNullCall: FirCheckNotNullCall,
-        callCompleted: Boolean
-    ): Pair<CheckNotNullCallNode, UnionFunctionCallArgumentsNode?> {
+    fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, callCompleted: Boolean): CheckNotNullCallNode {
         levelCounter--
         val node = createCheckNotNullCallNode(checkNotNullCall)
+        unifyDataFlowFromPostponedLambdas(node, callCompleted)
         if (checkNotNullCall.resultType.isNothing) {
             addNodeThatReturnsNothing(node)
         } else {
             addNewSimpleNode(node)
         }
-        val unionNode = processUnionOfArguments(node, callCompleted).second
-        return node to unionNode
-    }
-
-    // Arguments are evaluated left to right, and this is how data flows.
-    //    foo(run { x as String; 1 }, { /* x smartcasted to String */ x.length })
-    //
-    // However, as we need to fix type parameters before analyzing lambdas, this is not always the order of analysis;
-    // if that is possible, multiple lambdas should be considered to be concurrent.
-    //
-    //    foo(run { x as String; genericFunction() }, run { /* x not smartcastable because this lambda may be resolved first */ 1 })
-    //    /* x is smartcastable after the call */
-    //
-    // And if the lambda is conditional, then the data flow needs to be merged with other branches.
-    //
-    //    foo(nullable?.let { x as String; genericFunction() }, run { 1 })
-    //    /* x is not smartcastable */
-    //
-    //    foo(nullable ?: run { x as String; genericFunction() }, run { 1 })
-    //    /* x is not smartcastable */
-    //
-    //    foo(if (condition) run { x as String; genericFunction() } else { genericFunction() }, run { 1 })
-    //    /* x is not smartcastable */
-    //
-    //    foo(if (condition) run { x as String; genericFunction() } else { x as String; genericFunction() }, run { 1 })
-    //    /* x is smartcastable */
-    //
-    // `splitDataFlowForPostponedLambdas` in `enterX` should be matched with either `joinDataFlowFromPostponedLambdasWith`
-    // or `processUnionOfArguments` in `exitX`. The difference is that the latter creates an intersection of all the lambdas'
-    // type information (like after function calls - all casts from all lambdas are valid) while the former is a union
-    // (like after `if` - only the casts from one of the lambdas are valid, and we don't know which).
-    //
-    private fun splitDataFlowForPostponedLambdas() {
-        exitsFromCompletedPostponedAnonymousFunctions.add(mutableListOf())
-    }
-
-    private fun joinDataFlowFromPostponedLambdasWith(node: CFGNode<*>): MergePostponedLambdaExitsNode? {
-        val currentLevelExits = exitsFromCompletedPostponedAnonymousFunctions.popLast()
-        if (currentLevelExits.isEmpty()) {
-            return null
-        }
-
-        val joinNode = createMergePostponedLambdaExitsNode(node.fir)
-        addEdge(node, joinNode)
-        currentLevelExits.joinDataFlowFromPostponedLambdasTo(joinNode)
-        exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.add(joinNode)
-        return joinNode
-    }
-
-    private fun MutableList<CFGNode<*>>.joinDataFlowFromPostponedLambdasTo(node: CFGNode<*>) {
-        for (exitNode in this) {
-            // To avoid storing nodes from subgraphs in the list, we have PostponedLambdaExitNode instead of the real
-            // exit node of the lambda subgraph. The latter is the previous node of the former. Everything else is
-            // already a join/union node in this graph.
-            val functionExitOrMerge = if (exitNode is PostponedLambdaExitNode) exitNode.lastPreviousNode else exitNode
-            addEdge(functionExitOrMerge, node, preferredKind = EdgeKind.DfgForward)
-        }
-    }
-
-    private fun processUnionOfArguments(
-        node: CFGNode<*>,
-        callCompleted: Boolean
-    ): Pair<EdgeKind, UnionFunctionCallArgumentsNode?> {
-        val currentLevelExits = exitsFromCompletedPostponedAnonymousFunctions.popLast()
-        if (currentLevelExits.isEmpty()) {
-            return EdgeKind.Forward to null
-        }
-
-        if (!callCompleted || !shouldPassFlowFromInplaceLambda.top()) {
-            currentLevelExits.singleOrNull()?.let {
-                exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.add(it)
-                return EdgeKind.Forward to null
-            }
-
-            val unionNode = createUnionFunctionCallArgumentsNode(node.fir)
-            currentLevelExits.joinDataFlowFromPostponedLambdasTo(unionNode)
-            exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.addAll(currentLevelExits)
-            return EdgeKind.Forward to unionNode
-        }
-
-        val unionNode = createUnionFunctionCallArgumentsNode(node.fir)
-        currentLevelExits.joinDataFlowFromPostponedLambdasTo(unionNode)
-
-        if (lastNode in currentLevelExits) {
-            popAndAddEdge(node, preferredKind = EdgeKind.CfgForward)
-            lastNodes.push(unionNode)
-            return EdgeKind.DfgForward to unionNode
-        }
-        addNewSimpleNode(unionNode)
-        return EdgeKind.Forward to unionNode
-    }
-
-    fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression): WhenSubjectExpressionExitNode {
-        return createWhenSubjectExpressionExitNode(expression).also { addNewSimpleNode(it) }
+        return node
     }
 
     // ----------------------------------- Annotations -----------------------------------
@@ -1354,7 +1246,8 @@ class ControlFlowGraphBuilder {
         return exitSafeCallNodes.pop().let {
             addNewSimpleNode(it)
             it.updateDeadStatus()
-            it to joinDataFlowFromPostponedLambdasWith(it)
+            // Safe calls only have one user-specified branch, so if any lambdas were postponed, they still are.
+            it to mergeDataFlowFromPostponedLambdas(it, callCompleted = false)
         }
     }
 
@@ -1389,11 +1282,11 @@ class ControlFlowGraphBuilder {
         return Triple(lhsExitNode, lhsIsNotNullNode, rhsEnterNode)
     }
 
-    fun exitElvis(lhsIsNotNull: Boolean): Pair<ElvisExitNode, MergePostponedLambdaExitsNode?> {
+    fun exitElvis(lhsIsNotNull: Boolean, callCompleted: Boolean): Pair<ElvisExitNode, MergePostponedLambdaExitsNode?> {
         val exitNode = exitElvisExpressionNodes.pop()
         addNewSimpleNode(exitNode, isDead = lhsIsNotNull)
         exitNode.updateDeadStatus()
-        return exitNode to joinDataFlowFromPostponedLambdasWith(exitNode)
+        return exitNode to mergeDataFlowFromPostponedLambdas(exitNode, callCompleted)
     }
 
     // ----------------------------------- Contract description -----------------------------------
@@ -1417,7 +1310,7 @@ class ControlFlowGraphBuilder {
 
     fun reset() {
         exitsOfAnonymousFunctions.clear()
-        exitsFromCompletedPostponedAnonymousFunctions.clear()
+        dataFlowSourcesForNextCompletedCall.reset()
         lastNodes.reset()
     }
 

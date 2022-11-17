@@ -6,7 +6,7 @@ digraph functionCallBound_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -22,7 +22,7 @@ digraph functionCallBound_kt {
     subgraph cluster_2 {
         color=red
         5 [label="Enter function <init>" style="filled" fillcolor=red];
-        6 [label="Delegated constructor call: super<R|Base|>()"];
+        6 [label="Delegated constructor call: super<R|Base|>()" style="filled" fillcolor=yellow];
         7 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     5 -> {6};
@@ -85,7 +85,7 @@ digraph functionCallBound_kt {
                     25 [label="Access variable R|<local>/base|"];
                     26 [label="Type operator: (R|<local>/base| as? R|Sub|)"];
                     27 [label="Enter safe call"];
-                    28 [label="Function call: $subj$.R|/isOk|()"];
+                    28 [label="Function call: $subj$.R|/isOk|()" style="filled" fillcolor=yellow];
                     29 [label="Exit safe call"];
                     30 [label="Const: Boolean(true)"];
                     31 [label="Equality operator =="];

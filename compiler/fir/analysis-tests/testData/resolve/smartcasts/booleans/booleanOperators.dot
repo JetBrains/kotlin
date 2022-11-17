@@ -85,13 +85,13 @@ digraph booleanOperators_kt {
                     30 [label="Enter block"];
                     31 [label="Access variable R|<local>/x|"];
                     32 [label="Smart cast: R|<local>/x|"];
-                    33 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    33 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     34 [label="Access variable R|<local>/x|"];
                     35 [label="Smart cast: R|<local>/x|"];
-                    36 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    36 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     37 [label="Access variable R|<local>/x|"];
                     38 [label="Smart cast: R|<local>/x|"];
-                    39 [label="Function call: R|<local>/x|.R|/C.baz|()"];
+                    39 [label="Function call: R|<local>/x|.R|/C.baz|()" style="filled" fillcolor=yellow];
                     40 [label="Exit block"];
                 }
                 41 [label="Exit when branch result"];
@@ -164,13 +164,13 @@ digraph booleanOperators_kt {
                     60 [label="Enter block"];
                     61 [label="Access variable R|<local>/x|"];
                     62 [label="Smart cast: R|<local>/x|"];
-                    63 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    63 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     64 [label="Access variable R|<local>/x|"];
                     65 [label="Smart cast: R|<local>/x|"];
-                    66 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+                    66 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()" style="filled" fillcolor=yellow];
                     67 [label="Access variable R|<local>/x|"];
                     68 [label="Smart cast: R|<local>/x|"];
-                    69 [label="Function call: R|<local>/x|.<Unresolved name: baz>#()"];
+                    69 [label="Function call: R|<local>/x|.<Unresolved name: baz>#()" style="filled" fillcolor=yellow];
                     70 [label="Exit block"];
                 }
                 71 [label="Exit when branch result"];
@@ -224,7 +224,7 @@ digraph booleanOperators_kt {
                     78 [label="Enter when branch condition "];
                     79 [label="Access variable R|<local>/x|"];
                     80 [label="Type operator: (R|<local>/x| !is R|A|)"];
-                    81 [label="Function call: (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|()"];
+                    81 [label="Function call: (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
                     82 [label="Exit when branch condition"];
                 }
                 83 [label="Synthetic else branch"];
@@ -234,7 +234,7 @@ digraph booleanOperators_kt {
                     85 [label="Enter block"];
                     86 [label="Access variable R|<local>/x|"];
                     87 [label="Smart cast: R|<local>/x|"];
-                    88 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    88 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     89 [label="Exit block"];
                 }
                 90 [label="Exit when branch result"];
@@ -358,7 +358,7 @@ digraph booleanOperators_kt {
                         130 [label="Enter right part of &&"];
                         131 [label="Access variable R|<local>/x|"];
                         132 [label="Smart cast: R|<local>/x|"];
-                        133 [label="Function call: R|<local>/x|.R|/A.bool|()"];
+                        133 [label="Function call: R|<local>/x|.R|/A.bool|()" style="filled" fillcolor=yellow];
                         134 [label="Exit &&"];
                     }
                     135 [label="Exit when branch condition"];
@@ -370,7 +370,7 @@ digraph booleanOperators_kt {
                     138 [label="Enter block"];
                     139 [label="Access variable R|<local>/x|"];
                     140 [label="Smart cast: R|<local>/x|"];
-                    141 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    141 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     142 [label="Exit block"];
                 }
                 143 [label="Exit when branch result"];
@@ -419,7 +419,7 @@ digraph booleanOperators_kt {
                     150 [label="Enter when branch condition "];
                     151 [label="Access variable R|<local>/x|"];
                     152 [label="Type operator: (R|<local>/x| !is R|A|)"];
-                    153 [label="Function call: (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|()"];
+                    153 [label="Function call: (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
                     154 [label="Exit when branch condition"];
                 }
                 155 [label="Synthetic else branch"];
@@ -429,7 +429,7 @@ digraph booleanOperators_kt {
                     157 [label="Enter block"];
                     158 [label="Access variable R|<local>/x|"];
                     159 [label="Smart cast: R|<local>/x|"];
-                    160 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    160 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     161 [label="Exit block"];
                 }
                 162 [label="Exit when branch result"];
@@ -488,7 +488,7 @@ digraph booleanOperators_kt {
                     color=blue
                     180 [label="Enter block"];
                     181 [label="Access variable R|<local>/x|"];
-                    182 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+                    182 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()" style="filled" fillcolor=yellow];
                     183 [label="Exit block"];
                 }
                 184 [label="Exit when branch result"];
@@ -550,7 +550,7 @@ digraph booleanOperators_kt {
                     color=blue
                     202 [label="Enter block"];
                     203 [label="Access variable R|<local>/x|"];
-                    204 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+                    204 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()" style="filled" fillcolor=yellow];
                     205 [label="Exit block"];
                 }
                 206 [label="Exit when branch result"];
@@ -613,7 +613,7 @@ digraph booleanOperators_kt {
                     color=blue
                     224 [label="Enter block"];
                     225 [label="Access variable R|<local>/x|"];
-                    226 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+                    226 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()" style="filled" fillcolor=yellow];
                     227 [label="Exit block"];
                 }
                 228 [label="Exit when branch result"];
@@ -675,7 +675,7 @@ digraph booleanOperators_kt {
                     color=blue
                     246 [label="Enter block"];
                     247 [label="Access variable R|<local>/x|"];
-                    248 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+                    248 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()" style="filled" fillcolor=yellow];
                     249 [label="Exit block"];
                 }
                 250 [label="Exit when branch result"];
@@ -738,7 +738,7 @@ digraph booleanOperators_kt {
                     color=blue
                     268 [label="Enter block"];
                     269 [label="Access variable R|<local>/x|"];
-                    270 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+                    270 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()" style="filled" fillcolor=yellow];
                     271 [label="Exit block"];
                 }
                 272 [label="Exit when branch result"];
@@ -802,7 +802,7 @@ digraph booleanOperators_kt {
                     290 [label="Enter block"];
                     291 [label="Access variable R|<local>/x|"];
                     292 [label="Smart cast: R|<local>/x|"];
-                    293 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    293 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     294 [label="Exit block"];
                 }
                 295 [label="Exit when branch result"];
@@ -866,7 +866,7 @@ digraph booleanOperators_kt {
                     313 [label="Enter block"];
                     314 [label="Access variable R|<local>/x|"];
                     315 [label="Smart cast: R|<local>/x|"];
-                    316 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    316 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     317 [label="Exit block"];
                 }
                 318 [label="Exit when branch result"];
@@ -931,7 +931,7 @@ digraph booleanOperators_kt {
                     336 [label="Enter block"];
                     337 [label="Access variable R|<local>/x|"];
                     338 [label="Smart cast: R|<local>/x|"];
-                    339 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    339 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     340 [label="Exit block"];
                 }
                 341 [label="Exit when branch result"];

@@ -34,7 +34,7 @@ digraph lambdaReturningObject_kt {
     subgraph cluster_4 {
         color=red
         8 [label="Enter function <init>" style="filled" fillcolor=red];
-        9 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        9 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         10 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     8 -> {9};
@@ -53,7 +53,7 @@ digraph lambdaReturningObject_kt {
         subgraph cluster_7 {
             color=blue
             14 [label="Enter block"];
-            15 [label="Function call: R|kotlin/TODO|()"];
+            15 [label="Function call: R|kotlin/TODO|()" style="filled" fillcolor=yellow];
             16 [label="Stub" style="filled" fillcolor=gray];
             17 [label="Jump: ^MyOut R|kotlin/TODO|()" style="filled" fillcolor=gray];
             18 [label="Stub" style="filled" fillcolor=gray];
@@ -89,8 +89,8 @@ digraph lambdaReturningObject_kt {
                 33 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             24 [label="Postponed exit from lambda"];
-            25 [label="Function call: R|/MyOut|<R|IrStarProjectionImpl|>(...)"];
-            26 [label="Function call: R|/bar|(...)"];
+            25 [label="Function call: R|/MyOut|<R|IrStarProjectionImpl|>(...)" style="filled" fillcolor=yellow];
+            26 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
             27 [label="Exit block"];
         }
         28 [label="Exit function foo" style="filled" fillcolor=red];

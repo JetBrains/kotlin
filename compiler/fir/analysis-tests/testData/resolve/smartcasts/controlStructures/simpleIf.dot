@@ -155,7 +155,7 @@ digraph simpleIf_kt {
                     60 [label="Access variable R|kotlin/String.length|"];
                     61 [label="Access variable R|<local>/x|"];
                     62 [label="Smart cast: R|<local>/x|"];
-                    63 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+                    63 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
                     64 [label="Exit block"];
                 }
                 65 [label="Exit when branch result"];

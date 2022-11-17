@@ -9,7 +9,7 @@ digraph localClassesWithImplicit_kt {
         subgraph cluster_1 {
             color=blue
             1 [label="Enter block"];
-            2 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
+            2 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             3 [label="Jump: ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             4 [label="Stub" style="filled" fillcolor=gray];
             5 [label="Exit block" style="filled" fillcolor=gray];
@@ -108,7 +108,7 @@ digraph localClassesWithImplicit_kt {
     subgraph cluster_9 {
         color=red
         33 [label="Enter function <init>" style="filled" fillcolor=red];
-        34 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        34 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         35 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     33 -> {34};
@@ -160,7 +160,7 @@ digraph localClassesWithImplicit_kt {
                             64 [label="Access variable R|<local>/b|"];
                             65 [label="Smart cast: R|<local>/b|"];
                             66 [label="Access variable R|kotlin/String.length|"];
-                            67 [label="Function call: this@R|/A|.R|<local>/bar|()"];
+                            67 [label="Function call: this@R|/A|.R|<local>/bar|()" style="filled" fillcolor=yellow];
                             68 [label="Exit block"];
                         }
                         69 [label="Exit when branch result"];
@@ -171,7 +171,7 @@ digraph localClassesWithImplicit_kt {
                 72 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             39 [label="Postponed exit from lambda"];
-            40 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
+            40 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
             41 [label="Jump: ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/a|.R|kotlin/String.length|
     ^ when () {
@@ -196,12 +196,13 @@ digraph localClassesWithImplicit_kt {
     38 -> {39 45};
     38 -> {45} [style=dashed];
     39 -> {40};
+    39 -> {38} [color=green style=dashed];
     40 -> {41};
     41 -> {44};
     41 -> {42} [style=dotted];
     42 -> {43} [style=dotted];
     43 -> {44} [style=dotted];
-    45 -> {72 46};
+    45 -> {46};
     46 -> {47};
     47 -> {48};
     48 -> {49};
@@ -229,7 +230,6 @@ digraph localClassesWithImplicit_kt {
     70 -> {71};
     71 -> {72};
     72 -> {39};
-    72 -> {45} [color=green style=dashed];
 
     subgraph cluster_19 {
         color=red
@@ -249,13 +249,13 @@ digraph localClassesWithImplicit_kt {
                     86 [label="Access variable R|<local>/a|"];
                     87 [label="Smart cast: R|<local>/a|"];
                     88 [label="Access variable R|kotlin/String.length|"];
-                    89 [label="Function call: this@R|/A|.R|<local>/baz|()"];
+                    89 [label="Function call: this@R|/A|.R|<local>/baz|()" style="filled" fillcolor=yellow];
                     90 [label="Exit block"];
                 }
                 91 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             76 [label="Postponed exit from lambda"];
-            77 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
+            77 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
             78 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/b|.<Unresolved name: length>#
     R|<local>/a|.R|kotlin/String.length|
@@ -272,12 +272,13 @@ digraph localClassesWithImplicit_kt {
     75 -> {76 82};
     75 -> {82} [style=dashed];
     76 -> {77};
+    76 -> {75} [color=green style=dashed];
     77 -> {78};
     78 -> {81};
     78 -> {79} [style=dotted];
     79 -> {80} [style=dotted];
     80 -> {81} [style=dotted];
-    82 -> {91 83};
+    82 -> {83};
     83 -> {84};
     84 -> {85};
     85 -> {86};
@@ -287,7 +288,6 @@ digraph localClassesWithImplicit_kt {
     89 -> {90};
     90 -> {91};
     91 -> {76};
-    91 -> {82} [color=green style=dashed];
 
     subgraph cluster_23 {
         color=red
@@ -313,7 +313,7 @@ digraph localClassesWithImplicit_kt {
     subgraph cluster_25 {
         color=red
         99 [label="Enter function <init>" style="filled" fillcolor=red];
-        100 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        100 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         101 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     99 -> {100};
@@ -365,7 +365,7 @@ digraph localClassesWithImplicit_kt {
                             130 [label="Access variable R|<local>/b|"];
                             131 [label="Smart cast: R|<local>/b|"];
                             132 [label="Access variable R|kotlin/String.length|"];
-                            133 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.bar|()"];
+                            133 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.bar|()" style="filled" fillcolor=yellow];
                             134 [label="Exit block"];
                         }
                         135 [label="Exit when branch result"];
@@ -376,7 +376,7 @@ digraph localClassesWithImplicit_kt {
                 138 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             105 [label="Postponed exit from lambda"];
-            106 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
+            106 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
             107 [label="Jump: ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/a|.R|kotlin/String.length|
     ^ when () {
@@ -401,12 +401,13 @@ digraph localClassesWithImplicit_kt {
     104 -> {105 111};
     104 -> {111} [style=dashed];
     105 -> {106};
+    105 -> {104} [color=green style=dashed];
     106 -> {107};
     107 -> {110};
     107 -> {108} [style=dotted];
     108 -> {109} [style=dotted];
     109 -> {110} [style=dotted];
-    111 -> {138 112};
+    111 -> {112};
     112 -> {113};
     113 -> {114};
     114 -> {115};
@@ -434,7 +435,6 @@ digraph localClassesWithImplicit_kt {
     136 -> {137};
     137 -> {138};
     138 -> {105};
-    138 -> {111} [color=green style=dashed];
 
     subgraph cluster_35 {
         color=red
@@ -454,13 +454,13 @@ digraph localClassesWithImplicit_kt {
                     152 [label="Access variable R|kotlin/String.length|"];
                     153 [label="Access variable R|<local>/b|"];
                     154 [label="Access variable <Unresolved name: length>#"];
-                    155 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.baz|()"];
+                    155 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.baz|()" style="filled" fillcolor=yellow];
                     156 [label="Exit block"];
                 }
                 157 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             142 [label="Postponed exit from lambda"];
-            143 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
+            143 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
             144 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/a|.R|kotlin/String.length|
     R|<local>/b|.<Unresolved name: length>#
@@ -477,12 +477,13 @@ digraph localClassesWithImplicit_kt {
     141 -> {142 148};
     141 -> {148} [style=dashed];
     142 -> {143};
+    142 -> {141} [color=green style=dashed];
     143 -> {144};
     144 -> {147};
     144 -> {145} [style=dotted];
     145 -> {146} [style=dotted];
     146 -> {147} [style=dotted];
-    148 -> {157 149};
+    148 -> {149};
     149 -> {150};
     150 -> {151};
     151 -> {152};
@@ -492,7 +493,6 @@ digraph localClassesWithImplicit_kt {
     155 -> {156};
     156 -> {157};
     157 -> {142};
-    157 -> {148} [color=green style=dashed];
 
     subgraph cluster_39 {
         color=red

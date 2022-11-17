@@ -6,7 +6,7 @@ digraph boundSmartcastsInBranches_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -45,7 +45,7 @@ digraph boundSmartcastsInBranches_kt {
                 color=blue
                 13 [label="Enter block"];
                 14 [label="Access variable R|<local>/list|"];
-                15 [label="Function call: R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()"];
+                15 [label="Function call: R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()" style="filled" fillcolor=yellow];
                 16 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<A>|"];
                 subgraph cluster_6 {
                     color=blue
@@ -54,7 +54,7 @@ digraph boundSmartcastsInBranches_kt {
                         color=blue
                         18 [label="Enter loop condition"];
                         19 [label="Access variable R|<local>/<iterator>|"];
-                        20 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()"];
+                        20 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()" style="filled" fillcolor=yellow];
                         21 [label="Exit loop condition"];
                     }
                     subgraph cluster_8 {
@@ -64,7 +64,7 @@ digraph boundSmartcastsInBranches_kt {
                             color=blue
                             23 [label="Enter block"];
                             24 [label="Access variable R|<local>/<iterator>|"];
-                            25 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|A|>|()"];
+                            25 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|A|>|()" style="filled" fillcolor=yellow];
                             26 [label="Variable declaration: lval a: R|A|"];
                             subgraph cluster_10 {
                                 color=blue
@@ -184,7 +184,7 @@ digraph boundSmartcastsInBranches_kt {
                 subgraph cluster_19 {
                     color=blue
                     68 [label="Enter block"];
-                    69 [label="Function call: R|/A.A|()"];
+                    69 [label="Function call: R|/A.A|()" style="filled" fillcolor=yellow];
                     70 [label="Assignment: R|<local>/x|"];
                     71 [label="Exit block"];
                 }
@@ -261,7 +261,7 @@ digraph boundSmartcastsInBranches_kt {
                 subgraph cluster_26 {
                     color=blue
                     97 [label="Enter block"];
-                    98 [label="Function call: R|/A.A|()"];
+                    98 [label="Function call: R|/A.A|()" style="filled" fillcolor=yellow];
                     99 [label="Assignment: R|<local>/x|"];
                     100 [label="Exit block"];
                 }
@@ -341,7 +341,7 @@ digraph boundSmartcastsInBranches_kt {
                 subgraph cluster_33 {
                     color=blue
                     127 [label="Enter block"];
-                    128 [label="Function call: R|/A.A|()"];
+                    128 [label="Function call: R|/A.A|()" style="filled" fillcolor=yellow];
                     129 [label="Assignment: R|<local>/x|"];
                     130 [label="Exit block"];
                 }

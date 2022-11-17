@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothing?>() {
     abstract fun visitNode(node: CFGNode<*>)
 
-    // ----------------------------------- Simple function ----------------------------------- 
+    abstract fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker
+
+    // ----------------------------------- Simple function -----------------------------------
 
     open fun visitFunctionEnterNode(node: FunctionEnterNode) {
         visitNode(node)
@@ -25,10 +27,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
     }
 
     open fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode) {
-        visitNode(node)
-    }
-
-    open fun visitUnionFunctionCallArgumentsNode(node: UnionFunctionCallArgumentsNode) {
         visitNode(node)
     }
 
@@ -232,7 +230,7 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
     // ----------------------------------- Check not null call -----------------------------------
 
     open fun visitCheckNotNullCallNode(node: CheckNotNullCallNode) {
-        visitNode(node)
+        visitUnionNode(node)
     }
 
     // ----------------------------------- Resolvable call -----------------------------------
@@ -246,15 +244,15 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
     }
 
     open fun visitFunctionCallNode(node: FunctionCallNode) {
-        visitNode(node)
+        visitUnionNode(node)
     }
 
     open fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode) {
-        visitNode(node)
+        visitUnionNode(node)
     }
 
     open fun visitStringConcatenationCallNode(node: StringConcatenationCallNode) {
-        visitNode(node)
+        visitUnionNode(node)
     }
 
     open fun visitThrowExceptionNode(node: ThrowExceptionNode) {
@@ -297,6 +295,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
+    final override fun <T> visitUnionNode(node: T, data: Nothing?) where T : CFGNode<*>, T : UnionNodeMarker {
+        visitUnionNode(node)
+    }
+
     // ----------------------------------- Simple function -----------------------------------
 
     final override fun visitFunctionEnterNode(node: FunctionEnterNode, data: Nothing?) {
@@ -315,10 +317,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode, data: Nothing?) {
         visitPostponedLambdaExitNode(node)
-    }
-
-    final override fun visitUnionFunctionCallArgumentsNode(node: UnionFunctionCallArgumentsNode, data: Nothing?) {
-        visitUnionFunctionCallArgumentsNode(node)
     }
 
     final override fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode, data: Nothing?) {

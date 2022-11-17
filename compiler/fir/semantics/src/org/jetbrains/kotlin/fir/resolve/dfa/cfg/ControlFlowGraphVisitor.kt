@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 abstract class ControlFlowGraphVisitor<out R, in D> {
     abstract fun visitNode(node: CFGNode<*>, data: D): R
 
+    abstract fun <T> visitUnionNode(node: T, data: D): R where T : CFGNode<*>, T : UnionNodeMarker
+
     // ----------------------------------- Simple function -----------------------------------
 
     open fun visitFunctionEnterNode(node: FunctionEnterNode, data: D): R {
@@ -39,10 +41,6 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitUnionFunctionCallArgumentsNode(node: UnionFunctionCallArgumentsNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -296,7 +294,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     // ----------------------------------- Check not null call -----------------------------------
 
     open fun visitCheckNotNullCallNode(node: CheckNotNullCallNode, data: D): R {
-        return visitNode(node, data)
+        return visitUnionNode(node, data)
     }
 
     // ----------------------------------- Resolvable call -----------------------------------
@@ -310,7 +308,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitFunctionCallNode(node: FunctionCallNode, data: D): R {
-        return visitNode(node, data)
+        return visitUnionNode(node, data)
     }
 
     open fun visitCallableReferenceNode(node: CallableReferenceNode, data: D): R {
@@ -322,11 +320,11 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode, data: D): R {
-        return visitNode(node, data)
+        return visitUnionNode(node, data)
     }
 
     open fun visitStringConcatenationCallNode(node: StringConcatenationCallNode, data: D): R {
-        return visitNode(node, data)
+        return visitUnionNode(node, data)
     }
 
     open fun visitThrowExceptionNode(node: ThrowExceptionNode, data: D): R {
