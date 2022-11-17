@@ -129,7 +129,7 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
         fun androidGradlePluginVersionTooHigh(androidGradlePluginVersionString: String) = createCompatibilityWarningMessage(
             "The applied Android Gradle Plugin version ($androidGradlePluginVersionString) " +
                     "is higher than the maximum known to the Kotlin Gradle Plugin. " +
-                    "Tooling stability in such configuration isn't tested, please report encountered issues to kotl.in/issue"
+                    "Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue"
         )
 
         private fun createCompatibilityWarningMessage(warning: String) = buildString {
@@ -144,7 +144,7 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
                         "${compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.major}." +
                         "${compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.minor}"
             )
-            appendLine("To suppress this message add $KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN=true to your gradle.properties")
+            appendLine("To suppress this message add '$KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN=true' to your gradle.properties")
         }
     }
 }
