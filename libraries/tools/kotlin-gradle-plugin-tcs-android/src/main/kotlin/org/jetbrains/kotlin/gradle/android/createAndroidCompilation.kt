@@ -6,16 +6,22 @@
 package org.jetbrains.kotlin.gradle.android
 
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.android.build.gradle.internal.publishing.AndroidArtifacts.ARTIFACT_TYPE
 import org.gradle.api.attributes.java.TargetJvmEnvironment
+import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
 import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.gradle.android.AndroidKotlinSourceSet.Companion.android
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.DecoratedKotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 
+
 internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): PrototypeAndroidCompilation {
     return createCompilation {
         compilationName = name
-        defaultSourceSet = kotlin.sourceSets.maybeCreate(camelCase("prototype", targetName, name))
+        defaultSourceSet = kotlin.sourceSets.maybeCreate(camelCase("prototype", targetName, name)).apply {
+            android = AndroidKotlinSourceSet()
+        }
         decoratedKotlinCompilationFactory = DecoratedKotlinCompilationFactory(::PrototypeAndroidCompilation)
         compileTaskName = camelCase("prototype", "compile", targetName, name)
 
@@ -35,14 +41,14 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
         configure { compilation ->
             /* Setup attributes for the compile dependencies */
             compilation.configurations.compileDependencyConfiguration.apply {
-                attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
-                attributes.attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+                attributes.attribute(ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+                attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
             }
 
             /* Setup attributes for the runtime dependencies */
             compilation.configurations.runtimeDependencyConfiguration?.apply {
-                attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
-                attributes.attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+                attributes.attribute(ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+                attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
             }
         }
     }

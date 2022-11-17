@@ -9,8 +9,29 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.gradle.android.AndroidKotlinSourceSet.Companion.android
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.util.concurrent.Callable
 
 internal fun Project.androidBootClasspath(): FileCollection {
     return project.files(Callable { project.extensions.getByType<BaseExtension>().bootClasspath })
+}
+
+internal class AndroidBootClasspathIdeDependencyResolver(private val project: Project) : IdeDependencyResolver {
+    override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
+        if (sourceSet.android == null) return emptySet()
+        return project.androidBootClasspath().files.map { file ->
+            IdeaKotlinResolvedBinaryDependency(
+                binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
+                binaryFile = file,
+                extras = mutableExtrasOf(),
+                coordinates = IdeaKotlinBinaryCoordinates("com.android", "sdk", "7.4")
+            )
+        }.toSet()
+    }
 }

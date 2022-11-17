@@ -14,10 +14,12 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.gradle.android.AndroidKotlinSourceSet.Companion.android
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 
@@ -80,6 +82,15 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
             /* TODO w/ Google: Find a way to deprecate this attribute */
             configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
             configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+        }
+
+        configureIdeImport {
+            registerDependencyResolver(
+                AndroidBootClasspathIdeDependencyResolver(project),
+                constraint = IdeMultiplatformImport.SourceSetConstraint { sourceSet -> sourceSet.android != null },
+                phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+                level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            )
         }
     }
 

@@ -13,6 +13,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.markConsumable
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
@@ -77,6 +78,7 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     descriptor.runtimeElements.configure?.invoke(decorated, runtimeElementsConfiguration)
     descriptor.apiElementsPublished.configure?.invoke(decorated, apiElementsPublishedConfiguration)
     descriptor.runtimeElementsPublished.configure?.invoke(decorated, runtimeElementsPublishedConfiguration)
+    descriptor.configureIdeImport?.invoke(project.kotlinIdeMultiplatformImport)
 
     targets.add(decorated)
     decorated.logger.info("Created ${descriptor.platformType} target")

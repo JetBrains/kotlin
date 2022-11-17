@@ -11,14 +11,15 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -29,6 +30,8 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     final override val project: Project,
     val displayName: String
 ) : AbstractKotlinSourceSet() {
+
+    override val extras: MutableExtras = mutableExtrasOf()
 
     override val apiConfigurationName: String
         get() = disambiguateName(API)

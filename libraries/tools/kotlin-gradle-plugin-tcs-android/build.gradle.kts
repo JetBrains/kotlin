@@ -7,6 +7,7 @@ dependencies {
     compileOnly(gradleKotlinDsl())
     compileOnly("com.android.tools.build:gradle:7.2.1")
     compileOnly(project(":kotlin-gradle-plugin"))
+    compileOnly(project(":kotlin-gradle-plugin-idea"))
 }
 
 configureKotlinCompileTasksGradleCompatibility()
