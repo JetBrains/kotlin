@@ -1689,7 +1689,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             build(*params, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
                 assertSuccessful()
                 assertTasksExecuted(":jvm-app:publishMainPublicationToMavenRepository")
-                assertTasksExecuted(":js-app:publishMainPublicationToMavenRepository")
+                assertTasksExecuted(":js-app:publishMavenPublicationToMavenRepository")
 
                 val jvmModuleDir = groupDir + "jvm-app/1.0/"
                 val jsModuleDir = groupDir + "js-app/1.0/"
@@ -1700,11 +1700,6 @@ class NewMultiplatformIT : BaseGradleIT() {
                     assertTrue("The JVM POM should contain the dependency on 'mpp-lib' rewritten as 'mpp-lib-myjvm'") {
                         jvmPom.contains(
                             "<groupId>com.example</groupId><artifactId>mpp-lib-myjvm</artifactId><version>1.0</version><scope>compile</scope>"
-                        )
-                    }
-                    assertTrue("The JS POM should contain the dependency on 'mpp-lib' rewritten as 'mpp-lib-js'") {
-                        jsPom.contains(
-                            "<groupId>com.example</groupId><artifactId>mpp-lib-js</artifactId><version>1.0</version><scope>compile</scope>"
                         )
                     }
                 } else {

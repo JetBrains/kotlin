@@ -50,15 +50,11 @@ class MultiplatformGradleIT : BaseGradleIT() {
                 ":lib:compileTestKotlinCommon",
                 ":libJvm:compileKotlin",
                 ":libJvm:compileTestKotlin",
-                ":libJs:compileKotlin2Js",
-                ":libJs:compileTestKotlin2Js"
             )
             assertFileExists("lib/build/classes/kotlin/main/foo/PlatformClass.kotlin_metadata")
             assertFileExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
             assertFileExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
             assertFileExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
-            assertFileExists("libJs/build/classes/kotlin/main/libJs.js")
-            assertFileExists("libJs/build/classes/kotlin/test/libJs_test.js")
         }
 
         project.projectDir.resolve("gradle.properties").appendText("\nkotlin.internal.mpp12x.deprecation.suppress=true")
@@ -113,7 +109,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
             // plugins separately for the subproject, with a different class loader:
-            File(projectDir, "libJs/build.gradle").modify {
+            File(projectDir, "libJvm/build.gradle").modify {
                 "plugins { id 'com.moowork.node' version '1.3.1' }" + "\n" + it
             }
 
@@ -124,7 +120,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
             }
 
             // Instead, add the dependencies directly to the subprojects buildscripts:
-            listOf("lib", "libJvm", "libJs").forEach { subDirectory ->
+            listOf("lib", "libJvm").forEach { subDirectory ->
                 File(projectDir, "$subDirectory/build.gradle").modify {
                     """
                     buildscript {
@@ -150,9 +146,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
     @Test
     fun testIncrementalBuild(): Unit = Project("multiplatformProject").run {
         val compileCommonTask = ":lib:compileKotlinCommon"
-        val compileJsTask = ":libJs:compileKotlin2Js"
         val compileJvmTask = ":libJvm:compileKotlin"
-        val allKotlinTasks = listOf(compileCommonTask, compileJsTask, compileJvmTask)
+        val allKotlinTasks = listOf(compileCommonTask, compileJvmTask)
 
         build("build") {
             assertSuccessful()
@@ -170,15 +165,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
         build("build") {
             assertSuccessful()
             assertTasksExecuted(compileJvmTask)
-            assertTasksUpToDate(compileCommonTask, compileJsTask)
-        }
-
-        val jsProjectDir = File(projectDir, "libJs")
-        jsProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
-        build("build") {
-            assertSuccessful()
-            assertTasksExecuted(compileJsTask)
-            assertTasksUpToDate(compileCommonTask, compileJvmTask)
+            assertTasksUpToDate(compileCommonTask)
         }
     }
 
@@ -191,7 +178,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
             val commonTasks = listOf("libA", "libB").flatMap { module ->
                 sourceSets.map { sourceSet -> ":$module:compile${sourceSet}KotlinCommon" }
             }
-            val platformTasks = listOf("libJvm" to "", "libJs" to "2Js").flatMap { (module, platformSuffix) ->
+            val platformTasks = listOf("libJvm" to "").flatMap { (module, platformSuffix) ->
                 sourceSets.map { sourceSet -> ":$module:compile${sourceSet}Kotlin$platformSuffix" }
             }
             assertTasksExecuted(commonTasks + platformTasks)
@@ -219,11 +206,10 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
         gradleBuildScript("lib").appendText("\ncompileKotlinCommon.$overrideCompilerArgs")
         gradleBuildScript("libJvm").appendText("\ncompileKotlin.$overrideCompilerArgs")
-        gradleBuildScript("libJs").appendText("\ncompileKotlin2Js.$overrideCompilerArgs")
 
         build("build") {
             assertSuccessful()
-            assertTasksExecuted(":lib:compileKotlinCommon", ":libJvm:compileKotlin", ":libJs:compileKotlin2Js")
+            assertTasksExecuted(":lib:compileKotlinCommon", ":libJvm:compileKotlin")
         }
     }
 
@@ -292,14 +278,13 @@ class MultiplatformGradleIT : BaseGradleIT() {
         val sourceSetName = "foo"
         val sourceSetDeclaration = "\nsourceSets { $sourceSetName { } }"
 
-        listOf("lib", "libJvm", "libJs").forEach { module ->
+        listOf("lib", "libJvm").forEach { module ->
             gradleBuildScript(module).appendText(sourceSetDeclaration)
         }
 
         listOf(
             "expect fun foo(): String" to "lib/src/$sourceSetName/kotlin",
             "actual fun foo(): String = \"jvm\"" to "libJvm/src/$sourceSetName/kotlin",
-            "actual fun foo(): String = \"js\"" to "libJs/src/$sourceSetName/kotlin"
         ).forEach { (code, path) ->
             File(projectDir, path).run {
                 mkdirs();
@@ -307,7 +292,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
             }
         }
 
-        val customSourceSetCompileTasks = listOf(":lib" to "Common", ":libJs" to "2Js", ":libJvm" to "")
+        val customSourceSetCompileTasks = listOf(":lib" to "Common", ":libJvm" to "")
             .map { (module, platform) -> "$module:compile${sourceSetName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}Kotlin$platform" }
 
         build(*customSourceSetCompileTasks.toTypedArray(), options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {

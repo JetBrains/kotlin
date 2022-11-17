@@ -110,7 +110,6 @@ class KotlinProjectIT : KGPBaseTest() {
         project("multiplatformProject", gradleVersion) {
             getModels<KotlinProject> {
                 val libKotlinProject = getModel(":lib")!!
-                val libJsKotlinProject = getModel(":libJs")!!
                 val libJvmKotlinProject = getModel(":libJvm")!!
 
                 libKotlinProject.assertBasics(
@@ -118,44 +117,14 @@ class KotlinProjectIT : KGPBaseTest() {
                     defaultBuildOptions.kotlinVersion,
                     KotlinProject.ProjectType.PLATFORM_COMMON,
                 )
-                libJsKotlinProject.assertBasics(
-                    "libJs",
-                    defaultBuildOptions.kotlinVersion,
-                    KotlinProject.ProjectType.PLATFORM_JS,
-                )
                 libJvmKotlinProject.assertBasics(
                     "libJvm",
                     defaultBuildOptions.kotlinVersion,
                     KotlinProject.ProjectType.PLATFORM_JVM,
                 )
 
-                assertEquals(1, libJsKotlinProject.expectedByDependencies.size)
-                assertTrue(libJsKotlinProject.expectedByDependencies.contains(":lib"))
-
                 assertEquals(1, libJvmKotlinProject.expectedByDependencies.size)
                 assertTrue(libJvmKotlinProject.expectedByDependencies.contains(":lib"))
-
-
-                assertEquals(2, libJsKotlinProject.sourceSets.size)
-                val mainJsSourceSet = libJsKotlinProject.sourceSets.single { it.name == "main" }
-                val testJsSourceSet = libJsKotlinProject.sourceSets.single { it.name == "test" }
-
-                mainJsSourceSet.assertBasics("main", SourceSet.SourceSetType.PRODUCTION, emptySet())
-                testJsSourceSet.assertBasics("test", SourceSet.SourceSetType.TEST, listOf("main"))
-
-                assertEquals(1, mainJsSourceSet.sourceDirectories.size)
-                assertTrue(mainJsSourceSet.sourceDirectories.contains(projectPath.resolve("libJs/src/main/kotlin").toFile()))
-                assertEquals(1, mainJsSourceSet.resourcesDirectories.size)
-                assertTrue(mainJsSourceSet.resourcesDirectories.contains(projectPath.resolve("libJs/src/main/resources").toFile()))
-                assertEquals(projectPath.resolve("libJs/build/classes/kotlin/main").toFile(), mainJsSourceSet.classesOutputDirectory)
-                assertEquals(projectPath.resolve("libJs/build/resources/main").toFile(), mainJsSourceSet.resourcesOutputDirectory)
-
-                assertEquals(1, testJsSourceSet.sourceDirectories.size)
-                assertTrue(testJsSourceSet.sourceDirectories.contains(projectPath.resolve("libJs/src/test/kotlin").toFile()))
-                assertEquals(1, testJsSourceSet.resourcesDirectories.size)
-                assertTrue(testJsSourceSet.resourcesDirectories.contains(projectPath.resolve("libJs/src/test/resources").toFile()))
-                assertEquals(projectPath.resolve("libJs/build/classes/kotlin/test").toFile(), testJsSourceSet.classesOutputDirectory)
-                assertEquals(projectPath.resolve("libJs/build/resources/test").toFile(), testJsSourceSet.resourcesOutputDirectory)
             }
         }
     }

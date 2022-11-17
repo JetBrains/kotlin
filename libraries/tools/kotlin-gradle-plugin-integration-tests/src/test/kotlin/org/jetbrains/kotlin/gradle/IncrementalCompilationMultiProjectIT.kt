@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -33,13 +34,16 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         "implementation \"org.jetbrains.kotlin:kotlin-test-js:${'$'}kotlin_version\""
 
     override val compileKotlinTaskName: String
-        get() = "compileKotlin2Js"
+        get() = "compileKotlinJs"
 
     override val compileCacheFolderName: String
         get() = "caches-js"
 
-    //compileKotlin2Js's modification doe not work
+    @Disabled("compileKotlinJs's modification does not work")
     override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
+
+    @Disabled("In JS IR all dependencies effectively api, not implementation")
+    override fun testAddDependencyInLib(gradleVersion: GradleVersion) {}
 
     @DisplayName("Add new dependency in lib project")
     @GradleTest
