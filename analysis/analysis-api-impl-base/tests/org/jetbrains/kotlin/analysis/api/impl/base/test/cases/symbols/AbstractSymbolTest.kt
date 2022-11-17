@@ -85,11 +85,19 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
             analyseForTest(ktFile) {
                 val (symbols, symbolForPrettyRendering) = collectSymbols(ktFile, testServices)
 
-                val pointerWithRenderedSymbol = symbols.map { symbol ->
-                    PointerWithRenderedSymbol(
-                        symbol.safePointer(),
-                        renderSymbolForComparison(symbol),
-                    )
+                val pointerWithRenderedSymbol = symbols.flatMap { symbol ->
+                    listOf(
+                        PointerWithRenderedSymbol(
+                            symbol.safePointer(),
+                            renderSymbolForComparison(symbol),
+                        )
+                    ) + symbol.withImplicitSymbols().map { implicitSymbol ->
+                        PointerWithRenderedSymbol(
+                            implicitSymbol.safePointer(),
+                            renderSymbolForComparison(implicitSymbol),
+                            shouldBeRendered = false,
+                        )
+                    }
                 }
 
                 val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
@@ -105,7 +113,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
                             is KtReceiverParameterSymbol -> DebugSymbolRenderer().render(symbol)
                             else -> error(symbol::class.toString())
-                        }
+                        },
                     )
                 }
 
@@ -168,7 +176,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
     }
 
     private fun List<PointerWithRenderedSymbol>.renderDeclarations(): String =
-        map { it.rendered }.renderAsDeclarations()
+        mapNotNull { it.rendered.takeIf { _ -> it.shouldBeRendered } }.renderAsDeclarations()
 
     private fun List<String>.renderAsDeclarations(): String =
         if (isEmpty()) "NO_SYMBOLS"
@@ -184,10 +192,16 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         var failed = false
         try {
             val restored = analyseForTest(ktFile) {
-                pointersWithRendered.map { (pointerWrapper, expectedRender) ->
+                pointersWithRendered.mapNotNull { (pointerWrapper, expectedRender, shouldBeRendered) ->
                     val pointer = pointerWrapper?.let(pointerAccessor) ?: error("Symbol pointer for $expectedRender was not created")
                     val restored = pointer.restoreSymbol() ?: error("Symbol $expectedRender was not restored")
-                    renderSymbolForComparison(restored)
+                    val actualRender = renderSymbolForComparison(restored)
+                    if (shouldBeRendered) {
+                        actualRender
+                    } else {
+                        testServices.assertions.assertEquals(expectedRender, actualRender) { "${restored::class}" }
+                        null
+                    }
                 }
             }
 
@@ -259,9 +273,18 @@ private data class SymbolPointersData(
 private data class PointerWithRenderedSymbol(
     val pointer: PointerWrapper?,
     val rendered: String,
+    val shouldBeRendered: Boolean = true,
 )
 
 private data class PointerWrapper(
     val regularPointer: KtSymbolPointer<*>,
     val pointerWithoutPsiAnchor: KtSymbolPointer<*>?,
 )
+
+private fun KtSymbol?.withImplicitSymbols(): List<KtSymbol> = when (this) {
+    null -> emptyList()
+    is KtPropertySymbol -> listOf(this) + setter.withImplicitSymbols() + getter.withImplicitSymbols()
+    is KtPropertySetterSymbol -> listOf(this) + parameter
+    is KtValueParameterSymbol -> listOf(this) + generatedPrimaryConstructorProperty.withImplicitSymbols()
+    else -> listOf(this)
+}

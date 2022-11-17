@@ -46,9 +46,9 @@ internal class KtFirValueParameterSymbol(
             firSymbol.source?.kind == KtFakeSourceElementKind.ItLambdaParameter
         }
 
-    override val isCrossinline: Boolean get() = withValidityAssertion { firSymbol.isCrossinline}
+    override val isCrossinline: Boolean get() = withValidityAssertion { firSymbol.isCrossinline }
 
-    override val isNoinline: Boolean get() = withValidityAssertion { firSymbol.isNoinline}
+    override val isNoinline: Boolean get() = withValidityAssertion { firSymbol.isNoinline }
 
     override val returnType by cached {
         val returnType = firSymbol.resolvedReturnType
@@ -64,7 +64,13 @@ internal class KtFirValueParameterSymbol(
 
     override val hasDefaultValue: Boolean get() = withValidityAssertion { firSymbol.hasDefaultValue }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
+    override val annotationsList by cached {
+        KtFirAnnotationListForDeclaration.create(
+            firSymbol,
+            firResolveSession.useSiteFirSession,
+            token,
+        )
+    }
 
     override val generatedPrimaryConstructorProperty: KtKotlinPropertySymbol? by cached {
         val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return@cached null
@@ -72,6 +78,7 @@ internal class KtFirValueParameterSymbol(
         check(ktPropertySymbol is KtKotlinPropertySymbol) {
             "Unexpected symbol for primary constructor property ${ktPropertySymbol.javaClass} for fir: ${firSymbol.fir.renderWithType()}"
         }
+
         ktPropertySymbol
     }
 
@@ -79,14 +86,16 @@ internal class KtFirValueParameterSymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtValueParameterSymbol>(this)?.let { return it }
 
         analyze(firResolveSession.useSiteKtModule) {
-            val owner = getContainingSymbol() as KtFunctionLikeSymbol
-            val firFunction = owner.firSymbol.fir as FirFunction
+            when (val owner = getContainingSymbol()) {
+                is KtFunctionLikeSymbol ->
+                    KtFirValueParameterSymbolPointer(
+                        owner.createPointer(),
+                        name,
+                        (owner.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
+                    )
 
-            KtFirValueParameterSymbolPointer(
-                owner.createPointer(),
-                name,
-                firFunction.valueParameters.indexOf(firSymbol.fir),
-            )
+                else -> error("${requireNotNull(owner)::class}")
+            }
         }
     }
 

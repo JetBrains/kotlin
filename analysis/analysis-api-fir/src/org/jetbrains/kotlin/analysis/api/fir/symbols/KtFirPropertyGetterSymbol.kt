@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirPropertyAccessorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KtPropertyAccessorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
@@ -57,8 +58,14 @@ internal class KtFirPropertyGetterSymbol(
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.fir.propertySymbol.receiver(builder) }
-    
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
+
+    override val annotationsList by cached {
+        KtFirAnnotationListForDeclaration.create(
+            firSymbol,
+            firResolveSession.useSiteFirSession,
+            token,
+        )
+    }
 
     /**
      * Returns [CallableId] of the delegated Java method if the corresponding property of this setter is a synthetic Java property.
@@ -76,11 +83,12 @@ internal class KtFirPropertyGetterSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
 
+    @OptIn(KtAnalysisApiInternals::class)
     override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertyGetterSymbol>(this)?.let { return it }
 
         @Suppress("UNCHECKED_CAST")
-        KtFirPropertyAccessorSymbolPointer(requireOwnerPointer(), isGetter = true) as KtSymbolPointer<KtPropertyGetterSymbol>
+        KtPropertyAccessorSymbolPointer(requireOwnerPointer(), isGetter = true) as KtSymbolPointer<KtPropertyGetterSymbol>
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
