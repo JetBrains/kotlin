@@ -967,12 +967,14 @@ internal class KtFirCallResolver(
         psi: KtElement,
         resolveFragmentOfCall: Boolean
     ): List<KtCallCandidateInfo> {
-        val parent = psi.parent
-        fun findDerivedClass(psi: KtElement): KtClassOrObject? = when (psi) {
-            is KtConstructorDelegationCall -> ((parent as? KtSecondaryConstructor)?.parent as? KtClassBody)?.parent as? KtClassOrObject
-            is KtSuperTypeCallEntry -> (parent as? KtSuperTypeList)?.parent as? KtClassOrObject
-            is KtConstructorCalleeExpression -> (parent as? KtElement)?.let(::findDerivedClass)
-            else -> null
+        fun findDerivedClass(psi: KtElement): KtClassOrObject? {
+            val parent = psi.parent
+            return when (psi) {
+                is KtConstructorDelegationCall -> ((parent as? KtSecondaryConstructor)?.parent as? KtClassBody)?.parent as? KtClassOrObject
+                is KtSuperTypeCallEntry -> (parent as? KtSuperTypeList)?.parent as? KtClassOrObject
+                is KtConstructorCalleeExpression -> (parent as? KtElement)?.let(::findDerivedClass)
+                else -> null
+            }
         }
 
         val derivedClass = findDerivedClass(psi)
