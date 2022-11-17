@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS
 // EXPECTED_REACHABLE_NODES: 1282
 // CHECK_COMMENT_EXISTS: text="Single line comment" multiline=false
 // CHECK_COMMENT_EXISTS: text="Second single line comment" multiline=false
