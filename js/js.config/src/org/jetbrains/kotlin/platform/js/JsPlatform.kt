@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.platform.js
 
 import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isJs as _isJs
 
 @Suppress("DEPRECATION_ERROR")
 object JsPlatforms {
@@ -28,3 +29,9 @@ object JsPlatforms {
 
     val allJsPlatforms: List<TargetPlatform> = listOf(defaultJsPlatform)
 }
+
+@Deprecated(
+    "For binary compatibility, please use org.jetbrains.kotlin.platform.isJs",
+    ReplaceWith("this.isJs()", "org.jetbrains.kotlin.platform.isJs")
+)
+fun TargetPlatform?.isJs(): Boolean = _isJs()
