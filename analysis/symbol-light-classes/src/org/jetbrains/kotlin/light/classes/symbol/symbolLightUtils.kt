@@ -9,7 +9,6 @@ import com.intellij.psi.*
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAn
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiExpression
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiLiteral
+import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
@@ -296,16 +296,16 @@ internal fun hasTypeParameters(
     ktModule: KtModule,
     declaration: KtTypeParameterListOwner?,
     declarationPointer: KtSymbolPointer<KtSymbolWithTypeParameters>,
-): Boolean = declaration?.typeParameters?.isNotEmpty() ?: analyze(ktModule) {
+): Boolean = declaration?.typeParameters?.isNotEmpty() ?: analyzeForLightClasses(ktModule) {
     declarationPointer.restoreSymbolOrThrowIfDisposed().typeParameters.isNotEmpty()
 }
 
-internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyze(ktModule) {
+internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeForLightClasses(ktModule) {
     restoreSymbol() != null
 }
 
 internal fun <T : KtSymbol> compareSymbolPointers(ktModule: KtModule, left: KtSymbolPointer<T>, right: KtSymbolPointer<T>): Boolean {
-    return left === right || analyze(ktModule) {
+    return left === right || analyzeForLightClasses(ktModule) {
         left.restoreSymbol() == right.restoreSymbol()
     }
 }

@@ -10,7 +10,6 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeNullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -37,7 +37,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     method: SymbolLightMethodBase
 ) : SymbolLightParameterBase(method) {
     private inline fun <T> withReceiverType(crossinline action: context(KtAnalysisSession) (KtType) -> T): T {
-        return analyze(ktModule) {
+        return analyzeForLightClasses(ktModule) {
             val callableSymbol = callableSymbolWithReceiverPointer.restoreSymbolOrThrowIfDisposed()
             action(this, requireNotNull(callableSymbol.receiverType))
         }
@@ -49,10 +49,10 @@ internal class SymbolLightParameterForReceiver private constructor(
             callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
             method: SymbolLightMethodBase
         ): SymbolLightParameterForReceiver? {
-            val methodName = analyze(ktModule) {
+            val methodName = analyzeForLightClasses(ktModule) {
                 val callableSymbol = callableSymbolPointer.restoreSymbolOrThrowIfDisposed()
-                if (callableSymbol !is KtNamedSymbol) return@analyze null
-                if (!callableSymbol.isExtension || callableSymbol.receiverType == null) return@analyze null
+                if (callableSymbol !is KtNamedSymbol) return@analyzeForLightClasses null
+                if (!callableSymbol.isExtension || callableSymbol.receiverType == null) return@analyzeForLightClasses null
                 callableSymbol.name.asString()
             } ?: return null
 
@@ -110,7 +110,7 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     override fun hashCode(): Int = _name.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && analyze(ktModule) {
+    override fun isValid(): Boolean = super.isValid() && analyzeForLightClasses(ktModule) {
         callableSymbolWithReceiverPointer.restoreSymbol()?.receiverType != null
     }
 }
