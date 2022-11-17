@@ -227,7 +227,7 @@ internal class SymbolLightAccessorMethod(
                     if (propertyParameter != null) {
                         builder.addParameter(
                             SymbolLightSetterParameter(
-                                propertySymbol(), propertyParameter, this@SymbolLightAccessorMethod
+                                containingPropertySymbolPointer, propertyParameter, this@SymbolLightAccessorMethod
                             )
                         )
                     }
