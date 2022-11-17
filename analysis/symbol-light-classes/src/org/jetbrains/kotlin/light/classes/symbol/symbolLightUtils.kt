@@ -299,3 +299,13 @@ internal fun hasTypeParameters(
 ): Boolean = declaration?.typeParameters?.isNotEmpty() ?: analyze(ktModule) {
     declarationPointer.restoreSymbolOrThrowIfDisposed().typeParameters.isNotEmpty()
 }
+
+internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyze(ktModule) {
+    restoreSymbol() != null
+}
+
+internal fun <T : KtSymbol> compareSymbolPointers(ktModule: KtModule, left: KtSymbolPointer<T>, right: KtSymbolPointer<T>): Boolean {
+    return left === right || analyze(ktModule) {
+        left.restoreSymbol() == right.restoreSymbol()
+    }
+}

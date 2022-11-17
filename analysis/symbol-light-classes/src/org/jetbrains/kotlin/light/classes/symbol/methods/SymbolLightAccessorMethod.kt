@@ -214,9 +214,7 @@ internal class SymbolLightAccessorMethod(
         return isGetter == other.isGetter &&
                 other.propertyAccessorDeclaration == null &&
                 ktModule == other.ktModule &&
-                analyzeForLightClasses(ktModule) {
-                    propertyAccessorSymbolPointer.restoreSymbol() == other.propertyAccessorSymbolPointer.restoreSymbol()
-                }
+                compareSymbolPointers(ktModule, propertyAccessorSymbolPointer, other.propertyAccessorSymbolPointer)
     }
 
     override fun hashCode(): Int = propertyAccessorDeclaration.hashCode()
@@ -249,8 +247,8 @@ internal class SymbolLightAccessorMethod(
 
     override fun getParameterList(): PsiParameterList = _parametersList
 
-    override fun isValid(): Boolean = super.isValid() &&
-            propertyAccessorDeclaration?.isValid ?: analyzeForLightClasses(ktModule) { propertyAccessorSymbolPointer.restoreSymbol() != null }
+    override fun isValid(): Boolean =
+        super.isValid() && propertyAccessorDeclaration?.isValid ?: propertyAccessorSymbolPointer.isValid(ktModule)
 
     override fun isOverride(): Boolean = analyzeForLightClasses(ktModule) { propertyAccessorSymbol().isOverride }
 

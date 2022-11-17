@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
@@ -74,7 +75,5 @@ internal class SymbolLightSuspendContinuationParameter(
 
     override fun hashCode(): Int = name.hashCode() * 31 + containingMethod.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && analyze(ktModule) {
-        functionSymbolPointer.restoreSymbol() != null
-    }
+    override fun isValid(): Boolean = super.isValid() && functionSymbolPointer.isValid(ktModule)
 }

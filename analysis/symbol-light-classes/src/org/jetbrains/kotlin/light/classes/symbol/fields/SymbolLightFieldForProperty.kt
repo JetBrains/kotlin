@@ -160,14 +160,10 @@ internal class SymbolLightFieldForProperty(
                 fieldName == other.fieldName &&
                 containingClass == other.containingClass &&
                 ktModule == other.ktModule &&
-                analyzeForLightClasses(ktModule) {
-                    propertySymbolPointer.restoreSymbol() == other.propertySymbolPointer.restoreSymbol()
-                }
+                compareSymbolPointers(ktModule, propertySymbolPointer, other.propertySymbolPointer)
     }
 
     override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: fieldName.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: analyzeForLightClasses(ktModule) {
-        propertySymbolPointer.restoreSymbol() != null
-    }
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: propertySymbolPointer.isValid(ktModule)
 }

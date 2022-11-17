@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
+import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendContinuationParameter
@@ -106,9 +108,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
     override val kotlinOrigin: KtDeclaration? =
         functionDeclaration ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>()
 
-    override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: analyzeForLightClasses(ktModule) {
-        functionSymbolPointer.restoreSymbol() != null
-    }
+    override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: functionSymbolPointer.isValid(ktModule)
 
     override fun isOverride(): Boolean = withFunctionSymbol { it.getDirectlyOverriddenSymbols().isNotEmpty() }
 
@@ -123,9 +123,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
         return other.functionDeclaration == null &&
                 fieldsEquals(other) &&
                 containingClass == other.containingClass &&
-                analyzeForLightClasses(ktModule) {
-                    functionSymbolPointer.restoreSymbol() == other.functionSymbolPointer.restoreSymbol()
-                }
+                compareSymbolPointers(ktModule, functionSymbolPointer, other.functionSymbolPointer)
     }
 
     private fun fieldsEquals(other: SymbolLightMethod<*>): Boolean {

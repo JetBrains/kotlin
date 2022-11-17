@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeNullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
@@ -105,9 +106,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightParameterForReceiver &&
             ktModule == other.ktModule &&
-            analyze(ktModule) {
-                callableSymbolWithReceiverPointer.restoreSymbol() == other.callableSymbolWithReceiverPointer.restoreSymbol()
-            }
+            compareSymbolPointers(ktModule, callableSymbolWithReceiverPointer, other.callableSymbolWithReceiverPointer)
 
     override fun hashCode(): Int = _name.hashCode()
 
