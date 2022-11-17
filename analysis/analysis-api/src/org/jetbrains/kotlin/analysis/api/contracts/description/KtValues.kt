@@ -30,8 +30,11 @@ public sealed class KtAbstractConstantReference(name: String, token: KtLifetimeT
      * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference]
      * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference]
      */
-    public class KtBooleanConstantReference(name: String, token: KtLifetimeToken) :
-        KtAbstractConstantReference(name, token), KtBooleanExpression
+    public sealed class KtBooleanConstantReference(name: String, token: KtLifetimeToken) :
+        KtAbstractConstantReference(name, token), KtBooleanExpression {
+        public class KtTrue(token: KtLifetimeToken) : KtBooleanConstantReference("TRUE", token)
+        public class KtFalse(token: KtLifetimeToken) : KtBooleanConstantReference("FALSE", token)
+    }
 }
 
 public sealed class KtAbstractValueParameterReference(

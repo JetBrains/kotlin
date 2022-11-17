@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtAbstractConstantReference.KtBooleanConstantReference
 import org.jetbrains.kotlin.analysis.api.contracts.description.KtAbstractValueParameterReference.KtBooleanValueParameterReference
 import org.jetbrains.kotlin.analysis.api.contracts.description.KtAbstractValueParameterReference.KtValueParameterReference
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -68,7 +69,11 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
         booleanConstantDescriptor: BooleanConstantReference,
         data: Unit
     ): KtContractDescriptionElement =
-        KtAbstractConstantReference.KtBooleanConstantReference(booleanConstantDescriptor.name, analysisContext.token)
+        when (booleanConstantDescriptor) {
+            BooleanConstantReference.TRUE -> KtBooleanConstantReference.KtTrue(analysisContext.token)
+            BooleanConstantReference.FALSE -> KtBooleanConstantReference.KtFalse(analysisContext.token)
+            else -> error("Can't convert $booleanConstantDescriptor to Analysis API")
+        }
 
     override fun visitVariableReference(variableReference: VariableReference, data: Unit): KtContractDescriptionElement =
         visitVariableReference(variableReference, ::KtValueParameterReference)

@@ -152,6 +152,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends
         }
 
         @Test
+        @TestMetadata("returnsFalseContract.kt")
+        public void testReturnsFalseContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsFalseContract.kt");
+        }
+
+        @Test
         @TestMetadata("returnsNotNullContract.kt")
         public void testReturnsNotNullContract() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsNotNullContract.kt");

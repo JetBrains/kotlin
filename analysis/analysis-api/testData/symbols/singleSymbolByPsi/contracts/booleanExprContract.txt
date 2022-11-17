@@ -10,7 +10,7 @@ KtFunctionSymbol:
       effect:
         KtReturnsEffectDeclaration:
           value:
-            KtBooleanConstantReference:
+            KtTrueBooleanConstantReference:
               name: TRUE
       condition:
         KtBinaryLogicExpression:
