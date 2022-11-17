@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 
@@ -14,7 +15,11 @@ abstract class AbstractK2IncrementalJvmJpsTest(
     override fun overrideModuleSettings() {
         myProject.k2JvmCompilerArguments = K2JVMCompilerArguments().also {
             it.disableDefaultScriptingPlugin = true
-            it.useK2 = true
+            it.useIR = true
         }
+    }
+    override fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
+        additionalCommandLineArguments = additionalCommandLineArguments + listOf("-Xuse-k2", "-Xuse-fir-ic", "-Xuse-fir-lt")
+        super.updateCommandLineArguments(arguments)
     }
 }

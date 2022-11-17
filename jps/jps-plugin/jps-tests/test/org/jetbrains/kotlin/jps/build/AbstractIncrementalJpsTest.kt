@@ -246,7 +246,7 @@ abstract class AbstractIncrementalJpsTest(
         return build(null, CompileScopeTestBuilder.rebuild().allModules())
     }
 
-    private fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
+    protected open fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
         parseCommandLineArguments(additionalCommandLineArguments, arguments)
     }
 
