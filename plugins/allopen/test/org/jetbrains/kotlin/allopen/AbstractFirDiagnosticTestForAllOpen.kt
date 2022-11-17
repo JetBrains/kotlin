@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.allopen
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 
@@ -24,10 +25,21 @@ abstract class AbstractFirDiagnosticTestForAllOpen : AbstractFirDiagnosticTest()
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
 
-        builder.apply {
+        with(builder) {
             useConfigurators(::AllOpenEnvironmentConfigurator)
+            configurationForClassicAndFirTestsAlongside()
         }
+    }
+}
 
-        builder.configurationForClassicAndFirTestsAlongside()
+abstract class AbstractFirDiagnosticsWithLightTreeTestForAllOpen : AbstractFirDiagnosticTestForAllOpen() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+
+        with(builder) {
+            defaultDirectives {
+                +FirDiagnosticsDirectives.USE_LIGHT_TREE
+            }
+        }
     }
 }
