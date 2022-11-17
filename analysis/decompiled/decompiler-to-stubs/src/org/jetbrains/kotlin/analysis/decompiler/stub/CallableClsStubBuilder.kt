@@ -172,7 +172,7 @@ private class FunctionClsStubBuilder(
 
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // As functions are never decompiled to fun f() = 1 form, hasBlockBody is always true
-        // This info is anyway irrelevant for the purposes these stabs are used
+        // This info is anyway irrelevant for the purposes these stubs are used
         return KotlinFunctionStubImpl(
             parent,
             callableName.ref(),
@@ -241,7 +241,7 @@ private class PropertyClsStubBuilder(
         val callableName = c.nameResolver.getName(propertyProto.name)
 
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
-        // This info is anyway irrelevant for the purposes these stabs are used
+        // This info is anyway irrelevant for the purposes these stubs are used
         return KotlinPropertyStubImpl(
             parent,
             callableName.ref(),
@@ -296,7 +296,7 @@ private class ConstructorClsStubBuilder(
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // As decompiled code for secondary constructor would be just constructor(args) { /* compiled code */ } every secondary constructor
         // delegated call is not to this (as there is no this keyword) and it has body (while primary does not have one)
-        // This info is anyway irrelevant for the purposes these stabs are used
+        // This info is anyway irrelevant for the purposes these stubs are used
         return if (Flags.IS_SECONDARY.get(constructorProto.flags))
             KotlinConstructorStubImpl(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true, isDelegatedCallToThis = false)
         else
