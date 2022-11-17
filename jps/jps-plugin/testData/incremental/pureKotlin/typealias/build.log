@@ -1,0 +1,17 @@
+// Fix this testdata and mute fo old compiler
+
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/FooImpl.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/TypesKt.class
+  out/production/module/Foo.class
+End of files
+Compiling files:
+  src/FooImpl.kt
+  src/types.kt
+  src/Foo.kt
+End of files
+Exit code: OK
+------------------------------------------

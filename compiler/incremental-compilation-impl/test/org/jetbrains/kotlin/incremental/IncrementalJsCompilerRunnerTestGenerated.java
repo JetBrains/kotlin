@@ -681,6 +681,11 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/traitClassObjectConstantChanged/");
         }
 
+        @TestMetadata("typealias")
+        public void testTypealias() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/typealias/");
+        }
+
         @TestMetadata("valAddCustomAccessor")
         public void testValAddCustomAccessor() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/valAddCustomAccessor/");
