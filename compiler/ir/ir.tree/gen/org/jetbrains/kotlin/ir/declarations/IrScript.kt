@@ -26,9 +26,9 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         IrStatementContainer, IrMetadataSourceOwner {
     abstract override val symbol: IrScriptSymbol
 
-    abstract var thisReceiver: IrValueParameter
+    abstract var thisReceiver: IrValueParameter?
 
-    abstract var baseClass: IrType
+    abstract var baseClass: IrType?
 
     abstract var explicitCallParameters: List<IrValueParameter>
 
@@ -53,7 +53,7 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
-        thisReceiver.accept(visitor, data)
+        thisReceiver?.accept(visitor, data)
         explicitCallParameters.forEach { it.accept(visitor, data) }
         implicitReceiversParameters.forEach { it.accept(visitor, data) }
         providedPropertiesParameters.forEach { it.accept(visitor, data) }
@@ -62,7 +62,7 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         statements.transformInPlace(transformer, data)
-        thisReceiver = thisReceiver.transform(transformer, data)
+        thisReceiver = thisReceiver?.transform(transformer, data)
         explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer, data)
         implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer,
                 data)

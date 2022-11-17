@@ -86,7 +86,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                 it.owner != irScript && it.descriptor !in importedScripts
             }
             irScript.earlierScripts?.forEach {
-                context.symbolTable.introduceValueParameter(it.owner.thisReceiver)
+                context.symbolTable.introduceValueParameter(it.owner.thisReceiver!!)
             }
 
             fun createValueParameter(valueParameterDescriptor: ValueParameterDescriptor): IrValueParameter {
@@ -142,7 +142,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
             irScript.constructor = with(IrFunctionBuilder().apply {
                 isPrimary = true
-                returnType = irScript.thisReceiver.type as IrSimpleType
+                returnType = irScript.thisReceiver!!.type as IrSimpleType
             }) {
                 irScript.factory.createConstructor(
                     startOffset, endOffset, origin,
@@ -240,7 +240,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                             ).apply {
                                 value = irComponentCall
                                 receiver = IrGetValueImpl(
-                                    ktEntry.startOffsetSkippingComments, ktEntry.endOffset, irScript.thisReceiver.symbol
+                                    ktEntry.startOffsetSkippingComments, ktEntry.endOffset, irScript.thisReceiver!!.symbol
                                 )
                             }
                             irBlock.statements.add(irComponentInitializer)

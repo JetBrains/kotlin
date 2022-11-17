@@ -398,8 +398,8 @@ object IrTree : AbstractTreeBuilder() {
         +symbol(scriptSymbolType)
         // NOTE: is the result of the FE conversion, because there script interpreted as a class and has receiver
         // TODO: consider removing from here and handle appropriately in the lowering
-        +field("thisReceiver", valueParameter, mutable = true, isChild = true)
-        +field("baseClass", irTypeType, mutable = true)
+        +field("thisReceiver", valueParameter, mutable = true, isChild = true, nullable = true) // K1
+        +field("baseClass", irTypeType, mutable = true, nullable = true) // K1
         +listField("explicitCallParameters", valueParameter, mutability = Var, isChild = true)
         +listField("implicitReceiversParameters", valueParameter, mutability = Var, isChild = true)
         +listField("providedProperties", propertySymbolType, mutability = Var)
@@ -408,7 +408,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("earlierScriptsParameter", valueParameter, mutable = true, nullable = true, isChild = true)
         +listField("earlierScripts", scriptSymbolType, mutability = Var, nullable = true)
         +field("targetClass", classSymbolType, mutable = true, nullable = true)
-        +field("constructor", constructor, mutable = true, nullable = true)
+        +field("constructor", constructor, mutable = true, nullable = true) // K1
     }
     val simpleFunction: ElementConfig by element(Declaration) {
         visitorParent = function
