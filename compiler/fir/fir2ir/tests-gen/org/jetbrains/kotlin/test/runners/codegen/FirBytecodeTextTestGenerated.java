@@ -3836,6 +3836,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("kt33722.kt")
+        public void testKt33722() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/kt33722.kt");
+        }
+
+        @Test
         @TestMetadata("mangledInlineClassInterfaceImplementation.kt")
         public void testMangledInlineClassInterfaceImplementation() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/mangledInlineClassInterfaceImplementation.kt");
