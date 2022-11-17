@@ -9,14 +9,17 @@ import com.intellij.psi.*
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiExpression
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiLiteral
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import java.util.*
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
@@ -286,4 +290,12 @@ internal fun BitSet.copy(): BitSet = clone() as BitSet
 context(KtAnalysisSession)
 internal fun <T : KtSymbol> KtSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T = requireNotNull(restoreSymbol()) {
     "${this::class} pointer already disposed"
+}
+
+internal fun hasTypeParameters(
+    ktModule: KtModule,
+    declaration: KtTypeParameterListOwner?,
+    declarationPointer: KtSymbolPointer<KtSymbolWithTypeParameters>,
+): Boolean = declaration?.typeParameters?.isNotEmpty() ?: analyze(ktModule) {
+    declarationPointer.restoreSymbolOrThrowIfDisposed().typeParameters.isNotEmpty()
 }
