@@ -1,0 +1,17 @@
+logger.info("Including kotlin-ide modules in settings.gradle")
+def excludedModules = [
+        "tools/kotlin-maven-artifacts-publishing/intellij.kotlin.util.mavenArtifactsPublishing.iml",
+        "util/project-model-updater/kotlin.util.project-model-updater.iml",
+        "util/compiler-dependencies/kotlin.util.compiler-dependencies.iml",
+        "kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml"
+]
+def modulesIml = new File("${rootDir}/intellij/.idea/modules.xml").text
+def matcher = modulesIml =~ /filepath="(.+)"/ // TODO use some xml parser instead
+def modules = (0..<matcher.count)
+        .collect { matcher[it][1] }
+        .findAll { it.startsWithAny('$PROJECT_DIR$/community/plugins/kotlin/', '$PROJECT_DIR$/plugins/kotlin/') }
+        .collect {
+            it.startsWith('$PROJECT_DIR$/community/plugins/kotlin/') ? (it - '$PROJECT_DIR$/community/plugins/kotlin/') :
+                    (it.startsWith('$PROJECT_DIR$/plugins/kotlin/') ? (it - '$PROJECT_DIR$/plugins/kotlin/') : null)
+        }
+(modules - excludedModules).each { intellij it }
