@@ -307,6 +307,9 @@ internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
 
     val parameterName = Name.identifier("receiver")
     explicitReceiver?.let {
+        if (it is FirResolvedQualifier && it.resolvedToCompanionObject) {
+            return@let
+        }
         refinedArgument += RefinedArgument(parameterName, it)
     }
 
