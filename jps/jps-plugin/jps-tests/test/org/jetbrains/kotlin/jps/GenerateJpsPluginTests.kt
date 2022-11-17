@@ -32,6 +32,21 @@ fun main(args: Array<String>) {
                 )
             }
 
+            testClass<AbstractK2IncrementalJvmJpsTest> {
+                model("incremental/multiModule/common", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
+                model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "incremental/multiModule/multiplatform/custom", extension = null, excludeParentDirs = true,
+                    targetBackend = TargetBackend.JVM_IR
+                )
+                model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
+                model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
+                model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "incremental/classHierarchyAffected", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR
+                )
+            }
+
             testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
                 model(
                     "incremental/multiModule/multiplatform/withGeneratedContent", extension = null, excludeParentDirs = true,
