@@ -49,7 +49,7 @@ public class GroupingMessageCollector implements MessageCollector {
             @NotNull String message,
             @Nullable CompilerMessageSourceLocation location
     ) {
-        if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
+        if (severity == CompilerMessageSeverity.OUTPUT || CompilerMessageSeverity.VERBOSE.contains(severity)) {
             delegate.report(severity, message, location);
         }
         else {
