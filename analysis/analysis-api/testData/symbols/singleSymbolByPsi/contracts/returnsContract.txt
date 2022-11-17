@@ -30,7 +30,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: check
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -48,7 +48,7 @@ KtFunctionSymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []

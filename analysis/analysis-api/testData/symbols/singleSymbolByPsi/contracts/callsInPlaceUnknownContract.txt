@@ -26,7 +26,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: unknownContract
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -44,7 +44,7 @@ KtFunctionSymbol:
       isVararg: false
       name: block
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []

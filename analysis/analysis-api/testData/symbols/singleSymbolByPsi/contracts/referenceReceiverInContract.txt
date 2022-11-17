@@ -26,7 +26,13 @@ KtFunctionSymbol:
   modality: FINAL
   name: referenceReceiverInContract
   origin: SOURCE
-  receiverType: kotlin/Function0<kotlin/Unit>
+  receiverParameter: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
+    type: kotlin/Function0<kotlin/Unit>
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

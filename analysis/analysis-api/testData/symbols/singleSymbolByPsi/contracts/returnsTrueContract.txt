@@ -33,7 +33,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: returnsTrueContract
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -51,7 +51,7 @@ KtFunctionSymbol:
       isVararg: false
       name: foo
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
