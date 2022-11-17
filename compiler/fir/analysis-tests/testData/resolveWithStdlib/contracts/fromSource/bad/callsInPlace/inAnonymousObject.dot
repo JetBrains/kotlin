@@ -21,8 +21,8 @@ digraph inAnonymousObject_kt {
             4 [label="Exit anonymous object expression"];
             5 [label="Variable declaration: lval obj: R|<anonymous>|"];
             6 [label="Access variable R|<local>/obj|"];
-            7 [label="Function call: R|<local>/obj|.R|/<anonymous>.run|()"];
-            8 [label="Function call: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            7 [label="Function call: R|<local>/obj|.R|/<anonymous>.run|()" style="filled" fillcolor=yellow];
+            8 [label="Function call: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             9 [label="Exit block"];
         }
         10 [label="Exit function foo" style="filled" fillcolor=red];
@@ -54,7 +54,7 @@ digraph inAnonymousObject_kt {
     subgraph cluster_3 {
         color=red
         15 [label="Enter function <init>" style="filled" fillcolor=red];
-        16 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        16 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         17 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     15 -> {16};
@@ -95,7 +95,7 @@ digraph inAnonymousObject_kt {
         subgraph cluster_8 {
             color=blue
             28 [label="Enter block"];
-            29 [label="Function call: R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            29 [label="Function call: R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             30 [label="Exit block"];
         }
         31 [label="Exit function run" style="filled" fillcolor=red];

@@ -53,7 +53,7 @@ FILE: flowFromInplaceLambda3.kt
             R|<local>/x| = String()
         }
         )
-        R|<local>/x|.<Unresolved name: length>#
+        R|<local>/x|.R|kotlin/String.length|
     }
     public final fun test2(): R|kotlin/Unit| {
         lvar x: R|kotlin/Any?|

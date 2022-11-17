@@ -41,6 +41,8 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
         graph.traverse(TraverseDirection.Forward, object : ControlFlowGraphVisitorVoid() {
             override fun visitNode(node: CFGNode<*>) {}
 
+            override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
+
             override fun visitTryMainBlockEnterNode(node: TryMainBlockEnterNode) {
                 tryScopeCount++
             }

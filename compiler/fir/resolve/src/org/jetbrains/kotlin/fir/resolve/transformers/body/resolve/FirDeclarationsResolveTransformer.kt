@@ -270,6 +270,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
 
     private fun transformPropertyAccessorsWithDelegate(property: FirProperty) {
         context.forPropertyDelegateAccessors(property, resolutionContext, callCompleter) {
+            dataFlowAnalyzer.enterDelegateExpression()
             // Resolve delegate expression, after that, delegate will contain either expr.provideDelegate or expr
             if (property.isLocal) {
                 property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
@@ -281,7 +282,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
 
             property.transformAccessors()
             val completedCalls = completeCandidates()
-            dataFlowAnalyzer.exitDelegateExpression()
 
             val finalSubstitutor = createFinalSubstitutor()
 
@@ -297,6 +297,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 it.transformSingle(callCompletionResultsWriter, null)
             }
 
+            dataFlowAnalyzer.exitDelegateExpression()
             property
         }
     }
@@ -311,7 +312,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode,
     ): FirStatement {
-        dataFlowAnalyzer.enterDelegateExpression()
         // First, resolve delegate expression in dependent context
         val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent)
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)

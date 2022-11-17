@@ -63,6 +63,8 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
+        override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
+
         private fun getPropertySymbol(node: CFGNode<*>): FirPropertySymbol? {
             return (node.fir as? FirQualifiedAccess)?.referredPropertySymbol
         }

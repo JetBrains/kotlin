@@ -39,10 +39,10 @@ digraph safeCalls_kt {
             9 [label="Enter block"];
             10 [label="Access variable R|<local>/x|"];
             11 [label="Enter safe call"];
-            12 [label="Function call: $subj$.R|/A.foo|()"];
+            12 [label="Function call: $subj$.R|/A.foo|()" style="filled" fillcolor=yellow];
             13 [label="Enter safe call"];
             14 [label="Const: String()"];
-            15 [label="Function call: $subj$.R|/A.bar|(...)"];
+            15 [label="Function call: $subj$.R|/A.bar|(...)" style="filled" fillcolor=yellow];
             16 [label="Exit safe call"];
             17 [label="Exit safe call"];
             18 [label="Exit block"];
@@ -105,7 +105,7 @@ digraph safeCalls_kt {
                     36 [label="Enter safe call"];
                     37 [label="Access variable R|<local>/y|"];
                     38 [label="Type operator: (R|<local>/y| as R|kotlin/String|)"];
-                    39 [label="Function call: $subj$.R|/A.bar|(...)"];
+                    39 [label="Function call: $subj$.R|/A.bar|(...)" style="filled" fillcolor=yellow];
                     40 [label="Exit safe call"];
                     41 [label="Const: Null(null)"];
                     42 [label="Equality operator !="];

@@ -56,10 +56,10 @@ digraph boundSmartcasts_kt {
                     19 [label="Enter block"];
                     20 [label="Access variable R|<local>/x|"];
                     21 [label="Smart cast: R|<local>/x|"];
-                    22 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    22 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     23 [label="Access variable R|<local>/y|"];
                     24 [label="Smart cast: R|<local>/y|"];
-                    25 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    25 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     26 [label="Exit block"];
                 }
                 27 [label="Exit when branch result"];
@@ -117,10 +117,10 @@ digraph boundSmartcasts_kt {
                     42 [label="Enter block"];
                     43 [label="Access variable R|<local>/x|"];
                     44 [label="Smart cast: R|<local>/x|"];
-                    45 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    45 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     46 [label="Access variable R|<local>/y|"];
                     47 [label="Smart cast: R|<local>/y|"];
-                    48 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    48 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     49 [label="Exit block"];
                 }
                 50 [label="Exit when branch result"];
@@ -178,7 +178,7 @@ digraph boundSmartcasts_kt {
                     65 [label="Enter block"];
                     66 [label="Access variable R|<local>/z|"];
                     67 [label="Smart cast: R|<local>/z|"];
-                    68 [label="Function call: R|<local>/z|.R|/A.foo|()"];
+                    68 [label="Function call: R|<local>/z|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     69 [label="Exit block"];
                 }
                 70 [label="Exit when branch result"];
@@ -203,10 +203,10 @@ digraph boundSmartcasts_kt {
                     81 [label="Enter block"];
                     82 [label="Access variable R|<local>/z|"];
                     83 [label="Smart cast: R|<local>/z|"];
-                    84 [label="Function call: R|<local>/z|.<Unresolved name: foo>#()"];
+                    84 [label="Function call: R|<local>/z|.<Unresolved name: foo>#()" style="filled" fillcolor=yellow];
                     85 [label="Access variable R|<local>/z|"];
                     86 [label="Smart cast: R|<local>/z|"];
-                    87 [label="Function call: R|<local>/z|.R|/B.bar|()"];
+                    87 [label="Function call: R|<local>/z|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     88 [label="Exit block"];
                 }
                 89 [label="Exit when branch result"];
@@ -267,11 +267,11 @@ digraph boundSmartcasts_kt {
             98 [label="Type operator: (R|<local>/x| as R|kotlin/Int|)"];
             99 [label="Access variable R|<local>/x|"];
             100 [label="Smart cast: R|<local>/x|"];
-            101 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+            101 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
             102 [label="Access variable R|<local>/y|"];
             103 [label="Assignment: R|<local>/x|"];
             104 [label="Access variable R|<local>/x|"];
-            105 [label="Function call: R|<local>/x|.<Unresolved name: inc>#()"];
+            105 [label="Function call: R|<local>/x|.<Unresolved name: inc>#()" style="filled" fillcolor=yellow];
             subgraph cluster_24 {
                 color=blue
                 106 [label="Enter when"];
@@ -289,10 +289,10 @@ digraph boundSmartcasts_kt {
                     113 [label="Enter block"];
                     114 [label="Access variable R|<local>/x|"];
                     115 [label="Smart cast: R|<local>/x|"];
-                    116 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    116 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     117 [label="Access variable R|<local>/y|"];
                     118 [label="Smart cast: R|<local>/y|"];
-                    119 [label="Function call: R|<local>/y|.R|/A.foo|()"];
+                    119 [label="Function call: R|<local>/y|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     120 [label="Exit block"];
                 }
                 121 [label="Exit when branch result"];
@@ -337,7 +337,7 @@ digraph boundSmartcasts_kt {
     subgraph cluster_27 {
         color=red
         125 [label="Enter function <init>" style="filled" fillcolor=red];
-        126 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        126 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         127 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     125 -> {126};
@@ -394,16 +394,16 @@ digraph boundSmartcasts_kt {
             147 [label="Exit ?:"];
             148 [label="Variable declaration: lval a: R|kotlin/Any|"];
             149 [label="Access variable R|<local>/a|"];
-            150 [label="Function call: R|<local>/a|.R|/baz|()"];
+            150 [label="Function call: R|<local>/a|.R|/baz|()" style="filled" fillcolor=yellow];
             151 [label="Access variable R|<local>/d|"];
             152 [label="Access variable R|/D.any|"];
             153 [label="Smart cast: R|<local>/d|.R|/D.any|"];
-            154 [label="Function call: R|<local>/d|.R|/D.any|.R|/baz|()"];
+            154 [label="Function call: R|<local>/d|.R|/D.any|.R|/baz|()" style="filled" fillcolor=yellow];
             155 [label="Access variable R|<local>/a|"];
             156 [label="Type operator: (R|<local>/a| as R|A|)"];
             157 [label="Access variable R|<local>/a|"];
             158 [label="Smart cast: R|<local>/a|"];
-            159 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            159 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
             160 [label="Exit block"];
         }
         161 [label="Exit function test_5" style="filled" fillcolor=red];
@@ -446,15 +446,15 @@ digraph boundSmartcasts_kt {
             168 [label="Type operator: (R|<local>/a| as R|A|)"];
             169 [label="Access variable R|<local>/a|"];
             170 [label="Smart cast: R|<local>/a|"];
-            171 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            171 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
             172 [label="Access variable R|<local>/d1|"];
             173 [label="Access variable R|/D.any|"];
             174 [label="Smart cast: R|<local>/d1|.R|/D.any|"];
-            175 [label="Function call: R|<local>/d1|.R|/D.any|.R|/A.foo|()"];
+            175 [label="Function call: R|<local>/d1|.R|/D.any|.R|/A.foo|()" style="filled" fillcolor=yellow];
             176 [label="Access variable R|<local>/d1|"];
             177 [label="Access variable R|/D.any|"];
             178 [label="Smart cast: R|<local>/d1|.R|/D.any|"];
-            179 [label="Function call: R|<local>/d1|.R|/D.any|.R|/baz|()"];
+            179 [label="Function call: R|<local>/d1|.R|/D.any|.R|/baz|()" style="filled" fillcolor=yellow];
             180 [label="Exit block"];
         }
         181 [label="Exit function test_6" style="filled" fillcolor=red];
@@ -499,12 +499,12 @@ digraph boundSmartcasts_kt {
             195 [label="Type operator: (R|<local>/a| as R|A|)"];
             196 [label="Access variable R|<local>/a|"];
             197 [label="Smart cast: R|<local>/a|"];
-            198 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            198 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
             199 [label="Access variable R|<local>/b|"];
             200 [label="Type operator: (R|<local>/b| as R|B|)"];
             201 [label="Access variable R|<local>/b|"];
             202 [label="Smart cast: R|<local>/b|"];
-            203 [label="Function call: R|<local>/b|.R|/B.bar|()"];
+            203 [label="Function call: R|<local>/b|.R|/B.bar|()" style="filled" fillcolor=yellow];
             204 [label="Exit block"];
         }
         205 [label="Exit function test_7" style="filled" fillcolor=red];

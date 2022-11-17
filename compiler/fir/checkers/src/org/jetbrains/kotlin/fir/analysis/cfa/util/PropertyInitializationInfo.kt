@@ -19,7 +19,7 @@ abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K 
     override fun merge(other: E): E =
         operation(other, EventOccurrencesRange::or)
 
-    fun plus(other: E): E =
+    override fun plus(other: E): E =
         when {
             isEmpty() -> other
             other.isEmpty() ->

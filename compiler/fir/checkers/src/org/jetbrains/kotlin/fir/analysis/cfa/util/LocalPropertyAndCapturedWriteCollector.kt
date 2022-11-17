@@ -33,6 +33,8 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
 
     override fun visitNode(node: CFGNode<*>) {}
 
+    override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
+
     override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
         symbols[node.fir.symbol] = lambdaOrLocalFunctionStack.lastOrNull() == null
     }

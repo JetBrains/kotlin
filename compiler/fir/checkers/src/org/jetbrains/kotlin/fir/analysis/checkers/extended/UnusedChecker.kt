@@ -49,6 +49,8 @@ object UnusedChecker : FirControlFlowChecker() {
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
+        override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
+
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             val variableSymbol = node.fir.calleeReference.resolvedSymbol ?: return
             val dataPerNode = data[node] ?: return
@@ -117,6 +119,7 @@ object UnusedChecker : FirControlFlowChecker() {
             else variableUseState
 
             return base.also {
+                // TODO: is this modifying constant enum values???
                 it.isRead = this.isRead || variableUseState?.isRead == true
                 it.isRedundantInit = this.isRedundantInit && variableUseState?.isRedundantInit == true
             }
@@ -147,6 +150,8 @@ object UnusedChecker : FirControlFlowChecker() {
             return result
         }
 
+        override fun plus(other: VariableStatusInfo): VariableStatusInfo =
+            merge(other) // TODO: not sure
     }
 
     class PathAwareVariableStatusInfo(
@@ -166,21 +171,28 @@ object UnusedChecker : FirControlFlowChecker() {
     private class ValueWritesWithoutReading(
         private val session: FirSession,
         private val localProperties: Set<FirPropertySymbol>
-    ) : ControlFlowGraphVisitor<PathAwareVariableStatusInfo, Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>>() {
+    ) : PathAwareControlFlowGraphVisitor<PathAwareVariableStatusInfo>() {
+        override val emptyInfo: PathAwareVariableStatusInfo
+            get() = PathAwareVariableStatusInfo.EMPTY
+
         fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
             return graph.collectDataForNode(TraverseDirection.Backward, PathAwareVariableStatusInfo.EMPTY, this)
         }
 
+        private fun PathAwareVariableStatusInfo.withAnnotationsFrom(node: CFGNode<*>): PathAwareVariableStatusInfo =
+            (node.fir as? FirAnnotationContainer)?.annotations?.fold(this, ::visitAnnotation) ?: this
+
         override fun visitNode(
             node: CFGNode<*>,
             data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
-        ): PathAwareVariableStatusInfo {
-            if (data.isEmpty()) return PathAwareVariableStatusInfo.EMPTY
-            val result = data.map { (label, info) -> info.applyLabel(node, label) }
-                .reduce(PathAwareVariableStatusInfo::merge)
-            return (node.fir as? FirAnnotationContainer)?.annotations?.fold(result, ::visitAnnotation)
-                ?: result
-        }
+        ): PathAwareVariableStatusInfo =
+            super.visitNode(node, data).withAnnotationsFrom(node)
+
+        override fun <T> visitUnionNode(
+            node: T,
+            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+        ): PathAwareVariableStatusInfo where T : CFGNode<*>, T : UnionNodeMarker =
+            super.visitUnionNode(node, data).withAnnotationsFrom(node)
 
         override fun visitVariableDeclarationNode(
             node: VariableDeclarationNode,
@@ -284,7 +296,7 @@ object UnusedChecker : FirControlFlowChecker() {
             node: FunctionCallNode,
             data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
         ): PathAwareVariableStatusInfo {
-            val dataForNode = visitNode(node, data)
+            val dataForNode = visitUnionNode(node, data)
             val reference = node.fir.calleeReference.resolved ?: return dataForNode
             val functionSymbol = reference.resolvedSymbol as? FirFunctionSymbol<*> ?: return dataForNode
             val symbol = if (functionSymbol.callableId.callableName.identifier == "invoke") {

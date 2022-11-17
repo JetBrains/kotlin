@@ -237,7 +237,7 @@ digraph returns_kt {
                     85 [label="Enter block"];
                     86 [label="Access variable R|<local>/x|"];
                     87 [label="Smart cast: R|<local>/x|"];
-                    88 [label="Function call: R|<local>/x|.R|/C.baz|()"];
+                    88 [label="Function call: R|<local>/x|.R|/C.baz|()" style="filled" fillcolor=yellow];
                     89 [label="Exit block"];
                 }
                 90 [label="Exit when branch result"];
@@ -247,7 +247,7 @@ digraph returns_kt {
                     92 [label="Enter block"];
                     93 [label="Access variable R|<local>/x|"];
                     94 [label="Smart cast: R|<local>/x|"];
-                    95 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    95 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     96 [label="Exit block"];
                 }
                 97 [label="Exit when branch result"];
@@ -255,13 +255,13 @@ digraph returns_kt {
             }
             99 [label="Access variable R|<local>/x|"];
             100 [label="Smart cast: R|<local>/x|"];
-            101 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+            101 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
             102 [label="Access variable R|<local>/x|"];
             103 [label="Smart cast: R|<local>/x|"];
-            104 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+            104 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()" style="filled" fillcolor=yellow];
             105 [label="Access variable R|<local>/x|"];
             106 [label="Smart cast: R|<local>/x|"];
-            107 [label="Function call: R|<local>/x|.<Unresolved name: baz>#()"];
+            107 [label="Function call: R|<local>/x|.<Unresolved name: baz>#()" style="filled" fillcolor=yellow];
             108 [label="Exit block"];
         }
         109 [label="Exit function test_2" style="filled" fillcolor=red];
@@ -342,7 +342,7 @@ digraph returns_kt {
                     123 [label="Enter block"];
                     124 [label="Access variable R|<local>/x|"];
                     125 [label="Smart cast: R|<local>/x|"];
-                    126 [label="Function call: R|<local>/x|.R|/C.baz|()"];
+                    126 [label="Function call: R|<local>/x|.R|/C.baz|()" style="filled" fillcolor=yellow];
                     127 [label="Exit block"];
                 }
                 128 [label="Exit when branch result"];
@@ -352,18 +352,18 @@ digraph returns_kt {
                     130 [label="Enter block"];
                     131 [label="Access variable R|<local>/x|"];
                     132 [label="Smart cast: R|<local>/x|"];
-                    133 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+                    133 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     134 [label="Exit block"];
                 }
                 135 [label="Exit when branch result"];
                 136 [label="Exit when"];
             }
             137 [label="Access variable R|<local>/x|"];
-            138 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+            138 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()" style="filled" fillcolor=yellow];
             139 [label="Access variable R|<local>/x|"];
-            140 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+            140 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()" style="filled" fillcolor=yellow];
             141 [label="Access variable R|<local>/x|"];
-            142 [label="Function call: R|<local>/x|.<Unresolved name: baz>#()"];
+            142 [label="Function call: R|<local>/x|.<Unresolved name: baz>#()" style="filled" fillcolor=yellow];
             143 [label="Exit block"];
         }
         144 [label="Exit function test_3" style="filled" fillcolor=red];
@@ -409,7 +409,7 @@ digraph returns_kt {
         subgraph cluster_37 {
             color=blue
             146 [label="Enter block"];
-            147 [label="Function call: R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
+            147 [label="Function call: R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             148 [label="Jump: ^runHigherOrder R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             149 [label="Stub" style="filled" fillcolor=gray];
             150 [label="Exit block" style="filled" fillcolor=gray];
@@ -480,7 +480,7 @@ digraph returns_kt {
                 186 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             176 [label="Postponed exit from lambda"];
-            177 [label="Function call: R|/runHigherOrder|<R|kotlin/Int|>(...)"];
+            177 [label="Function call: R|/runHigherOrder|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
             178 [label="Exit block"];
         }
         179 [label="Exit function test_4" style="filled" fillcolor=red];

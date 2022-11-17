@@ -6,7 +6,7 @@ digraph overridenOpenVal_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -37,7 +37,7 @@ digraph overridenOpenVal_kt {
         color=red
         9 [label="Enter function <init>" style="filled" fillcolor=red];
         10 [label="Access variable R|<local>/x|"];
-        11 [label="Delegated constructor call: super<R|A|>(...)"];
+        11 [label="Delegated constructor call: super<R|A|>(...)" style="filled" fillcolor=yellow];
         12 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     9 -> {10};

@@ -30,7 +30,7 @@ digraph smartCastInInit_kt {
         subgraph cluster_4 {
             color=blue
             7 [label="Enter block"];
-            8 [label="Function call: R|kotlin/TODO|()"];
+            8 [label="Function call: R|kotlin/TODO|()" style="filled" fillcolor=yellow];
             9 [label="Stub" style="filled" fillcolor=gray];
             10 [label="Jump: ^s R|kotlin/TODO|()" style="filled" fillcolor=gray];
             11 [label="Stub" style="filled" fillcolor=gray];
@@ -50,7 +50,7 @@ digraph smartCastInInit_kt {
     subgraph cluster_5 {
         color=red
         14 [label="Enter function <init>" style="filled" fillcolor=red];
-        15 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        15 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         16 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     14 -> {15};
@@ -62,11 +62,11 @@ digraph smartCastInInit_kt {
         subgraph cluster_7 {
             color=blue
             18 [label="Enter block"];
-            19 [label="Function call: R|/s|()"];
+            19 [label="Function call: R|/s|()" style="filled" fillcolor=yellow];
             20 [label="Assignment: R|/Main.x|"];
             21 [label="Access variable R|/Main.x|"];
             22 [label="Smart cast: this@R|/Main|.R|/Main.x|"];
-            23 [label="Function call: this@R|/Main|.R|/Main.x|.R|/S.foo|()"];
+            23 [label="Function call: this@R|/Main|.R|/Main.x|.R|/S.foo|()" style="filled" fillcolor=yellow];
             24 [label="Exit block"];
         }
         25 [label="Exit init block" style="filled" fillcolor=red];

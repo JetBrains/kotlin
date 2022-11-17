@@ -6,7 +6,7 @@ digraph exhaustiveWhenAndDNNType_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Enum<SomeEnum>|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Enum<SomeEnum>|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -22,7 +22,7 @@ digraph exhaustiveWhenAndDNNType_kt {
     subgraph cluster_2 {
         color=red
         5 [label="Enter function <init>" style="filled" fillcolor=red];
-        6 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        6 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         7 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     5 -> {6};
@@ -62,7 +62,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                 color=blue
                 19 [label="Enter when"];
                 20 [label="Access variable R|<local>/flag|"];
-                21 [label="Check not null: R|<local>/flag|!!"];
+                21 [label="Check not null: R|<local>/flag|!!" style="filled" fillcolor=yellow];
                 subgraph cluster_9 {
                     color=blue
                     22 [label="Enter when branch condition "];
@@ -85,7 +85,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                 subgraph cluster_11 {
                     color=blue
                     35 [label="Enter block"];
-                    36 [label="Function call: R|/B.B|()"];
+                    36 [label="Function call: R|/B.B|()" style="filled" fillcolor=yellow];
                     37 [label="Exit block"];
                 }
                 38 [label="Exit when branch result"];
@@ -93,7 +93,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                 subgraph cluster_12 {
                     color=blue
                     40 [label="Enter block"];
-                    41 [label="Function call: R|/B.B|()"];
+                    41 [label="Function call: R|/B.B|()" style="filled" fillcolor=yellow];
                     42 [label="Exit block"];
                 }
                 43 [label="Exit when branch result"];
@@ -101,7 +101,7 @@ digraph exhaustiveWhenAndDNNType_kt {
             }
             45 [label="Variable declaration: lval b: R|B|"];
             46 [label="Access variable R|<local>/b|"];
-            47 [label="Function call: R|/takeB|(...)"];
+            47 [label="Function call: R|/takeB|(...)" style="filled" fillcolor=yellow];
             48 [label="Exit block"];
         }
         49 [label="Exit function test_1" style="filled" fillcolor=red];
@@ -155,7 +155,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                 color=blue
                 55 [label="Enter when"];
                 56 [label="Access variable R|<local>/flag|"];
-                57 [label="Check not null: R|<local>/flag|!!"];
+                57 [label="Check not null: R|<local>/flag|!!" style="filled" fillcolor=yellow];
                 subgraph cluster_16 {
                     color=blue
                     58 [label="Enter when branch condition "];
@@ -178,7 +178,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                 subgraph cluster_18 {
                     color=blue
                     71 [label="Enter block"];
-                    72 [label="Function call: R|/B.B|()"];
+                    72 [label="Function call: R|/B.B|()" style="filled" fillcolor=yellow];
                     73 [label="Exit block"];
                 }
                 74 [label="Exit when branch result"];
@@ -186,7 +186,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                 subgraph cluster_19 {
                     color=blue
                     76 [label="Enter block"];
-                    77 [label="Function call: R|/B.B|()"];
+                    77 [label="Function call: R|/B.B|()" style="filled" fillcolor=yellow];
                     78 [label="Exit block"];
                 }
                 79 [label="Exit when branch result"];
@@ -194,7 +194,7 @@ digraph exhaustiveWhenAndDNNType_kt {
             }
             81 [label="Variable declaration: lval b: R|B|"];
             82 [label="Access variable R|<local>/b|"];
-            83 [label="Function call: R|/takeB|(...)"];
+            83 [label="Function call: R|/takeB|(...)" style="filled" fillcolor=yellow];
             84 [label="Exit block"];
         }
         85 [label="Exit function test_2" style="filled" fillcolor=red];
@@ -270,7 +270,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                 subgraph cluster_25 {
                     color=blue
                     106 [label="Enter block"];
-                    107 [label="Function call: R|/B.B|()"];
+                    107 [label="Function call: R|/B.B|()" style="filled" fillcolor=yellow];
                     108 [label="Exit block"];
                 }
                 109 [label="Exit when branch result"];
@@ -278,7 +278,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                 subgraph cluster_26 {
                     color=blue
                     111 [label="Enter block"];
-                    112 [label="Function call: R|/B.B|()"];
+                    112 [label="Function call: R|/B.B|()" style="filled" fillcolor=yellow];
                     113 [label="Exit block"];
                 }
                 114 [label="Exit when branch result"];
@@ -286,7 +286,7 @@ digraph exhaustiveWhenAndDNNType_kt {
             }
             116 [label="Variable declaration: lval b: R|B|"];
             117 [label="Access variable R|<local>/b|"];
-            118 [label="Function call: R|/takeB|(...)"];
+            118 [label="Function call: R|/takeB|(...)" style="filled" fillcolor=yellow];
             119 [label="Exit block"];
         }
         120 [label="Exit function test_3" style="filled" fillcolor=red];

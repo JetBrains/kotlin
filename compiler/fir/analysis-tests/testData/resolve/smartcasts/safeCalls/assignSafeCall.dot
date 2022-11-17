@@ -6,7 +6,7 @@ digraph assignSafeCall_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -97,7 +97,7 @@ digraph assignSafeCall_kt {
                     35 [label="Enter block"];
                     36 [label="Access variable R|<local>/a|"];
                     37 [label="Smart cast: R|<local>/a|"];
-                    38 [label="Function call: R|<local>/a|.R|/A.bar|()"];
+                    38 [label="Function call: R|<local>/a|.R|/A.bar|()" style="filled" fillcolor=yellow];
                     39 [label="Exit block"];
                 }
                 40 [label="Exit when branch result"];
@@ -139,7 +139,7 @@ digraph assignSafeCall_kt {
             45 [label="Enter block"];
             46 [label="Access variable R|<local>/a|"];
             47 [label="Enter safe call"];
-            48 [label="Function call: $subj$.R|/A.foo|()"];
+            48 [label="Function call: $subj$.R|/A.foo|()" style="filled" fillcolor=yellow];
             49 [label="Exit safe call"];
             50 [label="Variable declaration: lval x: R|kotlin/Int?|"];
             subgraph cluster_14 {
@@ -160,7 +160,7 @@ digraph assignSafeCall_kt {
                     59 [label="Enter block"];
                     60 [label="Access variable R|<local>/a|"];
                     61 [label="Smart cast: R|<local>/a|"];
-                    62 [label="Function call: R|<local>/a|.R|/A.bar|()"];
+                    62 [label="Function call: R|<local>/a|.R|/A.bar|()" style="filled" fillcolor=yellow];
                     63 [label="Exit block"];
                 }
                 64 [label="Exit when branch result"];
@@ -210,10 +210,10 @@ digraph assignSafeCall_kt {
             77 [label="Exit ?:"];
             78 [label="Variable declaration: lval a: R|A|"];
             79 [label="Access variable R|<local>/a|"];
-            80 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            80 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
             81 [label="Access variable R|<local>/x|"];
             82 [label="Smart cast: R|<local>/x|"];
-            83 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+            83 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
             84 [label="Exit block"];
         }
         85 [label="Exit function test_3" style="filled" fillcolor=red];
@@ -287,7 +287,7 @@ digraph assignSafeCall_kt {
                     107 [label="Enter block"];
                     108 [label="Access variable R|<local>/a|"];
                     109 [label="Smart cast: R|<local>/a|"];
-                    110 [label="Function call: R|<local>/a|.R|/B.bar|()"];
+                    110 [label="Function call: R|<local>/a|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     111 [label="Exit block"];
                 }
                 112 [label="Exit when branch result"];
@@ -329,7 +329,7 @@ digraph assignSafeCall_kt {
             117 [label="Enter block"];
             118 [label="Access variable R|<local>/a|"];
             119 [label="Enter safe call"];
-            120 [label="Function call: $subj$.R|/B.foo|()"];
+            120 [label="Function call: $subj$.R|/B.foo|()" style="filled" fillcolor=yellow];
             121 [label="Exit safe call"];
             122 [label="Variable declaration: lval x: R|kotlin/Int?|"];
             subgraph cluster_29 {
@@ -350,7 +350,7 @@ digraph assignSafeCall_kt {
                     131 [label="Enter block"];
                     132 [label="Access variable R|<local>/a|"];
                     133 [label="Smart cast: R|<local>/a|"];
-                    134 [label="Function call: R|<local>/a|.R|/B.bar|()"];
+                    134 [label="Function call: R|<local>/a|.R|/B.bar|()" style="filled" fillcolor=yellow];
                     135 [label="Exit block"];
                 }
                 136 [label="Exit when branch result"];
@@ -400,10 +400,10 @@ digraph assignSafeCall_kt {
             149 [label="Exit ?:"];
             150 [label="Variable declaration: lval a: R|B|"];
             151 [label="Access variable R|<local>/a|"];
-            152 [label="Function call: R|<local>/a|.R|/B.foo|()"];
+            152 [label="Function call: R|<local>/a|.R|/B.foo|()" style="filled" fillcolor=yellow];
             153 [label="Access variable R|<local>/x|"];
             154 [label="Smart cast: R|<local>/x|"];
-            155 [label="Function call: R|<local>/x|.R|/B.foo|()"];
+            155 [label="Function call: R|<local>/x|.R|/B.foo|()" style="filled" fillcolor=yellow];
             156 [label="Exit block"];
         }
         157 [label="Exit function test_3" style="filled" fillcolor=red];

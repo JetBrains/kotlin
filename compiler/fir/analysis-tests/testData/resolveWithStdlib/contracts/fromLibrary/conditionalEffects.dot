@@ -11,10 +11,10 @@ digraph conditionalEffects_kt {
             1 [label="Enter block"];
             2 [label="Access variable R|<local>/x|"];
             3 [label="Type operator: (R|<local>/x| is R|kotlin/Int|)"];
-            4 [label="Function call: R|kotlin/require|(...)"];
+            4 [label="Function call: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
             5 [label="Access variable R|<local>/x|"];
             6 [label="Smart cast: R|<local>/x|"];
-            7 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+            7 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
             8 [label="Exit block"];
         }
         9 [label="Exit function test_1" style="filled" fillcolor=red];
@@ -36,7 +36,7 @@ digraph conditionalEffects_kt {
             color=blue
             11 [label="Enter block"];
             12 [label="Access variable R|<local>/x|"];
-            13 [label="Function call: R|kotlin/requireNotNull|<R|kotlin/String|>(...)"];
+            13 [label="Function call: R|kotlin/requireNotNull|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
             14 [label="Access variable R|<local>/x|"];
             15 [label="Smart cast: R|<local>/x|"];
             16 [label="Access variable R|kotlin/String.length|"];
@@ -62,7 +62,7 @@ digraph conditionalEffects_kt {
             21 [label="Access variable R|<local>/x|"];
             22 [label="Const: Null(null)"];
             23 [label="Equality operator !="];
-            24 [label="Function call: R|kotlin/require|(...)"];
+            24 [label="Function call: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
             25 [label="Access variable R|<local>/x|"];
             26 [label="Smart cast: R|<local>/x|"];
             27 [label="Access variable R|kotlin/String.length|"];
@@ -99,7 +99,7 @@ digraph conditionalEffects_kt {
                 39 [label="Equality operator !="];
                 40 [label="Exit &&"];
             }
-            41 [label="Function call: R|kotlin/require|(...)"];
+            41 [label="Function call: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
             42 [label="Access variable R|<local>/x|"];
             43 [label="Smart cast: R|<local>/x|"];
             44 [label="Access variable R|kotlin/String.length|"];
@@ -165,7 +165,7 @@ digraph conditionalEffects_kt {
                     65 [label="Enter block"];
                     66 [label="Access variable R|<local>/x|"];
                     67 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                    68 [label="Function call: R|kotlin/require|(...)"];
+                    68 [label="Function call: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
                     69 [label="Access variable R|<local>/x|"];
                     70 [label="Smart cast: R|<local>/x|"];
                     71 [label="Access variable R|kotlin/String.length|"];
@@ -235,7 +235,7 @@ digraph conditionalEffects_kt {
                     88 [label="Enter block"];
                     89 [label="Access variable R|<local>/x|"];
                     90 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                    91 [label="Function call: R|kotlin/require|(...)"];
+                    91 [label="Function call: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
                     92 [label="Access variable R|<local>/x|"];
                     93 [label="Smart cast: R|<local>/x|"];
                     94 [label="Access variable R|kotlin/String.length|"];
@@ -248,7 +248,7 @@ digraph conditionalEffects_kt {
                     98 [label="Enter block"];
                     99 [label="Access variable R|<local>/x|"];
                     100 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                    101 [label="Function call: R|kotlin/require|(...)"];
+                    101 [label="Function call: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
                     102 [label="Access variable R|<local>/x|"];
                     103 [label="Smart cast: R|<local>/x|"];
                     104 [label="Access variable R|kotlin/String.length|"];

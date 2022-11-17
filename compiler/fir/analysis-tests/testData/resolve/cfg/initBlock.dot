@@ -6,7 +6,7 @@ digraph initBlock_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -45,7 +45,7 @@ digraph initBlock_kt {
     subgraph cluster_4 {
         color=red
         12 [label="Enter function <init>" style="filled" fillcolor=red];
-        13 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        13 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         14 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     12 -> {13};
@@ -59,7 +59,7 @@ digraph initBlock_kt {
             16 [label="Enter block"];
             17 [label="Const: Int(1)"];
             18 [label="Variable declaration: lval x: R|kotlin/Int|"];
-            19 [label="Function call: R|java/lang/Exception.Exception|()"];
+            19 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
             20 [label="Throw: throw R|java/lang/Exception.Exception|()"];
             21 [label="Stub" style="filled" fillcolor=gray];
             22 [label="Const: Int(2)" style="filled" fillcolor=gray];

@@ -23,7 +23,7 @@ digraph inPlaceLambda_kt {
                 subgraph cluster_4 {
                     color=blue
                     8 [label="Enter block"];
-                    9 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    9 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                     10 [label="Exit block"];
                 }
                 11 [label="Exit when branch result"];
@@ -54,7 +54,7 @@ digraph inPlaceLambda_kt {
         subgraph cluster_6 {
             color=blue
             16 [label="Enter block"];
-            17 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            17 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             18 [label="Postponed enter to lambda"];
             subgraph cluster_7 {
                 color=blue
@@ -62,13 +62,13 @@ digraph inPlaceLambda_kt {
                 subgraph cluster_8 {
                     color=blue
                     24 [label="Enter block"];
-                    25 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    25 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                     26 [label="Exit block"];
                 }
                 27 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             19 [label="Postponed exit from lambda"];
-            20 [label="Function call: R|/bar|(...)"];
+            20 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
             21 [label="Exit block"];
         }
         22 [label="Exit function foo" style="filled" fillcolor=red];
@@ -81,7 +81,7 @@ digraph inPlaceLambda_kt {
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    23 -> {27 24};
+    23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};

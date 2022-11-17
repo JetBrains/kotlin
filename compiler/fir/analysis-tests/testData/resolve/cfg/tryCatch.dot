@@ -202,7 +202,7 @@ digraph tryCatch_kt {
                                             color=blue
                                             70 [label="Enter when branch condition "];
                                             71 [label="Access variable R|<local>/b|"];
-                                            72 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+                                            72 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
                                             73 [label="Exit when branch condition"];
                                         }
                                         74 [label="Synthetic else branch"];

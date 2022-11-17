@@ -48,7 +48,7 @@ digraph elvis_kt {
                     21 [label="Enter block"];
                     22 [label="Access variable R|<local>/x|"];
                     23 [label="Smart cast: R|<local>/x|"];
-                    24 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    24 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     25 [label="Exit block"];
                 }
                 26 [label="Exit when branch result"];

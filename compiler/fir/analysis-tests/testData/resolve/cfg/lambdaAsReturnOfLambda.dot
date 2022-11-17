@@ -21,7 +21,7 @@ digraph lambdaAsReturnOfLambda_kt {
                         color=blue
                         9 [label="Enter block"];
                         10 [label="Access variable R|<local>/foo|"];
-                        11 [label="Function call: R|/bar|(...)"];
+                        11 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
                         12 [label="Exit block"];
                     }
                     13 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
@@ -37,7 +37,7 @@ digraph lambdaAsReturnOfLambda_kt {
             7 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
         16 [label="Postponed exit from lambda"];
-        17 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(...)"];
+        17 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(...)" style="filled" fillcolor=yellow];
         18 [label="Exit property" style="filled" fillcolor=red];
     }
     14 -> {15};
@@ -80,7 +80,7 @@ digraph lambdaAsReturnOfLambda_kt {
         subgraph cluster_8 {
             color=blue
             24 [label="Enter block"];
-            25 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
+            25 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()" style="filled" fillcolor=yellow];
             26 [label="Jump: ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
             27 [label="Stub" style="filled" fillcolor=gray];
             28 [label="Exit block" style="filled" fillcolor=gray];

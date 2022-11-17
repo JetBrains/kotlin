@@ -24,7 +24,7 @@ digraph flow_kt {
                     color=blue
                     8 [label="Enter block"];
                     9 [label="Access variable R|<local>/x|"];
-                    10 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    10 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                     11 [label="Jump: ^bar Unit"];
                     12 [label="Stub" style="filled" fillcolor=gray];
                     13 [label="Exit block" style="filled" fillcolor=gray];
@@ -33,7 +33,7 @@ digraph flow_kt {
                 15 [label="Exit when"];
             }
             16 [label="Access variable R|<local>/x|"];
-            17 [label="Function call: R|/bar|(...)"];
+            17 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
             18 [label="Exit block"];
         }
         19 [label="Exit function bar" style="filled" fillcolor=red];
@@ -102,9 +102,9 @@ digraph flow_kt {
                             color=blue
                             37 [label="Enter block"];
                             38 [label="Access variable R|<local>/y|"];
-                            39 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                            39 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                             40 [label="Access variable R|<local>/z|"];
-                            41 [label="Function call: R|<local>/z|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                            41 [label="Function call: R|<local>/z|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                             42 [label="Jump: ^foo Unit"];
                             43 [label="Stub" style="filled" fillcolor=gray];
                             44 [label="Exit block" style="filled" fillcolor=gray];
@@ -115,7 +115,7 @@ digraph flow_kt {
                             color=blue
                             47 [label="Enter block"];
                             48 [label="Access variable R|<local>/y|"];
-                            49 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                            49 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                             50 [label="Exit block"];
                         }
                         51 [label="Exit when branch result"];
@@ -133,8 +133,8 @@ digraph flow_kt {
                         57 [label="Enter block"];
                         58 [label="Const: Int(0)"];
                         59 [label="Const: Int(0)"];
-                        60 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)"];
-                        61 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()"];
+                        60 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)" style="filled" fillcolor=yellow];
+                        61 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()" style="filled" fillcolor=yellow];
                         62 [label="Variable declaration: lval <iterator>: R|kotlin/collections/IntIterator|"];
                         subgraph cluster_18 {
                             color=blue
@@ -143,7 +143,7 @@ digraph flow_kt {
                                 color=blue
                                 64 [label="Enter loop condition"];
                                 65 [label="Access variable R|<local>/<iterator>|"];
-                                66 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()"];
+                                66 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()" style="filled" fillcolor=yellow];
                                 67 [label="Exit loop condition"];
                             }
                             subgraph cluster_20 {
@@ -153,10 +153,10 @@ digraph flow_kt {
                                     color=blue
                                     69 [label="Enter block"];
                                     70 [label="Access variable R|<local>/<iterator>|"];
-                                    71 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()"];
+                                    71 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()" style="filled" fillcolor=yellow];
                                     72 [label="Variable declaration: lval i: R|kotlin/Int|"];
                                     73 [label="Access variable R|<local>/x|"];
-                                    74 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                                    74 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                                     75 [label="Exit block"];
                                 }
                                 76 [label="Exit loop block"];
@@ -166,7 +166,7 @@ digraph flow_kt {
                         78 [label="Exit block"];
                     }
                     79 [label="Access variable R|<local>/y|"];
-                    80 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    80 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                     81 [label="Exit block"];
                 }
                 82 [label="Exit when branch result"];
@@ -182,7 +182,7 @@ digraph flow_kt {
                         color=blue
                         86 [label="Enter block"];
                         87 [label="Access variable R|<local>/z|"];
-                        88 [label="Function call: R|/bar|(...)"];
+                        88 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
                         89 [label="Exit block"];
                     }
                     90 [label="Exit loop block"];

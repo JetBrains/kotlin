@@ -38,7 +38,7 @@ digraph safeCallAndEqualityToBool_kt {
                     10 [label="Enter when branch condition "];
                     11 [label="Access variable R|<local>/s|"];
                     12 [label="Enter safe call"];
-                    13 [label="Function call: $subj$.R|/check|()"];
+                    13 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     14 [label="Exit safe call"];
                     15 [label="Const: Boolean(true)"];
                     16 [label="Equality operator =="];
@@ -117,7 +117,7 @@ digraph safeCallAndEqualityToBool_kt {
                     39 [label="Enter when branch condition "];
                     40 [label="Access variable R|<local>/s|"];
                     41 [label="Enter safe call"];
-                    42 [label="Function call: $subj$.R|/check|()"];
+                    42 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     43 [label="Exit safe call"];
                     44 [label="Const: Boolean(false)"];
                     45 [label="Equality operator =="];
@@ -196,7 +196,7 @@ digraph safeCallAndEqualityToBool_kt {
                     68 [label="Enter when branch condition "];
                     69 [label="Access variable R|<local>/s|"];
                     70 [label="Enter safe call"];
-                    71 [label="Function call: $subj$.R|/check|()"];
+                    71 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     72 [label="Exit safe call"];
                     73 [label="Const: Boolean(true)"];
                     74 [label="Equality operator !="];
@@ -275,7 +275,7 @@ digraph safeCallAndEqualityToBool_kt {
                     97 [label="Enter when branch condition "];
                     98 [label="Access variable R|<local>/s|"];
                     99 [label="Enter safe call"];
-                    100 [label="Function call: $subj$.R|/check|()"];
+                    100 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     101 [label="Exit safe call"];
                     102 [label="Const: Boolean(false)"];
                     103 [label="Equality operator !="];

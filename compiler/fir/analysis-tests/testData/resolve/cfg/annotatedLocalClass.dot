@@ -6,7 +6,7 @@ digraph annotatedLocalClass_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     0 -> {1};
@@ -47,7 +47,7 @@ digraph annotatedLocalClass_kt {
                 18 [label="Exit when"];
             }
             19 [label="Exit local class foo"];
-            20 [label="Function call: R|/bar|()"];
+            20 [label="Function call: R|/bar|()" style="filled" fillcolor=yellow];
             21 [label="Exit block"];
         }
         subgraph cluster_7 {
@@ -83,7 +83,7 @@ digraph annotatedLocalClass_kt {
     subgraph cluster_8 {
         color=red
         25 [label="Enter function <init>" style="filled" fillcolor=red];
-        26 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        26 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
         27 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     25 -> {26};

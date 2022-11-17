@@ -68,7 +68,7 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
         }
     }
 
-    override fun merge(other: P): P {
+    private fun join(other: P, union: Boolean): P {
         var resultMap = persistentMapOf<EdgeLabel, S>()
         for (label in keys.union(other.keys)) {
             // disjoint merging to preserve paths. i.e., merge the property initialization info if and only if both have the key.
@@ -78,7 +78,7 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
             val i2 = other[label]
             resultMap = when {
                 i1 != null && i2 != null ->
-                    resultMap.put(label, i1.merge(i2))
+                    resultMap.put(label, if (union) i1.plus(i2) else i1.merge(i2))
                 i1 != null ->
                     resultMap.put(label, i1)
                 i2 != null ->
@@ -89,4 +89,8 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
         }
         return constructor(resultMap)
     }
+
+    override fun merge(other: P): P = join(other, union = false)
+
+    override fun plus(other: P): P = join(other, union = true)
 }

@@ -106,7 +106,7 @@ class FirControlFlowGraphRenderVisitor(
             }
             if (node.isDead) {
                 fillColor("gray")
-            } else if (node is UnionFunctionCallArgumentsNode) {
+            } else if (node is UnionNodeMarker) {
                 fillColor("yellow")
             }
             println(indices.getValue(node), attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))

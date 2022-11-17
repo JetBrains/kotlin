@@ -36,4 +36,6 @@ abstract class ControlFlowInfo<S : ControlFlowInfo<S, K, V>, K : Any, V : Any> p
     }
 
     abstract fun merge(other: S): S
+
+    abstract fun plus(other: S): S
 }

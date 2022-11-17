@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitor
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeLabel
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
@@ -60,6 +57,13 @@ object FirPropertyInitializationChecker : FirRegularClassChecker() {
         override fun visitNode(node: CFGNode<*>, data: Collection<Pair<EdgeLabel, Properties>>): Properties {
             if (data.isEmpty()) return emptySet()
             return data.map { it.second }.reduce { l, r -> l.intersect(r) }
+        }
+
+        override fun <T> visitUnionNode(
+            node: T, data: Collection<Pair<EdgeLabel, Properties>>
+        ): Properties where T : CFGNode<*>, T : UnionNodeMarker {
+            if (data.isEmpty()) return emptySet()
+            return data.map { it.second }.reduce { l, r -> l + r }
         }
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Collection<Pair<EdgeLabel, Properties>>): Properties {
