@@ -10,12 +10,14 @@ package org.jetbrains.kotlin.gradle.externalTargetApi
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.android.androidTargetPrototype
-import org.jetbrains.kotlin.gradle.androidLibrary
-import org.jetbrains.kotlin.gradle.assumeAndroidSdkAvailable
-import org.jetbrains.kotlin.gradle.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.anyDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.utils.getByType
 import org.junit.Test
 import kotlin.test.BeforeTest
@@ -71,5 +73,26 @@ class ExternalAndroidTargetPrototypeSmokeTest {
         if (androidPublication.artifacts.size != 1) fail("Expected one artifact. Found ${androidPublication.artifacts}")
         val aarArtifact = androidPublication.artifacts.first()
         assertEquals("aar", aarArtifact.extension)
+    }
+
+    @Test
+    fun `apply prototype - resolve androidPrototypeMain dependencies - contains android bootstrap classpath`() {
+        val project = buildProject {
+            enableDefaultStdlibDependency(false)
+            enableDependencyVerification(false)
+            applyMultiplatformPlugin()
+            repositories.mavenCentralCacheRedirector()
+        }
+
+        project.androidLibrary { compileSdk = 31 }
+        project.multiplatformExtension.androidTargetPrototype()
+        project.evaluate()
+
+        val androidPrototypeMain = project.multiplatformExtension.sourceSets.getByName("prototypeAndroidMain")
+
+        project.kotlinIdeMultiplatformImport.resolveDependencies(androidPrototypeMain).assertMatches(
+            binaryCoordinates(Regex("com\\.android:sdk:.*")),
+            anyDependency()
+        )
     }
 }
