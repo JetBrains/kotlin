@@ -36,6 +36,10 @@ open class BasicMapsOwner(val cachesDir: File) {
         return map
     }
 
+    open fun resetInMemoryChanges() {
+        forEachMapSafe("resetInMemoryChanges", BasicMap<*, *>::resetInMemoryChanges)
+    }
+
     open fun clean() {
         forEachMapSafe("clean", BasicMap<*, *>::clean)
     }

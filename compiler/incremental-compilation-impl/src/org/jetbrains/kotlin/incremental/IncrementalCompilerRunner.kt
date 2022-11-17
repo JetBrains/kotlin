@@ -523,6 +523,10 @@ abstract class IncrementalCompilerRunner<
                     AbiSnapshotImpl.write(abiSnapshotData!!.snapshot, abiSnapshotFile)
                 }
             }
+        } else {
+            caches.inputsCache.resetInMemoryChanges()
+            caches.platformCache.resetInMemoryChanges()
+            caches.lookupCache.resetInMemoryChanges()
         }
         if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
             buildDirtyLookupSymbols.addAll(additionalDirtyLookupSymbols())

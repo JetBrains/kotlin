@@ -40,6 +40,12 @@ abstract class BasicMap<K : Comparable<K>, V>(
         }).let { if (keepChangesInMemory) InMemoryStorageWrapper(it) else it }
     }
 
+    fun resetInMemoryChanges() {
+        if (storage is InMemoryStorageWrapper) {
+            storage.resetInMemoryChanges()
+        }
+    }
+
     fun clean() {
         storage.clean()
     }
