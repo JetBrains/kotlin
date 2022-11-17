@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 import kotlin.properties.Delegates
 
@@ -21,12 +22,13 @@ interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
     val platformType: KotlinPlatformType
     val targetFactory: TargetFactory<T>
 
-    val configure: ((T) -> Unit)?
-
     val apiElements: ExternalKotlinTargetConfigurationDescriptor<T>
     val runtimeElements: ExternalKotlinTargetConfigurationDescriptor<T>
     val apiElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>
     val runtimeElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>
+
+    val configure: ((T) -> Unit)?
+    val configureIdeImport: (IdeMultiplatformImport.() -> Unit)?
 }
 
 @ExternalKotlinTargetApi
@@ -56,6 +58,20 @@ class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> i
 
     var configure: ((T) -> Unit)? = null
 
+    fun configure(action: (T) -> Unit) {
+        val configure = this.configure
+        if (configure == null) this.configure = action
+        else this.configure = { configure(it); action(it) }
+    }
+
+    var configureIdeImport: (IdeMultiplatformImport.() -> Unit)? = null
+
+    fun configureIdeImport(action: IdeMultiplatformImport.() -> Unit) {
+        val configureIdeImport = this.configureIdeImport
+        if (configureIdeImport == null) this.configureIdeImport = action
+        else this.configureIdeImport = { configureIdeImport(); action() }
+    }
+
     internal fun build(): ExternalKotlinTargetDescriptor<T> = ExternalKotlinTargetDescriptorImpl(
         targetName = targetName,
         platformType = platformType,
@@ -64,7 +80,8 @@ class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> i
         runtimeElements = runtimeElements.build(),
         apiElementsPublished = apiElementsPublished.build(),
         runtimeElementsPublished = runtimeElementsPublished.build(),
-        configure = configure
+        configure = configure,
+        configureIdeImport = configureIdeImport
     )
 }
 
@@ -77,6 +94,7 @@ private data class ExternalKotlinTargetDescriptorImpl<T : DecoratedExternalKotli
     override val apiElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>,
     override val runtimeElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>,
     override val configure: ((T) -> Unit)?,
+    override val configureIdeImport: (IdeMultiplatformImport.() -> Unit)?,
 ) : ExternalKotlinTargetDescriptor<T>
 
 

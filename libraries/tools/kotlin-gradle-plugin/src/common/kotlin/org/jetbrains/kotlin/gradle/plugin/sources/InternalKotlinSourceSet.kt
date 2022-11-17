@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 
 internal val KotlinSourceSet.internal: InternalKotlinSourceSet
     get() = (this as? InternalKotlinSourceSet) ?: throw IllegalArgumentException(
@@ -22,6 +23,7 @@ internal interface InternalKotlinSourceSet : KotlinSourceSet {
     val dependsOnClosure: ObservableSet<KotlinSourceSet>
     val withDependsOnClosure: ObservableSet<KotlinSourceSet>
     val compilations: MutableObservableSet<KotlinCompilation<*>>
+    val extras: MutableExtras
 }
 
 internal val KotlinSourceSet.project: Project get() = this.internal.project
