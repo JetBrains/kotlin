@@ -164,22 +164,29 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         }
     }
 
-    private class DefaultJavaToolchainSetter(
+    internal class DefaultJavaToolchainSetter(
         private val providedJvm: Property<Jvm>
     ) : KotlinJavaToolchain.JavaToolchainSetter {
+
+        internal fun useAsConvention(
+            javaLauncher: Provider<JavaLauncher>
+        ) {
+            providedJvm.convention(javaLauncher.map(::mapToJvm))
+        }
+
         override fun use(
             javaLauncher: Provider<JavaLauncher>
         ) {
-            providedJvm.set(
-                javaLauncher.map { launcher ->
-                    val metadata = launcher.metadata
-                    val javaVersion = JavaVersion.toVersion(metadata.languageVersion.asInt())
-                    Jvm.discovered(
-                        metadata.installationPath.asFile,
-                        null,
-                        javaVersion
-                    )
-                }
+            providedJvm.set(javaLauncher.map(::mapToJvm))
+        }
+
+        private fun mapToJvm(javaLauncher: JavaLauncher): Jvm {
+            val metadata = javaLauncher.metadata
+            val javaVersion = JavaVersion.toVersion(metadata.languageVersion.asInt())
+            return Jvm.discovered(
+                metadata.installationPath.asFile,
+                null,
+                javaVersion
             )
         }
     }

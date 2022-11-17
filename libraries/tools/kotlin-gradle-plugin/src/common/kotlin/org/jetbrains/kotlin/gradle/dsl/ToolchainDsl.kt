@@ -13,6 +13,7 @@ import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.jvm.toolchain.JavaToolchainSpec
+import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -62,7 +63,8 @@ internal abstract class DefaultToolchainSupport @Inject constructor(
             tasks
                 .withType<UsesKotlinJavaToolchain>()
                 .configureEach {
-                    it.kotlinJavaToolchain.toolchain.use(javaLauncher)
+                    (it.kotlinJavaToolchain.toolchain as DefaultKotlinJavaToolchain.DefaultJavaToolchainSetter)
+                        .useAsConvention(javaLauncher)
                 }
         }
     }
