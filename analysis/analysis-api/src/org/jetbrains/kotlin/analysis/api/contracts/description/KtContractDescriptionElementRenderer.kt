@@ -30,6 +30,10 @@ internal fun Context.renderKtEffectDeclaration(value: KtEffectDeclaration, endWi
 
 internal fun Context.renderKtContractDescriptionValue(value: KtContractDescriptionValue, endWithNewLine: Boolean = true): Unit =
     printer.appendHeader(value::class) {
+        when (value) {
+            is KtAbstractConstantReference -> Unit
+            is KtAbstractValueParameterReference -> appendSimpleProperty(value::parameterIndex)
+        }
         appendSimpleProperty(value::name, endWithNewLine)
     }
 

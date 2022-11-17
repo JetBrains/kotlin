@@ -14,6 +14,7 @@ KtFunctionSymbol:
               name: WILDCARD
       condition:
         KtBooleanValueParameterReference:
+          parameterIndex: 0
           name: value
   ]
   hasStableParameterNames: true

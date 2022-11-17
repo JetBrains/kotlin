@@ -6,10 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtAbstractValueParameterReference.KtBooleanValueParameterReference
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtAbstractValueParameterReference.KtValueParameterReference
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 
 internal fun EffectDeclaration.effectDeclarationToAnalysisApi(analysisContext: Fe10AnalysisContext): KtEffectDeclaration =
     accept(ContractDescriptionElementToAnalysisApi(analysisContext), Unit).cast()
@@ -66,19 +71,25 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
         KtAbstractConstantReference.KtBooleanConstantReference(booleanConstantDescriptor.name, analysisContext.token)
 
     override fun visitVariableReference(variableReference: VariableReference, data: Unit): KtContractDescriptionElement =
-        KtAbstractValueParameterReference.KtValueParameterReference(
-            variableReference.descriptor.name.asStringStripSpecialMarkers(),
-            analysisContext.token
-        )
+        visitVariableReference(variableReference, ::KtValueParameterReference)
 
     override fun visitBooleanVariableReference(
         booleanVariableReference: BooleanVariableReference,
         data: Unit
-    ): KtContractDescriptionElement =
-        KtAbstractValueParameterReference.KtBooleanValueParameterReference(
-            booleanVariableReference.descriptor.name.asStringStripSpecialMarkers(),
-            analysisContext.token
-        )
+    ): KtContractDescriptionElement = visitVariableReference(booleanVariableReference, ::KtBooleanValueParameterReference)
+
+    private fun visitVariableReference(
+        variableReference: VariableReference,
+        constructor: (Int, String, KtLifetimeToken) -> KtAbstractValueParameterReference
+    ): KtAbstractValueParameterReference = constructor(
+        when (val descriptor = variableReference.descriptor) {
+            is ValueParameterDescriptor -> descriptor.index
+            is ReceiverParameterDescriptor -> -1
+            else -> error("Can't find $variableReference index")
+        },
+        variableReference.descriptor.name.asStringStripSpecialMarkers(),
+        analysisContext.token
+    )
 }
 
 // Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.

@@ -69,14 +69,20 @@ private class ConeContractDescriptionElementToAnalysisApi(private val builder: K
     override fun visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
         data: Unit
-    ): KtContractDescriptionElement =
-        KtAbstractValueParameterReference.KtValueParameterReference(valueParameterReference.name, builder.token)
+    ): KtContractDescriptionElement = KtAbstractValueParameterReference.KtValueParameterReference(
+        valueParameterReference.parameterIndex,
+        valueParameterReference.name,
+        builder.token
+    )
 
     override fun visitBooleanValueParameterReference(
         booleanValueParameterReference: ConeBooleanValueParameterReference,
         data: Unit
-    ): KtContractDescriptionElement =
-        KtAbstractValueParameterReference.KtBooleanValueParameterReference(booleanValueParameterReference.name, builder.token)
+    ): KtContractDescriptionElement = KtAbstractValueParameterReference.KtBooleanValueParameterReference(
+        booleanValueParameterReference.parameterIndex,
+        booleanValueParameterReference.name,
+        builder.token
+    )
 }
 
 // Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.

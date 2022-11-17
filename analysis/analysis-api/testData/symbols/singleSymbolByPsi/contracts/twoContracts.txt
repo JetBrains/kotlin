@@ -18,18 +18,21 @@ KtFunctionSymbol:
             KtIsNullPredicate:
               argument:
                 KtValueParameterReference:
+                  parameterIndex: 0
                   name: foo
               isNegated: false
           right:
             KtIsNullPredicate:
               argument:
                 KtValueParameterReference:
+                  parameterIndex: 1
                   name: bar
               isNegated: true
           kind: AND
     KtCallsEffectDeclaration:
       valueParameterReference:
         KtValueParameterReference:
+          parameterIndex: 2
           name: block
       kind: EXACTLY_ONCE
   ]

@@ -9,6 +9,7 @@ KtFunctionSymbol:
     KtCallsEffectDeclaration:
       valueParameterReference:
         KtValueParameterReference:
+          parameterIndex: 0
           name: block
       kind: AT_MOST_ONCE
   ]

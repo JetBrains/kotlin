@@ -9,6 +9,7 @@ KtFunctionSymbol:
     KtCallsEffectDeclaration:
       valueParameterReference:
         KtValueParameterReference:
+          parameterIndex: -1
           name: this
       kind: EXACTLY_ONCE
   ]

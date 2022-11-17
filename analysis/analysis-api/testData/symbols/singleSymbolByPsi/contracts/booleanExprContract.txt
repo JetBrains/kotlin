@@ -18,12 +18,14 @@ KtFunctionSymbol:
             KtIsNullPredicate:
               argument:
                 KtValueParameterReference:
+                  parameterIndex: 0
                   name: foo
               isNegated: false
           right:
             KtIsNullPredicate:
               argument:
                 KtValueParameterReference:
+                  parameterIndex: 1
                   name: bar
               isNegated: true
           kind: AND

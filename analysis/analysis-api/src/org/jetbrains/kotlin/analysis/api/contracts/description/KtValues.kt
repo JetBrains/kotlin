@@ -34,17 +34,24 @@ public sealed class KtAbstractConstantReference(name: String, token: KtLifetimeT
         KtAbstractConstantReference(name, token), KtBooleanExpression
 }
 
-public sealed class KtAbstractValueParameterReference(name: String, token: KtLifetimeToken) : KtContractDescriptionValue(name, token) {
+public sealed class KtAbstractValueParameterReference(
+    private val _parameterIndex: Int,
+    name: String,
+    token: KtLifetimeToken
+) : KtContractDescriptionValue(name, token) {
+    public val parameterIndex: Int get() = withValidityAssertion { _parameterIndex }
+
     /**
      * K1: [org.jetbrains.kotlin.contracts.description.expressions.VariableReference]
      * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeValueParameterReference]
      */
-    public class KtValueParameterReference(name: String, token: KtLifetimeToken) : KtAbstractValueParameterReference(name, token)
+    public class KtValueParameterReference(parameterIndex: Int, name: String, token: KtLifetimeToken) :
+        KtAbstractValueParameterReference(parameterIndex, name, token)
 
     /**
      * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableReference]
      * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanValueParameterReference]
      */
-    public class KtBooleanValueParameterReference(name: String, token: KtLifetimeToken) :
-        KtAbstractValueParameterReference(name, token), KtBooleanExpression
+    public class KtBooleanValueParameterReference(parameterIndex: Int, name: String, token: KtLifetimeToken) :
+        KtAbstractValueParameterReference(parameterIndex, name, token), KtBooleanExpression
 }
