@@ -172,11 +172,7 @@ class MemoizedInlineClassReplacements(
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
             }
-            context.multiFieldValueClassReplacements.run {
-                bindingNewFunctionToParameterTemplateStructure[function]?.also {
-                    bindingNewFunctionToParameterTemplateStructure[this@buildReplacement] = it
-                }
-            }
+            context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
         }
 
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
@@ -212,11 +208,7 @@ class MemoizedInlineClassReplacements(
                 }
             }
             valueParameters = newValueParameters
-            context.multiFieldValueClassReplacements.run {
-                bindingNewFunctionToParameterTemplateStructure[function]?.also {
-                    bindingNewFunctionToParameterTemplateStructure[this@buildReplacement] = it
-                }
-            }
+            context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
         }
 
     private fun buildReplacement(

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
+import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -596,6 +597,13 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 // => box it
                 TypeAdaptationConstraint.FORCE_BOXING
             }
+        }
+
+        // ** Value classes **
+        // All Kotlin inline classes are final,
+        // and their supertypes are trivially mapped to reference types.
+        if (adapteeType.needsMfvcFlattening()) {
+            return TypeAdaptationConstraint.CONFLICT
         }
 
         // Other cases don't enforce type adaptation

@@ -41,9 +41,8 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
  */
 internal class JvmInlineClassLowering(
     context: JvmBackendContext,
-    fileClassNewDeclarations: MutableMap<IrFile, MutableList<IrSimpleFunction>>,
     scopeStack: MutableList<ScopeWithIr>,
-) : JvmValueClassAbstractLowering(context, fileClassNewDeclarations, scopeStack) {
+) : JvmValueClassAbstractLowering(context, scopeStack) {
     override val replacements: MemoizedValueClassAbstractReplacements
         get() = context.inlineClassReplacements
 

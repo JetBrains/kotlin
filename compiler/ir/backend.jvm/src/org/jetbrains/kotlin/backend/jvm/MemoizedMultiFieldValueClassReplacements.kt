@@ -101,7 +101,9 @@ class MemoizedMultiFieldValueClassReplacements(
 
             else -> replacementOrigin
         }
-        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes = false, useOldMangleRules = false)
+        name =
+            if (function.isLocal && (function !is IrSimpleFunction || function.overriddenSymbols.isEmpty())) function.name
+            else InlineClassAbi.mangledNameFor(function, mangleReturnTypes = false, useOldMangleRules = false)
     }
 
     private fun makeAndAddGroupedValueParametersFrom(
@@ -226,8 +228,7 @@ class MemoizedMultiFieldValueClassReplacements(
     override val getReplacementFunctionImpl: (IrFunction) -> IrSimpleFunction? =
         storageManager.createMemoizedFunctionWithNullableValues { function ->
             when {
-                (function.isLocal && function is IrSimpleFunction && function.overriddenSymbols.isEmpty()) ||
-                        (function.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && function.visibility == DescriptorVisibilities.LOCAL) ||
+                (function.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && function.visibility == DescriptorVisibilities.LOCAL) ||
                         function.isStaticValueClassReplacement ||
                         function.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER && function.isAccessor ||
                         function.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||

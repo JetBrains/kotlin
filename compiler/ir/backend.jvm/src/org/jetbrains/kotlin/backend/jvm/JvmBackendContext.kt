@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -32,7 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
@@ -266,5 +268,35 @@ class JvmBackendContext(
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
+    }
+
+    override fun remapMultiFieldValueClassStructure(
+        oldFunction: IrFunction,
+        newFunction: IrFunction,
+        parametersMappingOrNull: Map<IrValueParameter, IrValueParameter>?
+    ) {
+        val parametersMapping = parametersMappingOrNull ?: run {
+            require(oldFunction.explicitParametersCount == newFunction.explicitParametersCount) {
+                "Use non-default mapping instead:\n${oldFunction.render()}\n${newFunction.render()}"
+            }
+            oldFunction.explicitParameters.zip(newFunction.explicitParameters).toMap()
+        }
+        val oldRemappedParameters = multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure[oldFunction] ?: return
+        val newRemapsFromOld = oldRemappedParameters.mapNotNull { oldRemapping ->
+            when (oldRemapping) {
+                is RegularMapping -> parametersMapping[oldRemapping.valueParameter]?.let(::RegularMapping)
+                is MultiFieldValueClassMapping -> {
+                    val newParameters = oldRemapping.valueParameters.map { parametersMapping[it] }
+                    when {
+                        newParameters.all { it == null } -> null
+                        newParameters.none { it == null } -> oldRemapping.copy(valueParameters = newParameters.map { it!! })
+                        else -> error("Illegal new parameters:\n${newParameters.joinToString("\n") { it?.dump() ?: "null" }}")
+                    }
+                }
+            }
+        }
+        val remappedParameters = newRemapsFromOld.flatMap { remap -> remap.valueParameters.map { it to remap } }.toMap()
+        val newBinding = newFunction.explicitParameters.map { remappedParameters[it] ?: RegularMapping(it) }.distinct()
+        multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure[newFunction] = newBinding
     }
 }

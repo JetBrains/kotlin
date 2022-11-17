@@ -19,19 +19,16 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal abstract class JvmValueClassAbstractLowering(
     val context: JvmBackendContext,
-    protected val fileClassNewDeclarations: MutableMap<IrFile, MutableList<IrSimpleFunction>>,
     override val scopeStack: MutableList<ScopeWithIr>,
 ) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     abstract val replacements: MemoizedValueClassAbstractReplacements
 
     final override fun lower(irFile: IrFile) = withinScope(irFile) {
         irFile.transformChildrenVoid()
-        addDeclarations(context, fileClassNewDeclarations, irFile)
     }
 
     abstract fun IrClass.isSpecificLoweringLogicApplicable(): Boolean
@@ -150,14 +147,19 @@ internal abstract class JvmValueClassAbstractLowering(
 
     internal fun visitStatementContainer(container: IrStatementContainer) {
         container.statements.transformFlat { statement ->
-            if (statement is IrFunction)
-                transformFunctionFlat(statement)
-            else
-                listOf(statement.transformStatement(this))
+            val newStatements =
+                if (statement is IrFunction) withinScope(statement) { transformFunctionFlat(statement) }
+                else listOf(statement.transformStatement(this))
+            for (replacingDeclaration in (newStatements ?: listOf(statement)).filterIsInstance<IrDeclaration>()) {
+                postActionAfterTransformingClassDeclaration(replacingDeclaration)
+            }
+            newStatements
         }
     }
 
-    final override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
+    protected open fun postActionAfterTransformingClassDeclaration(replacingDeclaration: IrDeclaration) = Unit
+
+    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
         visitStatementContainer(expression)
         return expression
     }
@@ -379,19 +381,6 @@ internal abstract class JvmValueClassAbstractLowering(
     final override fun visitErrorExpression(expression: IrErrorExpression) = super.visitErrorExpression(expression)
     final override fun visitErrorCallExpression(expression: IrErrorCallExpression) = super.visitErrorCallExpression(expression)
 
-    companion object {
-        internal fun addDeclarations(
-            context: JvmBackendContext, fileClassNewDeclarations: MutableMap<IrFile, MutableList<IrSimpleFunction>>, irFile: IrFile
-        ) {
-            fileClassNewDeclarations[irFile]?.let { newDeclarations ->
-                val oldFileClass = irFile.declarations.filterIsInstanceAnd<IrClass> { it.isFileClass }.singleOrNull()
-                val allFileDeclarations = (oldFileClass?.declarations ?: listOf()) + newDeclarations
-                val newClass = createFileClass(context, irFile, allFileDeclarations)
-                oldFileClass?.let { irFile.declarations.remove(it) }
-                irFile.addChild(newClass)
-            }
-        }
-    }
 
     abstract val IrType.needsHandling: Boolean
 }

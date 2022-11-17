@@ -108,11 +108,9 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                         irFunction.dispatchReceiverParameter?.let {
                             putValueArgument(0, irGet(it).reinterpretAsDispatchReceiverOfType(superClassType))
                         }
-                        val mfvcOrOriginal = backendContext.inlineClassReplacements.originalFunctionForMethodReplacement[classOverride]
-                            ?: classOverride
                         val bindingNewFunctionToParameterTemplateStructure = backendContext.multiFieldValueClassReplacements
                             .bindingNewFunctionToParameterTemplateStructure
-                        val structure = bindingNewFunctionToParameterTemplateStructure[mfvcOrOriginal]?.let { structure ->
+                        val structure = bindingNewFunctionToParameterTemplateStructure[classOverride]?.let { structure ->
                             require(structure.sumOf { it.valueParameters.size } == classOverride.explicitParametersCount) {
                                 "Bad parameters structure: $structure"
                             }

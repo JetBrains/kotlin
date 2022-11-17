@@ -81,78 +81,78 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
         // TODO FirMetadataSource.File
         if (fileClassMembers.isEmpty() && (irFile.metadata as? DescriptorMetadataSource.File)?.descriptors.isNullOrEmpty()) return
 
-        val irFileClass = createFileClass(context, irFile, fileClassMembers)
+        val irFileClass = createFileClass(irFile, fileClassMembers)
         classes.add(irFileClass)
 
         irFile.declarations.clear()
         irFile.declarations.addAll(classes)
     }
-}
 
-internal fun createFileClass(context: JvmBackendContext,  irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
-    val fileEntry = irFile.fileEntry
-    val fileClassInfo = irFile.getFileClassInfo()
-    val isMultifilePart = fileClassInfo.withJvmMultifileClass
+    private fun createFileClass(irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
+        val fileEntry = irFile.fileEntry
+        val fileClassInfo = irFile.getFileClassInfo()
+        val isMultifilePart = fileClassInfo.withJvmMultifileClass
 
-    val onlyPrivateDeclarationsAndFeatureIsEnabled =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.PackagePrivateFileClassesWithAllPrivateMembers) && fileClassMembers
-            .all {
-                val isPrivate = it is IrDeclarationWithVisibility && DescriptorVisibilities.isPrivate(it.visibility)
-                val isInlineOnly = it.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
-                isPrivate || isInlineOnly
+        val onlyPrivateDeclarationsAndFeatureIsEnabled =
+            context.state.languageVersionSettings.supportsFeature(LanguageFeature.PackagePrivateFileClassesWithAllPrivateMembers) && fileClassMembers
+                .all {
+                    val isPrivate = it is IrDeclarationWithVisibility && DescriptorVisibilities.isPrivate(it.visibility)
+                    val isInlineOnly = it.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
+                    isPrivate || isInlineOnly
+                }
+
+        val fileClassOrigin =
+            if (!isMultifilePart || context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
+                IrDeclarationOrigin.FILE_CLASS
+            else
+                IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
+        return IrClassImpl(
+            0, fileEntry.maxOffset,
+            fileClassOrigin,
+            symbol = IrClassSymbolImpl(),
+            name = fileClassInfo.fileClassFqName.shortName(),
+            kind = ClassKind.CLASS,
+            visibility = if (isMultifilePart || onlyPrivateDeclarationsAndFeatureIsEnabled)
+                JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+            else
+                DescriptorVisibilities.PUBLIC,
+            modality = Modality.FINAL
+        ).apply {
+            superTypes = listOf(context.irBuiltIns.anyType)
+            parent = irFile
+            declarations.addAll(fileClassMembers)
+            createImplicitParameterDeclarationWithWrappedDescriptor()
+            for (member in fileClassMembers) {
+                member.parent = this
+                if (member is IrProperty) {
+                    member.getter?.let { it.parent = this }
+                    member.setter?.let { it.parent = this }
+                    member.backingField?.let { it.parent = this }
+                }
             }
 
-    val fileClassOrigin =
-        if (!isMultifilePart || context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
-            IrDeclarationOrigin.FILE_CLASS
-        else
-            IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
-    return IrClassImpl(
-        0, fileEntry.maxOffset,
-        fileClassOrigin,
-        symbol = IrClassSymbolImpl(),
-        name = fileClassInfo.fileClassFqName.shortName(),
-        kind = ClassKind.CLASS,
-        visibility = if (isMultifilePart || onlyPrivateDeclarationsAndFeatureIsEnabled)
-            JavaDescriptorVisibilities.PACKAGE_VISIBILITY
-        else
-            DescriptorVisibilities.PUBLIC,
-        modality = Modality.FINAL
-    ).apply {
-        superTypes = listOf(context.irBuiltIns.anyType)
-        parent = irFile
-        declarations.addAll(fileClassMembers)
-        createImplicitParameterDeclarationWithWrappedDescriptor()
-        for (member in fileClassMembers) {
-            member.parent = this
-            if (member is IrProperty) {
-                member.getter?.let { it.parent = this }
-                member.setter?.let { it.parent = this }
-                member.backingField?.let { it.parent = this }
+            annotations =
+                if (isMultifilePart) irFile.annotations.filterNot {
+                    it.symbol.owner.parentAsClass.hasEqualFqName(JvmFileClassUtil.JVM_NAME)
+                }
+                else irFile.annotations
+
+            metadata = irFile.metadata
+
+            val partClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
+            val facadeClassType =
+                if (isMultifilePart) AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
+                else null
+            context.state.factory.packagePartRegistry.addPart(irFile.fqName, partClassType.internalName, facadeClassType?.internalName)
+
+            if (fileClassInfo.fileClassFqName != fqNameWhenAvailable) {
+                context.classNameOverride[this] = JvmClassName.byInternalName(partClassType.internalName)
             }
-        }
 
-        annotations =
-            if (isMultifilePart) irFile.annotations.filterNot {
-                it.symbol.owner.parentAsClass.hasEqualFqName(JvmFileClassUtil.JVM_NAME)
+            if (facadeClassType != null) {
+                val jvmClassName = JvmClassName.byInternalName(facadeClassType.internalName)
+                context.multifileFacadesToAdd.getOrPut(jvmClassName) { ArrayList() }.add(this)
             }
-            else irFile.annotations
-
-        metadata = irFile.metadata
-
-        val partClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
-        val facadeClassType =
-            if (isMultifilePart) AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
-            else null
-        context.state.factory.packagePartRegistry.addPart(irFile.fqName, partClassType.internalName, facadeClassType?.internalName)
-
-        if (fileClassInfo.fileClassFqName != fqNameWhenAvailable) {
-            context.classNameOverride[this] = JvmClassName.byInternalName(partClassType.internalName)
-        }
-
-        if (facadeClassType != null) {
-            val jvmClassName = JvmClassName.byInternalName(facadeClassType.internalName)
-            context.multifileFacadesToAdd.getOrPut(jvmClassName) { ArrayList() }.add(this)
         }
     }
 }

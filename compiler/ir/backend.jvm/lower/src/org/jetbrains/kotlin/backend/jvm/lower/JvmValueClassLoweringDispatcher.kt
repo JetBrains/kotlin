@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -29,19 +32,14 @@ val jvmValueClassPhase = makeIrFilePhase(
     prerequisite = setOf(forLoopsPhase, jvmBuiltInsPhase, collectionStubMethodLowering, singleAbstractMethodPhase),
 )
 
-internal class JvmValueClassLoweringDispatcher(
-    private val context: JvmBackendContext,
-    private val fileClassNewDeclarations: MutableMap<IrFile, MutableList<IrSimpleFunction>> = mutableMapOf(),
-    override val scopeStack: MutableList<ScopeWithIr> = mutableListOf(),
-    private val inlineClassLowering: JvmInlineClassLowering = JvmInlineClassLowering(context, fileClassNewDeclarations, scopeStack),
-    private val multiFieldValueClassLowering: JvmMultiFieldValueClassLowering =
-        JvmMultiFieldValueClassLowering(context, fileClassNewDeclarations, scopeStack),
-) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+internal class JvmValueClassLoweringDispatcher(context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+    override val scopeStack: MutableList<ScopeWithIr> = mutableListOf()
+    private val inlineClassLowering: JvmInlineClassLowering = JvmInlineClassLowering(context, scopeStack)
+    private val multiFieldValueClassLowering: JvmMultiFieldValueClassLowering = JvmMultiFieldValueClassLowering(context, scopeStack)
 
 
     override fun lower(irFile: IrFile) = withinScope(irFile) {
         irFile.transformChildrenVoid()
-        JvmValueClassAbstractLowering.addDeclarations(context, fileClassNewDeclarations, irFile)
     }
 
 
@@ -106,6 +104,14 @@ internal class JvmValueClassLoweringDispatcher(
 
             override fun visitReturn(expression: IrReturn, data: Nothing?): Boolean =
                 lowering.needsToVisitReturn(expression) || super.visitReturn(expression, data)
+
+            override fun visitContainerExpression(expression: IrContainerExpression, data: Nothing?): Boolean =
+                visitStatementContainer(expression)
+
+            override fun visitBlockBody(body: IrBlockBody, data: Nothing?): Boolean =
+                visitStatementContainer(body)
+
+            private fun visitStatementContainer(expression: IrStatementContainer) = expression.statements.any { it.accept(this, null) }
         }, null)
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression = if (expression.requiresAnyHandling()) {
