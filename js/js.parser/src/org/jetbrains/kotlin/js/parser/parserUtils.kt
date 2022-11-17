@@ -22,10 +22,15 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.Reader
 import java.io.StringReader
 
-fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String): List<JsStatement>? {
+fun parse(
+    code: String,
+    reporter: ErrorReporter,
+    scope: JsScope,
+    fileName: String
+): List<JsStatement>? {
     val insideFunction = scope is JsFunctionScope
     val node = parse(code, CodePosition(0, 0), 0, reporter, insideFunction, Parser::parse)
-    return node?.toJsAst(scope, fileName) {
+    return node?.toJsAst(scope, fileName, false) {
         mapStatements(it)
     }
 }
@@ -53,14 +58,14 @@ fun parseExpressionOrStatement(
         for (warning in accumulatingReporter.warnings) {
             reporter.warning(warning.message, warning.startPosition, warning.endPosition)
         }
-        val expr = exprNode?.toJsAst(scope, fileName) {
+        val expr = exprNode?.toJsAst(scope, fileName, true) {
             mapExpression(it)
         }
         expr?.let { listOf(JsExpressionStatement(it)) }
     }
     else {
         val node = parse(code, startPosition, 0, reporter, true, Parser::parse)
-        node?.toJsAst(scope, fileName) {
+        node?.toJsAst(scope, fileName, true) {
             mapStatements(it)
         }
     }
@@ -71,7 +76,7 @@ fun parseFunction(code: String, fileName: String, position: CodePosition, offset
         addListener(FunctionParsingObserver())
         primaryExpr(it)
     }
-    return rootNode?.toJsAst(scope, fileName, JsAstMapper::mapFunction)
+    return rootNode?.toJsAst(scope, fileName, false, JsAstMapper::mapFunction)
 }
 
 private class FunctionParsingObserver : ParserListener {
@@ -108,9 +113,12 @@ private fun parse(
     }
 }
 
-inline
-private fun <T> Node.toJsAst(scope: JsScope, fileName: String, mapAction: JsAstMapper.(Node)->T): T =
-        JsAstMapper(scope, fileName).mapAction(this)
+inline private fun <T> Node.toJsAst(
+    scope: JsScope,
+    fileName: String,
+    shouldIncludeComments: Boolean,
+    mapAction: JsAstMapper.(Node) -> T
+): T = JsAstMapper(scope, fileName, shouldIncludeComments).mapAction(this)
 
 private fun StringReader(string: String, offset: Int): Reader {
     val reader = StringReader(string)

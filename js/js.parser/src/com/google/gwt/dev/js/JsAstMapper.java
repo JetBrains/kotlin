@@ -36,9 +36,16 @@ public class JsAstMapper {
     @NotNull
     private final String fileName;
 
-    public JsAstMapper(@NotNull JsScope scope, @NotNull String fileName) {
+    private final boolean shouldIncludeComments;
+
+    public JsAstMapper(
+            @NotNull JsScope scope,
+            @NotNull String fileName,
+            boolean shouldIncludeComments
+    ) {
         scopeContext = new ScopeContext(scope);
         this.fileName = fileName;
+        this.shouldIncludeComments = shouldIncludeComments;
     }
 
     private static JsParserException createParserException(String msg, Node offender) {
@@ -46,7 +53,8 @@ public class JsAstMapper {
     }
 
     private JsNode map(Node node) throws JsParserException {
-        return withLocation(mapWithComments(node), node);
+        JsNode jsNode = shouldIncludeComments ? mapWithComments(node) : mapWithoutLocation(node);
+        return withLocation(jsNode, node);
     }
 
     private JsNode mapWithComments(Node node) throws JsParserException {
