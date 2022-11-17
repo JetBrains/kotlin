@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 
 /**
  * [kotlin.contracts.ContractBuilder.callsInPlace]
+ *
  * K1: [org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration]
  */
@@ -25,6 +26,8 @@ public class KtCallsEffectDeclaration(
 }
 
 /**
+ * [kotlin.contracts.SimpleEffect.implies]
+ *
  * K1: [org.jetbrains.kotlin.contracts.description.ConditionalEffectDeclaration]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration]
  */
@@ -39,6 +42,8 @@ public class KtConditionalEffectDeclaration(
 }
 
 /**
+ * [kotlin.contracts.ContractBuilder.returnsNotNull] & [kotlin.contracts.ContractBuilder.returns]
+ *
  * K1: [org.jetbrains.kotlin.contracts.description.ReturnsEffectDeclaration]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration]
  */
