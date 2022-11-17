@@ -374,6 +374,8 @@ libraries/stdlib/wasm/internal/ "Kotlin Wasm"
 
 # UNKNOWN: /spec-docs/
 
+/scripts/ "Kotlin Build Infrastructure"
+
 /test-instrumenter/ "Kotlin Build Infrastructure"
 
 /tests/ "Kotlin Build Infrastructure"
