@@ -40,9 +40,7 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
 import static org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager.*;
 
-/**
- * @noinspection UnusedDeclaration
- */
+/** @noinspection UnusedDeclaration */
 @Mojo(name = "kapt", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Parameter
@@ -74,7 +72,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Component
     private ArtifactHandlerManager artifactHandlerManager;
 
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     @Component
@@ -167,7 +165,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
                 .filter(path -> {
                     File pathFile = new File(path);
                     return !pathFile.equals(generatedSourcesDirectory)
-                           && !pathFile.equals(generatedKotlinSourcesDirectory);
+                            && !pathFile.equals(generatedKotlinSourcesDirectory);
                 })
                 .collect(Collectors.toList());
     }
@@ -189,8 +187,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     }
 
     @Override
-    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments, @NotNull List<File> sourceRoots)
-            throws MojoExecutionException {
+    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         super.configureSpecificCompilerArguments(arguments, sourceRoots);
 
         AnnotationProcessingManager.ResolvedArtifacts resolvedArtifacts;
@@ -210,8 +207,8 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
                 joinArrays(
                         arguments.getPluginClasspaths(),
                         (jdkToolsJarPath == null)
-                        ? new String[] {resolvedArtifacts.kaptCompilerPluginArtifact}
-                        : new String[] {jdkToolsJarPath, resolvedArtifacts.kaptCompilerPluginArtifact}
+                                ? new String[]{resolvedArtifacts.kaptCompilerPluginArtifact}
+                                : new String[]{jdkToolsJarPath, resolvedArtifacts.kaptCompilerPluginArtifact}
                 )
         );
     }
@@ -223,16 +220,6 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
             getLog().warn("Can't determine Java home, 'java.home' property does not exist");
             return null;
         }
-
-        val jdkVersion = try {
-            System.getProperty("java.specification.version") ?.toInt()
-        }
-        catch (e:NumberFormatException){
-            // we got 1.8 or 1.6
-            null
-        } ?:0
-        if (jdkVersion >= 9) return null
-
         File javaHome = new File(javaHomePath);
         File toolsJar = new File(javaHome, "lib/tools.jar");
         if (toolsJar.exists()) {
@@ -337,8 +324,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
             oos.flush();
             return Base64.getEncoder().encodeToString(os.toByteArray());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // Should not occur
             throw new RuntimeException(e);
         }
