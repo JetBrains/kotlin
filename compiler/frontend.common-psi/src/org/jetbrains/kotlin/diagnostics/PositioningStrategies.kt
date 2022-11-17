@@ -354,7 +354,7 @@ object PositioningStrategies {
     fun modifierSetPosition(vararg tokens: KtModifierKeywordToken): PositioningStrategy<KtModifierListOwner> {
         return object : PositioningStrategy<KtModifierListOwner>() {
             override fun mark(element: KtModifierListOwner): List<TextRange> {
-                val modifierList = element.modifierList.sure { "No modifier list, but modifier has been found by the analyzer" }
+                val modifierList = element.modifierList ?: return DEFAULT.mark(element)
 
                 for (token in tokens) {
                     val modifier = modifierList.getModifier(token)
@@ -363,7 +363,7 @@ object PositioningStrategies {
                     }
                 }
 
-                throw IllegalStateException("None of the modifiers is found: " + listOf(*tokens))
+                return DEFAULT.mark(element)
             }
         }
     }
