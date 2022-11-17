@@ -1,0 +1,39 @@
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /referenceReceiverInContract
+  contextReceivers: []
+  contractEffects: [
+    KtConditionalEffectDeclaration:
+      effect:
+        KtReturnsEffectDeclaration:
+          value:
+            KtConstantReference:
+              name: WILDCARD
+      condition:
+        KtBooleanValueParameterReference:
+          name: this
+  ]
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: true
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: referenceReceiverInContract
+  origin: SOURCE
+  receiverType: kotlin/Boolean
+  returnType: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

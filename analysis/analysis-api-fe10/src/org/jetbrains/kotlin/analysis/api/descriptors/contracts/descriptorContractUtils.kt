@@ -66,14 +66,17 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
         KtAbstractConstantReference.KtBooleanConstantReference(booleanConstantDescriptor.name, analysisContext.token)
 
     override fun visitVariableReference(variableReference: VariableReference, data: Unit): KtContractDescriptionElement =
-        KtAbstractValueParameterReference.KtValueParameterReference(variableReference.descriptor.name.asString(), analysisContext.token)
+        KtAbstractValueParameterReference.KtValueParameterReference(
+            variableReference.descriptor.name.asStringStripSpecialMarkers(),
+            analysisContext.token
+        )
 
     override fun visitBooleanVariableReference(
         booleanVariableReference: BooleanVariableReference,
         data: Unit
     ): KtContractDescriptionElement =
         KtAbstractValueParameterReference.KtBooleanValueParameterReference(
-            booleanVariableReference.descriptor.name.asString(),
+            booleanVariableReference.descriptor.name.asStringStripSpecialMarkers(),
             analysisContext.token
         )
 }

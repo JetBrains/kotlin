@@ -134,6 +134,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends
         }
 
         @Test
+        @TestMetadata("referenceBooleanReceiverInContract.kt")
+        public void testReferenceBooleanReceiverInContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceBooleanReceiverInContract.kt");
+        }
+
+        @Test
+        @TestMetadata("referenceReceiverInContract.kt")
+        public void testReferenceReceiverInContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceReceiverInContract.kt");
+        }
+
+        @Test
         @TestMetadata("returnsContract.kt")
         public void testReturnsContract() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsContract.kt");
