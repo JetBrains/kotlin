@@ -14,6 +14,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
+import kotlin.io.path.appendText
 
 @JvmGradlePluginTests
 @DisplayName("Kotlin Java Toolchain support")
@@ -655,6 +656,37 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build("assemble") {
                 assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
+    @DisplayName("KT-55004: Should use non-default toolchain for parent project")
+    @GradleTest
+    internal fun toolchainFromParentProject(gradleVersion: GradleVersion) {
+        project(
+            projectName = "multiproject".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            //language=Groovy
+            buildGradle.appendText(
+                """
+                |
+                |allprojects {
+                |    tasks.withType(org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain.class)
+                |         .configureEach {
+                |              kotlinJavaToolchain.jdk.use(
+                |                  "${getJdk11Path()}",
+                |                  JavaVersion.VERSION_11
+                |              )
+                |         }
+                |}
+                """.trimMargin()
+            )
+
+            build(":lib:compileKotlin") {
+                assertOutputDoesNotContain("-jvm-target 1.8")
+                assertOutputContains("-jvm-target 11")
             }
         }
     }
