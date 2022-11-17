@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -18,9 +17,8 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMember
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import java.util.*
 
-context(KtAnalysisSession)
 internal class SymbolLightConstructor(
-    private val constructorSymbol: KtConstructorSymbol,
+    constructorSymbol: KtConstructorSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
@@ -44,11 +42,13 @@ internal class SymbolLightConstructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
-        constructorSymbol.computeAnnotations(
-            parent = this,
-            nullability = NullabilityType.Unknown,
-            annotationUseSiteTarget = null,
-        )
+        withFunctionSymbol { constructorSymbol ->
+            constructorSymbol.computeAnnotations(
+                parent = this@SymbolLightConstructor,
+                nullability = NullabilityType.Unknown,
+                annotationUseSiteTarget = null,
+            )
+        }
     }
 
     private val _modifiers: Set<String> by lazyPub {
@@ -59,7 +59,9 @@ internal class SymbolLightConstructor(
         if (containingClass is SymbolLightClassForEnumEntry)
             setOf(PsiModifier.PACKAGE_LOCAL)
         else
-            setOf(constructorSymbol.toPsiVisibilityForMember())
+            withFunctionSymbol { constructorSymbol ->
+                setOf(constructorSymbol.toPsiVisibilityForMember())
+            }
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
