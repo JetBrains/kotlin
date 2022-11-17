@@ -45,7 +45,13 @@ fun main(args: Array<String>) {
                     "incremental/multiModule/multiplatform/custom", extension = null, excludeParentDirs = true,
                     targetBackend = TargetBackend.JVM_IR
                 )
-                model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "incremental/pureKotlin",
+                    extension = null,
+                    recursive = false,
+                    targetBackend = TargetBackend.JVM_IR,
+                    excludedPattern = ".*SinceK2"
+                )
                 model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model(

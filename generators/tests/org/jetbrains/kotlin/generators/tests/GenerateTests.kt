@@ -46,26 +46,52 @@ fun main(args: Array<String>) {
     generateTestGroupSuite(args) {
         testGroup("compiler/incremental-compilation-impl/test", "jps/jps-plugin/testData") {
             fun incrementalJvmTestData(targetBackend: TargetBackend, excludePattern: String? = null): TestGroup.TestClass.() -> Unit = {
-                model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = targetBackend, excludedPattern = excludePattern)
+                model(
+                    "incremental/pureKotlin",
+                    extension = null,
+                    recursive = false,
+                    targetBackend = targetBackend,
+                    excludedPattern = excludePattern
+                )
                 model("incremental/classHierarchyAffected", extension = null, recursive = false, targetBackend = targetBackend)
                 model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
                 model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
                 model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
             }
-            testClass<AbstractIncrementalJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR))
-            testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
-            testClass<AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
-            testClass<AbstractIncrementalFirLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
+            testClass<AbstractIncrementalJvmCompilerRunnerTest>(
+                init = incrementalJvmTestData(
+                    targetBackend = TargetBackend.JVM_IR,
+                    excludePattern = ".*SinceK2"
+                )
+            )
+            testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "^.*Expect.*"
+                )
+            )
+            testClass<AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "^.*Expect.*"
+                )
+            )
+            testClass<AbstractIncrementalFirLightTreeJvmCompilerRunnerTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "^.*Expect.*"
+                )
+            )
 
             testClass<AbstractIncrementalJsCompilerRunnerTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false)
+                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = ".*SinceK2")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractIncrementalJsKlibCompilerRunnerTest>() {
                 // IC of sealed interfaces are not supported in JS
-                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
+                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
@@ -79,7 +105,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIncrementalJsCompilerRunnerWithMetadataOnlyTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false)
+                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = ".*SinceK2")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
