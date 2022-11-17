@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 
 fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependencyMatcher> {
@@ -30,4 +31,9 @@ fun binaryCoordinates(regex: Regex): IdeaKotlinDependencyMatcher {
 
 fun binaryCoordinates(literal: String): IdeaKotlinDependencyMatcher {
     return binaryCoordinates(Regex.fromLiteral(literal))
+}
+
+fun anyDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependencyMatcher {
+    override val description: String get() = "any"
+    override fun matches(dependency: IdeaKotlinDependency): Boolean = true
 }
