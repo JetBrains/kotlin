@@ -511,6 +511,13 @@ internal class WithJavaCompilationDetails<T : KotlinCommonOptions, CO : KotlinCo
             super.addAssociateCompilationDependencies(other)
         } // otherwise, do nothing: the Java Gradle plugin adds these dependencies for us, we don't need to add them to the classpath
     }
+
+    override val kotlinDependenciesHolder: HasKotlinDependencies
+        get() = project.objects.newInstance(
+            KotlinWithJavaDependencyConfigurationsHolder::class.java,
+            project,
+            javaSourceSet,
+        )
 }
 
 class AndroidCompilationDetails(
@@ -703,6 +710,29 @@ internal abstract class KotlinDependencyConfigurationsHolder @Inject constructor
 
     override val runtimeOnlyConfigurationName: String
         get() = lowerCamelCaseName(configurationNamesPrefix, RUNTIME_ONLY)
+
+    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
+        DefaultKotlinDependencyHandler(this, project).run(configure)
+
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) =
+        dependencies { configure.execute(this) }
+}
+
+internal abstract class KotlinWithJavaDependencyConfigurationsHolder @Inject constructor(
+    val project: Project,
+    private val javaSourceSet: SourceSet,
+) : HasKotlinDependencies {
+    override val apiConfigurationName: String
+        get() = javaSourceSet.apiConfigurationName
+
+    override val implementationConfigurationName: String
+        get() = javaSourceSet.implementationConfigurationName
+
+    override val compileOnlyConfigurationName: String
+        get() = javaSourceSet.compileOnlyConfigurationName
+
+    override val runtimeOnlyConfigurationName: String
+        get() = javaSourceSet.runtimeOnlyConfigurationName
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
         DefaultKotlinDependencyHandler(this, project).run(configure)

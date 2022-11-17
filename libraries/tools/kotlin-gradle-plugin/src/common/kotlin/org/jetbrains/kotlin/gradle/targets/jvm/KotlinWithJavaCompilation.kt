@@ -31,18 +31,6 @@ abstract class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions
     override val processResourcesTaskName: String
         get() = javaSourceSet.processResourcesTaskName
 
-    override val runtimeOnlyConfigurationName: String
-        get() = javaSourceSet.runtimeOnlyConfigurationName
-
-    override val implementationConfigurationName: String
-        get() = javaSourceSet.implementationConfigurationName
-
-    override val apiConfigurationName: String
-        get() = javaSourceSet.apiConfigurationName
-
-    override val compileOnlyConfigurationName: String
-        get() = javaSourceSet.compileOnlyConfigurationName
-
     override val compileAllTaskName: String
         get() = javaSourceSet.classesTaskName
 
