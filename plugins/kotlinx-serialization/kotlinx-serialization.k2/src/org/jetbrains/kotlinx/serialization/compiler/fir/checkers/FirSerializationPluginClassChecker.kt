@@ -7,11 +7,13 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineClass
+import org.jetbrains.kotlin.fir.analysis.checkers.outerClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -43,6 +45,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         with(context) {
             val classSymbol = declaration.symbol
+            checkMetaSerializableApplicable(classSymbol, reporter)
             checkEnum(classSymbol, reporter)
             checkExternalSerializer(classSymbol, reporter)
             if (!canBeSerializedInternally(classSymbol, reporter)) return
@@ -56,6 +59,15 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
 
             checkVersions(classSymbol, reporter)
         }
+    }
+
+    context(CheckerContext)
+    private fun checkMetaSerializableApplicable(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
+        if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) return
+        if (!classSymbol.classId.isNestedClass) return
+        val anno = classSymbol.resolvedAnnotationsWithClassIds.find { it.classId == SerializationAnnotations.metaSerializableAnnotationClassId }
+        if (anno == null) return
+        reporter.reportOn(anno.source, FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE)
     }
 
     context(CheckerContext)

@@ -151,6 +151,10 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.RENDER_TYPE,
             FirDiagnosticRenderers.RENDER_TYPE
         )
+        put(
+            FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE,
+            "@MetaSerializable annotation can be used only on top-level annotation classes."
+        )
 
         put(
             FirSerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE,

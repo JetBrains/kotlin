@@ -45,6 +45,7 @@ object FirSerializationErrors {
     val PROVIDED_RUNTIME_TOO_LOW by error3<KtAnnotationEntry, String, String, String>()
 
     val INCONSISTENT_INHERITABLE_SERIALINFO by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val META_SERIALIZABLE_NOT_APPLICABLE by error0<PsiElement>()
 
     val EXTERNAL_CLASS_NOT_SERIALIZABLE by error2<PsiElement, FirClassSymbol<*>, ConeKotlinType>()
     val EXTERNAL_CLASS_IN_ANOTHER_MODULE by error2<PsiElement, FirClassSymbol<*>, ConeKotlinType>()

@@ -40,6 +40,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     final override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
 
+        checkMetaSerializableApplicable(descriptor, context.trace)
         checkEnum(descriptor, declaration, context.trace)
         checkExternalSerializer(descriptor, declaration, context.trace)
 
@@ -58,6 +59,13 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
         checkInheritedAnnotations(descriptor, declaration, context.trace)
+    }
+
+    private fun checkMetaSerializableApplicable(descriptor: ClassDescriptor, trace: BindingTrace) {
+        if (descriptor.kind != ClassKind.ANNOTATION_CLASS) return
+        if (descriptor.classId?.isNestedClass != true) return
+        val entry = descriptor.findAnnotationDeclaration(SerializationAnnotations.metaSerializableAnnotationFqName) ?: return
+        trace.report(SerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE.on(entry))
     }
 
     private fun checkExternalSerializer(classDescriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {

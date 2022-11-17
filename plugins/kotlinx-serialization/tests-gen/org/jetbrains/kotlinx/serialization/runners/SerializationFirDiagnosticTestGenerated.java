@@ -93,6 +93,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         }
 
         @Test
+        @TestMetadata("metaSerializableNested.kt")
+        public void testMetaSerializableNested() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/metaSerializableNested.kt");
+        }
+
+        @Test
         @TestMetadata("NoSuitableCtorInParent.kt")
         public void testNoSuitableCtorInParent() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/NoSuitableCtorInParent.kt");
