@@ -390,7 +390,7 @@ enum class WasmOp(
     // ------------------------
     // Deprecated instructions
     // TODO Remove as soon as V8 & Binaryen support new instructions.
-    //      Revert ________.
+    //      Revert 7f8f7aa0.
 
     REF_TEST_DEPRECATED("ref.test", 0xFB_44, STRUCT_TYPE_IDX),
     REF_CAST_DEPRECATED("ref.cast", 0xFB_45, STRUCT_TYPE_IDX),
