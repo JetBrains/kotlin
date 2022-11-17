@@ -2627,7 +2627,7 @@ class ComposableFunctionBodyTransformer(
                                 }
                             }
                         }
-
+                        scope.updateIntrinsiceRememberSafety(false)
                         break@loop
                     }
                     if (scope.isInlinedLambda && scope.inComposableCall)
