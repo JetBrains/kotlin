@@ -127,6 +127,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("removeClassAsSuperType")
+    public void testRemoveClassAsSuperType() throws Exception {
+        runTest("compiler/testData/klibABI/removeClassAsSuperType/");
+    }
+
+    @Test
     @TestMetadata("removeClassAsSuperTypeArgument")
     public void testRemoveClassAsSuperTypeArgument() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsSuperTypeArgument/");
