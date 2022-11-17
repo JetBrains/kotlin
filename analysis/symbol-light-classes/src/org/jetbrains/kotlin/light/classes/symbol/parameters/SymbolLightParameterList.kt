@@ -11,13 +11,10 @@ import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.allowLightClassesOnEdt
-import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
-import org.jetbrains.kotlin.light.classes.symbol.restoreSymbolOrThrowIfDisposed
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameterList
 
@@ -39,10 +36,8 @@ internal class SymbolLightParameterList(
         val builder = LightParameterListBuilder(manager, language)
 
         callableWithReceiverSymbolPointer?.let {
-            analyzeForLightClasses(ktModule) {
-                SymbolLightParameterForReceiver.tryGet(it.restoreSymbolOrThrowIfDisposed(), parent)?.let { receiver ->
-                    builder.addParameter(receiver)
-                }
+            SymbolLightParameterForReceiver.tryGet(ktModule, it, parent)?.let { receiver ->
+                builder.addParameter(receiver)
             }
         }
 

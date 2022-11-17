@@ -10,12 +10,14 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.receiverType
+import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
@@ -24,31 +26,39 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.light.classes.symbol.nullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.restoreSymbolOrThrowIfDisposed
 import org.jetbrains.kotlin.psi.KtParameter
 
-context(KtAnalysisSession)
 internal class SymbolLightParameterForReceiver private constructor(
-    private val receiver: KtReceiverParameterSymbol,
-    private val context: KtSymbol,
+    private val ktModule: KtModule,
+    private val callableSymbolWithReceiverPointer: KtSymbolPointer<KtCallableSymbol>,
     methodName: String,
     method: SymbolLightMethodBase
 ) : SymbolLightParameterBase(method) {
+    private inline fun <T> withReceiverType(crossinline action: context(KtAnalysisSession) (KtType) -> T): T {
+        return analyze(ktModule) {
+            val callableSymbol = callableSymbolWithReceiverPointer.restoreSymbolOrThrowIfDisposed()
+            action(this, requireNotNull(callableSymbol.receiverType))
+        }
+    }
 
     companion object {
-        context (KtAnalysisSession)
         fun tryGet(
-            callableSymbol: KtCallableSymbol,
+            ktModule: KtModule,
+            callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
             method: SymbolLightMethodBase
         ): SymbolLightParameterForReceiver? {
-            if (callableSymbol !is KtNamedSymbol) return null
-
-            if (!callableSymbol.isExtension) return null
-            val extensionTypeAndAnnotations = callableSymbol.receiverParameter ?: return null
+            val methodName = analyze(ktModule) {
+                val callableSymbol = callableSymbolPointer.restoreSymbolOrThrowIfDisposed()
+                if (callableSymbol !is KtNamedSymbol) return@analyze null
+                if (!callableSymbol.isExtension || callableSymbol.receiverType == null) return@analyze null
+                callableSymbol.name.asString()
+            } ?: return null
 
             return SymbolLightParameterForReceiver(
-                receiver = extensionTypeAndAnnotations,
-                context = callableSymbol,
-                methodName = callableSymbol.name.asString(),
+                ktModule = ktModule,
+                callableSymbolWithReceiverPointer = callableSymbolPointer,
+                methodName = methodName,
                 method = method,
             )
         }
@@ -68,33 +78,42 @@ internal class SymbolLightParameterForReceiver private constructor(
     override val kotlinOrigin: KtParameter? = null
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
-        buildList {
-            receiver.type.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let { add(it) }
-            receiver.annotations.mapTo(this) {
-                SymbolLightAnnotationForAnnotationCall(it, this@SymbolLightParameterForReceiver)
+        withReceiverType { receiverType ->
+            buildList {
+                receiverType.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let { add(it) }
+                receiverType.annotations.mapTo(this) {
+                    SymbolLightAnnotationForAnnotationCall(it, this@SymbolLightParameterForReceiver)
+                }
             }
         }
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
-    private val _modifierList: PsiModifierList by lazyPub {
+
+    private val _modifierList: PsiModifierList by lazy {
         SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyOf(_annotations))
     }
 
-    private val _type: PsiType by lazyPub {
-        receiver.type.asPsiType(this@SymbolLightParameterForReceiver) ?: nonExistentType()
+    private val _type: PsiType by lazy {
+        withReceiverType { receiverType ->
+            receiverType.asPsiType(this@SymbolLightParameterForReceiver)
+        } ?: nonExistentType()
     }
 
     override fun getType(): PsiType = _type
 
-    override fun equals(other: Any?): Boolean =
-        this === other ||
-                (other is SymbolLightParameterForReceiver &&
-                        receiver == other.receiver)
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is SymbolLightParameterForReceiver &&
+            ktModule == other.ktModule &&
+            analyze(ktModule) {
+                callableSymbolWithReceiverPointer.restoreSymbol() == other.callableSymbolWithReceiverPointer.restoreSymbol()
+            }
 
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
+    override fun hashCode(): Int = _name.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && context.isValid()
+    override fun isValid(): Boolean = super.isValid() && analyze(ktModule) {
+        callableSymbolWithReceiverPointer.restoreSymbol()?.receiverType != null
+    }
 }
 
 
