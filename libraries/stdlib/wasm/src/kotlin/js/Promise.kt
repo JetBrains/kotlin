@@ -23,7 +23,7 @@ public external class Promise<out T>(executor: (resolve: (JsValue?) -> Unit, rej
 public typealias UntypedPromise = Promise<JsValue?>
 
 @JsFun("e => { throw e; }")
-internal external fun jsThrow(e: JsValue)
+private external fun jsThrow(e: JsValue)
 
 @JsFun("""(f) => {
     let result = null;
