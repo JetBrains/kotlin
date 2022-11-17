@@ -359,7 +359,7 @@ object LightTreePositioningStrategies {
                     return markElement(it, startOffset, endOffset, tree, baseNode)
                 }
             }
-            return null
+            return DEFAULT.mark(node, startOffset, endOffset, tree)
         }
 
         override fun mark(
