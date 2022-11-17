@@ -78,3 +78,11 @@ fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
     this is VirtualMachineError -> this
     else -> FileAnalysisException(filePath, this)
 }
+
+inline fun <R> withSourceCodeAnalysisExceptionUnwrapping(block: () -> R): R {
+    return try {
+        block()
+    } catch (throwable: Throwable) {
+        throw if (throwable is SourceCodeAnalysisException) throwable.cause else throwable
+    }
+}

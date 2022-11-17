@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.SourceCodeAnalysisException
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -1176,7 +1177,10 @@ internal class KtFirCallResolver(
             action()
         } catch (e: Throwable) {
             if (shouldIjPlatformExceptionBeRethrown(e)) throw e
-            buildErrorWithAttachment("Error during resolving call ${element::class.java.name}", cause = e) {
+            buildErrorWithAttachment(
+                "Error during resolving call ${element::class.java.name}",
+                cause = if (e is SourceCodeAnalysisException) e.cause else e,
+            ) {
                 withPsiEntry("psi", element)
                 element.getOrBuildFir(firResolveSession)?.let { withFirEntry("fir", it) }
             }
