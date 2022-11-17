@@ -446,4 +446,5 @@ projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
     dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
 
     systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
+    systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
 }
