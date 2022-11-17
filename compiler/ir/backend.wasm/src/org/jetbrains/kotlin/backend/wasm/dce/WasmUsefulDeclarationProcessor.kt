@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.wasm.ir.*
 
 internal class WasmUsefulDeclarationProcessor(
     override val context: WasmBackendContext,
@@ -59,7 +58,7 @@ internal class WasmUsefulDeclarationProcessor(
 
             context.wasmSymbols.wasmClassId,
             context.wasmSymbols.wasmInterfaceId,
-            context.wasmSymbols.refCast,
+            context.wasmSymbols.refCastNull,
             context.wasmSymbols.refTest,
             context.wasmSymbols.boxIntrinsic,
             context.wasmSymbols.wasmArrayCopy -> {

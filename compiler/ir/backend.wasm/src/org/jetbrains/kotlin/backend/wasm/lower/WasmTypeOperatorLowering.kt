@@ -242,7 +242,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        return builder.irCall(symbols.refCast, type = toType).apply {
+        return builder.irCall(symbols.refCastNull, type = toType).apply {
             putTypeArgument(0, toType)
             putValueArgument(0, value)
         }

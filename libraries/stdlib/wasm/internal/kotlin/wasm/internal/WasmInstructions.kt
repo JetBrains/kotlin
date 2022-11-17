@@ -19,15 +19,12 @@ import kotlin.wasm.internal.ExternalInterfaceType
 internal fun wasm_unreachable(): Nothing =
     implementedAsIntrinsic
 
-internal fun <To> wasm_ref_cast(a: Any?): To =
-    implementedAsIntrinsic
-
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-@WasmOp(WasmOp.REF_CAST_NULL)
 internal fun <reified To> wasm_ref_cast_null(a: Any?): To =
     implementedAsIntrinsic
 
-internal fun <To> wasm_ref_test(a: Any?): Boolean =
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+internal fun <reified To> wasm_ref_test(a: Any?): Boolean =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")

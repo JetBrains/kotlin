@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -674,7 +673,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     ) : InteropTypeAdapter {
         override val fromType: IrType = context.wasmSymbols.wasmDataRefType
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
-            val call = builder.irCall(context.wasmSymbols.refCast)
+            val call = builder.irCall(context.wasmSymbols.refCastNull)
             call.putValueArgument(0, expression)
             call.putTypeArgument(0, toType)
             return call

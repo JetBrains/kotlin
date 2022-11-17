@@ -180,7 +180,7 @@ class WasmSymbols(
     val refIsNull = getInternalFunction("wasm_ref_is_null")
     val externRefIsNull = getInternalFunction("wasm_externref_is_null")
     val refTest = getInternalFunction("wasm_ref_test")
-    val refCast = getInternalFunction("wasm_ref_cast")
+    val refCastNull = getInternalFunction("wasm_ref_cast_null")
     val wasmArrayCopy = getInternalFunction("wasm_array_copy")
     val wasmArrayNewData0 = getInternalFunction("array_new_data0")
 

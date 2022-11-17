@@ -392,7 +392,7 @@ class BodyGenerator(
                 generateExpression(receiver)
 
                 //TODO: check why it could be needed
-                generateRefCast(receiver.type, klass.defaultType)
+                generateRefNullCast(receiver.type, klass.defaultType)
 
                 body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0))
                 body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot))
@@ -428,7 +428,7 @@ class BodyGenerator(
             body.buildGetUnit()
     }
 
-    private fun generateRefCast(fromType: IrType, toType: IrType) {
+    private fun generateRefNullCast(fromType: IrType, toType: IrType) {
         if (!isDownCastAlwaysSuccessInRuntime(fromType, toType)) {
             body.buildRefCastNullStatic(
                 toType = context.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
@@ -507,8 +507,8 @@ class BodyGenerator(
                 }
             }
 
-            wasmSymbols.refCast -> {
-                generateRefCast(
+            wasmSymbols.refCastNull -> {
+                generateRefNullCast(
                     fromType = call.getValueArgument(0)!!.type,
                     toType = call.getTypeArgument(0)!!
                 )
@@ -540,7 +540,7 @@ class BodyGenerator(
                 val klass: IrClass = backendContext.inlineClassesUtils.getInlinedClass(toType)!!
                 val field = getInlineClassBackingField(klass)
 
-                generateRefCast(fromType, toType)
+                generateRefNullCast(fromType, toType)
                 generateInstanceFieldAccess(field)
             }
 
@@ -722,7 +722,7 @@ class BodyGenerator(
 
         // REF -> REF -> REF_CAST
         if (!expectedIsPrimitive) {
-            generateRefCast(actualTypeErased, expectedTypeErased)
+            generateRefNullCast(actualTypeErased, expectedTypeErased)
         }
     }
 
