@@ -13,6 +13,7 @@ import java.io.Closeable
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 interface CompilationTransaction : Closeable {
     fun registerAddedOrChangedFile(outputFile: Path)
@@ -28,7 +29,9 @@ class DummyCompilationTransaction : CompilationTransaction {
     }
 
     override fun deleteFile(outputFile: Path) {
-        Files.delete(outputFile)
+        if (Files.exists(outputFile)) {
+            Files.delete(outputFile)
+        }
     }
 
     override fun markAsSuccessful() {
@@ -45,19 +48,52 @@ class RecoverableCompilationTransaction(
     private val reporter: BuildReporter,
     private val stashDir: Path,
 ) : CompilationTransaction {
+    private val fileRelocationRegistry = hashMapOf<Path, Path?>()
+    private var filesCounter = 0
     private var successful = false
 
     override fun registerAddedOrChangedFile(outputFile: Path) {
-        reporter.warn { "$outputFile is being added or changed" }
+        if (fileRelocationIsAlreadyRegisteredFor(outputFile)) return
+        if (Files.exists(outputFile)) {
+            val relocatedFilePath = getNextRelocatedFilePath()
+            reporter.warn { "Moving the $outputFile file to the stash as $relocatedFilePath" }
+            fileRelocationRegistry[outputFile] = relocatedFilePath
+            Files.move(outputFile, relocatedFilePath)
+        } else {
+            reporter.warn { "Marking the $outputFile file as newly added" }
+            fileRelocationRegistry[outputFile] = null
+        }
     }
 
     override fun deleteFile(outputFile: Path) {
-        reporter.warn { "Deleting $outputFile" }
-        Files.delete(outputFile)
+        if (fileRelocationIsAlreadyRegisteredFor(outputFile)) {
+            reporter.warn { "Deleting $outputFile" }
+            if (Files.exists(outputFile)) {
+                Files.delete(outputFile)
+            }
+            return
+        }
+        val relocatedFilePath = getNextRelocatedFilePath()
+        reporter.warn { "Moving $outputFile to the stash as $relocatedFilePath" }
+        fileRelocationRegistry[outputFile] = relocatedFilePath
+        Files.move(outputFile, relocatedFilePath)
     }
+
+    private fun getNextRelocatedFilePath(): Path = stashDir.resolve("$filesCounter.backup").also { filesCounter++ }
+
+    private fun fileRelocationIsAlreadyRegisteredFor(outputFile: Path) = outputFile in fileRelocationRegistry
 
     private fun revertChanges() {
         reporter.warn { "Reverting changes" }
+        for ((originPath, relocatedPath) in fileRelocationRegistry) {
+            if (relocatedPath == null) {
+                if (Files.exists(originPath)) {
+                    Files.delete(originPath)
+                }
+                continue
+            }
+            Files.move(relocatedPath, originPath, StandardCopyOption.REPLACE_EXISTING)
+        }
     }
 
     private fun cleanupStash() {
@@ -77,6 +113,7 @@ class RecoverableCompilationTransaction(
             cleanupStash()
         } else {
             revertChanges()
+            cleanupStash()
         }
     }
 }
