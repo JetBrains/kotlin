@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
@@ -344,31 +345,48 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
             }
             // Specialize calls to equals when the left argument is a value of inline class type.
-            expression.isSpecializedInlineClassEqEq -> {
+            expression.isSpecializedInlineClassEqEq || expression.isSpecializedInlineClassEquals -> {
                 expression.transformChildrenVoid()
+                val leftOp: IrExpression
+                val rightOp: IrExpression
+                if (expression.isSpecializedInlineClassEqEq) {
+                    leftOp = expression.getValueArgument(0)!!
+                    rightOp = expression.getValueArgument(1)!!
+                } else {
+                    leftOp = expression.dispatchReceiver!!
+                    rightOp = expression.getValueArgument(0)!!
+                }
                 context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
-                    .specializeEqualsCall(expression.getValueArgument(0)!!, expression.getValueArgument(1)!!)
+                    .specializeEqualsCall(leftOp, rightOp)
                     ?: expression
             }
-
             else ->
                 super.visitCall(expression)
+        }
+
+    private val IrCall.isSpecializedInlineClassEquals: Boolean
+        get() {
+            return isSpecializedInlineClassEqualityCheck { symbol.owner.isEquals() }
         }
 
     private val IrCall.isSpecializedInlineClassEqEq: Boolean
         get() {
             // Note that reference equality (x === y) is not allowed on values of inline class type,
             // so it is enough to check for eqeq.
-            if (symbol != context.irBuiltIns.eqeqSymbol)
-                return false
-
-            val leftClass = getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isSingleFieldValueClass }
-                ?: return false
-
-            // Before version 1.4, we cannot rely on the Result.equals-impl0 method
-            return (leftClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) ||
-                    context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+            return isSpecializedInlineClassEqualityCheck { symbol == context.irBuiltIns.eqeqSymbol }
         }
+
+    private inline fun IrCall.isSpecializedInlineClassEqualityCheck(calleePredicate: (IrSimpleFunctionSymbol) -> Boolean): Boolean {
+
+        if (!calleePredicate(symbol)) return false
+
+        val leftClass = getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isSingleFieldValueClass }
+            ?: return false
+
+        // Before version 1.4, we cannot rely on the Result.equals-impl0 method
+        return (leftClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) ||
+                context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+    }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
         val field = expression.symbol.owner
