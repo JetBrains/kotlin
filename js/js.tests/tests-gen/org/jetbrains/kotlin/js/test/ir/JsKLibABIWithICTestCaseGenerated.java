@@ -115,6 +115,11 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         runTest("compiler/testData/klibABI/removeClassAsReturnType/");
     }
 
+    @TestMetadata("removeClassAsSuperType")
+    public void testRemoveClassAsSuperType() throws Exception {
+        runTest("compiler/testData/klibABI/removeClassAsSuperType/");
+    }
+
     @TestMetadata("removeClassAsSuperTypeArgument")
     public void testRemoveClassAsSuperTypeArgument() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsSuperTypeArgument/");
