@@ -395,6 +395,8 @@ libraries/stdlib/wasm/internal/ "Kotlin Wasm"
 # Build files
 **.gradle.kts "Kotlin Build Infrastructure"
 **.gradle "Kotlin Build Infrastructure"
+/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle.kts "Kotlin Build Tools" "Kotlin Multiplatform" 
+/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle "Kotlin Build Tools" "Kotlin Multiplatform"
 .gitignore "Kotlin Build Infrastructure"
 gradlew "Kotlin Build Infrastructure"
 gradlew.bat "Kotlin Build Infrastructure"
