@@ -1626,4 +1626,69 @@ class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testForEarlyExit() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(condition: Boolean) {
+                val value = remember { mutableStateOf(false) }
+                if (!value.value && !condition) return
+                val value2 = remember { mutableStateOf(false) }
+                Text("Text ${'$'}{value.value}, ${'$'}{value2.value}")
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<rememb...>,<Text("...>:Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                val value = %composer.cache(false) {
+                  mutableStateOf(
+                    value = false
+                  )
+                }
+                if (!value.value && !condition) {
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                    Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+                  }
+                  return
+                }
+                val value2 = remember({
+                  mutableStateOf(
+                    value = false
+                  )
+                }, %composer, 0)
+                Text("Text %{value.value}, %{value2.value}", %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+              }
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Text(value: String) { }
+        """
+    )
 }
