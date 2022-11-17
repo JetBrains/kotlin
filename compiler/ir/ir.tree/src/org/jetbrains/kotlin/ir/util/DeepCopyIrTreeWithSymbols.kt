@@ -128,7 +128,7 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.name,
             declaration.factory,
         ).also { scriptCopy ->
-            scriptCopy.thisReceiver = declaration.thisReceiver.transform()
+            scriptCopy.thisReceiver = declaration.thisReceiver?.transform()
             declaration.statements.mapTo(scriptCopy.statements) { it.transform() }
             scriptCopy.earlierScripts = declaration.earlierScripts
             scriptCopy.earlierScriptsParameter = declaration.earlierScriptsParameter
