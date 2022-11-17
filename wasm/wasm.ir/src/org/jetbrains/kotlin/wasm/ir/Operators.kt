@@ -372,13 +372,11 @@ enum class WasmOp(
     I31_GET_U("i31.get_u", 0xFB_22),
 
     REF_EQ("ref.eq", 0xD5),
-    REF_TEST("ref.test", 0xFB_40, HEAP_TYPE),
-    REF_TEST_NULL("ref.test null", 0xFB_48, HEAP_TYPE),
-    REF_CAST("ref.cast", 0xFB_41, HEAP_TYPE),
-    REF_CAST_NULL("ref.cast null", 0xFB_49, HEAP_TYPE),
-
-    // TODO remove as soon as V8 support new instructions, see below
-    BR_ON_CAST_FAIL("br_on_cast_fail", 0xfb47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
+// Not yet supported by Binaryen
+//    REF_TEST("ref.test", 0xFB_40, HEAP_TYPE),
+//    REF_TEST_NULL("ref.test null", 0xFB_48, HEAP_TYPE),
+//    REF_CAST("ref.cast", 0xFB_41, HEAP_TYPE),
+//    REF_CAST_NULL("ref.cast null", 0xFB_49, HEAP_TYPE),
 
 // Not yet supported by V8
 //    BR_ON_CAST("br_on_cast", 0xFB42, listOf(LABEL_IDX, HEAP_TYPE)),
@@ -388,6 +386,19 @@ enum class WasmOp(
 
     EXTERN_INTERNALIZE("extern.internalize", 0xfb70), // externref -> anyref
     EXTERN_EXTERNALIZE("extern.externalize", 0xfb71), // anyref -> externref
+
+    // ------------------------
+    // Deprecated instructions
+    // TODO Remove as soon as V8 & Binaryen support new instructions.
+    //      Revert ________.
+
+    REF_TEST_DEPRECATED("ref.test", 0xFB_44, STRUCT_TYPE_IDX),
+    REF_CAST_DEPRECATED("ref.cast", 0xFB_45, STRUCT_TYPE_IDX),
+
+    REF_IS_DATA_DEPRECATED("ref.is_data", 0xFB_51),
+    REF_AS_DATA_DEPRECATED("ref.as_data", 0xFB_59),
+
+    BR_ON_CAST_FAIL_DEPRECATED("br_on_cast_fail", 0xFB_47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
 
     // ============================================================
     // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.

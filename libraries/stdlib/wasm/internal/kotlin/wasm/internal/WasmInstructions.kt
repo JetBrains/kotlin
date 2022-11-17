@@ -20,16 +20,11 @@ internal fun wasm_unreachable(): Nothing =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-internal fun <reified To> wasm_ref_cast_null(a: Any?): To =
+internal fun <reified To> wasm_ref_cast_deprecated(a: Any?): To =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-internal fun <reified To> wasm_ref_test(a: Any?): Boolean =
-    implementedAsIntrinsic
-
-@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-@WasmOp(WasmOp.REF_TEST_NULL)
-internal fun <reified To> wasm_ref_test_null(a: Any?): Boolean =
+internal fun <reified To> wasm_ref_test_deprecated(a: Any?): Boolean =
     implementedAsIntrinsic
 
 internal fun <T> wasm_array_copy(destination: T, destinationIndex: Int, source: T, sourceIndex: Int, length: Int): Unit =
@@ -392,3 +387,9 @@ internal external fun wasm_i64_ctz(a: Long): Long
 
 @WasmOp(WasmOp.REF_IS_NULL)
 internal external fun wasm_externref_is_null(a: ExternalInterfaceType?): Boolean
+
+@WasmOp(WasmOp.REF_AS_DATA_DEPRECATED)
+internal external fun wasm_ref_as_data_deprecated(x: anyref): dataref
+
+@WasmOp(WasmOp.REF_IS_DATA_DEPRECATED)
+internal external fun wasm_ref_is_data_deprecated(x: anyref): Boolean

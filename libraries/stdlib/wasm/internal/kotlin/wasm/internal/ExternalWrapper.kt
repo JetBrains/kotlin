@@ -146,8 +146,11 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // }
     // If ref is an instance of kotlin class -- return it casted to Any
     val refAsAnyref = ref.externAsWasmAnyref()
-    if (wasm_ref_test_null<Any>(refAsAnyref)) {
-        return wasm_ref_cast_null<Any>(refAsAnyref)
+    if (wasm_ref_is_data_deprecated(refAsAnyref)) {
+        val refAsDataRef = wasm_ref_as_data_deprecated(refAsAnyref)
+        if (wasm_ref_test_deprecated<Any>(refAsDataRef)) {
+            return wasm_ref_cast_deprecated<Any>(refAsDataRef)
+        }
     }
 
     // If we have Null in notNullRef -- return null

@@ -179,8 +179,8 @@ class WasmSymbols(
     val refEq = getInternalFunction("wasm_ref_eq")
     val refIsNull = getInternalFunction("wasm_ref_is_null")
     val externRefIsNull = getInternalFunction("wasm_externref_is_null")
-    val refTest = getInternalFunction("wasm_ref_test")
-    val refCastNull = getInternalFunction("wasm_ref_cast_null")
+    val refTest = getInternalFunction("wasm_ref_test_deprecated")
+    val refCastNull = getInternalFunction("wasm_ref_cast_deprecated")
     val wasmArrayCopy = getInternalFunction("wasm_array_copy")
     val wasmArrayNewData0 = getInternalFunction("array_new_data0")
 
