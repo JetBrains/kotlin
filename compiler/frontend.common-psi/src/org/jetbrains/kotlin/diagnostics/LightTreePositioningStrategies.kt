@@ -345,6 +345,8 @@ object LightTreePositioningStrategies {
             }
 
     private open class ModifierSetBasedLightTreePositioningStrategy(private val modifierSet: TokenSet) : LightTreePositioningStrategy() {
+        constructor(vararg tokens: IElementType) : this(TokenSet.create(*tokens))
+
         protected fun markModifier(
             node: LighterASTNode?,
             startOffset: Int,
@@ -387,7 +389,7 @@ object LightTreePositioningStrategies {
         }
     }
 
-    private class InlineFunLightTreePositioningStrategy : ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(INLINE_KEYWORD)) {
+    private class InlineFunLightTreePositioningStrategy : ModifierSetBasedLightTreePositioningStrategy(INLINE_KEYWORD) {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
@@ -408,52 +410,52 @@ object LightTreePositioningStrategies {
     val MODALITY_MODIFIER: LightTreePositioningStrategy = ModifierSetBasedLightTreePositioningStrategy(MODALITY_MODIFIERS)
 
     val ABSTRACT_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.ABSTRACT_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.ABSTRACT_KEYWORD)
 
     val OPEN_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.OPEN_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.OPEN_KEYWORD)
 
     val OVERRIDE_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.OVERRIDE_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.OVERRIDE_KEYWORD)
 
     val PRIVATE_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.PRIVATE_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.PRIVATE_KEYWORD)
 
     val LATEINIT_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.LATEINIT_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.LATEINIT_KEYWORD)
 
     val VARIANCE_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.IN_KEYWORD, KtTokens.OUT_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.IN_KEYWORD, KtTokens.OUT_KEYWORD)
 
     val CONST_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.CONST_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.CONST_KEYWORD)
 
     val FUN_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.FUN_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.FUN_KEYWORD)
 
     val SUSPEND_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.SUSPEND_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.SUSPEND_KEYWORD)
 
     private val SUSPEND_OR_FUN_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.SUSPEND_KEYWORD, KtTokens.FUN_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.SUSPEND_KEYWORD, KtTokens.FUN_KEYWORD)
 
     val INLINE_OR_VALUE_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(INLINE_KEYWORD, KtTokens.VALUE_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(INLINE_KEYWORD, KtTokens.VALUE_KEYWORD)
 
     val INNER_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.INNER_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.INNER_KEYWORD)
 
     val DATA_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.DATA_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.DATA_KEYWORD)
 
     val OPERATOR_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.OPERATOR_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.OPERATOR_KEYWORD)
 
     val ENUM_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.ENUM_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.ENUM_KEYWORD)
 
     val TAILREC_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.TAILREC_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.TAILREC_KEYWORD)
 
     val OBJECT_KEYWORD: LightTreePositioningStrategy = keywordStrategy { objectKeyword(it) }
 
@@ -476,7 +478,7 @@ object LightTreePositioningStrategies {
     }
 
     val INLINE_PARAMETER_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD)
 
     val INLINE_FUN_MODIFIER: LightTreePositioningStrategy = InlineFunLightTreePositioningStrategy()
 
@@ -850,7 +852,7 @@ object LightTreePositioningStrategies {
     }
 
     val REIFIED_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.REIFIED_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.REIFIED_KEYWORD)
 
     val TYPE_PARAMETERS_LIST: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
