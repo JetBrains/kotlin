@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
@@ -24,7 +23,6 @@ import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
-import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.*
@@ -62,7 +60,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.reflect.jvm.javaField
 
 abstract class AbstractIncrementalJpsTest(
@@ -246,7 +243,7 @@ abstract class AbstractIncrementalJpsTest(
         return build(null, CompileScopeTestBuilder.rebuild().allModules())
     }
 
-    private fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
+    protected open fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
         parseCommandLineArguments(additionalCommandLineArguments, arguments)
     }
 
@@ -338,11 +335,22 @@ abstract class AbstractIncrementalJpsTest(
 
         buildLogFile?.let {
             val logs = createBuildLog(otherMakeResults)
-            UsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, logs)
+            val expected = excludeCompilerErrorMessagesFromLog(File(buildLogFile.absolutePath).readText())
+            val actual = excludeCompilerErrorMessagesFromLog(logs)
+
+            UsefulTestCase.assertEquals(expected.trimEnd(), actual.trimEnd())
 
             val lastMakeResult = otherMakeResults.last()
             clearCachesRebuildAndCheckOutput(lastMakeResult)
         }
+    }
+
+    private fun excludeCompilerErrorMessagesFromLog(log: String): String {
+        return if (!log.contains("COMPILATION FAILED")) log
+        else log.split("COMPILATION FAILED").mapIndexed { index, s ->
+            if (index == 0) return@mapIndexed s
+            return@mapIndexed if(s.indexOf("=") > 0) s.substring(s.indexOf("=")) else ""
+        }.joinToString("COMPILATION FAILED\n\n")
     }
 
     protected data class MakeResult(
@@ -534,7 +542,10 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
-            logDirtyFiles(markedDirtyBeforeRound, "ChunkBuildStarted") // files can be marked as dirty during build start (KotlinCompileContext initialization)
+            logDirtyFiles(
+                markedDirtyBeforeRound,
+                "ChunkBuildStarted"
+            ) // files can be marked as dirty during build start (KotlinCompileContext initialization)
 
             if (!chunk.isDummy(context) && context.projectDescriptor.project.modules.size > 1) {
                 logLine("Building ${chunk.modules.sortedBy { it.name }.joinToString { it.name }}")
