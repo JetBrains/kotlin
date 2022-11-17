@@ -35,8 +35,9 @@ public interface KtAnnotationUseSiteTargetRenderer {
     public object WITH_NON_DEFAULT_USE_SITE : KtAnnotationUseSiteTargetRenderer {
         context(KtAnalysisSession, KtAnnotationRenderer)
         override fun renderUseSiteTarget(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter) {
-            if (owner !is KtCallableSymbol) return
             val print = when (owner) {
+                is KtReceiverParameterSymbol -> true
+                !is KtCallableSymbol -> return
                 is KtAnonymousFunctionSymbol -> true
                 is KtConstructorSymbol -> true
                 is KtFunctionSymbol -> true
@@ -52,7 +53,9 @@ public interface KtAnnotationUseSiteTargetRenderer {
                 is KtLocalVariableSymbol -> true
                 is KtKotlinPropertySymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY
                 is KtSyntheticJavaPropertySymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY
+                else -> return
             }
+
             if (print) {
                 WITH_USES_SITE.renderUseSiteTarget(annotation, owner, printer)
             }

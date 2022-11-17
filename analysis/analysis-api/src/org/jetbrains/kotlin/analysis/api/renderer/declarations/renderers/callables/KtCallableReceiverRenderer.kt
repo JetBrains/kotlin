@@ -17,9 +17,16 @@ public interface KtCallableReceiverRenderer {
 
     public object AS_TYPE_WITH_IN_APPROXIMATION : KtCallableReceiverRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderReceiver(symbol: KtReceiverParameterSymbol, printer: PrettyPrinter) {
-            val receiverType = declarationTypeApproximator.approximateType(symbol.type, Variance.IN_VARIANCE)
-            typeRenderer.renderType(receiverType, printer)
+        override fun renderReceiver(symbol: KtReceiverParameterSymbol, printer: PrettyPrinter): Unit = printer {
+            " ".separated(
+                {
+                    annotationRenderer.renderAnnotations(symbol, printer)
+                },
+                {
+                    val receiverType = declarationTypeApproximator.approximateType(symbol.type, Variance.IN_VARIANCE)
+                    typeRenderer.renderType(receiverType, printer)
+                },
+            )
         }
     }
 }
