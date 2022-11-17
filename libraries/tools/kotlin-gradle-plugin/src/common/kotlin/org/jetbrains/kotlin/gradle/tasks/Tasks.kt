@@ -383,7 +383,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
     @get:Internal
     protected open val taskOutputsBackupExcludes: List<File>
-        get() = listOf(destinationDirectory.get().asFile)
+        get() = listOf(destinationDirectory.get().asFile, taskBuildCacheableOutputDirectory.get().asFile)
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
