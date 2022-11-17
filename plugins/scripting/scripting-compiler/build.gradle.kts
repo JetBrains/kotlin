@@ -73,3 +73,11 @@ projectTest(taskName = "testWithIr", parallel = true) {
     systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-ir")
 }
 
+projectTest(taskName = "testWithK2", parallel = true) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-k2")
+    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-k2")
+}
+

@@ -22,7 +22,7 @@ import kotlin.concurrent.thread
 
 const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.base.compiler.arguments"
 
-private fun getBaseCompilerArgumentsFromProperty(): List<String>? =
+internal fun getBaseCompilerArgumentsFromProperty(): List<String>? =
     System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.takeIf { it.isNotBlank() }?.split(' ')
 
 // TODO: partially copypasted from LauncherReplTest, consider extracting common parts to some (new) test util module
