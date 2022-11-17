@@ -83,7 +83,10 @@ class FirKotlinScopeProvider(
 
 
 data class ConeSubstitutionScopeKey(
-    val lookupTag: ConeClassLikeLookupTag, val isFromExpectClass: Boolean, val substitutor: ConeSubstitutor
+    val lookupTag: ConeClassLikeLookupTag,
+    val isFromExpectClass: Boolean,
+    val substitutor: ConeSubstitutor,
+    val derivedClassLookupTag: ConeClassLikeLookupTag?
 ) : ScopeSessionKey<FirClass, FirClassSubstitutionScope>()
 
 fun FirClass.unsubstitutedScope(
@@ -162,10 +165,14 @@ private fun FirClass.scopeForClassImpl(
     val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 
-    val key = ConeSubstitutionScopeKey(classFirDispatchReceiver.symbol.toLookupTag(), isFromExpectClass, substitutor)
-    return scopeSession.getOrBuild(
-        this, key
-    ) {
+    val key = ConeSubstitutionScopeKey(
+        classFirDispatchReceiver.symbol.toLookupTag(),
+        isFromExpectClass,
+        substitutor,
+        derivedClassLookupTag
+    )
+
+    return scopeSession.getOrBuild(this, key) {
         FirClassSubstitutionScope(
             useSiteSession,
             basicScope,

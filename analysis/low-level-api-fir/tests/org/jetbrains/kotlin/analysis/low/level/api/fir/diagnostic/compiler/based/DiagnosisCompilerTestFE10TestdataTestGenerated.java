@@ -31233,6 +31233,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("delegatedConstructor.kt")
+            public void testDelegatedConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/subtyping/delegatedConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("extFunctionTypeAsSuperType.kt")
             public void testExtFunctionTypeAsSuperType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/subtyping/extFunctionTypeAsSuperType.kt");
