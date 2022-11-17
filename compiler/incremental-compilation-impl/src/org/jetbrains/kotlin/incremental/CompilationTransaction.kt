@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.konan.file.use
@@ -54,14 +56,16 @@ class RecoverableCompilationTransaction(
 
     override fun registerAddedOrChangedFile(outputFile: Path) {
         if (fileRelocationIsAlreadyRegisteredFor(outputFile)) return
-        if (Files.exists(outputFile)) {
-            val relocatedFilePath = getNextRelocatedFilePath()
-            reporter.warn { "Moving the $outputFile file to the stash as $relocatedFilePath" }
-            fileRelocationRegistry[outputFile] = relocatedFilePath
-            Files.move(outputFile, relocatedFilePath)
-        } else {
-            reporter.warn { "Marking the $outputFile file as newly added" }
-            fileRelocationRegistry[outputFile] = null
+        reporter.measure(BuildTime.BACKUP_OUTPUT) {
+            if (Files.exists(outputFile)) {
+                val relocatedFilePath = getNextRelocatedFilePath()
+                reporter.warn { "Moving the $outputFile file to the stash as $relocatedFilePath" }
+                fileRelocationRegistry[outputFile] = relocatedFilePath
+                Files.move(outputFile, relocatedFilePath)
+            } else {
+                reporter.warn { "Marking the $outputFile file as newly added" }
+                fileRelocationRegistry[outputFile] = null
+            }
         }
     }
 
@@ -73,10 +77,12 @@ class RecoverableCompilationTransaction(
             }
             return
         }
-        val relocatedFilePath = getNextRelocatedFilePath()
-        reporter.warn { "Moving $outputFile to the stash as $relocatedFilePath" }
-        fileRelocationRegistry[outputFile] = relocatedFilePath
-        Files.move(outputFile, relocatedFilePath)
+        reporter.measure(BuildTime.BACKUP_OUTPUT) {
+            val relocatedFilePath = getNextRelocatedFilePath()
+            reporter.warn { "Moving $outputFile to the stash as $relocatedFilePath" }
+            fileRelocationRegistry[outputFile] = relocatedFilePath
+            Files.move(outputFile, relocatedFilePath)
+        }
     }
 
     private fun getNextRelocatedFilePath(): Path = stashDir.resolve("$filesCounter.backup").also { filesCounter++ }
@@ -85,22 +91,26 @@ class RecoverableCompilationTransaction(
 
     private fun revertChanges() {
         reporter.warn { "Reverting changes" }
-        for ((originPath, relocatedPath) in fileRelocationRegistry) {
-            if (relocatedPath == null) {
-                if (Files.exists(originPath)) {
-                    Files.delete(originPath)
+        reporter.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+            for ((originPath, relocatedPath) in fileRelocationRegistry) {
+                if (relocatedPath == null) {
+                    if (Files.exists(originPath)) {
+                        Files.delete(originPath)
+                    }
+                    continue
                 }
-                continue
+                Files.move(relocatedPath, originPath, StandardCopyOption.REPLACE_EXISTING)
             }
-            Files.move(relocatedPath, originPath, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
     private fun cleanupStash() {
         reporter.warn { "Cleaning up stash" }
-        Files.walk(stashDir).use {
-            it.sorted(Comparator.reverseOrder())
-                .forEach(Files::delete)
+        reporter.measure(BuildTime.CLEAN_BACKUP_STASH) {
+            Files.walk(stashDir).use {
+                it.sorted(Comparator.reverseOrder())
+                    .forEach(Files::delete)
+            }
         }
     }
 
