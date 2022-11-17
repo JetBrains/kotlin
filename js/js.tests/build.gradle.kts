@@ -273,7 +273,7 @@ fun Test.setupV8() {
     }
 }
 
-fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
+fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: Boolean) {
     setupV8()
     if (jsIrEnabled)
         setupNodeJs()
@@ -307,8 +307,20 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
 
     exclude("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
 
-    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/*")
-    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/*")
+    if (jsEnabled && !jsIrEnabled) {
+        include("org/jetbrains/kotlin/integration/AntTaskJsTest.class")
+        include("org/jetbrains/kotlin/js/testOld/*")
+        include("org/jetbrains/kotlin/js/testOld/ast/*")
+        include("org/jetbrains/kotlin/js/testOld/optimizer/*")
+        include("org/jetbrains/kotlin/js/test/*")
+    }
+    if (!jsEnabled) {
+        if (firEnabled) {
+            include("org/jetbrains/kotlin/js/test/fir/*")
+        } else {
+            include("org/jetbrains/kotlin/js/test/ir/*")
+        }
+    }
 
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     setUpBoxTests()
@@ -345,7 +357,7 @@ fun Test.setUpBoxTests() {
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true)
+    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true, firEnabled = true)
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
 
@@ -364,17 +376,22 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096)
 }
 
 projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
+    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false)
     useJUnitPlatform()
 }
 
 projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
+    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false)
+    useJUnitPlatform()
+}
+
+projectTest("jsFirTest", true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true)
     useJUnitPlatform()
 }
 
 projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
+    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
     useJUnitPlatform()
 }
