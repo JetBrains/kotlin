@@ -40,7 +40,9 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
 import static org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager.*;
 
-/** @noinspection UnusedDeclaration */
+/**
+ * @noinspection UnusedDeclaration
+ */
 @Mojo(name = "kapt", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Parameter
@@ -72,7 +74,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Component
     private ArtifactHandlerManager artifactHandlerManager;
 
-    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
     private MavenSession session;
 
     @Component
@@ -194,8 +196,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
         try {
             resolvedArtifacts = getAnnotationProcessingManager().resolveAnnotationProcessors(annotationProcessorPaths);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new MojoExecutionException("Error while processing kapt options", e);
         }
 
@@ -220,6 +221,18 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
             getLog().warn("Can't determine Java home, 'java.home' property does not exist");
             return null;
         }
+
+        String jdkStringVersion = System.getProperty("java.specification.version");
+        if (jdkStringVersion == null) return null;
+        int jdkVersion;
+        try {
+            jdkVersion = Integer.parseInt(jdkStringVersion);
+        } catch (NumberFormatException e) {
+            // we got 1.8 or 1.6
+            return null;
+        }
+        if (jdkVersion >= 9) return null;
+
         File javaHome = new File(javaHomePath);
         File toolsJar = new File(javaHome, "lib/tools.jar");
         if (toolsJar.exists()) {
@@ -302,8 +315,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
             int equalsIndex = option.indexOf("=");
             if (equalsIndex < 0) {
                 map.put(option, "");
-            }
-            else {
+            } else {
                 map.put(option.substring(0, equalsIndex).trim(), option.substring(equalsIndex + 1).trim());
             }
         }
