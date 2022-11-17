@@ -76,8 +76,9 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
 
                 if ((functionSymbol as? KtFunctionSymbol)?.isSuspend == true) {
                     builder.addParameter(
+                        @Suppress("UNCHECKED_CAST")
                         SymbolLightSuspendContinuationParameter(
-                            functionSymbol = functionSymbol,
+                            functionSymbolPointer = functionSymbolPointer as KtSymbolPointer<KtFunctionSymbol>,
                             containingMethod = this@SymbolLightMethod,
                         )
                     )

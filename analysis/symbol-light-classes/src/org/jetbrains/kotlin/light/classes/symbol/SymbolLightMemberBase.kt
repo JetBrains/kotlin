@@ -21,7 +21,7 @@ internal abstract class SymbolLightMemberBase<T : PsiMember>(
     override val lightMemberOrigin: LightMemberOrigin?,
     private val containingClass: SymbolLightClassBase,
 ) : KtLightElementBase(containingClass), PsiMember, KtLightMember<T> {
-    protected val ktModule: KtModule get() = containingClass.ktModule
+    val ktModule: KtModule get() = containingClass.ktModule
 
     override fun hasModifierProperty(name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
