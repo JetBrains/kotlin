@@ -640,7 +640,7 @@ abstract class FirJavaFacade(
     ): FirJavaConstructor {
         val constructorSymbol = FirConstructorSymbol(constructorId)
         return buildJavaConstructor {
-            source = javaConstructor?.toSourceElement()
+            source = javaConstructor?.toSourceElement() ?: javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
             this.moduleData = moduleData
             isFromSource = javaClass.isFromSource
             symbol = constructorSymbol
@@ -687,9 +687,7 @@ abstract class FirJavaFacade(
         moduleData: FirModuleData,
     ): FirJavaConstructor {
         return buildJavaConstructor {
-            source = (javaClass as? JavaElementImpl<*>)
-                ?.psi
-                ?.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor) as? KtFakeSourceElement
+            source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
             this.moduleData = moduleData
             isFromSource = javaClass.isFromSource
             symbol = FirConstructorSymbol(constructorId)
