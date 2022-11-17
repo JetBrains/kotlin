@@ -37,6 +37,6 @@ abstract class AbstractDceTest : TestCase() {
         private val REQUEST_REACHABLE_PATTERN = Regex("^ *// *REQUEST_REACHABLE: (.+) *$", RegexOption.MULTILINE)
 
         private val pathToTestDir = "js/js.translator/testData/dce"
-        private val pathToOutputDir = "js/js.translator/testData/out/dce"
+        private val pathToOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
     }
 }
