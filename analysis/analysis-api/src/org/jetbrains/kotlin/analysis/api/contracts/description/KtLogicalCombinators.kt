@@ -35,7 +35,7 @@ public class KtBinaryLogicExpression(
  * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalNot]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeLogicalNot]
  */
-public class KtLogicalNot(private val _arg: KtBooleanExpression) : KtBooleanExpression {
-    override val token: KtLifetimeToken get() = _arg.token
-    public val arg: KtBooleanExpression get() = withValidityAssertion { _arg }
+public class KtLogicalNot(private val _argument: KtBooleanExpression) : KtBooleanExpression {
+    override val token: KtLifetimeToken get() = _argument.token
+    public val argument: KtBooleanExpression get() = withValidityAssertion { _argument }
 }

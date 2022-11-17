@@ -41,7 +41,7 @@ internal fun Context.renderKtBooleanExpression(value: KtBooleanExpression, endWi
     when (value) {
         is KtContractDescriptionValue -> renderKtContractDescriptionValue(value, endWithNewLine)
         is KtLogicalNot -> printer.appendHeader(value::class) {
-            appendProperty(value::arg, ::renderKtBooleanExpression, endWithNewLine)
+            appendProperty(value::argument, ::renderKtBooleanExpression, endWithNewLine)
         }
         is KtBinaryLogicExpression -> printer.appendHeader(value::class) {
             appendProperty(value::left, ::renderKtBooleanExpression)
