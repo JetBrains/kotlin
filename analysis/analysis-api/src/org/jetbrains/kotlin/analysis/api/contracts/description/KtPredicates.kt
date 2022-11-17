@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
 /**
@@ -12,23 +14,30 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeIsInstancePredicate]
  */
 public class KtIsInstancePredicate(
-    public val arg: KtValueParameterReference,
-    public val type: KtType,
-    public val isNegated: Boolean
+    private val _argument: KtAbstractValueParameterReference,
+    private val _type: KtType,
+    private val _isNegated: Boolean
 ) : KtBooleanExpression {
-    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitIsInstancePredicate(this, data)
+    override val token: KtLifetimeToken get() = _type.token
 
-    public fun negated(): KtIsInstancePredicate = KtIsInstancePredicate(arg, type, isNegated.not())
+    public val argument: KtAbstractValueParameterReference get() = withValidityAssertion { _argument }
+    public val type: KtType get() = withValidityAssertion { _type }
+    public val isNegated: Boolean get() = withValidityAssertion { _isNegated }
+
+    public fun negated(): KtIsInstancePredicate = KtIsInstancePredicate(argument, type, !isNegated)
 }
 
 /**
  * K1: [org.jetbrains.kotlin.contracts.description.expressions.IsNullPredicate]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeIsNullPredicate]
  */
-public class KtIsNullPredicate(public val arg: KtValueParameterReference, public val isNegated: Boolean) : KtBooleanExpression {
-    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitIsNullPredicate(this, data)
+public class KtIsNullPredicate(
+    private val _argument: KtAbstractValueParameterReference,
+    private val _isNegated: Boolean
+) : KtBooleanExpression {
+    override val token: KtLifetimeToken get() = _argument.token
+    public val argument: KtAbstractValueParameterReference get() = withValidityAssertion { _argument }
+    public val isNegated: Boolean get() = withValidityAssertion { _isNegated }
 
-    public fun negated(): KtIsNullPredicate = KtIsNullPredicate(arg, isNegated.not())
+    public fun negated(): KtIsNullPredicate = KtIsNullPredicate(argument, !isNegated)
 }

@@ -5,28 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+
 /**
  * K1: [org.jetbrains.kotlin.contracts.description.ContractDescriptionElement]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement]
  */
-public sealed interface KtContractDescriptionElement {
-    public fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R
-}
+public sealed interface KtContractDescriptionElement : KtLifetimeOwner
 
 /**
  * K1: [org.jetbrains.kotlin.contracts.description.EffectDeclaration]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration]
  */
-public sealed interface KtEffectDeclaration : KtContractDescriptionElement {
-    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitEffectDeclaration(this, data)
-}
+public sealed interface KtEffectDeclaration : KtContractDescriptionElement
 
 /**
  * K1: [org.jetbrains.kotlin.contracts.description.BooleanExpression]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression]
  */
-public sealed interface KtBooleanExpression : KtContractDescriptionElement {
-    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitBooleanExpression(this, data)
-}
+public sealed interface KtBooleanExpression : KtContractDescriptionElement

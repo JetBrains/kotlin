@@ -6,7 +6,7 @@ import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
 fun unknownContract(block: () -> Unit) {
-    contract {
+    contr<caret>act {
         callsInPlace(block, InvocationKind.UNKNOWN)
     }
     block()

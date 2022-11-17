@@ -5,9 +5,9 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-fun atLeastOnceContract(block: () -> Unit) {
-    contract {
-        callsInPlace(block, InvocationKind.AT_LEAST_ONCE)
+fun atMostOnceContract(block: () -> Unit) {
+    contr<caret>act {
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
     block()
 }

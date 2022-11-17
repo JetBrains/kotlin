@@ -5,9 +5,9 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-fun returnsNotNullContract(foo: Any?): Any? {
-    contract {
-        returnsNotNull() implies (foo != null)
+fun boolenExprContract(foo: Any?, bar: Any?): Boolean {
+    contr<caret>act {
+        returns(true) implies (foo == null && bar != null)
     }
-    return foo
+    return foo == null && bar != null
 }

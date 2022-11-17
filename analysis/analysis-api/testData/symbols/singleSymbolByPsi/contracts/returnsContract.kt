@@ -5,9 +5,11 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-fun returnsTrueContract(foo: Any?): Boolean {
-    contract {
-        returns(true) implies (foo == null)
+inline fun check(value: Boolean) {
+    contr<caret>act {
+        returns() implies value
     }
-    return foo == null
+    if (!value) {
+        throw IllegalStateException()
+    }
 }

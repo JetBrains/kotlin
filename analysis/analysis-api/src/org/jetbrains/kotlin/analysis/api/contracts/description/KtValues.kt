@@ -5,58 +5,46 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+
 /**
  * K1: [org.jetbrains.kotlin.contracts.description.expressions.ContractDescriptionValue]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionValue]
  */
-public sealed interface KtContractDescriptionValue : KtContractDescriptionElement {
-    public override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitValue(this, data)
+public sealed class KtContractDescriptionValue(
+    private val _name: String,
+    override val token: KtLifetimeToken
+) : KtContractDescriptionElement {
+    public val name: String get() = withValidityAssertion { _name }
 }
 
-/**
- * K1: [org.jetbrains.kotlin.contracts.description.expressions.ConstantReference]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference]
- */
-public open class KtConstantReference(public val name: String) : KtContractDescriptionValue {
-    public override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitConstantDescriptor(this, data)
+public sealed class KtAbstractConstantReference(name: String, token: KtLifetimeToken) : KtContractDescriptionValue(name, token) {
+    /**
+     * K1: [org.jetbrains.kotlin.contracts.description.expressions.ConstantReference]
+     * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference]
+     */
+    public class KtConstantReference(name: String, token: KtLifetimeToken) : KtAbstractConstantReference(name, token)
 
-    public companion object {
-        public val NULL: KtConstantReference = KtConstantReference("NULL")
-        public val WILDCARD: KtConstantReference = KtConstantReference("WILDCARD")
-        public val NOT_NULL: KtConstantReference = KtConstantReference("NOT_NULL")
-    }
+    /**
+     * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference]
+     * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference]
+     */
+    public class KtBooleanConstantReference(name: String, token: KtLifetimeToken) :
+        KtAbstractConstantReference(name, token), KtBooleanExpression
 }
 
-/**
- * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference]
- */
-public class KtBooleanConstantReference(name: String) : KtConstantReference(name), KtBooleanExpression {
-    public override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitBooleanConstantDescriptor(this, data)
+public sealed class KtAbstractValueParameterReference(name: String, token: KtLifetimeToken) : KtContractDescriptionValue(name, token) {
+    /**
+     * K1: [org.jetbrains.kotlin.contracts.description.expressions.VariableReference]
+     * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeValueParameterReference]
+     */
+    public class KtValueParameterReference(name: String, token: KtLifetimeToken) : KtAbstractValueParameterReference(name, token)
 
-    public companion object {
-        public val TRUE: KtBooleanConstantReference = KtBooleanConstantReference("TRUE")
-        public val FALSE: KtBooleanConstantReference = KtBooleanConstantReference("FALSE")
-    }
-}
-
-/**
- * K1: [org.jetbrains.kotlin.contracts.description.expressions.VariableReference]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeValueParameterReference]
- */
-public open class KtValueParameterReference(public val name: String) : KtContractDescriptionValue {
-    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitValueParameterReference(this, data)
-}
-
-/**
- * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableReference]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanValueParameterReference]
- */
-public class KtBooleanValueParameterReference(name: String) : KtValueParameterReference(name), KtBooleanExpression {
-    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitBooleanValueParameterReference(this, data)
+    /**
+     * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableReference]
+     * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanValueParameterReference]
+     */
+    public class KtBooleanValueParameterReference(name: String, token: KtLifetimeToken) :
+        KtAbstractValueParameterReference(name, token), KtBooleanExpression
 }

@@ -5,11 +5,9 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-fun twoContracts(foo: Any?, bar: Any?, block: () -> Unit): Boolean {
-    contract {
-        returns(true) implies (foo == null && bar != null)
+fun exactlyOnceContract(block: () -> Unit) {
+    contr<caret>act {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     block()
-    return foo == null && bar != null
 }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
 
 internal fun EffectDeclaration.effectDeclarationToAnalysisApi(analysisContext: Fe10AnalysisContext): KtEffectDeclaration =
-    accept(ContractDescriptionElementToAnalysisApi(analysisContext), Unit) as KtEffectDeclaration
+    accept(ContractDescriptionElementToAnalysisApi(analysisContext), Unit).cast()
 
 private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10AnalysisContext) :
     ContractDescriptionVisitor<KtContractDescriptionElement, Unit> {
@@ -21,54 +21,63 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
         conditionalEffect: ConditionalEffectDeclaration,
         data: Unit
     ): KtContractDescriptionElement = KtConditionalEffectDeclaration(
-        conditionalEffect.effect.accept(this, data) as KtEffectDeclaration,
-        conditionalEffect.condition.accept(this, data) as KtBooleanExpression,
+        conditionalEffect.effect.accept(this, data).cast(),
+        conditionalEffect.condition.accept(this, data).cast(),
     )
 
     override fun visitReturnsEffectDeclaration(returnsEffect: ReturnsEffectDeclaration, data: Unit): KtContractDescriptionElement =
-        KtReturnsEffectDeclaration(returnsEffect.value.accept(this, data) as KtConstantReference)
+        KtReturnsEffectDeclaration(returnsEffect.value.accept(this, data).cast())
 
     override fun visitCallsEffectDeclaration(callsEffect: CallsEffectDeclaration, data: Unit): KtContractDescriptionElement =
-        KtCallsEffectDeclaration(callsEffect.variableReference.accept(this, data) as KtValueParameterReference, callsEffect.kind)
+        KtCallsEffectDeclaration(callsEffect.variableReference.accept(this, data).cast(), callsEffect.kind)
 
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit): KtContractDescriptionElement = KtBinaryLogicExpression(
-        logicalOr.left.accept(this, data) as KtBooleanExpression,
-        logicalOr.right.accept(this, data) as KtBooleanExpression,
-        LogicOperationKind.OR
+        logicalOr.left.accept(this, data).cast(),
+        logicalOr.right.accept(this, data).cast(),
+        KtBinaryLogicExpression.KtLogicOperationKind.OR
     )
 
     override fun visitLogicalAnd(logicalAnd: LogicalAnd, data: Unit): KtContractDescriptionElement = KtBinaryLogicExpression(
-        logicalAnd.left.accept(this, data) as KtBooleanExpression,
-        logicalAnd.right.accept(this, data) as KtBooleanExpression,
-        LogicOperationKind.AND
+        logicalAnd.left.accept(this, data).cast(),
+        logicalAnd.right.accept(this, data).cast(),
+        KtBinaryLogicExpression.KtLogicOperationKind.AND
     )
 
     override fun visitLogicalNot(logicalNot: LogicalNot, data: Unit): KtContractDescriptionElement =
-        KtLogicalNot(logicalNot.arg.accept(this, data) as KtBooleanExpression)
+        KtLogicalNot(logicalNot.arg.accept(this, data).cast())
 
     override fun visitIsInstancePredicate(isInstancePredicate: IsInstancePredicate, data: Unit): KtContractDescriptionElement =
         KtIsInstancePredicate(
-            isInstancePredicate.arg.accept(this, data) as KtValueParameterReference,
+            isInstancePredicate.arg.accept(this, data).cast(),
             isInstancePredicate.type.toKtType(analysisContext),
             isInstancePredicate.isNegated
         )
 
     override fun visitIsNullPredicate(isNullPredicate: IsNullPredicate, data: Unit): KtContractDescriptionElement =
-        KtIsNullPredicate(isNullPredicate.arg.accept(this, data) as KtValueParameterReference, isNullPredicate.isNegated)
+        KtIsNullPredicate(isNullPredicate.arg.accept(this, data).cast(), isNullPredicate.isNegated)
 
     override fun visitConstantDescriptor(constantReference: ConstantReference, data: Unit): KtContractDescriptionElement =
-        KtConstantReference(constantReference.name)
+        KtAbstractConstantReference.KtConstantReference(constantReference.name, analysisContext.token)
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: BooleanConstantReference,
         data: Unit
-    ): KtContractDescriptionElement = KtBooleanConstantReference(booleanConstantDescriptor.name)
+    ): KtContractDescriptionElement =
+        KtAbstractConstantReference.KtBooleanConstantReference(booleanConstantDescriptor.name, analysisContext.token)
 
     override fun visitVariableReference(variableReference: VariableReference, data: Unit): KtContractDescriptionElement =
-        KtValueParameterReference(variableReference.descriptor.name.asString())
+        KtAbstractValueParameterReference.KtValueParameterReference(variableReference.descriptor.name.asString(), analysisContext.token)
 
     override fun visitBooleanVariableReference(
         booleanVariableReference: BooleanVariableReference,
         data: Unit
-    ): KtContractDescriptionElement = KtBooleanValueParameterReference(booleanVariableReference.descriptor.name.asString())
+    ): KtContractDescriptionElement =
+        KtAbstractValueParameterReference.KtBooleanValueParameterReference(
+            booleanVariableReference.descriptor.name.asString(),
+            analysisContext.token
+        )
 }
+
+// Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.
+// This visitor isn't type-safe anyway
+private inline fun <reified T : KtContractDescriptionElement> Any.cast() = this as T

@@ -14,7 +14,7 @@ KtFunctionSymbol:
               name: TRUE
       condition:
         KtIsNullPredicate:
-          arg:
+          argument:
             KtValueParameterReference:
               name: foo
           isNegated: false

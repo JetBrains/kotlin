@@ -16,13 +16,13 @@ KtFunctionSymbol:
         KtBinaryLogicExpression:
           left:
             KtIsNullPredicate:
-              arg:
+              argument:
                 KtValueParameterReference:
                   name: foo
               isNegated: false
           right:
             KtIsNullPredicate:
-              arg:
+              argument:
                 KtValueParameterReference:
                   name: bar
               isNegated: true
