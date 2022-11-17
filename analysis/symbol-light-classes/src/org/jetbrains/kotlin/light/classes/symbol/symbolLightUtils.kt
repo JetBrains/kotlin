@@ -296,8 +296,8 @@ internal fun hasTypeParameters(
     ktModule: KtModule,
     declaration: KtTypeParameterListOwner?,
     declarationPointer: KtSymbolPointer<KtSymbolWithTypeParameters>,
-): Boolean = declaration?.typeParameters?.isNotEmpty() ?: analyzeForLightClasses(ktModule) {
-    declarationPointer.restoreSymbolOrThrowIfDisposed().typeParameters.isNotEmpty()
+): Boolean = declaration?.typeParameters?.isNotEmpty() ?: declarationPointer.withSymbol(ktModule) {
+    it.typeParameters.isNotEmpty()
 }
 
 internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeForLightClasses(ktModule) {
@@ -309,3 +309,8 @@ internal fun <T : KtSymbol> compareSymbolPointers(ktModule: KtModule, left: KtSy
         left.restoreSymbol() == right.restoreSymbol()
     }
 }
+
+internal inline fun <T : KtSymbol, R> KtSymbolPointer<T>.withSymbol(
+    ktModule: KtModule,
+    crossinline action: context(KtAnalysisSession) (T) -> R,
+): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed()) }

@@ -18,13 +18,12 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendContinuationParameter
-import org.jetbrains.kotlin.light.classes.symbol.restoreSymbolOrThrowIfDisposed
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
@@ -45,9 +44,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
     @Suppress("UNCHECKED_CAST")
     protected val functionSymbolPointer: KtSymbolPointer<FType> = functionSymbol.createPointer() as KtSymbolPointer<FType>
 
-    protected fun <T> withFunctionSymbol(action: KtAnalysisSession.(FType) -> T): T = analyzeForLightClasses(ktModule) {
-        action(functionSymbolPointer.restoreSymbolOrThrowIfDisposed())
-    }
+    protected fun <T> withFunctionSymbol(action: KtAnalysisSession.(FType) -> T): T = functionSymbolPointer.withSymbol(ktModule, action)
 
     private val _isVarArgs: Boolean by lazy {
         functionDeclaration?.valueParameters?.any { it.isVarArg } ?: withFunctionSymbol { functionSymbol ->

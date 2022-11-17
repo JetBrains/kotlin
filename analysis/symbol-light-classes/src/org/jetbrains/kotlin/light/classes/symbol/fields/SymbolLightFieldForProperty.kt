@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
@@ -44,8 +43,8 @@ internal class SymbolLightFieldForProperty(
     override val kotlinOrigin: KtCallableDeclaration? = propertySymbol.sourcePsiSafe<KtCallableDeclaration>()
     private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol> = propertySymbol.createPointer()
 
-    private fun <T> withPropertySymbol(action: KtAnalysisSession.(KtPropertySymbol) -> T): T = analyzeForLightClasses(ktModule) {
-        action(propertySymbolPointer.restoreSymbolOrThrowIfDisposed())
+    private fun <T> withPropertySymbol(action: context (KtAnalysisSession) (KtPropertySymbol) -> T): T {
+        return propertySymbolPointer.withSymbol(ktModule, action)
     }
 
     private val _returnedType: PsiType by lazyPub {
