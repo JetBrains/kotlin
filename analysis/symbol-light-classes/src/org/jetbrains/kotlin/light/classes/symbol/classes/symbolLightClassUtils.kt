@@ -84,6 +84,7 @@ internal fun SymbolLightClassForClassOrObject.createConstructors(
 
     for (constructor in constructors) {
         if (constructor.isHiddenOrSynthetic()) continue
+
         result.add(
             SymbolLightConstructor(
                 constructorSymbol = constructor,

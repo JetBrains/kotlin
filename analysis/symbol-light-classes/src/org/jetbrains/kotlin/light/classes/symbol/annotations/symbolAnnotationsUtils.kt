@@ -114,7 +114,7 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
 
     val result = mutableListOf<PsiAnnotation>()
 
-    if (parent is SymbolLightMethod) {
+    if (parent is SymbolLightMethod<*>) {
         if (parent.isDelegated || parent.isOverride()) {
             result.add(SymbolLightSimpleAnnotation(java.lang.Override::class.java.name, parent))
         }

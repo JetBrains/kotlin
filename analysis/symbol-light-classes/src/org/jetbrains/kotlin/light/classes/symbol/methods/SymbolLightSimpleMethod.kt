@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
@@ -32,7 +31,7 @@ internal class SymbolLightSimpleMethod(
     private val isTopLevel: Boolean,
     argumentsSkipMask: BitSet? = null,
     private val suppressStatic: Boolean = false
-) : SymbolLightMethod(
+) : SymbolLightMethod<KtFunctionSymbol>(
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
@@ -123,12 +122,6 @@ internal class SymbolLightSimpleMethod(
         return modifiers
     }
 
-    private val _isDeprecated: Boolean by lazyPub {
-        functionSymbol.hasDeprecatedAnnotation()
-    }
-
-    override fun isDeprecated(): Boolean = _isDeprecated
-
     private val _modifierList: PsiModifierList by lazyPub {
         val modifiers = computeModifiers()
         val annotations = computeAnnotations(modifiers.contains(PsiModifier.PRIVATE))
@@ -163,11 +156,4 @@ internal class SymbolLightSimpleMethod(
     }
 
     override fun getReturnType(): PsiType = _returnedType
-
-    override fun equals(other: Any?): Boolean =
-        this === other || (other is SymbolLightSimpleMethod && functionSymbol == other.functionSymbol)
-
-    override fun hashCode(): Int = functionSymbol.hashCode()
-
-    override fun isValid(): Boolean = super.isValid() && functionSymbol.isValid()
 }

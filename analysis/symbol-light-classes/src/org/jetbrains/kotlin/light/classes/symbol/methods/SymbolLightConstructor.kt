@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -27,7 +25,7 @@ internal class SymbolLightConstructor(
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     argumentsSkipMask: BitSet? = null,
-) : SymbolLightMethod(
+) : SymbolLightMethod<KtConstructorSymbol>(
     functionSymbol = constructorSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
@@ -53,12 +51,6 @@ internal class SymbolLightConstructor(
         )
     }
 
-    private val _isDeprecated: Boolean by lazyPub {
-        constructorSymbol.hasDeprecatedAnnotation()
-    }
-
-    override fun isDeprecated(): Boolean = _isDeprecated
-
     private val _modifiers: Set<String> by lazyPub {
         // FIR treats an enum entry as an anonymous object w/ its own ctor (not default one).
         // On the other hand, FE 1.0 doesn't add anything; then ULC adds default ctor w/ package local visibility.
@@ -77,14 +69,4 @@ internal class SymbolLightConstructor(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun getReturnType(): PsiType? = null
-
-    override fun equals(other: Any?): Boolean =
-        this === other ||
-                (other is SymbolLightConstructor &&
-                        kotlinOrigin == other.kotlinOrigin &&
-                        constructorSymbol == other.constructorSymbol)
-
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
-
-    override fun isValid(): Boolean = super.isValid() && constructorSymbol.isValid()
 }
