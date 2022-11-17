@@ -239,9 +239,12 @@ internal class SymbolLightAccessorMethod(
             { }
         }
 
-        analyzeForLightClasses(ktModule) {
-            SymbolLightParameterList(this@SymbolLightAccessorMethod, propertySymbol(), parameterPopulator)
-        }
+        SymbolLightParameterList(
+            ktModule = ktModule,
+            parent = this@SymbolLightAccessorMethod,
+            callableWithReceiverSymbolPointer = containingPropertySymbolPointer,
+            parameterPopulator = parameterPopulator,
+        )
     }
 
     override fun getParameterList(): PsiParameterList = _parametersList

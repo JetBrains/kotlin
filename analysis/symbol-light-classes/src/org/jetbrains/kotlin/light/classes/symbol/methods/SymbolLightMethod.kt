@@ -56,15 +56,19 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
     override fun isVarArgs(): Boolean = _isVarArgs
 
     private val _parametersList by lazyPub {
-        withFunctionSymbol { functionSymbol ->
-            SymbolLightParameterList(this@SymbolLightMethod, functionSymbol) { builder ->
+        SymbolLightParameterList(
+            ktModule = ktModule,
+            parent = this@SymbolLightMethod,
+            callableWithReceiverSymbolPointer = functionSymbolPointer,
+        ) { builder ->
+            withFunctionSymbol { functionSymbol ->
                 functionSymbol.valueParameters.mapIndexed { index, parameter ->
                     val needToSkip = argumentsSkipMask?.get(index) == true
                     if (!needToSkip) {
                         builder.addParameter(
                             SymbolLightParameter(
                                 parameterSymbol = parameter,
-                                containingMethod = this@SymbolLightMethod
+                                containingMethod = this@SymbolLightMethod,
                             )
                         )
                     }
