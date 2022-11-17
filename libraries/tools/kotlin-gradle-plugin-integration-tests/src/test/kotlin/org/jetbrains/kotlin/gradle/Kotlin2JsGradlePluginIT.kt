@@ -183,8 +183,8 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 }
                 val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
                 val klibCacheDirs = cacheRootDir.list()
-                // 2 for lib.klib + 1 for stdlib + 1 for main
-                assertEquals(4, klibCacheDirs?.size, "cache should contain 4 dirs")
+                // 2 for lib.klib + 1 for stdlib + 1 for dom-api + 1 for main
+                assertEquals(5, klibCacheDirs?.size, "cache should contain 4 dirs")
 
                 val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
                 assertEquals(2, libKlibCacheDirs?.size, "cache should contain 2 dirs for lib.klib")
@@ -539,28 +539,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
-    @DisplayName("js default output is included into jar")
-    @GradleTest
-    fun testJarIncludesJsDefaultOutput(gradleVersion: GradleVersion) {
-        project("kotlin2JsNoOutputFileProject", gradleVersion) {
-            build("jar") {
-                checkIrCompilationMessage()
-
-                assertTasksExecuted(":compileKotlin2Js")
-                val jarPath = projectPath.resolve("build/libs/kotlin2JsNoOutputFileProject.jar")
-                assertFileExists(jarPath)
-                ZipFile(jarPath.toFile()).use { jar ->
-                    if (!irBackend) {
-                        assertEquals(
-                            1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject.js" },
-                            "The jar should contain an entry `kotlin2JsNoOutputFileProject.js` with no duplicates"
-                        )
-                    }
-                }
-            }
-        }
-    }
-
     @DisplayName("js customized output is included into jar")
     @GradleTest
     fun testJarIncludesJsOutputSetExplicitly(gradleVersion: GradleVersion) {
@@ -577,30 +555,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         "The jar should contain an entry `app.js` with no duplicates"
                     )
                 }
-            }
-        }
-    }
-
-    @DisplayName("moduleKind option works")
-    @GradleTest
-    fun testModuleKind(gradleVersion: GradleVersion) {
-        project("kotlin2JsModuleKind", gradleVersion) {
-            build("runRhino") {
-                checkIrCompilationMessage()
-            }
-        }
-    }
-
-    @DisplayName("default output file is generated")
-    @GradleTest
-    fun testDefaultOutputFile(gradleVersion: GradleVersion) {
-        project("kotlin2JsNoOutputFileProject", gradleVersion) {
-            build("build") {
-                checkIrCompilationMessage()
-                if (!irBackend) {
-                    assertFileExists(kotlinClassesDir().resolve("kotlin2JsNoOutputFileProject.js"))
-                }
-                assertFileExists(kotlinClassesDir(sourceSet = "test").resolve("kotlin2JsNoOutputFileProject_test.js"))
             }
         }
     }
@@ -630,37 +584,8 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
     @GradleTest
     fun testCompilerTestAccessInternalProduction(gradleVersion: GradleVersion) {
         project("kotlin2JsInternalTest", gradleVersion) {
-            build("runRhino") {
-                checkIrCompilationMessage()
-            }
-        }
-    }
-
-    @DisplayName("works with custom source sets")
-    @GradleTest
-    fun testJsCustomSourceSet(gradleVersion: GradleVersion) {
-        project("kotlin2JsProjectWithCustomSourceset", gradleVersion) {
             build("build") {
                 checkIrCompilationMessage()
-
-                assertTasksExecuted(
-                    ":compileKotlin2Js",
-                    ":compileIntegrationTestKotlin2Js"
-                )
-
-                if (!irBackend) {
-                    assertFileInProjectExists("build/kotlin2js/main/module.js")
-                }
-                assertFileInProjectExists("build/kotlin2js/integrationTest/module-inttests.js")
-
-                val jarPath = projectPath.resolve("build/libs/kotlin2JsProjectWithCustomSourceset-inttests.jar")
-                assertFileExists(jarPath)
-                ZipFile(jarPath.toFile()).use { jar ->
-                    assertEquals(
-                        1, jar.entries().asSequence().count { it.name == "module-inttests.js" },
-                        "The jar should contain an entry `module-inttests.js` with no duplicates"
-                    )
-                }
             }
         }
     }

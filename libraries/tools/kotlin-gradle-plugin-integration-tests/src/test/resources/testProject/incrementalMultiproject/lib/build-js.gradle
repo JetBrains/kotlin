@@ -1,6 +1,12 @@
-apply plugin: 'org.jetbrains.kotlin.platform.js'
+apply plugin: 'org.jetbrains.kotlin.js'
 
 dependencies {
     // do not remove until KT-25488 is fixed
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}
+
+kotlin {
+    js {
+        nodejs()
+    }
 }

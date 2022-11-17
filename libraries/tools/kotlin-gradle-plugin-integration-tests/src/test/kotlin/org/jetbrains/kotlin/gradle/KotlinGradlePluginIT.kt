@@ -550,42 +550,6 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Kotlin source directories are available in Java source directories")
-    @GradleTest
-    fun testKotlinSourceInJavaSourceSet(gradleVersion: GradleVersion) {
-        project("multiplatformProject", gradleVersion) {
-            val srcDirPrefix = "srcDir: "
-
-            buildGradle.appendText(
-                """
-                
-                subprojects { project ->
-                    project.afterEvaluate {
-                        project.sourceSets.each { sourceSet ->
-                            sourceSet.allJava.srcDirs.each { srcDir ->
-                                println "$srcDirPrefix" + srcDir.canonicalPath
-                            }
-                        }
-                    }
-                }
-                """.trimIndent()
-            )
-            val srcDirRegex = "$srcDirPrefix(.*)".toRegex()
-
-            build("help") {
-                val reportedSrcDirs = srcDirRegex.findAll(output).map { it.groupValues[1] }.toSet()
-
-                val expectedKotlinDirs = listOf("lib", "libJvm", "libJs").flatMap { module ->
-                    listOf("main", "test").map { sourceSet ->
-                        projectPath.resolve("$module/src/$sourceSet/kotlin").toFile().absolutePath
-                    }
-                }
-
-                expectedKotlinDirs.forEach { assertTrue(it in reportedSrcDirs, "$it should be included into the Java source sets") }
-            }
-        }
-    }
-
     @DisplayName("Default Kotlin version is not affected by transitive dependencies")
     @GradleTest
     fun testDefaultKotlinVersionIsNotAffectedByTransitiveDependencies(gradleVersion: GradleVersion) {

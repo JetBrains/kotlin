@@ -32,19 +32,6 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     }
 
     @JsGradlePluginTests
-    @DisplayName("JS - kotlin2js plugin")
-    @GradleTest
-    fun inputsKotlin2Js(gradleVersion: GradleVersion) {
-        project("kotlin2JsProject", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-
-            build("assemble") {
-                assertNoUnnamedInputsOutputs()
-            }
-        }
-    }
-
-    @JsGradlePluginTests
     @DisplayName("JS")
     @GradleTest
     fun inputsJs(gradleVersion: GradleVersion) {

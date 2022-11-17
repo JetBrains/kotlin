@@ -132,31 +132,6 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testJsKtAppResolvesJsKtApp() {
-        val outerProject = Project("kotlin2JsInternalTest", gradleVersion)
-        val innerProject = Project("kotlin2JsNoOutputFileProject")
-
-        with(outerProject) {
-            embedProject(innerProject)
-            gradleBuildScript(innerProject.projectName).appendText("\ndependencies { implementation rootProject }")
-
-            gradleBuildScript(innerProject.projectName).appendText(
-                // Newer Gradle versions fail to resolve the deprecated configurations because of variant-aware resolution ambiguity between
-                // the *Elements configuration and its sub-variants (classes, resources)
-                "\n" + """
-                configurations {
-                    configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
-                        canBeResolved = false
-                    }
-                }
-                """.trimIndent()
-            )
-
-            testResolveAllConfigurations(innerProject.projectName, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary))
-        }
-    }
-
-    @Test
     fun testMppResolvesJvmAndJsKtLibs() {
         val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
         val innerJvmProject = Project("simpleProject")
@@ -215,13 +190,11 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
     fun testKtAppResolvesOldMpp() {
         val outerProject = Project("multiplatformProject")
         val innerJvmProject = Project("simpleProject")
-        val innerJsProject = Project("kotlin2JsInternalTest")
 
         with(outerProject) {
             embedProject(innerJvmProject)
-            embedProject(innerJsProject)
 
-            listOf(innerJvmProject to ":libJvm", innerJsProject to ":libJs").forEach { (project, dependency) ->
+            listOf(innerJvmProject to ":libJvm").forEach { (project, dependency) ->
                 gradleBuildScript(project.projectName).appendText(
                     "\n" + """
                         dependencies {
@@ -244,7 +217,7 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
         setupWorkingDir()
         gradleBuildScript().appendText(
             "\n" + """
-                configure([project(':lib'), project(':libJvm'), project(':libJs')]) {
+                configure([project(':lib'), project(':libJvm')]) {
                     group 'com.example.oldmpp'
                     version '1.0'
                     apply plugin: 'maven-publish'
@@ -270,16 +243,12 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
         gradleBuildScript("libJvm").appendText("\ndependencies { implementation 'com.example.oldmpp:libJvm:1.0' }")
         testResolveAllConfigurations("libJvm")
 
-        gradleBuildScript("libJs").appendText("\ndependencies { implementation 'com.example.oldmpp:libJs:1.0' }")
-        testResolveAllConfigurations("libJs")
-
         embedProject(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app"))
         gradleBuildScript("sample-lib").appendText(
             "\n" + """
             dependencies {
                 commonMainApi 'com.example.oldmpp:lib:1.0'
                 jvm6MainApi 'com.example.oldmpp:libJvm:1.0'
-                nodeJsMainApi 'com.example.oldmpp:libJs:1.0'
             }
         """.trimIndent()
         )
