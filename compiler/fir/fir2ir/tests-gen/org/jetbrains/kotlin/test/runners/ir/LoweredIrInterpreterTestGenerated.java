@@ -77,6 +77,12 @@ public class LoweredIrInterpreterTestGenerated extends AbstractLoweredIrInterpre
         }
 
         @Test
+        @TestMetadata("enumRecursiveName.kt")
+        public void testEnumRecursiveName() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/enumRecursiveName.kt");
+        }
+
+        @Test
         @TestMetadata("floatOperations.kt")
         public void testFloatOperations() throws Exception {
             runTest("compiler/testData/ir/loweredIr/interpreter/floatOperations.kt");
