@@ -238,7 +238,6 @@ internal class SymbolLightAccessorMethod(
         }
 
         SymbolLightParameterList(
-            ktModule = ktModule,
             parent = this@SymbolLightAccessorMethod,
             callableWithReceiverSymbolPointer = containingPropertySymbolPointer,
             parameterPopulator = parameterPopulator,

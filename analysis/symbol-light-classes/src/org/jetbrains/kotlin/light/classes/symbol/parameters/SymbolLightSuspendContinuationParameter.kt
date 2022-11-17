@@ -30,8 +30,6 @@ internal class SymbolLightSuspendContinuationParameter(
     private val functionSymbolPointer: KtSymbolPointer<KtFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(containingMethod) {
-    private val ktModule get() = containingMethod.ktModule
-
     private inline fun <T> withFunctionSymbol(crossinline action: context(KtAnalysisSession) (KtFunctionSymbol) -> T): T {
         return analyzeForLightClasses(ktModule) {
             action(this, functionSymbolPointer.restoreSymbolOrThrowIfDisposed())

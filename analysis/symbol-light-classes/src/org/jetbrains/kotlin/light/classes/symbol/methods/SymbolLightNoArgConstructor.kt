@@ -44,7 +44,7 @@ internal class SymbolLightNoArgConstructor(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _parameterList: PsiParameterList by lazyPub {
-        SymbolLightParameterList(ktModule = ktModule, parent = this@SymbolLightNoArgConstructor)
+        SymbolLightParameterList(parent = this@SymbolLightNoArgConstructor)
     }
 
     override fun getParameterList(): PsiParameterList = _parameterList

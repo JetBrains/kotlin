@@ -59,7 +59,6 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
 
     private val _parametersList by lazyPub {
         SymbolLightParameterList(
-            ktModule = ktModule,
             parent = this@SymbolLightMethod,
             callableWithReceiverSymbolPointer = functionSymbolPointer,
         ) { builder ->

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.light.classes.symbol.restoreSymbolOrThrowIfDisposed
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightParameterForReceiver private constructor(
-    private val ktModule: KtModule,
     private val callableSymbolWithReceiverPointer: KtSymbolPointer<KtCallableSymbol>,
     methodName: String,
     method: SymbolLightMethodBase
@@ -45,11 +43,10 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     companion object {
         fun tryGet(
-            ktModule: KtModule,
             callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
             method: SymbolLightMethodBase
         ): SymbolLightParameterForReceiver? {
-            val methodName = analyzeForLightClasses(ktModule) {
+            val methodName = analyzeForLightClasses(method.ktModule) {
                 val callableSymbol = callableSymbolPointer.restoreSymbolOrThrowIfDisposed()
                 if (callableSymbol !is KtNamedSymbol) return@analyzeForLightClasses null
                 if (!callableSymbol.isExtension || callableSymbol.receiverType == null) return@analyzeForLightClasses null
@@ -57,7 +54,6 @@ internal class SymbolLightParameterForReceiver private constructor(
             } ?: return null
 
             return SymbolLightParameterForReceiver(
-                ktModule = ktModule,
                 callableSymbolWithReceiverPointer = callableSymbolPointer,
                 methodName = methodName,
                 method = method,
