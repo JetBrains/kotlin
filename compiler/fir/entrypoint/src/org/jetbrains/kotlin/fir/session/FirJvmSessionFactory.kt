@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -29,7 +30,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
     fun createLibrarySession(
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
-        dependencyList: DependencyListForCliModule,
+        moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
         scope: AbstractProjectFileSearchScope,
         packagePartProvider: PackagePartProvider,
@@ -39,7 +40,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         return createLibrarySession(
             mainModuleName,
             sessionProvider,
-            dependencyList.moduleDataProvider,
+            moduleDataProvider,
             languageVersionSettings,
             registerExtraComponents = {
                 it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
@@ -50,15 +51,20 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 listOf(
                     JvmClassFileBasedSymbolProvider(
                         session,
-                        dependencyList.moduleDataProvider,
+                        moduleDataProvider,
                         kotlinScopeProvider,
                         packagePartProvider,
                         projectEnvironment.getKotlinClassFinder(scope),
-                        projectEnvironment.getFirJavaFacade(session, dependencyList.moduleDataProvider.allModuleData.last(), scope)
+                        projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
                     ),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    OptionalAnnotationClassesProvider(session, dependencyList.moduleDataProvider, kotlinScopeProvider, packagePartProvider)
+                    OptionalAnnotationClassesProvider(
+                        session,
+                        moduleDataProvider,
+                        kotlinScopeProvider,
+                        packagePartProvider
+                    )
                 )
             }
         )

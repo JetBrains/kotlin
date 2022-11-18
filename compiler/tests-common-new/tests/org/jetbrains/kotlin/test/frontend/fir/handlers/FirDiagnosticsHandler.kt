@@ -61,39 +61,43 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         listOf(service(::DiagnosticsService))
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        val diagnosticsPerFile = info.firAnalyzerFacade.runCheckers()
-        val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in module.directives
-        val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in module.directives
+        for (part in info.partsForDependsOnModules) {
+            val diagnosticsPerFile = part.firAnalyzerFacade.runCheckers()
+            val currentModule = part.module
 
-        for (file in module.files) {
-            val firFile = info.firFiles[file] ?: continue
-            var diagnostics = diagnosticsPerFile[firFile] ?: continue
-            if (AdditionalFilesDirectives.CHECK_TYPE in module.directives) {
-                diagnostics = diagnostics.filter { it.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
-            }
-            if (LanguageSettingsDirectives.API_VERSION in module.directives) {
-                diagnostics = diagnostics.filter { it.factory.name != FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
-            }
-            val diagnosticsMetadataInfos = diagnostics.flatMap { diagnostic ->
-                if (!diagnosticsService.shouldRenderDiagnostic(
-                        module,
-                        diagnostic.factory.name,
-                        diagnostic.severity
+            val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
+            val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in currentModule.directives
+
+            for (file in currentModule.files) {
+                val firFile = info.mainFirFiles[file] ?: continue
+                var diagnostics = diagnosticsPerFile[firFile] ?: continue
+                if (AdditionalFilesDirectives.CHECK_TYPE in currentModule.directives) {
+                    diagnostics = diagnostics.filter { it.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
+                }
+                if (LanguageSettingsDirectives.API_VERSION in currentModule.directives) {
+                    diagnostics = diagnostics.filter { it.factory.name != FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
+                }
+                val diagnosticsMetadataInfos = diagnostics.flatMap { diagnostic ->
+                    if (!diagnosticsService.shouldRenderDiagnostic(
+                            currentModule,
+                            diagnostic.factory.name,
+                            diagnostic.severity
+                        )
+                    ) return@flatMap emptyList()
+                    // SYNTAX errors will be reported later
+                    if (diagnostic.factory == FirSyntaxErrors.SYNTAX) return@flatMap emptyList()
+                    if (!diagnostic.isValid) return@flatMap emptyList()
+                    diagnostic.toMetaInfos(
+                        file,
+                        globalMetadataInfoHandler,
+                        lightTreeEnabled,
+                        lightTreeComparingModeEnabled
                     )
-                ) return@flatMap emptyList()
-                // SYNTAX errors will be reported later
-                if (diagnostic.factory == FirSyntaxErrors.SYNTAX) return@flatMap emptyList()
-                if (!diagnostic.isValid) return@flatMap emptyList()
-                diagnostic.toMetaInfos(
-                    file,
-                    globalMetadataInfoHandler,
-                    lightTreeEnabled,
-                    lightTreeComparingModeEnabled
-                )
+                }
+                globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
+                collectSyntaxDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
-            globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
-            collectSyntaxDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
-            collectDebugInfoDiagnostics(module, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
         }
     }
 

@@ -69,7 +69,7 @@ class Fir2IrJsResultsConverter(
         val fir2IrExtensions = Fir2IrExtensions.Default
         val firFiles = inputArtifact.allFirFiles.values
         val (irModuleFragment, components, pluginContext) =
-            inputArtifact.firAnalyzerFacade.convertToJsIr(firFiles, fir2IrExtensions, module, configuration, testServices)
+            inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade.convertToJsIr(firFiles, fir2IrExtensions, module, configuration, testServices)
 
         val sourceFiles = firFiles.mapNotNull { it.sourceFile }
         val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
@@ -81,7 +81,7 @@ class Fir2IrJsResultsConverter(
                 ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(module.languageVersionSettings.languageVersion)
 
         // At this point, checkers will already have been run by a previous test step. `runCheckers` returns the cached diagnostics map.
-        val diagnosticsMap = inputArtifact.firAnalyzerFacade.runCheckers()
+        val diagnosticsMap = inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade.runCheckers()
         val hasErrors = diagnosticsMap.any { entry -> entry.value.any { it.severity == Severity.ERROR } }
 
         return IrBackendInput.JsIrBackendInput(

@@ -64,13 +64,14 @@ class ClassicFrontend2IrConverter(
             .diagnosticReporter(DiagnosticReporterFactory.createReporter())
             .build()
 
-        val convertionResult =
+        val conversionResult =
             codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values))
         return IrBackendInput.JvmIrBackendInput(
             state,
             codegenFactory,
-            convertionResult,
-            emptyList()
+            dependentInputs = emptyList(),
+            conversionResult,
+            sourceFiles = emptyList()
         )
     }
 

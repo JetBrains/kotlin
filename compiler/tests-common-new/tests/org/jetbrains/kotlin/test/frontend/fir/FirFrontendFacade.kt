@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
@@ -19,17 +19,16 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.resolverLogger
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
@@ -37,25 +36,22 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.model.DependencyRelation
+import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import java.io.File
 import java.nio.file.Paths
 
 open class FirFrontendFacade(
     testServices: TestServices,
     private val additionalSessionConfiguration: SessionConfiguration?
 ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
+    private val testModulesByName by lazy { testServices.moduleStructure.modules.associateBy { it.name } }
+
     // Separate constructor is needed for creating callable references to it
     constructor(testServices: TestServices) : this(testServices, additionalSessionConfiguration = null)
 
@@ -67,53 +63,150 @@ open class FirFrontendFacade(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
+    override fun shouldRunAnalysis(module: TestModule): Boolean {
+        if (!super.shouldRunAnalysis(module)) return false
+
+        return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+            testServices.moduleStructure
+                .modules.none { testModule -> testModule.dependsOnDependencies.any { testModulesByName[it.moduleName] == module } }
+        } else {
+            true
+        }
+    }
+
     open fun registerExtraComponents(session: FirSession) {}
 
     override fun analyze(module: TestModule): FirOutputArtifact {
-        val moduleInfoProvider = testServices.firModuleInfoProvider
-        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-        // TODO: add configurable parser
+        val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
 
-        val project = compilerConfigurationProvider.getProject(module)
+        val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
 
-        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+        val (moduleDataMap, moduleDataProvider) = initializeModuleData(sortedModules)
 
-        val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in module.directives
-        val (ktFiles, lightTreeFiles) = if (lightTreeEnabled) {
-            emptyList<KtFile>() to testServices.sourceFileProvider.getLightTreeFilesForSourceFiles(module.files).values
-        } else {
-            testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
+        val projectEnvironment = createLibrarySession(
+            module,
+            testServices.compilerConfigurationProvider.getProject(module),
+            Name.special("<${module.name}>"),
+            testServices.firModuleInfoProvider.firSessionProvider,
+            moduleDataProvider,
+            testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        )
+
+        val targetPlatform = module.targetPlatform
+        val firOutputPartForDependsOnModules = mutableListOf<FirOutputPartForDependsOnModule>()
+        for (testModule in sortedModules) {
+            firOutputPartForDependsOnModules.add(
+                analyze(
+                    testModule,
+                    moduleDataMap[testModule]!!,
+                    targetPlatform,
+                    projectEnvironment,
+                    isMppSupported = isMppSupported
+                )
+            )
         }
+
+        return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
+    }
+
+    private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
+        val sortedModules = mutableListOf<TestModule>()
+        val visitedModules = mutableSetOf<TestModule>()
+        val modulesQueue = ArrayDeque<TestModule>()
+        modulesQueue.add(module)
+
+        while (modulesQueue.isNotEmpty()) {
+            val currentModule = modulesQueue.removeFirst()
+            if (!visitedModules.add(currentModule)) continue
+            sortedModules.add(currentModule)
+
+            for (dependency in currentModule.dependsOnDependencies) {
+                modulesQueue.add(testServices.dependencyProvider.getTestModule(dependency.moduleName))
+            }
+        }
+
+        return sortedModules.reversed()
+    }
+
+    private fun initializeModuleData(modules: List<TestModule>): Pair<Map<TestModule, FirModuleData>, ModuleDataProvider> {
+        val mainModule = modules.last()
+
+        val targetPlatform = mainModule.targetPlatform
+        val analyzerServices = targetPlatform.getAnalyzerServices()
 
         // the special name is required for `KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns`
         // it doesn't seem convincingly legitimate, probably should be refactored
-        val moduleName = Name.special("<${module.name}>")
+        val moduleName = Name.special("<${mainModule.name}>")
+        val binaryModuleData = BinaryModuleData.initialize(moduleName, targetPlatform, analyzerServices)
+
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+        val configuration = compilerConfigurationProvider.getCompilerConfiguration(mainModule)
+
+        val libraryList = initializeLibraryList(mainModule, binaryModuleData, targetPlatform, configuration)
+
+        val moduleInfoProvider = testServices.firModuleInfoProvider
+        val moduleDataMap = mutableMapOf<TestModule, FirModuleData>()
+
+        for (module in modules) {
+            val regularModules = libraryList.regularDependencies + moduleInfoProvider.getRegularDependentSourceModules(module)
+            val friendModules = libraryList.friendsDependencies + moduleInfoProvider.getDependentFriendSourceModules(module)
+            val dependsOnModules = libraryList.dependsOnDependencies + moduleInfoProvider.getDependentDependsOnSourceModules(module)
+
+            val moduleData = FirModuleDataImpl(
+                Name.special("<${module.name}>"),
+                regularModules,
+                dependsOnModules,
+                friendModules,
+                module.targetPlatform,
+                module.targetPlatform.getAnalyzerServices()
+            )
+
+            moduleInfoProvider.registerModuleData(module, moduleData)
+
+            moduleDataMap[module] = moduleData
+        }
+
+        return moduleDataMap to libraryList.moduleDataProvider
+    }
+
+    private fun initializeLibraryList(
+        mainModule: TestModule,
+        binaryModuleData: BinaryModuleData,
+        targetPlatform: TargetPlatform,
+        configuration: CompilerConfiguration,
+    ): DependencyListForCliModule {
+        return DependencyListForCliModule.build(binaryModuleData) {
+            when {
+                targetPlatform.isCommon() || targetPlatform.isJvm() || targetPlatform.isNative() -> {
+                    dependencies(configuration.jvmModularRoots.map { it.toPath() })
+                    dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
+                    friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+                }
+                targetPlatform.isJs() -> {
+                    val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getJsDependencies(mainModule, testServices)
+                    dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
+                    dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
+                    friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
+                }
+                else -> error("Unsupported")
+            }
+        }
+    }
+
+    private fun createLibrarySession(
+        module: TestModule,
+        project: Project,
+        moduleName: Name,
+        sessionProvider: FirProjectSessionProvider,
+        moduleDataProvider: ModuleDataProvider,
+        configuration: CompilerConfiguration
+    ): AbstractProjectEnvironment? {
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+        val projectEnvironment: AbstractProjectEnvironment?
         val languageVersionSettings = module.languageVersionSettings
-        val analyzerServices = module.targetPlatform.getAnalyzerServices()
-        val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
-
-        val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
-            if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
-                registerExtendedCommonCheckers()
-            }
-            additionalSessionConfiguration?.invoke(this)
-        }
-
-        val isCommonOrJvm = module.targetPlatform.isJvm() || module.targetPlatform.isCommon()
-
-        val dependencyList = buildDependencyList(module, moduleName, moduleInfoProvider, analyzerServices) {
-            if (isCommonOrJvm || module.targetPlatform.isNative()) {
-                configureJvmDependencies(configuration)
-            } else {
-                configureJsDependencies(module, testServices)
-            }
-        }
-
-        val projectEnvironment: VfsBasedProjectEnvironment?
-
         when {
-            isCommonOrJvm -> {
+            // TODO: use common session for common target platform when it's implemented
+            module.targetPlatform.isCommon() || module.targetPlatform.isJvm() -> {
                 val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
                 projectEnvironment = VfsBasedProjectEnvironment(
                     project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
@@ -123,8 +216,8 @@ open class FirFrontendFacade(
 
                 FirJvmSessionFactory.createLibrarySession(
                     moduleName,
-                    moduleInfoProvider.firSessionProvider,
-                    dependencyList,
+                    sessionProvider,
+                    moduleDataProvider,
                     projectEnvironment,
                     projectFileSearchScope,
                     packagePartProvider,
@@ -136,8 +229,8 @@ open class FirFrontendFacade(
                 projectEnvironment = null
                 TestFirJsSessionFactory.createLibrarySession(
                     moduleName,
-                    moduleInfoProvider.firSessionProvider,
-                    dependencyList,
+                    sessionProvider,
+                    moduleDataProvider,
                     module,
                     testServices,
                     configuration,
@@ -150,29 +243,97 @@ open class FirFrontendFacade(
                 FirNativeSessionFactory.createLibrarySession(
                     moduleName,
                     listOf(),
-                    moduleInfoProvider.firSessionProvider,
-                    dependencyList,
+                    sessionProvider,
+                    moduleDataProvider,
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                 )
             }
             else -> error("Unsupported")
         }
+        return projectEnvironment
+    }
 
-        val mainModuleData = FirModuleDataImpl(
-            moduleName,
-            dependencyList.regularDependencies,
-            dependencyList.dependsOnDependencies,
-            dependencyList.friendsDependencies,
-            dependencyList.platform,
-            dependencyList.analyzerServices
+    private fun analyze(
+        module: TestModule,
+        moduleData: FirModuleData,
+        targetPlatform: TargetPlatform,
+        projectEnvironment: AbstractProjectEnvironment?,
+        isMppSupported: Boolean,
+    ): FirOutputPartForDependsOnModule {
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+        val moduleInfoProvider = testServices.firModuleInfoProvider
+        val sessionProvider = moduleInfoProvider.firSessionProvider
+
+        val project = compilerConfigurationProvider.getProject(module)
+
+        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+
+        val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in module.directives
+        val (ktFiles, lightTreeFiles) = if (lightTreeEnabled) {
+            emptyList<KtFile>() to testServices.sourceFileProvider.getLightTreeFilesForSourceFiles(module.files).values
+        } else {
+            testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
+        }
+
+        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
+        val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
+            if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
+                registerExtendedCommonCheckers()
+            }
+            additionalSessionConfiguration?.invoke(this)
+        }
+
+        val moduleBasedSession = createModuleBasedSession(
+            module,
+            moduleData,
+            targetPlatform,
+            sessionProvider,
+            projectEnvironment,
+            extensionRegistrars,
+            sessionConfigurator,
+            project,
+            ktFiles
         )
 
-        val session = when {
-            isCommonOrJvm -> {
+        val enablePluginPhases = FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES in module.directives
+        val firAnalyzerFacade = FirAnalyzerFacade(
+            moduleBasedSession,
+            module.languageVersionSettings,
+            ktFiles,
+            lightTreeFiles,
+            IrGenerationExtension.getInstances(project),
+            lightTreeEnabled,
+            enablePluginPhases,
+            generateSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE || isMppSupported,
+        )
+        val firFiles = firAnalyzerFacade.runResolution()
+        val filesMap = firFiles.mapNotNull { firFile ->
+            val testFile = module.files.firstOrNull { it.name == firFile.name } ?: return@mapNotNull null
+            testFile to firFile
+        }.toMap()
+
+        return FirOutputPartForDependsOnModule(module, moduleBasedSession, firAnalyzerFacade, filesMap)
+    }
+
+    private fun createModuleBasedSession(
+        module: TestModule,
+        moduleData: FirModuleData,
+        targetPlatform: TargetPlatform,
+        sessionProvider: FirProjectSessionProvider,
+        projectEnvironment: AbstractProjectEnvironment?,
+        extensionRegistrars: List<FirExtensionRegistrar>,
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
+        project: Project,
+        ktFiles: Collection<KtFile>
+    ): FirSession {
+        val languageVersionSettings = module.languageVersionSettings
+        return when {
+            // TODO: use common session for common target platform when it's implemented
+            targetPlatform.isCommon() || targetPlatform.isJvm() -> {
                 FirJvmSessionFactory.createModuleBasedSession(
-                    mainModuleData,
-                    moduleInfoProvider.firSessionProvider,
+                    moduleData,
+                    sessionProvider,
                     PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)),
                     projectEnvironment!!,
                     incrementalCompilationContext = null,
@@ -185,10 +346,10 @@ open class FirFrontendFacade(
                     sessionConfigurator,
                 )
             }
-            module.targetPlatform.isJs() -> {
+            targetPlatform.isJs() -> {
                 TestFirJsSessionFactory.createModuleBasedSession(
-                    mainModuleData,
-                    moduleInfoProvider.firSessionProvider,
+                    moduleData,
+                    sessionProvider,
                     extensionRegistrars,
                     languageVersionSettings,
                     null,
@@ -196,10 +357,10 @@ open class FirFrontendFacade(
                     sessionConfigurator,
                 )
             }
-            module.targetPlatform.isNative() -> {
+            targetPlatform.isNative() -> {
                 FirNativeSessionFactory.createModuleBasedSession(
-                    mainModuleData,
-                    moduleInfoProvider.firSessionProvider,
+                    moduleData,
+                    sessionProvider,
                     extensionRegistrars,
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
@@ -208,93 +369,5 @@ open class FirFrontendFacade(
             }
             else -> error("Unsupported")
         }
-
-        moduleInfoProvider.registerModuleData(module, session.moduleData)
-
-        val enablePluginPhases = FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES in module.directives
-        val firAnalyzerFacade = FirAnalyzerFacade(
-            session,
-            languageVersionSettings,
-            ktFiles,
-            lightTreeFiles,
-            IrGenerationExtension.getInstances(project),
-            lightTreeEnabled,
-            enablePluginPhases,
-            generateSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE
-        )
-        val firFiles = firAnalyzerFacade.runResolution()
-        val filesMap = firFiles.mapNotNull { firFile ->
-            val testFile = module.files.firstOrNull { it.name == firFile.name } ?: return@mapNotNull null
-            testFile to firFile
-        }.toMap()
-
-        return FirOutputArtifactImpl(session, filesMap, firAnalyzerFacade)
-    }
-}
-
-private fun DependencyListForCliModule.Builder.configureJvmDependencies(
-    configuration: CompilerConfiguration,
-) {
-    dependencies(configuration.jvmModularRoots.map { it.toPath() })
-    dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
-
-    friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
-}
-
-private fun DependencyListForCliModule.Builder.configureJsDependencies(
-    module: TestModule,
-    testServices: TestServices,
-) {
-    val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getJsDependencies(module, testServices)
-
-    dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
-    dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
-
-    friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
-}
-
-private fun getJsDependencies(module: TestModule, testServices: TestServices): Triple<List<String>, List<File>, List<File>> {
-    val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
-    val transitiveLibraries = JsEnvironmentConfigurator.getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
-    val friendLibraries = JsEnvironmentConfigurator.getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
-    return Triple(runtimeKlibsPaths, transitiveLibraries, friendLibraries)
-}
-
-fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {
-    val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getJsDependencies(module, testServices)
-    return runtimeKlibsPaths + transitiveLibraries.map { it.path } + friendLibraries.map { it.path }
-}
-
-fun resolveJsLibraries(
-    module: TestModule,
-    testServices: TestServices,
-    configuration: CompilerConfiguration
-): List<KotlinResolvedLibrary> {
-    val paths = getAllJsDependenciesPaths(module, testServices)
-    val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
-    val logger = configuration.resolverLogger
-    return jsResolveLibraries(paths, repositories, logger).getFullResolvedList()
-}
-
-private fun buildDependencyList(
-    module: TestModule,
-    moduleName: Name,
-    moduleInfoProvider: FirModuleInfoProvider,
-    analyzerServices: PlatformDependentAnalyzerServices,
-    configureDependencies: DependencyListForCliModule.Builder.() -> Unit,
-) = DependencyListForCliModule.build(moduleName, module.targetPlatform, analyzerServices) {
-    configureDependencies()
-    sourceDependencies(moduleInfoProvider.getRegularDependentSourceModules(module))
-    sourceFriendsDependencies(moduleInfoProvider.getDependentFriendSourceModules(module))
-    sourceDependsOnDependencies(moduleInfoProvider.getDependentDependsOnSourceModules(module))
-}
-
-fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
-    return when {
-        isJvm() -> JvmPlatformAnalyzerServices
-        isJs() -> JsPlatformAnalyzerServices
-        isNative() -> NativePlatformAnalyzerServices
-        isCommon() -> CommonPlatformAnalyzerServices
-        else -> error("Unknown target platform: $this")
     }
 }

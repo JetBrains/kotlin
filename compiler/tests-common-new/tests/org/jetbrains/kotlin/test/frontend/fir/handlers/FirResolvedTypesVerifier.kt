@@ -6,16 +6,13 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeAmbiguousSuper
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
-import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeFunctionExpectedError
-import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -31,7 +28,7 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         val visitor = Visitor()
-        for (firFile in info.firFiles.values) {
+        for (firFile in info.mainFirFiles.values) {
             firFile.acceptChildren(visitor, firFile)
         }
         val ignored = IGNORE_LEAKED_INTERNAL_TYPES in module.directives

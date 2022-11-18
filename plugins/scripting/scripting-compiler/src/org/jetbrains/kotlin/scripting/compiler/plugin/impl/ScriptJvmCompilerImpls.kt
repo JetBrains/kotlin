@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
-import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -29,10 +26,11 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
-import org.jetbrains.kotlin.fir.pipeline.runCheckers
-import org.jetbrains.kotlin.fir.pipeline.runResolution
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -52,6 +50,8 @@ import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.compilationCache
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
+import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.name.Name
 
 class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
 
@@ -349,20 +349,42 @@ private fun doCompileWithK2(
     val sessionProvider = FirProjectSessionProvider()
     val extendedAnalysisMode = kotlinCompilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
 
-    val session = createSession(
-        targetId.name,
-        JvmPlatforms.unspecifiedJvmPlatform,
-        kotlinCompilerConfiguration,
+    var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
+    val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
+        compilerInput.configuration,
         projectEnvironment,
         sourcesScope,
-        JvmPlatformAnalyzerServices,
+        emptyList(),
+        null
+    )?.also { (_, _, precompiledBinariesFileScope) ->
+        precompiledBinariesFileScope?.let { librariesScope -= it }
+    }
+    val libraryList = createLibraryListAndSession(targetId.name, kotlinCompilerConfiguration, projectEnvironment, librariesScope, sessionProvider)
+    val moduleData = FirModuleDataImpl(
+        Name.identifier(targetId.name),
+        libraryList.regularDependencies,
+        listOf(),
+        libraryList.friendsDependencies,
+        JvmPlatforms.unspecifiedJvmPlatform,
+        JvmPlatformAnalyzerServices
+    )
+    val session = FirJvmSessionFactory.createModuleBasedSession(
+        moduleData,
         sessionProvider,
-        previousStepsSymbolProviders = emptyList(),
-        incrementalExcludesScope = null,
-        extendedAnalysisMode = extendedAnalysisMode,
-        needRegisterJavaElementFinder = true
+        sourcesScope,
+        projectEnvironment,
+        providerAndScopeForIncrementalCompilation,
+        extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)?.let { FirExtensionRegistrar.getInstances(it.project) }
+            ?: emptyList(),
+        kotlinCompilerConfiguration.languageVersionSettings,
+        lookupTracker = kotlinCompilerConfiguration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
+        enumWhenTracker = kotlinCompilerConfiguration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
+        needRegisterJavaElementFinder = true,
+        registerExtraComponents = {},
     ) {
-        friendDependencies(kotlinCompilerConfiguration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+        if (extendedAnalysisMode) {
+            registerExtendedCommonCheckers()
+        }
     }
 
     session.scriptDefinitionProviderService?.run {
@@ -376,7 +398,7 @@ private fun doCompileWithK2(
     // checkers
     session.runCheckers(scopeSession, fir, diagnosticsReporter)
 
-    val analysisResults = ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
+    val analysisResults = FirResult(ModuleCompilerAnalyzedOutput(session, scopeSession, fir), null)
 
     if (diagnosticsReporter.hasErrors) {
         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)

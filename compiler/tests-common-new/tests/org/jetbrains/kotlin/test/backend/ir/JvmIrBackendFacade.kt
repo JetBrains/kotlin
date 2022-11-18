@@ -37,7 +37,7 @@ class JvmIrBackendFacade(
         }
         val state = inputArtifact.state
         try {
-            inputArtifact.codegenFactory.generateModule(state, inputArtifact.backendInput)
+            inputArtifact.codegenFactory.generateModule(state, inputArtifact.backendInput.last())
         } catch (e: BackendException) {
             if (CodegenTestDirectives.IGNORE_ERRORS in module.directives) {
                 return null

@@ -41,12 +41,15 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        val fqNamesWithNames = module.directives[FirDiagnosticsDirectives.SCOPE_DUMP]
-        if (fqNamesWithNames.isEmpty()) return
-        val printer = SmartPrinter(dumper.builderForModule(module), indent = "  ")
-        for (fqNameWithNames in fqNamesWithNames) {
-            val (fqName, names) = extractFqNameAndMemberNames(fqNameWithNames)
-            printer.processClass(fqName, names, info.session, info.firAnalyzerFacade.scopeSession, module)
+        for (part in info.partsForDependsOnModules) {
+            val currentModule = part.module
+            val fqNamesWithNames = currentModule.directives[FirDiagnosticsDirectives.SCOPE_DUMP]
+            if (fqNamesWithNames.isEmpty()) return
+            val printer = SmartPrinter(dumper.builderForModule(currentModule), indent = "  ")
+            for (fqNameWithNames in fqNamesWithNames) {
+                val (fqName, names) = extractFqNameAndMemberNames(fqNameWithNames)
+                printer.processClass(fqName, names, part.session, part.firAnalyzerFacade.scopeSession, currentModule)
+            }
         }
     }
 

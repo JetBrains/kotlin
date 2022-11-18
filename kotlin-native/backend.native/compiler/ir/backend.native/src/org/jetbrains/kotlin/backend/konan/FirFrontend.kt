@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
@@ -45,7 +46,8 @@ internal fun PhaseContext.firFrontend(
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
     }
-    val dependencyList = DependencyListForCliModule.build(mainModuleName, CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices) {
+    val binaryModuleData = BinaryModuleData.initialize(mainModuleName, CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices)
+    val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
         dependencies(config.resolvedLibraries.getFullList().map { it.libraryFile.absolutePath })
         friendDependencies(config.friendModuleFiles.map { it.absolutePath })
         // TODO: !!! dependencies module data?
@@ -55,7 +57,7 @@ internal fun PhaseContext.firFrontend(
             mainModuleName,
             resolvedLibraries,
             sessionProvider,
-            dependencyList,
+            dependencyList.moduleDataProvider,
             configuration.languageVersionSettings,
             registerExtraComponents = {},
     )
@@ -64,8 +66,8 @@ internal fun PhaseContext.firFrontend(
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies,
             dependencyList.friendsDependencies,
-            dependencyList.platform,
-            dependencyList.analyzerServices
+            CommonPlatforms.defaultCommonPlatform,
+            NativePlatformAnalyzerServices
     )
     val session = FirNativeSessionFactory.createModuleBasedSession(
             mainModuleData,

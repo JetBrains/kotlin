@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.test.frontend.fir.getAnalyzerServices
+import org.jetbrains.kotlin.test.getAnalyzerServices
 import java.nio.file.Path
 
 interface KtModuleWithModifiableDependencies {

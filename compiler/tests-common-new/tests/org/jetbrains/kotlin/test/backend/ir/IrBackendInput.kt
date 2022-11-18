@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 
@@ -43,6 +42,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     data class JvmIrBackendInput(
         val state: GenerationState,
         val codegenFactory: JvmIrCodegenFactory,
+        val dependentInputs: List<JvmIrCodegenFactory.JvmIrBackendInput>,
         val backendInput: JvmIrCodegenFactory.JvmIrBackendInput,
         val sourceFiles: List<KtSourceFile>
     ) : IrBackendInput() {

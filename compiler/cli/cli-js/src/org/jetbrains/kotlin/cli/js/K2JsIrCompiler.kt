@@ -43,9 +43,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
@@ -55,7 +53,6 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.pipeline.runResolution
@@ -509,7 +506,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
 
-        val dependencyList = DependencyListForCliModule.build(mainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices) {
+        val binaryModuleData = BinaryModuleData.initialize(mainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices)
+        val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
             dependencies(libraries.map { Paths.get(it).toAbsolutePath() })
             friendDependencies(friendLibraries.map { Paths.get(it).toAbsolutePath() })
             // TODO: !!! dependencies module data?
@@ -533,8 +531,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies,
             dependencyList.friendsDependencies,
-            dependencyList.platform,
-            dependencyList.analyzerServices
+            JsPlatforms.defaultJsPlatform,
+            JsPlatformAnalyzerServices
         )
 
         val session = FirJsSessionFactory.createJsModuleBasedSession(
@@ -598,7 +596,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
             IrGenerationExtension.getInstances(environmentForJS.project),
             generateSignatures = false,
-            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance // TODO: consider passing externally
+            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
+            dependentComponents = emptyList()
         ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
         }

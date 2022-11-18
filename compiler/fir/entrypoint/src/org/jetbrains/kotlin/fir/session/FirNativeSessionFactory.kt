@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.checkers.registerNativeCheckers
+import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
@@ -24,11 +25,10 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         mainModuleName: Name,
         resolvedLibraries: List<KotlinResolvedLibrary>,
         sessionProvider: FirProjectSessionProvider,
-        dependencyListForCliModule: DependencyListForCliModule,
+        moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit) = {},
     ): FirSession {
-        val moduleDataProvider = dependencyListForCliModule.moduleDataProvider
         return createLibrarySession(
             mainModuleName,
             sessionProvider,
