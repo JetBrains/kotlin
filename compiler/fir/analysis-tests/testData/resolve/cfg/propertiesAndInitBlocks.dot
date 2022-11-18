@@ -269,39 +269,40 @@ digraph propertiesAndInitBlocks_kt {
             subgraph cluster_27 {
                 color=blue
                 87 [label="Catch enter"];
+                88 [label="Variable declaration: lval e: R|kotlin/Exception|"];
                 subgraph cluster_28 {
                     color=blue
-                    88 [label="Enter block"];
-                    89 [label="Const: Int(2)"];
-                    90 [label="Exit block"];
+                    89 [label="Enter block"];
+                    90 [label="Const: Int(2)"];
+                    91 [label="Exit block"];
                 }
-                91 [label="Catch exit"];
+                92 [label="Catch exit"];
             }
             subgraph cluster_29 {
                 color=blue
-                92 [label="Enter finally"];
+                93 [label="Enter finally"];
                 subgraph cluster_30 {
                     color=blue
-                    93 [label="Enter block"];
-                    94 [label="Const: Int(0)"];
-                    95 [label="Exit block"];
+                    94 [label="Enter block"];
+                    95 [label="Const: Int(0)"];
+                    96 [label="Exit block"];
                 }
-                96 [label="Exit finally"];
+                97 [label="Exit finally"];
             }
-            97 [label="Try expression exit"];
+            98 [label="Try expression exit"];
         }
-        98 [label="Exit property" style="filled" fillcolor=red];
+        99 [label="Exit property" style="filled" fillcolor=red];
     }
     80 -> {81};
     81 -> {82 87};
-    81 -> {92}    [label=onUncaughtException];
+    81 -> {93}    [label=onUncaughtException];
     82 -> {83};
     83 -> {84};
     84 -> {85};
     85 -> {86};
-    86 -> {92 87};
+    86 -> {93 87};
     87 -> {88};
-    87 -> {92}    [label=onUncaughtException];
+    87 -> {93}    [label=onUncaughtException];
     88 -> {89};
     89 -> {90};
     90 -> {91};
@@ -311,7 +312,8 @@ digraph propertiesAndInitBlocks_kt {
     94 -> {95};
     95 -> {96};
     96 -> {97};
-    96 -> {98}    [label=onUncaughtException];
     97 -> {98};
+    97 -> {99}    [label=onUncaughtException];
+    98 -> {99};
 
 }

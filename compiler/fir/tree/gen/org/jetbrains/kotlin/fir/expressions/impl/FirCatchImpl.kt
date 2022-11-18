@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.visitors.*
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirCatchImpl(
     override val source: KtSourceElement?,
-    override var parameter: FirValueParameter,
+    override var parameter: FirProperty,
     override var block: FirBlock,
 ) : FirCatch() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

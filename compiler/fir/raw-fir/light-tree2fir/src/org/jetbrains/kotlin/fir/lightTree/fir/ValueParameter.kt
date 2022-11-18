@@ -48,7 +48,7 @@ class ValueParameter(
     private val isVar: Boolean,
     private val modifiers: Modifier,
     val returnTypeRef: FirTypeRef,
-    private val source: KtSourceElement,
+    val source: KtSourceElement,
     private val moduleData: FirModuleData,
     private val isFromPrimaryConstructor: Boolean,
     private val additionalAnnotations: List<FirAnnotation>,
@@ -58,6 +58,19 @@ class ValueParameter(
 ) {
     fun hasValOrVar(): Boolean {
         return isVal || isVar
+    }
+
+    val annotations: List<FirAnnotation> by lazy(LazyThreadSafetyMode.NONE) {
+        buildList {
+            if (!isFromPrimaryConstructor)
+                addAll(modifiers.annotations)
+            else
+                modifiers.annotations.filterTo(this) {
+                    val useSiteTarget = it.useSiteTarget
+                    useSiteTarget == null || useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER || useSiteTarget == AnnotationUseSiteTarget.RECEIVER || useSiteTarget == AnnotationUseSiteTarget.FILE
+                }
+            addAll(additionalAnnotations)
+        }
     }
 
     val firValueParameter: FirValueParameter by lazy(LazyThreadSafetyMode.NONE) {
@@ -72,13 +85,7 @@ class ValueParameter(
             isCrossinline = modifiers.hasCrossinline()
             isNoinline = modifiers.hasNoinline()
             isVararg = modifiers.hasVararg()
-            annotations += if (!isFromPrimaryConstructor)
-                modifiers.annotations
-            else
-                modifiers.annotations.filter {
-                    val useSiteTarget = it.useSiteTarget
-                    useSiteTarget == null || useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER || useSiteTarget == AnnotationUseSiteTarget.RECEIVER || useSiteTarget == AnnotationUseSiteTarget.FILE
-                }
+            annotations += this@ValueParameter.annotations
             annotations += additionalAnnotations
         }
     }

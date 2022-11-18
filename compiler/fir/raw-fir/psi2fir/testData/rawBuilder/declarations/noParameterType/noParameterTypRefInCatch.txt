@@ -2,7 +2,7 @@ FILE: noParameterTypRefInCatch.kt
     public? final? fun foo(): R|kotlin/Unit| {
         try {
         }
-        catch (e: <ERROR TYPE REF: No type for parameter>) {
+        catch ([IsCatchParameterProperty=true] lval e: <ERROR TYPE REF: No type for parameter> = STUB) {
         }
 
     }

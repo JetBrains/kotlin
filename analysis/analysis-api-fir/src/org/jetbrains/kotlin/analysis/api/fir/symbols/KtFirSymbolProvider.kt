@@ -36,7 +36,7 @@ internal class KtFirSymbolProvider(
                 psi = psi,
             )
 
-            psi.isLoopParameter -> {
+            psi.isLoopParameter || psi.isCatchParameter -> {
                 firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(
                     psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
                 )

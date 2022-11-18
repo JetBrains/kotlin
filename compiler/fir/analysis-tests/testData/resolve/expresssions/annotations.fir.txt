@@ -23,7 +23,7 @@ FILE: annotations.kt
         lval z: R|kotlin/Int| = @R|MyAnn|() try {
             R|<local>/x|
         }
-        catch (t: R|kotlin/Throwable|) {
+        catch (lval t: R|kotlin/Throwable| = STUB) {
             Int(0)
         }
 
