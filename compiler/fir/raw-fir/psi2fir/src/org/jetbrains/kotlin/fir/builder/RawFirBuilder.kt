@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.AstLoadingFilter
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
@@ -1056,6 +1057,10 @@ open class RawFirBuilder(
                         else -> declaration.convert()
                     }
                 }
+
+                for (danglingModifierList in PsiTreeUtil.getChildrenOfTypeAsList(file, KtModifierList::class.java)) {
+                    declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
+                }
             }
         }
 
@@ -1267,7 +1272,14 @@ open class RawFirBuilder(
                                     classOrObject,
                                     this,
                                     typeParameters
-                                ),
+                                )
+                            )
+                        }
+                        for (danglingModifier in PsiTreeUtil.getChildrenOfTypeAsList(classOrObject.body, KtModifierList::class.java)) {
+                            addDeclaration(
+                                buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifier).apply {
+                                    containingClassAttr = currentDispatchReceiverType()?.lookupTag
+                                }
                             )
                         }
 
@@ -1358,6 +1370,12 @@ open class RawFirBuilder(
                                 ownerClassBuilder = this,
                                 ownerTypeParameters = emptyList()
                             )
+                        }
+
+                        for (danglingModifier in PsiTreeUtil.getChildrenOfTypeAsList(objectDeclaration.body, KtModifierList::class.java)) {
+                            declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifier).apply {
+                                containingClassAttr = currentDispatchReceiverType()?.lookupTag
+                            }
                         }
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
@@ -2726,6 +2744,17 @@ open class RawFirBuilder(
         private fun MutableList<FirTypeProjection>.appendTypeArguments(args: List<KtTypeProjection>) {
             for (typeArgument in args) {
                 this += typeArgument.convert<FirTypeProjection>()
+            }
+        }
+
+        private fun buildErrorTopLevelDeclarationForDanglingModifierList(modifierList : KtModifierList) = buildDanglingModifierList {
+            this.source = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Source
+            diagnostic = ConeDanglingModifierOnTopLevel
+            symbol = FirDanglingModifierSymbol()
+            for (annotationEntry in modifierList.getAnnotationEntries()) {
+                annotations += annotationEntry.convert<FirAnnotation>()
             }
         }
     }

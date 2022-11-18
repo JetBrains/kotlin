@@ -76,6 +76,16 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contextReceivers.kt");
         }
 
+        @TestMetadata("danglingAnnotationsClassLevel.kt")
+        public void testDanglingAnnotationsClassLevel() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsClassLevel.kt");
+        }
+
+        @TestMetadata("danglingAnnotationsFileLevel.kt")
+        public void testDanglingAnnotationsFileLevel() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsFileLevel.kt");
+        }
+
         @TestMetadata("delegates.kt")
         public void testDelegates() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegates.kt");

@@ -46,6 +46,11 @@ object ConeDestructuringDeclarationsOnTopLevel : ConeDiagnostic {
         get() = "Destructuring declarations are only allowed for local variables/values"
 }
 
+object ConeDanglingModifierOnTopLevel : ConeDiagnostic {
+    override val reason: String
+        get() = "Top level declaration expected"
+}
+
 enum class DiagnosticKind {
     Syntax,
     ExpressionExpected,

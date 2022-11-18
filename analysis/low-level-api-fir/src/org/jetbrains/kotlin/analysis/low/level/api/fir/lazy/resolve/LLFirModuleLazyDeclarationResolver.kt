@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProv
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformerExecutor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ktDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.fir.FirElement
@@ -29,6 +30,11 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.util.SourceCodeAnalysisException
+import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -224,7 +230,16 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         val designation: FirDesignationWithFile
         val neededPhase: FirResolvePhase
 
-        if (requestedDeclarationDesignation != null) {
+        if (target is FirDanglingModifierList) {
+            neededPhase = toPhase
+            val ktFile = target.psi?.containingFile as? KtFile
+                ?: error("File for dangling modifier list cannot be null")
+            designation = FirDesignationWithFile(
+                emptyList(),
+                target,
+                moduleComponents.cache.getCachedFirFile(ktFile) ?: error("Fir file for dandling modifier list cannot be null")
+            )
+        } else if (requestedDeclarationDesignation != null) {
             designation = requestedDeclarationDesignation
             neededPhase = toPhase
         } else {

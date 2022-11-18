@@ -28,7 +28,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
 ): FirDeclaration {
     //TODO test what way faster
     findSourceNonLocalFirDeclarationByProvider(firFileBuilder, provider, containerFirFile)?.let { return it }
-    findSourceOfNonLocalFirDeclarationByTraversingWholeTree(firFileBuilder, containerFirFile)?.let { return it }
+    findSourceByTraversingWholeTree(firFileBuilder, containerFirFile)?.let { return it }
     errorWithFirSpecificEntries("No fir element was found for", psi = this)
 }
 
@@ -56,14 +56,15 @@ internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclaratio
     return fir
 }
 
-private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTree(
+internal fun KtElement.findSourceByTraversingWholeTree(
     firFileBuilder: LLFirFileBuilder,
     containerFirFile: FirFile?,
 ): FirDeclaration? {
     val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
-    val originalDeclaration = originalDeclaration
+    val originalDeclaration = (this as? KtDeclaration)?.originalDeclaration
+    val isDeclaration = this is KtDeclaration
     return FirElementFinder.findElementIn(firFile, canGoInside = { it is FirRegularClass }) { firDeclaration ->
-        firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
+        firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
     }
 }
 

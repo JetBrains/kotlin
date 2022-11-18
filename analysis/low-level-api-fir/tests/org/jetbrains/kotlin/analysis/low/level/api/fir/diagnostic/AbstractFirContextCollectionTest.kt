@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.DanglingTopLevelModifierListStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.NonReanalyzableDeclarationStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.ReanalyzableStructureElement
@@ -62,6 +64,7 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         is NonReanalyzableDeclarationStructureElement -> fir
         is ReanalyzableStructureElement<*, *> -> firSymbol.fir
         is RootStructureElement -> firFile
+        is DanglingTopLevelModifierListStructureElement -> fir
     }
 
 
