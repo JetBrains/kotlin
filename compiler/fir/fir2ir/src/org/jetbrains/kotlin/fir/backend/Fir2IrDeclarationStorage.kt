@@ -64,26 +64,27 @@ import java.util.concurrent.ConcurrentHashMap
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
-    private val moduleDescriptor: FirModuleDescriptor
+    private val moduleDescriptor: FirModuleDescriptor,
+    dependentStorages: List<Fir2IrDeclarationStorage>
 ) : Fir2IrComponents by components {
 
     private val firProvider = session.firProvider
 
-    private val fragmentCache = ConcurrentHashMap<FqName, IrExternalPackageFragment>()
+    private val fragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = ConcurrentHashMap()
 
-    private val builtInsFragmentCache = ConcurrentHashMap<FqName, IrExternalPackageFragment>()
+    private val builtInsFragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = ConcurrentHashMap()
 
-    private val fileCache = ConcurrentHashMap<FirFile, IrFile>()
+    private val fileCache: ConcurrentHashMap<FirFile, IrFile> = ConcurrentHashMap()
 
-    private val scriptCache = ConcurrentHashMap<FirScript, IrScript>()
+    private val scriptCache: ConcurrentHashMap<FirScript, IrScript> = ConcurrentHashMap()
 
-    private val functionCache = ConcurrentHashMap<FirFunction, IrSimpleFunction>()
+    private val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunction> = merge(dependentStorages) { it.functionCache }
 
-    private val constructorCache = ConcurrentHashMap<FirConstructor, IrConstructor>()
+    private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructor> = ConcurrentHashMap()
 
-    private val initializerCache = ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer>()
+    private val initializerCache: ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer> = ConcurrentHashMap()
 
-    private val propertyCache = ConcurrentHashMap<FirProperty, IrProperty>()
+    private val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = merge(dependentStorages) { it.propertyCache }
 
     // interface A { /* $1 */ fun foo() }
     // interface B : A {
@@ -96,24 +97,40 @@ class Fir2IrDeclarationStorage(
     // We've got FIR declarations only for $1 and $3, but we've got a fake override for $2 in IR
     // and just to simplify things we create a synthetic FIR for $2, while it can't be referenced from other FIR nodes.
     //
-    // But when we binding overrides for $3, we want it had $2 ad it's overridden,
+    // But when we're binding overrides for $3, we want it had $2 ad it's overridden,
     // so remember that in class B there's a fake override $2 for real $1.
     //
-    // Thus we may obtain it by fakeOverridesInClass[ir(B)][fir(A::foo)] -> fir(B::foo)
-    private val fakeOverridesInClass = mutableMapOf<IrClass, MutableMap<FirCallableDeclaration, FirCallableDeclaration>>()
+    // Thus, we may obtain it by fakeOverridesInClass[ir(B)][fir(A::foo)] -> fir(B::foo)
+    private val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FirCallableDeclaration, FirCallableDeclaration>> =
+        dependentStorages.map { it.fakeOverridesInClass }.fold(mutableMapOf()) { result, map ->
+            // Note: merge is necessary here, because sometimes (see testFakeOverridesInPlatformModule)
+            // we have to match fake override in platform class with overridden fake overrides in common class
+            result.putAll(map)
+            result
+        }
 
     // For pure fields (from Java) only
-    private val fieldToPropertyCache = ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty>()
+    private val fieldToPropertyCache: ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty> = ConcurrentHashMap()
 
-    private val delegatedReverseCache = ConcurrentHashMap<IrDeclaration, FirDeclaration>()
+    private val delegatedReverseCache: ConcurrentHashMap<IrDeclaration, FirDeclaration> = ConcurrentHashMap()
 
-    private val fieldCache = ConcurrentHashMap<FirField, IrField>()
+    private val fieldCache: ConcurrentHashMap<FirField, IrField> = ConcurrentHashMap()
 
     private data class FieldStaticOverrideKey(val lookupTag: ConeClassLikeLookupTag, val name: Name)
 
-    private val fieldStaticOverrideCache = ConcurrentHashMap<FieldStaticOverrideKey, IrField>()
+    private val fieldStaticOverrideCache: ConcurrentHashMap<FieldStaticOverrideKey, IrField> = ConcurrentHashMap()
 
-    private val localStorage by threadLocal { Fir2IrLocalStorage() }
+    private val localStorage: Fir2IrLocalStorage by threadLocal { Fir2IrLocalStorage() }
+
+    private fun <K, V> merge(
+        dependentStorages: List<Fir2IrDeclarationStorage>,
+        mapFunc: (Fir2IrDeclarationStorage) -> ConcurrentHashMap<K, V>
+    ): ConcurrentHashMap<K, V> {
+        return dependentStorages.map { mapFunc(it) }.fold(ConcurrentHashMap()) { result, map ->
+            result.putAll(map)
+            result
+        }
+    }
 
     private fun areCompatible(firFunction: FirFunction, irFunction: IrFunction): Boolean {
         if (firFunction is FirSimpleFunction && irFunction is IrSimpleFunction) {

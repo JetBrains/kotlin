@@ -42,12 +42,9 @@ import org.jetbrains.kotlin.name.Name
  * methods and properties in the super-interface, and creates corresponding members in the subclass.
  * TODO: generic super interface types and generic delegated members.
  */
-class DelegatedMemberGenerator(
-    private val components: Fir2IrComponents
-) : Fir2IrComponents by components {
-
-    private val baseFunctionSymbols = mutableMapOf<IrFunction, List<FirNamedFunctionSymbol>>()
-    private val basePropertySymbols = mutableMapOf<IrProperty, List<FirPropertySymbol>>()
+class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
+    private val baseFunctionSymbols: MutableMap<IrFunction, List<FirNamedFunctionSymbol>> = mutableMapOf()
+    private val basePropertySymbols: MutableMap<IrProperty, List<FirPropertySymbol>> = mutableMapOf()
 
     private data class DeclarationBodyInfo(
         val declaration: IrDeclaration,

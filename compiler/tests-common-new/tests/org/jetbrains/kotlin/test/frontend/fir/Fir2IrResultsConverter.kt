@@ -68,7 +68,14 @@ class Fir2IrResultsConverter(
         lateinit var mainIrPart: JvmIrCodegenFactory.JvmIrBackendInput
 
         for ((index, firOutputPart) in inputArtifact.partsForDependsOnModules.withIndex()) {
-            val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.convertToIr(fir2IrExtensions)
+            val dependentComponents = mutableListOf<Fir2IrComponents>()
+            if (isMppSupported) {
+                for (dependency in firOutputPart.module.dependsOnDependencies) {
+                    dependentComponents.add(componentsMap[dependency.moduleName]!!)
+                }
+            }
+
+            val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.convertToIr(fir2IrExtensions, dependentComponents)
             componentsMap[firOutputPart.module.name] = components
 
             val irPart = JvmIrCodegenFactory.JvmIrBackendInput(

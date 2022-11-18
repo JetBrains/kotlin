@@ -84,6 +84,7 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
             irGeneratorExtensions,
             kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally
             generateSignatures = true,
+            dependentComponents = dependentComponents
         )
     } else {
         return Fir2IrConverter.createModuleFragmentWithoutSignatures(

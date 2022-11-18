@@ -123,7 +123,7 @@ object GenerationUtils {
             generateSignatures = false
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
-        val (moduleFragment, components, pluginContext) = firAnalyzerFacade.convertToIr(fir2IrExtensions)
+        val (moduleFragment, components, pluginContext) = firAnalyzerFacade.convertToIr(fir2IrExtensions, dependentComponents = emptyList())
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(

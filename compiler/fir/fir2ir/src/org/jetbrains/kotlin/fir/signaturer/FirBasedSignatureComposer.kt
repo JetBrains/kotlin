@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
-class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {
+class FirBasedSignatureComposer(
+    override val mangler: FirMangler,
+    dependentComposers: List<FirBasedSignatureComposer> = emptyList()
+) : Fir2IrSignatureComposer {
     private var fileSignature: IdSignature.FileSignature? = null
 
     override fun withFileSignature(sig: IdSignature.FileSignature, body: () -> Unit) {
@@ -34,7 +37,11 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
 
     private data class FirDeclarationWithParentId(val declaration: FirDeclaration, val classId: ClassId?)
 
-    private val signatureCache = mutableMapOf<FirDeclarationWithParentId, IdSignature.CommonSignature>()
+    private val signatureCache: MutableMap<FirDeclarationWithParentId, IdSignature.CommonSignature> =
+        dependentComposers.map { it.signatureCache }.fold(mutableMapOf()) { result, map ->
+            result.putAll(map)
+            result
+        }
 
     inner class SignatureBuilder : FirVisitor<Unit, Any?>() {
         var hashId: Long? = null
