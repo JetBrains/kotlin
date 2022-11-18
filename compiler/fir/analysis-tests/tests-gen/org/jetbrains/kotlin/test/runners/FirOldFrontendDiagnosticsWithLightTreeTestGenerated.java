@@ -18039,9 +18039,15 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
-            @TestMetadata("lateinitInlineClasses.kt")
-            public void testLateinitInlineClasses() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClasses.kt");
+            @TestMetadata("lateinitInlineClassesOff.kt")
+            public void testLateinitInlineClassesOff() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClassesOff.kt");
+            }
+
+            @Test
+            @TestMetadata("lateinitInlineClassesOn.kt")
+            public void testLateinitInlineClassesOn() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClassesOn.kt");
             }
 
             @Test

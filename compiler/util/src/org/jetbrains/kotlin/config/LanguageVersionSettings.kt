@@ -280,6 +280,7 @@ enum class LanguageFeature(
     CustomEqualsInInlineClasses(KOTLIN_1_9), // KT-24874
     EnhanceNullabilityOfPrimitiveArrays(KOTLIN_1_9, kind = BUG_FIX), // KT-54521
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
+    InlineLateinit(KOTLIN_1_9, kind = OTHER), // KT-23814
 
 
     // Disabled for indefinite time. See KT-53751

@@ -257,7 +257,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 arrayElementType.isGenericArrayOfTypeParameter()
     }
 
-    private fun ConeKotlinType.isRecursiveInlineClassType(session: FirSession) =
+    fun ConeKotlinType.isRecursiveInlineClassType(session: FirSession) =
         isRecursiveInlineClassType(hashSetOf(), session)
 
     private fun ConeKotlinType.isRecursiveInlineClassType(visited: HashSet<ConeKotlinType>, session: FirSession): Boolean {
