@@ -86,20 +86,6 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             directory.listFiles()?.forEach(File::deleteRecursively)
         }
 
-        // TODO: Suppress the tests failing with ISE "Symbol for <signature> is unbound" until KT-54491 is fixed.
-        //  Such failures are caused by references to unbound symbols still preserved in CacheUpdater in JS IR IC.
-        override fun isIgnoredTest(projectInfo: ProjectInfo) = when {
-            super.isIgnoredTest(projectInfo) -> true
-            !useIncrementalCompiler -> false
-            else -> projectInfo.name in setOf(
-                "removeFunction",
-                "removeProperty",
-                "removeOpenFunction",
-                "removeOpenProperty",
-                "removeInlinedClass"
-            )
-        }
-
         override fun onIgnoredTest() {
             /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
         }
