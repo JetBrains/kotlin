@@ -159,6 +159,8 @@ where advanced options include:
   -Xvalidate-ir              Validate IR before and after lowering
   -Xallow-any-scripts-in-source-roots
                              Allow to compile any scripts along with regular Kotlin sources
+  -Xallow-implicit-delegation-to-defaults
+                             Allow implicit delegation to default Java interface methods
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xbuiltins-from-sources    Compile builtIns from sources
@@ -186,8 +188,6 @@ where advanced options include:
                              Use 'warning' level to issue warnings instead of errors.
   -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
                              Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code.
-  -Xignore-implicit-delegation-to-defaults
-                             Allow implicit delegation to default Java interface methods
   -Xenable-incremental-compilation
                              Enable incremental compilation
   -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm

@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.psiUtil.belongsToDelegatedSuperTypeEntry
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -31,3 +30,10 @@ object JvmDelegateToDefaultsAnnotationChecker : AdditionalAnnotationChecker {
         }
     }
 }
+
+private fun PsiElement.belongsToDelegatedSuperTypeEntry(): Boolean =
+    when (parent) {
+        is KtDelegatedSuperTypeEntry -> true
+        is KtAnnotatedExpression, is KtParenthesizedExpression, is KtLabeledExpression -> parent.belongsToDelegatedSuperTypeEntry()
+        else -> false
+    }
