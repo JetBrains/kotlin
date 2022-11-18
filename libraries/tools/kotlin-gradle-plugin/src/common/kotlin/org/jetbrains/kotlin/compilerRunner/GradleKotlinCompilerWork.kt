@@ -124,6 +124,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         get() = incrementalCompilationEnvironment != null
 
     override fun run() {
+        metrics.addTimeMetric(BuildPerformanceMetric.START_WORKER_EXECUTION)
+        metrics.startMeasure(BuildTime.RUN_COMPILATION_IN_WORKER)
         try {
             val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
             val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = kotlinPluginVersion)
@@ -141,6 +143,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 withAbiSnapshot = incrementalCompilationEnvironment?.withAbiSnapshot,
                 withArtifactTransform = incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
             )
+            metrics.endMeasure(BuildTime.RUN_COMPILATION_IN_WORKER)
             val result = TaskExecutionResult(buildMetrics = metrics.getMetrics(), icLogLines = icLogLines, taskInfo = taskInfo)
             TaskExecutionResults[taskPath] = result
         }
@@ -297,6 +300,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(log, bufferingMessageCollector)
         val compilationResults = GradleCompilationResults(log, projectRootFile)
+        metrics.addTimeMetric(BuildPerformanceMetric.CALL_KOTLIN_DAEMON)
         return metrics.measure(BuildTime.RUN_COMPILATION) {
             daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
         }.also {
