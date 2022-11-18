@@ -54,8 +54,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             }
 
             is KtValueParameterSymbol -> {
-                // todo that does not work for parameters not from source, corresponding info should be added to the fir tree
-                getParentSymbolByPsi()
+                firSymbolBuilder.callableBuilder.buildCallableSymbol(symbol.firSymbol.fir.containingFunctionSymbol)
             }
 
             is KtCallableSymbol -> {

@@ -152,6 +152,7 @@ internal fun KtAnalysisSession.compareCalls(call1: KtCall, call2: KtCall): Int {
 context(KtAnalysisSession)
 internal fun renderScopeWithParentDeclarations(scope: KtScope): String = prettyPrint {
     fun KtSymbol.qualifiedNameString() = when (this) {
+        is KtConstructorSymbol -> "<constructor> ${containingClassIdIfNonLocal?.asString()}"
         is KtClassLikeSymbol -> classIdIfNonLocal!!.asString()
         is KtCallableSymbol -> callableIdIfNonLocal!!.toString()
         else -> error("unknown symbol $this")
@@ -176,6 +177,18 @@ internal fun renderScopeWithParentDeclarations(scope: KtScope): String = prettyP
                     append(typeParameter.render(renderingOptions))
                     append(" from ")
                     append(containingDeclarationForTypeParameter?.qualifiedNameString())
+                }
+            }
+        }
+
+        if (symbol is KtFunctionLikeSymbol && symbol.valueParameters.isNotEmpty()) {
+            appendLine()
+            withIndent {
+                printCollection(symbol.valueParameters, separator = "\n") { typeParameter ->
+                    val containingDeclarationForValueParameter = typeParameter.getContainingSymbol()
+                    append(typeParameter.render(renderingOptions))
+                    append(" from ")
+                    append(containingDeclarationForValueParameter?.qualifiedNameString())
                 }
             }
         }
