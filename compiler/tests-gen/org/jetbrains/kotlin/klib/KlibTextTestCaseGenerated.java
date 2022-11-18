@@ -1950,6 +1950,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/localClassUsedBeforeDeclaration.kt");
         }
 
+        @TestMetadata("localCompanion.kt")
+        public void testLocalCompanion() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/localCompanion.kt");
+        }
+
         @TestMetadata("readWriteProperty.kt")
         public void testReadWriteProperty() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");

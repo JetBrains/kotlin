@@ -2667,6 +2667,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         }
 
         @Test
+        @TestMetadata("localCompanion.kt")
+        public void testLocalCompanion() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/localCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("Modality.kt")
         public void testModality() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/Modality.kt");

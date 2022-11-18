@@ -2667,6 +2667,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("localCompanion.kt")
+        public void testLocalCompanion() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/localCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("Modality.kt")
         public void testModality() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/Modality.kt");

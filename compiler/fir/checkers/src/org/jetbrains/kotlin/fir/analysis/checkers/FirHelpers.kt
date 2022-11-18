@@ -116,8 +116,7 @@ fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLik
 
 fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? {
     if (this !is FirClassSymbol<*>) return null
-    val outerClassId = classId.outerClassId ?: return null
-    return context.session.symbolProvider.getClassLikeSymbolByClassId(outerClassId)
+    return getContainingDeclarationSymbol(context.session)
 }
 
 @OptIn(SymbolInternals::class)

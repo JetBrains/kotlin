@@ -192,7 +192,7 @@ object FirOptInUsageBaseChecker {
                     context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
                 )
             }
-        } else if (this is FirRegularClassSymbol && fir is FirRegularClass && !fir.isLocal) {
+        } else if (this is FirRegularClassSymbol && fir is FirRegularClass) {
             val parentClassSymbol = outerClassSymbol(context)
             parentClassSymbol?.loadExperimentalities(
                 context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
