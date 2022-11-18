@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.LinkedClassifierStatus.Partially
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartiallyLinkedStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
@@ -564,8 +565,5 @@ internal class PartiallyLinkedIrTreePatcher(
                 startOffset
             }
         }
-
-        @Suppress("ClassName")
-        private object PARTIAL_LINKAGE_RUNTIME_ERROR : IrStatementOriginImpl("PARTIAL_LINKAGE_RUNTIME_ERROR")
     }
 }

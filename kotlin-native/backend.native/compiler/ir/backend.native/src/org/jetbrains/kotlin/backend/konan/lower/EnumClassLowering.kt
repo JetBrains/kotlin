@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.isPartiallyLinked
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -168,7 +169,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.transformChildrenVoid()
-                if (declaration.kind == ClassKind.ENUM_CLASS)
+                if (declaration.kind == ClassKind.ENUM_CLASS && !declaration.isPartiallyLinked())
                     EnumClassTransformer(declaration).run()
                 return declaration
             }
