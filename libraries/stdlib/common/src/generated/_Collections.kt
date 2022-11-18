@@ -1715,8 +1715,6 @@ public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return true

@@ -12530,8 +12530,6 @@ public infix fun CharArray.union(other: Iterable<Char>): Set<Char> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -12540,8 +12538,6 @@ public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -12550,8 +12546,6 @@ public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -12560,8 +12554,6 @@ public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -12570,8 +12562,6 @@ public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -12580,8 +12570,6 @@ public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -12590,8 +12578,6 @@ public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -12600,8 +12586,6 @@ public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -12610,8 +12594,6 @@ public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false

@@ -1195,8 +1195,6 @@ public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
  * Returns `true` if all elements match the given [predicate].
  *
  * The operation is _terminal_.
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
