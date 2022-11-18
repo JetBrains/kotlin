@@ -25,6 +25,9 @@ public abstract @interface Anno6 /* Anno6*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
+  @kotlin.jvm.JvmField()
+  public static final int x = 42 /* initializer type: int */;
+
   @org.jetbrains.annotations.NotNull()
   public static final AnnoWithCompanion.Companion Companion;
 
