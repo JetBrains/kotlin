@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetInclusion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
@@ -30,6 +31,14 @@ class KotlinCommonCompilationFactory internal constructor(
                     DefaultKotlinCompilationFriendPathsResolver.AdditionalMetadataFriendArtifactResolver
                 )
             ),
+
+            /*
+            Metadata compilation will only include directly added source sets to the compile task
+             */
+            compilationSourceSetInclusion = KotlinCompilationSourceSetInclusion(
+                addSourcesToCompileTask = KotlinCompilationSourceSetInclusion.AddSourcesWithoutDependsOnClosure()
+            ),
+
             /*
             Metadata compilations are created *because* of a pre-existing SourceSet.
             We therefore can create the container inline

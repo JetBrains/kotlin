@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationSourceSetInclusion
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetInclusion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinNativeCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationDependencyConfigurationsFactory
@@ -31,8 +31,13 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
             compilerOptionsFactory = KotlinNativeCompilerOptionsFactory,
             compilationAssociator = KotlinNativeCompilationAssociator,
 
-            compilationSourceSetInclusion = DefaultKotlinCompilationSourceSetInclusion(
-                DefaultKotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask
+            /*
+            Metadata compilation will only include directly added source sets to the compile task
+             */
+            compilationSourceSetInclusion = KotlinCompilationSourceSetInclusion(
+                addSourcesToCompileTask = KotlinCompilationSourceSetInclusion.AddSourcesWithoutDependsOnClosure(
+                    KotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask
+                )
             ),
 
             compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(

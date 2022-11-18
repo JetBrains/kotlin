@@ -19,21 +19,16 @@ import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.getOrPut
 import java.util.concurrent.Callable
 
-internal interface KotlinCompilationSourceSetInclusion {
-    fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet)
-}
-
-internal class DefaultKotlinCompilationSourceSetInclusion(
+internal class KotlinCompilationSourceSetInclusion(
     private val addSourcesToCompileTask: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask
-) : KotlinCompilationSourceSetInclusion {
+) {
 
-    override fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet) {
+    fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet) {
         /* Check if the source set was already included */
         if (!compilation.includedSourceSets.add(sourceSet)) return
 
         addSourcesToCompileTask.addSources(
-            compilation, sourceSet,
-            addAsCommonSources = lazy {
+            compilation, sourceSet, addAsCommonSources = lazy {
                 compilation.project.kotlinExtension.sourceSets.any { otherSourceSet ->
                     sourceSet in otherSourceSet.dependsOn
                 }
@@ -79,7 +74,7 @@ internal class DefaultKotlinCompilationSourceSetInclusion(
          * to avoid re-processing of unnecessary source sets!
          */
         private val includedSourceSetsKey = extrasKeyOf<MutableSet<KotlinSourceSet>>(
-            DefaultKotlinCompilationSourceSetInclusion::class.java.name
+            KotlinCompilationSourceSetInclusion::class.java.name
         )
 
         val InternalKotlinCompilation<*>.includedSourceSets: MutableSet<KotlinSourceSet>
@@ -89,17 +84,18 @@ internal class DefaultKotlinCompilationSourceSetInclusion(
 
     fun interface AddSourcesToCompileTask {
         fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>)
-
-        companion object {
-            fun composite(vararg elements: AddSourcesToCompileTask?): AddSourcesToCompileTask =
-                CompositeAddSourcesToCompileTask(listOfNotNull(*elements))
-        }
     }
 
-    private class CompositeAddSourcesToCompileTask(private val children: List<AddSourcesToCompileTask>) : AddSourcesToCompileTask {
-        override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-            return children.forEach { child -> child.addSources(compilation, sourceSet, addAsCommonSources) }
-        }
+    object DefaultAddSourcesToCompileTask : AddSourcesToCompileTask {
+        override fun addSources(
+            compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>
+        ) = addSourcesToKotlinCompileTask(
+            project = compilation.project,
+            taskName = compilation.compileKotlinTaskName,
+            sourceFileExtensions = sourceSet.customSourceFilesExtensions,
+            addAsCommonSources = addAsCommonSources,
+            sources = { sourceSet.kotlin }
+        )
     }
 
     object NativeAddSourcesToCompileTask : AddSourcesToCompileTask {
@@ -116,15 +112,20 @@ internal class DefaultKotlinCompilationSourceSetInclusion(
         }
     }
 
-    object DefaultAddSourcesToCompileTask : AddSourcesToCompileTask {
-        override fun addSources(
-            compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>
-        ) = addSourcesToKotlinCompileTask(
-            project = compilation.project,
-            taskName = compilation.compileKotlinTaskName,
-            sourceFileExtensions = sourceSet.customSourceFilesExtensions,
-            addAsCommonSources = addAsCommonSources,
-            sources = { sourceSet.kotlin }
-        )
+    /**
+     * Will use the [delegate] to add sources to the compile task only if the source set was added directly to the compilation
+     * (not if the source set is just part of the dependsOn closure).
+     *
+     * This is necessary for metadata compilations, where dependsOn source sets will be binary dependencies.
+     * In contrast: Platform compilations (jvm, android, linuxX64, ...) will add *all* sources to the compile task
+     * and compiles them together.
+     */
+    class AddSourcesWithoutDependsOnClosure(
+        private val delegate: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask
+    ) : AddSourcesToCompileTask {
+        override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
+            if (sourceSet !in compilation.kotlinSourceSets) return
+            delegate.addSources(compilation, sourceSet, addAsCommonSources)
+        }
     }
 }
