@@ -37,6 +37,18 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
     }
 
     @Test
+    @TestMetadata("danglingAnnotationClassLevel.kt")
+    public void testDanglingAnnotationClassLevel() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/danglingAnnotationClassLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevel.kt")
+    public void testDanglingAnnotationTopLevel() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/danglingAnnotationTopLevel.kt");
+    }
+
+    @Test
     @TestMetadata("declarationsInPropertyInit.kt")
     public void testDeclarationsInPropertyInit() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/declarationsInPropertyInit.kt");

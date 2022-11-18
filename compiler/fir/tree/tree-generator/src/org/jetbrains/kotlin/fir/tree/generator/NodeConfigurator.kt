@@ -456,6 +456,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
         }
 
+        danglingModifierList.configure {
+            +symbol("FirDanglingModifierSymbol")
+        }
+
         file.configure {
             +field("annotationsContainer", fileAnnotationsContainer).withTransform()
             +field("packageDirective", packageDirective)

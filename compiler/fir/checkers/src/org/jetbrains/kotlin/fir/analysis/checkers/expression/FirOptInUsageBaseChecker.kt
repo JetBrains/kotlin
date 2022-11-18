@@ -154,7 +154,7 @@ object FirOptInUsageBaseChecker {
                 fir.loadCallableSpecificExperimentalities(this, context, visited, fromSetter, dispatchReceiverType, result)
             is FirClassLikeDeclaration ->
                 fir.loadClassLikeSpecificExperimentalities(this, context, visited, result)
-            is FirAnonymousInitializer, is FirFile, is FirTypeParameter, is FirScript -> {}
+            is FirAnonymousInitializer, is FirDanglingModifierList, is FirFile, is FirTypeParameter, is FirScript -> {}
         }
 
         fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)

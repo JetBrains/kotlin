@@ -1,0 +1,50 @@
+FILE: danglingAnnotationsClassLevel.kt
+    public? final? class A : R|kotlin/Any| {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+    }
+    public? final? class B : R|kotlin/Any| {
+        public? [ContainingClassKey=B] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+    }
+    public? final? class Outer : R|kotlin/Any| {
+        public? [ContainingClassKey=Outer] constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? class Inner : R|kotlin/Any| {
+            public? [ContainingClassKey=Inner] constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+        }
+
+        public? final? fun withLocal(): R|kotlin/Unit| {
+            local final? [ContainingClassKey=Outer] class Local : R|kotlin/Any| {
+                public? [ContainingClassKey=Local] constructor(): R|Outer.Local| {
+                    super<R|kotlin/Any|>()
+                }
+
+                @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+            }
+
+            lval r: I = object : I {
+                private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<<implicit>>()
+                }
+
+                @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+            }
+
+        }
+
+    }
+    public? final? interface I : R|kotlin/Any| {
+    }

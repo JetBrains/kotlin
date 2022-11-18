@@ -76,6 +76,18 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizerTe
         }
 
         @Test
+        @TestMetadata("danglingAnnotationsClassLevel.kt")
+        public void testDanglingAnnotationsClassLevel() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsClassLevel.kt");
+        }
+
+        @Test
+        @TestMetadata("danglingAnnotationsFileLevel.kt")
+        public void testDanglingAnnotationsFileLevel() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsFileLevel.kt");
+        }
+
+        @Test
         @TestMetadata("delegates.kt")
         public void testDelegates() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegates.kt");

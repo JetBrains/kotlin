@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDanglingModifierOnTopLevel
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -97,6 +98,7 @@ class DeclarationsConverter(
         var fileAnnotationContainer: FirFileAnnotationsContainer? = null
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
+        val modifierList = mutableListOf<LighterASTNode>()
         context.packageFqName = FqName.ROOT
         var packageDirective: FirPackageDirective? = null
         file.forEachChildren { child ->
@@ -116,7 +118,12 @@ class DeclarationsConverter(
                 SCRIPT -> {
                     // TODO: scripts aren't supported yet
                 }
+                MODIFIER_LIST -> modifierList += child
             }
+        }
+
+        modifierList.forEach {
+            firDeclarationList += buildErrorTopLevelDeclarationForDanglingModifierList(it)
         }
 
         return buildFile {
@@ -839,7 +846,8 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumClassBody
      */
     private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
-        return classBody.forEachChildrenReturnList { node, container ->
+        val modifierLists = mutableListOf<LighterASTNode>()
+        var firDeclarations = classBody.forEachChildrenReturnList { node, container ->
             @Suppress("RemoveRedundantQualifierName")
             when (node.tokenType) {
                 ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
@@ -850,8 +858,22 @@ class DeclarationsConverter(
                 OBJECT_DECLARATION -> container += convertClass(node)
                 CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) //anonymousInitializer
                 SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
+                MODIFIER_LIST -> modifierLists += node
             }
         }
+        for (node in modifierLists) {
+            firDeclarations += buildErrorTopLevelDeclarationForDanglingModifierList(node)
+        }
+        return firDeclarations
+    }
+
+    private fun buildErrorTopLevelDeclarationForDanglingModifierList(node: LighterASTNode) = buildDanglingModifierList {
+        this.source = node.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
+        moduleData = baseModuleData
+        origin = FirDeclarationOrigin.Source
+        diagnostic = ConeDanglingModifierOnTopLevel
+        symbol = FirDanglingModifierSymbol()
+        annotations += convertModifierList(node).annotations
     }
 
     /**

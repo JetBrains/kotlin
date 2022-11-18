@@ -43,6 +43,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(anonymousObject)
+        impl(danglingModifierList)
         noImpl(anonymousObjectExpression)
 
         impl(typeAlias)
