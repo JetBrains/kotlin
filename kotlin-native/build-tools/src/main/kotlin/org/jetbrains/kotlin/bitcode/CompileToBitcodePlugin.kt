@@ -127,6 +127,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             get() = _sanitizer.orNull
         abstract val testedModules: ListProperty<String>
         abstract val testSupportModules: ListProperty<String>
+        abstract val testFrameworkModules: ListProperty<String>
         abstract val testLauncherModule: Property<String>
     }
 
@@ -206,18 +207,18 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 action: Action<in TestsGroup>,
         ) {
             val testsGroup = project.objects.newInstance(TestsGroup::class.java, target, sanitizer.asMaybe).apply {
-                testSupportModules.convention(listOf("googletest", "googlemock"))
+                testFrameworkModules.convention(listOf("googletest", "googlemock"))
                 testLauncherModule.convention("test_support")
                 action.execute(this)
             }
             val target = testsGroup.target
             val sanitizer = testsGroup.sanitizer
             val testName = fullTaskName(testTaskName, target.name, sanitizer)
-            val testedTasks = testsGroup.testedModules.get().map {
+            val testedModulesMainTasks = testsGroup.testedModules.get().map {
                 val name = fullTaskName(it, target.name, sanitizer)
                 project.tasks.getByName(name) as CompileToBitcode
             }
-            val compileToBitcodeTasks = testedTasks.mapNotNull {
+            val testedModulesTestTasks = testedModulesMainTasks.mapNotNull {
                 val name = "${it.name}TestBitcode"
                 val task = project.tasks.findByName(name) as? CompileToBitcode
                         ?: project.tasks.create(name, CompileToBitcode::class.java, it.target, it.sanitizer.asMaybe).apply {
@@ -227,7 +228,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                             this.compiler.convention("clang++")
                             this.compilerArgs.set(it.compilerArgs)
                             this.inputFiles.from(it.inputFiles.dir)
-                            this.inputFiles.include("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
+                            this.inputFiles.include("**/*Test.cpp", "**/*Test.mm")
                             this.headersDirs.setFrom(it.headersDirs)
                             this.headersDirs.from(googleTestExtension.headersDirs)
                             this.compilerWorkingDirectory.set(it.compilerWorkingDirectory)
@@ -239,15 +240,41 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
                             addToCompdb(this)
                         }
-                if (task.inputFiles.count() == 0) null
-                else task
+                task.takeUnless { t -> t.inputFiles.isEmpty }
             }
-            val testFrameworkTasks = testsGroup.testSupportModules.get().map {
+            val testSupportModulesMainTasks = testsGroup.testSupportModules.get().map {
                 val name = fullTaskName(it, target.name, sanitizer)
                 project.tasks.getByName(name) as CompileToBitcode
             }
+            val testedAndTestSupportModulesTestSupportTasks = (testedModulesMainTasks + testSupportModulesMainTasks).mapNotNull {
+                val name = "${it.name}TestSupportBitcode"
+                val task = project.tasks.findByName(name) as? CompileToBitcode
+                        ?: project.tasks.create(name, CompileToBitcode::class.java, it.target, it.sanitizer.asMaybe).apply {
+                            this.moduleName.set(it.moduleName)
+                            this.outputFile.convention(moduleName.flatMap { project.layout.buildDirectory.file("bitcode/test/$target${sanitizer.dirSuffix}/${it}TestSupport.bc") })
+                            this.outputDirectory.convention(moduleName.flatMap { project.layout.buildDirectory.dir("bitcode/test/$target${sanitizer.dirSuffix}/${it}TestSupport") })
+                            this.compiler.convention("clang++")
+                            this.compilerArgs.set(it.compilerArgs)
+                            this.inputFiles.from(it.inputFiles.dir)
+                            this.inputFiles.include("**/*TestSupport.cpp", "**/*TestSupport.mm")
+                            this.headersDirs.setFrom(it.headersDirs)
+                            this.headersDirs.from(googleTestExtension.headersDirs)
+                            this.compilerWorkingDirectory.set(it.compilerWorkingDirectory)
+                            this.group = VERIFICATION_BUILD_TASK_GROUP
+                            this.description = "Compiles '${it.name}' test support to bitcode for $target${sanitizer.description}"
 
-            val testSupportTask = testsGroup.testLauncherModule.get().let {
+                            dependsOn(":kotlin-native:dependencies:update")
+                            dependsOn("downloadGoogleTest")
+
+                            addToCompdb(this)
+                        }
+                task.takeUnless { t -> t.inputFiles.isEmpty }
+            }
+            val testFrameworkMainTasks = testsGroup.testFrameworkModules.get().map {
+                val name = fullTaskName(it, target.name, sanitizer)
+                project.tasks.getByName(name) as CompileToBitcode
+            }
+            val testLauncherMainTask = testsGroup.testLauncherModule.get().let {
                 val name = fullTaskName(it, target.name, sanitizer)
                 project.tasks.getByName(name) as CompileToBitcode
             }
@@ -262,8 +289,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.llvmLinkOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName.bc"))
                 this.compilerOutputFile.set(project.layout.buildDirectory.file("obj/$target/$testName.o"))
                 this.mimallocEnabled.set(testsGroup.testedModules.get().any { it.contains("mimalloc") })
-                this.mainFile.set(testSupportTask.outputFile)
-                val tasksToLink = (compileToBitcodeTasks + testedTasks + testFrameworkTasks)
+                this.mainFile.set(testLauncherMainTask.outputFile)
+                val tasksToLink = (testedModulesTestTasks + testedModulesMainTasks + testFrameworkMainTasks + testSupportModulesMainTasks + testedAndTestSupportModulesTestSupportTasks)
                 this.inputFiles.setFrom(tasksToLink.map { it.outputFile })
 
                 usesService(compileTestsSemaphore)
