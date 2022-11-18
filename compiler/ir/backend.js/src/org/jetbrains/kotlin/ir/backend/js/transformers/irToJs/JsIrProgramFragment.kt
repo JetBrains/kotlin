@@ -161,7 +161,7 @@ private class JsIrModuleCrossModuleReferecenceBuilder(
         }
 
         val transitiveExport = transitiveJsExportFrom.mapNotNull {
-            if (it.hasJsExports) import(it) else null
+            if (!it.hasJsExports) null else CrossModuleTransitiveExport(import(it), it.externalModuleName)
         }
         return CrossModuleReferences(
             moduleKind,
@@ -190,10 +190,12 @@ private class JsIrModuleCrossModuleReferecenceBuilder(
 
 class CrossModuleImport(val exportedAs: String, val moduleExporter: JsName)
 
+class CrossModuleTransitiveExport(val internalName: JsName, val externalName: String)
+
 class CrossModuleReferences(
     val moduleKind: ModuleKind,
     val importedModules: List<JsImportedModule>, // additional Kotlin imported modules
-    val transitiveJsExportFrom: List<JsName>, // the list of modules which provide their js exports for transitive export
+    val transitiveJsExportFrom: List<CrossModuleTransitiveExport>, // the list of modules which provide their js exports for transitive export
     val exports: Map<String, String>, // tag -> index
     val imports: Map<String, CrossModuleImport>, // tag -> import statement
 ) {

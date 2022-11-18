@@ -139,8 +139,9 @@ internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalcul
         update(importedModule.relativeRequirePath ?: "")
     }
 
-    updateForEach(transitiveJsExportFrom) { exportFrom ->
-        update(exportFrom.toString())
+    updateForEach(transitiveJsExportFrom) { transitiveExport ->
+        update(transitiveExport.internalName.toString())
+        update(transitiveExport.externalName)
     }
 
     updateForEach(exports.keys.sorted()) { tag ->

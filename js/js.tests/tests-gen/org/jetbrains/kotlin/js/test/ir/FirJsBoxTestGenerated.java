@@ -2368,6 +2368,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
             }
 
             @Test
+            @TestMetadata("reexport.kt")
+            public void testReexport() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/reexport.kt");
+            }
+
+            @Test
             @TestMetadata("reservedModuleName.kt")
             public void testReservedModuleName() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");
@@ -2918,6 +2924,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         @TestMetadata("overridenMethod.kt")
         public void testOverridenMethod() throws Exception {
             runTest("js/js.translator/testData/box/export/overridenMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("reexport.kt")
+        public void testReexport() throws Exception {
+            runTest("js/js.translator/testData/box/export/reexport.kt");
         }
 
         @Test
