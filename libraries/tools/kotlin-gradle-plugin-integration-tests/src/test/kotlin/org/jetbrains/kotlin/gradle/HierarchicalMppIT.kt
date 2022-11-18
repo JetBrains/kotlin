@@ -296,6 +296,20 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-54995: compileAppleMainKotlinMetadata fails on default parameters with `No value passed for parameter 'mustExist'")
+    fun testCompileSharedNativeSourceSetWithOKIODependency(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kt-54995-compileSharedNative-with-okio",
+            gradleVersion = gradleVersion
+        ) {
+            build("assemble") {
+                assertFileExists(projectPath.resolve("build/libs/test-project-jvm.jar"))
+                assertFileExists(projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain.klib"))
+            }
+        }
+    }
+
     private fun publishThirdPartyLib(
         projectName: String = "third-party-lib".withPrefix,
         withGranularMetadata: Boolean,
