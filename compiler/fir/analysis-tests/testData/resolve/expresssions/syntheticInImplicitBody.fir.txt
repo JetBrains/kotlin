@@ -8,7 +8,7 @@ FILE: User.kt
             ^foo this@R|/User|.R|/User.text|
         }
 
-        public final override fun getText(): R|kotlin/String| {
+        public open override fun getText(): R|kotlin/String| {
             ^getText String()
         }
 

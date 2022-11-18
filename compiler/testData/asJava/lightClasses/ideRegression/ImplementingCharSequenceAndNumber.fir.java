@@ -5,42 +5,42 @@ public final class Container /* p1.Container*/ {
 
 public static final class MyNumber /* p1.Container.MyNumber*/ extends java.lang.Number {
   @java.lang.Override()
-  public final byte toByte();//  toByte()
+  public byte toByte();//  toByte()
 
   @java.lang.Override()
-  public final char toChar();//  toChar()
+  public char toChar();//  toChar()
 
   @java.lang.Override()
-  public final double toDouble();//  toDouble()
+  public double toDouble();//  toDouble()
 
   @java.lang.Override()
-  public final float toFloat();//  toFloat()
+  public float toFloat();//  toFloat()
 
   @java.lang.Override()
-  public final int toInt();//  toInt()
+  public int toInt();//  toInt()
 
   @java.lang.Override()
-  public final long toLong();//  toLong()
+  public long toLong();//  toLong()
 
   @java.lang.Override()
-  public final short toShort();//  toShort()
+  public short toShort();//  toShort()
 
   public  MyNumber();//  .ctor()
 
 }public static final class MyString /* p1.Container.MyString*/ implements java.lang.CharSequence {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
+  public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
 
   @java.lang.Override()
-  public final char get(int);//  get(int)
+  public char get(int);//  get(int)
 
   public  MyString();//  .ctor()
 
-  public final error.NonExistentClass chars();//  chars()
+  public error.NonExistentClass chars();//  chars()
 
-  public final error.NonExistentClass codePoints();//  codePoints()
+  public error.NonExistentClass codePoints();//  codePoints()
 
-  public final int getLength();//  getLength()
+  public int getLength();//  getLength()
 
 }}

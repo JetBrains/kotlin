@@ -41,7 +41,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
-  modality: FINAL
+  modality: OPEN
   name: foo
   origin: SOURCE
   receiverParameter: null
@@ -84,7 +84,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
-  modality: FINAL
+  modality: OPEN
   name: foo
   origin: SOURCE
   receiverParameter: null
@@ -133,7 +133,7 @@ KtKotlinPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: true
-  modality: FINAL
+  modality: OPEN
   name: i
   origin: SOURCE
   receiverParameter: null
@@ -180,7 +180,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
-  modality: FINAL
+  modality: OPEN
   name: foo
   origin: SOURCE
   receiverParameter: null
@@ -208,7 +208,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
-  modality: FINAL
+  modality: OPEN
   name: foo
   origin: SOURCE
   receiverParameter: null

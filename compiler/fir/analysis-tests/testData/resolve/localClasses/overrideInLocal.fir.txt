@@ -5,7 +5,7 @@ FILE: a.kt
                 super<R|B|>()
             }
 
-            protected final override val message: R|kotlin/String| = String(expression expected)
+            protected open override val message: R|kotlin/String| = String(expression expected)
                 protected get(): R|kotlin/String|
 
         }

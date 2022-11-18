@@ -74,12 +74,12 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="private"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=false
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Private modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.Private) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.Private) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Private
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Private'
+          RETURN type=kotlin.Nothing from='public open fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Private'
             CONST Boolean type=kotlin.Boolean value=true
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -134,23 +134,23 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="private_to_this"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=false
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:PrivateToThis modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      PROPERTY name:internalDisplayName visibility:public modality:FINAL [val]
+      PROPERTY name:internalDisplayName visibility:public modality:OPEN [val]
         overridden:
           public open internalDisplayName: kotlin.String [val]
-        FUN name:<get-internalDisplayName> visibility:public modality:FINAL <> ($this:<root>.Visibilities.PrivateToThis) returnType:kotlin.String
-          correspondingProperty: PROPERTY name:internalDisplayName visibility:public modality:FINAL [val]
+        FUN name:<get-internalDisplayName> visibility:public modality:OPEN <> ($this:<root>.Visibilities.PrivateToThis) returnType:kotlin.String
+          correspondingProperty: PROPERTY name:internalDisplayName visibility:public modality:OPEN [val]
           overridden:
             public open fun <get-internalDisplayName> (): kotlin.String declared in <root>.Visibility
           $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.PrivateToThis
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-internalDisplayName> (): kotlin.String declared in <root>.Visibilities.PrivateToThis'
+            RETURN type=kotlin.Nothing from='public open fun <get-internalDisplayName> (): kotlin.String declared in <root>.Visibilities.PrivateToThis'
               CONST String type=kotlin.String value="private/*private to this*/"
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.PrivateToThis) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.PrivateToThis) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.PrivateToThis
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.PrivateToThis'
+          RETURN type=kotlin.Nothing from='public open fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.PrivateToThis'
             CONST Boolean type=kotlin.Boolean value=true
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -197,12 +197,12 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="protected"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=true
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Protected modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.Protected) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.Protected) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Protected
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Protected'
+          RETURN type=kotlin.Nothing from='public open fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Protected'
             CONST Boolean type=kotlin.Boolean value=false
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -257,12 +257,12 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="internal"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=false
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Internal modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.Internal) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.Internal) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Internal
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Internal'
+          RETURN type=kotlin.Nothing from='public open fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Internal'
             CONST Boolean type=kotlin.Boolean value=true
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -317,12 +317,12 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="public"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=true
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Public modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.Public) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.Public) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Public
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Public'
+          RETURN type=kotlin.Nothing from='public open fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Public'
             CONST Boolean type=kotlin.Boolean value=false
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -377,12 +377,12 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="local"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=false
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Local modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.Local) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.Local) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Local
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Local'
+          RETURN type=kotlin.Nothing from='public open fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.Local'
             CONST Boolean type=kotlin.Boolean value=true
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -437,7 +437,7 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="inherited"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=false
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Inherited modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.Inherited) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.Inherited) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Inherited
@@ -498,23 +498,23 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="invisible_fake"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=false
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:InvisibleFake modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.InvisibleFake) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.InvisibleFake) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.InvisibleFake
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.InvisibleFake'
+          RETURN type=kotlin.Nothing from='public open fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibilities.InvisibleFake'
             CONST Boolean type=kotlin.Boolean value=true
-      PROPERTY name:externalDisplayName visibility:public modality:FINAL [val]
+      PROPERTY name:externalDisplayName visibility:public modality:OPEN [val]
         overridden:
           public open externalDisplayName: kotlin.String [val]
-        FUN name:<get-externalDisplayName> visibility:public modality:FINAL <> ($this:<root>.Visibilities.InvisibleFake) returnType:kotlin.String
-          correspondingProperty: PROPERTY name:externalDisplayName visibility:public modality:FINAL [val]
+        FUN name:<get-externalDisplayName> visibility:public modality:OPEN <> ($this:<root>.Visibilities.InvisibleFake) returnType:kotlin.String
+          correspondingProperty: PROPERTY name:externalDisplayName visibility:public modality:OPEN [val]
           overridden:
             public open fun <get-externalDisplayName> (): kotlin.String declared in <root>.Visibility
           $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.InvisibleFake
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-externalDisplayName> (): kotlin.String declared in <root>.Visibilities.InvisibleFake'
+            RETURN type=kotlin.Nothing from='public open fun <get-externalDisplayName> (): kotlin.String declared in <root>.Visibilities.InvisibleFake'
               CONST String type=kotlin.String value="invisible (private in a supertype)"
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -561,7 +561,7 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
             name: CONST String type=kotlin.String value="unknown"
             isPublicAPI: CONST Boolean type=kotlin.Boolean value=false
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Unknown modality:FINAL visibility:public superTypes:[<root>.Visibility]'
-      FUN name:mustCheckInImports visibility:public modality:FINAL <> ($this:<root>.Visibilities.Unknown) returnType:kotlin.Boolean
+      FUN name:mustCheckInImports visibility:public modality:OPEN <> ($this:<root>.Visibilities.Unknown) returnType:kotlin.Boolean
         overridden:
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Unknown

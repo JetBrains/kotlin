@@ -15,7 +15,7 @@ FILE: insideSAM.fir.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final override fun experimentalMethod(): R|kotlin/Unit| {
+            public open override fun experimentalMethod(): R|kotlin/Unit| {
             }
 
         }

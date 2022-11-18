@@ -68,34 +68,34 @@ FILE fqName:<root> fileName:/kt44814.kt
           RETURN type=kotlin.Nothing from='public final fun <get-psi> (): <root>.PsiElement declared in <root>.FirPsiSourceElement'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:psi type:<root>.PsiElement visibility:private [final]' type=<root>.PsiElement origin=null
               receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-psi>' type=<root>.FirPsiSourceElement origin=null
-    PROPERTY name:lighterASTNode visibility:public modality:FINAL [val]
+    PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
       overridden:
         public abstract lighterASTNode: <root>.LighterASTNode [val]
       FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'lighterASTNode: <root>.LighterASTNode declared in <root>.FirPsiSourceElement.<init>' type=<root>.LighterASTNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lighterASTNode> visibility:public modality:FINAL <> ($this:<root>.FirPsiSourceElement) returnType:<root>.LighterASTNode
-        correspondingProperty: PROPERTY name:lighterASTNode visibility:public modality:FINAL [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lighterASTNode> visibility:public modality:OPEN <> ($this:<root>.FirPsiSourceElement) returnType:<root>.LighterASTNode
+        correspondingProperty: PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirSourceElement
         $this: VALUE_PARAMETER name:<this> type:<root>.FirPsiSourceElement
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirPsiSourceElement'
+          RETURN type=kotlin.Nothing from='public open fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirPsiSourceElement'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]' type=<root>.LighterASTNode origin=null
               receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-lighterASTNode>' type=<root>.FirPsiSourceElement origin=null
-    PROPERTY name:treeStructure visibility:public modality:FINAL [val]
+    PROPERTY name:treeStructure visibility:public modality:OPEN [val]
       overridden:
         public abstract treeStructure: <root>.FlyweightCapableTreeStructure [val]
       FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-treeStructure> visibility:public modality:FINAL <> ($this:<root>.FirPsiSourceElement) returnType:<root>.FlyweightCapableTreeStructure
-        correspondingProperty: PROPERTY name:treeStructure visibility:public modality:FINAL [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-treeStructure> visibility:public modality:OPEN <> ($this:<root>.FirPsiSourceElement) returnType:<root>.FlyweightCapableTreeStructure
+        correspondingProperty: PROPERTY name:treeStructure visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirSourceElement
         $this: VALUE_PARAMETER name:<this> type:<root>.FirPsiSourceElement
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement'
+          RETURN type=kotlin.Nothing from='public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
               receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-treeStructure>' type=<root>.FirPsiSourceElement origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -119,34 +119,34 @@ FILE fqName:<root> fileName:/kt44814.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () [primary] declared in <root>.FirSourceElement'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]'
-    PROPERTY name:lighterASTNode visibility:public modality:FINAL [val]
+    PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
       overridden:
         public abstract lighterASTNode: <root>.LighterASTNode [val]
       FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'lighterASTNode: <root>.LighterASTNode declared in <root>.FirLightSourceElement.<init>' type=<root>.LighterASTNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lighterASTNode> visibility:public modality:FINAL <> ($this:<root>.FirLightSourceElement) returnType:<root>.LighterASTNode
-        correspondingProperty: PROPERTY name:lighterASTNode visibility:public modality:FINAL [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lighterASTNode> visibility:public modality:OPEN <> ($this:<root>.FirLightSourceElement) returnType:<root>.LighterASTNode
+        correspondingProperty: PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirSourceElement
         $this: VALUE_PARAMETER name:<this> type:<root>.FirLightSourceElement
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirLightSourceElement'
+          RETURN type=kotlin.Nothing from='public open fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirLightSourceElement'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]' type=<root>.LighterASTNode origin=null
               receiver: GET_VAR '<this>: <root>.FirLightSourceElement declared in <root>.FirLightSourceElement.<get-lighterASTNode>' type=<root>.FirLightSourceElement origin=null
-    PROPERTY name:treeStructure visibility:public modality:FINAL [val]
+    PROPERTY name:treeStructure visibility:public modality:OPEN [val]
       overridden:
         public abstract treeStructure: <root>.FlyweightCapableTreeStructure [val]
       FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-treeStructure> visibility:public modality:FINAL <> ($this:<root>.FirLightSourceElement) returnType:<root>.FlyweightCapableTreeStructure
-        correspondingProperty: PROPERTY name:treeStructure visibility:public modality:FINAL [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-treeStructure> visibility:public modality:OPEN <> ($this:<root>.FirLightSourceElement) returnType:<root>.FlyweightCapableTreeStructure
+        correspondingProperty: PROPERTY name:treeStructure visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirSourceElement
         $this: VALUE_PARAMETER name:<this> type:<root>.FirLightSourceElement
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement'
+          RETURN type=kotlin.Nothing from='public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]' type=<root>.FlyweightCapableTreeStructure origin=null
               receiver: GET_VAR '<this>: <root>.FirLightSourceElement declared in <root>.FirLightSourceElement.<get-treeStructure>' type=<root>.FirLightSourceElement origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -690,10 +690,10 @@ FILE fqName:<root> fileName:/kt44814.kt
                           CALL 'public final fun find <T> (predicate: kotlin.Function1<T of kotlin.collections.CollectionsKt.find, kotlin.Boolean>): T of kotlin.collections.CollectionsKt.find? [inline] declared in kotlin.collections.CollectionsKt' type=<root>.LighterASTNode? origin=null
                             <T>: <root>.LighterASTNode?
                             $receiver: CALL 'public final fun getChildren (treeStructure: <root>.FlyweightCapableTreeStructure): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
-                              $this: CALL 'public final fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirLightSourceElement' type=<root>.LighterASTNode origin=GET_PROPERTY
+                              $this: CALL 'public open fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirLightSourceElement' type=<root>.LighterASTNode origin=GET_PROPERTY
                                 $this: TYPE_OP type=<root>.FirLightSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirLightSourceElement
                                   GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
-                              treeStructure: CALL 'public final fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement' type=<root>.FlyweightCapableTreeStructure origin=GET_PROPERTY
+                              treeStructure: CALL 'public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement' type=<root>.FlyweightCapableTreeStructure origin=GET_PROPERTY
                                 $this: TYPE_OP type=<root>.FirLightSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirLightSourceElement
                                   GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                             predicate: FUN_EXPR type=kotlin.Function1<<root>.LighterASTNode?, kotlin.Boolean> origin=LAMBDA
@@ -729,7 +729,7 @@ FILE fqName:<root> fileName:/kt44814.kt
                             then: GET_VAR 'val tmp_3: <root>.LighterASTNode? [val] declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.LighterASTNode? origin=null
                     CONSTRUCTOR_CALL 'public constructor <init> (modifierList: <root>.LighterASTNode, tree: <root>.FlyweightCapableTreeStructure) [primary] declared in <root>.FirModifierList.FirLightModifierList' type=<root>.FirModifierList.FirLightModifierList origin=null
                       modifierList: GET_VAR 'val modifierListNode: <root>.LighterASTNode [val] declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.LighterASTNode origin=null
-                      tree: CALL 'public final fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement' type=<root>.FlyweightCapableTreeStructure origin=GET_PROPERTY
+                      tree: CALL 'public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement' type=<root>.FlyweightCapableTreeStructure origin=GET_PROPERTY
                         $this: TYPE_OP type=<root>.FirLightSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirLightSourceElement
                           GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                 BRANCH

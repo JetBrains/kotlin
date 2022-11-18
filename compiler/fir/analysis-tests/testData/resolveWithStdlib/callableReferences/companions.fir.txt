@@ -25,7 +25,7 @@ FILE: main.kt
             super<R|JavaClass|>()
         }
 
-        public final override fun bar(x: R|kotlin/CharSequence|): R|kotlin/Int| {
+        public open override fun bar(x: R|kotlin/CharSequence|): R|kotlin/Int| {
             ^bar Int(1)
         }
 

@@ -366,14 +366,14 @@ FILE: metaSerializable.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(Project4), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
+        public open override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(Project4), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
             public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-        public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project4|): R|kotlin/Unit| {
+        public open override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project4|): R|kotlin/Unit| {
             ^serialize R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.encodeString|(<strcat>(R|<local>/value|.R|/Project4.name|, String(:), R|<local>/value|.R|/Project4.language|))
         }
 
-        public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project4| {
+        public open override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project4| {
             lval params: R|kotlin/collections/List<kotlin/String>| = R|<local>/decoder|.R|kotlinx/serialization/encoding/Decoder.decodeString|().R|kotlin/text/split|(vararg(Char(:)))
             ^deserialize R|/Project4.Project4|(R|<local>/params|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/String|>|(Int(0)), R|<local>/params|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/String|>|(Int(1)))
         }

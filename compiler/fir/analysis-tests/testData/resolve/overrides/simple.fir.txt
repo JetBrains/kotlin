@@ -22,7 +22,7 @@ FILE: simple.kt
             super<R|A|>()
         }
 
-        public final override fun foo(): R|B| {
+        public open override fun foo(): R|B| {
             ^foo this@R|/B|
         }
 
@@ -30,7 +30,7 @@ FILE: simple.kt
             ^bar this@R|/B|
         }
 
-        public final override fun buz(p: R|B|): R|B| {
+        public open override fun buz(p: R|B|): R|B| {
             ^buz this@R|/B|
         }
 

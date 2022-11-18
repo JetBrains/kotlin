@@ -4,14 +4,14 @@ FILE: serializableWith.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(IntHolder), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
+        public open override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(IntHolder), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
             public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-        public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|IntHolder|): R|kotlin/Unit| {
+        public open override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|IntHolder|): R|kotlin/Unit| {
             R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.encodeString|(R|<local>/value|.R|/IntHolder.value|.R|kotlin/Int.toString|())
         }
 
-        public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|IntHolder| {
+        public open override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|IntHolder| {
             lval string: R|kotlin/String| = R|<local>/decoder|.R|kotlinx/serialization/encoding/Decoder.decodeString|()
             ^deserialize R|/IntHolder.IntHolder|(R|<local>/string|.R|kotlin/text/toInt|())
         }
@@ -22,14 +22,14 @@ FILE: serializableWith.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(SerializableObject), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
+        public open override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(SerializableObject), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
             public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-        public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|SerializableObject|): R|kotlin/Unit| {
+        public open override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|SerializableObject|): R|kotlin/Unit| {
             R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.encodeString|(String(obj))
         }
 
-        public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|SerializableObject| {
+        public open override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|SerializableObject| {
             R|<local>/decoder|.R|kotlinx/serialization/encoding/Decoder.decodeString|()
             ^deserialize Q|SerializableObject|
         }

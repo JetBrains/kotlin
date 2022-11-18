@@ -458,7 +458,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         if (declaration.containingClassLookupTag() == null) return true
         if (effectiveVisibility == EffectiveVisibility.PrivateInClass) return true
 
-        if (!declaration.isFinal) {
+        if (!declaration.isEffectivelyFinal(context)) {
             reporter.reportOn(declaration.source, FirErrors.DECLARATION_CANT_BE_INLINED, context)
             return false
         }

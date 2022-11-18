@@ -13,7 +13,7 @@ FILE: unstableSmartcastAndAmbiguity.kt
             super<R|XdSwimlaneSettings|>()
         }
 
-        public final override val settingsLogic: R|kotlin/String|
+        public open override val settingsLogic: R|kotlin/String|
             public get(): R|kotlin/String| {
                 ^ String(hello)
             }

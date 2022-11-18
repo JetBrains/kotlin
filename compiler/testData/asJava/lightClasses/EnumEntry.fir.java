@@ -6,7 +6,7 @@ static final class FirstEntry /* p.KotlinEnum.FirstEntry*/ extends p.KotlinEnum 
    FirstEntry();//  .ctor()
 
   @java.lang.Override()
-  public final void abstractFun();//  abstractFun()
+  public void abstractFun();//  abstractFun()
 
   public final int getFirstEntryProp();//  getFirstEntryProp()
 

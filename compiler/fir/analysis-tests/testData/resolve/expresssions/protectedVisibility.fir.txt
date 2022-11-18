@@ -100,7 +100,7 @@ FILE: protectedVisibility.kt
             super<R|Generic<kotlin/Int>|>(Int(1))
         }
 
-        protected final override fun foo(): R|kotlin/Int| {
+        protected open override fun foo(): R|kotlin/Int| {
             ^foo this@R|/DerivedGeneric|.super<R|Generic<kotlin/Int>|>.R|SubstitutionOverride</Generic.foo: R|kotlin/Int|>|()
         }
 

@@ -22,7 +22,7 @@ FILE: smartcastsFromEquals_sameModule.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals ===(this@R|/FinalWithOverride|, R|<local>/other|)
         }
 

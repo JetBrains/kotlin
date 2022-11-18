@@ -14,7 +14,7 @@ FILE: RedundantVisibilityDueToOverride.kt
             super<R|A|>()
         }
 
-        public final override var attribute: R|kotlin/String| = this@R|/C1|.super<R|A|>.R|/A.attribute|
+        public open override var attribute: R|kotlin/String| = this@R|/C1|.super<R|A|>.R|/A.attribute|
             public get(): R|kotlin/String|
             public set(value: R|kotlin/String|): R|kotlin/Unit|
 
@@ -34,7 +34,7 @@ FILE: RedundantVisibilityDueToOverride.kt
             super<R|B2|>()
         }
 
-        public final override var attribute: R|kotlin/String| = this@R|/C2|.super<R|B2|>.R|/B2.attribute|
+        public open override var attribute: R|kotlin/String| = this@R|/C2|.super<R|B2|>.R|/B2.attribute|
             public get(): R|kotlin/String|
             public set(value: R|kotlin/String|): R|kotlin/Unit|
 

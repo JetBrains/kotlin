@@ -24,7 +24,7 @@ FILE: inAnonymousObject.kt
                 this@R|/<anonymous>|.R|/<anonymous>.leaked| = R|<local>/b|
             }
 
-            public final override fun run(): R|kotlin/Unit| {
+            public open override fun run(): R|kotlin/Unit| {
                 R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
 

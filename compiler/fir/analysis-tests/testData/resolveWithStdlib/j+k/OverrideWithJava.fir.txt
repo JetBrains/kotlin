@@ -4,7 +4,7 @@ FILE: test.kt
             super<R|A|>()
         }
 
-        public final override fun foo(): R|B| {
+        public open override fun foo(): R|B| {
             ^foo this@R|/B|
         }
 

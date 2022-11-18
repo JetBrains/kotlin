@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND_K2: JS_IR
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KType

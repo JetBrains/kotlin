@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: questionable bytecode listing difference (open/final methods in final class)
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING

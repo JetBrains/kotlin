@@ -12,10 +12,10 @@ FILE: defaultFromOverrides.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override fun foo(x: R|kotlin/Int|): R|kotlin/Unit| {
+        public open override fun foo(x: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
-        public final override fun bar(x: R|kotlin/String|, y: R|kotlin/Int|): R|kotlin/Unit| {
+        public open override fun bar(x: R|kotlin/String|, y: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
     }

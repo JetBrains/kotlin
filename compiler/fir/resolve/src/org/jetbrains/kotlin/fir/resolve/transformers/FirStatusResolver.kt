@@ -390,16 +390,8 @@ class FirStatusResolver(
                             else -> Modality.OPEN
                         }
                     }
-
-                    else -> {
-                        if (declaration.isOverride &&
-                            (containingClass.modality != Modality.FINAL || containingClass.classKind == ClassKind.ENUM_CLASS)
-                        ) {
-                            Modality.OPEN
-                        } else {
-                            Modality.FINAL
-                        }
-                    }
+                    declaration.isOverride -> Modality.OPEN
+                    else -> Modality.FINAL
                 }
             }
 

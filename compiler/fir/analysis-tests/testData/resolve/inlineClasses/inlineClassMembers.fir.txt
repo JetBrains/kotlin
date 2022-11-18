@@ -56,11 +56,11 @@ FILE: inlineClassMembers.kt
         public final fun unbox(): R|kotlin/Unit| {
         }
 
-        public final override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 
-        public final override fun hashCode(): R|kotlin/Int| {
+        public open override fun hashCode(): R|kotlin/Int| {
             ^hashCode Int(1)
         }
 
@@ -82,11 +82,11 @@ FILE: inlineClassMembers.kt
         public final fun unbox(): R|kotlin/Unit| {
         }
 
-        public final override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 
-        public final override fun hashCode(): R|kotlin/Int| {
+        public open override fun hashCode(): R|kotlin/Int| {
             ^hashCode Int(1)
         }
 

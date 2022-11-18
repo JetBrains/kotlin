@@ -33,7 +33,7 @@ class Fir2IrComponentsStorage : Fir2IrComponents {
 
   override lateinit var classifierStorage: Fir2IrClassifierStorage
     override get
-    set
+    open set
 
 }
 

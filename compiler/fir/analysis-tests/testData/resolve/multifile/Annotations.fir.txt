@@ -81,10 +81,10 @@ FILE: main.kt
         public final val y: R|kotlin/Char| = R|<local>/y|
             public get(): R|kotlin/Char|
 
-        public final override fun foo(arg: R|kotlin/Double|): R|kotlin/Unit| {
+        public open override fun foo(arg: R|kotlin/Double|): R|kotlin/Unit| {
         }
 
-        public final override val v: R|kotlin/String|
+        public open override val v: R|kotlin/String|
             @R|annotations/Simple|() public get(): R|kotlin/String| {
                 ^ String()
             }

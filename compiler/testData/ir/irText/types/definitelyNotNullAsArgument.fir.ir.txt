@@ -64,18 +64,18 @@ FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
           RETURN type=kotlin.Nothing from='public final fun <get-t> (): TT of <root>.C declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:t type:TT of <root>.C visibility:private [final]' type=TT of <root>.C origin=null
               receiver: GET_VAR '<this>: <root>.C<TT of <root>.C> declared in <root>.C.<get-t>' type=<root>.C<TT of <root>.C> origin=null
-    FUN name:input visibility:public modality:FINAL <> ($this:<root>.C<TT of <root>.C>, t:{TT of <root>.C & Any}) returnType:kotlin.Unit
+    FUN name:input visibility:public modality:OPEN <> ($this:<root>.C<TT of <root>.C>, t:{TT of <root>.C & Any}) returnType:kotlin.Unit
       overridden:
         public abstract fun input (t: T of <root>.I): kotlin.Unit declared in <root>.I
       $this: VALUE_PARAMETER name:<this> type:<root>.C<TT of <root>.C>
       VALUE_PARAMETER name:t index:0 type:{TT of <root>.C & Any}
       BLOCK_BODY
-    FUN name:output visibility:public modality:FINAL <> ($this:<root>.C<TT of <root>.C>) returnType:{TT of <root>.C & Any}
+    FUN name:output visibility:public modality:OPEN <> ($this:<root>.C<TT of <root>.C>) returnType:{TT of <root>.C & Any}
       overridden:
         public abstract fun output (): T of <root>.I declared in <root>.I
       $this: VALUE_PARAMETER name:<this> type:<root>.C<TT of <root>.C>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun output (): {TT of <root>.C & Any} declared in <root>.C'
+        RETURN type=kotlin.Nothing from='public open fun output (): {TT of <root>.C & Any} declared in <root>.C'
           CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={TT of <root>.C & Any} origin=EXCLEXCL
             <T0>: {TT of <root>.C & Any}
             arg0: CALL 'public final fun <get-t> (): TT of <root>.C declared in <root>.C' type=TT of <root>.C origin=GET_PROPERTY

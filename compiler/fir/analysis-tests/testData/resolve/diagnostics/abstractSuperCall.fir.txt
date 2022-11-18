@@ -35,7 +35,7 @@ FILE: abstractSuperCall.kt
             super<R|A|>()
         }
 
-        public final override fun f(): R|kotlin/Unit| {
+        public open override fun f(): R|kotlin/Unit| {
         }
 
         public final fun g(): R|kotlin/Unit| {

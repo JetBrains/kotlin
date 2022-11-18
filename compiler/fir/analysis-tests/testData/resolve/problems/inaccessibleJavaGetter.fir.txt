@@ -12,12 +12,12 @@ FILE: test.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override val setter: R|kotlin/String|
+        public open override val setter: R|kotlin/String|
             public get(): R|kotlin/String| {
                 ^ String(K)
             }
 
-        public final override val isDelegated: R|kotlin/Boolean|
+        public open override val isDelegated: R|kotlin/Boolean|
             public get(): R|kotlin/Boolean| {
                 ^ Boolean(false)
             }

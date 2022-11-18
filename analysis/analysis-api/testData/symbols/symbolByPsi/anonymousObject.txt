@@ -13,7 +13,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
-  modality: FINAL
+  modality: OPEN
   name: run
   origin: SOURCE
   receiverParameter: null

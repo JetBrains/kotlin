@@ -54,7 +54,7 @@ FILE: m2.kt
             super<R|m1/BaseSingleDatabaseIntrospector<m2/SqliteRoot, m2/SqliteSchema>|>()
         }
 
-        protected final override fun createDatabaseRetriever(database: R|m2/SqliteRoot|): R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>| {
+        protected open override fun createDatabaseRetriever(database: R|m2/SqliteRoot|): R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>| {
             ^createDatabaseRetriever object : R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>| {
                 private constructor(): R|<anonymous>| {
                     this@R|m2/SqliteIntrospector|.super<R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>|>(R|<local>/database|)

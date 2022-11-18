@@ -38,14 +38,14 @@ public final class Derived /* Derived*/ extends Base implements IntfWithProp {
   private final int x = 3 /* initializer type: int */;
 
   @java.lang.Override()
-  public final error.NonExistentClass v();//  v()
+  public error.NonExistentClass v();//  v()
 
   @java.lang.Override()
-  public final int abs();//  abs()
+  public int abs();//  abs()
 
   public  Derived(int);//  .ctor(int)
 
-  public final int getX();//  getX()
+  public int getX();//  getX()
 
 }
 
@@ -76,6 +76,6 @@ public abstract class AnotherDerived /* AnotherDerived*/ extends Base {
 final class Private /* Private*/ {
   public  Private();//  .ctor()
 
-  public final boolean getOverridesNothing();//  getOverridesNothing()
+  public boolean getOverridesNothing();//  getOverridesNothing()
 
 }

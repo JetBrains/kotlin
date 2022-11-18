@@ -124,7 +124,7 @@ KtKotlinPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: true
-  modality: FINAL
+  modality: OPEN
   name: exitAnimation
   origin: SOURCE
   receiverParameter: null

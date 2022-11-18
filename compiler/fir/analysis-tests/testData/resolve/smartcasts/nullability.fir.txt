@@ -24,10 +24,10 @@ FILE: nullability.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override val data: R|MyData?| = R|<local>/data|
+        public open override val data: R|MyData?| = R|<local>/data|
             public get(): R|MyData?|
 
-        public final override fun fdata(): R|MyData?| {
+        public open override fun fdata(): R|MyData?| {
             ^fdata Null(null)
         }
 
@@ -37,11 +37,11 @@ FILE: nullability.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override var data: R|MyData?| = R|<local>/data|
+        public open override var data: R|MyData?| = R|<local>/data|
             public get(): R|MyData?|
             public set(value: R|MyData?|): R|kotlin/Unit|
 
-        public final override fun fdata(): R|MyData?| {
+        public open override fun fdata(): R|MyData?| {
             ^fdata Null(null)
         }
 
@@ -51,12 +51,12 @@ FILE: nullability.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override val data: R|MyData?|
+        public open override val data: R|MyData?|
             public get(): R|MyData?| {
                 ^ Null(null)
             }
 
-        public final override fun fdata(): R|MyData?| {
+        public open override fun fdata(): R|MyData?| {
             ^fdata Null(null)
         }
 

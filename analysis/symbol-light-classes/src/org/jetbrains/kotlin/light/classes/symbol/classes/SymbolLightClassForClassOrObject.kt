@@ -197,8 +197,9 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         val nonFinalFunctionsFromAny = classOrObjectSymbol.getMemberScope()
             .getCallableSymbols { name -> name.isFromAny }
             .filterIsInstance<KtFunctionSymbol>()
-            .filterNot { it.modality == Modality.FINAL }
-            .filter { actuallyComesFromAny(it) }
+            .filterNot {
+                it.modality == Modality.FINAL || (it.getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.modality == Modality.FINAL
+            }.filter { actuallyComesFromAny(it) }
 
         val functionsFromAnyByName = nonFinalFunctionsFromAny.associateBy { it.name }
 

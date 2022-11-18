@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_K2: JVM_IR
 
 interface A<T> {
     fun foo(a: T): String

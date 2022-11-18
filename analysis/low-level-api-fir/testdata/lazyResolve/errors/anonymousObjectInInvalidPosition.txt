@@ -150,7 +150,7 @@ FILE: anonymousObjectInInvalidPosition.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public open override [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
         }
 
     }
@@ -168,7 +168,7 @@ FILE: anonymousObjectInInvalidPosition.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public open override [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
         }
 
     }

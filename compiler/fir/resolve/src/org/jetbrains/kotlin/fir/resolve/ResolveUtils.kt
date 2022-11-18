@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -221,7 +223,14 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
     return null
 }
 
-private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(): FirBasedSymbol<*> {
+private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
+    if (isFinal) return true
+    val containingClass = dispatchReceiverType?.toRegularClassSymbol(session)
+        ?: return false
+    return containingClass.modality == Modality.FINAL && containingClass.classKind != ClassKind.ENUM_CLASS
+}
+
+private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(session: FirSession): FirBasedSymbol<*> {
     val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
 
     // This can happen in case of 2 properties referencing
@@ -234,7 +243,7 @@ private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowe
     }
 
     if (
-        propertyReceiver.isFinal &&
+        propertyReceiver.isEffectivelyFinal(session) &&
         hasVisibleBackingField &&
         propertyReceiver.canNarrowDownGetterType
     ) {
@@ -255,7 +264,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             typeFromSymbol(newCallee.candidateSymbol, false)
         }
         is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
-            val symbol = newCallee.getNarrowedDownSymbol()
+            val symbol = newCallee.getNarrowedDownSymbol(session)
             typeFromSymbol(symbol, false)
         }
         is FirResolvedNamedReference -> {

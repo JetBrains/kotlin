@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FIn<{T of <root>.bar & Any}>]'
-            FUN name:f visibility:public modality:FINAL <> ($this:<root>.bar.<no name provided><T of <root>.bar>, sx:{T of <root>.bar & Any}) returnType:kotlin.Unit
+            FUN name:f visibility:public modality:OPEN <> ($this:<root>.bar.<no name provided><T of <root>.bar>, sx:{T of <root>.bar & Any}) returnType:kotlin.Unit
               overridden:
                 public abstract fun f (x: T of <root>.FIn): kotlin.Unit declared in <root>.FIn
               $this: VALUE_PARAMETER name:<this> type:<root>.bar.<no name provided><T of <root>.bar>

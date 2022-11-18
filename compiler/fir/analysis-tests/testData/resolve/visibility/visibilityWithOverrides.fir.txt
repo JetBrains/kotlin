@@ -4,7 +4,7 @@ FILE: B.kt
             super<R|A|>()
         }
 
-        protected final override infix fun foo(s: R|kotlin/String|): R|kotlin/String| {
+        protected open override infix fun foo(s: R|kotlin/String|): R|kotlin/String| {
             ^foo String()
         }
 
