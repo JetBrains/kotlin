@@ -5,6 +5,6 @@ annotation class AllOpen
 
 @AllOpen
 annotation class ConsoleCommands(
-    <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>val value: String = ""<!>,
-    <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>val scope: String<!>
+    val <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>value<!>: String = "",
+    val <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>scope<!>: String
 )
