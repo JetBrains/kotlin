@@ -12,6 +12,7 @@ interface BuildMetricsReporter {
     fun addTimeMetricMs(time: BuildTime, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
 
     fun addMetric(metric: BuildPerformanceMetric, value: Long)
+    fun addTimeMetric(metric: BuildPerformanceMetric)
 
     fun addAttribute(attribute: BuildAttribute)
 
