@@ -192,6 +192,18 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         }
 
         @Test
+        @TestMetadata("functionCallWithGenericResult.kt")
+        public void testFunctionCallWithGenericResult() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionCallWithGenericResult.kt");
+        }
+
+        @Test
+        @TestMetadata("functionWithGenericExpectedTypeInside.kt")
+        public void testFunctionWithGenericExpectedTypeInside() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionWithGenericExpectedTypeInside.kt");
+        }
+
+        @Test
         @TestMetadata("functionWithTypeParameters.kt")
         public void testFunctionWithTypeParameters() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionWithTypeParameters.kt");
