@@ -277,15 +277,15 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions, CO : KotlinCommonC
         if (!sourceSetsAddedEagerly.add(sourceSet)) return
 
         with(target.project) {
-            //TODO possibly issue with forced instantiation
-            addSourcesToCompileTask(
-                sourceSet,
-                addAsCommonSources = lazy {
-                    target.project.kotlinExtension.sourceSets.any { otherSourceSet ->
-                        sourceSet in otherSourceSet.dependsOn
+            if (shouldAddSourcesToCompileTask(sourceSet)) {
+                addSourcesToCompileTask(
+                    sourceSet, addAsCommonSources = lazy {
+                        target.project.kotlinExtension.sourceSets.any { otherSourceSet ->
+                            sourceSet in otherSourceSet.dependsOn
+                        }
                     }
-                }
-            )
+                )
+            }
 
             // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
             // old Java & Android projects:
@@ -313,6 +313,20 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions, CO : KotlinCommonC
                 }
             }
         }
+    }
+
+    /**
+     * Metadata Compilations should only add source sets, directly added to the compilation to the compile task (w/o dependsOn).
+     * DependsOn source sets will be represented as klib dependencies.
+     *
+     * Platform Compilations shall include all sources (including dependsOn) to the compilation
+     */
+    private fun shouldAddSourcesToCompileTask(sourceSet: KotlinSourceSet): Boolean {
+        if (compilation is KotlinMetadataCompilation) {
+            return sourceSet in directlyIncludedKotlinSourceSets
+        }
+
+        return true
     }
 }
 
