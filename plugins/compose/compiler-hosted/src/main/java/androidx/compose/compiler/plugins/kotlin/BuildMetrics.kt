@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtParameter
 
+@JvmDefaultWithCompatibility
 interface FunctionMetrics {
     val isEmpty: Boolean get() = false
     val packageName: FqName
@@ -81,6 +82,7 @@ interface FunctionMetrics {
     fun print(out: Appendable, src: IrSourcePrinterVisitor)
 }
 
+@JvmDefaultWithCompatibility
 interface ModuleMetrics {
     val isEmpty get() = false
 
