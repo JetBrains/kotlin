@@ -388,7 +388,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @TaskAction
     fun execute(inputChanges: InputChanges) {
         val buildMetrics = metrics.get()
-        buildMetrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+        buildMetrics.addTimeMetric(BuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+        buildMetrics.measure(BuildTime.OUT_OF_WORKER_TASK_ACTION) {
             KotlinBuildStatsService.applyIfInitialised {
                 if (name.contains("Test"))
                     it.report(BooleanMetrics.TESTS_EXECUTED, true)
