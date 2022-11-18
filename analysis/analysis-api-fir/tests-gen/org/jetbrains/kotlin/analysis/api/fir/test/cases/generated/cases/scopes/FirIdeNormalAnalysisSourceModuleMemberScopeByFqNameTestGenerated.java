@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleMemberScopeByFqNameTestGenerated ex
     }
 
     @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/dataClass.kt");
+    }
+
+    @Test
     @TestMetadata("emumEntryWithoutMembers.kt")
     public void testEmumEntryWithoutMembers() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/emumEntryWithoutMembers.kt");
