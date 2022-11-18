@@ -300,8 +300,10 @@ private fun KtSymbol?.withImplicitSymbols(): Sequence<KtSymbol> {
             yieldAll(ktSymbol.setter.withImplicitSymbols())
         }
 
-        if (ktSymbol is KtPropertySetterSymbol) {
-            yieldAll(ktSymbol.parameter.withImplicitSymbols())
+        if (ktSymbol is KtFunctionLikeSymbol) {
+            for (parameter in ktSymbol.valueParameters) {
+                yieldAll(parameter.withImplicitSymbols())
+            }
         }
 
         if (ktSymbol is KtValueParameterSymbol) {
