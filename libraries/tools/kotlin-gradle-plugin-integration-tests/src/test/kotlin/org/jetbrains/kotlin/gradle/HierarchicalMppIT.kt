@@ -297,6 +297,20 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-54995: compileAppleMainKotlinMetadata fails on default parameters with `No value passed for parameter 'mustExist'")
+    fun testCompileSharedNativeSourceSetWithOKIODependency(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kt-54995-compileSharedNative-with-okio",
+            gradleVersion = gradleVersion
+        ) {
+            build("assemble") {
+                assertFileExists(projectPath.resolve("build/libs/test-project-jvm.jar"))
+                assertFileExists(projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain.klib"))
+            }
+        }
+    }
+
     private fun publishThirdPartyLib(
         projectName: String = "third-party-lib".withPrefix,
         withGranularMetadata: Boolean,
@@ -731,9 +745,9 @@ class HierarchicalMppIT : KGPBaseTest() {
             val iosX64ModuleSources = macOnly { listOf("test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar") }
             val iosArm64ModuleSources = macOnly { listOf("test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar") }
             val allPublishedSources = rootModuleSources +
-                jvmModuleSources + jvm2ModuleSources +
-                linuxX64ModuleSources + linuxArm64ModuleSources +
-                iosX64ModuleSources + iosArm64ModuleSources
+                    jvmModuleSources + jvm2ModuleSources +
+                    linuxX64ModuleSources + linuxArm64ModuleSources +
+                    iosX64ModuleSources + iosArm64ModuleSources
 
             infix fun Pair<String, List<String>>.and(that: List<String>) = first to (second + that)
 
@@ -847,7 +861,8 @@ class HierarchicalMppIT : KGPBaseTest() {
     @DisplayName("KT-51946: Temporarily mark HMPP tasks as notCompatibleWithConfigurationCache for Gradle 7.4")
     fun testHmppTasksAreNotIncludedInGradleConfigurationCache(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         with(project("hmppGradleConfigurationCache", gradleVersion = gradleVersion, localRepoDir = tempDir)) {
-            val options = buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+            val options =
+                buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
 
             build(":lib:publish") {
                 assertTasksExecuted(":lib:publish")
@@ -873,6 +888,7 @@ class HierarchicalMppIT : KGPBaseTest() {
             }
         }
     }
+
     @GradleTest
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_3)
     @DisplayName("KT-51946: Print warning on tasks that are not compatible with configuration cache")
@@ -885,7 +901,8 @@ class HierarchicalMppIT : KGPBaseTest() {
                 assertOutputDoesNotContain("""Task \S+ is not compatible with configuration cache""".toRegex())
             }
 
-            val options = buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+            val options =
+                buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
             buildAndFail("clean", "assemble", buildOptions = options) {
                 assertOutputContains("""Task \S+ is not compatible with configuration cache""".toRegex())
             }
