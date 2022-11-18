@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -669,4 +670,9 @@ private typealias TargetLists = AnnotationTargetLists
 
 fun FirQualifiedAccess.explicitReceiverIsNotSuperReference(): Boolean {
     return (this.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference !is FirSuperReference
+}
+
+fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlinType {
+    this.isInlineClass(session)
+    return toRegularClassSymbol(session)!!.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
 }

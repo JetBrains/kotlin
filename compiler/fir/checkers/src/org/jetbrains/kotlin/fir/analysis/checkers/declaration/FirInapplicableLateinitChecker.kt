@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getInlineClassUnderlyingType
+import org.jetbrains.kotlin.fir.analysis.checkers.isInlineClass
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -50,13 +52,34 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
 
             declaration.hasGetter() || declaration.hasSetter() ->
                 reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)
+
+            declaration.returnTypeRef.coneType.isInlineClass(context.session) -> {
+                val underlyingType = declaration.returnTypeRef.coneType.getInlineClassUnderlyingType(context.session)
+                if (underlyingType.isPrimitive) {
+                    reporter.reportError(
+                        declaration.source,
+                        "is not allowed on properties of inline class with primitive underlying type",
+                        context
+                    )
+                }
+                if (underlyingType.hasNullableUpperBound) {
+                    reporter.reportError(
+                        declaration.source,
+                        "is not allowed on properties of inline class which underlying type has nullable upper bound",
+                        context
+                    )
+                }
+            }
         }
     }
 
-    private fun FirProperty.isNullable() = when (val type = returnTypeRef.coneType) {
-        is ConeTypeParameterType -> type.isNullable || type.lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
-        else -> type.isNullable
-    }
+    private val ConeKotlinType.hasNullableUpperBound
+        get() = when (this) {
+            is ConeTypeParameterType -> isNullable || lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
+            else -> isNullable
+        }
+
+    private fun FirProperty.isNullable() = returnTypeRef.coneType.hasNullableUpperBound
 
     private fun FirProperty.hasGetter() = getter != null && getter !is FirDefaultPropertyGetter
     private fun FirProperty.hasSetter() = setter != null && setter !is FirDefaultPropertySetter
