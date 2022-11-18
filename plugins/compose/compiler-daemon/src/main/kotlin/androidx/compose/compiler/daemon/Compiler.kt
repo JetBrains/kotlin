@@ -58,6 +58,7 @@ data class DaemonCompilerSettings(val composePluginPath: String? = null) {
     }
 }
 
+@JvmDefaultWithCompatibility
 interface DaemonCompiler {
     fun compile(
         args: Array<String>,
