@@ -2482,7 +2482,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * functionParameters
-     *   : "(" { functionParameter{"," functionParameter}* {","}? }? ")"
+     *   : "(" functionParameter{","}? ")"
      *   ;
      *
      * functionParameter
