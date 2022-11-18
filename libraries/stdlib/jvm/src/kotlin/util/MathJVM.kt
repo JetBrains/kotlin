@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -514,8 +514,8 @@ public actual inline fun Double.pow(n: Int): Double = nativeMath.pow(this, n.toD
  * `q = round(this / other)`.
  *
  * Special cases:
- *    - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
- *    - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
+ *   - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
+ *   - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
  *
  * @see round
  */
@@ -898,7 +898,7 @@ public actual inline fun log10(x: Float): Float = nativeMath.log10(x.toDouble())
 public actual fun log2(x: Float): Float = (nativeMath.log(x.toDouble()) / LN2).toFloat()
 
 /**
- * Computes `ln(a + 1)`.
+ * Computes `ln(x + 1)`.
  *
  * This function can be implemented to produce more precise result for [x] near zero.
  *
@@ -1060,8 +1060,8 @@ public actual inline fun Float.pow(n: Int): Float = nativeMath.pow(this.toDouble
  * `q = round(this / other)`.
  *
  * Special cases:
- *    - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
- *    - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
+ *   - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
+ *   - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
  *
  * @see round
  */
