@@ -30,7 +30,7 @@ public abstract class A<T: Any, V: String?>(lateinit var p2: String) {
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e5 = "A"
 
     // With initializer, primitive
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e6 = 3
+    <!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e6 = 3
 
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e7 by CustomDelegate()
 

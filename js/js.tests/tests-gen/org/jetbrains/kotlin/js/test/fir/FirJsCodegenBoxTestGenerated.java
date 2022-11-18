@@ -16970,6 +16970,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("lateinitInlineClasses.kt")
+        public void testLateinitInlineClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());

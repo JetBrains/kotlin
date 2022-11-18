@@ -6,14 +6,20 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineClassDeclarationChecker.isRecursiveInlineClassType
+import org.jetbrains.kotlin.fir.analysis.checkers.getInlineClassUnderlyingType
+import org.jetbrains.kotlin.fir.analysis.checkers.isInlineClass
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.types.*
 
@@ -23,40 +29,88 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
             return
         }
 
-        when {
-            declaration.isVal ->
-                reporter.reportError(declaration.source, "is allowed only on mutable properties", context)
+        if (declaration.isVal) {
+            reporter.reportError(declaration.source, "is allowed only on mutable properties", context)
+        }
 
-            declaration.initializer != null -> if (declaration.isLocal) {
+        if (declaration.initializer != null) {
+            if (declaration.isLocal) {
                 reporter.reportError(declaration.source, "is not allowed on local variables with initializer", context)
             } else {
                 reporter.reportError(declaration.source, "is not allowed on properties with initializer", context)
             }
+        }
 
-            declaration.delegate != null ->
-                reporter.reportError(declaration.source, "is not allowed on delegated properties", context)
+        if (declaration.delegate != null) {
+            reporter.reportError(declaration.source, "is not allowed on delegated properties", context)
+        }
 
-            declaration.isNullable() ->
-                reporter.reportError(declaration.source, "is not allowed on properties of a type with nullable upper bound", context)
+        if (declaration.isNullable()) {
+            reporter.reportError(declaration.source, "is not allowed on properties of a type with nullable upper bound", context)
+        }
 
-            declaration.returnTypeRef.coneType.isPrimitiveOrNullablePrimitive -> if (declaration.isLocal) {
+        if (declaration.returnTypeRef.coneType.isPrimitive) {
+            if (declaration.isLocal) {
                 reporter.reportError(declaration.source, "is not allowed on local variables of primitive types", context)
             } else {
                 reporter.reportError(declaration.source, "is not allowed on properties of primitive types", context)
             }
+        }
 
-            declaration.hasExplicitBackingField ->
-                reporter.reportError(declaration.source, "must be moved to the field declaration", context)
+        if (declaration.hasExplicitBackingField) {
+            reporter.reportError(declaration.source, "must be moved to the field declaration", context)
+        }
 
-            declaration.hasGetter() || declaration.hasSetter() ->
-                reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)
+        if ((declaration.hasGetter() || declaration.hasSetter()) && declaration.delegate == null) {
+            reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)
+        }
+
+        if (declaration.returnTypeRef.coneType.isInlineClass(context.session)) {
+            val declarationType = declaration.returnTypeRef.coneType
+            val variables = if (declaration.isLocal) "local variables" else "properties"
+            when {
+                declarationType.isUnsignedType -> reporter.reportError(
+                    declaration.source,
+                    "is not allowed on $variables of unsigned types",
+                    context
+                )
+                !context.languageVersionSettings.supportsFeature(LanguageFeature.InlineLateinit) -> reporter.reportError(
+                    declaration.source,
+                    "is not allowed on $variables of inline class types",
+                    context
+                )
+                hasUnderlyingTypeForbiddenForLateinit(declarationType, context.session) -> reporter.reportError(
+                    declaration.source,
+                    "is not allowed on $variables of inline type with underlying type not suitable for lateinit declaration",
+                    context
+                )
+            }
         }
     }
 
-    private fun FirProperty.isNullable() = when (val type = returnTypeRef.coneType) {
-        is ConeTypeParameterType -> type.isNullable || type.lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
-        else -> type.isNullable
+    private fun hasUnderlyingTypeForbiddenForLateinit(type: ConeKotlinType, session: FirSession): Boolean {
+
+        fun isForbiddenTypeForLateinit(type: ConeKotlinType): Boolean {
+            if (type.isPrimitiveOrNullablePrimitive) return true
+            if (type.hasNullableUpperBound) return true
+            if (type.isInlineClass(session)) {
+                return isForbiddenTypeForLateinit(type.getInlineClassUnderlyingType(session))
+            }
+            return false
+        }
+
+        // prevent infinite recursion
+        if (type.isRecursiveInlineClassType(session)) return false
+        return isForbiddenTypeForLateinit(type.getInlineClassUnderlyingType(session))
     }
+
+    private val ConeKotlinType.hasNullableUpperBound
+        get() = when (this) {
+            is ConeTypeParameterType -> isNullable || lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
+            else -> isNullable
+        }
+
+    private fun FirProperty.isNullable() = returnTypeRef.coneType.hasNullableUpperBound
 
     private fun FirProperty.hasGetter() = getter != null && getter !is FirDefaultPropertyGetter
     private fun FirProperty.hasSetter() = setter != null && setter !is FirDefaultPropertySetter

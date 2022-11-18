@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
@@ -675,3 +677,7 @@ private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement
     )
 }
 
+fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlinType {
+    require(this.isInlineClass(session))
+    return toRegularClassSymbol(session)!!.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
+}
