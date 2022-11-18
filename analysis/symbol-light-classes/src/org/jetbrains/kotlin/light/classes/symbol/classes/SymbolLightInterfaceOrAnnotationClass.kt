@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -56,6 +57,15 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
+
+    private val _ownFields: List<KtLightField> by lazyPub {
+        mutableListOf<KtLightField>().also {
+            addCompanionObjectFieldIfNeeded(it)
+            addFieldsFromCompanionIfNeeded(it)
+        }
+    }
+
+    override fun getOwnFields(): List<KtLightField> = _ownFields
 
     override fun getImplementsList(): PsiReferenceList? = null
 
