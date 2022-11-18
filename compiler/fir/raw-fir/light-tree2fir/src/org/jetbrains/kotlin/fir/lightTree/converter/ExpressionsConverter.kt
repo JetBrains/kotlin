@@ -1120,8 +1120,8 @@ class ExpressionsConverter(
                     val multiDeclaration = valueParameter.destructuringDeclaration
                     val firLoopParameter = generateTemporaryVariable(
                         baseModuleData,
-                        valueParameter.firValueParameter.source,
-                        if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.firValueParameter.name,
+                        valueParameter.source,
+                        if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.name,
                         buildFunctionCall {
                             source = fakeSource
                             calleeReference = buildSimpleNamedReference {
@@ -1130,7 +1130,7 @@ class ExpressionsConverter(
                             }
                             explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
                         },
-                        valueParameter.firValueParameter.returnTypeRef
+                        valueParameter.returnTypeRef
                     )
                     if (multiDeclaration != null) {
                         val destructuringBlock = generateDestructuringBlock(
