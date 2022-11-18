@@ -38,4 +38,6 @@ public abstract class KtReceiverParameterSymbol : KtAnnotatedSymbol {
      * In terms of the example above -- this is link to the function foo.
      */
     public abstract val owningCallableSymbol: KtCallableSymbol
+
+    abstract override fun createPointer(): KtSymbolPointer<KtReceiverParameterSymbol>
 }

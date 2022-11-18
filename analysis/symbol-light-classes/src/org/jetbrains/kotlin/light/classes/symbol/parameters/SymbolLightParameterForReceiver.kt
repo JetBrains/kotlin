@@ -12,32 +12,27 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.receiverType
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeNullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
-import org.jetbrains.kotlin.light.classes.symbol.nullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.restoreSymbolOrThrowIfDisposed
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightParameterForReceiver private constructor(
-    private val callableSymbolWithReceiverPointer: KtSymbolPointer<KtCallableSymbol>,
+    private val receiverPointer: KtSymbolPointer<KtReceiverParameterSymbol>,
     methodName: String,
-    method: SymbolLightMethodBase
+    method: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(method) {
-    private inline fun <T> withReceiverType(crossinline action: context(KtAnalysisSession) (KtType) -> T): T {
+    private inline fun <T> withReceiverSymbol(crossinline action: context(KtAnalysisSession) (KtReceiverParameterSymbol) -> T): T {
         return analyzeForLightClasses(ktModule) {
-            val callableSymbol = callableSymbolWithReceiverPointer.restoreSymbolOrThrowIfDisposed()
-            action(this, requireNotNull(callableSymbol.receiverType))
+            action(this, receiverPointer.restoreSymbolOrThrowIfDisposed())
         }
     }
 
@@ -45,17 +40,15 @@ internal class SymbolLightParameterForReceiver private constructor(
         fun tryGet(
             callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
             method: SymbolLightMethodBase
-        ): SymbolLightParameterForReceiver? {
-            val methodName = analyzeForLightClasses(method.ktModule) {
-                val callableSymbol = callableSymbolPointer.restoreSymbolOrThrowIfDisposed()
-                if (callableSymbol !is KtNamedSymbol) return@analyzeForLightClasses null
-                if (!callableSymbol.isExtension || callableSymbol.receiverType == null) return@analyzeForLightClasses null
-                callableSymbol.name.asString()
-            } ?: return null
+        ): SymbolLightParameterForReceiver? = analyzeForLightClasses(method.ktModule) {
+            val callableSymbol = callableSymbolPointer.restoreSymbolOrThrowIfDisposed()
+            if (callableSymbol !is KtNamedSymbol) return@analyzeForLightClasses null
+            if (!callableSymbol.isExtension) return@analyzeForLightClasses null
+            val receiverSymbol = callableSymbol.receiverParameter ?: return@analyzeForLightClasses null
 
-            return SymbolLightParameterForReceiver(
-                callableSymbolWithReceiverPointer = callableSymbolPointer,
-                methodName = methodName,
+            SymbolLightParameterForReceiver(
+                receiverPointer = receiverSymbol.createPointer(),
+                methodName = callableSymbol.name.asString(),
                 method = method,
             )
         }
@@ -75,10 +68,10 @@ internal class SymbolLightParameterForReceiver private constructor(
     override val kotlinOrigin: KtParameter? = null
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
-        withReceiverType { receiverType ->
+        withReceiverSymbol { receiver ->
             buildList {
-                receiverType.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let { add(it) }
-                receiverType.annotations.mapTo(this) {
+                receiver.type.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let(::add)
+                receiver.annotations.mapTo(this) {
                     SymbolLightAnnotationForAnnotationCall(it, this@SymbolLightParameterForReceiver)
                 }
             }
@@ -92,8 +85,8 @@ internal class SymbolLightParameterForReceiver private constructor(
     }
 
     private val _type: PsiType by lazy {
-        withReceiverType { receiverType ->
-            receiverType.asPsiType(this@SymbolLightParameterForReceiver)
+        withReceiverSymbol { receiver ->
+            receiver.type.asPsiType(this@SymbolLightParameterForReceiver)
         } ?: nonExistentType()
     }
 
@@ -102,13 +95,9 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightParameterForReceiver &&
             ktModule == other.ktModule &&
-            compareSymbolPointers(ktModule, callableSymbolWithReceiverPointer, other.callableSymbolWithReceiverPointer)
+            compareSymbolPointers(ktModule, receiverPointer, other.receiverPointer)
 
     override fun hashCode(): Int = _name.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && analyzeForLightClasses(ktModule) {
-        callableSymbolWithReceiverPointer.restoreSymbol()?.receiverType != null
-    }
+    override fun isValid(): Boolean = super.isValid() && receiverPointer.isValid(ktModule)
 }
-
-

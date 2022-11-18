@@ -17,6 +17,8 @@ public final class Test /* Test*/ {
 
   public final void fooF(@MyAnnotation7() @org.jetbrains.annotations.NotNull() int);//  fooF(int)
 
+  public final void fooWithNullableReceiver(@MyAnnotation7() @org.jetbrains.annotations.Nullable() java.lang.Integer, long);//  fooWithNullableReceiver(java.lang.Integer, long)
+
   public final void setFooP(@MyAnnotation7() @org.jetbrains.annotations.NotNull() int, @org.jetbrains.annotations.NotNull() kotlin.Unit);//  setFooP(int, kotlin.Unit)
 
 }
