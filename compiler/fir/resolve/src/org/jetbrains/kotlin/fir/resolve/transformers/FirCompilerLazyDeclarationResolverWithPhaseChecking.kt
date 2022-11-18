@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 
 class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationResolver() {
     private var currentTransformerPhase: FirResolvePhase? = null
-    private var isEnabled = true
 
     private val exceptions = mutableListOf<FirLazyResolveContractViolationException>()
 
@@ -33,18 +32,8 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         currentTransformerPhase = null
     }
 
-    override fun disableLazyResolveContractChecks() {
-        check(isEnabled)
-        isEnabled = false
-    }
-
-    override fun enableLazyResolveContractsChecks() {
-        check(!isEnabled)
-        isEnabled = true
-    }
-
     private fun checkIfCanLazyResolveToPhase(symbol: FirBasedSymbol<*>, requestedPhase: FirResolvePhase) {
-        if (!isEnabled) return
+        if (!lazyResolveContractChecksEnabled) return
 
         val currentPhase = currentTransformerPhase
             ?: error("Current phase is not set, please call ${this::startResolvingPhase.name} before starting transforming the file")

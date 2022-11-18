@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.*
@@ -139,21 +140,23 @@ abstract class AbstractFirDeserializedSymbolProvider(
                 val (nameResolver, classProto, annotationDeserializer, moduleData, sourceElement, postProcessor) = result
                 moduleData ?: return null to null
                 val symbol = FirRegularClassSymbol(classId)
-                deserializeClassToSymbol(
-                    classId,
-                    classProto,
-                    symbol,
-                    nameResolver,
-                    session,
-                    moduleData,
-                    annotationDeserializer,
-                    kotlinScopeProvider,
-                    serializerExtensionProtocol,
-                    parentContext,
-                    sourceElement,
-                    origin = defaultDeserializationOrigin,
-                    deserializeNestedClass = this::getClass,
-                )
+                session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+                    deserializeClassToSymbol(
+                        classId,
+                        classProto,
+                        symbol,
+                        nameResolver,
+                        session,
+                        moduleData,
+                        annotationDeserializer,
+                        kotlinScopeProvider,
+                        serializerExtensionProtocol,
+                        parentContext,
+                        sourceElement,
+                        origin = defaultDeserializationOrigin,
+                        deserializeNestedClass = this::getClass,
+                    )
+                }
                 symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
                 symbol to postProcessor
             }

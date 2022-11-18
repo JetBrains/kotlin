@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -114,7 +115,9 @@ class JvmClassFileBasedSymbolProvider(
             val knownContent = (result as? KotlinClassFinder.Result.ClassFileContent)?.content
             val javaClass = javaFacade.findClass(classId, knownContent) ?: return null
             return ClassMetadataFindResult.NoMetadata { symbol ->
-                javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
+                session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+                    javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
+                }
             }
         }
 
