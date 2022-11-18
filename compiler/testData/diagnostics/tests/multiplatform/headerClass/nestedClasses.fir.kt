@@ -3,9 +3,9 @@
 // FILE: common.kt
 import kotlin.reflect.KProperty
 
-fun <T> lazy(initializer: () -> T): Lazy<T> = <!UNRESOLVED_REFERENCE!>TODO<!>()
+fun <T> lazy(initializer: () -> T): Lazy<T> = TODO()
 interface Lazy<out T> {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = <!UNRESOLVED_REFERENCE!>TODO<!>()
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = TODO()
 }
 
 expect class OuterClass {

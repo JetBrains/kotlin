@@ -20,7 +20,9 @@ class FirModuleInfoProvider(private val testServices: TestServices) : TestServic
     private val firModuleDataByModule: MutableMap<TestModule, FirModuleData> = mutableMapOf()
 
     fun registerModuleData(module: TestModule, moduleData: FirModuleData) {
-        if (module in firModuleDataByModule) error("module data for module $module already registered")
+        // Allow reregistering since tests with several targets are possible (JVM, JS)
+        // FirFrontendFacade creates modules for every platform. But if several targets are presented, several common modules will be initialized.
+        // It's not possible to reuse moduleData for the same modules because moduleData depends on the platform.
         firModuleDataByModule[module] = moduleData
     }
 

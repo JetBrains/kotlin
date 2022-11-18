@@ -24,7 +24,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
         val irModule = info.irModuleFragment
         irModule.acceptChildrenVoid(InlineFunctionsCollector())
         irModule.acceptChildrenVoid(InlineCallBodiesCheck())
-        assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.allUnbound.isEmpty())
+        assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.last().symbolTable.allUnbound.isEmpty())
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

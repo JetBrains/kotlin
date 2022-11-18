@@ -80,7 +80,7 @@ abstract class AbstractVisualizerBlackBoxTest {
         TestRunner(firConfiguration).runTest(filePath) { testConfiguration ->
             testConfiguration.testServices.moduleStructure.modules.forEach { firModule ->
                 val firArtifact = testConfiguration.testServices.dependencyProvider.getArtifact(firModule, FrontendKinds.FIR)
-                val firRenderer = firArtifact.firFiles.values.firstOrNull()?.let { FirVisualizer(it) }
+                val firRenderer = firArtifact.mainFirFiles.values.firstOrNull()?.let { FirVisualizer(it) }
                 firRenderResult = firRenderer?.render()?.trim() ?: ""
             }
         }

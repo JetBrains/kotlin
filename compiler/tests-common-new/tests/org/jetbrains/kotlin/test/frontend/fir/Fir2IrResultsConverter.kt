@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -40,22 +42,18 @@ class Fir2IrResultsConverter(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
+        val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
-        val (irModuleFragment, components, pluginContext) = inputArtifact.firAnalyzerFacade.convertToIr(fir2IrExtensions)
-        val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
-
-        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
-        val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
-
-        // TODO: handle fir from light tree
-        val ktFiles = inputArtifact.firFiles.values.mapNotNull { it.psi as KtFile? }
-        val sourceFiles = inputArtifact.firFiles.values.mapNotNull { it.sourceFile }
 
         // Create and initialize the module and its dependencies
         val project = compilerConfigurationProvider.getProject(module)
+        // TODO: handle fir from light tree
+        val ktFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.psi as KtFile? }
+        val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
         val container = TopDownAnalyzerFacadeForJVM.createContainer(
             project, ktFiles, NoScopeRecordCliBindingTrace(), configuration,
             compilerConfigurationProvider.getPackagePartProviderFactory(module),
@@ -63,28 +61,43 @@ class Fir2IrResultsConverter(
             TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles), emptyList()
         )
 
+        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
+
+        val componentsMap = mutableMapOf<String, Fir2IrComponents>()
+        val resultParts = mutableListOf<JvmIrCodegenFactory.JvmIrBackendInput>()
+
+        for (firOutputPart in inputArtifact.partsForDependsOnModules) {
+            val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.convertToIr(fir2IrExtensions)
+            componentsMap[firOutputPart.module.name] = components
+
+            resultParts.add(
+                JvmIrCodegenFactory.JvmIrBackendInput(
+                    irModuleFragment,
+                    components.symbolTable,
+                    phaseConfig,
+                    components.irProviders,
+                    fir2IrExtensions,
+                    FirJvmBackendExtension(firOutputPart.session, components),
+                    pluginContext,
+                    notifyCodegenStart = {},
+                )
+            )
+        }
+
+        val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.TEST,
-            container.get(), dummyBindingContext, configuration
+            container.get(), NoScopeRecordCliBindingTrace().bindingContext, configuration
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(components)
+            FirJvmBackendClassResolver(componentsMap[module.name]!!)
         ).build()
 
         return IrBackendInput.JvmIrBackendInput(
             generationState,
             codegenFactory,
-            JvmIrCodegenFactory.JvmIrBackendInput(
-                irModuleFragment,
-                components.symbolTable,
-                phaseConfig,
-                components.irProviders,
-                fir2IrExtensions,
-                FirJvmBackendExtension(inputArtifact.session, components),
-                pluginContext,
-                notifyCodegenStart = {},
-            ),
+            resultParts,
             sourceFiles
         )
     }

@@ -41,7 +41,7 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
     private fun getKtFiles(module: TestModule): Map<TestFile, KtFile> {
         return when (module.frontendKind) {
             FrontendKinds.ClassicFrontend -> testServices.dependencyProvider.getArtifact(module, FrontendKinds.ClassicFrontend).ktFiles
-            FrontendKinds.FIR -> testServices.dependencyProvider.getArtifact(module, FrontendKinds.FIR).firFiles.entries
+            FrontendKinds.FIR -> testServices.dependencyProvider.getArtifact(module, FrontendKinds.FIR).mainFirFiles.entries
                 .associate { it.key to (it.value.psi as KtFile) }
             else -> testServices.assertions.fail { "Unknown frontend kind ${module.frontendKind}" }
         }

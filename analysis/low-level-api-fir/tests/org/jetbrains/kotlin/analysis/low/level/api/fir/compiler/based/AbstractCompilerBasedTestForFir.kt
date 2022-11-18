@@ -9,11 +9,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.createFirResolveSessionForNoCaching
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -23,15 +25,13 @@ import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifactImpl
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
 
 abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
     @OptIn(TestInfrastructureInternals::class)
@@ -58,11 +58,55 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
     inner class LowLevelFirFrontendFacade(
         testServices: TestServices
     ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
+        private val testModulesByName by lazy { testServices.moduleStructure.modules.associateBy { it.name } }
 
         override val directiveContainers: List<DirectivesContainer>
             get() = listOf(FirDiagnosticsDirectives)
 
+        override fun shouldRunAnalysis(module: TestModule): Boolean {
+            if (!super.shouldRunAnalysis(module)) return false
+
+            return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+                testServices.moduleStructure
+                    .modules.none { testModule -> testModule.dependsOnDependencies.any { testModulesByName[it.moduleName] == module } }
+            } else {
+                true
+            }
+        }
+
         override fun analyze(module: TestModule): FirOutputArtifact {
+            val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+
+            val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
+
+            val firOutputPartForDependsOnModules = mutableListOf<FirOutputPartForDependsOnModule>()
+            for (testModule in sortedModules) {
+                firOutputPartForDependsOnModules.add(analyzeDependsOnModule(testModule))
+            }
+
+            return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
+        }
+
+        private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
+            val sortedModules = mutableListOf<TestModule>()
+            val visitedModules = mutableSetOf<TestModule>()
+            val modulesQueue = ArrayDeque<TestModule>()
+            modulesQueue.add(module)
+
+            while (modulesQueue.isNotEmpty()) {
+                val currentModule = modulesQueue.removeFirst()
+                if (!visitedModules.add(currentModule)) continue
+                sortedModules.add(currentModule)
+
+                for (dependency in currentModule.dependsOnDependencies) {
+                    modulesQueue.add(testServices.dependencyProvider.getTestModule(dependency.moduleName))
+                }
+            }
+
+            return sortedModules.reversed()
+        }
+
+        private fun analyzeDependsOnModule(module: TestModule): FirOutputPartForDependsOnModule {
             val moduleInfoProvider = testServices.ktModuleProvider
             val ktModule = moduleInfoProvider.getModule(module.name) as KtSourceModuleByCompilerConfiguration
 
@@ -81,7 +125,12 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
             } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
 
             val analyzerFacade = LowLevelFirAnalyzerFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)
-            return LowLevelFirOutputArtifact(firResolveSession.useSiteFirSession, analyzerFacade)
+            return FirOutputPartForDependsOnModule(
+                module,
+                firResolveSession.useSiteFirSession,
+                analyzerFacade,
+                analyzerFacade.allFirFiles
+            )
         }
     }
 

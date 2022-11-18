@@ -38,13 +38,14 @@ object FirSessionFactoryHelper {
         dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
-        val dependencyList = DependencyListForCliModule.build(moduleName, platform, analyzerServices, dependenciesConfigurator)
+        val binaryModuleData = BinaryModuleData.initialize(moduleName, platform, analyzerServices)
+        val dependencyList = DependencyListForCliModule.build(binaryModuleData, init = dependenciesConfigurator)
         val sessionProvider = externalSessionProvider ?: FirProjectSessionProvider()
         val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
         FirJvmSessionFactory.createLibrarySession(
             moduleName,
             sessionProvider,
-            dependencyList,
+            dependencyList.moduleDataProvider,
             projectEnvironment,
             librariesScope,
             packagePartProvider,
@@ -57,8 +58,8 @@ object FirSessionFactoryHelper {
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies,
             dependencyList.friendsDependencies,
-            dependencyList.platform,
-            dependencyList.analyzerServices
+            platform,
+            analyzerServices
         )
         return FirJvmSessionFactory.createModuleBasedSession(
             mainModuleData,

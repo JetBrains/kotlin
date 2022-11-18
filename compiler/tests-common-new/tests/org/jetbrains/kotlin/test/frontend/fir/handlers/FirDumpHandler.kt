@@ -32,25 +32,28 @@ class FirDumpHandler(
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        if (FirDiagnosticsDirectives.FIR_DUMP !in module.directives) return
-        val builderForModule = dumper.builderForModule(module)
-        val firFiles = info.firFiles
+        for (part in info.partsForDependsOnModules) {
+            val currentModule = part.module
+            if (FirDiagnosticsDirectives.FIR_DUMP !in currentModule.directives) return
+            val builderForModule = dumper.builderForModule(currentModule)
+            val firFiles = info.mainFirFiles
 
-        val allFiles = buildList {
-            addAll(firFiles.values)
-            addAll(info.session.createFilesWithGeneratedDeclarations())
-        }
-        info.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
+            val allFiles = buildList {
+                addAll(firFiles.values)
+                addAll(part.session.createFilesWithGeneratedDeclarations())
+            }
+            part.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
 
-        val renderer = FirRenderer(
-            builder = builderForModule,
-            packageDirectiveRenderer = FirPackageDirectiveRenderer(),
-            classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(info.session)
-        )
-        allFiles.forEach {
-            renderer.renderElementAsString(it)
+            val renderer = FirRenderer(
+                builder = builderForModule,
+                packageDirectiveRenderer = FirPackageDirectiveRenderer(),
+                classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(part.session)
+            )
+            allFiles.forEach {
+                renderer.renderElementAsString(it)
+            }
+            part.session.lazyDeclarationResolver.finishResolvingPhase(FirResolvePhase.BODY_RESOLVE)
         }
-        info.session.lazyDeclarationResolver.finishResolvingPhase(FirResolvePhase.BODY_RESOLVE)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

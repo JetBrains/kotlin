@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.test.services.assertions
 
 class FirResolveContractViolationErrorHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        val session = info.session
-        val lazyResolver = session.lazyDeclarationResolver as? FirCompilerLazyDeclarationResolverWithPhaseChecking ?: return
-        val exceptions = lazyResolver.getContractViolationExceptions().ifEmpty { return }
-        testServices.assertions.failAll(exceptions)
+        for (part in info.partsForDependsOnModules) {
+            val session = part.session
+            val lazyResolver = session.lazyDeclarationResolver as? FirCompilerLazyDeclarationResolverWithPhaseChecking ?: return
+            val exceptions = lazyResolver.getContractViolationExceptions().ifEmpty { return }
+            testServices.assertions.failAll(exceptions)
+        }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

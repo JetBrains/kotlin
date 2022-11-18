@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.test.frontend.fir.getAnalyzerServices
+import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AnalysisApiEnvironmentManager : TestService {
