@@ -14,7 +14,7 @@ FILE: complex.kt
                 try {
                     this@R|/closeFinally|.R|/AutoCloseable.close|()
                 }
-                catch (closeException: R|kotlin/Throwable|) {
+                catch (lval closeException: R|kotlin/Throwable| = STUB) {
                     R|<local>/cause|.R|kotlin/Throwable.addSuppressed|(R|<local>/closeException|)
                 }
 

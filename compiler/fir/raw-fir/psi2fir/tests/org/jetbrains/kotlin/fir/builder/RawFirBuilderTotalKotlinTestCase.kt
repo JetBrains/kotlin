@@ -9,15 +9,18 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -67,18 +70,18 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 }
                 totalLength += FirRenderer().renderElementAsString(firFile).length
                 counter++
-                firFile.accept(object : FirVisitorVoid() {
-                    override fun visitElement(element: FirElement) {
-                        element.acceptChildren(this)
+                firFile.accept(object : FirVisitor<Unit, FirElement>() {
+                    override fun visitElement(element: FirElement, data: FirElement) {
+                        element.acceptChildren(this, element)
                     }
 
-                    override fun visitErrorExpression(errorExpression: FirErrorExpression) {
+                    override fun visitErrorExpression(errorExpression: FirErrorExpression, data: FirElement) {
                         errorExpressions++
                         println(errorExpression.render())
                         errorExpression.psi?.let { println(it) }
                     }
 
-                    override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
+                    override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: FirElement) {
                         val calleeReference = qualifiedAccess.calleeReference
                         if (calleeReference is FirErrorNamedReference) {
                             errorReferences++
@@ -86,23 +89,25 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         } else {
                             normalReferences++
                         }
-                        visitStatement(qualifiedAccess)
+                        visitStatement(qualifiedAccess, data)
                     }
 
-                    override fun visitExpression(expression: FirExpression) {
+                    override fun visitExpression(expression: FirExpression, data: FirElement) {
                         when (expression) {
                             is FirExpressionStub -> {
-                                expressionStubs++
-                                println(expression.psi?.text)
+                                if (data !is FirProperty || data.isCatchParameter != true) {
+                                    expressionStubs++
+                                    println(expression.psi?.text)
+                                }
                             }
                             else -> normalExpressions++
                         }
-                        expression.acceptChildren(this)
+                        expression.acceptChildren(this, expression)
                     }
 
-                    override fun visitStatement(statement: FirStatement) {
+                    override fun visitStatement(statement: FirStatement, data: FirElement) {
                         normalStatements++
-                        statement.acceptChildren(this)
+                        statement.acceptChildren(this, statement)
                     }
 
 //                    override fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration) {
@@ -111,11 +116,11 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 //                        errorDeclaration.psi?.let { println(it) }
 //                    }
 
-                    override fun visitDeclaration(declaration: FirDeclaration) {
+                    override fun visitDeclaration(declaration: FirDeclaration, data: FirElement) {
                         normalDeclarations++
-                        declaration.acceptChildren(this)
+                        declaration.acceptChildren(this, declaration)
                     }
-                })
+                }, firFile)
                 ktFile.accept(object : KtTreeVisitor<Nothing?>() {
                     override fun visitReferenceExpression(expression: KtReferenceExpression, data: Nothing?): Void? {
                         ktReferences++

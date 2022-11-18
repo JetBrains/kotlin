@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 
@@ -22,7 +23,7 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
         if (
             declaration is FirRegularClass ||
             declaration is FirTypeParameter ||
-            declaration is FirProperty ||
+            declaration is FirProperty && declaration.isCatchParameter != true ||
             declaration is FirTypeAlias
         ) {
             reportIfUnderscore(declaration, context, reporter)

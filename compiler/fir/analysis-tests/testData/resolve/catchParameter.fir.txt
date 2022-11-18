@@ -3,39 +3,39 @@ FILE: catchParameter.kt
     public final fun <T : R|kotlin/Throwable|> test(): R|kotlin/Unit| {
         try {
         }
-        catch (e: R|kotlin/NullPointerException| = R|java/lang/NullPointerException.NullPointerException|()) {
+        catch (lval e: R|kotlin/NullPointerException| = STUB) {
         }
 
         try {
         }
-        catch (e: R|T|) {
+        catch (lval e: R|T| = STUB) {
         }
 
         try {
         }
-        catch (e: R|() -> kotlin/Int|) {
+        catch (lval e: R|() -> kotlin/Int| = STUB) {
         }
 
         try {
         }
-        catch (e: R|StringType|) {
+        catch (lval e: R|StringType| = STUB) {
         }
 
         try {
         }
-        catch (e: R|kotlin/Int| = Int(5)) {
+        catch (lval e: R|kotlin/Int| = STUB) {
         }
 
         try {
         }
-        catch (e: R|kotlin/Throwable|) {
+        catch (lval e: R|kotlin/Throwable| = STUB) {
         }
 
     }
     public final inline fun <reified T> anotherTest(): R|kotlin/Unit| {
         try {
         }
-        catch (e: R|T|) {
+        catch (lval e: R|T| = STUB) {
         }
 
     }

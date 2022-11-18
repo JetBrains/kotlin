@@ -142,3 +142,7 @@ var FirRegularClass.isJavaRecord: Boolean? by FirDeclarationDataRegistry.data(Is
 private object IsJavaRecordComponentKey : FirDeclarationDataKey()
 var FirFunction.isJavaRecordComponent: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordComponentKey)
 
+private object IsCatchParameterProperty : FirDeclarationDataKey()
+
+var FirProperty.isCatchParameter: Boolean? by FirDeclarationDataRegistry.data(IsCatchParameterProperty)
+

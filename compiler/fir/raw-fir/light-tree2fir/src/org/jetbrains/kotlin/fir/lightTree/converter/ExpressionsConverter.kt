@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
@@ -1198,7 +1201,21 @@ class ExpressionsConverter(
             for ((parameter, block) in catchClauses) {
                 if (parameter == null) continue
                 catches += buildCatch {
-                    this.parameter = parameter.firValueParameter
+                    this.parameter = buildProperty {
+                        source = parameter.source
+                        moduleData = baseModuleData
+                        origin = FirDeclarationOrigin.Source
+                        returnTypeRef = parameter.returnTypeRef
+                        isVar = false
+                        status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                        isLocal = true
+                        initializer = buildExpressionStub { }
+                        this.name = parameter.name
+                        symbol = FirPropertySymbol(CallableId(name))
+                        annotations += parameter.annotations
+                    }.also {
+                        it.isCatchParameter = true
+                    }
                     this.block = block
                 }
             }
