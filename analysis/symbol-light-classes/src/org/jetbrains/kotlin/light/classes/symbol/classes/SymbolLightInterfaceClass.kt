@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 
 context(KtAnalysisSession)
@@ -27,15 +26,6 @@ internal open class SymbolLightInterfaceClass(
     init {
         require(classOrObjectSymbol.classKind == KtClassKind.INTERFACE)
     }
-
-    private val _ownFields: List<KtLightField> by lazyPub {
-        mutableListOf<KtLightField>().also {
-            addCompanionObjectFieldIfNeeded(it)
-            addFieldsFromCompanionIfNeeded(it)
-        }
-    }
-
-    override fun getOwnFields(): List<KtLightField> = _ownFields
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
         val result = mutableListOf<KtLightMethod>()
