@@ -153,36 +153,12 @@ object FirOptInUsageBaseChecker {
         val session = context.session
         if (fir is FirCallableDeclaration) {
             val parentClassSymbol = fir.containingClassLookupTag()?.toSymbol(session) as? FirRegularClassSymbol
-            if (fir.isSubstitutionOrIntersectionOverride) {
-                parentClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
-                val parentClassScope = parentClassSymbol?.unsubstitutedScope(context)
-                if (this is FirNamedFunctionSymbol) {
-                    parentClassScope?.processDirectlyOverriddenFunctions(this) {
-                        it.loadExperimentalities(
-                            context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
-                        )
-                        ProcessorAction.NEXT
-                    }
-                } else if (this is FirPropertySymbol) {
-                    parentClassScope?.processDirectlyOverriddenProperties(this) {
-                        it.loadExperimentalities(context, result, visited, fromSetter, dispatchReceiverType, fromSupertype = false)
-                        ProcessorAction.NEXT
-                    }
-                }
-            }
             if (fir is FirConstructor) {
                 parentClassSymbol?.loadExperimentalities(
                     context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
                 )
             } else {
-                // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
-                fir.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-                fir.receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
-                if (fir is FirSimpleFunction) {
-                    fir.valueParameters.forEach {
-                        it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
-                    }
-                }
+                fir.loadOverridableSpecificExperimentalities(session, context, parentClassSymbol, visited, result)
             }
             dispatchReceiverType?.addExperimentalities(context, result, visited)
             if (fromSetter && this is FirPropertySymbol) {
@@ -190,17 +166,21 @@ object FirOptInUsageBaseChecker {
                     context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
                 )
             }
-        } else if (this is FirRegularClassSymbol && fir is FirRegularClass) {
-            val parentClassSymbol = outerClassSymbol(context)
-            parentClassSymbol?.loadExperimentalities(
-                context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
-            )
-        }
-
-        fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
-
-        if (fir is FirTypeAlias) {
-            fir.expandedTypeRef.coneType.addExperimentalities(context, result, visited)
+        } else if (fir is FirClassLikeDeclaration) {
+            when (fir) {
+                is FirRegularClass -> if (this is FirRegularClassSymbol) {
+                    val parentClassSymbol = outerClassSymbol(context)
+                    parentClassSymbol?.loadExperimentalities(
+                        context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
+                    )
+                }
+                is FirTypeAlias -> {
+                    fir.expandedTypeRef.coneType.addExperimentalities(context, result, visited)
+                }
+                is FirAnonymousObject -> {
+                }
+            }
+            fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
         }
 
         if (fir.getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) != null) {
@@ -215,6 +195,47 @@ object FirOptInUsageBaseChecker {
 
         // TODO: getAnnotationsOnContainingModule
         return result
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun FirCallableDeclaration.loadOverridableSpecificExperimentalities(
+        session: FirSession,
+        context: CheckerContext,
+        parentClassSymbol: FirRegularClassSymbol?,
+        visited: MutableSet<FirDeclaration>,
+        result: SmartSet<Experimentality>
+    ) {
+        if (isSubstitutionOrIntersectionOverride) {
+            parentClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
+            val parentClassScope = parentClassSymbol?.unsubstitutedScope(context)
+            if (this is FirSimpleFunction) {
+                parentClassScope?.processDirectlyOverriddenFunctions(symbol) { overriddenSymbol ->
+                    val overriddenFir = overriddenSymbol.fir
+                    if (visited.add(overriddenFir)) {
+                        overriddenFir.loadOverridableSpecificExperimentalities(session, context, parentClassSymbol, visited, result)
+                    }
+                    ProcessorAction.NEXT
+                }
+            } else if (this is FirProperty) {
+                parentClassScope?.processDirectlyOverriddenProperties(symbol) { overriddenSymbol ->
+                    val overriddenFir = overriddenSymbol.fir
+                    if (visited.add(overriddenFir)) {
+                        overriddenFir.loadOverridableSpecificExperimentalities(session, context, parentClassSymbol, visited, result)
+                    }
+                    ProcessorAction.NEXT
+                }
+            }
+        }
+        // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
+        returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
+        receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
+        if (this is FirSimpleFunction) {
+            valueParameters.forEach {
+                it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
+            }
+        }
+
+        loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype = false)
     }
 
     private fun ConeKotlinType?.addExperimentalities(
