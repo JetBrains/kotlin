@@ -77,6 +77,10 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 .convention(propertiesProvider.kotlinOptionsSuppressFreeArgsModificationWarning)
                 .finalizeValueOnRead()
 
+            task.preciseCompilationResultsBackup
+                .convention(propertiesProvider.preciseCompilationResultsBackup)
+                .finalizeValueOnRead()
+
             task.incremental = false
             task.useModuleDetection.convention(false)
         }

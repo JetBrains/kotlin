@@ -381,10 +381,19 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
 
+    @get:Internal
+    internal abstract val preciseCompilationResultsBackup: Property<Boolean>
+
     /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
     @get:Internal
     protected open val taskOutputsBackupExcludes: List<File>
-        get() = listOf(destinationDirectory.get().asFile)
+        get() {
+            val list = mutableListOf<File>()
+            if (preciseCompilationResultsBackup.get()) {
+                list.add(destinationDirectory.get().asFile)
+            }
+            return list
+        }
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
@@ -749,11 +758,12 @@ abstract class KotlinCompile @Inject constructor(
                 usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings,
-                withAbiSnapshot = useKotlinAbiSnapshot.get()
+                withAbiSnapshot = useKotlinAbiSnapshot.get(),
+                preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
             )
         } else null
 
-        @Suppress("ConvertArgumentToSet", "DEPRECATION")
+        @Suppress("ConvertArgumentToSet")
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             // In the incremental compiler, outputFiles will be cleaned on rebuild. However, because classpathSnapshotDir is not included in
@@ -1175,7 +1185,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 getChangedFiles(inputChanges, incrementalProps),
                 ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildCacheableOutputDirectory.get().asFile,
-                multiModuleICSettings = multiModuleICSettings
+                multiModuleICSettings = multiModuleICSettings,
+                preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
             )
         } else null
 

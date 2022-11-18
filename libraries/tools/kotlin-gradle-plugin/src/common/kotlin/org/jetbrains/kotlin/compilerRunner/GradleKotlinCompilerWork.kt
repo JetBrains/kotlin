@@ -294,7 +294,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             multiModuleICSettings = icEnv.multiModuleICSettings,
             modulesInfo = incrementalModuleInfo!!,
             kotlinScriptExtensions = kotlinScriptExtensions,
-            withAbiSnapshot = icEnv.withAbiSnapshot
+            withAbiSnapshot = icEnv.withAbiSnapshot,
+            preciseCompilationResultsBackup = icEnv.preciseCompilationResultsBackup,
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
