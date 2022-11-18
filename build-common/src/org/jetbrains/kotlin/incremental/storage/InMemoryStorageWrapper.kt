@@ -5,8 +5,16 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import java.util.*
+import kotlin.collections.LinkedHashMap
+
+/**
+ * An in-memory wrapper for [origin] that keeps all the write operations in-memory.
+ * Flushes all the changes to the [origin] on [flush] invocation.
+ * [resetInMemoryChanges] should be called to reset in-memory changes of this wrapper.
+ */
 class InMemoryStorageWrapper<K, V>(val origin: LazyStorage<K, V>) : LazyStorage<K, V> {
-    private val inMemoryStorage = LinkedHashMap<K, V>()
+    private val inMemoryStorage = LinkedHashMap<K, ValueWrapper<V>>()
     private val removedKeys = hashSetOf<K>()
     private var isCleanRequested = false
 
@@ -32,8 +40,13 @@ class InMemoryStorageWrapper<K, V>(val origin: LazyStorage<K, V>) : LazyStorage<
         for (key in removedKeys) {
             origin.remove(key)
         }
-        for ((key, value) in inMemoryStorage) {
-            origin[key] = value
+        for ((key, valueWrapper) in inMemoryStorage) {
+            if (valueWrapper.isAppend) {
+                origin.append(key, valueWrapper.value)
+                origin[key] // trigger chunks compaction
+            } else {
+                origin[key] = valueWrapper.value
+            }
         }
 
         clean()
@@ -47,10 +60,25 @@ class InMemoryStorageWrapper<K, V>(val origin: LazyStorage<K, V>) : LazyStorage<
     }
 
     override fun append(key: K, value: V) {
-        // TODO
         @Suppress("UNCHECKED_CAST")
         when (value) {
-            is Collection<*> -> ((inMemoryStorage[key] ?: origin[key]?.let { ArrayList(it as Collection<*>) } ?: mutableListOf<Any?>()) as MutableCollection<Any?>).addAll(value)
+            is Collection<*> -> {
+                when {
+                    key in inMemoryStorage -> {
+                        // the key's value was set in-memory, so we keep changing it without additional marking as append
+                        (inMemoryStorage.getValue(key).value as MutableCollection<Any?>).addAll(value)
+                    }
+                    key !in removedKeys && key in origin -> {
+                        val collection = copyCollection(origin[key] as Collection<*>)
+                        collection.addAll(value)
+                        inMemoryStorage[key] = ValueWrapper(collection as V, isAppend = true)
+                    }
+                    else -> {
+                        set(key, value)
+                    }
+                }
+            }
+            else -> error("The value is expected to implement the Collection interface")
         }
     }
 
@@ -60,14 +88,29 @@ class InMemoryStorageWrapper<K, V>(val origin: LazyStorage<K, V>) : LazyStorage<
     }
 
     override fun set(key: K, value: V) {
-        inMemoryStorage[key] = value
+        @Suppress("UNCHECKED_CAST")
+        inMemoryStorage[key] = ValueWrapper(if (value is Collection<*>) copyCollection(value) as V else value)
+    }
+
+    private fun copyCollection(collection: Collection<*>): MutableCollection<Any?> {
+        val newCollection = when (collection) {
+            is Set<*> -> TreeSet<Any?>()
+            else -> ArrayList<Any?>(collection.size)
+        }
+        newCollection.addAll(collection)
+        return newCollection
     }
 
     override fun get(key: K): V? = when (key) {
-        in inMemoryStorage -> inMemoryStorage[key]
+        in inMemoryStorage -> inMemoryStorage.getValue(key).value
         !in removedKeys -> origin[key]
         else -> null
     }
 
     override fun contains(key: K) = key in inMemoryStorage || (key !in removedKeys && key in origin)
+
+    private fun <K, V> Map<K, V>.getValue(key: K) =
+        this[key] ?: error("$key was unexpectedly removed from in-memory storage. Seems to be a multithreading issue")
+
+    class ValueWrapper<V>(val value: V, val isAppend: Boolean = false)
 }
