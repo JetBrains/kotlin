@@ -706,8 +706,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
 
             val checkedConsumerAGPVersions = AGPVersion.testedVersions
-                // Special version added for testing KT-49798
-                .plus(AGPVersion.fromString("7.1.0-beta02"))
                 .filter { version -> version >= AGPVersion.fromString(TestVersions.AGP.AGP_42) }
                 .filter { version -> version < AGPVersion.fromString(TestVersions.AGP.MAX_SUPPORTED) }
                 .map { it.toString() }
