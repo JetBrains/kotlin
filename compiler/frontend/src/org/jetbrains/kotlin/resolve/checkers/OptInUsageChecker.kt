@@ -315,7 +315,10 @@ class OptInUsageChecker(project: Project) : CallChecker {
 
         /**
          * Checks whether there's an element lexically above in the tree, annotated with `@OptIn(X::class)`, or a declaration
-         * annotated with `@X` where [annotationFqName] is the FQ name of X
+         * annotated with `@X` where [annotationFqName] is the FQ name of X.
+         *
+         * This implementation also was rewritten for K2 use in intellij repository.
+         * See `org.jetbrains.kotlin.idea.base.fir.codeInsight.FirOptInUsageCheckerKt#isOptInAllowed`.
          */
         fun PsiElement.isOptInAllowed(
             annotationFqName: FqName,
