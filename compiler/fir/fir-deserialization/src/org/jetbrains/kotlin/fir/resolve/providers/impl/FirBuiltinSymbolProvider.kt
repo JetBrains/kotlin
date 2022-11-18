@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassType
@@ -129,13 +130,15 @@ open class FirBuiltinSymbolProvider(
             val classData = classDataFinder.findClassData(classId)!!
             val classProto = classData.classProto
 
-            deserializeClassToSymbol(
-                classId, classProto, symbol, nameResolver, moduleData.session, moduleData,
-                null, kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
-                null,
-                origin = FirDeclarationOrigin.BuiltIns,
-                this::findAndDeserializeClass,
-            )
+            moduleData.session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+                deserializeClassToSymbol(
+                    classId, classProto, symbol, nameResolver, moduleData.session, moduleData,
+                    null, kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
+                    null,
+                    origin = FirDeclarationOrigin.BuiltIns,
+                    this::findAndDeserializeClass,
+                )
+            }
         }
 
         fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
