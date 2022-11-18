@@ -115,7 +115,7 @@ private class TestBuilderImpl : TestBuilder {
                 }
             }
 
-            if (testFailureDetails != null) TestFailure(serialNumber, testFailureDetails) else null
+            if (testFailureDetails != null) TestFailure(serialNumber, test.sourceLocation, testFailureDetails) else null
         }
 
         return if (testFailures.isEmpty()) OK_STATUS else testFailures.joinToString(prefix = "\n", separator = "\n", postfix = "\n")
@@ -157,13 +157,20 @@ private class NonImplementedCallable(callableTypeAndName: String, classifierType
             TestMismatchedExpectation(fullMessage, errorMessage)
 }
 
-private sealed interface Test
-private class FailingWithLinkageErrorTest(val errorMessagePattern: ErrorMessagePattern, val block: Block<Any?>) : Test
-private class FailingWithNoWhenBranchErrorTest(val block: Block<Any?>) : Test
-private class SuccessfulTest(val expectedOutcome: Any, val block: Block<Any>) : Test
+private sealed class Test {
+    val sourceLocation: String? = computeSourceLocation()
+}
 
-private class TestFailure(val serialNumber: Int, val details: TestFailureDetails) {
-    override fun toString() = "#$serialNumber: ${details.description}"
+private class FailingWithLinkageErrorTest(val errorMessagePattern: ErrorMessagePattern, val block: Block<Any?>) : Test()
+private class FailingWithNoWhenBranchErrorTest(val block: Block<Any?>) : Test()
+private class SuccessfulTest(val expectedOutcome: Any, val block: Block<Any>) : Test()
+
+private class TestFailure(val serialNumber: Int, val sourceLocation: String?, val details: TestFailureDetails) {
+    override fun toString() = buildString {
+        append('#').append(serialNumber)
+        if (sourceLocation != null) append(" (").append(sourceLocation).append(")")
+        append(": ").append(details.description)
+    }
 }
 
 private sealed class TestFailureDetails(val description: String)
@@ -184,3 +191,31 @@ private val Throwable.throwableKind: ThrowableKind
 
 private fun FailingWithLinkageErrorTest.checkIrLinkageErrorMessage(t: Throwable) =
     (errorMessagePattern as AbstractErrorMessagePattern).checkIrLinkageErrorMessage(t.message)
+
+fun computeSourceLocation(): String? {
+    fun extractSourceLocation(stackTraceLine: String): String? {
+        return stackTraceLine.substringAfterLast('(', missingDelimiterValue = "")
+            .substringBefore(')', missingDelimiterValue = "")
+            .takeIf { it.isNotEmpty() }
+            ?.split(':', limit = 2)
+            ?.takeIf { it.size == 2 && it[0].isNotEmpty() && it[1].isNotEmpty() }
+            ?.let { "${it[0].substringAfterLast('/').substringAfterLast('\\')}:${it[1]}" }
+    }
+
+    var beenInTestBuilderImpl = false
+
+    // Capture the stack trace to find out the line number where the test was exactly configured.
+    return Throwable().stackTraceToString()
+        .lineSequence()
+        .dropWhile { stackTraceLine ->
+            val isInTestBuilderImpl = TestBuilderImpl::class.simpleName!! in stackTraceLine
+            if (isInTestBuilderImpl) {
+                beenInTestBuilderImpl = true
+                true
+            } else {
+                !beenInTestBuilderImpl
+            }
+        }
+        .mapNotNull(::extractSourceLocation)
+        .firstOrNull()
+}
