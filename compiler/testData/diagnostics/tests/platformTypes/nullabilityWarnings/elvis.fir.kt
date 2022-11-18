@@ -60,8 +60,8 @@ fun test() {
     takeNotNull(J.getNNAny() <!USELESS_ELVIS!>?: J()<!>)
     takeNotNull(J.getNAny() ?: J())
 
-    val x = <!UNRESOLVED_REFERENCE!>unresolved<!> ?: null
-    val y = <!UNRESOLVED_REFERENCE!>unresolved<!>.foo ?: return
+    val x = <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>unresolved<!> ?: null
+    val y = <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>.foo<!> ?: return
 }
 
 fun takeNotNull(s: J) {}

@@ -13,14 +13,14 @@ fun bar(a: A): Int = 0
 val l0: Int
     get() =
         if (1 < 2) {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(C)
+            <!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(C)<!>
         } else {
             bar(C)
         }
 
 val l1: Int
     get() = when {
-        true -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(C)
-        false -> { <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(C) }
+        true -> <!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(C)<!>
+        false -> { <!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(C)<!> }
         else -> bar(C)
     }

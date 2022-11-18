@@ -25,7 +25,7 @@ fun test_5(x: Any, b: Boolean) {
         require(x is String)
         x.length
     } else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }

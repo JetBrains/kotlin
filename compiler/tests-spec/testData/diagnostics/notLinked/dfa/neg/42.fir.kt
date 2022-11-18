@@ -149,7 +149,7 @@ fun case_14(x: Any) {
     if (x is Int || x is Float) {
         if (x is Float) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Float")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Float")!>x<!>.<!UNRESOLVED_REFERENCE!>NaN<!>
+            <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Float")!>x<!>.<!UNRESOLVED_REFERENCE!>NaN<!><!>
         } else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()

@@ -23,15 +23,15 @@ class A {
                                                                                         <!UNRESOLVED_REFERENCE!>div<!> {
                                                                                             <!UNRESOLVED_REFERENCE!>div<!> {
                                                                                                 <!UNRESOLVED_REFERENCE!>div<!> {
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
-                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
+                                                                                                    <!UNRESOLVED_REFERENCE!>+<!>(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>foo<!> ?: "")
                                                                                                 }
                                                                                             }
                                                                                         }

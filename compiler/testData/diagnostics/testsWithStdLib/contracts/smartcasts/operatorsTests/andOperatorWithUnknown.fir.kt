@@ -28,16 +28,16 @@ fun annotatedTrue(x: Any?) {
         x.length
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 }
 
 fun annotatedFalse(x: Any?) {
     if (falseWhenString(x) && unknownFunction(x)) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 }
 
@@ -46,15 +46,15 @@ fun annotatedTrueWithVariable(x: Any?, b: Boolean) {
         x.length
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 }
 
 fun annotatedFalseWithVariable(x: Any?, b: Boolean) {
     if (falseWhenString(x) && b) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 }

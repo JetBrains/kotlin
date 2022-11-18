@@ -13,43 +13,43 @@ fun safeIsString(x: Any?): Boolean? {
 
 fun elseWithNullableResult(x: Any?) {
     when (safeIsString(x)) {
-        false -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        false -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
         else -> x.length
     }
 
     when (safeIsString(x)) {
         true -> x.length
-        else -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        else -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 
     when (safeIsString(x)) {
         true -> x.length
-        false -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        else -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        false -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        else -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 
     when (safeIsString(x)) {
         true -> x.length
-        null -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        else -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        null -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        else -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 }
 
 fun exhaustiveWithNullableResult(x: Any?) {
     when (safeIsString(x)) {
         true -> x.length
-        false -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        null -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        false -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        null -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 
     when (safeIsString(x)) {
-        false -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        false -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
         true -> x.length
         null -> x.length
     }
 
     when (safeIsString(x)) {
-        false -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        false -> <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
         null -> x.length
         true -> x.length
     }

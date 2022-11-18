@@ -20,7 +20,7 @@ fun implicitAlwaysFalse(x: Any?) {
         x.length
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 }
 

@@ -2,7 +2,7 @@ fun castInTry(s: Any) {
     try {
         s as String // Potential cast exception
     } catch (e: Exception) {
-        s.<!UNRESOLVED_REFERENCE!>length<!> // shouldn't be resolved
+        <!ARGUMENT_TYPE_MISMATCH!>s.<!UNRESOLVED_REFERENCE!>length<!><!> // shouldn't be resolved
     } finally {
         s.<!UNRESOLVED_REFERENCE!>length<!> // shouldn't be resolved
     }

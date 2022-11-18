@@ -12,6 +12,6 @@ fun test(x: Any) {
     if (checkIsString(x)) {
         x.length // OK
     } else {
-        x.<!UNRESOLVED_REFERENCE!>length<!> // Error
+        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!> // Error
     }
 }

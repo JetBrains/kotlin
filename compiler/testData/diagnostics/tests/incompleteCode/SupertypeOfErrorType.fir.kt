@@ -16,7 +16,7 @@ fun foo() {
 }
 
 fun bar(i: Int, a: <!UNRESOLVED_REFERENCE!>U<!>) {
-    val r = if (true) i else a
+    val r = if (true) i else <!ARGUMENT_TYPE_MISMATCH!>a<!>
     val b: Any = r
 }
 

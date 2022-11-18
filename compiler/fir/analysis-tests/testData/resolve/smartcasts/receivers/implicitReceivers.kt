@@ -15,7 +15,7 @@ fun Any?.test_1() {
         foo()
     } else {
         this.<!UNRESOLVED_REFERENCE!>foo<!>()
-        <!UNRESOLVED_REFERENCE!>foo<!>()
+        <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
     }
     this.<!UNRESOLVED_REFERENCE!>foo<!>()
     <!UNRESOLVED_REFERENCE!>foo<!>()
@@ -24,7 +24,7 @@ fun Any?.test_1() {
 fun Any?.test_2() {
     if (this !is A) {
         this.<!UNRESOLVED_REFERENCE!>foo<!>()
-        <!UNRESOLVED_REFERENCE!>foo<!>()
+        <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
     } else {
         this.foo()
         foo()
@@ -52,7 +52,7 @@ fun Any?.test_4() {
         this.<!UNRESOLVED_REFERENCE!>foo<!>()
         <!UNRESOLVED_REFERENCE!>foo<!>()
         this.<!UNRESOLVED_REFERENCE!>bar<!>()
-        <!UNRESOLVED_REFERENCE!>bar<!>()
+        <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>bar<!>()<!>
     } else if (this !is B) {
         this.<!UNRESOLVED_REFERENCE!>bar<!>()
         <!UNRESOLVED_REFERENCE!>bar<!>()

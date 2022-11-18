@@ -9,7 +9,7 @@ fun testAny() {
     takeFnToAny { Unit }
     takeFnToAny { <!UNRESOLVED_REFERENCE!>unresolved<!>() }
     takeFnToAny { if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() }
-    takeFnToAny { if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() else <!UNRESOLVED_REFERENCE!>unresolved<!>() }
+    takeFnToAny { if (true) <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!> else <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!> }
     takeFnToAny(fun() = Unit)
     takeFnToAny(fun() {})
     takeFnToAny(fun() { return })
@@ -31,7 +31,7 @@ fun testUnit() {
     takeFnToUnit { Unit }
     takeFnToUnit { <!UNRESOLVED_REFERENCE!>unresolved<!>() }
     takeFnToUnit { if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() }
-    takeFnToUnit { if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() else <!UNRESOLVED_REFERENCE!>unresolved<!>() }
+    takeFnToUnit { if (true) <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!> else <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!> }
     takeFnToUnit(fun() = Unit)
     takeFnToUnit(fun() {})
     takeFnToUnit(fun() { return })
@@ -54,7 +54,7 @@ fun testParameter() {
     takeFnToParameter { <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!> }
     takeFnToParameter { if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() }
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeFnToParameter<!> {
-        if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() else <!UNRESOLVED_REFERENCE!>unresolved<!>()
+        if (true) <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!> else <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!>
     }
     takeFnToParameter(fun() = Unit)
     takeFnToParameter(fun() {})

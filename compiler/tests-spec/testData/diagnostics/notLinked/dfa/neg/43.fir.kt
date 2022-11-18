@@ -13,7 +13,7 @@ fun case_1(x: Double?, y: Double?) : Double {
     } else if (x == null && y != null) {
         y
     } else {
-        x <!UNSAFE_OPERATOR_CALL!>+<!> y
+        <!ARGUMENT_TYPE_MISMATCH!>x <!UNSAFE_OPERATOR_CALL!>+<!> y<!>
     }
 }
 

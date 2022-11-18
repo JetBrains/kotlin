@@ -22,7 +22,7 @@ fun case_2(x: Nothing) {
 fun case_3(x: Nothing?) {
     if (x !is Class) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
+        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!><!>
     }
 }
 
@@ -30,7 +30,7 @@ fun case_3(x: Nothing?) {
 fun case_4(x: Nothing) {
     if (<!USELESS_IS_CHECK!>x !is EnumClass<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>fun_1<!>()
+        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>fun_1<!>()<!>
     }
 }
 
@@ -54,7 +54,7 @@ fun case_6(x: Nothing?) {
 fun case_7(x: Nothing) {
     if (!(<!USELESS_IS_CHECK!>x is DeepObject.A.B.C.D.E.F.G.J<!>)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
+        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!><!>
     }
 }
 
@@ -70,7 +70,7 @@ fun case_8(x: Nothing?) {
 fun case_9(x: Nothing?) {
     if (!!(<!USELESS_IS_CHECK!>x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!><!>)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>length<!>
+        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>length<!><!>
     }
 }
 
@@ -79,7 +79,7 @@ fun case_10(x: Nothing?) {
     if (!!(x !is Interface3)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>itest<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>itest3<!>()
+        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>itest3<!>()<!>
     }
 }
 
