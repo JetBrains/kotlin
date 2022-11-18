@@ -57,6 +57,9 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // with a fake sources which refers to the target expression
     object GeneratedLambdaLabel : KtFakeSourceElementKind()
 
+    // for error element which is created for dangling modifier lists
+    object DanglingModifierList : KtFakeSourceElementKind()
+
     // for lambdas & functions with expression bodies the return statement is added
     // with a fake sources which refers to the return target
     sealed class ImplicitReturn : KtFakeSourceElementKind() {

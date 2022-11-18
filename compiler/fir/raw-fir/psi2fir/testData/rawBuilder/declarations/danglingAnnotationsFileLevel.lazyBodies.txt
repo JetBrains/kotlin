@@ -1,0 +1,2 @@
+FILE: danglingAnnotationsFileLevel.kt
+    @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>

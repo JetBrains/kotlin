@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
@@ -32,7 +34,8 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
             val comment = structureElement.createComment()
             when (ktDeclaration) {
                 is KtClassOrObject -> {
-                    val lBrace = ktDeclaration.body?.lBrace
+                    val body = ktDeclaration.body
+                    val lBrace = body?.lBrace
                     if (lBrace != null) {
                         elementToComment[lBrace] = comment
                     } else {
@@ -62,6 +65,13 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
             }
         }
 
+        PsiTreeUtil.getChildrenOfTypeAsList(ktFile, KtModifierList::class.java).forEach {
+            if (it.nextSibling is PsiErrorElement) {
+                val structureElement = declarationToStructureElement[ktFile] ?: return@forEach
+                val comment = structureElement.createComment()
+                elementToComment[it] = comment
+            }
+        }
 
         val text = buildString {
             ktFile.accept(object : PsiElementVisitor() {

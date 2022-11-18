@@ -70,6 +70,18 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("danglingAnnotation.kt")
+        public void testDanglingAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/danglingAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("danglingAnnotationInClass.kt")
+        public void testDanglingAnnotationInClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/danglingAnnotationInClass.kt");
+        }
+
+        @Test
         @TestMetadata("fileAnnotation.kt")
         public void testFileAnnotation() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/fileAnnotation.kt");
@@ -571,6 +583,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("javaClassLiteral.kt")
         public void testJavaClassLiteral() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/javaClassLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/secondaryConstructor.kt");
         }
     }
 
