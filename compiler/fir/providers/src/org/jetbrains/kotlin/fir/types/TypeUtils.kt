@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -394,6 +395,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
         if (oldArgument.kind == ProjectionKind.INVARIANT) continue
 
         val parameter = typeConstructor.getParameter(index)
+        (parameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
         val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->
             substitutor.safeSubstitute(
                 this as TypeSystemInferenceExtensionContext, parameter.getUpperBound(paramIndex)
