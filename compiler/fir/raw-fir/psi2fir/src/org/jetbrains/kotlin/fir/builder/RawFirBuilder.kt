@@ -11,10 +11,7 @@ import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -1985,11 +1982,32 @@ open class RawFirBuilder(
                 tryBlock = expression.tryBlock.toFirBlock()
                 finallyBlock = expression.finallyBlock?.finalExpression?.toFirBlock()
                 for (clause in expression.catchClauses) {
-                    val parameter = clause.catchParameter?.let {
-                        convertValueParameter(
-                            it,
-                            valueParameterDeclaration = ValueParameterDeclaration.CATCH
+                    val parameter = clause.catchParameter?.let { ktParameter ->
+                        val name = convertValueParameterName(
+                            ktParameter.nameAsSafeName,
+                            ktParameter.nameIdentifier?.node?.text,
+                            ValueParameterDeclaration.CATCH
                         )
+
+                        buildProperty {
+                            source = ktParameter.toFirSourceElement()
+                            moduleData = baseModuleData
+                            origin = FirDeclarationOrigin.Source
+                            returnTypeRef = when {
+                                ktParameter.typeReference != null -> ktParameter.typeReference.toFirOrErrorType()
+                                else -> createNoTypeForParameterTypeRef()
+                            }
+                            isVar = false
+                            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                            isLocal = true
+                            this.name = name
+                            symbol = FirPropertySymbol(CallableId(name))
+                            for (annotationEntry in ktParameter.annotationEntries) {
+                                this.annotations += annotationEntry.convert<FirAnnotation>()
+                            }
+                        }.also {
+                            it.isCatchParameter = true
+                        }
                     } ?: continue
                     catches += buildCatch {
                         source = clause.toFirSourceElement()

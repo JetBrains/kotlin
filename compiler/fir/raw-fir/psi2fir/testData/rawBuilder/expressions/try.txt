@@ -3,10 +3,10 @@ FILE: try.kt
         try {
             throw KotlinNullPointerException#()
         }
-        catch (e: RuntimeException) {
+        catch ([IsCatchParameterProperty=true] e: RuntimeException) {
             println#(String(Runtime exception))
         }
-        catch (e: Exception) {
+        catch ([IsCatchParameterProperty=true] e: Exception) {
             println#(String(Some exception))
         }
         finally {

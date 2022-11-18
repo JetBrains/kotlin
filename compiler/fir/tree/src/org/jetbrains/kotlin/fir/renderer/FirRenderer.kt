@@ -181,7 +181,9 @@ class FirRenderer(
             annotationRenderer?.render(callableDeclaration)
             visitMemberDeclaration(callableDeclaration)
             val receiverParameter = callableDeclaration.receiverParameter
-            print(" ")
+            if (callableDeclaration !is FirProperty || callableDeclaration.isCatchParameter != true) {
+                print(" ")
+            }
             if (receiverParameter != null) {
                 annotationRenderer?.render(receiverParameter, AnnotationUseSiteTarget.RECEIVER)
                 receiverParameter.typeRef.accept(this)
