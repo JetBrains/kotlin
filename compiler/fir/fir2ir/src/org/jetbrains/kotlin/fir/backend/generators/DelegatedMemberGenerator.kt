@@ -43,11 +43,12 @@ import org.jetbrains.kotlin.name.Name
  * TODO: generic super interface types and generic delegated members.
  */
 class DelegatedMemberGenerator(
-    private val components: Fir2IrComponents
+    private val components: Fir2IrComponents,
+    dependentGenerators: List<DelegatedMemberGenerator>
 ) : Fir2IrComponents by components {
 
-    private val baseFunctionSymbols = mutableMapOf<IrFunction, List<FirNamedFunctionSymbol>>()
-    private val basePropertySymbols = mutableMapOf<IrProperty, List<FirPropertySymbol>>()
+    private val baseFunctionSymbols: MutableMap<IrFunction, List<FirNamedFunctionSymbol>> = merge(dependentGenerators) { it.baseFunctionSymbols }
+    private val basePropertySymbols: MutableMap<IrProperty, List<FirPropertySymbol>> = merge(dependentGenerators) { it.basePropertySymbols }
 
     private data class DeclarationBodyInfo(
         val declaration: IrDeclaration,
@@ -57,6 +58,16 @@ class DelegatedMemberGenerator(
     )
 
     private val bodiesInfo = mutableListOf<DeclarationBodyInfo>()
+
+    private fun <K, V> merge(
+        dependentGenerators: List<DelegatedMemberGenerator>,
+        mapFunc: (DelegatedMemberGenerator) -> MutableMap<K, V>
+    ): MutableMap<K, V> {
+        return dependentGenerators.map { mapFunc(it) }.fold(mutableMapOf()) { result, map ->
+            result.putAll(map)
+            result
+        }
+    }
 
     fun generateBodies() {
         for ((declaration, irField, delegateToSymbol, delegateToLookupTag) in bodiesInfo) {

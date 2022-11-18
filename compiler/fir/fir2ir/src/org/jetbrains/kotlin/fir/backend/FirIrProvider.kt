@@ -31,7 +31,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
     private val symbolProvider = fir2IrComponents.session.symbolProvider
     private val declarationStorage = fir2IrComponents.declarationStorage
     private val classifierStorage = fir2IrComponents.classifierStorage
-    private val fakeOverrideGenerator = FakeOverrideGenerator(fir2IrComponents, Fir2IrConversionScope())
+    private val fakeOverrideGenerator = FakeOverrideGenerator(fir2IrComponents, Fir2IrConversionScope(), dependentGenerators = emptyList())
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         val signature = symbol.signature ?: return null

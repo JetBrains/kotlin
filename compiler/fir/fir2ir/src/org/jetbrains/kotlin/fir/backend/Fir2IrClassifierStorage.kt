@@ -39,32 +39,47 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Fir2IrClassifierStorage(
-    private val components: Fir2IrComponents
+    private val components: Fir2IrComponents,
+    private val dependentStorages: List<Fir2IrClassifierStorage>
 ) : Fir2IrComponents by components {
     private val firProvider = session.firProvider
 
-    private val classCache = mutableMapOf<FirRegularClass, IrClass>()
+    private val classCache: MutableMap<FirRegularClass, IrClass> = merge { it.classCache }
 
-    private val localClassesCreatedOnTheFly = mutableMapOf<FirClass, IrClass>()
+    private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = merge { it.localClassesCreatedOnTheFly }
 
     private var processMembersOfClassesOnTheFlyImmediately = false
 
-    private val typeAliasCache = mutableMapOf<FirTypeAlias, IrTypeAlias>()
+    private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAlias> = merge { it.typeAliasCache }
 
-    private val typeParameterCache = mutableMapOf<FirTypeParameter, IrTypeParameter>()
+    private val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = merge { it.typeParameterCache }
 
-    private val typeParameterCacheForSetter = mutableMapOf<FirTypeParameter, IrTypeParameter>()
+    private val typeParameterCacheForSetter: MutableMap<FirTypeParameter, IrTypeParameter> = merge { it.typeParameterCacheForSetter }
 
-    private val enumEntryCache = mutableMapOf<FirEnumEntry, IrEnumEntry>()
+    private val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = merge { it.enumEntryCache }
 
-    private val fieldsForContextReceivers = mutableMapOf<IrClass, List<IrField>>()
+    private val fieldsForContextReceivers: MutableMap<IrClass, List<IrField>> = merge { it.fieldsForContextReceivers }
 
-    private val localStorage = Fir2IrLocalStorage()
+    private val localStorage: Fir2IrLocalStorage = Fir2IrLocalStorage(
+        dependentStorages.map { it.localStorage }.fold(mutableMapOf()) { result, storage ->
+            result.putAll(storage.getLocalClassCache())
+            result
+        })
+
+    private fun <K, V> merge(mapFunc: (Fir2IrClassifierStorage) -> MutableMap<K, V>): MutableMap<K, V> {
+        return dependentStorages.map { mapFunc(it) }.fold(mutableMapOf()) { result, map ->
+            result.putAll(map)
+            result
+        }
+    }
 
     private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeContext) }
 
     fun preCacheBuiltinClasses() {
+        // dependentStorages are only actual for MPP scenario
+        // There is no need to precache them twice since the same library session is used and FIR and IR elements are the same
+        if (dependentStorages.isNotEmpty()) return
         for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
             val firClass = ConeClassLikeLookupTagImpl(classId).toSymbol(session)!!.fir as FirRegularClass
             val irClass = irBuiltinSymbol.owner
