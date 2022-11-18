@@ -23,8 +23,6 @@ class BuildTimes : Serializable {
 
     fun addTimeMs(buildTime: BuildTime, timeMs: Long) = addTimeNs(buildTime, timeMs * 1_000_000)
 
-    fun asMapNs(): Map<BuildTime, Long> = buildTimesNs
-
     fun asMapMs(): Map<BuildTime, Long> = buildTimesNs.mapValues { it.value / 1_000_000 }
 
     companion object {

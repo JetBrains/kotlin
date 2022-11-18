@@ -10,6 +10,8 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.tooling.events.task.TaskSuccessResult
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.lang.management.ManagementFactory
 import java.util.ArrayList
+import java.util.concurrent.TimeUnit
 
 
 private fun availableForStat(taskPath: String): Boolean {
@@ -51,10 +54,11 @@ internal fun prepareData(
     if (!availableForStat(taskPath)) {
         return null
     }
-    val buildMetrics = buildOperationRecords.firstOrNull { it.path == taskPath }?.buildMetrics
     val taskExecutionResult = TaskExecutionResults[taskPath]
-    val buildTimesMs = buildMetrics?.buildTimes?.asMapMs()?.filterValues { value -> value != 0L } ?: emptyMap()
-    val perfData = buildMetrics?.buildPerformanceMetrics?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
+    val buildMetrics = buildOperationRecords.firstOrNull { it.path == taskPath }?.buildMetrics
+
+    val performanceMetrics = collectBuildPerformanceMetrics(taskExecutionResult, buildMetrics)
+    val buildTimesMetrics = collectBuildMetrics(taskExecutionResult, buildMetrics, performanceMetrics, result.startTime, System.currentTimeMillis())
     val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
         is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
         else -> emptyList<String>()
@@ -63,14 +67,13 @@ internal fun prepareData(
         durationMs = durationMs,
         taskResult = taskResult.name,
         label = label,
-        buildTimesMetrics = buildTimesMs,
-        performanceMetrics = perfData,
+        buildTimesMetrics = buildTimesMetrics,
+        performanceMetrics = performanceMetrics,
         projectName = projectName,
         taskName = taskPath,
         changes = changes,
-        tags = parseTags(taskExecutionResult, buildMetrics, additionalTags).map { it.name },
-        nonIncrementalAttributes = buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys
-            ?: emptySet(),
+        tags = collectTags(taskExecutionResult, buildMetrics, additionalTags).map { it.name },
+        nonIncrementalAttributes = buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys ?: emptySet(),
         hostName = BuildReportsService.hostName,
         kotlinVersion = kotlinVersion,
         buildUuid = uuid,
@@ -79,8 +82,53 @@ internal fun prepareData(
     )
 }
 
-private fun parseTags(taskExecutionResult: TaskExecutionResult?, buildMetrics: BuildMetrics?, additionalTags: List<StatTag>): List<StatTag> {
-    val tags = parseTags(taskExecutionResult, additionalTags)
+
+private fun collectBuildPerformanceMetrics(
+    taskExecutionResult: TaskExecutionResult?,
+    buildMetrics: BuildMetrics?,
+): Map<BuildPerformanceMetric, Long> {
+    val taskBuildPerformanceMetrics = HashMap<BuildPerformanceMetric, Long>()
+    taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.let { taskBuildPerformanceMetrics.putAll(it) }
+    buildMetrics?.buildPerformanceMetrics?.asMap()?.let { taskBuildPerformanceMetrics.putAll(it) }
+    taskBuildPerformanceMetrics.filterValues { value -> value != 0L }
+    return taskBuildPerformanceMetrics
+}
+private fun collectBuildMetrics(
+    taskExecutionResult: TaskExecutionResult?,
+    buildMetrics: BuildMetrics?,
+    performanceMetrics: Map<BuildPerformanceMetric, Long>,
+    gradleTaskStartTime: Long? = null,
+    taskFinishEventTime: Long? = null,
+): Map<BuildTime, Long> {
+    val taskBuildMetrics = HashMap<BuildTime, Long>()
+    taskExecutionResult?.buildMetrics?.buildTimes?.asMapMs()?.let { taskBuildMetrics.putAll(it) }
+    buildMetrics?.buildTimes?.asMapMs()?.let { taskBuildMetrics.putAll(it) }
+    gradleTaskStartTime?.let { startTime ->
+        performanceMetrics[BuildPerformanceMetric.START_TASK_ACTION_EXECUTION]?.let { actionStartTime ->
+            taskBuildMetrics.put(BuildTime.GRADLE_TASK_PREPARATION, actionStartTime - startTime)
+        }
+    }
+    taskFinishEventTime?.let { listenerNotificationTime ->
+        performanceMetrics[BuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION]?.let { daemonFinishTime ->
+            taskBuildMetrics.put(BuildTime.TASK_FINISH_LISTENER_NOTIFICATION, listenerNotificationTime - daemonFinishTime)
+        }
+    }
+    performanceMetrics[BuildPerformanceMetric.CALL_WORKER]?.let { callWorkerTime ->
+        performanceMetrics[BuildPerformanceMetric.START_WORKER_EXECUTION]?.let { startWorkerExecutionTime ->
+            taskBuildMetrics.put(BuildTime.RUN_WORKER_DELAY, TimeUnit.NANOSECONDS.toMillis(startWorkerExecutionTime - callWorkerTime))
+        }
+
+    }
+    taskBuildMetrics.filterValues { value -> value != 0L }
+    return taskBuildMetrics
+}
+
+private fun collectTags(
+    taskExecutionResult: TaskExecutionResult?,
+    buildMetrics: BuildMetrics?,
+    additionalTags: List<StatTag>
+): List<StatTag> {
+    val tags = collectTags(taskExecutionResult, additionalTags)
     val nonIncrementalAttributes = buildMetrics?.buildAttributes?.asMap() ?: emptyMap()
     if (nonIncrementalAttributes.isEmpty()) {
         tags.add(StatTag.INCREMENTAL)
@@ -90,7 +138,7 @@ private fun parseTags(taskExecutionResult: TaskExecutionResult?, buildMetrics: B
     return tags
 }
 
-private fun parseTags(
+private fun collectTags(
     taskExecutionResult: TaskExecutionResult?,
     additionalTags: List<StatTag>,
 ): MutableList<StatTag>{

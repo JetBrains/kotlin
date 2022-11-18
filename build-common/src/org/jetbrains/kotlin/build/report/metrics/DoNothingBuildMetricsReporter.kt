@@ -18,6 +18,9 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter {
     override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
     }
 
+    override fun addTimeMetric(metric: BuildPerformanceMetric) {
+    }
+
     override fun addAttribute(attribute: BuildAttribute) {
     }
 

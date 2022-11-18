@@ -144,8 +144,8 @@ internal class PlainTextBuildReportWriter(
 
         repeat(indentLevel) { p.pushIndent() }
         when (sizeMetric.type) {
-            SizeMetricType.BYTES -> p.println("${sizeMetric.readableString}: ${formatSize(value)}")
-            SizeMetricType.NUMBER -> p.println("${sizeMetric.readableString}: $value")
+            ValueType.BYTES -> p.println("${sizeMetric.readableString}: ${formatSize(value)}")
+            ValueType.NUMBER -> p.println("${sizeMetric.readableString}: $value")
         }
         repeat(indentLevel) { p.popIndent() }
     }

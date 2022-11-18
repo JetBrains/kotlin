@@ -38,6 +38,15 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
         myBuildMetrics.add(metric, value)
     }
 
+    override fun addTimeMetric(metric: BuildPerformanceMetric) {
+        when (metric.type) {
+            ValueType.NANOSECONDS -> myBuildMetrics.add(metric, System.nanoTime())
+            ValueType.MILLISECONDS -> myBuildMetrics.add(metric, System.currentTimeMillis())
+            else -> error("Unable to add time metric for '${metric.type}' type")
+        }
+
+    }
+
     override fun addAttribute(attribute: BuildAttribute) {
         myBuildAttributes.add(attribute)
     }

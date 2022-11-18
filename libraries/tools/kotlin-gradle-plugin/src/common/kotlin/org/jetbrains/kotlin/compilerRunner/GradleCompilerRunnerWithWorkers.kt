@@ -15,6 +15,7 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -36,6 +37,7 @@ internal class GradleCompilerRunnerWithWorkers(
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue {
 
+        buildMetrics.addTimeMetric(BuildPerformanceMetric.CALL_WORKER)
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(GradleKotlinCompilerWorkAction::class.java) { params ->
             params.compilerWorkArguments.set(workArgs)
