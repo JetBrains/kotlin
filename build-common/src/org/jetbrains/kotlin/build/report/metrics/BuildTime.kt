@@ -30,7 +30,7 @@ enum class BuildTime(val parent: BuildTime? = null, val readableString: String) 
                     JAR_SNAPSHOT(INCREMENTAL_COMPILATION_DAEMON, "ABI JAR Snapshot support"),
                         SET_UP_ABI_SNAPSHOTS(JAR_SNAPSHOT, "Set up ABI snapshot"),
                         IC_ANALYZE_JAR_FILES(JAR_SNAPSHOT, "Analyze jar files"),
-                    IC_CALCULATE_INITIAL_DIRTY_SET(INCREMENTAL_COMPILATION_DAEMON, "Calculate initial dirty sources set"), //TODO
+                    IC_CALCULATE_INITIAL_DIRTY_SET(INCREMENTAL_COMPILATION_DAEMON, "Calculate initial dirty sources set"),
                         COMPUTE_CLASSPATH_CHANGES(IC_CALCULATE_INITIAL_DIRTY_SET, "Compute classpath changes"),
                             LOAD_CURRENT_CLASSPATH_SNAPSHOT(COMPUTE_CLASSPATH_CHANGES, "Load current classpath snapshot"),
                                 REMOVE_DUPLICATE_CLASSES(LOAD_CURRENT_CLASSPATH_SNAPSHOT, "Remove duplicate classes"),
