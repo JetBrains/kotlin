@@ -169,12 +169,12 @@ object FirOptInUsageBaseChecker {
                         ProcessorAction.NEXT
                     }
                 }
-            } else if (dispatchReceiverType == null) {
+            }
+            if (fir is FirConstructor) {
                 parentClassSymbol?.loadExperimentalities(
                     context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
                 )
-            }
-            if (fir !is FirConstructor) {
+            } else {
                 // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
                 fir.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
                 fir.receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
