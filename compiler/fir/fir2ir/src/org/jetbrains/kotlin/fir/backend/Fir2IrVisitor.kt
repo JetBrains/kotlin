@@ -515,7 +515,14 @@ class Fir2IrVisitor(
         if (boundSymbol is FirClassSymbol) {
             // Object case
             val firClass = boundSymbol.fir as FirClass
-            val irClass = classifierStorage.getCachedIrClass(firClass)!!
+            val irClass = if (firClass.origin == FirDeclarationOrigin.Source) {
+                // We anyway can use 'else' branch as fallback, but
+                // this is an additional check of FIR2IR invariants
+                // (source classes should be already built when we analyze bodies)
+                classifierStorage.getCachedIrClass(firClass)!!
+            } else {
+                classifierStorage.getIrClassSymbol(boundSymbol).owner
+            }
             // NB: IR generates anonymous objects as classes, not singleton objects
             if (firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT && !isThisForClassPhysicallyAvailable(irClass)) {
                 return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->

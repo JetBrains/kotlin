@@ -1990,6 +1990,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/SimpleTypeMarker.kt");
         }
 
+        @TestMetadata("thisInEnumConstructor.kt")
+        public void testThisInEnumConstructor() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/thisInEnumConstructor.kt");
+        }
+
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/TypeParameterBounds.kt");

@@ -2751,6 +2751,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("thisInEnumConstructor.kt")
+        public void testThisInEnumConstructor() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/thisInEnumConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("throwableStackTrace.kt")
         public void testThrowableStackTrace() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/throwableStackTrace.kt");
