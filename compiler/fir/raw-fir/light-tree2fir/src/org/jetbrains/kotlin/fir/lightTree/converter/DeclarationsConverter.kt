@@ -562,7 +562,7 @@ class DeclarationsConverter(
                         properties += primaryConstructorWrapper.valueParameters
                             .filter { it.hasValOrVar() }
                             .map {
-                                it.toFirProperty(
+                                it.toFirPropertyFromPrimaryConstructor(
                                     baseModuleData,
                                     callableIdForName(it.firValueParameter.name),
                                     classWrapper.hasExpect(),
@@ -2261,32 +2261,24 @@ class DeclarationsConverter(
         }
 
         val name = convertValueParameterName(identifier.nameAsSafeName(), identifier, valueParameterDeclaration)
-        val firValueParameter = buildValueParameter {
-            source = valueParameter.toFirSourceElement()
-            moduleData = baseModuleData
-            origin = FirDeclarationOrigin.Source
+
+        return ValueParameter(
+            isVal = isVal,
+            isVar = isVar,
+            modifiers = modifiers,
             returnTypeRef = firType
                 ?: when {
                     valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef()
                     else -> implicitType
-                }
-            this.name = name
-            symbol = FirValueParameterSymbol(name)
-            defaultValue = firExpression
-            isCrossinline = modifiers.hasCrossinline()
-            isNoinline = modifiers.hasNoinline()
-            isVararg = modifiers.hasVararg()
-            val isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
-            annotations += if (!isFromPrimaryConstructor)
-                modifiers.annotations
-            else
-                modifiers.annotations.filter {
-                    val useSiteTarget = it.useSiteTarget
-                    useSiteTarget == null || useSiteTarget == CONSTRUCTOR_PARAMETER || useSiteTarget == RECEIVER || useSiteTarget == FILE
-                }
-            annotations += additionalAnnotations
-        }
-        return ValueParameter(isVal, isVar, modifiers, firValueParameter, destructuringDeclaration)
+                },
+            source = valueParameter.toFirSourceElement(),
+            moduleData = baseModuleData,
+            isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR,
+            additionalAnnotations = additionalAnnotations,
+            name = name,
+            defaultValue = firExpression,
+            destructuringDeclaration = destructuringDeclaration
+        )
     }
 
     private fun <T> fillDanglingConstraintsTo(
