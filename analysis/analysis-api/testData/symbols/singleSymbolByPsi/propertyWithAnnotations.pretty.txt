@@ -4,4 +4,4 @@ var prop: kotlin.Int
   @GetAnnotation
   get()
   @SetAnnotation
-  set(@setparam:SetparamAnnotation value: kotlin.Int)
+  set(@SetparamAnnotation value: kotlin.Int)
