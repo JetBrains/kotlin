@@ -31705,6 +31705,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testExpectActualSimple() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualSimple.kt");
             }
+
+            @Test
+            @TestMetadata("expectInterfaceInSupertypes.kt")
+            public void testExpectInterfaceInSupertypes() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectInterfaceInSupertypes.kt");
+            }
         }
     }
 

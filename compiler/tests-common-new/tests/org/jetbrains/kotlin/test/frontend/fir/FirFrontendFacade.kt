@@ -99,8 +99,7 @@ open class FirFrontendFacade(
                     testModule,
                     moduleDataMap[testModule]!!,
                     targetPlatform,
-                    projectEnvironment,
-                    isMppSupported = isMppSupported
+                    projectEnvironment
                 )
             )
         }
@@ -256,8 +255,7 @@ open class FirFrontendFacade(
         module: TestModule,
         moduleData: FirModuleData,
         targetPlatform: TargetPlatform,
-        projectEnvironment: AbstractProjectEnvironment?,
-        isMppSupported: Boolean,
+        projectEnvironment: AbstractProjectEnvironment?
     ): FirOutputPartForDependsOnModule {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val moduleInfoProvider = testServices.firModuleInfoProvider
@@ -303,7 +301,7 @@ open class FirFrontendFacade(
             IrGenerationExtension.getInstances(project),
             lightTreeEnabled,
             enablePluginPhases,
-            generateSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE || isMppSupported,
+            generateSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE
         )
         val firFiles = firAnalyzerFacade.runResolution()
         val filesMap = firFiles.mapNotNull { firFile ->

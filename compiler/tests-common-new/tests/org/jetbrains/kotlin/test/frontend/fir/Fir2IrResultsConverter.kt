@@ -91,6 +91,8 @@ class Fir2IrResultsConverter(
             )
         }
 
+        val mainModuleComponents = componentsMap[module.name]!!
+
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.TEST,
@@ -98,7 +100,7 @@ class Fir2IrResultsConverter(
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(componentsMap[module.name]!!)
+            FirJvmBackendClassResolver(mainModuleComponents)
         ).build()
 
         return IrBackendInput.JvmIrBackendInput(

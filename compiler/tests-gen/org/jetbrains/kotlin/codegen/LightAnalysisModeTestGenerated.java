@@ -26987,6 +26987,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testExpectActualSimple() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualSimple.kt");
             }
+
+            @TestMetadata("expectInterfaceInSupertypes.kt")
+            public void testExpectInterfaceInSupertypes() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectInterfaceInSupertypes.kt");
+            }
         }
     }
 
