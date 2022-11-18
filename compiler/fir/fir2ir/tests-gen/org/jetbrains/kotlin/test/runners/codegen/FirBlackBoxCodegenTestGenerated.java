@@ -32692,6 +32692,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestDataPath("$PROJECT_ROOT")
         public class MultiModule {
             @Test
+            @TestMetadata("accessToLocalClassFromBackend.kt")
+            public void testAccessToLocalClassFromBackend() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/accessToLocalClassFromBackend.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInMultiModule() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
@@ -32748,6 +32754,24 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("expectActualTypealias.kt")
             public void testExpectActualTypealias() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualTypealias.kt");
+            }
+
+            @Test
+            @TestMetadata("expectInterfaceInSupertypes.kt")
+            public void testExpectInterfaceInSupertypes() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectInterfaceInSupertypes.kt");
+            }
+
+            @Test
+            @TestMetadata("fakeOverridesInPlatformModule.kt")
+            public void testFakeOverridesInPlatformModule() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/fakeOverridesInPlatformModule.kt");
+            }
+
+            @Test
+            @TestMetadata("getRidOfDoubleBindingInFir2IrLazyProperty.kt")
+            public void testGetRidOfDoubleBindingInFir2IrLazyProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/getRidOfDoubleBindingInFir2IrLazyProperty.kt");
             }
 
             @Test

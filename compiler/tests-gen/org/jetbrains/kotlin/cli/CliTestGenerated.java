@@ -452,6 +452,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithError.args");
         }
 
+        @TestMetadata("firMultiplatformCompilationWithLightTreeWithoutErrors.args")
+        public void testFirMultiplatformCompilationWithLightTreeWithoutErrors() throws Exception {
+            runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithLightTreeWithoutErrors.args");
+        }
+
         @TestMetadata("firMultiplatformCompilationWithoutErrors.args")
         public void testFirMultiplatformCompilationWithoutErrors() throws Exception {
             runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithoutErrors.args");

@@ -446,7 +446,7 @@ class Fir2IrConverter(
                     session, scopeSession, firFiles, languageVersionSettings,
                     fir2IrExtensions, mangler, irMangler, irFactory,
                     visibilityConverter, specialSymbolProvider, irGenerationExtensions,
-                    kotlinBuiltIns
+                    kotlinBuiltIns, dependentComponents
                 )
             }
             val signatureComposer = FirBasedSignatureComposer(mangler, dependentComposers = dependentComponents.map { it.signatureComposer as FirBasedSignatureComposer })
@@ -472,7 +472,8 @@ class Fir2IrConverter(
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider,
             irGenerationExtensions: Collection<IrGenerationExtension>,
-            kotlinBuiltIns: KotlinBuiltIns
+            kotlinBuiltIns: KotlinBuiltIns,
+            dependentComponents: List<Fir2IrComponents>
         ): Fir2IrResult {
             val signatureComposer = FirBasedSignatureComposer(mangler, dependentComposers = dependentComponents.map { it.signatureComposer as FirBasedSignatureComposer })
             val signaturer = DescriptorSignatureComposerStub()
@@ -481,7 +482,7 @@ class Fir2IrConverter(
                 session, scopeSession, firFiles, languageVersionSettings,
                 fir2IrExtensions, irMangler, irFactory, visibilityConverter,
                 specialSymbolProvider, irGenerationExtensions, signatureComposer,
-                symbolTable, generateSignatures = false, kotlinBuiltIns = kotlinBuiltIns, dependentComponents = emptyList()
+                symbolTable, generateSignatures = false, kotlinBuiltIns = kotlinBuiltIns, dependentComponents = dependentComponents
             )
         }
 

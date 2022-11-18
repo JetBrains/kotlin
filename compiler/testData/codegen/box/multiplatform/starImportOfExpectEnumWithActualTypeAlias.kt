@@ -3,9 +3,6 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND_K2: JVM_IR
-// K2 status: caused by: java.lang.IllegalStateException: Should not be here!
-// It will be fixed after merging of MPP branch
 
 // MODULE: lib-common
 // FILE: common.kt

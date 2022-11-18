@@ -3,9 +3,10 @@
 // FILE: common.kt
 import kotlin.reflect.KProperty
 
-fun <T> lazy(initializer: () -> T): Lazy<T> = <!UNRESOLVED_REFERENCE!>TODO<!>()
+fun <T> lazy(initializer: () -> T): Lazy<T> = TODO()
+
 interface Lazy<out T> {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = <!UNRESOLVED_REFERENCE!>TODO<!>()
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = TODO()
 }
 
 expect class OuterClass {
@@ -35,6 +36,8 @@ expect class OuterClassWithNamedCompanion {
 expect object OuterObject {
     object NestedObject
 }
+
+fun TODO(): Nothing = null!!
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

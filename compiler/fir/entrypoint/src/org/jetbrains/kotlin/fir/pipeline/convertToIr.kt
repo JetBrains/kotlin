@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -45,16 +46,19 @@ fun FirResult.convertToIrAndActualize(
         val commonIrOutput = commonOutput.convertToIr(
             fir2IrExtensions,
             irGeneratorExtensions,
-            linkViaSignatures = true,
+            linkViaSignatures = linkViaSignatures,
             dependentComponents = emptyList()
         )
         result = platformOutput.convertToIr(
             fir2IrExtensions,
             irGeneratorExtensions,
-            linkViaSignatures = true,
+            linkViaSignatures = linkViaSignatures,
             dependentComponents = listOf(commonIrOutput.components)
         )
-        // TODO: implement IR actualization
+        IrActualizer.actualize(
+            result.irModuleFragment,
+            listOf(commonIrOutput.irModuleFragment)
+        )
     } else {
         result = platformOutput.convertToIr(
             fir2IrExtensions,
@@ -94,7 +98,8 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
             JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,
-            kotlinBuiltIns = DefaultBuiltIns.Instance // TODO: consider passing externally
+            kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
+            dependentComponents = dependentComponents
         )
     }
 }
