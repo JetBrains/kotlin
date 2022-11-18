@@ -41,8 +41,9 @@ import java.io.File
 open class IncrementalJsCache(
     cachesDir: File,
     pathConverter: FileToPathConverter,
-    serializerProtocol: SerializerExtensionProtocol
-) : AbstractIncrementalCache<FqName>(cachesDir, pathConverter) {
+    serializerProtocol: SerializerExtensionProtocol,
+    keepChangesInMemory: Boolean,
+) : AbstractIncrementalCache<FqName>(cachesDir, pathConverter, keepChangesInMemory) {
     companion object {
         private const val TRANSLATION_RESULT_MAP = "translation-result"
         private const val IR_TRANSLATION_RESULT_MAP = "ir-translation-result"
@@ -56,13 +57,13 @@ open class IncrementalJsCache(
 
     private val protoData = ProtoDataProvider(serializerProtocol)
 
-    override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
-    override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile))
-    private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, pathConverter, protoData))
-    private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, pathConverter))
-    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, pathConverter))
-    private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile))
-    private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, pathConverter))
+    override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter, keepChangesInMemory))
+    override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, keepChangesInMemory))
+    private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, pathConverter, protoData, keepChangesInMemory))
+    private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, pathConverter, keepChangesInMemory))
+    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, pathConverter, keepChangesInMemory))
+    private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile, keepChangesInMemory))
+    private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, pathConverter, keepChangesInMemory))
 
     private val dirtySources = hashSetOf<File>()
 
@@ -228,9 +229,10 @@ private object TranslationResultValueExternalizer : DataExternalizer<Translation
 private class TranslationResultMap(
     storageFile: File,
     private val pathConverter: FileToPathConverter,
-    private val protoData: ProtoDataProvider
+    private val protoData: ProtoDataProvider,
+    keepChangesInMemory: Boolean,
 ) :
-    BasicStringMap<TranslationResultValue>(storageFile, TranslationResultValueExternalizer) {
+    BasicStringMap<TranslationResultValue>(storageFile, TranslationResultValueExternalizer, keepChangesInMemory) {
     override fun dumpValue(value: TranslationResultValue): String =
         "Metadata: ${value.metadata.md5()}, Binary AST: ${value.binaryAst.md5()}, InlineData: ${value.inlineData.md5()}"
 
@@ -311,9 +313,10 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
 
 private class IrTranslationResultMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
+    private val pathConverter: FileToPathConverter,
+    keepChangesInMemory: Boolean,
 ) :
-    BasicStringMap<IrTranslationResultValue>(storageFile, IrTranslationResultValueExternalizer) {
+    BasicStringMap<IrTranslationResultValue>(storageFile, IrTranslationResultValueExternalizer, keepChangesInMemory) {
     override fun dumpValue(value: IrTranslationResultValue): String =
         "Filedata: ${value.fileData.md5()}, " +
                 "Types: ${value.types.md5()}, " +
@@ -393,8 +396,9 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
 
 private class InlineFunctionsMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
+    private val pathConverter: FileToPathConverter,
+    keepChangesInMemory: Boolean,
+) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer, keepChangesInMemory) {
     @Synchronized
     fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
         val key = pathConverter.toPath(srcFile)
@@ -437,7 +441,10 @@ private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
 }
 
 
-private class PackageMetadataMap(storageFile: File) : BasicStringMap<ByteArray>(storageFile, ByteArrayExternalizer) {
+private class PackageMetadataMap(
+    storageFile: File,
+    keepChangesInMemory: Boolean,
+) : BasicStringMap<ByteArray>(storageFile, ByteArrayExternalizer, keepChangesInMemory) {
     fun put(packageName: String, newMetadata: ByteArray) {
         storage[packageName] = newMetadata
     }

@@ -10,8 +10,9 @@ import java.io.File
 
 class ComplementarySourceFilesMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
+    private val pathConverter: FileToPathConverter,
+    keepChangesInMemory: Boolean,
+) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer, keepChangesInMemory) {
 
     operator fun set(sourceFile: File, complementaryFiles: Collection<File>) {
         storage[pathConverter.toPath(sourceFile)] = pathConverter.toPaths(complementaryFiles)

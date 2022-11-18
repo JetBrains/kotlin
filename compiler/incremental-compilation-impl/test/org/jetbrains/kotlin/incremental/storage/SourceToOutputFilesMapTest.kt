@@ -23,7 +23,7 @@ class SourceToOutputFilesMapTest : TestWithWorkingDir() {
         val caches = File(workingDir, "caches").apply { mkdirs() }
         val stofMapFile = File(caches, "stof.tab")
         pathConverter = IncrementalFileToPathConverter((workingDir.canonicalFile))
-        stofMap = SourceToOutputFilesMap(stofMapFile, pathConverter)
+        stofMap = SourceToOutputFilesMap(stofMapFile, pathConverter, false)
     }
 
     @After

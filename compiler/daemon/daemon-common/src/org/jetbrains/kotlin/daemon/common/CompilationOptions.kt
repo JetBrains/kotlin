@@ -43,7 +43,7 @@ open class CompilationOptions(
                "targetPlatform=$targetPlatform, " +
                "reportCategories=${Arrays.toString(reportCategories)}, " +
                "reportSeverity=$reportSeverity, " +
-               "requestedCompilationResults=${Arrays.toString(requestedCompilationResults)}" +
+               "requestedCompilationResults=${Arrays.toString(requestedCompilationResults)}, " +
                "kotlinScriptExtensions=${Arrays.toString(kotlinScriptExtensions)}" +
                ")"
     }
@@ -71,7 +71,9 @@ class IncrementalCompilationOptions(
     val multiModuleICSettings: MultiModuleICSettings,
     val modulesInfo: IncrementalModuleInfo,
     kotlinScriptExtensions: Array<String>? = null,
-    val withAbiSnapshot: Boolean = false
+    val withAbiSnapshot: Boolean = false,
+    val keepIncrementalCompilationCachesChangesInMemory: Boolean = false,
+    val preciseCompilationResultsBackup: Boolean = false,
 ) : CompilationOptions(
     compilerMode,
     targetPlatform,
@@ -81,7 +83,7 @@ class IncrementalCompilationOptions(
     kotlinScriptExtensions
 ) {
     companion object {
-        const val serialVersionUID: Long = 0
+        const val serialVersionUID: Long = 1
     }
 
     override fun toString(): String {
@@ -93,7 +95,7 @@ class IncrementalCompilationOptions(
                 "classpathChanges=${classpathChanges::class.simpleName}, " +
                 "workingDir=$workingDir, " +
                 "multiModuleICSettings=$multiModuleICSettings, " +
-                "usePreciseJavaTracking=$usePreciseJavaTracking" +
+                "usePreciseJavaTracking=$usePreciseJavaTracking, " +
                 "outputFiles=$outputFiles" +
                 ")"
     }

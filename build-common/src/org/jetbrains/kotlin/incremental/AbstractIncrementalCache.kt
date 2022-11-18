@@ -51,7 +51,8 @@ interface IncrementalCacheCommon {
  */
 abstract class AbstractIncrementalCache<ClassName>(
     workingDir: File,
-    protected val pathConverter: FileToPathConverter
+    protected val pathConverter: FileToPathConverter,
+    keepChangesInMemory: Boolean,
 ) : BasicMapsOwner(workingDir), IncrementalCacheCommon {
     companion object {
         private val CLASS_ATTRIBUTES = "class-attributes"
@@ -76,10 +77,10 @@ abstract class AbstractIncrementalCache<ClassName>(
         result
     }
 
-    internal val classAttributesMap = registerMap(ClassAttributesMap(CLASS_ATTRIBUTES.storageFile))
-    private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile))
-    private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile))
-    protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter))
+    internal val classAttributesMap = registerMap(ClassAttributesMap(CLASS_ATTRIBUTES.storageFile, keepChangesInMemory))
+    private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile, keepChangesInMemory))
+    private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile, keepChangesInMemory))
+    protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter, keepChangesInMemory))
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
     /**
@@ -88,7 +89,7 @@ abstract class AbstractIncrementalCache<ClassName>(
      * about missing parts.
      * TODO: provide a better solution (maintain an index of expect/actual declarations akin to IncrementalPackagePartProvider)
      */
-    private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, pathConverter))
+    private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, pathConverter, keepChangesInMemory))
 
     override fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
         files.flatMapTo(HashSet()) { sourceToClassesMap.getFqNames(it) }
@@ -184,8 +185,9 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     protected class ClassFqNameToSourceMap(
         storageFile: File,
-        private val pathConverter: FileToPathConverter
-    ) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
+        private val pathConverter: FileToPathConverter,
+        keepChangesInMemory: Boolean,
+    ) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor, keepChangesInMemory) {
 
         operator fun set(fqName: FqName, sourceFile: File) {
             storage[fqName.asString()] = pathConverter.toPath(sourceFile)

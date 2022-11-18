@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.incremental.dumpCollection
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
-internal open class ClassOneToManyMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
+internal open class ClassOneToManyMap(
+    storageFile: File,
+    keepChangesInMemory: Boolean,
+) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer, keepChangesInMemory) {
     override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
 
     @Synchronized
@@ -56,5 +59,5 @@ internal open class ClassOneToManyMap(storageFile: File) : BasicStringMap<Collec
     }
 }
 
-internal class SubtypesMap(storageFile: File) : ClassOneToManyMap(storageFile)
-internal class SupertypesMap(storageFile: File) : ClassOneToManyMap(storageFile)
+internal class SubtypesMap(storageFile: File, keepChangesInMemory: Boolean,) : ClassOneToManyMap(storageFile, keepChangesInMemory)
+internal class SupertypesMap(storageFile: File, keepChangesInMemory: Boolean) : ClassOneToManyMap(storageFile, keepChangesInMemory)

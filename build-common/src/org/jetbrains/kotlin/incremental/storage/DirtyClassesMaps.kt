@@ -21,12 +21,20 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
-internal class DirtyClassesJvmNameMap(storageFile: File) : AbstractDirtyClassesMap<JvmClassName>(JvmClassNameTransformer, storageFile)
-internal class DirtyClassesFqNameMap(storageFile: File) : AbstractDirtyClassesMap<FqName>(FqNameTransformer, storageFile)
+internal class DirtyClassesJvmNameMap(
+    storageFile: File,
+    keepChangesInMemory: Boolean,
+) : AbstractDirtyClassesMap<JvmClassName>(JvmClassNameTransformer, storageFile, keepChangesInMemory)
+internal class DirtyClassesFqNameMap(
+    storageFile: File,
+    keepChangesInMemory: Boolean,
+) : AbstractDirtyClassesMap<FqName>(FqNameTransformer, storageFile, keepChangesInMemory)
 
 internal abstract class AbstractDirtyClassesMap<Name>(
-    private val nameTransformer: NameTransformer<Name>, storageFile: File
-) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
+    private val nameTransformer: NameTransformer<Name>,
+    storageFile: File,
+    keepChangesInMemory: Boolean,
+) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE, keepChangesInMemory) {
     fun markDirty(className: Name) {
         storage[nameTransformer.asString(className)] = true
     }

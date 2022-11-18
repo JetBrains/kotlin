@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 abstract class BasicMap<K : Comparable<K>, V>(
-        internal val storageFile: File,
-        keyDescriptor: KeyDescriptor<K>,
-        valueExternalizer: DataExternalizer<V>
+    internal val storageFile: File,
+    keyDescriptor: KeyDescriptor<K>,
+    valueExternalizer: DataExternalizer<V>,
+    keepChangesInMemory: Boolean,
 ) {
     protected val storage: LazyStorage<K, V>
     private val nonCachingStorage = System.getProperty("kotlin.jps.non.caching.storage")?.toBoolean() ?: false
-    private val keepChangesInMemory = true
 
     init {
         storage = (if (nonCachingStorage) {
@@ -90,14 +90,16 @@ abstract class BasicMap<K : Comparable<K>, V>(
 }
 
 abstract class BasicStringMap<V>(
-        storageFile: File,
-        keyDescriptor: KeyDescriptor<String>,
-        valueExternalizer: DataExternalizer<V>
-) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer) {
+    storageFile: File,
+    keyDescriptor: KeyDescriptor<String>,
+    valueExternalizer: DataExternalizer<V>,
+    keepChangesInMemory: Boolean,
+) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer, keepChangesInMemory) {
     constructor(
-            storageFile: File,
-            valueExternalizer: DataExternalizer<V>
-    ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer)
+        storageFile: File,
+        valueExternalizer: DataExternalizer<V>,
+        keepChangesInMemory: Boolean,
+    ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer, keepChangesInMemory)
 
     override fun dumpKey(key: String): String = key
 }

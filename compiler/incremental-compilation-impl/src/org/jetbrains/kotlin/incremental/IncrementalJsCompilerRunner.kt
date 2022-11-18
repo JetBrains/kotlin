@@ -87,14 +87,18 @@ class IncrementalJsCompilerRunner(
     buildHistoryFile: File,
     private val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
-    withAbiSnapshot: Boolean = false
+    withAbiSnapshot: Boolean = false,
+    keepIncrementalCompilationCachesChangesInMemory: Boolean = false,
+    preciseCompilationResultsBackup: Boolean = false,
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
     reporter,
     buildHistoryFile = buildHistoryFile,
     outputDirs = null,
-    withAbiSnapshot = withAbiSnapshot
+    withAbiSnapshot = withAbiSnapshot,
+    keepIncrementalCompilationCachesChangesInMemory = keepIncrementalCompilationCachesChangesInMemory,
+    preciseCompilationResultsBackup = preciseCompilationResultsBackup,
 ) {
 
     override fun createCacheManager(args: K2JSCompilerArguments, projectDir: File?): IncrementalJsCachesManager {
@@ -104,8 +108,9 @@ class IncrementalJsCompilerRunner(
             projectDir,
             reporter,
             serializerProtocol,
-            storeFullFqNamesInLookupCache = withAbiSnapshot
-            )
+            storeFullFqNamesInLookupCache = withAbiSnapshot,
+            keepChangesInMemory = keepIncrementalCompilationCachesChangesInMemory
+        )
     }
 
     override fun destinationDir(args: K2JSCompilerArguments): File {

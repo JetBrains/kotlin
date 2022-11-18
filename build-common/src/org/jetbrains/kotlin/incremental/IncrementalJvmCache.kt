@@ -45,10 +45,12 @@ val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 open class IncrementalJvmCache(
     targetDataRoot: File,
     targetOutputDir: File?,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
+    keepChangesInMemory: Boolean = false,
 ) : AbstractIncrementalCache<JvmClassName>(
     workingDir = File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME),
-    pathConverter = pathConverter
+    pathConverter = pathConverter,
+    keepChangesInMemory = keepChangesInMemory,
 ), IncrementalCache {
     companion object {
         private val PROTO_MAP = "proto"
@@ -64,20 +66,20 @@ open class IncrementalJvmCache(
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
-    override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
-    override val dirtyOutputClassesMap = registerMap(DirtyClassesJvmNameMap(DIRTY_OUTPUT_CLASSES.storageFile))
+    override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter, keepChangesInMemory))
+    override val dirtyOutputClassesMap = registerMap(DirtyClassesJvmNameMap(DIRTY_OUTPUT_CLASSES.storageFile, keepChangesInMemory))
 
-    private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
-    private val feProtoMap = registerMap(ProtoMap(FE_PROTO_MAP.storageFile))
-    private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile))
-    private val packagePartMap = registerMap(PackagePartMap(PACKAGE_PARTS.storageFile))
-    private val multifileFacadeToParts = registerMap(MultifileClassFacadeMap(MULTIFILE_CLASS_FACADES.storageFile))
-    private val partToMultifileFacade = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile))
-    private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
+    private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile, keepChangesInMemory))
+    private val feProtoMap = registerMap(ProtoMap(FE_PROTO_MAP.storageFile, keepChangesInMemory))
+    private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile, keepChangesInMemory))
+    private val packagePartMap = registerMap(PackagePartMap(PACKAGE_PARTS.storageFile, keepChangesInMemory))
+    private val multifileFacadeToParts = registerMap(MultifileClassFacadeMap(MULTIFILE_CLASS_FACADES.storageFile, keepChangesInMemory))
+    private val partToMultifileFacade = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile, keepChangesInMemory))
+    private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, keepChangesInMemory))
     // todo: try to use internal names only?
-    private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile, pathConverter))
+    private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile, pathConverter, keepChangesInMemory))
     // gradle only
-    private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile))
+    private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile, keepChangesInMemory))
 
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
 
@@ -328,7 +330,10 @@ open class IncrementalJvmCache(
         return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]?.bytes
     }
 
-    private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
+    private inner class ProtoMap(
+        storageFile: File,
+        keepChangesInMemory: Boolean,
+    ) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer, keepChangesInMemory) {
 
         @Synchronized
         fun process(kotlinClassInfo: KotlinClassInfo, changesCollector: ChangesCollector) {
@@ -396,8 +401,11 @@ open class IncrementalJvmCache(
         }
     }
 
-    private inner class JavaSourcesProtoMap(storageFile: File) :
-        BasicStringMap<SerializedJavaClass>(storageFile, JavaClassProtoMapValueExternalizer) {
+    private inner class JavaSourcesProtoMap(
+        storageFile: File,
+        keepChangesInMemory: Boolean,
+    ) :
+        BasicStringMap<SerializedJavaClass>(storageFile, JavaClassProtoMapValueExternalizer, keepChangesInMemory) {
 
         @Synchronized
         fun process(jvmClassName: JvmClassName, newData: SerializedJavaClass, changesCollector: ChangesCollector) {
@@ -431,8 +439,11 @@ open class IncrementalJvmCache(
     }
 
     // todo: reuse code with InlineFunctionsMap?
-    private inner class ConstantsMap(storageFile: File) :
-        BasicStringMap<Map<String, Any>>(storageFile, MapExternalizer(StringExternalizer, ConstantValueExternalizer)) {
+    private inner class ConstantsMap(
+        storageFile: File,
+        keepChangesInMemory: Boolean,
+    ) :
+        BasicStringMap<Map<String, Any>>(storageFile, MapExternalizer(StringExternalizer, ConstantValueExternalizer), keepChangesInMemory) {
 
         operator fun contains(className: JvmClassName): Boolean =
             className.internalName in storage
@@ -484,7 +495,10 @@ open class IncrementalJvmCache(
             value.dumpMap(Any::toString)
     }
 
-    private inner class PackagePartMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
+    private inner class PackagePartMap(
+        storageFile: File,
+        keepChangesInMemory: Boolean,
+    ) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE, keepChangesInMemory) {
         fun addPackagePart(className: JvmClassName) {
             storage[className.internalName] = true
         }
@@ -499,8 +513,11 @@ open class IncrementalJvmCache(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class MultifileClassFacadeMap(storageFile: File) :
-        BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
+    private inner class MultifileClassFacadeMap(
+        storageFile: File,
+        keepChangesInMemory: Boolean,
+    ) :
+        BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer, keepChangesInMemory) {
 
         @Synchronized
         operator fun set(className: JvmClassName, partNames: Collection<String>) {
@@ -521,8 +538,11 @@ open class IncrementalJvmCache(
         override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
     }
 
-    private inner class MultifileClassPartMap(storageFile: File) :
-        BasicStringMap<String>(storageFile, EnumeratorStringDescriptor.INSTANCE) {
+    private inner class MultifileClassPartMap(
+        storageFile: File,
+        keepChangesInMemory: Boolean,
+    ) :
+        BasicStringMap<String>(storageFile, EnumeratorStringDescriptor.INSTANCE, keepChangesInMemory) {
 
         @Synchronized
         fun set(partName: String, facadeName: String) {
@@ -542,8 +562,9 @@ open class IncrementalJvmCache(
 
     inner class InternalNameToSourcesMap(
         storageFile: File,
-        private val pathConverter: FileToPathConverter
-    ) : BasicStringMap<Collection<String>>(storageFile, EnumeratorStringDescriptor(), PathCollectionExternalizer) {
+        private val pathConverter: FileToPathConverter,
+        keepChangesInMemory: Boolean,
+    ) : BasicStringMap<Collection<String>>(storageFile, EnumeratorStringDescriptor(), PathCollectionExternalizer, keepChangesInMemory) {
         operator fun set(internalName: String, sourceFiles: Collection<File>) {
             storage[internalName] = pathConverter.toPaths(sourceFiles)
         }
@@ -559,10 +580,14 @@ open class IncrementalJvmCache(
             value.dumpCollection()
     }
 
-    private inner class InlineFunctionsMap(storageFile: File) :
+    private inner class InlineFunctionsMap(
+        storageFile: File,
+        keepChangesInMemory: Boolean,
+    ) :
         BasicStringMap<Map<InlineFunctionOrAccessor, Long>>(
             storageFile,
-            MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer)
+            MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer),
+            keepChangesInMemory,
         ) {
 
         @Synchronized

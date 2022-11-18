@@ -68,7 +68,9 @@ abstract class IncrementalCompilerRunner<
      */
     private val outputDirs: Collection<File>?,
 
-    protected val withAbiSnapshot: Boolean = false
+    protected val withAbiSnapshot: Boolean = false,
+    protected val keepIncrementalCompilationCachesChangesInMemory: Boolean = false,
+    private val preciseCompilationResultsBackup: Boolean = false,
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -361,12 +363,18 @@ abstract class IncrementalCompilerRunner<
         performWorkBeforeCompilation(compilationMode, args)
 
         val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
-        val exitCode = RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups")).use { transaction ->
+        val exitCode = createTransaction().use { transaction ->
             doCompile(compilationMode, allKotlinFiles, args, caches, abiSnapshotData, messageCollector, transaction)
         }
 
         performWorkAfterCompilation(compilationMode, exitCode, caches)
         return exitCode
+    }
+
+    private fun createTransaction() = if (preciseCompilationResultsBackup) {
+        RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups"))
+    } else {
+        DummyCompilationTransaction()
     }
 
     protected open fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: Args) {}

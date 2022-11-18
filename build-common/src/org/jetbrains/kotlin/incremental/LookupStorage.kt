@@ -34,7 +34,8 @@ open class LookupStorage(
     targetDataDir: File,
     pathConverter: FileToPathConverter,
     storeFullFqNames: Boolean = false,
-    private val trackChanges: Boolean = false
+    private val trackChanges: Boolean = false,
+    keepChangesInMemory: Boolean = false,
 ) : BasicMapsOwner(targetDataDir) {
     val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
 
@@ -44,9 +45,9 @@ open class LookupStorage(
     }
 
     private val countersFile = "counters".storageFile
-    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, pathConverter))
-    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, pathConverter))
-    private val lookupMap = TrackedLookupMap(registerMap(LookupMap("lookups".storageFile, storeFullFqNames)), trackChanges)
+    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, pathConverter, keepChangesInMemory))
+    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, pathConverter, keepChangesInMemory))
+    private val lookupMap = TrackedLookupMap(registerMap(LookupMap("lookups".storageFile, storeFullFqNames, keepChangesInMemory)), trackChanges)
 
     @Volatile
     private var size: Int = 0

@@ -25,7 +25,7 @@ class FileSnapshotMapTest : TestWithWorkingDir() {
         val caches = File(workingDir, "caches").apply { mkdirs() }
         val snapshotMapFile = File(caches, "snapshots.tab")
         pathConverter = IncrementalFileToPathConverter((workingDir.canonicalFile))
-        snapshotMap = FileSnapshotMap(snapshotMapFile, pathConverter)
+        snapshotMap = FileSnapshotMap(snapshotMapFile, pathConverter, false)
     }
 
     @After

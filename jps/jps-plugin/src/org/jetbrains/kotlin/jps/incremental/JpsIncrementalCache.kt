@@ -54,7 +54,7 @@ class JpsIncrementalJsCache(
     target: ModuleBuildTarget,
     paths: BuildDataPaths,
     pathConverter: FileToPathConverter
-) : IncrementalJsCache(paths.getTargetDataRoot(target), pathConverter, JsSerializerProtocol), JpsIncrementalCache {
+) : IncrementalJsCache(paths.getTargetDataRoot(target), pathConverter, JsSerializerProtocol, false), JpsIncrementalCache {
     override fun addJpsDependentCache(cache: JpsIncrementalCache) {
         if (cache is JpsIncrementalJsCache) {
             addDependentCache(cache)

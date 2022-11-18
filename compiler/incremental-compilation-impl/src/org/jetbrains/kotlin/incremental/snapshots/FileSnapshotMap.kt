@@ -25,8 +25,9 @@ import java.util.*
 
 class FileSnapshotMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer) {
+    private val pathConverter: FileToPathConverter,
+    keepChangesInMemory: Boolean,
+) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer, keepChangesInMemory) {
 
     override fun dumpValue(value: FileSnapshot): String =
         value.toString()

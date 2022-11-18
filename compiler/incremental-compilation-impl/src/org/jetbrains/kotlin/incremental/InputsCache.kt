@@ -29,15 +29,16 @@ import java.io.File
 class InputsCache(
     workingDir: File,
     private val reporter: ICReporter,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
+    keepChangesInMemory: Boolean,
 ) : BasicMapsOwner(workingDir) {
     companion object {
         private const val SOURCE_SNAPSHOTS = "source-snapshot"
         private const val SOURCE_TO_OUTPUT_FILES = "source-to-output"
     }
 
-    internal val sourceSnapshotMap = registerMap(FileSnapshotMap(SOURCE_SNAPSHOTS.storageFile, pathConverter))
-    private val sourceToOutputMap = registerMap(SourceToOutputFilesMap(SOURCE_TO_OUTPUT_FILES.storageFile, pathConverter))
+    internal val sourceSnapshotMap = registerMap(FileSnapshotMap(SOURCE_SNAPSHOTS.storageFile, pathConverter, keepChangesInMemory))
+    private val sourceToOutputMap = registerMap(SourceToOutputFilesMap(SOURCE_TO_OUTPUT_FILES.storageFile, pathConverter, keepChangesInMemory))
 
     fun removeOutputForSourceFiles(
         sources: Iterable<File>,

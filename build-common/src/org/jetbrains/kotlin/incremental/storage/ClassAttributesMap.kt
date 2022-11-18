@@ -35,8 +35,9 @@ internal object ICClassesAttributesExternalizer : DataExternalizer<ICClassesAttr
 }
 
 internal open class ClassAttributesMap(
-    storageFile: File
-) : BasicStringMap<ICClassesAttributes>(storageFile, ICClassesAttributesExternalizer) {
+    storageFile: File,
+    keepChangesInMemory: Boolean,
+) : BasicStringMap<ICClassesAttributes>(storageFile, ICClassesAttributesExternalizer, keepChangesInMemory) {
     override fun dumpValue(value: ICClassesAttributes): String = value.toString()
 
     operator fun set(key: FqName, value: ICClassesAttributes) {

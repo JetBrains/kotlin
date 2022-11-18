@@ -20,8 +20,9 @@ import java.io.File
 
 internal class FileToIdMap(
     file: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<Int>(file, IntExternalizer) {
+    private val pathConverter: FileToPathConverter,
+    keepChangesInMemory: Boolean,
+) : BasicStringMap<Int>(file, IntExternalizer, keepChangesInMemory) {
     override fun dumpValue(value: Int): String = value.toString()
 
     operator fun get(file: File): Int? = storage[pathConverter.toPath(file)]
