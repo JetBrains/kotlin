@@ -17,14 +17,29 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
+/**
+ * A compilation transaction that is able to track compilation result files changes and maybe to revert them back.
+ */
 interface CompilationTransaction : Closeable {
+    /**
+     * This method should be called before creating a new file or changing an existing file.
+     */
     fun registerAddedOrChangedFile(outputFile: Path)
 
+    /**
+     * This method should be used to perform a file removal.
+     */
     fun deleteFile(outputFile: Path)
 
+    /**
+     * Marks the transaction as successful, so it should not revert changes if it is able to perform revert.
+     */
     fun markAsSuccessful()
 }
 
+/**
+ * A dummy implementation of compilation transaction
+ */
 class DummyCompilationTransaction : CompilationTransaction {
     override fun registerAddedOrChangedFile(outputFile: Path) {
         // do nothing
@@ -46,6 +61,12 @@ class DummyCompilationTransaction : CompilationTransaction {
 
 }
 
+/**
+ * A recoverable implementation of compilation transaction.
+ * Tracks all files changes during a compilation and reverts them back if [markAsSuccessful] isn't called
+ * In the case of a successful compilation [stashDir] is removed after is compilation.
+ * In the case of an unsuccessful compilation [stashDir] is also removed, but the backed-up files restored to their origin location.
+ */
 class RecoverableCompilationTransaction(
     private val reporter: BuildReporter,
     private val stashDir: Path,
@@ -54,8 +75,12 @@ class RecoverableCompilationTransaction(
     private var filesCounter = 0
     private var successful = false
 
+    /**
+     * Moves the original [outputFile] before change to the [stashDir].
+     * If the [outputFile] doesn't exist then it's marked to be removed if the transaction is unsuccessful.
+     */
     override fun registerAddedOrChangedFile(outputFile: Path) {
-        if (fileRelocationIsAlreadyRegisteredFor(outputFile)) return
+        if (isFileRelocationIsAlreadyRegisteredFor(outputFile)) return
         reporter.measure(BuildTime.BACKUP_OUTPUT) {
             if (Files.exists(outputFile)) {
                 val relocatedFilePath = getNextRelocatedFilePath()
@@ -69,8 +94,11 @@ class RecoverableCompilationTransaction(
         }
     }
 
+    /**
+     * Moves the original [outputFile] to the [stashDir] instead of deleting.
+     */
     override fun deleteFile(outputFile: Path) {
-        if (fileRelocationIsAlreadyRegisteredFor(outputFile)) {
+        if (isFileRelocationIsAlreadyRegisteredFor(outputFile)) {
             if (Files.exists(outputFile)) {
                 reporter.debug { "Deleting $outputFile" }
                 Files.delete(outputFile)
@@ -87,8 +115,12 @@ class RecoverableCompilationTransaction(
 
     private fun getNextRelocatedFilePath(): Path = stashDir.resolve("$filesCounter.backup").also { filesCounter++ }
 
-    private fun fileRelocationIsAlreadyRegisteredFor(outputFile: Path) = outputFile in fileRelocationRegistry
+    private fun isFileRelocationIsAlreadyRegisteredFor(outputFile: Path) = outputFile in fileRelocationRegistry
 
+    /**
+     * Reverts all the file changes registered in this transaction.
+     * If the value for a key is null, then it's the file that was created during the transaction, so the file will be just removed.
+     */
     private fun revertChanges() {
         reporter.debug { "Reverting changes" }
         reporter.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
@@ -104,6 +136,9 @@ class RecoverableCompilationTransaction(
         }
     }
 
+    /**
+     * Deletes the [stashDir].
+     */
     private fun cleanupStash() {
         reporter.debug { "Cleaning up stash" }
         reporter.measure(BuildTime.CLEAN_BACKUP_STASH) {
@@ -128,6 +163,9 @@ class RecoverableCompilationTransaction(
     }
 }
 
+/**
+ * A delegating [OutputItemsCollector] implementation that registers compiler output changes in the [transaction]
+ */
 class TransactionOutputsRegistrar(
     private val transaction: CompilationTransaction,
     private val origin: OutputItemsCollector
