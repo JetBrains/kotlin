@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmNamesChecker
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.toKtLightSourceElement
 
 object FirFunctionalTypeParameterNameChecker : FirTypeRefChecker() {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -26,11 +24,6 @@ object FirFunctionalTypeParameterNameChecker : FirTypeRefChecker() {
     private fun check(typeRef: FirFunctionTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         val name = typeRef.name ?: return
         val typeRefSource = typeRef.source ?: return
-        FirJvmNamesChecker.checkNameAndReport(
-            name,
-            typeRefSource.treeStructure.nameIdentifier(typeRefSource.lighterASTNode)?.toKtLightSourceElement(typeRefSource.treeStructure),
-            context,
-            reporter
-        )
+        FirJvmNamesChecker.checkNameAndReport(name, typeRefSource, context, reporter)
     }
 }

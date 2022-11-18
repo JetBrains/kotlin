@@ -21,22 +21,22 @@ object FirJvmNamesChecker {
     private val DANGEROUS_CHARS = setOf('?', '*', '"', '|', '%')
 
 
-    fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (source != null &&
-            source.kind !is KtFakeSourceElementKind &&
+    fun checkNameAndReport(name: Name, declarationSource: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declarationSource != null &&
+            declarationSource.kind !is KtFakeSourceElementKind &&
             !name.isSpecial
         ) {
             val nameString = name.asString()
             if (nameString.any { it in INVALID_CHARS }) {
                 reporter.reportOn(
-                    source,
+                    declarationSource,
                     FirErrors.INVALID_CHARACTERS,
                     "contains illegal characters: ${INVALID_CHARS.intersect(nameString.toSet()).joinToString("")}",
                     context
                 )
             } else if (nameString.any { it in DANGEROUS_CHARS }) {
                 reporter.reportOn(
-                    source,
+                    declarationSource,
                     FirErrors.DANGEROUS_CHARACTERS,
                     DANGEROUS_CHARS.intersect(nameString.toSet()).joinToString(""),
                     context

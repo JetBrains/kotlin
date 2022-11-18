@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -540,10 +540,10 @@ fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSourc
             }
         }
         is FirFunctionTypeRef -> {
-            val paramters = delegatedTypeRef.parameters
+            val parameters = delegatedTypeRef.parameters
 
             delegatedTypeRef.receiverTypeRef?.let { result.add(FirTypeRefSource(it, it.source)) }
-            for (valueParameter in paramters) {
+            for (valueParameter in parameters) {
                 val valueParamTypeRef = valueParameter.returnTypeRef
                 result.add(FirTypeRefSource(valueParamTypeRef, valueParamTypeRef.source))
             }
