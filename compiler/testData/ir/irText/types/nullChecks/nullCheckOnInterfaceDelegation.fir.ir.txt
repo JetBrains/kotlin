@@ -24,13 +24,13 @@ FILE fqName:<root> fileName:/nullCheckOnInterfaceDelegation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.A; <root>.IFoo]'
-    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:@[FlexibleNullability] kotlin.String?
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.Derived) returnType:@[FlexibleNullability] kotlin.String?
       overridden:
         public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.A
         public abstract fun foo (): kotlin.String declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived'
+        RETURN type=kotlin.Nothing from='public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived'
           CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.A' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]' type=@[FlexibleNullability] kotlin.String? origin=null
             $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/nullCheckOnInterfaceDelegation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.Delegated'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            CALL 'public final fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived' type=kotlin.String origin=null
+            CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived' type=kotlin.String origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Derived visibility:local [final]' type=<root>.Derived origin=null
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.foo' type=<root>.Delegated origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.Derived visibility:local [final]

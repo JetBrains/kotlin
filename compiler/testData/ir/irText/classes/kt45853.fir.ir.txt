@@ -28,12 +28,12 @@ FILE fqName:<root> fileName:/kt45853.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.AX'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.AX]'
-    FUN name:getA visibility:public modality:FINAL <> ($this:<root>.B) returnType:<root>.X?
+    FUN name:getA visibility:public modality:OPEN <> ($this:<root>.B) returnType:<root>.X?
       overridden:
         public abstract fun getA (): @[FlexibleNullability] <root>.X? [fake_override] declared in <root>.AX
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun getA (): <root>.X? declared in <root>.B'
+        RETURN type=kotlin.Nothing from='public open fun getA (): <root>.X? declared in <root>.B'
           CALL 'public open fun <get-a> (): @[FlexibleNullability] <root>.AX? declared in <root>.AX' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]' type=@[FlexibleNullability] <root>.AX? origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.B declared in <root>.B.getA' type=<root>.B origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]

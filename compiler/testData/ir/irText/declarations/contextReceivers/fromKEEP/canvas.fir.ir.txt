@@ -43,14 +43,14 @@ FILE fqName:<root> fileName:/canvas.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Circle modality:FINAL visibility:public superTypes:[<root>.Shape]'
-    FUN name:draw visibility:public modality:FINAL <> ($this:<root>.Circle, _context_receiver_0:<root>.Canvas) returnType:kotlin.String
+    FUN name:draw visibility:public modality:OPEN <> ($this:<root>.Circle, _context_receiver_0:<root>.Canvas) returnType:kotlin.String
       overridden:
         public abstract fun draw (_context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Shape
       $this: VALUE_PARAMETER name:<this> type:<root>.Circle
       contextReceiverParametersCount: 1
       VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.Canvas
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun draw (_context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle'
+        RETURN type=kotlin.Nothing from='public open fun draw (_context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle'
           CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
             $this: CONST String type=kotlin.String value="OK"
             other: CALL 'public abstract fun <get-suffix> (): kotlin.String declared in <root>.Canvas' type=kotlin.String origin=GET_PROPERTY
@@ -74,19 +74,19 @@ FILE fqName:<root> fileName:/canvas.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:MyCanvas modality:FINAL visibility:public superTypes:[<root>.Canvas]'
-    PROPERTY name:suffix visibility:public modality:FINAL [val]
+    PROPERTY name:suffix visibility:public modality:OPEN [val]
       overridden:
         public abstract suffix: kotlin.String [val]
       FIELD PROPERTY_BACKING_FIELD name:suffix type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-suffix> visibility:public modality:FINAL <> ($this:<root>.MyCanvas) returnType:kotlin.String
-        correspondingProperty: PROPERTY name:suffix visibility:public modality:FINAL [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-suffix> visibility:public modality:OPEN <> ($this:<root>.MyCanvas) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:suffix visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-suffix> (): kotlin.String declared in <root>.Canvas
         $this: VALUE_PARAMETER name:<this> type:<root>.MyCanvas
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-suffix> (): kotlin.String declared in <root>.MyCanvas'
+          RETURN type=kotlin.Nothing from='public open fun <get-suffix> (): kotlin.String declared in <root>.MyCanvas'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:suffix type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.MyCanvas declared in <root>.MyCanvas.<get-suffix>' type=<root>.MyCanvas origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -114,6 +114,6 @@ FILE fqName:<root> fileName:/canvas.kt
               $receiver: VALUE_PARAMETER name:$this$with type:<root>.MyCanvas
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
-                  CALL 'public final fun draw (_context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle' type=kotlin.String origin=null
+                  CALL 'public open fun draw (_context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle' type=kotlin.String origin=null
                     $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Circle' type=<root>.Circle origin=null
                     _context_receiver_0: GET_VAR '$this$with: <root>.MyCanvas declared in <root>.box.<anonymous>' type=<root>.MyCanvas origin=null

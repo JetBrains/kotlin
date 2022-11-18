@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/definitelyNonNullOverride.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B'
           <T>: {T of <root>.D & Any}
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.B<{T of <root>.D & Any}>]'
-    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.D<T of <root>.D>, t:{T of <root>.D & Any}) returnType:kotlin.Unit
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.D<T of <root>.D>, t:{T of <root>.D & Any}) returnType:kotlin.Unit
       overridden:
         public open fun foo (t: T of <root>.B): kotlin.Unit declared in <root>.B
       $this: VALUE_PARAMETER name:<this> type:<root>.D<T of <root>.D>

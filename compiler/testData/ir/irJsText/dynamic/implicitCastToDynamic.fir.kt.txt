@@ -39,4 +39,3 @@ fun test5(a: Any, s: String, na: Any?) {
   <set-d2>(<set-?> = na)
   <set-d2>(<set-?> = s)
 }
-

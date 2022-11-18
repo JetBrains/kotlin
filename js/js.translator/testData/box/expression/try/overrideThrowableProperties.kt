@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR
 // EXPECTED_REACHABLE_NODES: 1315
 
 open class Ex0(msg: String, cs: Throwable): Throwable(msg, cs)

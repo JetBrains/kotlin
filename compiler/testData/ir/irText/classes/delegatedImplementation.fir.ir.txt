@@ -29,21 +29,21 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:BaseImpl modality:FINAL visibility:public superTypes:[<root>.IBase]'
-    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.BaseImpl, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.BaseImpl, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
       overridden:
         public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseImpl
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
-    FUN name:bar visibility:public modality:FINAL <> ($this:<root>.BaseImpl) returnType:kotlin.Int
+    FUN name:bar visibility:public modality:OPEN <> ($this:<root>.BaseImpl) returnType:kotlin.Int
       overridden:
         public abstract fun bar (): kotlin.Int declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseImpl
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Int declared in <root>.BaseImpl'
+        RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.BaseImpl'
           CONST Int type=kotlin.Int value=42
-    FUN name:qux visibility:public modality:FINAL <> ($this:<root>.BaseImpl, $receiver:kotlin.String) returnType:kotlin.Unit
+    FUN name:qux visibility:public modality:OPEN <> ($this:<root>.BaseImpl, $receiver:kotlin.String) returnType:kotlin.Unit
       overridden:
         public abstract fun qux (): kotlin.Unit declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseImpl
@@ -116,38 +116,38 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IOther]'
-            PROPERTY name:x visibility:public modality:FINAL [val]
+            PROPERTY name:x visibility:public modality:OPEN [val]
               overridden:
                 public abstract x: kotlin.String [val]
               FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
                 EXPRESSION_BODY
                   GET_VAR 'x0: kotlin.String declared in <root>.otherImpl' type=kotlin.String origin=null
-              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>) returnType:kotlin.String
-                correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>) returnType:kotlin.String
+                correspondingProperty: PROPERTY name:x visibility:public modality:OPEN [val]
                 overridden:
                   public abstract fun <get-x> (): kotlin.String declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.otherImpl.<no name provided>'
+                  RETURN type=kotlin.Nothing from='public open fun <get-x> (): kotlin.String declared in <root>.otherImpl.<no name provided>'
                     GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                       receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<get-x>' type=<root>.otherImpl.<no name provided> origin=null
-            PROPERTY name:y visibility:public modality:FINAL [var]
+            PROPERTY name:y visibility:public modality:OPEN [var]
               overridden:
                 public abstract y: kotlin.Int [var]
               FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private
                 EXPRESSION_BODY
                   GET_VAR 'y0: kotlin.Int declared in <root>.otherImpl' type=kotlin.Int origin=null
-              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>) returnType:kotlin.Int
-                correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>) returnType:kotlin.Int
+                correspondingProperty: PROPERTY name:y visibility:public modality:OPEN [var]
                 overridden:
                   public abstract fun <get-y> (): kotlin.Int declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
+                  RETURN type=kotlin.Nothing from='public open fun <get-y> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
                     GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private' type=kotlin.Int origin=null
                       receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<get-y>' type=<root>.otherImpl.<no name provided> origin=null
-              FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, <set-?>:kotlin.Int) returnType:kotlin.Unit
-                correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>, <set-?>:kotlin.Int) returnType:kotlin.Unit
+                correspondingProperty: PROPERTY name:y visibility:public modality:OPEN [var]
                 overridden:
                   public abstract fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
@@ -156,32 +156,32 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
                     receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<set-y>' type=<root>.otherImpl.<no name provided> origin=null
                     value: GET_VAR '<set-?>: kotlin.Int declared in <root>.otherImpl.<no name provided>.<set-y>' type=kotlin.Int origin=null
-            PROPERTY name:z1 visibility:public modality:FINAL [val]
+            PROPERTY name:z1 visibility:public modality:OPEN [val]
               overridden:
                 public abstract z1: kotlin.Int [val]
-              FUN name:<get-z1> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
-                correspondingProperty: PROPERTY name:z1 visibility:public modality:FINAL [val]
+              FUN name:<get-z1> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
+                correspondingProperty: PROPERTY name:z1 visibility:public modality:OPEN [val]
                 overridden:
                   public abstract fun <get-z1> (): kotlin.Int declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public final fun <get-z1> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
+                  RETURN type=kotlin.Nothing from='public open fun <get-z1> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
                     CONST Int type=kotlin.Int value=1
-            PROPERTY name:z2 visibility:public modality:FINAL [var]
+            PROPERTY name:z2 visibility:public modality:OPEN [var]
               overridden:
                 public abstract z2: kotlin.Int [var]
-              FUN name:<get-z2> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
-                correspondingProperty: PROPERTY name:z2 visibility:public modality:FINAL [var]
+              FUN name:<get-z2> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
+                correspondingProperty: PROPERTY name:z2 visibility:public modality:OPEN [var]
                 overridden:
                   public abstract fun <get-z2> (): kotlin.Int declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public final fun <get-z2> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
+                  RETURN type=kotlin.Nothing from='public open fun <get-z2> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
                     CONST Int type=kotlin.Int value=2
-              FUN name:<set-z2> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte, value:kotlin.Int) returnType:kotlin.Unit
-                correspondingProperty: PROPERTY name:z2 visibility:public modality:FINAL [var]
+              FUN name:<set-z2> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte, value:kotlin.Int) returnType:kotlin.Unit
+                correspondingProperty: PROPERTY name:z2 visibility:public modality:OPEN [var]
                 overridden:
                   public abstract fun <set-z2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
@@ -215,7 +215,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
-        CALL 'public final fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
+        CALL 'public open fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.foo' type=<root>.Test1 origin=null
           x: GET_VAR 'x: kotlin.Int declared in <root>.Test1.foo' type=kotlin.Int origin=null
@@ -226,7 +226,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.Test1'
-          CALL 'public final fun bar (): kotlin.Int declared in <root>.BaseImpl' type=kotlin.Int origin=null
+          CALL 'public open fun bar (): kotlin.Int declared in <root>.BaseImpl' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.bar' type=<root>.Test1 origin=null
     FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <> ($this:<root>.Test1, $receiver:kotlin.String) returnType:kotlin.Unit
@@ -235,7 +235,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
-        CALL 'public final fun qux (): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
+        CALL 'public open fun qux (): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.qux' type=<root>.Test1 origin=null
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Test1.qux' type=kotlin.String origin=null
@@ -268,7 +268,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
-        CALL 'public final fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
+        CALL 'public open fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.foo' type=<root>.Test2 origin=null
           x: GET_VAR 'x: kotlin.Int declared in <root>.Test2.foo' type=kotlin.Int origin=null
@@ -279,7 +279,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.Test2'
-          CALL 'public final fun bar (): kotlin.Int declared in <root>.BaseImpl' type=kotlin.Int origin=null
+          CALL 'public open fun bar (): kotlin.Int declared in <root>.BaseImpl' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.bar' type=<root>.Test2 origin=null
     FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.String) returnType:kotlin.Unit
@@ -288,7 +288,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
-        CALL 'public final fun qux (): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
+        CALL 'public open fun qux (): kotlin.Unit declared in <root>.BaseImpl' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.qux' type=<root>.Test2 origin=null
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Test2.qux' type=kotlin.String origin=null

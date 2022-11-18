@@ -178,7 +178,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   override var size: Int
     field = 0
     override get
-    private set
+    private open set
 
   private fun ensureCapacity(index: Int) {
     when {

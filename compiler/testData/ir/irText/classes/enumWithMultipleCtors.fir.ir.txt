@@ -14,12 +14,12 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]'
-        FUN name:f visibility:public modality:FINAL <> ($this:<root>.A.Y) returnType:kotlin.String
+        FUN name:f visibility:public modality:OPEN <> ($this:<root>.A.Y) returnType:kotlin.String
           overridden:
             public open fun f (): kotlin.String declared in <root>.A
           $this: VALUE_PARAMETER name:<this> type:<root>.A.Y
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun f (): kotlin.String declared in <root>.A.Y'
+            RETURN type=kotlin.Nothing from='public open fun f (): kotlin.String declared in <root>.A.Y'
               CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
                 $this: CALL 'public open fun f (): kotlin.String declared in <root>.A' superQualifier='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.String origin=null
                   $this: GET_VAR '<this>: <root>.A.Y declared in <root>.A.Y.f' type=<root>.A.Y origin=null

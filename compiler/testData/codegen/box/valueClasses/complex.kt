@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
-// https://youtrack.jetbrains.com/issue/KT-52236/Different-modality-in-psi-and-fir
 // CHECK_BYTECODE_LISTING
 // FIR_IDENTICAL
 // WITH_STDLIB

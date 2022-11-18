@@ -11,4 +11,3 @@ fun test2(d: dynamic): Int {
     else -> -1
   }
 }
-

@@ -11,4 +11,3 @@ fun testSafeMemberAssignment(d: dynamic) {
     }
   } /*~> Unit */
 }
-

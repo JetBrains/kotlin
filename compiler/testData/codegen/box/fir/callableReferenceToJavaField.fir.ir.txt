@@ -36,7 +36,7 @@ FILE fqName:foo fileName:/main.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in bar.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[bar.Base]'
-    FUN name:foo visibility:protected modality:FINAL <> ($this:foo.Derived) returnType:kotlin.Unit
+    FUN name:foo visibility:protected modality:OPEN <> ($this:foo.Derived) returnType:kotlin.Unit
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in bar.Base
       $this: VALUE_PARAMETER name:<this> type:foo.Derived
@@ -54,7 +54,7 @@ FILE fqName:foo fileName:/main.kt
     FUN name:box visibility:public modality:FINAL <> ($this:foo.Derived) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:foo.Derived
       BLOCK_BODY
-        CALL 'protected final fun foo (): kotlin.Unit declared in foo.Derived' type=kotlin.Unit origin=null
+        CALL 'protected open fun foo (): kotlin.Unit declared in foo.Derived' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: foo.Derived declared in foo.Derived.box' type=foo.Derived origin=null
         RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.Derived'
           CALL 'public final fun <get-s> (): kotlin.String declared in foo.A' type=kotlin.String origin=GET_PROPERTY

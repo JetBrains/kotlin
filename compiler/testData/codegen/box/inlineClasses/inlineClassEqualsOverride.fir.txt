@@ -32,9 +32,9 @@ public final class IC2 {
     public synthetic final static method box-impl(p0: int): IC2
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
-    public final method equals-ACFGG4I(p0: int): boolean
+    public method equals-ACFGG4I(p0: int): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
-    public final static method equals-impl0(p0: int, p1: int): boolean
+    public static method equals-impl0(p0: int, p1: int): boolean
     public final method getValue(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int): int
@@ -70,8 +70,8 @@ public final class IC4 {
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): IC4
     public static method constructor-impl(p0: int): int
-    public final @org.jetbrains.annotations.NotNull method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Void
-    public final static @org.jetbrains.annotations.NotNull method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): java.lang.Void
+    public @org.jetbrains.annotations.NotNull method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Void
+    public static @org.jetbrains.annotations.NotNull method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): java.lang.Void
     public final static method equals-impl0(p0: int, p1: int): boolean
     public final method getValue(): int
     public method hashCode(): int
@@ -108,8 +108,8 @@ public final class IC6 {
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): IC6
     public static method constructor-impl(p0: int): int
-    public final @org.jetbrains.annotations.NotNull method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Void
-    public final static @org.jetbrains.annotations.NotNull method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): java.lang.Void
+    public @org.jetbrains.annotations.NotNull method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Void
+    public static @org.jetbrains.annotations.NotNull method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): java.lang.Void
     public final static method equals-impl0(p0: int, p1: int): boolean
     public final method getValue(): int
     public method hashCode(): int

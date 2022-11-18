@@ -43,4 +43,3 @@ fun testSafeAugmentedMemberAssignment(d: dynamic) {
     }
   } /*~> Unit */
 }
-
