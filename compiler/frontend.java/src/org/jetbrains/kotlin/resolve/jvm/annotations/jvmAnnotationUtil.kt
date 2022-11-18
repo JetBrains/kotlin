@@ -45,6 +45,9 @@ val TRANSIENT_ANNOTATION_CLASS_ID = ClassId.topLevel(TRANSIENT_ANNOTATION_FQ_NAM
 @JvmField
 val JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSerializableLambda")
 
+@JvmField
+val JVM_DELEGATE_TO_DEFAULTS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmDelegateToDefaults")
+
 fun DeclarationDescriptor.findJvmOverloadsAnnotation(): AnnotationDescriptor? =
     annotations.findAnnotation(JVM_OVERLOADS_FQ_NAME)
 

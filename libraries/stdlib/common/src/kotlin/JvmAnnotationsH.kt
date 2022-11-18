@@ -184,7 +184,13 @@ internal expect annotation class JvmPackageName(val name: String)
 public expect annotation class JvmSerializableLambda
 
 /**
- * Instructs compiler to ignores overrides in the delegate's class and delegate to Java default methods when present. See KT-36902.
+ * When delegating to an object implementing a Java interface containing default method implementations,
+ * this annotation instructs the compiler to ignore overrides of the default methods in the delegate's class
+ * and delegate to the default methods defined in the interface.
+ *
+ * See [KT-36902](https://youtrack.jetbrains.com/issue/KT-36902) for more information.
+ *
+ * Can be applied to `by` expressions only.
  */
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)

@@ -715,3 +715,10 @@ tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
         else -> this
     }
 }
+
+fun PsiElement.belongsToDelegatedSuperTypeEntry(): Boolean =
+    when (parent) {
+        is KtDelegatedSuperTypeEntry -> true
+        is KtAnnotatedExpression, is KtParenthesizedExpression, is KtLabeledExpression -> parent.belongsToDelegatedSuperTypeEntry()
+        else -> false
+    }

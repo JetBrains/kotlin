@@ -1309,6 +1309,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("JvmDelegateToDefaultsAnnotation.kt")
+            public void testJvmDelegateToDefaultsAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/JvmDelegateToDefaultsAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("JvmSerializableLambdaAnnotation.kt")
             public void testJvmSerializableLambdaAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/JvmSerializableLambdaAnnotation.kt");

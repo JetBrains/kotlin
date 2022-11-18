@@ -80,7 +80,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
 
                 val firstFinal = filteredOverriddenMembers.firstOrNull { it.isFinal }
                 val firstOpen = filteredOverriddenMembers.firstOrNull { it.isOpen && delegatedTo != it.unwrapFakeOverrides() }
-                val delegateToDefaults = context.languageVersionSettings.getFlag(AnalysisFlags.ignoreImplicitDelegationToDefaults)
+                val delegateToDefaults = context.languageVersionSettings.getFlag(AnalysisFlags.allowImplicitDelegationToDefaults)
                         || delegatedWrapperData.delegateField.initializer?.annotations?.any {
                     it.typeRef.toRegularClassSymbol(context.session)?.classId?.asFqNameString() == "kotlin.jvm.JvmDelegateToDefaults"
                 } ?: false

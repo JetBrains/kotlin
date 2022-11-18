@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 object DelegatedDefaultInterfaceMethodsAreOverriddenChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (context.languageVersionSettings.getFlag(AnalysisFlags.ignoreImplicitDelegationToDefaults)) return
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.allowImplicitDelegationToDefaults)) return
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return
 

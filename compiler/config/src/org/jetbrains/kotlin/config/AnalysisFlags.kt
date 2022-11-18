@@ -58,5 +58,5 @@ object AnalysisFlags {
     val eagerResolveOfLightClasses by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val ignoreImplicitDelegationToDefaults by AnalysisFlag.Delegates.Boolean
+    val allowImplicitDelegationToDefaults by AnalysisFlag.Delegates.Boolean
 }

@@ -123,6 +123,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
         container.useInstance(JavaActualAnnotationArgumentExtractor())
         container.useInstance(JvmSerializableLambdaAnnotationChecker)
+        container.useInstance(JvmDelegateToDefaultsAnnotationChecker)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

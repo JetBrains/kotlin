@@ -34,5 +34,6 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJavaAnnotationsChecker,
             FirJvmPackageNameAnnotationsChecker,
             FirJvmSerializableLambdaChecker,
+            FirJvmDelegateToDefaultsChecker,
         )
 }
