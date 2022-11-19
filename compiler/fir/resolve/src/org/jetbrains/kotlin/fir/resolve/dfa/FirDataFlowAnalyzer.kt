@@ -39,12 +39,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 class DataFlowAnalyzerContext(
     val graphBuilder: ControlFlowGraphBuilder,
     variableStorage: VariableStorageImpl,
-    flowOnNodes: MutableMap<CFGNode<*>, PersistentFlow>,
     val preliminaryLoopVisitor: PreliminaryLoopVisitor,
     val variablesClearedBeforeLoop: Stack<List<RealVariable>>,
 ) {
-    var flowOnNodes = flowOnNodes
-        private set
     var variableStorage = variableStorage
         private set
 
@@ -58,10 +55,7 @@ class DataFlowAnalyzerContext(
 
     fun reset() {
         graphBuilder.reset()
-
         variableStorage = variableStorage.clear()
-        flowOnNodes = mutableMapOf()
-
         preliminaryLoopVisitor.resetState()
         variablesClearedBeforeLoop.reset()
         firLocalVariableAssignmentAnalyzer = null
@@ -71,7 +65,7 @@ class DataFlowAnalyzerContext(
         fun empty(session: FirSession): DataFlowAnalyzerContext =
             DataFlowAnalyzerContext(
                 ControlFlowGraphBuilder(), VariableStorageImpl(session),
-                mutableMapOf(), PreliminaryLoopVisitor(), stackOf()
+                PreliminaryLoopVisitor(), stackOf()
             )
     }
 }
@@ -210,15 +204,13 @@ abstract class FirDataFlowAnalyzer(
                 variableStorage.removeRealVariable(valueParameter.symbol)
             }
         }
-        val variableStorage = variableStorage
-        val flowOnNodes = context.flowOnNodes
-
+        val info = DataFlowInfo(variableStorage)
         if (graphBuilder.isTopLevel()) {
             context.reset()
         } else {
             resetReceivers()
         }
-        return FirControlFlowGraphReferenceImpl(graph, DataFlowInfo(variableStorage, flowOnNodes))
+        return FirControlFlowGraphReferenceImpl(graph, info)
     }
 
     // ----------------------------------- Anonymous function -----------------------------------
@@ -253,6 +245,7 @@ abstract class FirDataFlowAnalyzer(
         }
         functionExitNode.mergeIncomingFlow()
         if (postponedLambdaExitNode != null) {
+            // Data flow changed, need to recompute. TODO: this violates the "flow computed only once" principle.
             postponedLambdaExitNode.mergeIncomingFlow()
         } else {
             resetReceivers()
@@ -1208,11 +1201,6 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private val CFGNode<*>.flow: PersistentFlow
-        get() = context.flowOnNodes.getValue(this.origin)
-
-    private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) firstPreviousNode else this
-
     private val CFGNode<*>.livePreviousFlows: List<PersistentFlow>
         get() = previousNodes.mapNotNull { it.takeIf { this.isDead || !it.isDead }?.flow }
 
@@ -1242,13 +1230,14 @@ abstract class FirDataFlowAnalyzer(
         return result
     }
 
+    @OptIn(CfgInternals::class)
     private fun UnionFunctionCallArgumentsNode.unionFlowFromArguments() {
-        context.flowOnNodes[this] = logicSystem.joinFlow(previousNodes.map { it.flow }, union = true).freeze()
+        flow = logicSystem.joinFlow(previousNodes.map { it.flow }, union = true).freeze()
     }
 
+    @OptIn(CfgInternals::class)
     private fun CFGNode<*>.setFlow(builder: MutableFlow): PersistentFlow {
-        val flow = builder.freeze()
-        context.flowOnNodes[this] = flow
+        val flow = builder.freeze().also { this.flow = it }
         if (currentReceiverState === builder) {
             currentReceiverState = flow
         }

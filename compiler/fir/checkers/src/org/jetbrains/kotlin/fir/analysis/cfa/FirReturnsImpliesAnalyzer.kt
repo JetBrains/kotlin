@@ -87,7 +87,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        var flow = dataFlowInfo.flowOnNodes.getValue(node)
+        var flow = node.flow
         val operation = effect.value.toOperation()
         if (operation != null) {
             if (resultExpression is FirConstExpression<*>) {
