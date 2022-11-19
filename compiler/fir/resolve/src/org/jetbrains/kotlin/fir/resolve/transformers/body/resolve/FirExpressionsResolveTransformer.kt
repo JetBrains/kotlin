@@ -823,21 +823,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
     ): FirStatement = whileAnalysing(binaryLogicExpression) {
         val booleanType = binaryLogicExpression.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type)
-        return when (binaryLogicExpression.kind) {
-            LogicOperationKind.AND ->
-                binaryLogicExpression.also(dataFlowAnalyzer::enterBinaryAnd)
-                    .transformLeftOperand(this, ResolutionMode.WithExpectedType(booleanType))
-                    .also(dataFlowAnalyzer::exitLeftBinaryAndArgument)
-                    .transformRightOperand(this, ResolutionMode.WithExpectedType(booleanType)).also(dataFlowAnalyzer::exitBinaryAnd)
-
-            LogicOperationKind.OR ->
-                binaryLogicExpression.also(dataFlowAnalyzer::enterBinaryOr)
-                    .transformLeftOperand(this, ResolutionMode.WithExpectedType(booleanType))
-                    .also(dataFlowAnalyzer::exitLeftBinaryOrArgument)
-                    .transformRightOperand(this, ResolutionMode.WithExpectedType(booleanType)).also(dataFlowAnalyzer::exitBinaryOr)
-        }.transformOtherChildren(transformer, ResolutionMode.WithExpectedType(booleanType)).also {
-            it.resultType = booleanType
-        }
+        return binaryLogicExpression.also(dataFlowAnalyzer::enterBinaryLogicExpression)
+            .transformLeftOperand(this, ResolutionMode.WithExpectedType(booleanType))
+            .also(dataFlowAnalyzer::exitLeftBinaryLogicExpressionArgument)
+            .transformRightOperand(this, ResolutionMode.WithExpectedType(booleanType))
+            .also(dataFlowAnalyzer::exitBinaryLogicExpression)
+            .transformOtherChildren(transformer, ResolutionMode.WithExpectedType(booleanType))
+            .also { it.resultType = booleanType }
     }
 
     override fun transformVariableAssignment(

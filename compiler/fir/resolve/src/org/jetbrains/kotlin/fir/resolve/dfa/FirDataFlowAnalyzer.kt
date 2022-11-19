@@ -1038,46 +1038,22 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ----------------------------------- Boolean operators -----------------------------------
 
-    fun enterBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression) {
-        graphBuilder.enterBinaryAnd(binaryLogicExpression).mergeIncomingFlow()
+    fun enterBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
+        graphBuilder.enterBinaryLogicExpression(binaryLogicExpression).mergeIncomingFlow()
     }
 
-    fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression) {
-        val (leftExitNode, rightEnterNode) = graphBuilder.exitLeftBinaryAndArgument(binaryLogicExpression)
-        exitLeftArgumentOfBinaryBooleanOperator(leftExitNode, rightEnterNode, isAnd = true)
-    }
-
-    fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression) {
-        val node = graphBuilder.exitBinaryAnd(binaryLogicExpression)
-        exitBinaryBooleanOperator(binaryLogicExpression, node, isAnd = true)
-    }
-
-    fun enterBinaryOr(binaryLogicExpression: FirBinaryLogicExpression) {
-        graphBuilder.enterBinaryOr(binaryLogicExpression).mergeIncomingFlow()
-    }
-
-    fun exitLeftBinaryOrArgument(binaryLogicExpression: FirBinaryLogicExpression) {
-        val (leftExitNode, rightEnterNode) = graphBuilder.exitLeftBinaryOrArgument(binaryLogicExpression)
-        exitLeftArgumentOfBinaryBooleanOperator(leftExitNode, rightEnterNode, isAnd = false)
-    }
-
-    fun exitBinaryOr(binaryLogicExpression: FirBinaryLogicExpression) {
-        val node = graphBuilder.exitBinaryOr(binaryLogicExpression)
-        exitBinaryBooleanOperator(binaryLogicExpression, node, isAnd = false)
-    }
-
-    private fun exitLeftArgumentOfBinaryBooleanOperator(leftExitNode: CFGNode<*>, rightEnterNode: CFGNode<*>, isAnd: Boolean) {
+    fun exitLeftBinaryLogicExpressionArgument(binaryLogicExpression: FirBinaryLogicExpression) {
+        val (leftExitNode, rightEnterNode) = graphBuilder.exitLeftBinaryLogicExpressionArgument(binaryLogicExpression)
         val leftExitFlow = leftExitNode.mergeIncomingFlow()
         val rightEnterFlow = rightEnterNode.mergeIncomingFlow()
         val leftOperandVariable = variableStorage.get(leftExitFlow, leftExitNode.firstPreviousNode.fir) ?: return
+        val isAnd = binaryLogicExpression.kind == LogicOperationKind.AND
         rightEnterFlow.commitOperationStatement(leftOperandVariable eq isAnd)
     }
 
-    private fun exitBinaryBooleanOperator(
-        binaryLogicExpression: FirBinaryLogicExpression,
-        node: AbstractBinaryExitNode<*>,
-        isAnd: Boolean
-    ) {
+    fun exitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
+        val node = graphBuilder.exitBinaryLogicExpression()
+        val isAnd = binaryLogicExpression.kind == LogicOperationKind.AND
         val flowFromLeft = node.leftOperandNode.flow
         val flowFromRight = node.rightOperandNode.flow
         val flow = node.mergeIncomingFlow()
