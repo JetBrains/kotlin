@@ -812,14 +812,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun enterSafeCallAfterNullCheck(safeCall: FirSafeCallExpression) {
-        val node = graphBuilder.enterSafeCall(safeCall)
-        val flow = node.mergeIncomingFlow()
-        // When calling `c` in `a?.b?.c`, all type information obtained after calling `b` is valid as we know `a`
-        // is non-null. In theory, this should be unnecessary if the TODOs below are implemented.
-        val flowFromPreviousSafeCall = (node.firstPreviousNode as? ExitSafeCallNode)?.lastNodeInNotNullCase?.flow
-        if (flowFromPreviousSafeCall != null) {
-            flow.copyAllInformationFrom(flowFromPreviousSafeCall)
-        }
+        val flow = graphBuilder.enterSafeCall(safeCall).mergeIncomingFlow()
         val receiverVariable = variableStorage.getOrCreateIfReal(flow, safeCall.receiver) ?: return
         flow.commitOperationStatement(receiverVariable notEq null)
     }
@@ -828,17 +821,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (node, mergePostponedLambdaExitsNode) = graphBuilder.exitSafeCall()
         val flow = node.mergeIncomingFlow()
         mergePostponedLambdaExitsNode?.mergeIncomingFlow()
-
-        val receiverLastNode = node.firstPreviousNode
-        val receiverVariable = variableStorage.getOrCreateIfRealAndUnchanged(receiverLastNode.flow, flow, safeCall.receiver) ?: return
+        // If there is only 1 previous node, then this is LHS of `a?.b ?: c`; then the null-case
+        // edge from `a` goes directly to `c` and this node's flow already assumes `b` executed.
+        if (node.previousNodes.size < 2) return
+        // Otherwise if the result is non-null, then `b` executed, which implies `a` is not null
+        // and every statement from `b` holds.
         val expressionVariable = variableStorage.getOrCreate(flow, safeCall)
         // TODO? if the callee has non-null return type, then safe-call == null => receiver == null
         //   if (x?.toString() == null) { /* x == null */ }
-        // TODO? all new statements in previous node's flow are valid here if receiver != null
-        //   if (x?.whatever(y as String) != null) { /* y is String */ }
         // TODO? all new implications in previous node's flow are valid here if receiver != null
         //  (that requires a second level of implications: receiver != null => condition => effect).
-        flow.addImplication((expressionVariable notEq null) implies (receiverVariable notEq null))
+        flow.addAllConditionally(expressionVariable notEq null, node.lastPreviousNode.flow)
     }
 
     fun exitResolvedQualifierNode(resolvedQualifier: FirResolvedQualifier) {
@@ -1193,22 +1186,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitElvis(elvisExpression: FirElvisExpression, isLhsNotNull: Boolean) {
-        val (node, mergePostponedLambdaExitsNode) = graphBuilder.exitElvis()
+        val (node, mergePostponedLambdaExitsNode) = graphBuilder.exitElvis(isLhsNotNull)
         val flow = node.mergeIncomingFlow()
         mergePostponedLambdaExitsNode?.mergeIncomingFlow()
-
-        val rhs = elvisExpression.rhs
-        // No need to check for reassignments - if we can make any statements about LHS, then RHS has not executed.
-        val lhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.lhs) ?: return
-        if (isLhsNotNull) {
-            flow.commitOperationStatement(lhsVariable notEq null)
-        } else if (rhs is FirConstExpression<*> && rhs.kind == ConstantValueKind.Boolean) {
-            // (a ?: x) != x -> a != null. The logic system can only handle cases where x is Boolean.
-            // Or null...but nobody would write that, right?
-            val elvisVariable = variableStorage.createSynthetic(elvisExpression)
-            val value = rhs.value as Boolean
-            flow.addImplication((elvisVariable eq !value) implies (lhsVariable notEq null))
-        }
+        // If LHS is never null, then the edge from RHS is dead and this node's flow already contains
+        // all statements from LHS unconditionally.
+        if (isLhsNotNull) return
+        // For any predicate P(x), if P(v) != P(u ?: v) then u != null. In general this requires two levels of
+        // implications, but for constant v the logic system can handle some basic cases of P(x).
+        val rhs = (elvisExpression.rhs as? FirConstExpression<*>)?.value as? Boolean ?: return
+        val elvisVariable = variableStorage.createSynthetic(elvisExpression)
+        flow.addAllConditionally(elvisVariable eq !rhs, node.firstPreviousNode.flow)
     }
 
     // Callable reference
@@ -1289,13 +1277,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 }
             }
         }
-    }
-
-    private fun FLOW.copyAllInformationFrom(other: FLOW) {
-        if (this === currentReceiverState) {
-            updateAllReceivers(this, other)
-        }
-        logicSystem.copyAllInformation(other, this)
     }
 
     private fun FLOW.addImplication(statement: Implication) {

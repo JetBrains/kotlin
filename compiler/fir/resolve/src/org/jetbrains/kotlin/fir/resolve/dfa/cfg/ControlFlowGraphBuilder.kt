@@ -1348,31 +1348,29 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Safe calls -----------------------------------
 
     fun enterSafeCall(safeCall: FirSafeCallExpression): EnterSafeCallNode {
-        /*
-         * We create
-         *   lastNode -> enterNode
-         *   lastNode -> exitNode
-         * instead of
-         *   lastNode -> enterNode -> exitNode
-         * because we need to fork flow before `enterNode`, so `exitNode`
-         *   will have unchanged flow from `lastNode`
-         *   which corresponds to a path with nullable receiver.
-         */
-        val lastNode = lastNodes.pop()
         val enterNode = createEnterSafeCallNode(safeCall)
-        lastNodes.push(enterNode)
         val exitNode = createExitSafeCallNode(safeCall)
         exitSafeCallNodes.push(exitNode)
-        addEdge(lastNode, enterNode)
-        if (elvisRhsEnterNodes.topOrNull()?.fir?.lhs === safeCall) {
-            //if this is safe call in lhs of elvis, we make two edges
-            // 1. Df-only edge to exit node, to get not null implications there
-            // 2. Cf-only edge to elvis rhs
-            addEdge(lastNode, exitNode, preferredKind = EdgeKind.DfgForward)
-            addEdge(lastNode, elvisRhsEnterNodes.top(), preferredKind = EdgeKind.CfgForward)
+        val lastNode = lastNodes.pop()
+        if (lastNode is ExitSafeCallNode) {
+            // Only the non-null branch of the previous safe call can enter this one.
+            //   a ----> a.b -----> a?.b.c ------> a?.b?.c
+            //       \-----\-> a?.b (null) ---^
+            addEdge(lastNode.lastPreviousNode, enterNode)
+        } else {
+            addEdge(lastNode, enterNode)
+        }
+        val nextElvisRHS = elvisRhsEnterNodes.topOrNull()
+        if (nextElvisRHS?.fir?.lhs === safeCall) {
+            // Can skip the null edge directly to elvis RHS.
+            //                            /-----------v
+            //   a ----> a.b ----> a?.b ----> c ----> a?.b ?: c
+            //       \------------------------^
+            addEdge(lastNode, nextElvisRHS)
         } else {
             addEdge(lastNode, exitNode)
         }
+        lastNodes.push(enterNode)
         splitDataFlowForPostponedLambdas()
         return enterNode
     }
@@ -1403,34 +1401,28 @@ class ControlFlowGraphBuilder {
             exitElvisExpressionNodes.push(it)
         }
 
-        val typedFir = lastNodes.topOrNull()?.fir as? FirExpression
-        val type = typedFir?.typeRef?.coneTypeSafe<ConeKotlinType>()
-
         val lhsExitNode = createElvisLhsExitNode(elvisExpression).also {
             popAndAddEdge(it)
         }
 
         val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisExpression).also {
-            val preferredKind = if (type?.isNullableNothing == true) {
-                EdgeKind.DeadForward
-            } else {
-                EdgeKind.Forward
-            }
-
-            addEdge(lhsExitNode, it, preferredKind = preferredKind)
+            val lhsIsNull = elvisExpression.lhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableNothing == true
+            addEdge(lhsExitNode, it, isDead = lhsIsNull)
             addEdge(it, exitNode, propagateDeadness = false)
         }
 
         val rhsEnterNode = elvisRhsEnterNodes.pop().also {
-            addEdge(lhsExitNode, it)
+            // Can only have a previous node if the LHS is a safe call, in which case it's the safe
+            // call's receiver - then RHS is not dead unless said receiver is dead (or never null).
+            addEdge(lhsExitNode, it, propagateDeadness = it.previousNodes.isEmpty())
         }
         lastNodes.push(rhsEnterNode)
         return Triple(lhsExitNode, lhsIsNotNullNode, rhsEnterNode)
     }
 
-    fun exitElvis(): Pair<ElvisExitNode, MergePostponedLambdaExitsNode?> {
+    fun exitElvis(lhsIsNotNull: Boolean): Pair<ElvisExitNode, MergePostponedLambdaExitsNode?> {
         val exitNode = exitElvisExpressionNodes.pop()
-        addNewSimpleNode(exitNode)
+        addNewSimpleNode(exitNode, isDead = lhsIsNotNull)
         exitNode.updateDeadStatus()
         return exitNode to joinDataFlowFromPostponedLambdasWith(exitNode)
     }

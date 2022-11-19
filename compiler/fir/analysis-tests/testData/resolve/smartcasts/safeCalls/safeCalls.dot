@@ -142,15 +142,13 @@ digraph safeCalls_kt {
             50 [label="Access variable R|<local>/x|"];
             51 [label="Smart cast: R|<local>/x|"];
             52 [label="Function call: $subj$.R|/A.bar|(...)"];
-            53 [label="Exit safe call"];
-            54 [label="Enter safe call"];
-            55 [label="Access variable R|<local>/x|"];
-            56 [label="Smart cast: R|<local>/x|"];
-            57 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-            58 [label="Function call: $subj$.R|/foo|(...)"];
-            59 [label="Exit safe call"];
-            60 [label="Enter safe call"];
-            61 [label="Postponed enter to lambda"];
+            53 [label="Enter safe call"];
+            54 [label="Access variable R|<local>/x|"];
+            55 [label="Smart cast: R|<local>/x|"];
+            56 [label="Function call: R|<local>/x|.R|/A.bool|()"];
+            57 [label="Function call: $subj$.R|/foo|(...)"];
+            58 [label="Enter safe call"];
+            59 [label="Postponed enter to lambda"];
             subgraph cluster_14 {
                 color=blue
                 69 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
@@ -164,8 +162,10 @@ digraph safeCalls_kt {
                 }
                 75 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            62 [label="Postponed exit from lambda"];
-            63 [label="Function call: $subj$.R|/let|(...)"];
+            60 [label="Postponed exit from lambda"];
+            61 [label="Function call: $subj$.R|/let|(...)"];
+            62 [label="Exit safe call"];
+            63 [label="Exit safe call"];
             64 [label="Exit safe call"];
             65 [label="Access variable R|<local>/x|"];
             66 [label="Function call: R|<local>/x|.<Unresolved name: bool>#()"];
@@ -176,21 +176,21 @@ digraph safeCalls_kt {
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {49 53};
+    48 -> {49 62};
     49 -> {50};
     50 -> {51};
     51 -> {52};
-    52 -> {53};
-    53 -> {54 59};
+    52 -> {62 53};
+    53 -> {54};
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {58};
+    57 -> {63 58};
     58 -> {59};
-    59 -> {60 64};
+    59 -> {60 69};
+    59 -> {69} [style=dashed];
     60 -> {61};
-    61 -> {62 69};
-    61 -> {69} [style=dashed];
+    61 -> {64};
     62 -> {63};
     63 -> {64};
     64 -> {65};
@@ -213,9 +213,9 @@ digraph safeCalls_kt {
             78 [label="Access variable R|<local>/x|"];
             79 [label="Enter safe call"];
             80 [label="Function call: $subj$.R|/A.id|()"];
-            81 [label="Exit safe call"];
-            82 [label="Enter safe call"];
-            83 [label="Function call: $subj$.R|/A.bool|()"];
+            81 [label="Enter safe call"];
+            82 [label="Function call: $subj$.R|/A.bool|()"];
+            83 [label="Exit safe call"];
             84 [label="Exit safe call"];
             85 [label="Access variable R|<local>/x|"];
             86 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.id>#()"];
@@ -225,11 +225,11 @@ digraph safeCalls_kt {
     }
     76 -> {77};
     77 -> {78};
-    78 -> {79 81};
+    78 -> {79 83};
     79 -> {80};
-    80 -> {81};
-    81 -> {82 84};
-    82 -> {83};
+    80 -> {83 81};
+    81 -> {82};
+    82 -> {84};
     83 -> {84};
     84 -> {85};
     85 -> {86};
@@ -275,12 +275,12 @@ digraph safeCalls_kt {
             99 [label="Postponed exit from lambda" style="filled" fillcolor=gray];
             100 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)" style="filled" fillcolor=gray];
             101 [label="Stub" style="filled" fillcolor=gray];
-            102 [label="Exit safe call"];
-            103 [label="Enter safe call"];
-            104 [label="Access variable R|<local>/x|"];
-            105 [label="Smart cast: R|<local>/x|"];
-            106 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-            107 [label="Function call: $subj$.R|/boo|(...)"];
+            102 [label="Enter safe call" style="filled" fillcolor=gray];
+            103 [label="Access variable R|<local>/x|" style="filled" fillcolor=gray];
+            104 [label="Smart cast: R|<local>/x|" style="filled" fillcolor=gray];
+            105 [label="Function call: R|<local>/x|.R|/A.bool|()" style="filled" fillcolor=gray];
+            106 [label="Function call: $subj$.R|/boo|(...)" style="filled" fillcolor=gray];
+            107 [label="Exit safe call"];
             108 [label="Exit safe call"];
             109 [label="Access variable R|<local>/x|"];
             110 [label="Function call: R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.id>#()"];
@@ -290,7 +290,7 @@ digraph safeCalls_kt {
     }
     93 -> {94};
     94 -> {95};
-    95 -> {96 102};
+    95 -> {96 107};
     96 -> {97};
     97 -> {113};
     97 -> {99} [color=red];
@@ -299,12 +299,12 @@ digraph safeCalls_kt {
     99 -> {100} [style=dotted];
     100 -> {101} [style=dotted];
     100 -> {112} [style=dotted]    [label=onUncaughtException];
-    101 -> {102} [style=dotted];
-    102 -> {103 108};
-    103 -> {104};
-    104 -> {105};
-    105 -> {106};
-    106 -> {107};
+    101 -> {107 102} [style=dotted];
+    102 -> {103} [style=dotted];
+    103 -> {104} [style=dotted];
+    104 -> {105} [style=dotted];
+    105 -> {106} [style=dotted];
+    106 -> {108} [style=dotted];
     107 -> {108};
     108 -> {109};
     109 -> {110};

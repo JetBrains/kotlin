@@ -79,14 +79,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     override fun forkFlow(flow: PersistentFlow): PersistentFlow =
         PersistentFlow(flow)
 
-    override fun copyAllInformation(from: PersistentFlow, to: PersistentFlow) {
-        to.approvedTypeStatements = from.approvedTypeStatements
-        to.logicStatements = from.logicStatements
-        to.directAliasMap = from.directAliasMap
-        to.backwardsAliasMap = from.backwardsAliasMap
-        to.assignmentIndex = from.assignmentIndex
-    }
-
     override fun joinFlow(flows: Collection<PersistentFlow>): PersistentFlow =
         foldFlow(flows, allExecute = false)
 
