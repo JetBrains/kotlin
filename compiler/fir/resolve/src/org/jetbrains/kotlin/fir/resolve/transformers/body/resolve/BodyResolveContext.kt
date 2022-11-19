@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
@@ -42,7 +41,7 @@ import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
-    val dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>,
+    val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
     val targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet(),
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
 ) {

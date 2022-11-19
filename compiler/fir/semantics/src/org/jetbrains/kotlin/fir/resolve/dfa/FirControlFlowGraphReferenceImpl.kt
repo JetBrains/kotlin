@@ -25,7 +25,7 @@ class FirControlFlowGraphReferenceImpl(
     }
 }
 
-class DataFlowInfo(val variableStorage: VariableStorage, val flowOnNodes: Map<CFGNode<*>, Flow>)
+class DataFlowInfo(val variableStorage: VariableStorage, val flowOnNodes: Map<CFGNode<*>, PersistentFlow>)
 
 val FirControlFlowGraphReference.controlFlowGraph: ControlFlowGraph?
     get() = (this as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph

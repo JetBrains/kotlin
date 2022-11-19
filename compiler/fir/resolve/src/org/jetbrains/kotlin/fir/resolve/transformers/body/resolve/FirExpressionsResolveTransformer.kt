@@ -827,7 +827,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .transformLeftOperand(this, ResolutionMode.WithExpectedType(booleanType))
             .also(dataFlowAnalyzer::exitLeftBinaryLogicExpressionArgument)
             .transformRightOperand(this, ResolutionMode.WithExpectedType(booleanType))
-            .also(dataFlowAnalyzer::exitBinaryLogicExpression)
+            .also { dataFlowAnalyzer.exitBinaryLogicExpression() }
             .transformOtherChildren(transformer, ResolutionMode.WithExpectedType(booleanType))
             .also { it.resultType = booleanType }
     }

@@ -20,18 +20,14 @@ fun ConeConstantReference.toOperation(): Operation? = when (this) {
 }
 
 // Returns `null` if the statement is always false.
-fun <F : Flow> LogicSystem<F>.approveContractStatement(
-    flow: F,
+fun LogicSystem.approveContractStatement(
     statement: ConeBooleanExpression,
     arguments: Array<out DataFlowVariable?>, // 0 = receiver (null if doesn't exist)
     substitutor: ConeSubstitutor?,
-    removeApprovedOrImpossible: Boolean = false,
+    approveOperationStatement: (OperationStatement) -> TypeStatements
 ): TypeStatements? {
-    fun OperationStatement.approve() =
-        approveOperationStatement(flow, this, removeApprovedOrImpossible)
-
     fun DataFlowVariable.processEqNull(isEq: Boolean): TypeStatements =
-        OperationStatement(this, if (isEq) Operation.EqNull else Operation.NotEqNull).approve()
+        approveOperationStatement(OperationStatement(this, if (isEq) Operation.EqNull else Operation.NotEqNull))
 
     fun ConeBooleanExpression.visit(inverted: Boolean): TypeStatements? = when (this) {
         is ConeBooleanConstantReference ->
@@ -61,9 +57,7 @@ fun <F : Flow> LogicSystem<F>.approveContractStatement(
         is ConeIsNullPredicate ->
             arguments.getOrNull(arg.parameterIndex + 1)?.processEqNull(inverted == isNegated) ?: mapOf()
         is ConeBooleanValueParameterReference ->
-            arguments.getOrNull(parameterIndex + 1)?.let {
-                OperationStatement(it, if (inverted) Operation.EqFalse else Operation.EqTrue).approve()
-            } ?: mapOf()
+            arguments.getOrNull(parameterIndex + 1)?.let { approveOperationStatement(it eq !inverted) } ?: mapOf()
         is ConeBinaryLogicExpression -> {
             val a = left.visit(inverted)
             val b = right.visit(inverted)

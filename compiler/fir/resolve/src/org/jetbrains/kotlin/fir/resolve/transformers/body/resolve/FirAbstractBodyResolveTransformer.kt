@@ -66,7 +66,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val typeResolverTransformer: FirSpecificTypeResolverTransformer get() = components.typeResolverTransformer
     protected inline val callResolver: FirCallResolver get() = components.callResolver
     protected inline val callCompleter: FirCallCompleter get() = components.callCompleter
-    protected inline val dataFlowAnalyzer: FirDataFlowAnalyzer<*> get() = components.dataFlowAnalyzer
+    protected inline val dataFlowAnalyzer: FirDataFlowAnalyzer get() = components.dataFlowAnalyzer
     protected inline val scopeSession: ScopeSession get() = components.scopeSession
     protected inline val file: FirFile get() = components.file
 
@@ -103,7 +103,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             session
         )
         override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
-        override val dataFlowAnalyzer: FirDataFlowAnalyzer<*> =
+        override val dataFlowAnalyzer: FirDataFlowAnalyzer =
             FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this, context.dataFlowAnalyzerContext)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
