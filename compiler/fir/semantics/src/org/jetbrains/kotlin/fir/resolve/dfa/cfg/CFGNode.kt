@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -124,6 +125,12 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     abstract val fir: E
     var isDead: Boolean = false
         protected set
+
+    private var _flow: PersistentFlow? = null
+    open var flow: PersistentFlow
+        get() = _flow ?: throw IllegalStateException("flow for $this not initialized - traversing nodes in wrong order?")
+        @CfgInternals
+        set(value) { _flow = value } // TODO: forbid reassignment
 
     @CfgInternals
     fun updateDeadStatus() {
@@ -746,6 +753,11 @@ class StubNode(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<FirStub>(
     }
 
     override val fir: FirStub get() = FirStub
+
+    override var flow: PersistentFlow
+        get() = firstPreviousNode.flow
+        @CfgInternals
+        set(_) = throw IllegalStateException("can't set flow for stub node")
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitStubNode(this, data)
