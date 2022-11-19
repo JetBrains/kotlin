@@ -2,7 +2,7 @@ FILE: safeCalls.kt
     public abstract interface A : R|kotlin/Any| {
         public abstract fun foo(): R|A|
 
-        public abstract fun bar(): R|A|
+        public abstract fun bar(x: R|kotlin/String|): R|A|
 
     }
     public abstract interface B : R|kotlin/Any| {
@@ -14,8 +14,16 @@ FILE: safeCalls.kt
 
     }
     public final fun test_1(x: R|A?|): R|kotlin/Unit| {
-        R|<local>/x|?.{ $subj$.R|/A.foo|() }?.{ $subj$.R|/A.bar|() }
+        R|<local>/x|?.{ $subj$.R|/A.foo|() }?.{ $subj$.R|/A.bar|(String()) }
     }
     public final fun test_2(x: R|B?|): R|kotlin/Unit| {
         R|<local>/x|?.{ $subj$.R|/B.foo| }?.{ $subj$.R|/B.bar| }
+    }
+    public final fun test_3(x: R|A?|, y: R|kotlin/String?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/x|?.{ $subj$.R|/A.bar|((R|<local>/y| as R|kotlin/String|)) }, Null(null)) ->  {
+                R|<local>/y|.R|kotlin/String.length|
+            }
+        }
+
     }

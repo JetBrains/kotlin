@@ -634,9 +634,8 @@ digraph kt44814_kt {
                     210 [label="Type operator: (this@R|/FirModifierList.Companion.getModifierList|.R|/FirPsiSourceElement.psi| as? R|KtModifierListOwner|) [6]"];
                     211 [label="Enter safe call [6]"];
                     212 [label="Access variable R|/KtModifierListOwner.modifierList| [6]"];
-                    213 [label="Exit safe call [6]"];
-                    214 [label="Enter safe call [6]"];
-                    215 [label="Postponed enter to lambda [7]"];
+                    213 [label="Enter safe call [6]"];
+                    214 [label="Postponed enter to lambda [7]"];
                     subgraph cluster_65 {
                         color=blue
                         233 [label="Enter function anonymousFunction [8]" style="filled" fillcolor=red];
@@ -649,8 +648,9 @@ digraph kt44814_kt {
                         }
                         238 [label="Exit function anonymousFunction [8]" style="filled" fillcolor=red];
                     }
-                    216 [label="Postponed exit from lambda [7]"];
-                    217 [label="Function call: $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(...) [6]"];
+                    215 [label="Postponed exit from lambda [7]"];
+                    216 [label="Function call: $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(...) [6]"];
+                    217 [label="Exit safe call [6]"];
                     218 [label="Exit safe call [6]"];
                     219 [label="Exit block [6]"];
                 }
@@ -734,15 +734,15 @@ digraph kt44814_kt {
     207 -> {208};
     208 -> {209};
     209 -> {210};
-    210 -> {211 213};
+    210 -> {211 217};
     211 -> {212};
-    212 -> {213};
-    213 -> {214 218};
-    214 -> {215};
-    215 -> {233};
-    215 -> {216} [color=red];
-    215 -> {233} [style=dashed];
-    216 -> {217};
+    212 -> {217 213};
+    213 -> {214};
+    214 -> {233};
+    214 -> {215} [color=red];
+    214 -> {233} [style=dashed];
+    215 -> {216};
+    216 -> {218};
     217 -> {218};
     218 -> {221 219};
     219 -> {220};
@@ -764,7 +764,7 @@ digraph kt44814_kt {
     236 -> {237};
     237 -> {238};
     238 -> {221} [color=red];
-    238 -> {216} [color=green];
+    238 -> {215} [color=green];
     239 -> {249 240};
     240 -> {241};
     241 -> {242 244};

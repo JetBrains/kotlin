@@ -21,7 +21,6 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     abstract fun addImplication(flow: FLOW, implication: Implication)
     abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
     abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
-    abstract fun copyAllInformation(from: FLOW, to: FLOW)
     abstract fun isSameValueIn(a: FLOW, b: FLOW, variable: RealVariable): Boolean
 
     abstract fun translateVariableFromConditionInStatements(

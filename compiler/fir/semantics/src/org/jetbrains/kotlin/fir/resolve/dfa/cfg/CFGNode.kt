@@ -781,8 +781,6 @@ class EnterSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallEx
     }
 }
 class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallExpression, level: Int, id: Int) : CFGNode<FirSafeCallExpression>(owner, level, id) {
-    val lastNodeInNotNullCase: CFGNode<*>? get() = previousNodes.getOrNull(1)
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitExitSafeCallNode(this, data)
     }
