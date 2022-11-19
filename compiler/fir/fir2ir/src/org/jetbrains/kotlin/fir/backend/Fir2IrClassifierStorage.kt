@@ -113,7 +113,7 @@ class Fir2IrClassifierStorage(
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
     ) {
         typeParameters = owner.typeParameters.mapIndexedNotNull { index, typeParameter ->
-            if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
+            if (typeParameter !is FirTypeParameter || (typeParameter.name == SELF_TYPE && owner is FirConstructor)) return@mapIndexedNotNull null
             getIrTypeParameter(typeParameter, index, symbol, typeContext).apply {
                 parent = this@setTypeParameters
                 if (superTypes.isEmpty()) {
@@ -401,7 +401,7 @@ class Fir2IrClassifierStorage(
                         ) { symbol ->
                             irFactory.createTypeParameter(
                                 startOffset, endOffset, origin, symbol,
-                                name, if (index < 0) 0 else index,
+                                replacedSelfName, if (index < 0) 0 else index,
                                 isReified,
                                 variance
                             )
@@ -413,7 +413,7 @@ class Fir2IrClassifierStorage(
                         ) { symbol ->
                             irFactory.createTypeParameter(
                                 startOffset, endOffset, origin, symbol,
-                                name, if (index < 0) 0 else index,
+                                replacedSelfName, if (index < 0) 0 else index,
                                 isReified,
                                 variance
                             )

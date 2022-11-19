@@ -6,7 +6,7 @@
 import kotlin.Self
 
 @Self
-class Foo {
+open class Foo<T> {
     public val bar = 1
 
     fun test(): Self = this as Self
@@ -21,5 +21,6 @@ class Foo {
 }
 
 fun box(): String {
-    return Foo().box()
+    val foo = Foo<Int>()
+    return foo.box()
 }

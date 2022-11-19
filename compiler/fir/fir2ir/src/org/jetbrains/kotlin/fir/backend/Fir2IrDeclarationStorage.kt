@@ -1440,8 +1440,14 @@ class Fir2IrDeclarationStorage(
                             firPropertySymbol.dispatchReceiverClassLookupTagOrNull() !=
                             firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassLookupTagOrNull()
                 Fir2IrLazyProperty(
-                    components, startOffset, endOffset, declarationOrigin,
-                    fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
+                    components,
+                    startOffset,
+                    endOffset,
+                    declarationOrigin,
+                    fir,
+                    (lazyParent as? Fir2IrLazyClass)?.fir,
+                    symbol,
+                    isFakeOverride
                 ).apply {
                     this.parent = lazyParent
                 }

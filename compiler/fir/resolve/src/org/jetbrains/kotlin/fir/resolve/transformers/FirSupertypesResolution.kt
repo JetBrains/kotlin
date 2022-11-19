@@ -489,6 +489,15 @@ open class FirSupertypeResolverVisitor(
             }.build()
 
             firClass.replaceTypeParameters(params + selfTypeParameter)
+
+            if (firClass is FirClass) {
+                firClass.declarations.filterIsInstance<FirConstructor>().forEach {
+                    val constructorTypeParams = it.typeParameters
+                    it.replaceTypeParameters(constructorTypeParams + selfTypeParameter)
+                    val firClassTypeRef = it.returnTypeRef.resolvedTypeFromPrototype(firClass.defaultType())
+                    it.replaceReturnTypeRef(firClassTypeRef)
+                }
+            }
         }
     }
 

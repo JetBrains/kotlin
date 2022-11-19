@@ -18,6 +18,11 @@ class ReturnTypeWithTypeParameter<T> {
     fun returnType(): Self {
         return this as Self
     }
+
+    fun functionWithConstruct(): Self {
+        val s = ReturnTypeWithTypeParameter<Int, ReturnTypeWithTypeParameter<Int, *>>()
+        return this as Self
+    }
 }
 
 @Self
@@ -58,7 +63,7 @@ class InnerSelfClass {
     }
 
     fun returnSelfClassType(): InnerSelfClass.Self {
-        return InnerSelfClass().Self()
+        return InnerSelfClass<InnerSelfClass<*>>().Self()
     }
 }
 

@@ -1,6 +1,6 @@
 FILE: selfTypes.kt
     @R|kotlin/Self|() public final class JustSelfAnnotation<out <Self> : R|JustSelfAnnotation<<Self>>|> : R|kotlin/Any| {
-        public constructor(): R|JustSelfAnnotation| {
+        public constructor<out <Self> : R|JustSelfAnnotation<<Self>>|>(): R|JustSelfAnnotation<<Self>>| {
             super<R|kotlin/Any|>()
         }
 
@@ -10,7 +10,7 @@ FILE: selfTypes.kt
 
     }
     @R|kotlin/Self|() public final class ReturnType<out <Self> : R|ReturnType<<Self>>|> : R|kotlin/Any| {
-        public constructor(): R|ReturnType| {
+        public constructor<out <Self> : R|ReturnType<<Self>>|>(): R|ReturnType<<Self>>| {
             super<R|kotlin/Any|>()
         }
 
@@ -21,7 +21,7 @@ FILE: selfTypes.kt
 
     }
     @R|kotlin/Self|() public final class ReturnTypeWithTypeParameter<T, out <Self> : R|ReturnTypeWithTypeParameter<T, <Self>>|> : R|kotlin/Any| {
-        public constructor<T>(): R|ReturnTypeWithTypeParameter<T>| {
+        public constructor<T, out <Self> : R|ReturnTypeWithTypeParameter<T, <Self>>|>(): R|ReturnTypeWithTypeParameter<T, <Self>>| {
             super<R|kotlin/Any|>()
         }
 
@@ -29,9 +29,14 @@ FILE: selfTypes.kt
             ^returnType (this@R|/ReturnTypeWithTypeParameter| as R|<Self>|)
         }
 
+        public final fun functionWithConstruct(): R|<Self>| {
+            lval s: R|ReturnTypeWithTypeParameter<kotlin/Int, ReturnTypeWithTypeParameter<kotlin/Int, *>>| = R|/ReturnTypeWithTypeParameter.ReturnTypeWithTypeParameter|<R|kotlin/Int|, R|ReturnTypeWithTypeParameter<kotlin/Int, *>|>()
+            ^functionWithConstruct (this@R|/ReturnTypeWithTypeParameter| as R|<Self>|)
+        }
+
     }
     @R|kotlin/Self|() public final class ReturnTypeWithTypeParameters<T, A, F, out <Self> : R|ReturnTypeWithTypeParameters<T, A, F, <Self>>|> : R|kotlin/Any| {
-        public constructor<T, A, F>(): R|ReturnTypeWithTypeParameters<T, A, F>| {
+        public constructor<T, A, F, out <Self> : R|ReturnTypeWithTypeParameters<T, A, F, <Self>>|>(): R|ReturnTypeWithTypeParameters<T, A, F, <Self>>| {
             super<R|kotlin/Any|>()
         }
 
@@ -46,7 +51,7 @@ FILE: selfTypes.kt
         }
 
         @R|kotlin/Self|() public final inner class Inner<out <Self> : R|InnerClass.Inner<<Self>>|> : R|kotlin/Any| {
-            public InnerClass.constructor(): R|InnerClass.Inner| {
+            public InnerClass.constructor<out <Self> : R|InnerClass.Inner<<Self>>|>(): R|InnerClass.Inner<<Self>>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -63,7 +68,7 @@ FILE: selfTypes.kt
         }
 
         @R|kotlin/Self|() public final class Nested<out <Self> : R|NestedClass.Nested<<Self>>|> : R|kotlin/Any| {
-            public constructor(): R|NestedClass.Nested| {
+            public constructor<out <Self> : R|NestedClass.Nested<<Self>>|>(): R|NestedClass.Nested<<Self>>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -75,7 +80,7 @@ FILE: selfTypes.kt
 
     }
     @R|kotlin/Self|() public final class InnerSelfClass<out <Self> : R|InnerSelfClass<<Self>>|> : R|kotlin/Any| {
-        public constructor(): R|InnerSelfClass| {
+        public constructor<out <Self> : R|InnerSelfClass<<Self>>|>(): R|InnerSelfClass<<Self>>| {
             super<R|kotlin/Any|>()
         }
 
@@ -95,12 +100,12 @@ FILE: selfTypes.kt
         }
 
         public final fun returnSelfClassType(): R|InnerSelfClass.Self| {
-            ^returnSelfClassType R|/InnerSelfClass.InnerSelfClass|().R|/InnerSelfClass.Self.Self|()
+            ^returnSelfClassType R|/InnerSelfClass.InnerSelfClass|<R|InnerSelfClass<*>|>().R|/InnerSelfClass.Self.Self|()
         }
 
     }
     @R|kotlin/Self|() public final class TypeAliasSelf<out <Self> : R|TypeAliasSelf<<Self>>|> : R|kotlin/Any| {
-        public constructor(): R|TypeAliasSelf| {
+        public constructor<out <Self> : R|TypeAliasSelf<<Self>>|>(): R|TypeAliasSelf<<Self>>| {
             super<R|kotlin/Any|>()
         }
 
@@ -116,7 +121,7 @@ FILE: selfTypes.kt
 
     }
     @R|kotlin/Self|() public final class SelfWithSelfVariable<out <Self> : R|SelfWithSelfVariable<<Self>>|> : R|kotlin/Any| {
-        public constructor(): R|SelfWithSelfVariable| {
+        public constructor<out <Self> : R|SelfWithSelfVariable<<Self>>|>(): R|SelfWithSelfVariable<<Self>>| {
             super<R|kotlin/Any|>()
         }
 
@@ -132,7 +137,7 @@ FILE: selfTypes.kt
         }
 
         @R|kotlin/Self|() public final inner class SelfAnnotated<S : R|InnerClassWithSelfAnnotation<S>|, out <Self> : R|InnerClassWithSelfAnnotation.SelfAnnotated<S, <Self>>|> : R|kotlin/Any| {
-            public InnerClassWithSelfAnnotation<S>.constructor(): R|InnerClassWithSelfAnnotation.SelfAnnotated<S>| {
+            public InnerClassWithSelfAnnotation<S>.constructor<out <Self> : R|InnerClassWithSelfAnnotation.SelfAnnotated<S, <Self>>|>(): R|InnerClassWithSelfAnnotation.SelfAnnotated<S, <Self>>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -150,7 +155,7 @@ FILE: selfTypes.kt
     @R|kotlin/Self|() public abstract interface SelfTypeParameterInterface<out <Self> : R|SelfTypeParameterInterface<<Self>>|> : R|kotlin/Any| {
     }
     @R|kotlin/Self|() public final class SelfTypeAsTypeParameterInExtends<out <Self> : R|SelfTypeAsTypeParameterInExtends<<Self>>|> : R|SelfTypeParameterInterface<<Self>>| {
-        public constructor(): R|SelfTypeAsTypeParameterInExtends| {
+        public constructor<out <Self> : R|SelfTypeAsTypeParameterInExtends<<Self>>|>(): R|SelfTypeAsTypeParameterInExtends<<Self>>| {
             super<R|kotlin/Any|>()
         }
 

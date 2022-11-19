@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -458,7 +457,9 @@ class BodyResolveContext(
                 .addNonLocalScopeIfNotNull(selfTypeScope)
 
         val scopeForConstructorHeader =
-            staticsAndCompanion.addNonLocalScopeIfNotNull(typeParameterScope)
+            staticsAndCompanion
+                .addNonLocalScopeIfNotNull(typeParameterScope)
+                .addNonLocalScopeIfNotNull(selfTypeScope)
 
         /*
          * Scope for enum entries is equal to initial scope for constructor header
