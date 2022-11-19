@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import kotlinx.collections.immutable.PersistentMap
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
@@ -16,41 +15,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
-
-@OptIn(ExperimentalContracts::class)
-internal inline fun <K, V> MutableMap<K, V>.put(key: K, valueProducer: () -> V, remappingFunction: (existing: V) -> V) {
-    contract {
-        callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(valueProducer, InvocationKind.AT_MOST_ONCE)
-    }
-    val existing = this[key]
-    if (existing == null) {
-        put(key, valueProducer())
-    } else {
-        put(key, remappingFunction(existing))
-    }
-}
-
-@OptIn(ExperimentalContracts::class)
-internal inline fun <K, V> PersistentMap<K, V>.put(
-    key: K,
-    valueProducer: () -> V,
-    remappingFunction: (existing: V) -> V
-): PersistentMap<K, V> {
-    contract {
-        callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(valueProducer, InvocationKind.AT_MOST_ONCE)
-    }
-    val existing = this[key]
-    return if (existing == null) {
-        put(key, valueProducer())
-    } else {
-        put(key, remappingFunction(existing))
-    }
-}
 
 fun TypeStatement?.smartCastedType(context: ConeTypeContext, originalType: ConeKotlinType): ConeKotlinType =
     if (this != null && exactType.isNotEmpty()) {

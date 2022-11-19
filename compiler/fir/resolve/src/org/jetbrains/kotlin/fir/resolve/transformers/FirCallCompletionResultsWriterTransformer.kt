@@ -65,7 +65,7 @@ class FirCallCompletionResultsWriterTransformer(
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator,
     private val typeApproximator: ConeTypeApproximator,
-    private val dataFlowAnalyzer: FirDataFlowAnalyzer<*>,
+    private val dataFlowAnalyzer: FirDataFlowAnalyzer,
     private val integerOperatorApproximator: IntegerLiteralAndOperatorApproximationTransformer,
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal

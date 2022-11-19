@@ -7,35 +7,32 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.types.*
 
-abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceContext) {
-    // --------------------------- Flow graph constructors ---------------------------
-    abstract fun createEmptyFlow(): FLOW
-    abstract fun forkFlow(flow: FLOW): FLOW
-    abstract fun joinFlow(flows: Collection<FLOW>): FLOW
-    abstract fun unionFlow(flows: Collection<FLOW>): FLOW
+abstract class LogicSystem(protected val context: ConeInferenceContext) {
+    abstract fun joinFlow(flows: Collection<PersistentFlow>, union: Boolean): MutableFlow
 
-    // -------------------------------- Flow mutators --------------------------------
     // Returns all known information about the variable, or null if unchanged by this statement:
-    abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement): TypeStatement?
-    abstract fun addTypeStatements(flow: FLOW, statements: TypeStatements): List<TypeStatement>
-    abstract fun addImplication(flow: FLOW, implication: Implication)
-    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
-    abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
-    abstract fun isSameValueIn(a: FLOW, b: FLOW, variable: RealVariable): Boolean
+    abstract fun addTypeStatement(flow: MutableFlow, statement: TypeStatement): TypeStatement?
+    abstract fun addImplication(flow: MutableFlow, implication: Implication)
+    abstract fun addLocalVariableAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable)
+    abstract fun recordNewAssignment(flow: MutableFlow, variable: RealVariable, index: Int)
+    abstract fun isSameValueIn(a: PersistentFlow, b: MutableFlow, variable: RealVariable): Boolean
+    abstract fun isSameValueIn(a: PersistentFlow, b: PersistentFlow, variable: RealVariable): Boolean
+
+    fun addTypeStatements(flow: MutableFlow, statements: TypeStatements): List<TypeStatement> =
+        statements.values.mapNotNull { addTypeStatement(flow, it) }
 
     abstract fun translateVariableFromConditionInStatements(
-        flow: FLOW,
+        flow: MutableFlow,
         originalVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
-        shouldRemoveOriginalStatements: Boolean = originalVariable.isSynthetic(),
         transform: (Implication) -> Implication? = { it },
     )
 
-    // This does *not* commit the results to the flow (but it does mutate the flow if removeApprovedOrImpossible=true)
+    abstract fun approveOperationStatement(flow: PersistentFlow, statement: OperationStatement): TypeStatements
     abstract fun approveOperationStatement(
-        flow: FLOW,
-        approvedStatement: OperationStatement,
-        removeApprovedOrImpossible: Boolean = false
+        flow: MutableFlow,
+        statement: OperationStatement,
+        removeApprovedOrImpossible: Boolean,
     ): TypeStatements
 
     protected abstract fun ConeKotlinType.isAcceptableForSmartcast(): Boolean
@@ -57,7 +54,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         right.isEmpty() -> left
         else -> left.toMutableMap().apply {
             for ((variable, rightStatement) in right) {
-                put(variable, { rightStatement }, { and(listOf(it, rightStatement))!! })
+                this[variable] = this[variable]?.let { and(listOf(it, rightStatement))!! } ?: rightStatement
             }
         }
     }

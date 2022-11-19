@@ -42,7 +42,7 @@ abstract class BodyResolveComponents : SessionHolder {
     abstract val callCompleter: FirCallCompleter
     abstract val doubleColonExpressionResolver: FirDoubleColonExpressionResolver
     abstract val syntheticCallGenerator: FirSyntheticCallGenerator
-    abstract val dataFlowAnalyzer: FirDataFlowAnalyzer<*>
+    abstract val dataFlowAnalyzer: FirDataFlowAnalyzer
     abstract val outerClassManager: FirOuterClassManager
     abstract val integerLiteralAndOperatorApproximationTransformer: IntegerLiteralAndOperatorApproximationTransformer
 }

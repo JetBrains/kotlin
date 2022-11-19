@@ -67,7 +67,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         node: CFGNode<*>,
         effectDeclaration: ConeConditionalEffectDeclaration,
         function: FirFunction,
-        logicSystem: LogicSystem<PersistentFlow>,
+        logicSystem: LogicSystem,
         dataFlowInfo: DataFlowInfo,
         context: CheckerContext
     ): Boolean {
@@ -87,7 +87,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        var flow = dataFlowInfo.flowOnNodes.getValue(node) as PersistentFlow
+        var flow = dataFlowInfo.flowOnNodes.getValue(node)
         val operation = effect.value.toOperation()
         if (operation != null) {
             if (resultExpression is FirConstExpression<*>) {
@@ -100,7 +100,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
                 if (resultVar != null) {
                     val impliedByReturnValue = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
                     if (impliedByReturnValue.isNotEmpty()) {
-                        flow = logicSystem.forkFlow(flow).also { logicSystem.addTypeStatements(it, impliedByReturnValue) }
+                        flow = flow.fork().also { logicSystem.addTypeStatements(it, impliedByReturnValue) }.freeze()
                     }
                 }
             }
@@ -126,8 +126,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         }
 
         val conditionStatements = logicSystem.approveContractStatement(
-            flow, effectDeclaration.condition, argumentVariables, substitutor = null
-        ) ?: return true
+            effectDeclaration.condition, argumentVariables, substitutor = null
+        ) { logicSystem.approveOperationStatement(flow, it) } ?: return true
 
         return !conditionStatements.values.all { requirement ->
             val originalType = requirement.variable.identifier.symbol.correspondingParameterType ?: return@all true

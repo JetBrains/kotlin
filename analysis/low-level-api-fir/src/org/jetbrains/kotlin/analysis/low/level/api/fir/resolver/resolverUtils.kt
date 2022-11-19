@@ -47,9 +47,9 @@ internal open class StubBodyResolveTransformerComponents(
     transformer,
     context,
 ) {
-    override val dataFlowAnalyzer: FirDataFlowAnalyzer<*>
-        get() = object : FirDataFlowAnalyzer<PersistentFlow>(this@StubBodyResolveTransformerComponents, context.dataFlowAnalyzerContext) {
-            override val logicSystem: LogicSystem<PersistentFlow>
+    override val dataFlowAnalyzer: FirDataFlowAnalyzer
+        get() = object : FirDataFlowAnalyzer(this@StubBodyResolveTransformerComponents, context.dataFlowAnalyzerContext) {
+            override val logicSystem: LogicSystem
                 get() = error("Should not be called")
 
             override val receiverStack: Iterable<ImplicitReceiverValue<*>>
