@@ -231,8 +231,8 @@ internal open class SymbolLightClass(
             val isLateInit = (propertySymbol as? KtKotlinPropertySymbol)?.isLateInit == true
             val isConst = (propertySymbol as? KtKotlinPropertySymbol)?.isConst == true
 
-            val forceStatic = classOrObjectSymbol.isObject
-            val takePropertyVisibility = !isCompanionObject && (isLateInit || isJvmField || isConst)
+            val forceStatic = classOrObjectSymbol.isObject || isCompanionObject
+            val takePropertyVisibility = isLateInit || isJvmField || isConst
 
             createField(
                 declaration = propertySymbol,
