@@ -183,7 +183,7 @@ fun equalsChecks(left: R<List<Int>>, right: R<List<Int>>) {
     supply(left == right as R<List<Int>>?)
 }
 
-// todo add default parameters
+lateinit var late1: E
 
 fun box(): String {
     supply("#1")
@@ -219,6 +219,13 @@ fun box(): String {
     supply("#16")
     equalsChecks1(A(listOf(listOf())))
     supply("#17")
+    late1 = e
+    lateinit var late2: E
+    late2 = e
+    supply(e)
+    supply(late1)
+    supply(late2)
+    supply("#18")
 
     val log = lines.joinToString("\n")
     val expectedLog =
@@ -305,6 +312,10 @@ fun box(): String {
         true
         #16
         #17
+        E(x=D(x=C(x=3, y=B(x=4), z=5)))
+        E(x=D(x=C(x=3, y=B(x=4), z=5)))
+        E(x=D(x=C(x=3, y=B(x=4), z=5)))
+        #18
         """.trimIndent()
     require(log == expectedLog) { log }
     

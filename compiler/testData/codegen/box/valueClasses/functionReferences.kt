@@ -4,8 +4,6 @@
 // TARGET_BACKEND: JVM_IR
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
-// LAMBDAS: INDY
-// ^ to ensure that LAMBDAS are actually CLASSes
 
 // FILE: caller.kt
 import kotlin.coroutines.*

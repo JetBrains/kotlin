@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal abstract class JvmValueClassAbstractLowering(
     val context: JvmBackendContext,
@@ -171,7 +170,7 @@ internal abstract class JvmValueClassAbstractLowering(
 
     // Anonymous initializers in inline classes are processed when building the primary constructor.
     final override fun visitAnonymousInitializerNew(declaration: IrAnonymousInitializer): IrStatement =
-        if (declaration.parent.safeAs<IrClass>()?.isSpecificLoweringLogicApplicable() == true)
+        if ((declaration.parent as? IrClass)?.isSpecificLoweringLogicApplicable() == true)
             declaration
         else
             super.visitAnonymousInitializerNew(declaration)
@@ -271,11 +270,11 @@ internal abstract class JvmValueClassAbstractLowering(
             visitValueDeclaration(expression.symbol.owner)
 
         override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): Boolean = false
-        override fun visitReturn(expression: IrReturn, data: Nothing?): Boolean = expression.returnTargetSymbol.owner.safeAs<IrFunction>()
+        override fun visitReturn(expression: IrReturn, data: Nothing?): Boolean = (expression.returnTargetSymbol.owner as? IrFunction)
             ?.let { replacements.quickCheckIfFunctionIsNotApplicable(it) } ?: false
 
         override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): Boolean =
-            declaration.parent.safeAs<IrClass>()?.isSpecificLoweringLogicApplicable() == true
+            (declaration.parent as? IrClass)?.isSpecificLoweringLogicApplicable() == true
 
         private fun visitStatementContainer(container: IrStatementContainer) = container.statements.any { it.accept(this, null) }
 

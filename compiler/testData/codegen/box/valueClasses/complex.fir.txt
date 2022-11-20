@@ -133,6 +133,7 @@ public final class C {
 @kotlin.Metadata
 public final class ComplexKt {
     // source: 'complex.kt'
+    public static field late1: E
     private final static @org.jetbrains.annotations.NotNull field lines: java.util.List
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -140,12 +141,14 @@ public final class ComplexKt {
     public final static method equalsChecks1-iUtXLc0(@org.jetbrains.annotations.NotNull p0: java.util.List): void
     public final static method f-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
     public final static method g-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final static @org.jetbrains.annotations.NotNull method getLate1(): E
     public final static @org.jetbrains.annotations.NotNull method getLines(): java.util.List
     public final static method h-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
     public final static method h1(): void
     public final static @org.jetbrains.annotations.NotNull method inlined-OsBMiQA(p0: int, p1: int, p2: int): D
     public final static @org.jetbrains.annotations.NotNull method notInlined-OsBMiQA(p0: int, p1: int, p2: int): D
     public final static method reuseBoxed(@org.jetbrains.annotations.NotNull p0: java.util.List): void
+    public final static method setLate1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
     public final static method supply(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
     public final static method testVars(@org.jetbrains.annotations.NotNull p0: NotInlined): void
 }
