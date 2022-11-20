@@ -113,6 +113,7 @@ allprojects {
     }
 
     repositories {
+        maven(url = "file:///dump")
         if (UtilsKt.getCacheRedirectorEnabled(project))
             maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
         else

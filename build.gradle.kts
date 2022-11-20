@@ -7,6 +7,7 @@ buildscript {
     kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
+        maven(url = "file:///dump")
         bootstrapKotlinRepo?.let(::maven)
 
         if (cacheRedirectorEnabled) {
@@ -384,6 +385,8 @@ allprojects {
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
+        maven(url = "file:///dump")
+
         when(kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
              null -> {}
             "master" -> {

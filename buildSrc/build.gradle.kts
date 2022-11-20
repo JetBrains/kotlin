@@ -10,6 +10,8 @@ buildscript {
     kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
+        maven(url = "file:///dump")
+
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         } else {
@@ -97,6 +99,7 @@ extra["versions.androidDxSources"] = "5.0.0_r2"
 extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
+    maven(url = "file:///dump")
     mavenCentral()
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
@@ -114,7 +117,7 @@ java {
 }
 
 val generateCompilerVersion by tasks.registering(VersionGenerator::class) {
-    kotlinNativeVersionInResources=true
+    kotlinNativeVersionInResources = true
     defaultVersionFileLocation()
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -186,7 +189,7 @@ dependencies {
     compileOnly(gradleApi())
 
     val kotlinVersion = project.bootstrapKotlinVersion
-    val ktorVersion  = "1.2.1"
+    val ktorVersion = "1.2.1"
     val slackApiVersion = "1.2.0"
     val metadataVersion = "0.0.1-dev-10"
 
@@ -213,7 +216,7 @@ samWithReceiver {
 }
 
 fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension.() -> Unit): Unit =
-        extensions.configure("samWithReceiver", configure)
+    extensions.configure("samWithReceiver", configure)
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.allWarningsAsErrors = true
