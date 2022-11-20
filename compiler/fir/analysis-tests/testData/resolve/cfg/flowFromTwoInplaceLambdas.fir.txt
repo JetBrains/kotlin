@@ -145,7 +145,7 @@ FILE: flowFromTwoInplaceLambdas.kt
         )
         when () {
             (R|<local>/y| is R|kotlin/String|) ->  {
-                R|<local>/x|.<Unresolved name: length>#
+                R|<local>/x|.R|kotlin/String.length|
             }
         }
 
