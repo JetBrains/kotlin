@@ -84,6 +84,6 @@ fun test7() {
     val y: Any?
     run2({ y = x }, { })
     if (y is String) {
-        x.<!UNRESOLVED_REFERENCE!>length<!> // ok - aliased
+        x.length // ok - aliased
     }
 }

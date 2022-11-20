@@ -27,12 +27,23 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             a.lowestCommonAncestor(b) ?: error("no common ancestor in $a, $b")
         }
         val result = commonFlow.fork()
+        result.mergeAssignments(flows)
+        if (union) {
+            result.copyNonConflictingAliases(flows, commonFlow)
+        } else {
+            result.copyCommonAliases(flows)
+        }
+        result.copyStatements(flows, commonFlow, union)
+        // TODO: compute common implications?
+        return result
+    }
 
+    private fun MutableFlow.mergeAssignments(flows: Collection<PersistentFlow>) {
         // If a variable was reassigned in one branch, it was reassigned at the join point.
         val reassignedVariables = mutableMapOf<RealVariable, Int>()
         for (flow in flows) {
             for ((variable, index) in flow.assignmentIndex) {
-                if (result.assignmentIndex[variable] != index) {
+                if (assignmentIndex[variable] != index) {
                     // Ideally we should generate an entirely new index here, but it doesn't really
                     // matter; the important part is that it's different from `commonFlow.previousFlow`.
                     reassignedVariables[variable] = max(index, reassignedVariables[variable] ?: 0)
@@ -40,27 +51,49 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             }
         }
         for ((variable, index) in reassignedVariables) {
-            recordNewAssignment(result, variable, index)
+            recordNewAssignment(this, variable, index)
         }
+    }
 
-        // TODO: if `union`, then all aliases from all flows are valid so long as other flows don't have a contradicting one
+    private fun MutableFlow.copyCommonAliases(flows: Collection<PersistentFlow>) {
         for ((from, to) in flows.first().directAliasMap) {
-            // If `from -> to` is still in `result` (was not removed by the above code), then it is also in all `flows`,
+            // If `from -> to` is still in `this` (was not removed by the above code), then it is also in all `flows`,
             // as the only way to break aliasing is by reassignment.
-            if (result.directAliasMap[from] != to && flows.all { it.unwrapVariable(from) == to }) {
+            if (directAliasMap[from] != to && flows.all { it.unwrapVariable(from) == to }) {
                 // if (p) { y = x } else { y = x } <-- after `if`, `y -> x` is in all `flows`, but not in `result`
                 // (which was forked from the flow before the `if`)
-                addLocalVariableAlias(result, from, to)
+                addLocalVariableAlias(this, from, to)
             }
         }
+    }
 
+    private fun MutableFlow.copyNonConflictingAliases(flows: Collection<PersistentFlow>, commonFlow: PersistentFlow) {
+        val candidates = mutableMapOf<RealVariable, RealVariable?>()
+        for (flow in flows) {
+            for ((from, to) in flow.directAliasMap) {
+                candidates[from] = when {
+                    // f({ a = b }, { notReassigning() }) -> a = b
+                    commonFlow.assignmentIndex[from] == flow.assignmentIndex[from] -> continue
+                    // f({ a = b }, { a = c }) -> a = b or c; can't express that, so just don't
+                    from in candidates && candidates[from] != to -> null
+                    // f({ a = b }, { a = b }) -> a = b
+                    else -> to
+                }
+            }
+        }
+        for ((from, to) in candidates) {
+            addLocalVariableAlias(this, from, to ?: continue)
+        }
+    }
+
+    private fun MutableFlow.copyStatements(flows: Collection<PersistentFlow>, commonFlow: PersistentFlow, union: Boolean) {
         flows.flatMapTo(mutableSetOf()) { it.knownVariables }.forEach computeStatement@{ variable ->
-            val statement = if (variable in result.directAliasMap) {
+            val statement = if (variable in directAliasMap) {
                 return@computeStatement // statements about alias == statements about aliased variable
             } else if (!union) {
                 // if (condition) { /* x: S1 */ } else { /* x: S2 */ } // -> x: S1 | S2
                 or(flows.mapTo(mutableSetOf()) { it.getTypeStatement(variable) ?: return@computeStatement })
-            } else if (variable !in reassignedVariables) {
+            } else if (assignmentIndex[variable] == commonFlow.assignmentIndex[variable]) {
                 // callAllInSomeOrder({ /* x: S1 */ }, { /* x: S2 */ }) // -> x: S1 & S2
                 and(flows.mapNotNullTo(mutableSetOf()) { it.getTypeStatement(variable) })
             } else {
@@ -78,19 +111,19 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                 or(byAssignment.values.mapTo(mutableSetOf()) { and(it.filterNotNull()) ?: return@computeStatement })
             }
             if (statement?.isNotEmpty == true) {
-                result.approvedTypeStatements[variable] = statement.toPersistent()
+                approvedTypeStatements[variable] = statement.toPersistent()
             }
         }
-        // TODO: compute common implications?
-        return result
     }
 
     override fun addLocalVariableAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
-        flow.addAliases(persistentSetOf(alias), flow.unwrapVariable(underlyingVariable))
+        if (underlyingVariable == alias) return // x = x
+        flow.directAliasMap[alias] = underlyingVariable
+        flow.backwardsAliasMap[underlyingVariable] = flow.backwardsAliasMap[underlyingVariable]?.add(alias) ?: persistentSetOf(alias)
     }
 
     private fun MutableFlow.replaceVariable(variable: RealVariable, replacement: RealVariable?) {
-        val original = directAliasMap[variable]
+        val original = directAliasMap.remove(variable)
         if (original != null) {
             // All statements should've been made about whatever variable this is an alias to. There is nothing to replace.
             if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
@@ -100,11 +133,9 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             }
             // `variable.dependentVariables` is not separated by flow, so it may be non-empty if aliasing of this variable
             // was broken in another flow. However, in *this* flow dependent variables should have no information attached to them.
-
-            val siblings = backwardsAliasMap.getValue(original).remove(variable)
-            directAliasMap.remove(variable)
-            if (siblings.isNotEmpty()) {
-                backwardsAliasMap[original] = siblings
+            val siblings = backwardsAliasMap.getValue(original)
+            if (siblings.size > 1) {
+                backwardsAliasMap[original] = siblings.remove(variable)
             } else {
                 backwardsAliasMap.remove(original)
             }
@@ -112,7 +143,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                 addLocalVariableAlias(this, replacement, original)
             }
         } else {
-            val aliases = backwardsAliasMap[variable]
+            val aliases = backwardsAliasMap.remove(variable)
             // If asked to remove the variable but there are aliases, replace with a new representative for the alias group instead.
             val replacementOrNext = replacement ?: aliases?.first()
             for (dependent in variable.dependentVariables) {
@@ -122,21 +153,14 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             }
             logicStatements.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements.replaceVariable(variable, replacementOrNext)
-            if (aliases != null) {
-                backwardsAliasMap -= variable
-                if (replacementOrNext != null) {
-                    directAliasMap -= replacementOrNext
-                    addAliases(aliases, replacementOrNext)
+            if (aliases != null && replacementOrNext != null) {
+                directAliasMap -= replacementOrNext
+                val withoutSelf = aliases - replacementOrNext
+                if (withoutSelf.isNotEmpty()) {
+                    withoutSelf.associateWithTo(directAliasMap) { replacementOrNext }
+                    backwardsAliasMap[replacementOrNext] = backwardsAliasMap[replacementOrNext]?.addAll(withoutSelf) ?: withoutSelf
                 }
             }
-        }
-    }
-
-    private fun MutableFlow.addAliases(aliases: PersistentSet<RealVariable>, target: RealVariable) {
-        val withoutSelf = aliases - target
-        if (withoutSelf.isNotEmpty()) {
-            withoutSelf.associateWithTo(directAliasMap) { target }
-            backwardsAliasMap[target] = backwardsAliasMap[target]?.addAll(withoutSelf) ?: withoutSelf
         }
     }
 
