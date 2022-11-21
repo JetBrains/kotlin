@@ -66,7 +66,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                     with(GeneratedNames()) {
                         +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, scopes, scopeState, callables, callableState) }
                         +{ it: FirSession -> InterpretersRunner(it, scopeIds, scopeState, tokenIds, tokenState, getTestFilePath) }
-                        +{ it: FirSession -> FirDataFrameAdditionalCheckers(it, tokenState) }
+                        +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
                     }
                 }
             })
@@ -96,11 +96,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                 }
             }
             val file = getTestFilePath()
-            val rootMarkerStrategy = when {
-                file.contains("convert") -> any
-                else -> id
-            }
-            return coneKotlinTypes(functionCall, state, queue, tokenIds, tokenState, rootMarkerStrategy)
+            return generateAccessorsScopesForRefinedCall(functionCall, state, queue, tokenIds, tokenState)
         }
 
 //        fun expectedResult(id: String): Any? {

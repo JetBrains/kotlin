@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.dataframe.*
 import org.jetbrains.kotlin.fir.dataframe.Names.COLUM_GROUP_CLASS_ID
 import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
@@ -39,54 +40,24 @@ class FirDataFrameReceiverInjector(
 ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-        return coneKotlinTypes(functionCall, scopeState, scopeIds, tokenIds, tokenState, id)
+        return generateAccessorsScopesForRefinedCall(functionCall, scopeState, scopeIds, tokenIds, tokenState)
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()
 }
 
-typealias RootMarkerStrategy = KotlinTypeFacade.(FirFunctionCall) -> ConeTypeProjection
-
-
-val id: RootMarkerStrategy = {
-    val callReturnType = it.typeRef.coneTypeSafe<ConeClassLikeType>()
-    callReturnType!!.typeArguments[0]
-}
-
-val any: RootMarkerStrategy = {
-    session.builtinTypes.anyType.type
-}
-
-fun KotlinTypeFacade.coneKotlinTypes(
+fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     functionCall: FirFunctionCall,
     scopeState: MutableMap<ClassId, SchemaContext>,
     scopeIds: ArrayDeque<ClassId>,
     tokenIds: ArrayDeque<ClassId>,
     tokenState: MutableMap<ClassId, SchemaContext>,
-    getRootMarker: KotlinTypeFacade.(FirFunctionCall) -> ConeTypeProjection,
     reporter: InterpretationErrorReporter = InterpretationErrorReporter { _, _ -> }
 ): List<ConeKotlinType> {
-    val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
-    if (callReturnType.classId != DF_CLASS_ID) return emptyList()
-    val processor = functionCall.loadInterpreter(session) ?: return emptyList()
-
-    val dataFrameSchema =
-        interpret(functionCall, processor, reporter = reporter)
-            ?.let {
-                val value = it.value
-                if (value !is PluginDataFrameSchema) {
-                    reporter.reportInterpretationError(functionCall, "${processor::class} must return ${PluginDataFrameSchema::class}, but was ${value}")
-                    return emptyList()
-                }
-                value
-            }
-
-    dataFrameSchema ?: return emptyList()
+    val (rootMarker, dataFrameSchema) = analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
 
     val types: MutableList<ConeClassLikeType> = mutableListOf()
 
-    // TODO: generate a new marker for each call when there is an API to cast functionCall result to this type
-    val rootMarker = getRootMarker(functionCall)
     fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
         val scopeId = scopeIds.removeLast()
         var tokenId = rootMarker?.type?.classId
@@ -152,6 +123,36 @@ fun KotlinTypeFacade.coneKotlinTypes(
 
     dataFrameSchema.materialize(rootMarker)
     return types
+}
+
+data class CallResult(val rootMarker: ConeClassLikeType, val dataFrameSchema: PluginDataFrameSchema)
+
+fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: InterpretationErrorReporter): CallResult? {
+    val callReturnType = call.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
+    if (callReturnType.classId != DF_CLASS_ID) return null
+    val rootMarker = callReturnType.typeArguments[0]
+    if (rootMarker !is ConeClassLikeType) {
+        return null
+    }
+    val origin = rootMarker.toSymbol(session)?.origin
+    if (origin !is FirDeclarationOrigin.Plugin || origin.key != FirDataFrameReceiverInjector.DataFramePluginKey) {
+        return null
+    }
+
+    val processor = call.loadInterpreter(session) ?: return null
+
+    val dataFrameSchema = interpret(call, processor, reporter = reporter)
+        .let {
+            val value = it?.value
+            if (value !is PluginDataFrameSchema) {
+                reporter.reportInterpretationError(call, "${processor::class} must return ${PluginDataFrameSchema::class}, but was ${value}")
+                return null
+            }
+            value
+        }
+
+
+    return CallResult(rootMarker, dataFrameSchema)
 }
 
 fun FirFunctionCall.functionSymbol(): FirNamedFunctionSymbol {
