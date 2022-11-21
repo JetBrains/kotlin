@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -193,7 +194,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 // Generate IR call that throws linkage error. Report compiler warning.
                 blockBody.statements += partialLinkageCase.throwLinkageError(declaration)
 
-                // Don't remove inline functions, that may harm linkage in K/N with static caches.
+                // Don't remove inline functions, this may harm linkage in K/N backend with enabled static caches.
                 if (!declaration.isInline) {
                     if (declaration.isTopLevelDeclaration) {
                         // Optimization: Remove unlinked top-level functions.
@@ -399,11 +400,11 @@ internal class PartiallyLinkedIrTreePatcher(
 
             // Collect direct children if `this` isn't an expression with branches.
             val directChildren = if (!hasBranches())
-                DirectChildrenStatementsCollector().also(::acceptChildrenVoid).getResult() else null
+                DirectChildrenStatementsCollector().also(::acceptChildrenVoid).getResult() else DirectChildren.EMPTY
 
             val linkageError = partialLinkageCase.throwLinkageError(element = this, file = currentFile)
 
-            return if (directChildren?.statements?.isNotEmpty() == true)
+            return if (directChildren.statements.isNotEmpty())
                 IrCompositeImpl(startOffset, endOffset, builtIns.nothingType, PARTIAL_LINKAGE_RUNTIME_ERROR).apply {
                     statements += directChildren.statements
                     if (!directChildren.hasPartialLinkageRuntimeError) statements += linkageError
@@ -530,13 +531,25 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
+    private fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
+        return when (this) {
+            is IrCall -> origin == PARTIAL_LINKAGE_RUNTIME_ERROR || symbol == builtIns.linkageErrorSymbol
+            is IrComposite -> origin == PARTIAL_LINKAGE_RUNTIME_ERROR || statements.any { it.isPartialLinkageRuntimeError() }
+            else -> false
+        }
+    }
+
+    private data class DirectChildren(val statements: List<IrStatement>, val hasPartialLinkageRuntimeError: Boolean) {
+        companion object {
+            val EMPTY = DirectChildren(emptyList(), false)
+        }
+    }
+
     /**
      * Collects direct children statements up to the first IR p.l. error (everything after the IR p.l. error
      * if effectively dead code and do not need to be kept in the IR tree).
      */
-    private class DirectChildrenStatementsCollector : IrElementVisitorVoid {
-        data class DirectChildren(val statements: List<IrStatement>, val hasPartialLinkageRuntimeError: Boolean)
-
+    private inner class DirectChildrenStatementsCollector : IrElementVisitorVoid {
         private val children = mutableListOf<IrStatement>()
         private var hasPartialLinkageRuntimeError = false
 
