@@ -43,6 +43,10 @@ class CandidateFactory private constructor(
 
     constructor(context: ResolutionContext, callInfo: CallInfo) : this(context, buildBaseSystem(context, callInfo))
 
+    /**
+     * [createCandidate] doesn't make any guarantees for inapplicable calls. Errors in the call or callee do not necessarily result in an
+     * inapplicable [Candidate].
+     */
     fun createCandidate(
         callInfo: CallInfo,
         symbol: FirBasedSymbol<*>,

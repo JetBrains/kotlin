@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
+import kotlin.math.min
 
 /**
  * Checks compatibility of variance of type argument for Java collections.
@@ -53,7 +54,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         }
         val argumentMapping = expression.resolvedArgumentMapping ?: return
         val typeArgumentMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-        for (i in 0 until expression.typeArguments.size) {
+        for (i in 0 until min(expression.typeArguments.size, calleeFunction.typeParameterSymbols.size)) {
             val type = (expression.typeArguments[i] as? FirTypeProjectionWithVariance)?.typeRef?.coneType
             if (type != null) {
                 typeArgumentMap[calleeFunction.typeParameterSymbols[i]] = type

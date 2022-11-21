@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesRes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
+import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -798,21 +798,29 @@ internal class KtFirCallResolver(
         return toTypeArgumentsMapping(typeArguments, partiallyAppliedSymbol)
     }
 
+    /**
+     * Maps [typeArguments] to the type parameters of [partiallyAppliedSymbol].
+     *
+     * If too many type arguments are provided, a mapping is still created. Extra type arguments are simply ignored. If this wasn't the
+     * case, the resulting [KtCall] would contain no type arguments at all, which can cause problems later. If too few type arguments are
+     * provided, an empty map is returned defensively so that [toTypeArgumentsMapping] doesn't conjure any error types. If you want to map
+     * too few type arguments meaningfully, please provide filler types explicitly.
+     */
     private fun toTypeArgumentsMapping(
         typeArguments: List<FirTypeProjection>,
         partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
     ): Map<KtTypeParameterSymbol, KtType> {
         val typeParameters = partiallyAppliedSymbol.symbol.typeParameters
         if (typeParameters.isEmpty()) return emptyMap()
-        if (typeParameters.size != typeArguments.size) return emptyMap()
+        if (typeArguments.size < typeParameters.size) return emptyMap()
 
         val result = mutableMapOf<KtTypeParameterSymbol, KtType>()
 
-        for ((index, argument) in typeArguments.withIndex()) {
+        for ((index, typeParameter) in typeParameters.withIndex()) {
             // After resolution all type arguments should be usual types (not FirPlaceholderProjection)
-            if (argument !is FirTypeProjectionWithVariance || argument.variance != Variance.INVARIANT) return emptyMap()
-            val argumentKtType = argument.typeRef.coneType.asKtType()
-            result[typeParameters[index]] = argumentKtType
+            val typeArgument = typeArguments[index]
+            if (typeArgument !is FirTypeProjectionWithVariance || typeArgument.variance != Variance.INVARIANT) return emptyMap()
+            result[typeParameter] = typeArgument.typeRef.coneType.asKtType()
         }
 
         return result

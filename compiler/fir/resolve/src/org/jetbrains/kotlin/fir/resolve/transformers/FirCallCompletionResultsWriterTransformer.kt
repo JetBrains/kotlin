@@ -513,7 +513,7 @@ class FirCallCompletionResultsWriterTransformer(
         access: FirQualifiedAccess,
         candidate: Candidate
     ): List<FirTypeProjection> {
-        return computeTypeArgumentTypes(candidate)
+        val typeArguments = computeTypeArgumentTypes(candidate)
             .mapIndexed { index, type ->
                 when (val argument = access.typeArguments.getOrNull(index)) {
                     is FirTypeProjectionWithVariance -> {
@@ -540,6 +540,12 @@ class FirCallCompletionResultsWriterTransformer(
                     }
                 }
             }
+
+        // We must ensure that all extra type arguments are preserved in the result, so that they can still be resolved later (e.g. for
+        // navigation in the IDE).
+        return if (typeArguments.size < access.typeArguments.size) {
+            typeArguments + access.typeArguments.subList(typeArguments.size, access.typeArguments.size)
+        } else typeArguments
     }
 
     private fun computeTypeArgumentTypes(

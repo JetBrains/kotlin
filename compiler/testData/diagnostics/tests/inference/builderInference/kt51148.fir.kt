@@ -1,5 +1,5 @@
 fun box(): String {
-    return <!INAPPLICABLE_CANDIDATE!>someFunction<!><<!CANNOT_INFER_PARAMETER_TYPE!>SomeEnum<!>>()
+    return <!INAPPLICABLE_CANDIDATE!>someFunction<!><SomeEnum>()
 }
 
 interface SomeInterface <V> {
