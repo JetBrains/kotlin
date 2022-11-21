@@ -252,11 +252,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var includes: String? by NullableStringFreezableVar(null)
 
     @Argument(
-        value = "-Xcache-directories",
+        value = "-Xcache-directory",
         valueDescription = "<path>",
-        description = "A path to cache directories"
+        description = "A path to cache directory"
     )
-    var cacheDirectories: String? by NullableStringFreezableVar(null)
+    var cacheDirectory: String? by NullableStringFreezableVar(null)
 
     @Argument(value = "-Xir-build-cache", description = "Use compiler to build cache")
     var irBuildCache: Boolean by FreezableVar(false)

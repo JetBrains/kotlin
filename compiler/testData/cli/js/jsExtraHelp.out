@@ -1,6 +1,6 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xcache-directories=<path> A path to cache directories
+  -Xcache-directory=<path>   A path to cache directory
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
   -Xenable-extension-functions-in-externals
