@@ -7,7 +7,7 @@ final String kotlinRootDir = rootProject.file("../../../").absolutePath.replace(
 final String kotlinLibsDir = "$buildDir/libs"
 
 final String githubRevision = isTeamcityBuild ? project.property("githubRevision") : "master"
-final String kotlinVersion = isTeamcityBuild ? project.property("deployVersion") : "1.8.255-SNAPSHOT"
+final String kotlinVersion = isTeamcityBuild ? project.property("deployVersion") : "1.9.255-SNAPSHOT"
 final String repo = isTeamcityBuild ? project.property("kotlinLibsRepo") : "$kotlinRootDir/build/repo"
 
 println("# Extracting info:")

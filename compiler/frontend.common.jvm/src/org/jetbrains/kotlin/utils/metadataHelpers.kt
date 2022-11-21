@@ -23,8 +23,8 @@ private val LANGUAGE_TO_METADATA_VERSION = EnumMap<LanguageVersion, JvmMetadataV
     this[LanguageVersion.KOTLIN_1_5] = JvmMetadataVersion(1, 5, 1)
     this[LanguageVersion.KOTLIN_1_6] = JvmMetadataVersion(1, 6, 0)
     this[LanguageVersion.KOTLIN_1_7] = JvmMetadataVersion(1, 7, 0)
-    this[LanguageVersion.KOTLIN_1_8] = JvmMetadataVersion.INSTANCE
-    this[LanguageVersion.KOTLIN_1_9] = JvmMetadataVersion(1, 9, 0)
+    this[LanguageVersion.KOTLIN_1_8] = JvmMetadataVersion(1, 8, 0)
+    this[LanguageVersion.KOTLIN_1_9] = JvmMetadataVersion.INSTANCE
     this[LanguageVersion.KOTLIN_2_0] = JvmMetadataVersion(2, 0, 0)
 
     check(size == LanguageVersion.values().size) {
