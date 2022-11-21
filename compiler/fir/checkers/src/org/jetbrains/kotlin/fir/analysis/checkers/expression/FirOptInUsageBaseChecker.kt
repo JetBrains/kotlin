@@ -154,7 +154,7 @@ object FirOptInUsageBaseChecker {
                     context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
                 )
             } else {
-                fir.loadOverridableSpecificExperimentalities(session, context, visited, result)
+                fir.loadOverridableSpecificExperimentalities(context, visited, result)
             }
             dispatchReceiverType?.addExperimentalities(context, result, visited)
             if (fromSetter && this is FirPropertySymbol) {
@@ -176,8 +176,9 @@ object FirOptInUsageBaseChecker {
                 is FirAnonymousObject -> {
                 }
             }
-            fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
         }
+
+        fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
 
         if (fir.getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) != null) {
             val accessibility = fir.checkSinceKotlinVersionAccessibility(context)
@@ -194,7 +195,6 @@ object FirOptInUsageBaseChecker {
     }
 
     private fun FirCallableDeclaration.loadOverridableSpecificExperimentalities(
-        session: FirSession,
         context: CheckerContext,
         visited: MutableSet<FirDeclaration>,
         result: SmartSet<Experimentality>
@@ -207,8 +207,6 @@ object FirOptInUsageBaseChecker {
                 it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
             }
         }
-
-        loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype = false)
     }
 
     private fun ConeKotlinType?.addExperimentalities(

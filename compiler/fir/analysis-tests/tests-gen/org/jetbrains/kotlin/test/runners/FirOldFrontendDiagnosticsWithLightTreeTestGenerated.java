@@ -37875,6 +37875,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("constructorCheck.kt")
+            public void testConstructorCheck() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/constructorCheck.kt");
+            }
+
+            @Test
             @TestMetadata("deeplyNestedClass.kt")
             public void testDeeplyNestedClass() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/deeplyNestedClass.kt");
