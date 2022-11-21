@@ -65,7 +65,7 @@ internal class KtFirConstructorSymbol(
             throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("constructor")
         }
 
-        KtFirConstructorSymbolPointer(requireOwnerPointer(), isPrimary, firSymbol.fir.createSignature())
+        KtFirConstructorSymbolPointer(requireOwnerPointer(), isPrimary, firSymbol.createSignature())
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

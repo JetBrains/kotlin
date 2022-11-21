@@ -12,18 +12,17 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.ir.util.IdSignature
 
 internal class KtFirConstructorSymbolPointer(
     ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
     private val isPrimary: Boolean,
-    private val signature: IdSignature,
+    private val signature: FirCallableSignature,
 ) : KtFirMemberSymbolPointer<KtConstructorSymbol>(ownerPointer) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession,
     ): KtConstructorSymbol? {
-        val firConstructor = candidates.findDeclarationWithSignature<FirConstructor>(signature, firSession) {
+        val firConstructor = candidates.findDeclarationWithSignature<FirConstructor>(signature) {
             processDeclaredConstructors(it)
         } ?: return null
 

@@ -10,16 +10,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.CallableId
 
-internal class KtFirTopLevelPropertySymbolPointer(callableId: CallableId, private val signature: IdSignature) :
+internal class KtFirTopLevelPropertySymbolPointer(callableId: CallableId, private val signature: FirCallableSignature) :
     KtTopLevelCallableSymbolPointer<KtKotlinPropertySymbol>(callableId) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
         candidates: Collection<FirCallableSymbol<*>>,
         firSession: FirSession,
     ): KtKotlinPropertySymbol? {
-        val firProperty = candidates.findDeclarationWithSignatureBySymbols<FirProperty>(signature, firSession) ?: return null
+        val firProperty = candidates.findDeclarationWithSignatureBySymbols<FirProperty>(signature) ?: return null
         return firSymbolBuilder.variableLikeBuilder.buildPropertySymbol(firProperty.symbol) as? KtKotlinPropertySymbol
     }
 }

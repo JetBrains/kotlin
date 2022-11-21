@@ -10,19 +10,17 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.CallableId
 
 internal class KtFirTopLevelFunctionSymbolPointer(
     callableId: CallableId,
-    private val signature: IdSignature
+    private val signature: FirCallableSignature,
 ) : KtTopLevelCallableSymbolPointer<KtFunctionSymbol>(callableId) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
         candidates: Collection<FirCallableSymbol<*>>,
         firSession: FirSession
     ): KtFunctionSymbol? {
-        val firFunction = candidates.findDeclarationWithSignatureBySymbols<FirSimpleFunction>(signature, firSession) ?: return null
+        val firFunction = candidates.findDeclarationWithSignatureBySymbols<FirSimpleFunction>(signature) ?: return null
         return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction.symbol)
     }
 }
-
