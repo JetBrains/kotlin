@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.LinkedClassifierStatus.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.LinkedClassifierStatus.Partially.*
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConstantObject
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -56,6 +58,9 @@ internal class LinkedClassifierExplorer(
 
         if (!isBound) {
             stubGenerator.getDeclaration(this) // Generate a stub and bind the symbol immediately.
+            return classifierSymbols.registerPartiallyLinked(this, MissingClassifier(this))
+        } else if ((owner as? IrLazyDeclarationBase)?.descriptor is NotFoundClasses.MockClassDescriptor) {
+            // In case of Lazy IR the declaration is present, but wraps a special descriptor.
             return classifierSymbols.registerPartiallyLinked(this, MissingClassifier(this))
         }
 
