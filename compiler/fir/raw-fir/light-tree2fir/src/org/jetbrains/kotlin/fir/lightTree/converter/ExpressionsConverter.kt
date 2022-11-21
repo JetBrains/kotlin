@@ -557,6 +557,18 @@ class ExpressionsConverter(
             result = convertFirSelector(it, dotQualifiedExpression.toFirSourceElement(), firReceiver!!) as? FirExpression
         }
 
+        val receiver = firReceiver
+        if (receiver != null) {
+            (firSelector as? FirErrorExpression)?.let { errorExpression ->
+                return buildQualifiedErrorAccessExpression {
+                    this.receiver = receiver
+                    this.selector = errorExpression
+                    source = dotQualifiedExpression.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic("Qualified expression with unexpected selector", DiagnosticKind.Syntax)
+                }
+            }
+        }
+
         return result ?: buildErrorExpression {
             source = null
             diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)

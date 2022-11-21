@@ -541,6 +541,22 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvalidCode {
+        @Test
+        public void testAllFilesPresentInInvalidCode() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("javaClassLiteral.kt")
+        public void testJavaClassLiteral() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/javaClassLiteral.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/qualifiedExpressions")
     @TestDataPath("$PROJECT_ROOT")
     public class QualifiedExpressions {

@@ -2462,6 +2462,14 @@ open class RawFirBuilder(
 
                 return convertFirSelector(firSelector, expression.toFirSourceElement(), receiver)
             }
+            if (firSelector is FirErrorExpression) {
+                return buildQualifiedErrorAccessExpression {
+                    this.receiver = receiver
+                    this.selector = firSelector
+                    source = expression.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic("Qualified expression with unexpected selector", DiagnosticKind.Syntax)
+                }
+            }
             return firSelector
         }
 

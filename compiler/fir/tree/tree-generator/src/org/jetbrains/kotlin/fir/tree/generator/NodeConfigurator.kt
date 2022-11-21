@@ -207,6 +207,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +fieldList("nonFatalDiagnostics", coneDiagnosticType)
         }
 
+        qualifiedErrorAccessExpression.configure {
+            +field("selector", errorExpression)
+            +field("receiver", expression)
+        }
+
         constExpression.configure {
             withArg("T")
             +field("kind", constKindType.withArgs("T"), withReplace = true)

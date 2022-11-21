@@ -433,6 +433,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(errorTypeRefImplType, coneStubDiagnosticType)
         }
 
+        impl(qualifiedErrorAccessExpression) {
+            default("typeRef", "FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic), false)")
+            useTypes(errorTypeRefImplType, coneStubDiagnosticType)
+        }
+
         impl(errorFunction) {
             defaultNull("receiverParameter", "body", withGetter = true)
             default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic, false)")
