@@ -23,12 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.utils.toHexString
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import java.io.File
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
 import javax.inject.Inject
 
 @CacheableTask
@@ -120,33 +116,8 @@ abstract class KotlinJsIrLink @Inject constructor(
         args.includes = entryModule.get().asFile.canonicalPath
 
         if (incrementalJsIr && mode == DEVELOPMENT) {
-            val digest = MessageDigest.getInstance("SHA-256")
-            args.cacheDirectories = args.libraries?.splitByPathSeparator()
-                ?.map {
-                    val file = File(it)
-                    val hash = digest.digest(file.normalize().absolutePath.toByteArray(StandardCharsets.UTF_8)).toHexString()
-                    rootCacheDirectory
-                        .resolve(file.nameWithoutExtension)
-                        .resolve(hash)
-                        .also {
-                            it.mkdirs()
-                        }
-                }
-                ?.plus(rootCacheDirectory.resolve(entryModule.get().asFile.name))
-                ?.let {
-                    if (it.isNotEmpty())
-                        it.joinToString(File.pathSeparator)
-                    else
-                        null
-                }
+            args.cacheDirectory = rootCacheDirectory.also { it.mkdirs() }.absolutePath
         }
-    }
-
-    private fun String.splitByPathSeparator(): List<String> {
-        return this.split(File.pathSeparator.toRegex())
-            .dropLastWhile { it.isEmpty() }
-            .toTypedArray()
-            .filterNot { it.isEmpty() }
     }
 }
 
