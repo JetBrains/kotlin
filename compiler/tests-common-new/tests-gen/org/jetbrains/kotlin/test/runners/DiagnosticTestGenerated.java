@@ -38055,6 +38055,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("overridableCheck.kt")
+            public void testOverridableCheck() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overridableCheck.kt");
+            }
+
+            @Test
             @TestMetadata("override.kt")
             public void testOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/override.kt");

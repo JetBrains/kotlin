@@ -13,15 +13,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -158,7 +154,7 @@ object FirOptInUsageBaseChecker {
                     context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
                 )
             } else {
-                fir.loadOverridableSpecificExperimentalities(session, context, parentClassSymbol, visited, result)
+                fir.loadOverridableSpecificExperimentalities(session, context, visited, result)
             }
             dispatchReceiverType?.addExperimentalities(context, result, visited)
             if (fromSetter && this is FirPropertySymbol) {
@@ -197,35 +193,12 @@ object FirOptInUsageBaseChecker {
         return result
     }
 
-    @OptIn(SymbolInternals::class)
     private fun FirCallableDeclaration.loadOverridableSpecificExperimentalities(
         session: FirSession,
         context: CheckerContext,
-        parentClassSymbol: FirRegularClassSymbol?,
         visited: MutableSet<FirDeclaration>,
         result: SmartSet<Experimentality>
     ) {
-        if (isSubstitutionOrIntersectionOverride) {
-            parentClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
-            val parentClassScope = parentClassSymbol?.unsubstitutedScope(context)
-            if (this is FirSimpleFunction) {
-                parentClassScope?.processDirectlyOverriddenFunctions(symbol) { overriddenSymbol ->
-                    val overriddenFir = overriddenSymbol.fir
-                    if (visited.add(overriddenFir)) {
-                        overriddenFir.loadOverridableSpecificExperimentalities(session, context, parentClassSymbol, visited, result)
-                    }
-                    ProcessorAction.NEXT
-                }
-            } else if (this is FirProperty) {
-                parentClassScope?.processDirectlyOverriddenProperties(symbol) { overriddenSymbol ->
-                    val overriddenFir = overriddenSymbol.fir
-                    if (visited.add(overriddenFir)) {
-                        overriddenFir.loadOverridableSpecificExperimentalities(session, context, parentClassSymbol, visited, result)
-                    }
-                    ProcessorAction.NEXT
-                }
-            }
-        }
         // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
         returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
         receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
