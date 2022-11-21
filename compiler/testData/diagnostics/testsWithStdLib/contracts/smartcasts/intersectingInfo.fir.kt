@@ -30,12 +30,12 @@ fun intersectingInfo(x: Any?, y: Any?) {
     if ((isString(x) && y is String) || (!notIsString(x) && !notIsInt(y))) {
         x.length
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        <!ARGUMENT_TYPE_MISMATCH!>y.<!UNRESOLVED_REFERENCE!>inc<!>()<!>
+        y.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        <!ARGUMENT_TYPE_MISMATCH!>y.<!UNRESOLVED_REFERENCE!>inc<!>()<!>
+        y.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 

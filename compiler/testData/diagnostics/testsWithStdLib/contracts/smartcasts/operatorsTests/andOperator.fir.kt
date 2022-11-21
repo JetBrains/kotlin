@@ -47,11 +47,11 @@ fun truetrue(x: Any?) {
 fun truefalse(x: Any?) {
     if (trueWhenString(x) && falseWhenInt(x)) {
         x.length
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>inc<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>inc<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
@@ -62,19 +62,19 @@ fun falsetrue(x: Any?) {
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>inc<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
 fun falsefalse(x: Any?) {
     if (falseWhenString(x) && falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>inc<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         // Note that we can't argue that we have any of smartcasts here,
         // because we don't know which one of both arguments was 'false' to bring us here
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!NONE_APPLICABLE!>inc<!>()<!>
+        x.<!NONE_APPLICABLE!>inc<!>()
     }
 }

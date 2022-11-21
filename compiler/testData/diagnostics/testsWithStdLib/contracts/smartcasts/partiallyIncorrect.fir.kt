@@ -16,6 +16,6 @@ fun incorrectPartDoesntMatter(x: Any?) {
         x.length
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }

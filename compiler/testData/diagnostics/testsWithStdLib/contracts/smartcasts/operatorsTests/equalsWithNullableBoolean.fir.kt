@@ -19,13 +19,13 @@ fun equalsTrue(x: Any?) {
         x.length
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun equalsFalse(x: Any?) {
     if (safeIsString(x) == false) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.length
@@ -34,16 +34,16 @@ fun equalsFalse(x: Any?) {
 
 fun equalsNull(x: Any?) {
     if (safeIsString(x) == null) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun notEqualsTrue(x: Any?) {
     if (safeIsString(x) != true) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.length
@@ -55,15 +55,15 @@ fun notEqualsFalse(x: Any?) {
         x.length
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun notEqualsNull(x: Any?) {
     if (safeIsString(x) != null) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }

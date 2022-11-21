@@ -15,7 +15,7 @@ fun testAny() {
 
 fun testAnyCall() {
     callAny {
-        error -> <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>error<!>()<!>
+        error -> <!UNRESOLVED_REFERENCE!>error<!>()
     }
 }
 
@@ -27,7 +27,7 @@ fun testParam() {
 
 fun testParamCall() {
     callParam {
-        param -> <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>param<!>()<!>
+        param -> <!UNRESOLVED_REFERENCE!>param<!>()
     }
 }
 

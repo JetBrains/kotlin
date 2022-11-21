@@ -2,13 +2,13 @@
 
 fun foo(): Int {
     val v = 1
-    val c = <!ARGUMENT_TYPE_MISMATCH!>v.<!UNRESOLVED_REFERENCE!>bar<!><!> ?: return 0
+    val c = v.<!UNRESOLVED_REFERENCE!>bar<!> ?: return 0
     return 42
 }
 
 fun foo2(): Int {
     val v = 1
-    val c = if (true) <!ARGUMENT_TYPE_MISMATCH!>v.<!UNRESOLVED_REFERENCE!>bar<!><!> else return 3
+    val c = if (true) v.<!UNRESOLVED_REFERENCE!>bar<!> else return 3
     val b = c
     return 42
 }
@@ -16,7 +16,7 @@ fun foo2(): Int {
 fun foo3(): Int {
     val v = 1
     val c = when {
-        true -> <!ARGUMENT_TYPE_MISMATCH!>v.<!UNRESOLVED_REFERENCE!>bar<!><!>
+        true -> v.<!UNRESOLVED_REFERENCE!>bar<!>
         else -> return 3
     }
     val b = c
@@ -27,13 +27,13 @@ fun foo3(): Int {
 
 fun bar(): Int {
     val v = 1
-    val c = <!ARGUMENT_TYPE_MISMATCH!>v.<!UNRESOLVED_REFERENCE!>bar<!><!> ?: 42
+    val c = v.<!UNRESOLVED_REFERENCE!>bar<!> ?: 42
     return c
 }
 
 fun bar2(): Int {
     val v = 1
-    val c = if (true) <!ARGUMENT_TYPE_MISMATCH!>v.<!UNRESOLVED_REFERENCE!>bar<!><!> else 3
+    val c = if (true) v.<!UNRESOLVED_REFERENCE!>bar<!> else 3
     val b = c
     return b
 }
@@ -41,7 +41,7 @@ fun bar2(): Int {
 fun bar3(): Int {
     val v = 1
     val c = when {
-        true -> <!ARGUMENT_TYPE_MISMATCH!>v.<!UNRESOLVED_REFERENCE!>bar<!><!>
+        true -> v.<!UNRESOLVED_REFERENCE!>bar<!>
         else -> 3
     }
     val b = c

@@ -32,12 +32,12 @@ fun test_4(b: Any) {
     if (b as? Boolean != null) {
         b.not()
     } else {
-        <!ARGUMENT_TYPE_MISMATCH!>b.<!UNRESOLVED_REFERENCE!>not<!>()<!>
+        b.<!UNRESOLVED_REFERENCE!>not<!>()
     }
     b.<!UNRESOLVED_REFERENCE!>not<!>()
 
     if (b as? Boolean == null) {
-        <!ARGUMENT_TYPE_MISMATCH!>b.<!UNRESOLVED_REFERENCE!>not<!>()<!>
+        b.<!UNRESOLVED_REFERENCE!>not<!>()
     } else {
         b.not()
     }

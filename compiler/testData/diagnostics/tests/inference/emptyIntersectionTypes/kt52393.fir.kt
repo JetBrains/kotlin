@@ -12,6 +12,6 @@ fun main() {
 //    val number: Long = 5 // works
 
     with (WrapperFunctions()) {
-        <!ARGUMENT_TYPE_MISMATCH!>wrapper <!NONE_APPLICABLE!>greaterEq<!> number<!>
+        wrapper <!NONE_APPLICABLE!>greaterEq<!> number
     }
 }

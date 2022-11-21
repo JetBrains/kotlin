@@ -37,7 +37,7 @@ class Inv<T>(val data: T)
 fun test5(x: Inv<out Any?>) {
     when (val y = x.data) {
         is String -> y.length // should be ok
-        null -> <!ARGUMENT_TYPE_MISMATCH!>x.data.<!UNRESOLVED_REFERENCE!>length<!><!> // should be error
+        null -> x.data.<!UNRESOLVED_REFERENCE!>length<!> // should be error
     }
 }
 

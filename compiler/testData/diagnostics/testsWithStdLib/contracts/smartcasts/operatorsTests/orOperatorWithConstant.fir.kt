@@ -20,26 +20,26 @@ fun falseWhenString(x: Any?): Boolean {
 
 fun annotatedTrueOrTrue(x: Any?) {
     if (trueWhenString(x) || true) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         // Unreachable
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun annotatedTrueOrFalse(x: Any?) {
     if (trueWhenString(x) || false) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun annotatedFalseOrTrue(x: Any?) {
     if (falseWhenString(x) || true) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         // Unreachable
@@ -49,7 +49,7 @@ fun annotatedFalseOrTrue(x: Any?) {
 
 fun annotatedFalseOrFalse(x: Any?) {
     if (falseWhenString(x) || false) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.length

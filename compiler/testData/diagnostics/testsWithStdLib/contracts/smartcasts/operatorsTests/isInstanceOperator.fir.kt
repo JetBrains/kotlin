@@ -29,7 +29,7 @@ fun testSimple(x: Any?) {
         x.length
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
@@ -43,7 +43,7 @@ fun testSpilling(x: Any?) {
 
 fun testInversion(x: Any?) {
     if (notIsString(x)) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.length

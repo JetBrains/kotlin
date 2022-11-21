@@ -13,6 +13,6 @@ suspend fun fib(n: Long) =
     async {
         when {
             n < 2 -> n
-            else -> <!ARGUMENT_TYPE_MISMATCH!><!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>fib(n - 1)<!>.<!UNRESOLVED_REFERENCE!>await<!>() + <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>fib(n - 2)<!>.<!UNRESOLVED_REFERENCE!>await<!>()<!>
+            else -> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>fib(n - 1)<!>.<!UNRESOLVED_REFERENCE!>await<!>() + <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>fib(n - 2)<!>.<!UNRESOLVED_REFERENCE!>await<!>()
         }
     }

@@ -132,7 +132,7 @@ fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
             println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         null -> {
-            <!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())<!>
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
         }
     }
 }

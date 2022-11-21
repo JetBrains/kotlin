@@ -22,7 +22,7 @@ fun case_2(x: Any) {
 fun case_3(x: Any?) {
     if (true && x !is Class) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!><!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
     }
 }
 
@@ -34,7 +34,7 @@ fun case_3(x: Any?) {
 fun case_4(x: Any) {
     if (true && true && x !is EnumClass) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
-        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>fun_1<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>fun_1<!>()
     }
 }
 
@@ -62,7 +62,7 @@ fun case_6(x: Any?) {
 fun case_7(x: Any) {
     if (!(x is DeepObject.A.B.C.D.E.F.G.J) && true && true && true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
-        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!><!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
     }
 }
 
@@ -70,7 +70,7 @@ fun case_7(x: Any) {
 fun case_8(x: Any?) {
     if (!(x is Int?) && true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
@@ -82,7 +82,7 @@ fun case_8(x: Any?) {
 fun case_9(x: Any?) {
     if (true && true && !!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>) && true && true && true && true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>get<!>(0)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>get<!>(0)
     }
 }
 
@@ -91,7 +91,7 @@ fun case_10(x: Any?) {
     if (true && !!(x !is Interface3) && true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest<!>()
-        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest3<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest3<!>()
     }
 }
 

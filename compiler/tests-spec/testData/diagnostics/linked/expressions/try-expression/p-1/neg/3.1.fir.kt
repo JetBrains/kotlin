@@ -10,7 +10,7 @@ class ExcB() : Exception()
 
 fun case1() {
     try <!SYNTAX!><!>val a = ""
-        <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>catch<!>(<!UNRESOLVED_REFERENCE!>e<!><!SYNTAX!>: Exception<!>) {}<!>
+        <!UNRESOLVED_REFERENCE!>catch<!>(<!UNRESOLVED_REFERENCE!>e<!><!SYNTAX!>: Exception<!>) {}
     }<!SYNTAX!><!>
 
 // TESTCASE NUMBER: 2

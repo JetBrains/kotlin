@@ -10,6 +10,6 @@ fun test(a: Any?, flag: Boolean, x: Any?) {
     }
     else {
         b = x
-        <!ARGUMENT_TYPE_MISMATCH!>b.<!UNRESOLVED_REFERENCE!>length<!>()<!>
+        b.<!UNRESOLVED_REFERENCE!>length<!>()
     }
 }

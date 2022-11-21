@@ -32,7 +32,7 @@ fun test1(x: Any?) {
         x.length
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
@@ -40,7 +40,7 @@ fun test2(x: Any?) {
     // Observe that condition == false <=>* function returned null <=> 'x' is String
     // *correct only for at most binary types, which is exactly the case for nullability comparisons
     if (nullWhenString(x) != null) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.length
@@ -51,9 +51,9 @@ fun test2(x: Any?) {
 fun test3(x: Any?) {
     // condition == false <=> function returned not-null, but we don't know anything about when function returns not-null
     if (nullWhenNotString(x) == null) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }

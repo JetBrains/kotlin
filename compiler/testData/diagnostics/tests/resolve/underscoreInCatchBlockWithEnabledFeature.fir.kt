@@ -6,7 +6,7 @@ fun foo() {
     try {
         TODO()
     } catch (_: Exception) {
-        <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace<!>
+        <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
     }
     try {
         TODO()
@@ -38,7 +38,7 @@ fun foo() {
         try {
             TODO()
         } catch (x: Exception) {
-            <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace<!>
+            <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
         }
     }
     val boo1 = { `_`: Exception ->
@@ -52,7 +52,7 @@ fun foo() {
         try {
             TODO()
         } catch (x: Exception) {
-            <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace<!>
+            <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
         }
     }
 }

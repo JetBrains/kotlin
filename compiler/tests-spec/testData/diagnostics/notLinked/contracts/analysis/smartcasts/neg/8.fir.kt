@@ -81,16 +81,16 @@ fun case_3(value_1: Int?, value_2: Any?) {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
         println(value_1)
     } else if (value_1.case_3(value_1, value_2 is Number?)) {
-        <!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())<!>
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     } else {
-        <!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())<!>
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     if (contracts.case_4(value_1, value_2) == true) {
-        <!ARGUMENT_TYPE_MISMATCH!>value_1.<!UNRESOLVED_REFERENCE!>inv<!>()<!>
+        value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
     } else if (contracts.case_4(value_1, value_2) == false) {
         println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
@@ -107,7 +107,7 @@ fun case_5(value_1: Number?, value_2: String?) {
         }
         false -> {
             println(value_2<!UNSAFE_CALL!>.<!>length)
-            <!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())<!>
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
         }
     }
 }

@@ -18,8 +18,8 @@ fun testUnresolved() {
     s.<!UNRESOLVED_REFERENCE!>foo<!>()
 
     when(<!UNRESOLVED_REFERENCE!>a<!>) {
-        is Int -> <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>a<!>
-        is String -> <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>a<!>
+        is Int -> <!UNRESOLVED_REFERENCE!>a<!>
+        is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
     for (j in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>collection<!>) {

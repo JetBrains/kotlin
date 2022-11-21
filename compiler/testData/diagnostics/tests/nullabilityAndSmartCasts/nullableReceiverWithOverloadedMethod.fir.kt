@@ -21,7 +21,7 @@ class B {
     fun g() {
         takeInt(if (3 > 2) {
             a = A()
-            <!ARGUMENT_TYPE_MISMATCH!>a<!UNSAFE_CALL!>.<!>f(true)<!>
+            a<!UNSAFE_CALL!>.<!>f(true)
         } else {
             6
         })

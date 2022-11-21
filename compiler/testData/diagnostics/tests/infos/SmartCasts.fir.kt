@@ -57,7 +57,7 @@ fun f11(a : A?) {
     is B -> a.bar()
     is A -> a.foo()
     is Any -> a.foo()
-    <!USELESS_IS_CHECK!>is Any?<!> -> <!ARGUMENT_TYPE_MISMATCH!>a.<!UNRESOLVED_REFERENCE!>bar<!>()<!>
+    <!USELESS_IS_CHECK!>is Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
     else -> a?.foo()
   }
 }
@@ -67,7 +67,7 @@ fun f12(a : A?) {
     is B -> a.bar()
     is A -> a.foo()
     is Any -> a.foo();
-    <!USELESS_IS_CHECK!>is Any?<!> -> <!ARGUMENT_TYPE_MISMATCH!>a.<!UNRESOLVED_REFERENCE!>bar<!>()<!>
+    <!USELESS_IS_CHECK!>is Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
     is C -> a.bar()
     else -> a?.foo()
   }
@@ -88,17 +88,17 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>c<!>.bar()<!>
+    <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
 
   a?.foo()
   if (!(a is B)) {
     a?.foo()
-    <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>c<!>.bar()<!>
+    <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
   else {
     a.foo()
-    <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>c<!>.bar()<!>
+    <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
 
   a?.foo()
@@ -108,7 +108,7 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>c<!>.bar()<!>
+    <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
 
   if (!(a is B) || !(a is C)) {

@@ -25,7 +25,7 @@ fun smartcastAndInitialization(x: Any?) {
         x.length
     } else {
         println(y)
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     println(y)
 }
@@ -39,7 +39,7 @@ fun inPresenceOfLazy(x: Any?, unknownBoolean: Boolean) {
     }
     else {
         println(<!UNINITIALIZED_VARIABLE!>y<!>)
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
@@ -51,7 +51,7 @@ fun isPresenceOfLazy2(x: Any?, unknownBoolean: Boolean) {
     }
     else {
         println(<!UNINITIALIZED_VARIABLE!>y<!>)
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
@@ -62,7 +62,7 @@ fun isPresenceOfLazy3(x: Any?, unknownBoolean: Boolean) {
         x.length
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }

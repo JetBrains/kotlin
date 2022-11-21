@@ -43,7 +43,7 @@ fun test() {
 
   if (out == null || out.println(0) == Unit) {
     out?.println(1)
-    <!ARGUMENT_TYPE_MISMATCH!>out<!UNSAFE_CALL!>.<!>println(1)<!>
+    out<!UNSAFE_CALL!>.<!>println(1)
   }
   else {
     out.println(2)
@@ -65,11 +65,11 @@ fun test() {
 
   if (1 == 2 || out != null && out.println(1) == Unit) {
     out?.println(2);
-    <!ARGUMENT_TYPE_MISMATCH!>out<!UNSAFE_CALL!>.<!>println(2)<!>;
+    out<!UNSAFE_CALL!>.<!>println(2);
   }
   else {
     out?.println(3)
-    <!ARGUMENT_TYPE_MISMATCH!>out<!UNSAFE_CALL!>.<!>println(3)<!>
+    out<!UNSAFE_CALL!>.<!>println(3)
   }
 
   out?.println()
@@ -102,7 +102,7 @@ fun test() {
 
   if (out == null || out.println(0) == Unit) {
     out?.println(1)
-    <!ARGUMENT_TYPE_MISMATCH!>out<!UNSAFE_CALL!>.<!>println(1)<!>
+    out<!UNSAFE_CALL!>.<!>println(1)
   }
   else {
     out.println(2)
@@ -126,11 +126,11 @@ fun test() {
 
   if (1 == 2 || out != null && out.println(1) == Unit) {
     out?.println(2);
-    <!ARGUMENT_TYPE_MISMATCH!>out<!UNSAFE_CALL!>.<!>println(2)<!>;
+    out<!UNSAFE_CALL!>.<!>println(2);
   }
   else {
     out?.println(3)
-    <!ARGUMENT_TYPE_MISMATCH!>out<!UNSAFE_CALL!>.<!>println(3)<!>
+    out<!UNSAFE_CALL!>.<!>println(3)
   }
 
   if (1 > 2) {

@@ -61,7 +61,7 @@ fun case_7(x: Any) {
 fun case_8(x: Any?) {
     if (!(x is Nothing?)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
-        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
@@ -69,7 +69,7 @@ fun case_8(x: Any?) {
 fun case_9(x: Any?) {
     if (!!(x !is Nothing?)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>
-        <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>inv<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 

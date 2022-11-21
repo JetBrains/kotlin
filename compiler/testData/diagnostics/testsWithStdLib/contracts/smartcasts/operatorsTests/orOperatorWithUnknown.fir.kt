@@ -25,16 +25,16 @@ fun unknownFunction(x: Any?) = x == 42
 
 fun annotatedTrue(x: Any?) {
     if (trueWhenString(x) || unknownFunction(x)) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun annotatedFalse(x: Any?) {
     if (falseWhenString(x) || unknownFunction(x)) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.length
@@ -43,16 +43,16 @@ fun annotatedFalse(x: Any?) {
 
 fun annotatedTrueWithVariable(x: Any?, b: Boolean) {
     if (trueWhenString(x) || b) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun annotatedFalseWithVariable(x: Any?, b: Boolean) {
     if (falseWhenString(x) || b) {
-        <!ARGUMENT_TYPE_MISMATCH!>x.<!UNRESOLVED_REFERENCE!>length<!><!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.length

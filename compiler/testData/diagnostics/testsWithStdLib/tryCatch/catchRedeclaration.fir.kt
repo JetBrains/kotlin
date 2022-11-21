@@ -12,7 +12,7 @@ fun test1() {
     try {}
     catch (e: Exception) {
         e.message
-        <!ARGUMENT_TYPE_MISMATCH!>e.<!UNRESOLVED_REFERENCE!>length<!><!>
+        e.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
