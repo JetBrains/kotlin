@@ -275,9 +275,19 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/renameFile/");
     }
 
+    @TestMetadata("renameModule")
+    public void testRenameModule() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/renameModule/");
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/simple/");
+    }
+
+    @TestMetadata("splitJoinModule")
+    public void testSplitJoinModule() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/splitJoinModule/");
     }
 
     @TestMetadata("suspendFunctions")

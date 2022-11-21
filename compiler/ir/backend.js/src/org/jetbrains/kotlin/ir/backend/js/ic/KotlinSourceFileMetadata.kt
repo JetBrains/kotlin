@@ -98,9 +98,14 @@ abstract class KotlinSourceFileExports {
 
 abstract class KotlinSourceFileMetadata : KotlinSourceFileExports() {
     abstract val directDependencies: KotlinSourceFileMap<Map<IdSignature, ICHash>>
+
+    fun isEmpty() = inverseDependencies.isEmpty() && directDependencies.isEmpty()
 }
 
-fun KotlinSourceFileMetadata.isEmpty() = inverseDependencies.isEmpty() && directDependencies.isEmpty()
+internal object KotlinSourceFileMetadataNotExist : KotlinSourceFileMetadata() {
+    override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
+    override val directDependencies = KotlinSourceFileMap<Map<IdSignature, ICHash>>(emptyMap())
+}
 
 internal class DirtyFileExports(
     override val inverseDependencies: KotlinSourceFileMutableMap<Set<IdSignature>> = KotlinSourceFileMutableMap()

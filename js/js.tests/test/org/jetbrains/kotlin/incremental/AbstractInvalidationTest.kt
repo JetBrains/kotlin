@@ -42,11 +42,11 @@ import java.util.EnumSet
 
 abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     companion object {
-        private val TEST_DATA_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
-        private const val BOX_FUNCTION_NAME = "box"
-
-        private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
+        private val OUT_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
+
+        private const val BOX_FUNCTION_NAME = "box"
+        private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
 
         private val KT_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.kt$")
     }
@@ -125,7 +125,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             val expectedFileStats: Map<String, Set<String>>
         )
 
-        private fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String): TestStepInfo {
+        private fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String, buildKlib: Boolean): TestStepInfo {
             val projStepId = projStep.id
             val moduleTestDir = File(testDir, module)
             val moduleSourceDir = File(sourceDir, module)
@@ -136,17 +136,20 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it.name) }
             }
 
-            val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) {
-                resolveModuleArtifact(it.moduleName, buildDir)
+            val expectedFileStats = moduleStep.expectedFileStats.toMutableMap()
+            if (deletedFiles.isNotEmpty()) {
+                val removedFiles = expectedFileStats[DirtyFileState.REMOVED_FILE.str] ?: emptySet()
+                expectedFileStats[DirtyFileState.REMOVED_FILE.str] = removedFiles + deletedFiles
             }
-            val outputKlibFile = resolveModuleArtifact(module, buildDir)
-            val configuration = createConfiguration(module, projStep.language)
-            buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
 
-            val expectedFileStats = if (deletedFiles.isEmpty()) {
-                moduleStep.expectedFileStats
-            } else {
-                moduleStep.expectedFileStats + (DirtyFileState.REMOVED_FILE.str to deletedFiles)
+            val outputKlibFile = resolveModuleArtifact(module, buildDir)
+
+            if (buildKlib) {
+                val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) {
+                    resolveModuleArtifact(it.moduleName, buildDir)
+                }
+                val configuration = createConfiguration(module, projStep.language)
+                buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
             }
             return TestStepInfo(
                 module.safeModuleName,
@@ -155,9 +158,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             )
         }
 
-        private fun verifyCacheUpdateStats(
-            stepId: Int, stats: KotlinSourceFileMap<EnumSet<DirtyFileState>>, testInfo: List<TestStepInfo>
-        ) {
+        private fun verifyCacheUpdateStats(stepId: Int, stats: KotlinSourceFileMap<EnumSet<DirtyFileState>>, testInfo: List<TestStepInfo>) {
             val gotStats = stats.filter { it.key.path != STDLIB_KLIB }
 
             val checkedLibs = mutableSetOf<KotlinLibraryFile>()
@@ -170,7 +171,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val got = mutableMapOf<String, MutableSet<String>>()
                 for ((srcFile, dirtyStats) in updateStatus) {
                     for (dirtyStat in dirtyStats) {
-                        got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(File(srcFile.path).name)
+                        if (dirtyStat != DirtyFileState.NON_MODIFIED_IR) {
+                            got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(File(srcFile.path).name)
+                        }
                     }
                 }
 
@@ -223,7 +226,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
         fun execute() {
             for (projStep in projectInfo.steps) {
-                val testInfo = projStep.order.map { setupTestStep(projStep, it) }
+                val testInfo = projStep.order.map { setupTestStep(projStep, it, true) }
 
                 val configuration = createConfiguration(projStep.order.last(), projStep.language)
                 val cacheUpdater = CacheUpdater(
@@ -238,8 +241,10 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                     }
                 )
 
+                val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it, false) }
+
                 val icCaches = cacheUpdater.actualizeCaches()
-                verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo)
+                verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
 
                 val mainModuleName = icCaches.last().moduleExternalName
                 val jsExecutableProducer = JsExecutableProducer(
@@ -342,7 +347,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     private fun testWorkingDir(testName: String): File {
-        val dir = File(File(File(TEST_DATA_DIR_PATH), "incrementalOut/invalidation"), testName)
+        val dir = File(File(File(OUT_DIR_PATH), "incrementalOut/invalidation"), testName)
 
         dir.invalidateDir()
 

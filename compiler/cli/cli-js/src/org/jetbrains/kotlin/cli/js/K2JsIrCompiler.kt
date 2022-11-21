@@ -665,18 +665,24 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             var libIndex = 0
             for ((libFile, srcFiles) in cacheUpdater.getDirtyFileLastStats()) {
+                val singleState = srcFiles.values.firstOrNull()?.singleOrNull()?.let { singleState ->
+                    singleState.takeIf { srcFiles.values.all { it.singleOrNull() == singleState } }
+                }
+
                 val (msg, showFiles) = when {
-                    srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) } -> "fully rebuilt" to false
-                    else -> "partially rebuilt" to true
+                    singleState == DirtyFileState.NON_MODIFIED_IR -> continue
+                    singleState == DirtyFileState.REMOVED_FILE -> "removed" to emptyMap()
+                    singleState == DirtyFileState.ADDED_FILE -> "built clean" to emptyMap()
+                    srcFiles.values.any { it.singleOrNull() == DirtyFileState.NON_MODIFIED_IR } -> "partially rebuilt" to srcFiles
+                    else -> "fully rebuilt" to srcFiles
                 }
                 messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
-                if (showFiles) {
-                    var fileIndex = 0
-                    for ((srcFile, stat) in srcFiles) {
-                        val statStr = stat.joinToString { it.str }
-                        // Use index, because MessageCollector ignores already reported messages
-                        messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
-                    }
+                var fileIndex = 0
+                for ((srcFile, stat) in showFiles) {
+                    val filteredStats = stat.filter { it != DirtyFileState.NON_MODIFIED_IR }
+                    val statStr = filteredStats.takeIf { it.isNotEmpty() }?.joinToString { it.str } ?: continue
+                    // Use index, because MessageCollector ignores already reported messages
+                    messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
                 }
             }
 
