@@ -34,6 +34,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     }
 
     @Test
+    @TestMetadata("explode.kt")
+    public void testExplode() throws Exception {
+        runTest("testData/diagnostics/explode.kt");
+    }
+
+    @Test
     @TestMetadata("injectAccessors.kt")
     public void testInjectAccessors() throws Exception {
         runTest("testData/diagnostics/injectAccessors.kt");
