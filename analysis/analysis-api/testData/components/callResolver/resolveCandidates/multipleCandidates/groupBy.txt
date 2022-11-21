@@ -71,7 +71,10 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = kotlin/collections/groupBy
-    typeArgumentsMapping = {}
+    typeArgumentsMapping = {
+      T -> (kotlin.collections.IndexedValue<kotlin.Int>),
+      K -> (kotlin.Int)
+    }
     argumentMapping = {
       { (_, value) -> value } -> (KtVariableLikeSignature:
         name = keySelector
@@ -111,7 +114,9 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /groupBy
-    typeArgumentsMapping = {}
+    typeArgumentsMapping = {
+      K -> (kotlin.collections.IndexedValue<kotlin.Int>)
+    }
     argumentMapping = {
       { (_, value) -> value } -> (KtVariableLikeSignature:
         name = keySelector

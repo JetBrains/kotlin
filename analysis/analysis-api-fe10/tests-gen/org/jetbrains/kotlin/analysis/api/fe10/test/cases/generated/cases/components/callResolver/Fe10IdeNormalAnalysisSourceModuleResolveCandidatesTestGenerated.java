@@ -298,6 +298,30 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
         }
 
         @Test
+        @TestMetadata("functionCallWithTooFewTypeArguments.kt")
+        public void testFunctionCallWithTooFewTypeArguments() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTooFewTypeArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCallWithTooFewTypeArguments2.kt")
+        public void testFunctionCallWithTooFewTypeArguments2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTooFewTypeArguments2.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCallWithTooManyTypeArguments.kt")
+        public void testFunctionCallWithTooManyTypeArguments() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTooManyTypeArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCallWithTooManyTypeArguments2.kt")
+        public void testFunctionCallWithTooManyTypeArguments2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTooManyTypeArguments2.kt");
+        }
+
+        @Test
         @TestMetadata("functionCallWithTypeArgument.kt")
         public void testFunctionCallWithTypeArgument() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTypeArgument.kt");

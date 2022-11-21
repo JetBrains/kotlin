@@ -52,7 +52,10 @@ internal object MapTypeArguments : ResolutionStage() {
         ) {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
         } else {
-            candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(emptyList())
+            candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(
+                if (typeArguments.size > owner.typeParameters.size) typeArguments.take(owner.typeParameters.size)
+                else typeArguments
+            )
             sink.yieldDiagnostic(InapplicableCandidate)
         }
     }

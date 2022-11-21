@@ -623,6 +623,48 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
     }
 
     @Test
+    @TestMetadata("typeArgument_tooFewTypeArguments1.kt")
+    public void testTypeArgument_tooFewTypeArguments1() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments1.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooFewTypeArguments1a.kt")
+    public void testTypeArgument_tooFewTypeArguments1a() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments1a.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooFewTypeArguments2.kt")
+    public void testTypeArgument_tooFewTypeArguments2() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments2.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooManyTypeArguments1.kt")
+    public void testTypeArgument_tooManyTypeArguments1() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments1.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooManyTypeArguments1a.kt")
+    public void testTypeArgument_tooManyTypeArguments1a() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments1a.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooManyTypeArguments2.kt")
+    public void testTypeArgument_tooManyTypeArguments2() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments2.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooManyTypeArguments2a.kt")
+    public void testTypeArgument_tooManyTypeArguments2a() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments2a.kt");
+    }
+
+    @Test
     @TestMetadata("ValueParameter.kt")
     public void testValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ValueParameter.kt");

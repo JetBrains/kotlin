@@ -1,0 +1,58 @@
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: OTHER_ERROR with generic>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /generic(a: A, b: B, c: C): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.String
+            symbol = a: A
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: B
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: C
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /generic
+    typeArgumentsMapping = {
+      A -> (kotlin.String),
+      B -> (kotlin.String),
+      C -> (kotlin.String)
+    }
+    argumentMapping = {
+      "a" -> (KtVariableLikeSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.String
+        symbol = a: A
+        callableIdIfNonLocal = null),
+      "b" -> (KtVariableLikeSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.String
+        symbol = b: B
+        callableIdIfNonLocal = null),
+      "c" -> (KtVariableLikeSignature:
+        name = c
+        receiverType = null
+        returnType = kotlin.String
+        symbol = c: C
+        callableIdIfNonLocal = null)
+    }
+  isInBestCandidates = true

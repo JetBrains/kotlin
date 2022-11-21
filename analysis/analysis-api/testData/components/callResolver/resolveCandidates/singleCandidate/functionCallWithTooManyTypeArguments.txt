@@ -1,0 +1,18 @@
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A> generic(): Unit>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /generic(): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = /generic
+    typeArgumentsMapping = {
+      A -> (kotlin.String)
+    }
+    argumentMapping = {}
+  isInBestCandidates = true

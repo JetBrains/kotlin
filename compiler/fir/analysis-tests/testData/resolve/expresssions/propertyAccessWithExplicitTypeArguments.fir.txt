@@ -58,21 +58,21 @@ FILE: propertyAccessWithExplicitTypeArguments.kt
         R|<local>/receiver|.R|/hello1|<R|kotlin/Int|>
         R|<local>/receiver|.R|/hello1|<R|kotlin/Int|>.R|/invoke|<R|kotlin/Int|, R|kotlin/String|>()
         R|<local>/receiver|.R|/hello1|<R|kotlin/Int|>
-        R|<local>/receiver|.R|/hello1|<R|kotlin/Int|>
-        R|<local>/receiver|.R|/hello1|<R|kotlin/Int|>
+        R|<local>/receiver|.R|/hello1|<R|kotlin/Int|, R|kotlin/String|>
+        R|<local>/receiver|.R|/hello1|<R|kotlin/Int|, R|kotlin/String|, R|kotlin/String|>
         R|kotlin/with|<R|ContextImpl<kotlin/String>|, R|kotlin/String|>(R|/ContextImpl.ContextImpl|<R|kotlin/String|>(), <L> = with@fun R|ContextImpl<kotlin/String>|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|/hello2|<R|kotlin/String|>
             R|/hello2|<R|kotlin/String|>
             R|/hello2|<R|kotlin/String|>.R|/invoke|<R|kotlin/String|, R|kotlin/Int|>()
             R|/hello2|<R|kotlin/String|>
-            R|/hello2|<R|kotlin/String|>
-            R|/hello2|<R|kotlin/String|>
+            R|/hello2|<R|kotlin/String|, R|kotlin/Int|>
+            R|/hello2|<R|kotlin/String|, R|kotlin/Int|, R|kotlin/Int|>
             R|<local>/receiver|.R|/hello3|<R|kotlin/Int|, R|kotlin/String|>
             R|<local>/receiver|.R|/hello3|<R|kotlin/Int|, R|kotlin/String|>
             R|<local>/receiver|.R|/hello3|<R|kotlin/Int|, R|kotlin/String|>.R|/invoke|<R|kotlin/Int|, R|kotlin/String|>()
             R|<local>/receiver|.R|/hello3|<R|kotlin/Int|, R|kotlin/String|>
             R|<local>/receiver|.R|/hello3|<R|kotlin/Int|, R|kotlin/String|>
-            ^ R|<local>/receiver|.R|/hello3|<R|kotlin/Int|, R|kotlin/String|>
+            ^ R|<local>/receiver|.R|/hello3|<R|kotlin/Int|, R|kotlin/String|, R|kotlin/String|>
         }
         )
     }
