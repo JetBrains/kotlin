@@ -712,6 +712,17 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             //language=Groovy
+            subProject("lib").buildGradle.appendText(
+                """
+                |
+                |tasks.named("compileJava", JavaCompile) {
+                |    targetCompatibility = JavaVersion.VERSION_11
+                |    sourceCompatibility = JavaVersion.VERSION_11
+                |}
+                """.trimMargin()
+            )
+
+            //language=Groovy
             buildGradle.appendText(
                 """
                 |
