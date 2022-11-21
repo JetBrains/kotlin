@@ -63,4 +63,22 @@ class IdeNativePlatformDependencyResolverTest {
         IdeNativePlatformDependencyResolver.resolve(macosArm64Main).assertMatches(dependencies)
         IdeNativePlatformDependencyResolver.resolve(macosArm64Test).assertMatches(dependencies)
     }
+
+    @Test
+    fun `test - non native source sets`() {
+        val project = buildProjectWithMPP()
+        val kotlin = project.multiplatformExtension
+        kotlin.jvm()
+        kotlin.linuxX64()
+
+        val commonMain = kotlin.sourceSets.getByName("commonMain")
+        val commonTest = kotlin.sourceSets.getByName("commonTest")
+        val jvmMain = kotlin.sourceSets.getByName("jvmMain")
+        val jvmTest = kotlin.sourceSets.getByName("jvmTest")
+
+        IdeNativePlatformDependencyResolver.resolve(commonMain).assertMatches(emptyList<Any>())
+        IdeNativePlatformDependencyResolver.resolve(commonTest).assertMatches(emptyList<Any>())
+        IdeNativePlatformDependencyResolver.resolve(jvmMain).assertMatches(emptyList<Any>())
+        IdeNativePlatformDependencyResolver.resolve(jvmTest).assertMatches(emptyList<Any>())
+    }
 }
