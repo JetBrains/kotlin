@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -74,6 +71,18 @@ internal class CacheInfoBuilder(private val context: Context, private val module
                         trackCallees(function)
                     }
                 }
+            }
+
+            override fun visitGetObjectValue(expression: IrGetObjectValue) {
+                expression.acceptChildrenVoid(this)
+
+                processFunction(context.getObjectClassInstanceFunction(expression.symbol.owner))
+            }
+
+            override fun visitGetEnumValue(expression: IrGetEnumValue) {
+                expression.acceptChildrenVoid(this)
+
+                processFunction(context.enumsSupport.getValueGetter(expression.symbol.owner.parentAsClass))
             }
 
             override fun visitCall(expression: IrCall) {
