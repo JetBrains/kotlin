@@ -36,7 +36,7 @@ fun test() {
         takeNotNull(dependOn(dependOn(x) as? String) ?: "")
     }
 
-    takeNotNull(bar()!!)
+    takeNotNull(<!ARGUMENT_TYPE_MISMATCH!>bar()<!>!!)
 }
 
 inline fun <reified T : Any> reifiedNull(): T? = null

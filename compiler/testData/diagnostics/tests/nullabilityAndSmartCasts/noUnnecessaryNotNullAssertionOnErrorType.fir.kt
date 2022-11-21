@@ -1,7 +1,7 @@
 package a
 
 fun foo() {
-    bar()!!
+    <!ARGUMENT_TYPE_MISMATCH!>bar()<!>!!
 }
 
 fun bar() = <!UNRESOLVED_REFERENCE!>aa<!>
