@@ -2,7 +2,7 @@
 package a
 
 fun foo() {
-    <!ARGUMENT_TYPE_MISMATCH!>bar()<!>!!
+    bar()!!
 }
 
 fun bar() = <!UNRESOLVED_REFERENCE!>aa<!>
