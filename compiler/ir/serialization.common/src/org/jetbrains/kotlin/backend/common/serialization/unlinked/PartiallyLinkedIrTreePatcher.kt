@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -308,14 +307,20 @@ internal class PartiallyLinkedIrTreePatcher(
             }
         }
 
+        override fun visitBlockBody(body: IrBlockBody): IrBody {
+            super.visitBlockBody(body)
+            body.statements.eliminateDeadCodeStatements()
+            return body
+        }
+
         override fun visitReturn(expression: IrReturn) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(returnTargetSymbol)
         }
 
-        override fun visitBlock(expression: IrBlock): IrExpression {
-            return (expression as? IrReturnableBlock)?.maybeThrowLinkageError {
+        override fun visitBlock(expression: IrBlock) = expression.maybeThrowLinkageError {
+            if (this is IrReturnableBlock)
                 checkReferencedDeclaration(symbol) ?: checkReferencedDeclaration(inlineFunctionSymbol)
-            } ?: super.visitBlock(expression)
+            else null
         }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall) = expression.maybeThrowLinkageError {
@@ -390,25 +395,18 @@ internal class PartiallyLinkedIrTreePatcher(
 
             val partialLinkageCase = computePartialLinkageCase()
                 ?: checkExpressionType(type) // Check something that is always present in every expression.
-                ?: return this
+                ?: return apply { if (this is IrContainerExpression) statements.eliminateDeadCodeStatements() }
 
-            // Collect direct children. Skip expressions that have branches.
-            val children = if (!expressionHasBranches(this))
-                buildList {
-                    acceptChildrenVoid(object : IrElementVisitorVoid {
-                        override fun visitElement(element: IrElement) {
-                            addIfNotNull(element as? IrStatement)
-                        }
-                    })
-                }
-            else emptyList()
+            // Collect direct children if `this` isn't an expression with branches.
+            val directChildren = if (!hasBranches())
+                DirectChildrenStatementsCollector().also(::acceptChildrenVoid).getResult() else null
 
             val linkageError = partialLinkageCase.throwLinkageError(element = this, file = currentFile)
 
-            return if (children.isNotEmpty())
+            return if (directChildren?.statements?.isNotEmpty() == true)
                 IrCompositeImpl(startOffset, endOffset, builtIns.nothingType, PARTIAL_LINKAGE_RUNTIME_ERROR).apply {
-                    statements += children
-                    statements += linkageError
+                    statements += directChildren.statements
+                    if (!directChildren.hasPartialLinkageRuntimeError) statements += linkageError
                 }
             else
                 linkageError
@@ -484,6 +482,19 @@ internal class PartiallyLinkedIrTreePatcher(
 
         private fun List<IrType>.precalculatedPartialLinkageReason(): Partially? =
             firstNotNullOfOrNull { it.precalculatedPartialLinkageReason() }
+
+        /**
+         * Removes statements after the first IR p.l. error (everything after the IR p.l. error if effectively dead code and do not need
+         * to be kept in the IR tree).
+         */
+        private fun MutableList<IrStatement>.eliminateDeadCodeStatements() {
+            var hasPartialLinkageRuntimeError = false
+            removeIf {
+                val needToRemove = hasPartialLinkageRuntimeError
+                hasPartialLinkageRuntimeError = hasPartialLinkageRuntimeError || it.isPartialLinkageRuntimeError()
+                needToRemove
+            }
+        }
     }
 
     private fun IrClassifierSymbol.partialLinkageReason(): Partially? = classifierExplorer.exploreSymbol(this)
@@ -519,8 +530,28 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
+    /**
+     * Collects direct children statements up to the first IR p.l. error (everything after the IR p.l. error
+     * if effectively dead code and do not need to be kept in the IR tree).
+     */
+    private class DirectChildrenStatementsCollector : IrElementVisitorVoid {
+        data class DirectChildren(val statements: List<IrStatement>, val hasPartialLinkageRuntimeError: Boolean)
+
+        private val children = mutableListOf<IrStatement>()
+        private var hasPartialLinkageRuntimeError = false
+
+        fun getResult() = DirectChildren(children, hasPartialLinkageRuntimeError)
+
+        override fun visitElement(element: IrElement) {
+            if (hasPartialLinkageRuntimeError) return
+            val statement = element as? IrStatement ?: error("Not a statement: $element")
+            children += statement
+            hasPartialLinkageRuntimeError = statement.isPartialLinkageRuntimeError()
+        }
+    }
+
     companion object {
-        private fun expressionHasBranches(expression: IrExpression): Boolean = when (expression) {
+        private fun IrExpression.hasBranches(): Boolean = when (this) {
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
         }
