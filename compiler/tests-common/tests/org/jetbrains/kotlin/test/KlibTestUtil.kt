@@ -108,6 +108,7 @@ object KlibTestUtil {
         library.commit()
     }
 
+    // TODO: Factor out
     fun deserializeKlibToCommonModule(klibFile: File): ModuleDescriptorImpl {
         val library = resolveSingleFileKlib(
             libraryFile = KFile(klibFile.path),

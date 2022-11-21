@@ -81,6 +81,7 @@ include ":benchmarks",
         ":compiler:config.jvm",
         ":kotlin-util-io",
         ":kotlin-util-klib",
+        ":kotlin-util-klib-dump",
         ":kotlin-util-klib-metadata",
         ":daemon-common",
         ":kotlin-daemon",
@@ -688,6 +689,7 @@ project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/seri
 project(':compiler:ir.interpreter').projectDir = "$rootDir/compiler/ir/ir.interpreter" as File
 project(':kotlin-util-io').projectDir = "$rootDir/compiler/util-io" as File
 project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File
+project(':kotlin-util-klib-dump').projectDir = "$rootDir/compiler/util-klib-dump" as File
 project(':kotlin-util-klib-metadata').projectDir = "$rootDir/compiler/util-klib-metadata" as File
 project(':native:kotlin-native-utils').projectDir = "$rootDir/native/utils" as File
 project(':native:frontend.native').projectDir = "$rootDir/native/frontend" as File

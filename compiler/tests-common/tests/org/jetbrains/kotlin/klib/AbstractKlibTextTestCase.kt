@@ -216,6 +216,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun deserializeModule(stdlib: KotlinLibrary, klib: KotlinLibrary): IrModuleFragment {
+        // TODO: Use KlibDumpIrLinker here
         val signaturer = IdSignatureDescriptor(JsManglerDesc)
 
         val stdlibDescriptor = getModuleDescriptor(stdlib)
