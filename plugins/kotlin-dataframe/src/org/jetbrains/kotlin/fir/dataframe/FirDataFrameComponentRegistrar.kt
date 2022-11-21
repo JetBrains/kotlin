@@ -43,7 +43,7 @@ class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
         with(GeneratedNames()) {
             +::FirDataFrameExtensionsGenerator
             +{ it: FirSession -> FirDataFrameReceiverInjector(it, scopeState, scopeIds, tokenState, tokenIds) }
-            +{ it: FirSession -> FirDataFrameAdditionalCheckers(it, tokenState) }
+            +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
             +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, tokenIds, callableState) }
             +{ it: FirSession -> FirDataFrameTokenGenerator(it, tokens, tokenState) }
         }
