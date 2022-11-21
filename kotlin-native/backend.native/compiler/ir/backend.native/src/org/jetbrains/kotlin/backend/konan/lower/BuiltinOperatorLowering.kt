@@ -56,14 +56,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
                     context.ir.symbols.throwNoWhenBranchMatchedException.owner.typeParameters.size,
                     context.ir.symbols.throwNoWhenBranchMatchedException.owner.valueParameters.size)
 
-            irBuiltins.linkageErrorSymbol -> {
-                val newExpression = IrCallImpl.fromSymbolOwner(
-                        expression.startOffset, expression.endOffset,
-                        context.ir.symbols.throwIrLinkageError
-                )
-                newExpression.putValueArgument(0, expression.getValueArgument(0)) // error message
-                newExpression
-            }
+            irBuiltins.linkageErrorSymbol -> with(symbols.throwIrLinkageError) { irCall(expression, this, newReturnType = owner.returnType) }
 
             else -> expression
         }
