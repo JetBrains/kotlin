@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTest
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KtClassifierBodyRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
@@ -287,6 +288,12 @@ private fun KtSymbol?.withImplicitSymbols(): Sequence<KtSymbol> {
     val ktSymbol = this ?: return emptySequence()
     return sequence {
         yield(ktSymbol)
+
+        if (ktSymbol is KtSymbolWithTypeParameters) {
+            for (parameter in ktSymbol.typeParameters) {
+                yieldAll(parameter.withImplicitSymbols())
+            }
+        }
 
         if (ktSymbol is KtPropertySymbol) {
             yieldAll(ktSymbol.getter.withImplicitSymbols())
