@@ -224,14 +224,15 @@ class OptInUsageChecker(project: Project) : CallChecker {
                         moduleAnnotationsResolver, context, languageVersionSettings, visited
                     )
                 )
-                if (this is FunctionDescriptor) {
-                    valueParameters.forEach {
-                        result.addAll(
-                            it.type.loadOptIns(
-                                moduleAnnotationsResolver, context, languageVersionSettings, visited
-                            )
+            }
+            if (this is FunctionDescriptor) {
+                valueParameters.forEach {
+                    result.addAll(
+                        it.type.loadOptIns(
+                            moduleAnnotationsResolver, context, languageVersionSettings, visited,
+                            warningsOnly = this is ConstructorDescriptor
                         )
-                    }
+                    )
                 }
             }
 
@@ -258,19 +259,20 @@ class OptInUsageChecker(project: Project) : CallChecker {
             moduleAnnotationsResolver: ModuleAnnotationsResolver,
             context: BindingContext,
             languageVersionSettings: LanguageVersionSettings,
-            visitedClassifiers: MutableSet<DeclarationDescriptor>
+            visitedClassifiers: MutableSet<DeclarationDescriptor>,
+            warningsOnly: Boolean = false
         ): Set<OptInDescription> =
             when {
                 this?.isError != false -> emptySet()
                 this is AbbreviatedType -> abbreviation.constructor.declarationDescriptor?.loadOptIns(
                     moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers,
-                    useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
+                    useFutureError = warningsOnly || !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + expandedType.loadOptIns(
                     moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers
                 )
                 else -> constructor.declarationDescriptor?.loadOptIns(
                     moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers,
-                    useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
+                    useFutureError = warningsOnly || !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + arguments.flatMap {
                     if (it.isStarProjection) emptySet()
                     else it.type.loadOptIns(moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers)

@@ -1,5 +1,6 @@
 package
 
+public fun foo(/*0*/ some: Some? = ...): kotlin.Unit
 public fun test(): kotlin.Unit
 
 @kotlin.RequiresOptIn public final annotation class Marker : kotlin.Annotation {

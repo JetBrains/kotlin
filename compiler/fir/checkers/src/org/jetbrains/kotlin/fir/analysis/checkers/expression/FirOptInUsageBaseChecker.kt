@@ -150,13 +150,21 @@ object FirOptInUsageBaseChecker {
         if (fir is FirCallableDeclaration) {
             val parentClassSymbol = fir.containingClassLookupTag()?.toSymbol(session) as? FirRegularClassSymbol
             if (fir is FirConstructor) {
+                // For other callable we check dispatch receiver type instead
                 parentClassSymbol?.loadExperimentalities(
                     context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
                 )
             } else {
-                fir.loadOverridableSpecificExperimentalities(context, visited, result)
+                // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
+                fir.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
+                fir.receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
             }
             dispatchReceiverType?.addExperimentalities(context, result, visited)
+            if (fir is FirFunction) {
+                fir.valueParameters.forEach {
+                    it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
+                }
+            }
             if (fromSetter && this is FirPropertySymbol) {
                 setterSymbol?.loadExperimentalities(
                     context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
@@ -192,21 +200,6 @@ object FirOptInUsageBaseChecker {
 
         // TODO: getAnnotationsOnContainingModule
         return result
-    }
-
-    private fun FirCallableDeclaration.loadOverridableSpecificExperimentalities(
-        context: CheckerContext,
-        visited: MutableSet<FirDeclaration>,
-        result: SmartSet<Experimentality>
-    ) {
-        // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
-        returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-        receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
-        if (this is FirSimpleFunction) {
-            valueParameters.forEach {
-                it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
-            }
-        }
     }
 
     private fun ConeKotlinType?.addExperimentalities(
