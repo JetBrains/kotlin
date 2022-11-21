@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -82,18 +79,17 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                     )
                 }
 
-                return when (val diagnostic = errorNamedReference.diagnostic) {
-                    is ConeUnresolvedNameError -> {
-                        reporter.reportOn(
-                            errorNamedReference.source,
-                            FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
-                            expectedFunctionSignature,
-                            delegateType,
-                            delegateDescription,
-                            context
-                        )
-                        true
-                    }
+                var errorReported = true
+                when (val diagnostic = errorNamedReference.diagnostic) {
+                    is ConeUnresolvedNameError -> reporter.reportOn(
+                        errorNamedReference.source,
+                        FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
+                        expectedFunctionSignature,
+                        delegateType,
+                        delegateDescription,
+                        context
+                    )
+
                     is ConeAmbiguityError -> {
                         if (diagnostic.applicability.isSuccess) {
                             // Match is successful but there are too many matches! So we report DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.
@@ -107,25 +103,24 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                         } else {
                             reportInapplicableDiagnostics(diagnostic.candidates.map { it.symbol })
                         }
-                        true
                     }
-                    is ConeInapplicableWrongReceiver -> {
-                        reporter.reportOn(
-                            errorNamedReference.source,
-                            FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
-                            expectedFunctionSignature,
-                            delegateType,
-                            delegateDescription,
-                            context
-                        )
-                        true
+
+                    is ConeInapplicableWrongReceiver -> reporter.reportOn(
+                        errorNamedReference.source,
+                        FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
+                        expectedFunctionSignature,
+                        delegateType,
+                        delegateDescription,
+                        context
+                    )
+                    is ConeInapplicableCandidateError -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
+                    is ConeConstraintSystemHasContradiction -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
+
+                    else -> {
+                        errorReported = false
                     }
-                    is ConeInapplicableCandidateError -> {
-                        reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
-                        true
-                    }
-                    else -> false
                 }
+                return errorReported
             }
 
             private fun checkReturnType(functionCall: FirFunctionCall) {
