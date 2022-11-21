@@ -727,8 +727,6 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
         }
 
         val checkedConsumerAGPVersions = AGPVersion.testedVersions
-            // Special version added for testing KT-49798
-            .plus(AGPVersion.fromString("7.1.0-beta02"))
             .filter { version -> version >= AGPVersion.v4_2_0 }
             // Current Gradle version within kotlin.git is not sufficient to build with higher AGP
             .filter { version -> version < AGPVersion.v7_2_2 }
