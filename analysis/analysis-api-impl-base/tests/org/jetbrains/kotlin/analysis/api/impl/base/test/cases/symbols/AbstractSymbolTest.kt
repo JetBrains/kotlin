@@ -85,20 +85,22 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
             analyseForTest(ktFile) {
                 val (symbols, symbolForPrettyRendering) = collectSymbols(ktFile, testServices)
 
-                val pointerWithRenderedSymbol = symbols.flatMap { symbol ->
-                    listOf(
+                val pointerWithRenderedSymbol = symbols
+                    .asSequence()
+                    .flatMap { symbol ->
+                        sequenceOf(symbol to true) + symbol.withImplicitSymbols().map { implicitSymbol ->
+                            implicitSymbol to false
+                        }
+                    }
+                    .distinctBy { it.first }
+                    .map { (symbol, shouldBeRendered) ->
                         PointerWithRenderedSymbol(
-                            symbol.safePointer(),
-                            renderSymbolForComparison(symbol),
-                        )
-                    ) + symbol.withImplicitSymbols().map { implicitSymbol ->
-                        PointerWithRenderedSymbol(
-                            implicitSymbol.safePointer(),
-                            renderSymbolForComparison(implicitSymbol),
-                            shouldBeRendered = false,
+                            pointer = symbol.safePointer(),
+                            rendered = renderSymbolForComparison(symbol),
+                            shouldBeRendered = shouldBeRendered,
                         )
                     }
-                }
+                    .toList()
 
                 val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
                     PointerWithRenderedSymbol(
@@ -281,10 +283,22 @@ private data class PointerWrapper(
     val pointerWithoutPsiAnchor: KtSymbolPointer<*>?,
 )
 
-private fun KtSymbol?.withImplicitSymbols(): List<KtSymbol> = when (this) {
-    null -> emptyList()
-    is KtPropertySymbol -> listOf(this) + setter.withImplicitSymbols() + getter.withImplicitSymbols()
-    is KtPropertySetterSymbol -> listOf(this) + parameter
-    is KtValueParameterSymbol -> listOf(this) + generatedPrimaryConstructorProperty.withImplicitSymbols()
-    else -> listOf(this)
+private fun KtSymbol?.withImplicitSymbols(): Sequence<KtSymbol> {
+    val ktSymbol = this ?: return emptySequence()
+    return sequence {
+        yield(ktSymbol)
+
+        if (ktSymbol is KtPropertySymbol) {
+            yieldAll(ktSymbol.getter.withImplicitSymbols())
+            yieldAll(ktSymbol.setter.withImplicitSymbols())
+        }
+
+        if (ktSymbol is KtPropertySetterSymbol) {
+            yieldAll(ktSymbol.parameter.withImplicitSymbols())
+        }
+
+        if (ktSymbol is KtValueParameterSymbol) {
+            yieldAll(ktSymbol.generatedPrimaryConstructorProperty.withImplicitSymbols())
+        }
+    }
 }
