@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
+import java.nio.file.Files
 import java.util.EnumSet
 
 fun interface JsIrCompilerICInterface {
@@ -38,6 +39,7 @@ fun interface JsIrCompilerICInterfaceFactory {
 enum class DirtyFileState(val str: String) {
     ADDED_FILE("added file"),
     MODIFIED_IR("modified ir"),
+    NON_MODIFIED_IR("non modified ir"),
     UPDATED_EXPORTS("updated exports"),
     UPDATED_IMPORTS("updated imports"),
     REMOVED_INVERSE_DEPENDS("removed inverse depends"),
@@ -106,14 +108,25 @@ class CacheUpdater(
         private val incrementalCaches = libraryDependencies.keys.associate { lib ->
             val libFile = KotlinLibraryFile(lib)
             val file = File(libFile.path)
-            libFile to IncrementalCache(lib, File(cacheRootDir, "${file.name}.${file.absolutePath.stringHashForIC()}"))
+            val libraryCacheDir = File(cacheRootDir, "${file.name}.${file.absolutePath.stringHashForIC()}")
+            libFile to IncrementalCache(KotlinLoadedLibraryHeader(lib), libraryCacheDir)
+        }
+
+        private val removedIncrementalCaches = buildList {
+            if (cacheRootDir.isDirectory) {
+                val availableCaches = incrementalCaches.values.mapTo(HashSet(incrementalCaches.size)) { it.cacheDir }
+                val allDirs = Files.walk(cacheRootDir.toPath(), 1).map { it.toFile() }
+                allDirs.filter { it != cacheRootDir && it !in availableCaches }.forEach { removedCacheDir ->
+                    add(IncrementalCache(KotlinRemovedLibraryHeader(removedCacheDir), removedCacheDir))
+                }
+            }
         }
 
         private fun getLibIncrementalCache(libFile: KotlinLibraryFile) =
             incrementalCaches[libFile] ?: notFoundIcError("incremental cache", libFile)
 
         private fun addFilesWithRemovedDependencies(
-            modifiedFiles: KotlinSourceFileMap<KotlinSourceFileMetadata>,
+            modifiedFiles: KotlinSourceFileMutableMap<KotlinSourceFileMetadata>,
             removedFiles: KotlinSourceFileMap<KotlinSourceFileMetadata>
         ): KotlinSourceFileMap<KotlinSourceFileMetadata> {
             val extraModifiedLibFiles = KotlinSourceFileMutableMap<KotlinSourceFileMetadata>()
@@ -145,36 +158,42 @@ class CacheUpdater(
                 addDependenciesToExtraModifiedFiles(removedFileMetadata.inverseDependencies, DirtyFileState.REMOVED_DIRECT_DEPENDS)
             }
 
-            if (extraModifiedLibFiles.isNotEmpty()) {
-                extraModifiedLibFiles.copyFilesFrom(modifiedFiles)
-                return extraModifiedLibFiles
-            }
+            modifiedFiles.copyFilesFrom(extraModifiedLibFiles)
             return modifiedFiles
         }
 
         fun loadModifiedFiles(): KotlinSourceFileMap<KotlinSourceFileMetadata> {
             val removedFilesMetadata = hashMapOf<KotlinLibraryFile, Map<KotlinSourceFile, KotlinSourceFileMetadata>>()
 
-            val modifiedFiles = KotlinSourceFileMap(incrementalCaches.entries.associate { (lib, cache) ->
-                val (dirtyFiles, removedFiles, newFiles) = cache.collectModifiedFiles()
+            fun collectDirtyFiles(lib: KotlinLibraryFile, cache: IncrementalCache): MutableMap<KotlinSourceFile, KotlinSourceFileMetadata> {
+                val (addedFiles, removedFiles, modifiedFiles, nonModifiedFiles) = cache.collectModifiedFiles()
 
                 val fileStats by lazy(LazyThreadSafetyMode.NONE) { dirtyFileStats.getOrPutFiles(lib) }
-                newFiles.forEach { fileStats.addDirtFileStat(it, DirtyFileState.ADDED_FILE) }
+                addedFiles.forEach { fileStats.addDirtFileStat(it, DirtyFileState.ADDED_FILE) }
                 removedFiles.forEach { fileStats.addDirtFileStat(it.key, DirtyFileState.REMOVED_FILE) }
-                dirtyFiles.forEach {
-                    if (it.key !in newFiles) {
-                        fileStats.addDirtFileStat(it.key, DirtyFileState.MODIFIED_IR)
-                    }
-                }
+                modifiedFiles.forEach { fileStats.addDirtFileStat(it.key, DirtyFileState.MODIFIED_IR) }
+                nonModifiedFiles.forEach { fileStats.addDirtFileStat(it, DirtyFileState.NON_MODIFIED_IR) }
 
                 if (removedFiles.isNotEmpty()) {
                     removedFilesMetadata[lib] = removedFiles
                 }
 
-                lib to dirtyFiles
-            })
+                return addedFiles.associateWithTo(modifiedFiles.toMutableMap()) { KotlinSourceFileMetadataNotExist }
+            }
 
-            return addFilesWithRemovedDependencies(modifiedFiles, KotlinSourceFileMap(removedFilesMetadata))
+            for (cache in removedIncrementalCaches) {
+                val libFile = cache.libraryFileFromHeader ?: notFoundIcError("removed library name; cache dir: ${cache.cacheDir}")
+                val dirtyFiles = collectDirtyFiles(libFile, cache)
+                if (dirtyFiles.isNotEmpty()) {
+                    icError("unexpected dirty file", libFile, dirtyFiles.keys.first())
+                }
+            }
+
+            val dirtyFiles = incrementalCaches.entries.associateTo(hashMapOf()) { (lib, cache) ->
+                lib to collectDirtyFiles(lib, cache)
+            }
+
+            return addFilesWithRemovedDependencies(KotlinSourceFileMutableMap(dirtyFiles), KotlinSourceFileMap(removedFilesMetadata))
         }
 
         fun collectExportedSymbolsForDirtyFiles(
@@ -493,10 +512,15 @@ class CacheUpdater(
             }
         }
 
-        fun buildCacheArtifacts(
+        fun buildAndCommitCacheArtifacts(
             jsIrLinker: JsIrLinker,
             loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>
         ): Map<KotlinLibraryFile, IncrementalCacheArtifact> {
+            removedIncrementalCaches.forEach {
+                if (!it.cacheDir.deleteRecursively()) {
+                    icError("can not delete cache directory ${it.cacheDir.absolutePath}")
+                }
+            }
             return libraryDependencies.keys.associate { library ->
                 val libFile = KotlinLibraryFile(library)
                 val incrementalCache = getLibIncrementalCache(libFile)
@@ -616,7 +640,7 @@ class CacheUpdater(
         updater.updateStdlibIntrinsicDependencies(loadedIr.linker, mainModuleFragment, loadedIr.loadedFragments, dirtyFiles)
 
         stopwatch.startNext("Incremental cache - building artifacts")
-        val incrementalCachesArtifacts = updater.buildCacheArtifacts(loadedIr.linker, loadedIr.loadedFragments)
+        val incrementalCachesArtifacts = updater.buildAndCommitCacheArtifacts(loadedIr.linker, loadedIr.loadedFragments)
 
         stopwatch.stop()
         return IrForDirtyFilesAndCompiler(incrementalCachesArtifacts, loadedIr.loadedFragments, dirtyFiles, compilerForIC)
@@ -676,7 +700,7 @@ fun rebuildCacheForDirtyFiles(
     }
 
     val libFile = KotlinLibraryFile(library)
-    val dirtySrcFiles = dirtyFiles?.map { KotlinSourceFile(it) } ?: KotlinLibraryHeader(library).sourceFiles
+    val dirtySrcFiles = dirtyFiles?.map { KotlinSourceFile(it) } ?: KotlinLoadedLibraryHeader(library).sourceFileFingerprints.keys
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
     val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, irFactory)

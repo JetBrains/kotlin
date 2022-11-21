@@ -48,10 +48,6 @@ internal fun notFoundIcError(what: String, libFile: KotlinLibraryFile? = null, s
     icError("can not find $what", libFile, srcFile)
 }
 
-internal inline fun <E> buildListUntil(to: Int, builderAction: MutableList<E>.(Int) -> Unit): List<E> {
-    return buildList(to) { repeat(to) { builderAction(it) } }
-}
-
 internal inline fun <E> buildSetUntil(to: Int, builderAction: MutableSet<E>.(Int) -> Unit): Set<E> {
     return HashSet<E>(to).apply { repeat(to) { builderAction(it) } }
 }
