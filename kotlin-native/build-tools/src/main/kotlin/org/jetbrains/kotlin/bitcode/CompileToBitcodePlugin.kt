@@ -306,6 +306,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 reportFile.set(project.layout.buildDirectory.file("testReports/$testName/report-with-prefixes.xml"))
                 filter.set(project.findProperty("gtest_filter") as? String)
                 tsanSuppressionsFile.set(project.layout.projectDirectory.file("tsan_suppressions.txt"))
+                this.target.set(target)
 
                 usesService(runGTestSemaphore)
             }

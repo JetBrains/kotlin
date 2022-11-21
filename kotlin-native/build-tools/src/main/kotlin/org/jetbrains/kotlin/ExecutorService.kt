@@ -20,9 +20,12 @@ import com.google.gson.annotations.Expose
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.process.ExecResult
-import org.gradle.process.ExecSpec
+import org.gradle.kotlin.dsl.*
+import org.gradle.process.*
+import org.gradle.process.internal.DefaultExecSpec
+import org.gradle.process.internal.ExecException
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.executors.*
 
 import java.io.*
 
@@ -42,6 +45,47 @@ interface ExecutorService {
     fun execute(action: Action<in ExecSpec>): ExecResult?
 }
 
+private fun Executor.service(project: Project) = object: ExecutorService {
+    override val project
+        get() = project
+
+    override fun execute(action: Action<in ExecSpec>): ExecResult? {
+        val execSpec = project.objects.newInstance<DefaultExecSpec>().apply {
+            action.execute(this)
+        }
+        val request = ExecuteRequest(
+                executableAbsolutePath = execSpec.executable,
+                args = execSpec.args,
+        ).apply {
+            execSpec.standardInput?.let {
+                stdin = it
+            }
+            execSpec.standardOutput?.let {
+                stdout = it
+            }
+            execSpec.errorOutput?.let {
+                stderr = it
+            }
+            environment.putAll(execSpec.environment.mapValues { it.toString() })
+        }
+        val response = this@service.execute(request)
+        return object : ExecResult {
+            override fun getExitValue() = response.exitCode ?: -1
+
+            override fun assertNormalExitValue(): ExecResult {
+                if (exitValue != 0) {
+                    throw ExecException("Failed with exit code $exitValue")
+                }
+                return this
+            }
+
+            override fun rethrowFailure(): ExecResult {
+                return this
+            }
+        }
+    }
+}
+
 /**
  * Creates an ExecutorService depending on a test target -Ptest_target
  */
@@ -50,40 +94,17 @@ fun create(project: Project): ExecutorService {
     val configurables = project.testTargetConfigurables
 
     return when {
-        project.compileOnlyTests -> noopExecutor(project)
+        project.compileOnlyTests -> NoOpExecutor(explanation = "compile-only tests").service(project)
         project.hasProperty("remote") -> sshExecutor(project, testTarget)
-        configurables is WasmConfigurables -> wasmExecutor(project)
-        configurables is ConfigurablesWithEmulator && testTarget != HostManager.host -> emulatorExecutor(project, testTarget)
-        configurables.targetTriple.isSimulator -> simulator(project)
+        configurables is WasmConfigurables -> WasmExecutor(configurables).service(project)
+        configurables is ConfigurablesWithEmulator && testTarget != HostManager.host -> EmulatorExecutor(configurables).service(project)
+        configurables is AppleConfigurables && configurables.targetTriple.isSimulator -> XcodeSimulatorExecutor(configurables).apply {
+            project.findProperty("iosDevice")?.toString()?.let {
+                deviceName = it
+            }
+        }.service(project)
         supportsRunningTestsOnDevice(testTarget) -> deviceLauncher(project)
-        else -> localExecutorService(project)
-    }
-}
-
-private fun noopExecutor(project: Project) = object : ExecutorService {
-    override val project: Project
-        get() = project
-
-    override fun execute(action: Action<in ExecSpec>): ExecResult? = object : ExecResult {
-        override fun getExitValue(): Int = 0
-
-        override fun assertNormalExitValue(): ExecResult = this
-
-        override fun rethrowFailure(): ExecResult = this
-    }
-}
-
-private fun wasmExecutor(project: Project) = object : ExecutorService {
-    val absoluteTargetToolchain = project.testTargetConfigurables.absoluteTargetToolchain
-
-    override val project: Project get() = project
-    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
-        action.execute(this)
-        val exe = executable
-        val d8 = "$absoluteTargetToolchain/bin/d8"
-        val launcherJs = "$executable.js"
-        this.executable = d8
-        this.args = listOf("--expose-wasm", launcherJs, "--", exe) + args
+        else -> HostExecutor().service(project)
     }
 }
 
@@ -200,118 +221,6 @@ fun localExecutor(project: Project) = { a: Action<in ExecSpec> -> project.exec(a
 fun localExecutorService(project: Project): ExecutorService = object : ExecutorService {
     override val project: Project get() = project
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec(action)
-}
-
-private fun emulatorExecutor(project: Project, target: KonanTarget) = object : ExecutorService {
-    val configurables = project.testTargetConfigurables as? ConfigurablesWithEmulator
-            ?: error("$target does not support emulation!")
-    val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
-
-    override val project: Project get() = project
-
-    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
-        action.execute(this)
-
-        val exe = executable
-        // TODO: Move these to konan.properties when when it will be possible
-        //  to represent absolute path there.
-        val qemuSpecificArguments = listOf("-L", absoluteTargetSysRoot)
-        val targetSpecificArguments = when (target) {
-            KonanTarget.LINUX_MIPS32,
-            KonanTarget.LINUX_MIPSEL32 -> {
-                // This is to workaround an endianess issue.
-                // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
-                listOf("$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache")
-            }
-            else -> emptyList()
-        }
-        executable = configurables.absoluteEmulatorExecutable
-        args = qemuSpecificArguments + targetSpecificArguments + exe + args
-    }
-}
-
-/**
- * Executes a given action with iPhone Simulator.
- *
- * The test target should be specified with -Ptest_target=ios_x64
- * @see KonanTarget.IOS_X64
- * @param iosDevice an optional project property used to control simulator's device type
- *        Specify -PiosDevice=iPhone X to set it
- */
-@Suppress("KDocUnresolvedReference")
-private fun simulator(project: Project): ExecutorService = object : ExecutorService {
-
-    private val target = project.testTarget
-    val configurables = project.testTargetConfigurables as AppleConfigurables
-
-    init {
-        require(configurables.targetTriple.isSimulator) {
-            "${configurables.target} is not a simulator."
-        }
-        val compatibleArchs = when (HostManager.host.architecture) {
-            Architecture.X64 -> listOf(Architecture.X64, Architecture.X86)
-            Architecture.ARM64 -> listOf(Architecture.ARM64, Architecture.ARM32)
-            else -> throw IllegalStateException("$target is not supported by the simulator")
-        }
-        require(configurables.target.architecture in compatibleArchs) {
-            "Can't run simulator with ${configurables.target.architecture} architecture."
-        }
-    }
-
-    private val simctl by lazy {
-        val sdk = Xcode.findCurrent().pathToPlatformSdk(configurables.platformName())
-        val out = ByteArrayOutputStream()
-        val result = project.exec {
-            commandLine("/usr/bin/xcrun", "--find", "simctl", "--sdk", sdk)
-            standardOutput = out
-        }
-        result.assertNormalExitValue()
-        out.toString("UTF-8").trim()
-    }
-
-    private val device by lazy {
-        val version = Xcode.findCurrent().version
-        val default = project.findProperty("iosDevice")?.toString() ?: when (target.family) {
-            Family.TVOS -> "Apple TV 4K"
-            Family.IOS -> "iPhone 11"
-            Family.WATCHOS -> "Apple Watch Series 6 " + (if (version.startsWith("14")) "(40mm)" else "- 40mm")
-            else -> error("Unexpected simulation target: $target")
-        }
-
-        // Find out if the default device is available
-        val out = ByteArrayOutputStream()
-        var result = project.exec {
-            commandLine("/usr/bin/xcrun", "simctl", "list", "devices", "available")
-            standardOutput = out
-        }
-        result.assertNormalExitValue()
-        // Create if it's not available
-        if (!out.toString("UTF-8").trim().contains(default)) {
-            out.reset()
-            result = project.exec {
-                commandLine("/usr/bin/xcrun", "simctl", "create", default, default)
-                standardOutput = out
-            }
-            result.assertNormalExitValue()
-        }
-
-        default
-    }
-
-    private val archSpecification = when (target.architecture) {
-        Architecture.X86 -> listOf("-a", "i386")
-        Architecture.X64 -> listOf() // x86-64 is used by default on Intel Macs.
-        Architecture.ARM64 -> listOf() // arm64 is used by default on Apple Silicon.
-        else -> error("${target.architecture} can't be used in simulator.")
-    }.toTypedArray()
-
-    override val project: Project get() = project
-
-    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
-        action.execute(this)
-        // Starting Xcode 11 `simctl spawn` requires explicit `--standalone` flag.
-        commandLine = listOf(simctl, "spawn", "--standalone", *archSpecification, device, executable) + args
-    }
 }
 
 /**

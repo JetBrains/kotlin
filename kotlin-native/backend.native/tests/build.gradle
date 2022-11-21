@@ -53,6 +53,7 @@ ext.target = platformManager.targetManager(project.testTarget).target
 ext.testLibraryDir = "${ext.testOutputRoot}/klib/platform/${project.target.name}"
 
 // Add executor to run tests depending on a target
+// NOTE: If this persists in a gradle daemon, environment update (e.g. an Xcode update) may lead to execution failures.
 project.extensions.executor = ExecutorServiceKt.create(project)
 
 
