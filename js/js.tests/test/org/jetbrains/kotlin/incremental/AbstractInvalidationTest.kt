@@ -122,6 +122,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private inner class TestStepInfo(
             val moduleName: String,
             val modulePath: String,
+            val friends: List<String>,
             val expectedFileStats: Map<String, Set<String>>
         )
 
@@ -144,16 +145,23 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
 
+            val friends = mutableListOf<File>()
             if (buildKlib) {
-                val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) {
-                    resolveModuleArtifact(it.moduleName, buildDir)
+                val dependencies = mutableListOf(File(STDLIB_KLIB))
+                for (dep in moduleStep.dependencies) {
+                    val klibFile = resolveModuleArtifact(dep.moduleName, buildDir)
+                    dependencies += klibFile
+                    if (dep.isFriend) {
+                        friends += klibFile
+                    }
                 }
                 val configuration = createConfiguration(module, projStep.language)
-                buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
+                buildArtifact(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
             }
             return TestStepInfo(
                 module.safeModuleName,
                 outputKlibFile.canonicalPath,
+                friends.map { it.canonicalPath },
                 expectedFileStats
             )
         }
@@ -228,10 +236,16 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             for (projStep in projectInfo.steps) {
                 val testInfo = projStep.order.map { setupTestStep(projStep, it, true) }
 
+                val mainModuleInfo = testInfo.last()
+                testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
+                    error("module ${it.moduleName} has friends, but only main module may have the friends")
+                }
+
                 val configuration = createConfiguration(projStep.order.last(), projStep.language)
                 val cacheUpdater = CacheUpdater(
-                    mainModule = testInfo.last().modulePath,
+                    mainModule = mainModuleInfo.modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },
+                    mainModuleFriends = mainModuleInfo.friends,
                     cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
@@ -281,7 +295,12 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     private fun buildArtifact(
-        configuration: CompilerConfiguration, moduleName: String, sourceDir: File, dependencies: Collection<File>, outputKlibFile: File
+        configuration: CompilerConfiguration,
+        moduleName: String,
+        sourceDir: File,
+        dependencies: Collection<File>,
+        friends: Collection<File>,
+        outputKlibFile: File
     ) {
         if (outputKlibFile.exists()) outputKlibFile.delete()
 
@@ -290,8 +309,12 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it) }
 
         val sourceModule = prepareAnalyzedSourceModule(
-            projectJs, sourceFiles, configuration, dependencies.map { it.canonicalPath }, emptyList(), // TODO
-            AnalyzerWithCompilerReport(configuration)
+            project = projectJs,
+            files = sourceFiles,
+            configuration = configuration,
+            dependencies = dependencies.map { it.canonicalPath },
+            friendDependencies = friends.map { it.canonicalPath },
+            analyzer = AnalyzerWithCompilerReport(configuration)
         )
 
         val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files

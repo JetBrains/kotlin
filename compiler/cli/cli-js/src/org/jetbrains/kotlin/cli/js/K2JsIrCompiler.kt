@@ -275,7 +275,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val icCaches = prepareIcCaches(arguments, messageCollector, outputDir, libraries, configurationJs, mainCallArguments)
+        val icCaches = prepareIcCaches(
+            arguments = arguments,
+            messageCollector = messageCollector,
+            outputDir = outputDir,
+            libraries = libraries,
+            friendLibraries = friendLibraries,
+            configurationJs = configurationJs,
+            mainCallArguments = mainCallArguments
+        )
 
         // Run analysis if main module is sources
         var sourceModule: ModulesStructure? = null
@@ -638,6 +646,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         messageCollector: MessageCollector,
         outputDir: File,
         libraries: List<String>,
+        friendLibraries: List<String>,
         configurationJs: CompilerConfiguration,
         mainCallArguments: List<String>?
     ): List<ModuleArtifact> {
@@ -656,6 +665,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val cacheUpdater = CacheUpdater(
                 mainModule = arguments.includes!!,
                 allModules = libraries,
+                mainModuleFriends = friendLibraries,
                 cacheDir = cacheDirectory,
                 compilerConfiguration = configurationJs,
                 irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
