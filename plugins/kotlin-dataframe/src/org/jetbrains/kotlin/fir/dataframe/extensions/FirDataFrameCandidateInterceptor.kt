@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.fir.dataframe.extensions
 
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -9,6 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.extensions.FirCandidateFactoryInterceptor
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -36,7 +39,11 @@ class FirDataFrameCandidateInterceptor(
     val Key = FirDataFrameExtensionsGenerator.DataFramePlugin
 
     @OptIn(SymbolInternals::class)
-    override fun intercept(symbol: FirBasedSymbol<*>): FirBasedSymbol<*> {
+    override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>, dispatchReceiverValue: ReceiverValue?): FirBasedSymbol<*> {
+        val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
+        if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
+            return symbol
+        }
         if (symbol.annotations.none { it.fqName(session)?.shortName()?.equals(Name.identifier("Refine")) == true }) {
             return symbol
         }
