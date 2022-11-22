@@ -362,6 +362,14 @@ class PropertyInitializerExitNode(owner: ControlFlowGraph, override val fir: Fir
     }
 }
 
+
+class DelegateExpressionExitNode(owner: ControlFlowGraph, override val fir: FirExpression, level: Int, id: Int)
+    : CFGNode<FirExpression>(owner, level, id), UnionNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitDelegateExpressionExitNode(this, data)
+    }
+}
+
 // ----------------------------------- Field -----------------------------------
 
 @OptIn(CfgInternals::class)

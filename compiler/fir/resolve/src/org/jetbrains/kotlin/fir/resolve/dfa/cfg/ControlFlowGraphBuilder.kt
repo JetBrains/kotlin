@@ -306,13 +306,11 @@ class ControlFlowGraphBuilder {
             CFGNode.addJustKindEdge(postponedEnterNode, postponedExitNode, EdgeKind.CfgForward, propagateDeadness = true)
         }
         if (invocationKind?.canBeVisited() == true) {
-            // TODO: existence of an `invocationKind` should imply that this is an argument to a call, and yet
-            //  replacing this with `top()` breaks things. Hmm.
-            val currentCallsPostponedLambdas = dataFlowSourcesForNextCompletedCall.topOrNull()
+            val currentCallsPostponedLambdas = dataFlowSourcesForNextCompletedCall.top()
             // Since the skipping edge goes to `postponedExitNode` rather than `exitNode`, if
             // we try to merge data flow for not-definitely-called lambdas from `exitNode` into the next call
             // we won't get a correct result. TODO: that seems hacky and points to the edges being wrong.
-            if (currentCallsPostponedLambdas != null && invocationKind.isDefinitelyVisited()) {
+            if (invocationKind.isDefinitelyVisited()) {
                 // When a call has lambda arguments that the function says it will call in place, control goes through
                 // all other arguments, then through the lambdas in parallel, then out of the function call. This parallel
                 // (in terms of ordering, not multi-threaded or w/e) execution is represented with the call being a union node.
@@ -645,6 +643,23 @@ class ControlFlowGraphBuilder {
         val graph = popGraph()
         assert(exitNode == graph.exitNode)
         return exitNode to graph
+    }
+
+    // ----------------------------------- Delegate -----------------------------------
+
+    fun enterDelegateExpression() {
+        splitDataFlowForPostponedLambdas()
+    }
+
+    fun exitDelegateExpression(fir: FirExpression): DelegateExpressionExitNode {
+        return createDelegateExpressionExitNode(fir).also {
+            // `val x by y` is resolved as either `val x$delegate = y.provideDelegate()` or `val x$delegate = y.id()`,
+            // where `fun <T> T.id(): T`...except `id` doesn't exist, and what that means is that `y` is resolved in
+            // context-dependent mode, and we don't necessarily get an enclosing completed call to unify data flow in.
+            // This node serves as a substitute.
+            unifyDataFlowFromPostponedLambdas(it, callCompleted = true)
+            addNewSimpleNode(it)
+        }
     }
 
     // ----------------------------------- Operator call -----------------------------------

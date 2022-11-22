@@ -104,6 +104,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitDelegateExpressionExitNode(node: DelegateExpressionExitNode, data: D): R {
+        return visitUnionNode(node, data)
+    }
+
     // ----------------------------------- Field -----------------------------------
 
     open fun visitFieldInitializerEnterNode(node: FieldInitializerEnterNode, data: D): R {

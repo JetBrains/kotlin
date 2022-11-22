@@ -343,9 +343,13 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Delegate -----------------------------------
 
-    fun enterDelegateExpression() {}
+    fun enterDelegateExpression() {
+        graphBuilder.enterDelegateExpression()
+    }
 
-    fun exitDelegateExpression() {}
+    fun exitDelegateExpression(fir: FirExpression) {
+        graphBuilder.exitDelegateExpression(fir).mergeIncomingFlow()
+    }
 
     // ----------------------------------- Block -----------------------------------
 
