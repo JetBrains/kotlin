@@ -729,14 +729,8 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val COMPANION_OBJECT: PositioningStrategy<KtObjectDeclaration> = object : PositioningStrategy<KtObjectDeclaration>() {
-        override fun mark(element: KtObjectDeclaration): List<TextRange> {
-            if (element.hasModifier(KtTokens.COMPANION_KEYWORD)) {
-                return modifierSetPosition(KtTokens.COMPANION_KEYWORD).mark(element)
-            }
-            return DEFAULT.mark(element)
-        }
-    }
+    val COMPANION_OBJECT: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.COMPANION_KEYWORD))
 
     @JvmField
     val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<PsiElement> =
