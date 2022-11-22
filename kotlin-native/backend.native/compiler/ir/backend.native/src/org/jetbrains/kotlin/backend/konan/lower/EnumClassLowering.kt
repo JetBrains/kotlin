@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
@@ -49,24 +48,6 @@ internal class EnumsSupport(
     private val enumValueGetters = mapping.enumValueGetters
     private val enumEntriesMaps = mapping.enumEntriesMaps
 
-    private val valuesFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
-    private val valueOfFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
-
-    fun getValuesFunction(enumClass: IrClass) = valuesFunctions.getOrPut(enumClass) {
-        enumClass.simpleFunctions().single {
-            it.name == valuesFunctionName && it.dispatchReceiverParameter == null
-        }
-    }
-    fun saveValuesFunction(enumClass: IrClass) { getValuesFunction(enumClass) }
-
-    fun getValueOfFunction(enumClass: IrClass) = valueOfFunctions.getOrPut(enumClass) {
-        enumClass.simpleFunctions().single {
-            it.name == valueOfFunctionName && it.dispatchReceiverParameter == null
-        }
-    }
-    fun saveValueOfFunction(enumClass: IrClass) { getValueOfFunction(enumClass) }
-
-
     fun enumEntriesMap(enumClass: IrClass): Map<Name, LoweredEnumEntryDescription> {
         require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
         return enumEntriesMaps.getOrPut(enumClass) {
@@ -100,11 +81,6 @@ internal class EnumsSupport(
                 }
             }
         }
-    }
-
-    companion object {
-        val valuesFunctionName = Name.identifier("values")
-        val valueOfFunctionName = Name.identifier("valueOf")
     }
 }
 
@@ -154,9 +130,19 @@ internal class EnumUsageLowering(val context: Context) : IrElementTransformer<Ir
         require(irClass.kind == ClassKind.ENUM_CLASS)
 
         return when (intrinsicType) {
-            IntrinsicType.ENUM_VALUES -> data.irCall(enumsSupport.getValuesFunction(irClass))
-            IntrinsicType.ENUM_VALUE_OF -> data.irCall(enumsSupport.getValueOfFunction(irClass)).apply {
-                putValueArgument(0, expression.getValueArgument(0)!!)
+            IntrinsicType.ENUM_VALUES -> {
+                val function = irClass.simpleFunctions().single {
+                    it.name == Name.identifier("values") && it.dispatchReceiverParameter == null
+                }
+                data.irCall(function)
+            }
+            IntrinsicType.ENUM_VALUE_OF -> {
+                val function = irClass.simpleFunctions().single {
+                    it.name == Name.identifier("valueOf") && it.dispatchReceiverParameter == null
+                }
+                data.irCall(function).apply {
+                    putValueArgument(0, expression.getValueArgument(0)!!)
+                }
             }
             else -> TODO("Unsupported intrinsic type ${intrinsicType}")
         }
@@ -238,8 +224,6 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                     else -> null
                 }
             }
-            enumsSupport.saveValuesFunction(irClass)
-            enumsSupport.saveValueOfFunction(irClass)
             irClass.simpleFunctions().forEach { declaration ->
                 val body = declaration.body
                 if (body is IrSyntheticBody) {
