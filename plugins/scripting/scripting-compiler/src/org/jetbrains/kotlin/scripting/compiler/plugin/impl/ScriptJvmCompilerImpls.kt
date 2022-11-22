@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -361,6 +363,11 @@ private fun doCompileWithK2(
         needRegisterJavaElementFinder = true
     ) {
         friendDependencies(kotlinCompilerConfiguration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+    }
+
+    session.scriptDefinitionProviderService?.run {
+        definitionProvider = ScriptDefinitionProvider.getInstance(context.environment.project)
+        configurationProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
     }
 
     val rawFir = session.buildFirFromKtFiles(sourceFiles)

@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
@@ -74,6 +76,26 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             }
         }
     }
+}
+
+// Scripting infrastructure still depends on project-based components, therefore we still need a separate registrar above - ScriptingCompilerConfigurationComponentRegistrar
+// TODO: refactor components and migrate the plugin to the project-independent operation
+class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
+    companion object {
+        fun registerComponents(extensionStorage: ExtensionStorage, compilerConfiguration: CompilerConfiguration) = with(extensionStorage) {
+            val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                // TODO: add jdk path and other params if needed
+            }
+            FirExtensionRegistrarAdapter.registerExtension(FirScriptingCompilerExtensionRegistrar(hostConfiguration, compilerConfiguration))
+        }
+    }
+
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        registerComponents(this, configuration)
+    }
+
+    override val supportsK2: Boolean
+        get() = true
 }
 
 private inline fun withClassloadingProblemsReporting(messageCollector: MessageCollector?, body: () -> Unit) {

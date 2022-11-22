@@ -11,6 +11,7 @@ dependencies {
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
