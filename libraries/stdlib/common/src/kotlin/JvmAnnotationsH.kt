@@ -185,12 +185,12 @@ public expect annotation class JvmSerializableLambda
 
 /**
  * When delegating to an object implementing a Java interface containing default method implementations,
- * this annotation instructs the compiler to ignore overrides of the default methods in the delegate's class
- * and delegate to the default methods defined in the interface.
+ * this annotation instructs the compiler to inherit default implementations of methods from the interface
+ * instead of delegating them to the delegate object.
  *
- * See [KT-36902](https://youtrack.jetbrains.com/issue/KT-36902) for more information.
+ * See [KT-55080](https://youtrack.jetbrains.com/issue/KT-55080) for more information.
  *
- * Can be applied to `by` expressions only.
+ * Can be applied to `Interface by Delegate` expressions only.
  */
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
