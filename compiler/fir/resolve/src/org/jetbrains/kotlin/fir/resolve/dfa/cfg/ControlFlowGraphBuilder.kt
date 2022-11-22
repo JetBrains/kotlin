@@ -247,6 +247,7 @@ class ControlFlowGraphBuilder {
         postponedAnonymousFunctionNodes[symbol] = enterNode to exitNode
         addNewSimpleNode(enterNode)
         addNewSimpleNode(exitNode, preferredKind = EdgeKind.DfgForward)
+        require(dataFlowSourcesForNextCompletedCall.isNotEmpty)
         return enterNode to exitNode
     }
 
