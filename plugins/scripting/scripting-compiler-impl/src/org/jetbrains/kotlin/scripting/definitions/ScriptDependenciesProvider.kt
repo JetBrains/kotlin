@@ -17,6 +17,10 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
+// Note: misleading name, it is now general configurations provider, not only for dependencies
+// but we are affraid to touch it so far, since the impact should be assessed first
+// TODO: consider deprecating completely and swith to a new interface in the K2
+// TODO: support SourceCode (or KtSourceFile) as a key
 open class ScriptDependenciesProvider constructor(
     protected val project: Project
 ) {

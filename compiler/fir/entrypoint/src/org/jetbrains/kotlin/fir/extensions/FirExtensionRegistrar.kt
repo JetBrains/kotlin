@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
@@ -30,6 +31,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirExtensionSessionComponent::class,
             FirSamConversionTransformerExtension::class,
             FirAssignExpressionAltererExtension::class,
+            FirScriptConfiguratorExtension::class,
         )
     }
 
@@ -83,6 +85,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirAssignExpressionAltererExtension::class, this)
         }
 
+        @JvmName("plusScriptConfiguratorExtension")
+        operator fun (FirScriptConfiguratorExtension.Factory).unaryPlus() {
+            registerExtension(FirScriptConfiguratorExtension::class, this)
+        }
+
         // ------------------ reference methods ------------------
 
         @JvmName("plusStatusTransformerExtension")
@@ -128,6 +135,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusAssignExpressionAltererExtension")
         operator fun ((FirSession) -> FirAssignExpressionAltererExtension).unaryPlus() {
             FirAssignExpressionAltererExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusScriptConfiguratorExtension")
+        operator fun ((FirSession) -> FirScriptConfiguratorExtension).unaryPlus() {
+            FirScriptConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         // ------------------ utilities ------------------
