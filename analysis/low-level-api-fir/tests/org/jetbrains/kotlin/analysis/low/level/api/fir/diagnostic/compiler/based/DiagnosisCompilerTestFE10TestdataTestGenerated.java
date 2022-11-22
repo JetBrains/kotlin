@@ -38440,6 +38440,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("onlyInputTypesAndClassLiterals.kt")
+                public void testOnlyInputTypesAndClassLiterals() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesAndClassLiterals.kt");
+                }
+
+                @Test
                 @TestMetadata("onlyInputTypesAndLowPriority.kt")
                 public void testOnlyInputTypesAndLowPriority() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesAndLowPriority.kt");

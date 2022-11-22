@@ -348,7 +348,7 @@ fun FirDeclaration.visibilityForApproximation(container: FirDeclaration?): Visib
 }
 
 
-internal fun ConeTypeContext.captureFromArgumentsInternal(type: ConeKotlinType, status: CaptureStatus): ConeKotlinType? {
+fun ConeTypeContext.captureFromArgumentsInternal(type: ConeKotlinType, status: CaptureStatus): ConeKotlinType? {
     val capturedArguments = captureArguments(type, status) ?: return null
     return if (type is ConeFlexibleType) {
         ConeFlexibleType(

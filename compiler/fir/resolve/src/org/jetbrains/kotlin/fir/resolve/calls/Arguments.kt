@@ -320,30 +320,23 @@ fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, context: Resolut
 }
 
 private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType? {
-    if (argumentType is ConeFlexibleType) {
-        return captureTypeFromExpressionOrNull(argumentType.lowerBound, context)
-    }
-
-    if (argumentType is ConeIntersectionType) {
-        val intersectedTypes = argumentType.intersectedTypes.map { captureTypeFromExpressionOrNull(it, context) ?: it }
-        if (intersectedTypes == argumentType.intersectedTypes) return null
+    val type = argumentType.fullyExpandedType(context.session)
+    if (type is ConeIntersectionType) {
+        val intersectedTypes = type.intersectedTypes.map { captureTypeFromExpressionOrNull(it, context) ?: it }
+        if (intersectedTypes == type.intersectedTypes) return null
         return ConeIntersectionType(
             intersectedTypes,
-            argumentType.alternativeType?.let { captureTypeFromExpressionOrNull(it, context) ?: it }
+            type.alternativeType?.let { captureTypeFromExpressionOrNull(it, context) ?: it }
         )
     }
 
-    if (argumentType !is ConeClassLikeType) return null
+    if (type !is ConeClassLikeType && type !is ConeFlexibleType) return null
 
-    argumentType.fullyExpandedType(context.session).let {
-        if (it !== argumentType) return captureTypeFromExpressionOrNull(it, context)
-    }
+    if (type.typeArguments.isEmpty()) return null
 
-    if (argumentType.typeArguments.isEmpty()) return null
-
-    return context.session.typeContext.captureFromArguments(
-        argumentType, CaptureStatus.FROM_EXPRESSION
-    ) as? ConeKotlinType
+    return context.session.typeContext.captureFromArgumentsInternal(
+        type, CaptureStatus.FROM_EXPRESSION
+    )
 }
 
 private fun checkApplicabilityForArgumentType(
