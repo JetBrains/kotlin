@@ -47604,6 +47604,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt54028.kt")
+        public void testKt54028() throws Exception {
+            runTest("compiler/testData/codegen/box/sealed/kt54028.kt");
+        }
+
+        @Test
         @TestMetadata("multipleFiles_enabled.kt")
         public void testMultipleFiles_enabled() throws Exception {
             runTest("compiler/testData/codegen/box/sealed/multipleFiles_enabled.kt");
