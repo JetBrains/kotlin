@@ -90,16 +90,22 @@ fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotation? {
     return getAnnotationByClassId(StandardClassIds.Annotations.Target)
 }
 
-fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {
+fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {
     return unfoldArrayOrVararg().mapNotNull {
-        it.extractClassFromArgument()
+        it.extractClassFromArgument(session)
     }
 }
 
-fun FirExpression.extractClassFromArgument(): FirRegularClassSymbol? {
+fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClassSymbol? {
     if (this !is FirGetClassCall) return null
-    val qualifier = argument as? FirResolvedQualifier ?: return null
-    return qualifier.symbol as? FirRegularClassSymbol
+    return when (val argument = argument) {
+        is FirResolvedQualifier ->
+            argument.symbol as? FirRegularClassSymbol
+        is FirClassReferenceExpression ->
+            argument.classTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.toRegularClassSymbol(session)
+        else ->
+            null
+    }
 }
 
 fun checkRepeatedAnnotation(

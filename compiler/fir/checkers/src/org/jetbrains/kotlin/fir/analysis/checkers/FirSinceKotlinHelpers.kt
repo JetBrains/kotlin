@@ -69,7 +69,7 @@ private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSin
         if (apiVersion != null) {
             // TODO: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version
             if (result == null || apiVersion > result!!.apiVersion) {
-                result = FirSinceKotlinValue(apiVersion, loadWasExperimentalMarkerClasses())
+                result = FirSinceKotlinValue(apiVersion, loadWasExperimentalMarkerClasses(session))
             }
         }
     }
@@ -96,9 +96,9 @@ private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSin
     return result
 }
 
-private fun FirDeclaration.loadWasExperimentalMarkerClasses(): List<FirRegularClassSymbol> {
+private fun FirDeclaration.loadWasExperimentalMarkerClasses(session: FirSession): List<FirRegularClassSymbol> {
     val wasExperimental = getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) ?: return emptyList()
     val annotationClasses = wasExperimental.findArgumentByName(OptInNames.WAS_EXPERIMENTAL_ANNOTATION_CLASS) ?: return emptyList()
-    return annotationClasses.extractClassesFromArgument()
+    return annotationClasses.extractClassesFromArgument(session)
 }
 

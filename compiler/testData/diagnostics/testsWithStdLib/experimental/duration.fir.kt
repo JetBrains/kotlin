@@ -9,6 +9,6 @@ data class Some(val duration: Duration = Duration.INFINITE)
 fun foo(duration: Duration = Duration.INFINITE) {}
 
 fun test() {
-    Some()
-    foo()
+    <!OPT_IN_USAGE_ERROR!>Some<!>()
+    <!OPT_IN_USAGE_ERROR!>foo<!>()
 }
