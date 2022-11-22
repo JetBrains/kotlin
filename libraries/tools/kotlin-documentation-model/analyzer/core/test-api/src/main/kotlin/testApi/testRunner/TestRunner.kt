@@ -87,6 +87,9 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
                         link.copy(
                             localDirectory = testDirPath.toFile().resolve(link.localDirectory).absolutePath
                         )
+                    }.toSet(),
+                    includes = sourceSet.includes.map { file ->
+                        testDirPath.toFile().resolve(file)
                     }.toSet()
                 )
             }
