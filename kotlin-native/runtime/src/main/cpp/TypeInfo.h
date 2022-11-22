@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <std_support/Span.hpp>
 
 #include "Common.h"
 
@@ -88,6 +89,11 @@ struct InterfaceTableRecord {
     VTableElement const* vtable;
 };
 
+struct FieldIsland {
+    int32_t baseOffset;
+    int32_t count;
+};
+
 // This struct represents runtime type information and by itself is the compile time
 // constant.
 struct TypeInfo {
@@ -106,6 +112,9 @@ struct TypeInfo {
     // Count of object reference fields inside this object.
     // 1 for kotlin.Array to mark it as non-leaf.
     int32_t objOffsetsCount_;
+    // Pair (offset, count)
+    FieldIsland* fieldIslands;
+    int32_t fieldIslandsCount_;
     const TypeInfo* const* implementedInterfaces_;
     int32_t implementedInterfacesCount_;
     int32_t interfaceTableSize_;

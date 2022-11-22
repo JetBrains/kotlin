@@ -95,11 +95,14 @@ inline void traverseObjectFields(ObjHeader* obj, func process) {
   RuntimeAssert(obj != nullptr, "Must be non null");
   const TypeInfo* typeInfo = obj->type_info();
   if (typeInfo != theArrayTypeInfo) {
-    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-      ObjHeader** location = reinterpret_cast<ObjHeader**>(
-          reinterpret_cast<uintptr_t>(obj) + typeInfo->objOffsets_[index]);
-      process(location);
-    }
+      for (int islandIndex = 0; islandIndex < typeInfo->fieldIslandsCount_; islandIndex++) {
+          FieldIsland &island = typeInfo->fieldIslands[islandIndex];
+          for (int index = 0; index < island.count; index++) {
+              ObjHeader** location = reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(obj) + island.baseOffset + index);
+              process(location);
+          }
+      }
+
   } else {
     ArrayHeader* array = obj->array();
     for (uint32_t index = 0; index < array->count_; index++) {

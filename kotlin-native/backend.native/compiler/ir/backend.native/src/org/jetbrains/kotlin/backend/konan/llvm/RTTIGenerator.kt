@@ -89,6 +89,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             superType: ConstValue,
             objOffsets: ConstValue,
             objOffsetsCount: Int,
+            fieldIslands: ConstValue,
+            fieldIslandsSize: Int,
             interfaces: ConstValue,
             interfacesCount: Int,
             interfaceTableSize: Int,
@@ -99,7 +101,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             classId: Int,
             writableTypeInfo: ConstPointer?,
             associatedObjects: ConstPointer?,
-            processObjectInMark: ConstPointer?) :
+            processObjectInMark: ConstPointer?
+    ) :
 
             Struct(
                     runtime.typeInfoType,
@@ -119,6 +122,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
                     objOffsets,
                     llvm.constInt32(objOffsetsCount),
+
+                    fieldIslands,
+                    llvm.constInt32(fieldIslandsSize),
 
                     interfaces,
                     llvm.constInt32(interfacesCount),
@@ -234,6 +240,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             objOffsets.size
         }
 
+        val fieldIslands = getFieldIslands(bodyType)
+        val fieldIslandsPtr = staticData.placeGlobalConstArray("kfis:$className", runtime.fieldIslandType, fieldIslands)
+        val fieldIslandsSize = fieldIslands.size
+
         val needInterfaceTable = !irClass.isInterface && !irClass.isAbstract() && !irClass.isObjCClass()
         val (interfaceTable, interfaceTableSize) = if (needInterfaceTable) {
             interfaceTableRecords(irClass)
@@ -251,6 +261,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 instanceSize,
                 superType,
                 objOffsetsPtr, objOffsetsCount,
+                fieldIslandsPtr, fieldIslandsSize,
                 interfacesPtr, interfaces.size,
                 interfaceTableSize, interfaceTablePtr,
                 reflectionInfo.packageName,
@@ -284,6 +295,28 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     isObjectType(type)
                 }
             }
+
+    // Pair (offset)
+    private fun getFieldIslands(bodyType: LLVMTypeRef): List<Struct> {
+        val elements = getStructElements(bodyType)
+        val result = mutableListOf<Struct>()
+        var index = 0
+        while (index < elements.size) {
+            if (isObjectType(elements[index])) {
+                val islandBeginIndex = index
+                var islandSize = 0
+                do {
+                    index += 1
+                    islandSize += 1
+                } while (index < elements.size && isObjectType(elements[index]))
+                val islandOffset = llvm.constInt32(LLVMOffsetOfElement(llvmTargetData, bodyType, islandBeginIndex).toInt())
+                result += Struct(runtime.fieldIslandType, islandOffset, llvm.constInt32(islandSize))
+            } else {
+                index += 1
+            }
+        }
+        return result.toList()
+    }
 
     private fun getObjOffsets(bodyType: LLVMTypeRef): List<ConstInt32> =
             getIndicesOfObjectFields(bodyType).map { index ->
@@ -521,6 +554,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val objOffsetsPtr = staticData.placeGlobalConstArray("", llvm.int32Type, objOffsets)
         val objOffsetsCount = objOffsets.size
 
+        val fieldIslands = getFieldIslands(bodyType)
+        val fieldIslandsPtr = staticData.placeGlobalConstArray("", runtime.fieldIslandType, fieldIslands)
+        val fieldIslandsCount = fieldIslands.size
+
         val writableTypeInfoType = runtime.writableTypeInfoType
         val writableTypeInfo = if (writableTypeInfoType == null) {
             null
@@ -562,6 +599,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 size = size,
                 superType = superClass.typeInfoPtr,
                 objOffsets = objOffsetsPtr, objOffsetsCount = objOffsetsCount,
+                fieldIslands = fieldIslandsPtr, fieldIslandsSize = fieldIslandsCount,
                 interfaces = interfacesPtr, interfacesCount = interfaces.size,
                 interfaceTableSize = interfaceTableSize, interfaceTable = interfaceTablePtr,
                 packageName = ReflectionInfo.EMPTY.packageName,

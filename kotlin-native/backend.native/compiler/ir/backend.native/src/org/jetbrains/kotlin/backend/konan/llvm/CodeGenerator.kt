@@ -1169,8 +1169,8 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun lookupInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
-        val interfaceTableSize = load(structGep(typeInfo, 9 /* interfaceTableSize_ */))
-        val interfaceTable = load(structGep(typeInfo, 10 /* interfaceTable_ */))
+        val interfaceTableSize = load(structGep(typeInfo, 11 /* interfaceTableSize_ */))
+        val interfaceTable = load(structGep(typeInfo, 12 /* interfaceTable_ */))
 
         fun fastPath(): LLVMValueRef {
             // The fastest optimistic version.

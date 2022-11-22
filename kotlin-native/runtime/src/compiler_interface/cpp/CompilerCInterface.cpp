@@ -19,6 +19,7 @@ extern "C" {
 #endif
 
 touchType(TypeInfo)
+touchType(FieldIsland)
 touchType(ExtendedTypeInfo)
 touchType(InterfaceTableRecord)
 touchType(AssociatedObjectTableRecord)

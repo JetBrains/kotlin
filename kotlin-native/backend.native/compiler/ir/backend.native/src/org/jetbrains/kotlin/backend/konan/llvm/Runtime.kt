@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.types.IrType
 
 interface RuntimeAware {
     val runtime: Runtime
@@ -24,6 +24,7 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
             ?: error("struct.$name is not found in the Runtime module.")
 
     val typeInfoType = getStructType("TypeInfo")
+    val fieldIslandType = getStructType("FieldIsland")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
     val interfaceTableRecordType = getStructType("InterfaceTableRecord")
