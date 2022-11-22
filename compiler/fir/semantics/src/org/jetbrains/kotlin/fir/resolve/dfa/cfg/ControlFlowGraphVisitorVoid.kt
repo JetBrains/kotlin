@@ -50,6 +50,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
+    open fun visitDelegateExpressionExitNode(node: DelegateExpressionExitNode) {
+        visitUnionNode(node)
+    }
+
     // ----------------------------------- Init -----------------------------------
 
     open fun visitInitBlockEnterNode(node: InitBlockEnterNode) {
@@ -337,6 +341,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitPropertyInitializerExitNode(node: PropertyInitializerExitNode, data: Nothing?) {
         visitPropertyInitializerExitNode(node)
+    }
+
+    final override fun visitDelegateExpressionExitNode(node: DelegateExpressionExitNode, data: Nothing?) {
+        visitDelegateExpressionExitNode(node)
     }
 
     // ----------------------------------- Init -----------------------------------

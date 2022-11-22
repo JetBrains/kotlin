@@ -225,7 +225,8 @@ digraph delegateWithAnonymousObject_kt {
         74 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)" style="filled" fillcolor=yellow];
         75 [label="Access variable this@R|/IssuesListUserProfile|"];
         76 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)" style="filled" fillcolor=yellow];
-        77 [label="Exit property" style="filled" fillcolor=red];
+        77 [label="Exit property delegate" style="filled" fillcolor=yellow];
+        78 [label="Exit property" style="filled" fillcolor=red];
     }
     71 -> {72};
     72 -> {73};
@@ -234,17 +235,18 @@ digraph delegateWithAnonymousObject_kt {
     74 -> {75};
     75 -> {76};
     76 -> {77};
-    77 -> {80} [color=green];
+    77 -> {78};
+    78 -> {81} [color=green];
 
     subgraph cluster_22 {
         color=red
-        78 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
-        79 [label="Part of class initialization"];
-        80 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
+        79 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
+        80 [label="Part of class initialization"];
+        81 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
     }
-    78 -> {79} [color=green];
-    79 -> {80} [style=dotted];
-    79 -> {71} [color=green];
-    79 -> {71} [style=dashed];
+    79 -> {80} [color=green];
+    80 -> {81} [style=dotted];
+    80 -> {71} [color=green];
+    80 -> {71} [style=dashed];
 
 }
