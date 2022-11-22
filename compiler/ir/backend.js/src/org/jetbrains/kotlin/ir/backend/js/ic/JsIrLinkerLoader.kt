@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -40,8 +41,11 @@ internal fun JsIrLinker.loadUnboundSymbols(checkNoUnbound: Boolean) {
 internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
     private val dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
+    private val mainModuleFriends: Collection<KotlinLibrary>,
     private val irFactory: IrFactory
 ) {
+    private val mainLibrary = dependencyGraph.keys.lastOrNull() ?: notFoundIcError("main library")
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun createLinker(loadedModules: Map<ModuleDescriptor, KotlinLibrary>): JsIrLinker {
         val signaturer = IdSignatureDescriptor(JsManglerDesc)
@@ -50,7 +54,15 @@ internal class JsIrLinkerLoader(
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val partialLinkageEnabled = compilerConfiguration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, partialLinkageEnabled, null)
+        return JsIrLinker(
+            currentModule = null,
+            messageLogger = compilerConfiguration.irMessageLogger,
+            builtIns = irBuiltIns,
+            symbolTable = symbolTable,
+            partialLinkageEnabled = partialLinkageEnabled,
+            translationPluginContext = null,
+            friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
+        )
     }
 
     private fun loadModules(): Map<ModuleDescriptor, KotlinLibrary> {
@@ -86,7 +98,6 @@ internal class JsIrLinkerLoader(
         val loadedModules = loadModules()
         val jsIrLinker = createLinker(loadedModules)
 
-        val mainLibrary = dependencyGraph.keys.lastOrNull() ?: notFoundIcError("main library")
         val irModules = loadedModules.entries.associate { (descriptor, module) ->
             val libraryFile = KotlinLibraryFile(module)
             val modifiedStrategy = when {

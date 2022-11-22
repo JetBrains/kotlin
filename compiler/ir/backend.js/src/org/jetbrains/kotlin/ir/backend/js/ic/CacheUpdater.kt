@@ -50,6 +50,7 @@ enum class DirtyFileState(val str: String) {
 class CacheUpdater(
     mainModule: String,
     private val allModules: Collection<String>,
+    private val mainModuleFriends: Collection<String>,
     cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     private val irFactory: () -> IrFactory,
@@ -103,6 +104,11 @@ class CacheUpdater(
                     nameToKotlinLibrary[depName] ?: notFoundIcError("library $depName")
                 }
             }
+        }
+
+        val mainModuleFriendLibraries = libraryDependencies.keys.let { libs ->
+            val friendPaths = mainModuleFriends.mapTo(HashSet(mainModuleFriends.size)) { File(it).canonicalPath }
+            libs.filter { it.libraryFile.canonicalPath in friendPaths }
         }
 
         private val incrementalCaches = libraryDependencies.keys.associate { lib ->
@@ -591,7 +597,12 @@ class CacheUpdater(
         val dirtyFileExports = updater.collectExportedSymbolsForDirtyFiles(modifiedFiles)
 
         stopwatch.startNext("Modified files - loading and linking IR")
-        val jsIrLinkerLoader = JsIrLinkerLoader(compilerConfiguration, updater.libraryDependencies, irFactory())
+        val jsIrLinkerLoader = JsIrLinkerLoader(
+            compilerConfiguration = compilerConfiguration,
+            dependencyGraph = updater.libraryDependencies,
+            mainModuleFriends = updater.mainModuleFriendLibraries,
+            irFactory = irFactory()
+        )
         var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
 
         var iterations = 0
@@ -703,7 +714,7 @@ fun rebuildCacheForDirtyFiles(
     val dirtySrcFiles = dirtyFiles?.map { KotlinSourceFile(it) } ?: KotlinLoadedLibraryHeader(library).sourceFileFingerprints.keys
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
-    val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, irFactory)
+    val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, emptyList(), irFactory)
     val (jsIrLinker, irModules) = jsIrLoader.loadIr(KotlinSourceFileMap<KotlinSourceFileExports>(modifiedFiles), true)
 
     val currentIrModule = irModules[libFile] ?: notFoundIcError("loaded fragment", libFile)
