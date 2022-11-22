@@ -37977,6 +37977,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("duration.kt")
+            public void testDuration() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/duration.kt");
+            }
+
+            @Test
             @TestMetadata("errors.kt")
             public void testErrors() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/errors.kt");

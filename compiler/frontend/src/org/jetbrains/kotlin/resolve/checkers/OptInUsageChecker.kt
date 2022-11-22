@@ -143,7 +143,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
             ),
             futureError = OptInFactoryBasedReporter(
                 Errors.OPT_IN_USAGE_FUTURE_ERROR,
-                getDefaultDiagnosticMessage("This declaration is experimental due to signature types and its usage must be marked (will become an error in 1.6)")
+                getDefaultDiagnosticMessage("This declaration is experimental due to signature types and its usage must be marked (will become an error in future releases)")
             ),
         )
 
@@ -243,7 +243,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
             if (annotations.any { it.fqName == WAS_EXPERIMENTAL_FQ_NAME }) {
                 val accessibility = checkSinceKotlinVersionAccessibility(languageVersionSettings)
                 if (accessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
-                    result.addAll(accessibility.markerClasses.mapNotNull { it.loadOptInForMarkerAnnotation() })
+                    result.addAll(accessibility.markerClasses.mapNotNull { it.loadOptInForMarkerAnnotation(useFutureError) })
                 }
             }
 
