@@ -3268,6 +3268,37 @@ public final class kotlin/io/TextStreamsKt {
 	public static final fun useLines (Ljava/io/Reader;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public class kotlin/io/encoding/Base64 {
+	public static final field Default Lkotlin/io/encoding/Base64$Default;
+	public synthetic fun <init> (ZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun decode (Ljava/lang/CharSequence;II)[B
+	public final fun decode ([BII)[B
+	public static synthetic fun decode$default (Lkotlin/io/encoding/Base64;Ljava/lang/CharSequence;IIILjava/lang/Object;)[B
+	public static synthetic fun decode$default (Lkotlin/io/encoding/Base64;[BIIILjava/lang/Object;)[B
+	public final fun decodeIntoByteArray (Ljava/lang/CharSequence;[BIII)I
+	public final fun decodeIntoByteArray ([B[BIII)I
+	public static synthetic fun decodeIntoByteArray$default (Lkotlin/io/encoding/Base64;Ljava/lang/CharSequence;[BIIIILjava/lang/Object;)I
+	public static synthetic fun decodeIntoByteArray$default (Lkotlin/io/encoding/Base64;[B[BIIIILjava/lang/Object;)I
+	public final fun encode ([BII)Ljava/lang/String;
+	public static synthetic fun encode$default (Lkotlin/io/encoding/Base64;[BIIILjava/lang/Object;)Ljava/lang/String;
+	public final fun encodeIntoByteArray ([B[BIII)I
+	public static synthetic fun encodeIntoByteArray$default (Lkotlin/io/encoding/Base64;[B[BIIIILjava/lang/Object;)I
+	public final fun encodeToAppendable ([BLjava/lang/Appendable;II)Ljava/lang/Appendable;
+	public static synthetic fun encodeToAppendable$default (Lkotlin/io/encoding/Base64;[BLjava/lang/Appendable;IIILjava/lang/Object;)Ljava/lang/Appendable;
+	public final fun encodeToByteArray ([BII)[B
+	public static synthetic fun encodeToByteArray$default (Lkotlin/io/encoding/Base64;[BIIILjava/lang/Object;)[B
+}
+
+public final class kotlin/io/encoding/Base64$Default : kotlin/io/encoding/Base64 {
+	public final fun getMime ()Lkotlin/io/encoding/Base64;
+	public final fun getUrlSafe ()Lkotlin/io/encoding/Base64;
+}
+
+public final class kotlin/io/encoding/Base64IOStreamKt {
+	public static final fun wrapForDecoding (Ljava/io/InputStream;Lkotlin/io/encoding/Base64;)Ljava/io/InputStream;
+	public static final fun wrapForEncoding (Ljava/io/OutputStream;Lkotlin/io/encoding/Base64;)Ljava/io/OutputStream;
+}
+
 public abstract interface class kotlin/io/path/CopyActionContext {
 	public abstract fun copyToIgnoringExistingDirectory (Ljava/nio/file/Path;Ljava/nio/file/Path;Z)Lkotlin/io/path/CopyActionResult;
 }
