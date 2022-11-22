@@ -32,7 +32,7 @@ sealed class FirDeclarationOrigin(
     object Delegated : FirDeclarationOrigin()
     object RenamedForOverride : FirDeclarationOrigin()
     object WrappedIntegerOperator : FirDeclarationOrigin()
-
+    object ScriptCustomization : FirDeclarationOrigin()
     class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
 
     override fun toString(): String {

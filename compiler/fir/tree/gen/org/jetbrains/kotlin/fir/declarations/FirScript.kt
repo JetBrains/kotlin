@@ -29,6 +29,7 @@ abstract class FirScript : FirDeclaration() {
     abstract val name: Name
     abstract val statements: List<FirStatement>
     abstract override val symbol: FirScriptSymbol
+    abstract val parameters: List<FirVariable>
     abstract val contextReceivers: List<FirContextReceiver>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitScript(this, data)

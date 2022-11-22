@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
@@ -334,7 +331,15 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
         }.also { irConstructor ->
             irConstructor.valueParameters = buildList {
                 addIfNotNull(irScript.earlierScriptsParameter)
-                addAll(irScript.explicitCallParameters)
+                addAll(irScript.explicitCallParameters.map {
+                    IrValueParameterImpl(
+                        it.startOffset, it.endOffset,
+                        IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrValueParameterSymbolImpl(),
+                        it.name, index = 0,
+                        type = it.type, varargElementType = null,
+                        isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                    ).also { it.parent = irScript }
+                })
                 addAll(irScript.implicitReceiversParameters)
                 addAll(irScript.providedPropertiesParameters)
             }
@@ -806,7 +811,21 @@ private class ScriptToClassTransformer(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: ScriptToClassTransformerContext): IrExpression {
-        if (irScript.needsReceiverProcessing) {
+        val getVar = expression.symbol.owner as? IrVariable
+        if (getVar != null) {
+            if (irScript.explicitCallParameters.contains(getVar)) {
+                val correspondingParam = irScriptClass.constructors.single().valueParameters.find {
+                    it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == getVar.name
+                } ?: error("script explicit parameter ${getVar.name.asString()} not found")
+                val newExpression =
+                    IrGetValueImpl(
+                        expression.startOffset, expression.endOffset,
+                        correspondingParam.type, correspondingParam.symbol,
+                        expression.origin
+                    )
+                return super.visitExpression(newExpression, data)
+            }
+        } else if (irScript.needsReceiverProcessing) {
             val getValueParameter = expression.symbol.owner as? IrValueParameter
             if (getValueParameter != null && getValueParameter.name == SpecialNames.THIS) {
                 val newExpression = getDispatchReceiverExpression(

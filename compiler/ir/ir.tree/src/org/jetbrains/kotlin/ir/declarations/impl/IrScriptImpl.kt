@@ -47,7 +47,7 @@ class IrScriptImpl(
     override var thisReceiver: IrValueParameter? = null
     override var baseClass: IrType? = null
 
-    override lateinit var explicitCallParameters: List<IrValueParameter>
+    override lateinit var explicitCallParameters: List<IrVariable>
     override lateinit var implicitReceiversParameters: List<IrValueParameter>
     override lateinit var providedProperties: List<IrPropertySymbol>
     override lateinit var providedPropertiesParameters: List<IrValueParameter>
