@@ -533,10 +533,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         require(operation != FirOperation.ASSIGN)
 
         assignmentOperatorStatement.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+        dataFlowAnalyzer.enterAugmentedAssignmentCall()
         val leftArgument = assignmentOperatorStatement.leftArgument.transformSingle(transformer, ResolutionMode.ContextIndependent)
         val rightArgument = assignmentOperatorStatement.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
 
         val generator = GeneratorOfPlusAssignCalls(assignmentOperatorStatement, operation, leftArgument, rightArgument)
+        dataFlowAnalyzer.enterSelectAugmentedAssignmentCall()
 
         // x.plusAssign(y)
         val assignOperatorCall = generator.createAssignOperatorCall()
@@ -553,6 +555,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
         val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
         val operatorIsSuccessful = operatorCallReference?.isError == false
+
+        dataFlowAnalyzer.exitSelectAugmentedAssignmentCall()
 
         fun operatorReturnTypeMatches(candidate: Candidate): Boolean {
             // After KT-45503, non-assign flavor of operator is checked more strictly: the return type must be assignable to the variable.
@@ -574,14 +578,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val lhsIsVar = lhsVariable?.isVar == true
 
         fun chooseAssign(): FirStatement {
-            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(resolvedAssignCall, noExpectedType)
             dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
             return resolvedAssignCall
         }
 
         fun chooseOperator(): FirStatement {
-            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(
                 resolvedOperatorCall,
                 lhsVariable?.returnTypeRef ?: noExpectedType,
@@ -669,11 +671,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private inline fun <T> resolveCandidateForAssignmentOperatorCall(block: () -> T): T {
-        return dataFlowAnalyzer.withIgnoreFunctionCalls {
-            callResolver.withNoArgumentsTransform {
-                context.withInferenceSession(InferenceSessionForAssignmentOperatorCall) {
-                    block()
-                }
+        return callResolver.withNoArgumentsTransform {
+            context.withInferenceSession(InferenceSessionForAssignmentOperatorCall) {
+                block()
             }
         }
     }
@@ -1230,10 +1230,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         augmentedArraySetCall.transformAnnotations(transformer, data)
 
         // transformedLhsCall: a.get(index)
+        dataFlowAnalyzer.enterAugmentedAssignmentCall()
         val transformedLhsCall = augmentedArraySetCall.lhsGetCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
         val transformedRhs = augmentedArraySetCall.rhs.transformSingle(transformer, ResolutionMode.ContextDependent)
 
         val generator = GeneratorOfPlusAssignCalls(augmentedArraySetCall, operation, transformedLhsCall, transformedRhs)
+
+        dataFlowAnalyzer.enterSelectAugmentedAssignmentCall()
 
         // a.get(b).plusAssign(c)
         val assignOperatorCall = generator.createAssignOperatorCall()
@@ -1243,24 +1246,23 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
         val assignIsSuccessful = assignCallReference?.isError == false
 
-        fun completeAssignCall() {
-            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
+        fun chooseAssign(): FirFunctionCall {
             callCompleter.completeCall(resolvedAssignCall, noExpectedType)
             dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
-        }
-
-        fun chooseAssign(): FirStatement {
-            completeAssignCall()
             return resolvedAssignCall
         }
 
         // prefer a "simpler" variant for dynamics
         if (transformedLhsCall.calleeReference.resolvedSymbol?.origin == FirDeclarationOrigin.DynamicScope) {
+            dataFlowAnalyzer.exitSelectAugmentedAssignmentCall()
             return chooseAssign()
         }
 
         // <array>.set(<index_i>, <array>.get(<index_i>).plus(c))
         val info = tryResolveAugmentedArraySetCallAsSetGetBlock(augmentedArraySetCall, transformedLhsCall, transformedRhs)
+
+        dataFlowAnalyzer.exitSelectAugmentedAssignmentCall()
+
         val resolvedOperatorCall = info.operatorCall
         val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
         val operatorIsSuccessful = operatorCallReference?.isError == false
@@ -1276,27 +1278,23 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val setIsSuccessful = setCallReference?.isError == false
 
         fun chooseSetOperator(): FirStatement {
-            dataFlowAnalyzer.enterFunctionCall(resolvedSetCall)
-            dataFlowAnalyzer.enterFunctionCall(resolvedOperatorCall)
             callCompleter.completeCall(
                 resolvedSetCall,
                 noExpectedType,
                 expectedTypeMismatchIsReportedInChecker = true
             )
-            dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             dataFlowAnalyzer.exitFunctionCall(resolvedSetCall, callCompleted = true)
             return info.toBlock()
         }
 
         fun reportError(diagnostic: ConeDiagnostic): FirStatement {
-            completeAssignCall()
-            val errorReference = buildErrorNamedReference {
-                source = augmentedArraySetCall.source
-                this.diagnostic = diagnostic
+            return chooseAssign().also {
+                val errorReference = buildErrorNamedReference {
+                    source = augmentedArraySetCall.source
+                    this.diagnostic = diagnostic
+                }
+                it.replaceCalleeReference(errorReference)
             }
-            resolvedAssignCall.replaceCalleeReference(errorReference)
-
-            return resolvedAssignCall
         }
 
         fun reportAmbiguity(

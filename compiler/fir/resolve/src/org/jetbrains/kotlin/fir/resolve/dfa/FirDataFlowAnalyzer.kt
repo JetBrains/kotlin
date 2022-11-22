@@ -133,9 +133,6 @@ abstract class FirDataFlowAnalyzer(
     private val any = components.session.builtinTypes.anyType.type
     private val nullableNothing = components.session.builtinTypes.nullableNothingType.type
 
-    @PrivateForInline
-    var ignoreFunctionCalls: Boolean = false
-
     // ----------------------------------- Requests -----------------------------------
 
     fun isAccessToUnstableLocalVariable(expression: FirExpression): Boolean {
@@ -160,17 +157,6 @@ abstract class FirDataFlowAnalyzer(
 
     fun dropSubgraphFromCall(call: FirFunctionCall) {
         graphBuilder.dropSubgraphFromCall(call)
-    }
-
-    @OptIn(PrivateForInline::class)
-    inline fun <T> withIgnoreFunctionCalls(block: () -> T): T {
-        val oldValue = ignoreFunctionCalls
-        ignoreFunctionCalls = true
-        return try {
-            block()
-        } finally {
-            ignoreFunctionCalls = oldValue
-        }
     }
 
     // ----------------------------------- Named function -----------------------------------
@@ -841,28 +827,52 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private var functionCallLevel = 0
+    private var resolvingAugmentedAssignmentOptions: Boolean = false
 
-    @OptIn(PrivateForInline::class)
+    // The expected sequence of calls for augmented assignment:
+    //  1. enterAugmentedAssignmentCall()
+    //  2. resolve arguments
+    //  3. enterSelectAugmentedAssignmentCall()
+    //  4. resolve all options for calls in context-independent mode
+    //  5. exitSelectAugmentedAssignmentCall()
+    //  6. complete the chosen version
+    //  7. exitFunctionCall(top-level call in the chosen option)
+    fun enterAugmentedAssignmentCall() {
+        graphBuilder.enterCall()
+        // Add an extra space in the local variable assignment analyzer. That way all postponed
+        // lambdas from all alternatives ([get+]plusAssign/[get+]plus[+set]) will be collected
+        // into that space and only removed when `exitFunctionCall` finalizes the chosen option.
+        functionCallLevel++
+    }
+
+    fun enterSelectAugmentedAssignmentCall() {
+        assert(!resolvingAugmentedAssignmentOptions) { "resolving augmented assignment while resolving augmented assignment?" }
+        resolvingAugmentedAssignmentOptions = true
+    }
+
+    fun exitSelectAugmentedAssignmentCall() {
+        assert(resolvingAugmentedAssignmentOptions) { "no enterSelectAugmentedAssignmentCall before exitSelectAugmentedAssignmentCall" }
+        resolvingAugmentedAssignmentOptions = false
+    }
+
     fun enterFunctionCall(functionCall: FirFunctionCall) {
-        if (!ignoreFunctionCalls) {
-            graphBuilder.enterCall()
-        }
         val lambdaArgs = functionCall.arguments.mapNotNullTo(mutableSetOf()) { it.getAnonymousFunction() }
         val localVariableAssignmentAnalyzer = context.firLocalVariableAssignmentAnalyzer
             ?: if (lambdaArgs.isNotEmpty()) getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first()) else null
         localVariableAssignmentAnalyzer?.enterFunctionCall(lambdaArgs, functionCallLevel)
         functionCallLevel++
+        if (!resolvingAugmentedAssignmentOptions) {
+            graphBuilder.enterCall()
+        }
     }
 
-    @OptIn(PrivateForInline::class)
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
         functionCallLevel--
         context.firLocalVariableAssignmentAnalyzer?.exitFunctionCall(callCompleted)
-        if (ignoreFunctionCalls) {
-            return
-        }
-        graphBuilder.exitFunctionCall(functionCall, callCompleted).mergeIncomingFlow {
-            processConditionalContract(it, functionCall)
+        if (!resolvingAugmentedAssignmentOptions) {
+            graphBuilder.exitFunctionCall(functionCall, callCompleted).mergeIncomingFlow {
+                processConditionalContract(it, functionCall)
+            }
         }
     }
 
