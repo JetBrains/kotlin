@@ -34,6 +34,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     }
 
     @Test
+    @TestMetadata("disableInterpretation.kt")
+    public void testDisableInterpretation() throws Exception {
+        runTest("testData/diagnostics/disableInterpretation.kt");
+    }
+
+    @Test
     @TestMetadata("explode.kt")
     public void testExplode() throws Exception {
         runTest("testData/diagnostics/explode.kt");
