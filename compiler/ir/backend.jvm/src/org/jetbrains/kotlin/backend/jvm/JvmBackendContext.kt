@@ -114,7 +114,8 @@ class JvmBackendContext(
     val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
     val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
-    val hiddenConstructors = ConcurrentHashMap<IrConstructor, IrConstructor>()
+    val hiddenConstructorsWithMangledParams = ConcurrentHashMap<IrConstructor, IrConstructor>()
+    val hiddenConstructorsOfSealedClasses = ConcurrentHashMap<IrConstructor, IrConstructor>()
 
     val collectionStubComputer = CollectionStubComputer(this)
 

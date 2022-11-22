@@ -322,10 +322,12 @@ class ExpressionCodegen(
 
     // * Operator functions require non-null assertions on parameters even if they are private.
     // * Local function for lambda survives at this stage if it was used in 'invokedynamic'-based code.
-    //   Such functions require non-null assertions on parameters.
-    private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction) =
-        irFunction is IrSimpleFunction && irFunction.isOperator ||
-                irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+    // * Hidden constructors with mangled parameters require non-null assertions (see KT-53492)
+    private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction): Boolean {
+        if (irFunction is IrSimpleFunction && irFunction.isOperator || irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return true
+        if (context.hiddenConstructorsWithMangledParams.containsKey(irFunction)) return true
+        return false
+    }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
         if (param.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
