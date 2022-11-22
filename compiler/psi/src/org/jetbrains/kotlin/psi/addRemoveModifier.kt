@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 private fun KtModifierListOwner.addModifierList(newModifierList: KtModifierList): KtModifierList {
     val anchor = firstChild!!
         .siblings(forward = true)
-        .dropWhile { it is PsiComment || it is PsiWhiteSpace }
+        .dropWhile { it is PsiComment || it is PsiWhiteSpace || it is KtContextReceiverList }
         .first()
     return addBefore(newModifierList, anchor) as KtModifierList
 }
