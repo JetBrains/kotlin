@@ -113,7 +113,7 @@ digraph lambdas_kt {
                 subgraph cluster_13 {
                     color=blue
                     39 [label="Enter block"];
-                    40 [label="Postponed enter to lambda"];
+                    40 [label="Local function declaration test_2"];
                     41 [label="Exit anonymous function expression"];
                     42 [label="Variable declaration: lval lambda: R|() -> kotlin/Int|"];
                     43 [label="Exit block"];

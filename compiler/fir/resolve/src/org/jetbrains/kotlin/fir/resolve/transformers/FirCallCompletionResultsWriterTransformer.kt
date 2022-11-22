@@ -572,10 +572,8 @@ class FirCallCompletionResultsWriterTransformer(
         // Control flow info is necessary prerequisite because we collect return expressions in that function
         //
         // Example: second lambda in the call like list.filter({}, {})
-        if (!dataFlowAnalyzer.isThereControlFlowInfoForAnonymousFunction(anonymousFunction)) {
-            // But, don't leave implicit type refs behind
-            return transformImplicitTypeRefInAnonymousFunction(anonymousFunction)
-        }
+        val returnExpressionsOfAnonymousFunction = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)
+            ?: return transformImplicitTypeRefInAnonymousFunction(anonymousFunction)
 
         val expectedType = data?.getExpectedType(anonymousFunction)?.let { expectedArgumentType ->
             // From the argument mapping, the expected type of this anonymous function would be:
@@ -645,8 +643,6 @@ class FirCallCompletionResultsWriterTransformer(
 
         val result = transformElement(anonymousFunction, null)
 
-        val returnExpressionsOfAnonymousFunction: Collection<FirStatement> =
-            dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(anonymousFunction)
         for (expression in returnExpressionsOfAnonymousFunction) {
             expression.transform<FirElement, ExpectedArgumentType?>(this, finalType?.toExpectedType())
         }

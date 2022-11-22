@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
@@ -57,7 +56,6 @@ class ControlFlowGraphBuilder {
 
     private val exitTargetsForReturn: SymbolBasedNodeStorage<FirFunction, FunctionExitNode> = SymbolBasedNodeStorage()
     private val exitTargetsForTry: Stack<CFGNode<*>> = stackOf()
-    private val exitsOfAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, FunctionExitNode> = mutableMapOf()
     private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, CFGNode<*>?> = mutableMapOf()
 
     //return jumps via finally blocks, target -> jumps
@@ -98,12 +96,10 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Public API -----------------------------------
 
-    fun isThereControlFlowInfoForAnonymousFunction(function: FirAnonymousFunction): Boolean =
-        function.controlFlowGraphReference?.controlFlowGraph != null ||
-                exitsOfAnonymousFunctions.containsKey(function.symbol)
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement>? {
+        val exitNode = function.controlFlowGraphReference?.controlFlowGraph?.exitNode
+            ?: return null
 
-    // This function might throw exception if !isThereControlFlowInfoForAnonymousFunction(function)
-    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement> {
         fun FirElement.extractArgument(): FirElement = when {
             this is FirReturnExpression && target.labeledElement.symbol == function.symbol -> result.extractArgument()
             else -> this
@@ -116,10 +112,7 @@ class ControlFlowGraphBuilder {
             else -> fir.extractArgument()
         }
 
-        val exitNode = function.controlFlowGraphReference?.controlFlowGraph?.exitNode
-            ?: exitsOfAnonymousFunctions.getValue(function.symbol)
-        val nonDirect = nonDirectJumps[exitNode]
-        return (nonDirect + exitNode.previousNodes).mapNotNullTo(mutableSetOf()) {
+        return (nonDirectJumps[exitNode] + exitNode.previousNodes).mapNotNullTo(mutableSetOf()) {
             it.extractArgument() as FirStatement?
         }
     }
@@ -257,29 +250,27 @@ class ControlFlowGraphBuilder {
         return enterNode to exitNode
     }
 
-    fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction): Pair<PostponedLambdaEnterNode?, FunctionEnterNode> {
+    fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction): Pair<LocalFunctionDeclarationNode?, FunctionEnterNode> {
         val symbol = anonymousFunction.symbol
-        val preparedEnterNode = postponedAnonymousFunctionNodes[symbol]?.first
-        val outerEnterNode = preparedEnterNode ?: createPostponedLambdaEnterNode(anonymousFunction).also { addNewSimpleNode(it) }
+        val flowSourceNode = postponedAnonymousFunctionNodes[symbol]?.first
+            ?: createLocalFunctionDeclarationNode(anonymousFunction).also { addNewSimpleNode(it) }
 
         pushGraph(ControlFlowGraph(anonymousFunction, "<anonymous>", ControlFlowGraph.Kind.AnonymousFunction), Mode.Function)
         val enterNode = createFunctionEnterNode(anonymousFunction)
         val exitNode = createFunctionExitNode(anonymousFunction)
-        exitsOfAnonymousFunctions[symbol] = exitNode
         exitTargetsForReturn.push(exitNode)
         if (!anonymousFunction.invocationKind.isInPlace) {
             exitTargetsForTry.push(exitNode)
         }
 
-        addEdge(outerEnterNode, enterNode)
+        addEdge(flowSourceNode, enterNode)
         lastNodes.push(enterNode)
-        return outerEnterNode.takeIf { preparedEnterNode == null } to enterNode
+        return (flowSourceNode as? LocalFunctionDeclarationNode) to enterNode
     }
 
     fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): Triple<FunctionExitNode, PostponedLambdaExitNode?, ControlFlowGraph> {
         val symbol = anonymousFunction.symbol
-        val exitNode = exitsOfAnonymousFunctions.remove(symbol)!!.also {
-            require(it == exitTargetsForReturn.pop())
+        val exitNode = exitTargetsForReturn.pop().also {
             if (!anonymousFunction.invocationKind.isInPlace) {
                 require(it == exitTargetsForTry.pop())
             }
@@ -295,7 +286,7 @@ class ControlFlowGraphBuilder {
         }
 
         val (postponedEnterNode, postponedExitNode) = postponedAnonymousFunctionNodes.remove(symbol)
-            ?: return Triple(exitNode, null, graph).also { (lastNode as PostponedLambdaEnterNode).owner.addSubGraph(graph) }
+            ?: return Triple(exitNode, null, graph).also { currentGraph.addSubGraph(graph) }
 
         val invocationKind = anonymousFunction.invocationKind
         var changedExitDataFlow = false
@@ -327,6 +318,8 @@ class ControlFlowGraphBuilder {
             }
         }
 
+        postponedEnterNode.addSubGraph(graph)
+        // May not be the current graph: `nearestCompletedCall(run { run { generic() } }, 1)`
         postponedEnterNode.owner.addSubGraph(graph)
         return Triple(exitNode, postponedExitNode.takeIf { changedExitDataFlow }, graph)
     }
@@ -1324,7 +1317,6 @@ class ControlFlowGraphBuilder {
     // -------------------------------------------------------------------------------------------------------------------------
 
     fun reset() {
-        exitsOfAnonymousFunctions.clear()
         dataFlowSourcesForNextCompletedCall.reset()
         lastNodes.reset()
     }
