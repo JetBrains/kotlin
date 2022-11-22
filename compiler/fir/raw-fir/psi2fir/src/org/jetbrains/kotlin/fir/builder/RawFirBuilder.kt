@@ -227,7 +227,6 @@ open class RawFirBuilder(
             val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
 
             if (this is KtNameReferenceExpression ||
-                this is KtConstantExpression ||
                 (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
                 getQualifiedExpressionForSelector() == null
             ) {
