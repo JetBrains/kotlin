@@ -299,7 +299,13 @@ class FirSignatureEnhancement(
                     status = firMethod.status
                     symbol = FirNamedFunctionSymbol(methodId).also { functionSymbol = it }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    typeParameters += firMethod.typeParameters
+                    typeParameters += firMethod.typeParameters.map { typeParameter ->
+                        buildTypeParameterCopy(typeParameter) {
+                            origin = FirDeclarationOrigin.Enhancement
+                            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                            containingDeclarationSymbol = functionSymbol
+                        }
+                    }
                     dispatchReceiverType = firMethod.dispatchReceiverType
                     attributes = firMethod.attributes.copy()
                 }
