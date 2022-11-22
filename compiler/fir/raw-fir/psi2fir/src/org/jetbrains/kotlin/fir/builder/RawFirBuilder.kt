@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -52,6 +53,8 @@ open class RawFirBuilder(
     val baseScopeProvider: FirScopeProvider,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
+    val isSafeExternalEnumOn = session.languageVersionSettings.supportsFeature(LanguageFeature.SafeExternalEnums)
+
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
 
     var mode: BodyBuildingMode = bodyBuildingMode
@@ -879,10 +882,15 @@ open class RawFirBuilder(
                      *   for correct resolve of super constructor call or just call kotlin.Any constructor
                      *   and convert it to right call at backend, because of it doesn't affects frontend work
                      */
+                    val superType =
+                        if (isSafeExternalEnumOn && modifierList?.hasExpectModifier() == true) implicitExternalEnumType else implicitEnumType
                     delegatedSuperTypeRef = buildResolvedTypeRef {
                         type = ConeClassLikeTypeImpl(
-                            implicitEnumType.type.lookupTag,
-                            delegatedSelfTypeRef?.coneType?.let { arrayOf(it) } ?: emptyArray(),
+                            superType.type.lookupTag,
+                            delegatedSelfTypeRef
+                                ?.takeIf { superType.type.typeArguments.isNotEmpty() }
+                                ?.coneType
+                                ?.let { arrayOf(it) } ?: emptyArray(),
                             isNullable = false,
                         )
                     }

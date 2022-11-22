@@ -25,6 +25,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("extendingExternalEnumDirectlyWithSafeExternalEnums.kt")
+    public void testExtendingExternalEnumDirectlyWithSafeExternalEnums() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/extendingExternalEnumDirectlyWithSafeExternalEnums.kt");
+    }
+
+    @Test
     @TestMetadata("funConstructorCallJS.kt")
     public void testFunConstructorCallJS() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");

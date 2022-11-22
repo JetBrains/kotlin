@@ -189,7 +189,7 @@ fun deserializeClassToSymbol(
             )
             generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName)
 
-            if (superTypesDeserialized.any { it?.isEnum == true }) {
+            if (superTypeRefs.any { it.isEnum }) {
                 generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
             }
         }

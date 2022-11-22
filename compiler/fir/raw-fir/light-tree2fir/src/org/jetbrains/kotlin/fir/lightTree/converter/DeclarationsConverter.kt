@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -527,7 +528,7 @@ class DeclarationsConverter(
                                 val superType = if (isSafeExternalEnumOn && modifiers.hasExternal()) implicitExternalEnumType else implicitEnumType
                                 type = ConeClassLikeTypeImpl(
                                     superType.type.lookupTag,
-                                    arrayOf(selfType.type),
+                                    runIf(superType.type.typeArguments.isNotEmpty()) { arrayOf(selfType.type) } ?: emptyArray(),
                                     isNullable = false
                                 )
                             }
