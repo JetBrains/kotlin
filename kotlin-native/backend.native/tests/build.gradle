@@ -66,24 +66,6 @@ compileTestKotlin {
 // Do not generate run tasks for konan built artifacts
 ext.konanNoRun = true
 
-final CacheTesting cacheTesting = CacheTestingKt.configureCacheTesting(project)
-if (cacheTesting != null) {
-    // Check for debug build and set the -g option.
-    if (project.globalTestArgs.contains("-opt")) {
-        throw new IllegalArgumentException("Cache testing should be run with debug build. " +
-                "Remove -opt options from the test args")
-    }
-    if (!project.globalTestArgs.contains("-g")) {
-        project.globalTestArgs.add("-g")
-    }
-
-    // Note: can't do this in [CacheTesting.configure] since task classes aren't accessible there.
-    tasks.withType(KonanCompileNativeBinary.class).configureEach {
-        dependsOn cacheTesting.buildCacheTask
-        extraOpts cacheTesting.compilerArgs
-    }
-}
-
 // Enable two-stage test compilation if the test_two_stage property is set.
 ext.twoStageEnabled = project.hasProperty("test_two_stage")
 
@@ -100,7 +82,7 @@ ext.isCmsGC = project.globalTestArgs.contains("-Xgc=cms") || !project.globalTest
 ext.runtimeAssertionsPanic = false
 
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
-if (project.globalTestArgs.contains("-g") && (cacheTesting == null)) {
+if (project.globalTestArgs.contains("-g")) {
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
         extraOpts "-Xbinary=runtimeAssertionsMode=panic"
     }
@@ -1119,7 +1101,7 @@ task worker_list_workers(type: KonanLocalTest) {
 }
 
 standaloneTest("freeze0") {
-    enabled = (project.testTarget != 'wasm32') && (cacheTesting == null) // No workers on WASM.
+    enabled = (project.testTarget != 'wasm32') // No workers on WASM.
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze0.kt"
@@ -1127,7 +1109,7 @@ standaloneTest("freeze0") {
 }
 
 standaloneTest("freeze1") {
-    enabled = (project.testTarget != 'wasm32') && (cacheTesting == null) // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze1.kt"
@@ -1135,7 +1117,7 @@ standaloneTest("freeze1") {
 }
 
 standaloneTest("freeze_stress") {
-    enabled = (project.testTarget != 'wasm32') && (cacheTesting == null) // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
         && !isAggressiveGC // TODO: Investigate why too slow
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
@@ -1144,7 +1126,7 @@ standaloneTest("freeze_stress") {
 }
 
 standaloneTest("freeze2") {
-    enabled = (project.testTarget != 'wasm32') && (cacheTesting == null) // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze2.kt"
@@ -1152,7 +1134,7 @@ standaloneTest("freeze2") {
 }
 
 standaloneTest("freeze3") {
-    enabled = (project.testTarget != 'wasm32') && (cacheTesting == null) // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze3.kt"
@@ -1160,7 +1142,7 @@ standaloneTest("freeze3") {
 }
 
 standaloneTest("freeze4") {
-    enabled = (project.testTarget != 'wasm32') && (cacheTesting == null) // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze4.kt"
@@ -1168,7 +1150,6 @@ standaloneTest("freeze4") {
 }
 
 standaloneTest("freeze5") {
-    enabled = cacheTesting == null
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze5.kt"
@@ -1176,7 +1157,7 @@ standaloneTest("freeze5") {
 }
 
 standaloneTest("freeze6") {
-    enabled = (project.testTarget != 'wasm32') && (cacheTesting == null) // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
         && !isNoopGC
     useGoldenData = true
     flags = ["-Xbinary=freezing=full", "-tr"]
@@ -1447,7 +1428,6 @@ task localClass_localHierarchy(type: KonanLocalTest) {
 }
 
 standaloneTest("objectDeclaration_globalConstants") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     flags = ["-opt", "-opt-in=kotlin.native.internal.InternalForKotlinNative", "-tr"]
     source = "codegen/objectDeclaration/globalConstants.kt"
 }
@@ -3055,29 +3035,24 @@ standaloneTest("args0") {
 }
 
 standaloneTest("devirtualization_lateinitInterface") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     useGoldenData = true
     flags = ["-opt"]
     source = "codegen/devirtualization/lateinitInterface.kt"
 }
 
 standaloneTest("devirtualization_getter_looking_as_box_function") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     useGoldenData = true
     flags = ["-opt"]
     source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
 standaloneTest("devirtualization_inline_getter") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     useGoldenData = true
     flags = ["-opt"]
     source = "codegen/devirtualization/inline_getter.kt"
 }
 
-
 standaloneTest("devirtualization_anonymousObject") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     useGoldenData = true
     flags = ["-opt"]
     source = "codegen/devirtualization/anonymousObject.kt"
@@ -3308,15 +3283,13 @@ task codegen_escapeAnalysis_recursion(type: KonanLocalTest) {
 }
 
 standaloneTest("codegen_escapeAnalysis_stackAllocated") {
-    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-        project.globalTestArgs.contains('-g') // -g and -opt are incompatible
+    disabled = project.globalTestArgs.contains('-g') // -g and -opt are incompatible
     flags = ['-opt', '-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
     source = "codegen/escapeAnalysis/stackAllocated.kt"
 }
 
 standaloneTest("codegen_escapeAnalysis_string") {
-    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-        project.globalTestArgs.contains('-g') || // -g and -opt are incompatible
+    disabled = project.globalTestArgs.contains('-g') || // -g and -opt are incompatible
         !isExperimentalMM // strings are frozen in legacy GC
     flags = ['-opt', '-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
     source = "codegen/escapeAnalysis/string.kt"
@@ -3490,7 +3463,7 @@ standaloneTest("mpp_optional_expectation") {
 }
 
 standaloneTest("freezing_control_basic_full") {
-    enabled = isExperimentalMM && cacheTesting == null
+    enabled = isExperimentalMM
     source = "runtime/freezing_control/basic.kt"
     flags = [
             '-Xbinary=freezing=full',
@@ -3510,7 +3483,7 @@ standaloneTest("freezing_control_basic_disabled") {
 }
 
 standaloneTest("freezing_control_basic_explicitOnly") {
-    enabled = isExperimentalMM && cacheTesting == null
+    enabled = isExperimentalMM
     source = "runtime/freezing_control/basic.kt"
     flags = [
             '-Xbinary=freezing=explicitOnly',
@@ -4077,8 +4050,7 @@ tasks.register("driver0", KonanDriverTest) {
 }
 
 tasks.register("driver_opt", KonanDriverTest) {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-        || isAggressiveGC // No need to test with different GC schedulers
+    disabled = isAggressiveGC // No need to test with different GC schedulers
     useGoldenData = true
     source = "runtime/basic/driver_opt.kt"
     flags = ["-opt"]
@@ -5311,8 +5283,7 @@ dynamicTest("kt42830") {
 }
 
 dynamicTest("produce_dynamic_unhandledException") {
-    disabled = (project.testTarget == 'wasm32') || // Uses exceptions + dynamic is unsupported for wasm.
-            (cacheTesting != null) // Disabled due to KT-47828.
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions + dynamic is unsupported for wasm.
     source = "produce_dynamic/unhandledException/unhandled.kt"
     cSource = "$projectDir/produce_dynamic/unhandledException/main.cpp"
     clangTool = "clang++"
@@ -5747,13 +5718,11 @@ if (isAppleTarget(project)) {
             sources = ['framework/stdlib']
             bitcode = true
         }
-        if (cacheTesting == null) fullBitcode = true
+        fullBitcode = true
         swiftSources = ['framework/stdlib/']
     }
 
-    if (cacheTesting != null && cacheTesting.isDynamic) {
-        // testMultipleFrameworks disabled until https://youtrack.jetbrains.com/issue/KT-34262 is fixed.
-    } else frameworkTest("testMultipleFrameworks") {
+    frameworkTest("testMultipleFrameworks") {
         framework('First') {
             sources = ['framework/multiple/framework1', 'framework/multiple/shared']
             bitcode = true
@@ -5766,8 +5735,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testMultipleFrameworksStatic") {
-         // this test doesn't work with caches. For now caches are enabled only if isExperimentalMM is true, even if cacheTesting is passed
-         if (cacheTesting != null && isExperimentalMM && !runtimeAssertionsPanic) {
+         if (isExperimentalMM && !runtimeAssertionsPanic) {
             // See https://youtrack.jetbrains.com/issue/KT-34261.
             expectedExitStatus = 134
          }
@@ -6021,7 +5989,6 @@ tasks.register("metadata_compare_unable_to_import", MetadataComparisonTest) {
 }
 
 standaloneTest("local_ea_arraysfieldwrite") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     useGoldenData = true
     flags = ["-opt"]
     source = "codegen/localEscapeAnalysis/arraysFieldWrite.kt"
@@ -6231,7 +6198,6 @@ fileCheckTest("filecheck_when") {
 
 if (HostManager.@Companion.hostIsMac) {
     fileCheckTest("filecheck_force_arm_instruction_set") {
-        enabled = enabled && cacheTesting == null
         annotatedSource = project.file('filecheck/force_arm_instruction_set.kt')
         targetName = "watchos_arm32"
         // Perform check after optimization pipeline because
@@ -6448,7 +6414,6 @@ fileCheckTest("filecheck_suspend_tailcalls") {
 }
 
 fileCheckTest("filecheck_bce") {
-    enabled = enabled && cacheTesting == null
     annotatedSource = project.file('filecheck/bce.kt')
 }
 
@@ -6476,7 +6441,6 @@ createInterop("filecheck_signext_zeroext_interop_input") {
 }
 
 fileCheckTest("filecheck_signext_zeroext_interop") {
-    enabled = enabled && cacheTesting == null
     annotatedSource = project.file('filecheck/signext_zeroext_interop.kt')
     interop = "filecheck_signext_zeroext_interop_input"
     if (project.testTarget == 'mingw_x64') {
