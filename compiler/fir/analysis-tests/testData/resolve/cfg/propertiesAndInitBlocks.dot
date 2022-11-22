@@ -269,7 +269,7 @@ digraph propertiesAndInitBlocks_kt {
             subgraph cluster_27 {
                 color=blue
                 87 [label="Catch enter"];
-                88 [label="Variable declaration: lval e: R|kotlin/Exception|"];
+                88 [label="Variable declaration: e: R|kotlin/Exception|"];
                 subgraph cluster_28 {
                     color=blue
                     89 [label="Enter block"];

@@ -3,10 +3,10 @@ FILE: tryCatch.kt
         try {
             lval x: R|kotlin/Int| = Int(1)
         }
-        catch (lval e: R|kotlin/RuntimeException| = STUB) {
+        catch (e: R|kotlin/RuntimeException|) {
             lval y: R|kotlin/Int| = Int(2)
         }
-        catch (lval e: R|kotlin/Exception| = STUB) {
+        catch (e: R|kotlin/Exception|) {
             lval z: R|kotlin/Int| = Int(3)
         }
 
@@ -15,7 +15,7 @@ FILE: tryCatch.kt
         lval x: R|kotlin/Int| = try {
             Int(1)
         }
-        catch (lval e: R|kotlin/Exception| = STUB) {
+        catch (e: R|kotlin/Exception|) {
             Int(2)
         }
 
@@ -37,10 +37,10 @@ FILE: tryCatch.kt
                 }
 
             }
-            catch (lval e: R|kotlin/Exception| = STUB) {
+            catch (e: R|kotlin/Exception|) {
                 continue@@@[Boolean(true)]
             }
-            catch (lval e: R|kotlin/RuntimeException| = STUB) {
+            catch (e: R|kotlin/RuntimeException|) {
                 break@@@[Boolean(true)]
             }
 

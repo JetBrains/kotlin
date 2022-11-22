@@ -1992,7 +1992,6 @@ open class RawFirBuilder(
                             isVar = false
                             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                             isLocal = true
-                            initializer = buildExpressionStub { }
                             this.name = name
                             symbol = FirPropertySymbol(CallableId(name))
                             for (annotationEntry in ktParameter.annotationEntries) {

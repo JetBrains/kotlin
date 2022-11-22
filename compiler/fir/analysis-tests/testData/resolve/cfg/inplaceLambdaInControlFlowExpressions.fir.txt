@@ -23,7 +23,7 @@ FILE: inplaceLambdaInControlFlowExpressions.kt
             }
             )
         }
-        catch (lval e: R|kotlin/Exception| = STUB) {
+        catch (e: R|kotlin/Exception|) {
             String()
         }
 

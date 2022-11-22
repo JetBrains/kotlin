@@ -8,7 +8,7 @@ FILE: errorsInUnreachable.kt
             R|<local>/x|.R|kotlin/Boolean.not|()
             lval a: R|kotlin/Int| = R|<local>/x1|.R|kotlin/text/toInt|()
         }
-        catch (lval e: R|kotlin/Exception| = STUB) {
+        catch (e: R|kotlin/Exception|) {
             ^case String(OK)
         }
 

@@ -68,7 +68,7 @@ digraph complex_kt {
                         subgraph cluster_12 {
                             color=blue
                             27 [label="Catch enter"];
-                            28 [label="Variable declaration: lval closeException: R|kotlin/Throwable|"];
+                            28 [label="Variable declaration: closeException: R|kotlin/Throwable|"];
                             subgraph cluster_13 {
                                 color=blue
                                 29 [label="Enter block"];
@@ -112,7 +112,7 @@ digraph complex_kt {
         try {
             this@R|/closeFinally|.R|/AutoCloseable.close|()
         }
-        catch (lval closeException: R|kotlin/Throwable| = STUB) {
+        catch (closeException: R|kotlin/Throwable|) {
             R|<local>/cause|.R|kotlin/Throwable.addSuppressed|(R|<local>/closeException|)
         }
 

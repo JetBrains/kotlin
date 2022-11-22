@@ -6,7 +6,7 @@ FIR element rendered:
 try {
     Int(1)
 }
-catch (lval e: R|kotlin/Throwable| = STUB) {
+catch (e: R|kotlin/Throwable|) {
 }
 finally {
 }

@@ -1212,7 +1212,6 @@ class ExpressionsConverter(
                         isVar = false
                         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                         isLocal = true
-                        initializer = buildExpressionStub { }
                         this.name = parameter.name
                         symbol = FirPropertySymbol(CallableId(name))
                         annotations += parameter.annotations
