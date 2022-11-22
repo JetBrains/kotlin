@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForContracts
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
@@ -42,7 +43,8 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
     FirResolvePhase.CONTRACTS,
     implicitTypeOnly = false,
     scopeSession,
-    outerBodyResolveContext = outerBodyResolveContext
+    outerBodyResolveContext = outerBodyResolveContext,
+    returnTypeCalculator = ReturnTypeCalculatorForContracts,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer =
         FirExpressionsResolveTransformer(this)

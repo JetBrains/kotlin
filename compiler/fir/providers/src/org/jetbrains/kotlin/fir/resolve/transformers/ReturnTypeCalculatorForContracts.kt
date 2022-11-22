@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
-object ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator() {
+object ReturnTypeCalculatorForContracts : ReturnTypeCalculator() {
     override val fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
         get() = FakeOverrideTypeCalculator.Forced
 
@@ -27,7 +27,7 @@ object ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator() {
         return buildErrorTypeRef {
             diagnostic = ConeSimpleDiagnostic(
                 "Cannot calculate return type during full-body resolution (local class/object?): ${declaration.render()}",
-                DiagnosticKind.RecursionInImplicitTypes
+                DiagnosticKind.InferenceError
             )
         }
     }
