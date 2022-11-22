@@ -94,7 +94,10 @@ public class AnnotationResolverImpl extends AnnotationResolver {
         for (KtAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptor descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
             if (descriptor == null) {
-                descriptor = new LazyAnnotationDescriptor(new LazyAnnotationsContextImpl(this, storageManager, trace, scope), entryElement);
+                LazyAnnotationDescriptor lazyAnnotationDescriptor =
+                        new LazyAnnotationDescriptor(new LazyAnnotationsContextImpl(this, storageManager, trace, scope), entryElement);
+                lazyAnnotationDescriptor.recordToTrace();
+                descriptor = lazyAnnotationDescriptor;
             }
             if (shouldResolveArguments) {
                 ForceResolveUtil.forceResolveAllContents(descriptor);
