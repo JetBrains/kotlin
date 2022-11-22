@@ -10,7 +10,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
@@ -51,7 +50,7 @@ private abstract class RunGTestJob : WorkAction<RunGTestJob.Parameters> {
         with(parameters) {
             reportFileUnprocessed.asFile.get().parentFile.mkdirs()
 
-            executor.execute(ExecuteRequest(this@with.executable.asFile.get().absolutePath).apply {
+            executor.execute(executeRequest(this@with.executable.asFile.get().absolutePath).apply {
                 this.args.add("--gtest_output=xml:${reportFileUnprocessed.asFile.get().absolutePath}")
                 filter.orNull?.also {
                     this.args.add("--gtest_filter=${it}")

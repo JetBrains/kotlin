@@ -17,7 +17,7 @@ private fun defaultDeviceName(target: KonanTarget) = when (target.family) {
 }
 
 private fun Executor.run(executableAbsolutePath: String, vararg args: String) = ByteArrayOutputStream().let {
-    this.execute(ExecuteRequest(executableAbsolutePath).apply {
+    this.execute(executeRequest(executableAbsolutePath).apply {
         this.args.addAll(args)
         stdout = it
         workingDirectory = File("").absoluteFile

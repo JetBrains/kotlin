@@ -61,6 +61,13 @@ data class ExecuteRequest(
     inline fun copying(block: ExecuteRequest.() -> Unit): ExecuteRequest = copy().apply(block)
 }
 
+/**
+ * Helper for [ExecuteRequest] creation.
+ * Allows to create it without opting in [kotlin.time.ExperimentalTime] for API < 1.6.
+ */
+fun executeRequest(executableAbsolutePath: String, args: MutableList<String> = mutableListOf()): ExecuteRequest =
+        ExecuteRequest(executableAbsolutePath, args)
+
 data class ExecuteResponse(
         /**
          * Process exit code if it exited by itself, or `null` if it was killed by a timeout.

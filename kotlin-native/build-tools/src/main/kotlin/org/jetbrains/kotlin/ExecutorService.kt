@@ -53,7 +53,7 @@ private fun Executor.service(project: Project) = object: ExecutorService {
         val execSpec = project.objects.newInstance<DefaultExecSpec>().apply {
             action.execute(this)
         }
-        val request = ExecuteRequest(
+        val request = executeRequest(
                 executableAbsolutePath = execSpec.executable,
                 args = execSpec.args,
         ).apply {
