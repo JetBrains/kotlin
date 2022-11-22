@@ -40,10 +40,12 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             var result: FirDeclaration? = null
             override fun visitElement(element: FirElement) {
                 if (result != null) return
-                val declaration = element.realPsi as? KtDeclaration
-                if (element is FirDeclaration && declaration != null && declaration.name?.decapitalizeAsciiOnly() == "resolveMe") {
-                    result = element
-                    return
+                if (element is FirDeclaration) {
+                    val declaration = element.realPsi as? KtDeclaration
+                    if (declaration != null && declaration.name?.decapitalizeAsciiOnly() == "resolveMe") {
+                        result = element
+                        return
+                    }
                 }
                 element.acceptChildren(this)
             }

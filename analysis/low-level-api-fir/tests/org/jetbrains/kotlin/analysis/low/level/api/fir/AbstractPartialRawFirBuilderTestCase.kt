@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
@@ -111,7 +110,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
         }
 
         val session = FirSessionFactoryHelper.createEmptySession()
-        val firBuilder = RawFirBuilder(session, scopeProvider, PsiHandlingMode.IDE)
+        val firBuilder = RawFirBuilder(session, scopeProvider)
         val original = firBuilder.buildFirFile(file)
 
         val designationBuilder = DesignationBuilder(elementToBuild)

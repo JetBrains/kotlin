@@ -84,7 +84,6 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         return RawFirBuilder(
             session,
             StubFirScopeProvider,
-            psiMode = PsiHandlingMode.COMPILER,
             bodyBuildingMode = bodyBuildingMode
         ).buildFirFile(this)
     }

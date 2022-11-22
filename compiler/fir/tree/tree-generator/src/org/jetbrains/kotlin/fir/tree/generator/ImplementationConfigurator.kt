@@ -142,6 +142,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(block, "FirLazyBlock") {
             val error = """error("FirLazyBlock should be calculated before accessing")"""
+            default("source") {
+                value = error
+                withGetter = true
+            }
             default("statements") {
                 value = error
                 withGetter = true

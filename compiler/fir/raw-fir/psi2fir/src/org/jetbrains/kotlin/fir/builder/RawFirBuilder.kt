@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
@@ -51,14 +52,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 open class RawFirBuilder(
     session: FirSession,
     val baseScopeProvider: FirScopeProvider,
-    private val psiMode: PsiHandlingMode,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
-
-    @Deprecated("Please replace with primary constructor call")
-    constructor(session: FirSession, baseScopeProvider: FirScopeProvider, mode: BodyBuildingMode = BodyBuildingMode.NORMAL) :
-            this(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = mode)
-
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
 
     var mode: BodyBuildingMode = bodyBuildingMode
@@ -71,6 +66,15 @@ open class RawFirBuilder(
             body()
         } finally {
             mode = BodyBuildingMode.LAZY_BODIES
+        }
+    }
+
+    private inline fun <T> runOnStubs(crossinline body: () -> T): T {
+        return when (mode) {
+            BodyBuildingMode.NORMAL -> body()
+            BodyBuildingMode.LAZY_BODIES -> {
+                AstLoadingFilter.disallowTreeLoading<T, Nothing> { body() }
+            }
         }
     }
 
@@ -164,6 +168,28 @@ open class RawFirBuilder(
 
         private inline fun <reified R : FirElement> KtElement.convert(): R =
             convertElement(this) as R
+
+        private inline fun <T> buildOrLazy(build: () -> T, noinline lazy: () -> T): T {
+            return when (mode) {
+                BodyBuildingMode.NORMAL -> build()
+                BodyBuildingMode.LAZY_BODIES -> runOnStubs(lazy)
+            }
+        }
+
+        private inline fun buildOrLazyExpression(
+            sourceElement: KtSourceElement?,
+            buildExpression: () -> FirExpression,
+        ): FirExpression {
+            return buildOrLazy(buildExpression, {
+                buildLazyExpression {
+                    source = sourceElement
+                }
+            })
+        }
+
+        private inline fun buildOrLazyBlock(buildBlock: () -> FirBlock): FirBlock {
+            return buildOrLazy(buildBlock, ::buildLazyBlock)
+        }
 
         open fun convertElement(element: KtElement): FirElement? =
             element.accept(this@Visitor, Unit)
@@ -317,28 +343,22 @@ open class RawFirBuilder(
             }
 
         private fun KtDeclarationWithBody.buildFirBody(): Pair<FirBlock?, FirContractDescription?> =
-            when {
-                !hasBody() ->
-                    null to null
-                mode == BodyBuildingMode.LAZY_BODIES -> {
-                    val block = buildLazyBlock {
-                        source = bodyExpression?.toFirSourceElement()
-                            ?: error("hasBody() == true but body is null")
-                    }
-                    block to null
-                }
-                hasBlockBody() -> {
-                    val block = bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
-                    if (hasContractEffectList()) {
-                        block to null
+            if (hasBody()) {
+                buildOrLazyBlock {
+                    if (hasBlockBody()) {
+                        val block = bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
+                        return@buildFirBody if (hasContractEffectList()) {
+                            block to null
+                        } else {
+                            block.extractContractDescriptionIfPossible()
+                        }
                     } else {
-                        block.extractContractDescriptionIfPossible()
+                        val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
+                        FirSingleExpressionBlock(result.toReturn(baseSource = result.source))
                     }
-                }
-                else -> {
-                    val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
-                    FirSingleExpressionBlock(result.toReturn(baseSource = result.source)) to null
-                }
+                } to null
+            } else {
+                null to null
             }
 
         private fun ValueArgument?.toFirExpression(): FirExpression {
@@ -497,13 +517,7 @@ open class RawFirBuilder(
                 Visibilities.Private
             }
             val status = obtainPropertyComponentStatus(componentVisibility, this, property)
-            val backingFieldInitializer = when {
-                mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
-                    source = this@toFirBackingField?.initializer?.toFirSourceElement()
-                }
-                this?.hasInitializer() != true -> null
-                else -> this@toFirBackingField.initializer?.toFirExpression("Should have initializer")
-            }
+            val backingFieldInitializer = this?.toInitializerExpression()
             val returnType = this?.returnTypeReference.toFirOrImplicitType()
             val source = this?.toFirSourceElement()
             return if (this != null) {
@@ -950,7 +964,10 @@ open class RawFirBuilder(
             if (hasModifier(INNER_KEYWORD)) dispatchReceiverForInnerClassConstructor() else null
 
         override fun visitKtFile(file: KtFile, data: Unit): FirElement {
-            context.packageFqName = if (psiMode == PsiHandlingMode.COMPILER) file.packageFqNameByTree else file.packageFqName
+            context.packageFqName = when (mode) {
+                BodyBuildingMode.NORMAL -> file.packageFqNameByTree
+                BodyBuildingMode.LAZY_BODIES -> file.packageFqName
+            }
             return buildFile {
                 source = file.toFirSourceElement()
                 moduleData = baseModuleData
@@ -1573,6 +1590,13 @@ open class RawFirBuilder(
             }
         }
 
+        private fun KtDeclarationWithInitializer.toInitializerExpression() =
+            runIf (hasInitializer()) {
+                buildOrLazyExpression(initializer?.toFirSourceElement()) {
+                    initializer.toFirExpression("Should have initializer")
+                }
+            }
+
         private fun <T> KtProperty.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
             ownerRegularClassTypeParametersCount: Int?,
@@ -1581,14 +1605,7 @@ open class RawFirBuilder(
             val propertyType = typeReference.toFirOrImplicitType()
             val propertyName = nameAsSafeName
             val isVar = isVar
-            val propertyInitializer = when {
-                !hasInitializer() -> null
-                mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
-                    source = initializer?.toFirSourceElement()
-                }
-                else -> initializer.toFirExpression("Should have initializer")
-
-            }
+            val propertyInitializer = toInitializerExpression()
 
             val propertySource = toFirSourceElement()
 
@@ -1680,14 +1697,11 @@ open class RawFirBuilder(
                         }
 
                         if (hasDelegate()) {
-                            fun extractDelegateExpression() = when (mode) {
-                                BodyBuildingMode.NORMAL -> this@toFirProperty.delegate?.expression.toFirExpression("Should have delegate")
-                                BodyBuildingMode.LAZY_BODIES -> this@toFirProperty.delegate?.expression?.let {
-                                    buildLazyExpression { source = it.toFirSourceElement() }
-                                } ?: buildErrorExpression {
-                                    ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected)
+                            fun extractDelegateExpression() = this@toFirProperty.delegate?.expression?.let { expression ->
+                                buildOrLazyExpression(expression.toFirSourceElement()) {
+                                    expression.toFirExpression("Should have delegate")
                                 }
-                            }
+                            } ?: buildErrorExpression { ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected) }
 
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                 val delegateExpression = extractDelegateExpression()
@@ -1905,7 +1919,8 @@ open class RawFirBuilder(
                 source = expression.toFirSourceElement()
                 for (statement in expression.statements) {
                     val firStatement = statement.toFirStatement { "Statement expected: ${statement.text}" }
-                    val isForLoopBlock = firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
+                    val isForLoopBlock =
+                        firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
                     if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty()) {
                         statements += firStatement
                     } else {
@@ -2500,7 +2515,10 @@ open class RawFirBuilder(
         override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, data: Unit): FirElement {
             context.forwardLabelUsagePermission(expression, expression.expression)
             return expression.expression?.accept(this, data)
-                ?: buildErrorExpression(expression.toFirSourceElement(), ConeSimpleDiagnostic("Empty parentheses", DiagnosticKind.Syntax))
+                ?: buildErrorExpression(
+                    expression.toFirSourceElement(),
+                    ConeSimpleDiagnostic("Empty parentheses", DiagnosticKind.Syntax)
+                )
         }
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: Unit): FirElement {
@@ -2546,7 +2564,10 @@ open class RawFirBuilder(
                 baseModuleData,
                 multiDeclaration.toFirSourceElement(),
                 "destruct",
-                multiDeclaration.initializer.toFirExpression("Initializer required for destructuring declaration", DiagnosticKind.Syntax),
+                multiDeclaration.initializer.toFirExpression(
+                    "Initializer required for destructuring declaration",
+                    DiagnosticKind.Syntax
+                ),
                 extractAnnotationsTo = { extractAnnotationsTo(it) }
             )
             return generateDestructuringBlock(
@@ -2620,16 +2641,4 @@ enum class BodyBuildingMode {
         fun lazyBodies(lazyBodies: Boolean): BodyBuildingMode =
             if (lazyBodies) LAZY_BODIES else NORMAL
     }
-}
-
-enum class PsiHandlingMode {
-    /**
-     * Do not build any stubs while handling PSI
-     */
-    COMPILER,
-
-    /**
-     * Build stubs if possible while handling PSI
-     */
-    IDE;
 }

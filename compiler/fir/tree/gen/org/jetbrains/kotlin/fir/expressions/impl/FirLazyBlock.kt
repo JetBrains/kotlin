@@ -20,9 +20,8 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirLazyBlock @FirImplementationDetail constructor(
-    override val source: KtSourceElement?,
-) : FirBlock() {
+class FirLazyBlock : FirBlock() {
+    override val source: KtSourceElement? get() = error("FirLazyBlock should be calculated before accessing")
     override val annotations: List<FirAnnotation> get() = error("FirLazyBlock should be calculated before accessing")
     override val statements: List<FirStatement> get() = error("FirLazyBlock should be calculated before accessing")
     override val typeRef: FirTypeRef get() = error("FirLazyBlock should be calculated before accessing")
