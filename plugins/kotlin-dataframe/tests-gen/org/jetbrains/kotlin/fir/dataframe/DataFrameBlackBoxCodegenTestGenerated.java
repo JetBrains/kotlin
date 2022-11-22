@@ -44,4 +44,16 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     public void testOuterClass() throws Exception {
         runTest("testData/box/OuterClass.kt");
     }
+
+    @Test
+    @TestMetadata("readCSV.kt")
+    public void testReadCSV() throws Exception {
+        runTest("testData/box/readCSV.kt");
+    }
+
+    @Test
+    @TestMetadata("readJson.kt")
+    public void testReadJson() throws Exception {
+        runTest("testData/box/readJson.kt");
+    }
 }
