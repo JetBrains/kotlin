@@ -357,7 +357,15 @@ class Fir2IrConverter(
             }
             is FirScript -> {
                 assert(parent is IrFile)
-                declarationStorage.getOrCreateIrScript(declaration)
+                declarationStorage.getOrCreateIrScript(declaration).also { irScript ->
+                    declarationStorage.enterScope(irScript)
+                    for (scriptStatement in declaration.statements) {
+                        if (scriptStatement is FirDeclaration) {
+                            processMemberDeclaration(scriptStatement, null, irScript)
+                        }
+                    }
+                    declarationStorage.leaveScope(irScript)
+                }
             }
             is FirSimpleFunction -> {
                 declarationStorage.getOrCreateIrFunction(

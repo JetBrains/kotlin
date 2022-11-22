@@ -30,7 +30,7 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
 
     abstract var baseClass: IrType?
 
-    abstract var explicitCallParameters: List<IrValueParameter>
+    abstract var explicitCallParameters: List<IrVariable>
 
     abstract var implicitReceiversParameters: List<IrValueParameter>
 

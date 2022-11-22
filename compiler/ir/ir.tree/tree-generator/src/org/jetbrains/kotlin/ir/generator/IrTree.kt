@@ -400,7 +400,7 @@ object IrTree : AbstractTreeBuilder() {
         // TODO: consider removing from here and handle appropriately in the lowering
         +field("thisReceiver", valueParameter, mutable = true, isChild = true, nullable = true) // K1
         +field("baseClass", irTypeType, mutable = true, nullable = true) // K1
-        +listField("explicitCallParameters", valueParameter, mutability = Var, isChild = true)
+        +listField("explicitCallParameters", variable, mutability = Var, isChild = true)
         +listField("implicitReceiversParameters", valueParameter, mutability = Var, isChild = true)
         +listField("providedProperties", propertySymbolType, mutability = Var)
         +listField("providedPropertiesParameters", valueParameter, mutability = Var, isChild = true)
