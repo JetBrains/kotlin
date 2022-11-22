@@ -34,7 +34,8 @@ open class LookupStorage(
     targetDataDir: File,
     pathConverter: FileToPathConverter,
     storeFullFqNames: Boolean = false,
-    private val trackChanges: Boolean = false
+    private val trackChanges: Boolean = false,
+    private val transaction: CompilationTransaction = DummyCompilationTransaction(),
 ) : BasicMapsOwner(targetDataDir) {
     val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
 
@@ -134,9 +135,7 @@ open class LookupStorage(
 
     @Synchronized
     override fun clean() {
-        if (countersFile.exists()) {
-            countersFile.delete()
-        }
+        transaction.deleteFile(countersFile.toPath())
 
         size = 0
 
@@ -148,6 +147,7 @@ open class LookupStorage(
         try {
             if (size != oldSize) {
                 if (size > 0) {
+                    transaction.registerAddedOrChangedFile(countersFile.toPath())
                     if (!countersFile.exists()) {
                         countersFile.parentFile.mkdirs()
                         countersFile.createNewFile()

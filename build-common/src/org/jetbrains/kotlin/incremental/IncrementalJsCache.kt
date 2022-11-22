@@ -41,7 +41,8 @@ import java.io.File
 open class IncrementalJsCache(
     cachesDir: File,
     pathConverter: FileToPathConverter,
-    serializerProtocol: SerializerExtensionProtocol
+    serializerProtocol: SerializerExtensionProtocol,
+    private val transaction: CompilationTransaction,
 ) : AbstractIncrementalCache<FqName>(cachesDir, pathConverter) {
     companion object {
         private const val TRANSLATION_RESULT_MAP = "translation-result"
@@ -72,6 +73,7 @@ open class IncrementalJsCache(
     var header: ByteArray
         get() = headerFile.readBytes()
         set(value) {
+            transaction.registerAddedOrChangedFile(headerFile.toPath())
             cachesDir.mkdirs()
             headerFile.writeBytes(value)
         }
