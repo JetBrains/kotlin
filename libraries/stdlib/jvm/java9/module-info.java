@@ -13,6 +13,7 @@ module kotlin.stdlib {
     exports kotlin.coroutines.jvm.internal;
     exports kotlin.enums;
     exports kotlin.io;
+    exports kotlin.io.encoding;
     exports kotlin.jvm;
     exports kotlin.jvm.functions;
     exports kotlin.math;
