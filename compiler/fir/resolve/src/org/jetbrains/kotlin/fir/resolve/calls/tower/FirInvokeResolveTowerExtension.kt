@@ -174,7 +174,7 @@ internal class FirInvokeResolveTowerExtension(
             val invokeReceiverExpression =
                 components.createExplicitReceiverForInvoke(
                     invokeReceiverCandidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression
-                )
+                ) ?: continue
 
             val invokeFunctionInfo =
                 info.copy(
@@ -283,7 +283,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
     info: CallInfo,
     invokeBuiltinExtensionMode: Boolean,
     extensionReceiverExpression: FirExpression
-): FirExpression {
+): FirExpression? {
     return when (val symbol = candidate.symbol) {
         is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
             candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol
@@ -294,7 +294,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
         )
         is FirTypeAliasSymbol -> {
             val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-            val expansionRegularClassSymbol = type.lookupTag.toSymbolOrError(session)
+            val expansionRegularClassSymbol = type.lookupTag.toSymbol(session) ?: return null
             buildResolvedQualifierForClass(expansionRegularClassSymbol, sourceElement = symbol.fir.source)
         }
         else -> throw AssertionError()

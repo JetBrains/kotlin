@@ -525,6 +525,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firErrorOnLastLineNoEol.args");
         }
 
+        @TestMetadata("firFriendlyErrorIfNoJdkOptionIsSet.args")
+        public void testFirFriendlyErrorIfNoJdkOptionIsSet() throws Exception {
+            runTest("compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.args");
+        }
+
         @TestMetadata("firHello.args")
         public void testFirHello() throws Exception {
             runTest("compiler/testData/cli/jvm/firHello.args");

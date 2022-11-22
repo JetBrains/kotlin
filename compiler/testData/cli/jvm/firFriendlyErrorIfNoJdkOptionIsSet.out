@@ -1,0 +1,8 @@
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
+compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.kt:2:11: error: unresolved reference: NullPointerException
+    throw NullPointerException()
+          ^
+compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.kt:2:11: error: type mismatch: inferred type is ERROR CLASS: Unresolved name: NullPointerException but kotlin/Throwable was expected
+    throw NullPointerException()
+          ^
+COMPILATION_ERROR
