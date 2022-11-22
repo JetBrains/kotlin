@@ -79,6 +79,7 @@ abstract class AbstractKotlinTarget(
     }
 
     override val components: Set<SoftwareComponent> by lazy {
+        require(!project.shouldPublishFromKotlinComponent) { "Accessing these components should not have happened" }
         project.buildAdhocComponentsFromKotlinVariants(kotlinComponents)
     }
 

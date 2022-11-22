@@ -60,7 +60,13 @@ internal abstract class AbstractKotlinPlugin(
         configureClassInspectionForIC(project)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
 
-        project.components.addAll(target.components)
+        val components = if (project.shouldPublishFromKotlinComponent) {
+            target.kotlinComponents
+        } else {
+            target.components
+        }
+
+        project.components.addAll(components)
 
     }
 

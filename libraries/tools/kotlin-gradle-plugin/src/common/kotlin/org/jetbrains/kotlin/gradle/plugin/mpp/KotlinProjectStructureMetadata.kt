@@ -163,7 +163,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         .getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
         .compilations.associateBy { it.defaultSourceSet }
 
-    val publishedVariantsNamesWithCompilation = getPublishedPlatformCompilations(project).mapKeys { it.key.name }
+    val publishedVariantsNamesWithCompilation = getPublishedPlatformCompilations(project).mapKeys { originalVariantNameFromPublished(it.key.name) ?: it.key.name }
 
     return KotlinProjectStructureMetadata(
         sourceSetNamesByVariantName = publishedVariantsNamesWithCompilation.mapValues { (_, compilation) ->

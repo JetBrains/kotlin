@@ -15,6 +15,7 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.shouldPublishFromKotlinComponent
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal fun ExternalKotlinTargetSoftwareComponent(
@@ -46,6 +47,10 @@ internal class ExternalKotlinTargetSoftwareComponent @UnsafeApi constructor(
 ) : ComponentWithCoordinates, ComponentWithVariants, SoftwareComponentInternal {
     override fun getName(): String = adhocSoftwareComponent.name
     override fun getUsages(): Set<UsageContext> = adhocSoftwareComponent.usages
-    override fun getVariants(): Set<SoftwareComponent> = multiplatformExtension.metadata().components
+    override fun getVariants(): Set<SoftwareComponent> = if (kotlinTargetComponent.target.project.shouldPublishFromKotlinComponent) {
+        multiplatformExtension.metadata().kotlinComponents
+    } else {
+        multiplatformExtension.metadata().components
+    }
     override fun getCoordinates(): ModuleVersionIdentifier = kotlinTargetComponent.coordinates
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
@@ -15,6 +16,7 @@ import org.gradle.api.publish.maven.internal.publication.MavenPublicationInterna
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -73,37 +75,64 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
         }
 }
 
+internal val Project.shouldPublishFromKotlinComponent get(): Boolean =
+    project.properties.getOrDefault("kotlin.mpp.fromKotlinComponent", "true") == "true"
+
 private fun InternalKotlinTarget.createMavenPublications(publications: PublicationContainer) {
+    if (project.shouldPublishFromKotlinComponent) {
+        createMavenPublicationsFromKotlinComponents(publications)
+    } else {
+        createMavenPublicationsFromGradleComponents(publications)
+    }
+}
+
+private fun InternalKotlinTarget.createMavenPublicationsFromKotlinComponents(publications: PublicationContainer) {
+    kotlinComponents
+        .filter { it.publishableOnCurrentHost }
+        .forEach { kotlinComponent ->
+            createMavenPublications(publications, kotlinComponent, kotlinComponent)
+        }
+}
+
+private fun InternalKotlinTarget.createMavenPublicationsFromGradleComponents(publications: PublicationContainer) {
     components
         .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
         .filter { (_, kotlinComponent) -> kotlinComponent.publishableOnCurrentHost }
         .forEach { (gradleComponent, kotlinComponent) ->
-            val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
-                // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
-                project.whenEvaluated {
-                    from(gradleComponent)
-                    kotlinComponent.sourcesArtifacts.forEach { sourceArtifact ->
-                        artifact(sourceArtifact)
-                    }
-                }
-                (this as MavenPublicationInternal).publishWithOriginalFileName()
-                artifactId = kotlinComponent.defaultArtifactId
-
-                val pomRewriter = PomDependenciesRewriter(project, kotlinComponent)
-                val shouldRewritePomDependencies =
-                    project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }
-
-                rewritePom(
-                    pom,
-                    pomRewriter,
-                    shouldRewritePomDependencies,
-                    dependenciesForPomRewriting(this@createMavenPublications)
-                )
-            }
-
-            (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
-            onPublicationCreated(componentPublication)
+            createMavenPublications(publications, kotlinComponent, gradleComponent)
         }
+}
+
+private fun InternalKotlinTarget.createMavenPublications(
+    publications: PublicationContainer,
+    kotlinComponent: KotlinTargetComponent,
+    fromComponent: SoftwareComponent
+) {
+    val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
+        // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
+        project.whenEvaluated {
+            from(fromComponent)
+            kotlinComponent.sourcesArtifacts.forEach { sourceArtifact ->
+                artifact(sourceArtifact)
+            }
+        }
+        (this as MavenPublicationInternal).publishWithOriginalFileName()
+        artifactId = kotlinComponent.defaultArtifactId
+
+        val pomRewriter = PomDependenciesRewriter(project, kotlinComponent)
+        val shouldRewritePomDependencies =
+            project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }
+
+        rewritePom(
+            pom,
+            pomRewriter,
+            shouldRewritePomDependencies,
+            dependenciesForPomRewriting(this@createMavenPublications)
+        )
+    }
+
+    (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
+    onPublicationCreated(componentPublication)
 }
 
 private fun rewritePom(

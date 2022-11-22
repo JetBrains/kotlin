@@ -16,11 +16,10 @@ import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmDefaultProjectModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.shouldPublishFromKotlinComponent
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -327,7 +326,13 @@ abstract class KotlinJsProjectExtension(project: Project) :
 
             this._target = target
 
-            target.project.components.addAll(target.components)
+            val components = if (target.project.shouldPublishFromKotlinComponent) {
+                (target as? AbstractKotlinTarget)?.kotlinComponents ?: emptySet()
+            } else {
+                target.components
+            }
+
+            target.project.components.addAll(components)
         }
 
         target.run(body)

@@ -96,7 +96,11 @@ class KotlinVariantWithMetadataVariant(
     usages: Set<DefaultKotlinUsageContext>,
     internal val metadataTarget: AbstractKotlinTarget
 ) : KotlinVariantWithCoordinates(producingCompilation, usages), ComponentWithVariants {
-    override fun getVariants() = metadataTarget.components
+    override fun getVariants() = if (metadataTarget.project.shouldPublishFromKotlinComponent) {
+        metadataTarget.kotlinComponents
+    } else {
+        metadataTarget.components
+    }
 }
 
 class JointAndroidKotlinTargetComponent(

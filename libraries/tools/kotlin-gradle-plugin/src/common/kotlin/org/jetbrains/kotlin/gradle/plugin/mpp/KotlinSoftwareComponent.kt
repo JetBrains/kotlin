@@ -14,6 +14,7 @@ import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.internal.component.MavenPublishingAwareContext
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
@@ -38,12 +39,16 @@ abstract class KotlinSoftwareComponent(
     override fun getVariants(): Set<SoftwareComponent> = kotlinTargets
         .filter { target -> target !is KotlinMetadataTarget }
         .flatMap { target ->
-            val targetPublishableComponentNames = target.internal.kotlinComponents
-                .filter { component -> component.publishable }
-                .map { component -> component.name }
-                .toSet()
+            if (project.shouldPublishFromKotlinComponent) {
+                (target as? AbstractKotlinTarget)?.kotlinComponents?.filter { it.publishable } ?: emptyList()
+            } else {
+                val targetPublishableComponentNames = target.internal.kotlinComponents
+                    .filter { component -> component.publishable }
+                    .map { component -> component.name }
+                    .toSet()
 
-            target.components.filter { it.name in targetPublishableComponentNames }
+                target.components.filter { it.name in targetPublishableComponentNames }
+            }
         }.toSet()
 
     private val _usages: Set<UsageContext> by lazy {
@@ -67,7 +72,8 @@ abstract class KotlinSoftwareComponent(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 usage = javaApiUsage,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
-                overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
+                overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) },
+                variantPrefix = "",
             )
 
 
@@ -79,7 +85,8 @@ abstract class KotlinSoftwareComponent(
                         metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                         javaApiUsage,
                         /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
-                        COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
+                        COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME,
+                        variantPrefix = "",
                     )
                 }
             }
@@ -132,15 +139,22 @@ class DefaultKotlinUsageContext(
     override val dependencyConfigurationName: String,
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
-    override val includeIntoProjectStructureMetadata: Boolean = true
-) : KotlinUsageContext {
+    override val includeIntoProjectStructureMetadata: Boolean = true,
+    val variantPrefix: String = "-published"
+) : KotlinUsageContext, MavenPublishingAwareContext {
 
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
     override fun getUsage(): Usage = usage
 
-    override fun getName(): String = dependencyConfigurationName
+    override fun getScopeMapping(): MavenPublishingAwareContext.ScopeMapping = when (usage.name) {
+        Usage.JAVA_API_JARS -> MavenPublishingAwareContext.ScopeMapping.compile
+        Usage.JAVA_RUNTIME_JARS -> MavenPublishingAwareContext.ScopeMapping.runtime
+        else -> error("Invalid scope")
+    }
+
+    override fun getName(): String = dependencyConfigurationName + if (project.shouldPublishFromKotlinComponent) variantPrefix else ""
 
     private val configuration: Configuration
         get() = project.configurations.getByName(dependencyConfigurationName)
