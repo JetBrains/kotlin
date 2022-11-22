@@ -11,6 +11,7 @@
 #include "Memory.h"
 #include "Natives.h"
 #include "Types.h"
+#include "Porting.h"
 
 namespace kotlin {
 
@@ -21,8 +22,12 @@ void traverseObjectFields(ObjHeader* object, F process) noexcept(noexcept(proces
     const TypeInfo* typeInfo = object->type_info();
     // Only consider arrays of objects, not arrays of primitives.
     if (typeInfo != theArrayTypeInfo) {
-        for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-            process(reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + typeInfo->objOffsets_[index]));
+        for (int islandIndex = 0; islandIndex < typeInfo->fieldIslandsCount_; islandIndex++) {
+            FieldIsland &island = typeInfo->fieldIslands[islandIndex];
+            for (int index = 0; index < island.count; index++) {
+                ObjHeader** location = reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + island.baseOffset + (index * 8));
+                process(location);
+            }
         }
     } else {
         ArrayHeader* array = object->array();

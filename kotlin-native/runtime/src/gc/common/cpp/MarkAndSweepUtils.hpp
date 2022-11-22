@@ -37,10 +37,13 @@ template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
     auto* typeInfo = object->type_info();
     RuntimeAssert(typeInfo != theArrayTypeInfo, "Must not be an array of objects");
-    for (int i = 0; i < typeInfo->objOffsetsCount_; ++i) {
-        auto* field = *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + typeInfo->objOffsets_[i]);
-        if (!field) continue;
-        processFieldInMark<Traits>(state, field);
+    for (int islandIndex = 0; islandIndex < typeInfo->fieldIslandsCount_; islandIndex++) {
+        FieldIsland &island = typeInfo->fieldIslands[islandIndex];
+        for (int index = 0; index < island.count; index++) {
+            auto* field = *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + island.baseOffset + (index * 8));
+            if (!field) continue;
+            processFieldInMark<Traits>(state, field);
+        }
     }
 }
 

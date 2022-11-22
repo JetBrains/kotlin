@@ -296,7 +296,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 }
             }
 
-    // Pair (offset)
     private fun getFieldIslands(bodyType: LLVMTypeRef): List<Struct> {
         val elements = getStructElements(bodyType)
         val result = mutableListOf<Struct>()
