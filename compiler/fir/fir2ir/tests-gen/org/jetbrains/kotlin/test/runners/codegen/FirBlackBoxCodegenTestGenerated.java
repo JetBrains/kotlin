@@ -32562,6 +32562,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("constructorWithMangledParams.kt")
+        public void testConstructorWithMangledParams() throws Exception {
+            runTest("compiler/testData/codegen/box/notNullAssertions/constructorWithMangledParams.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("definitelyNotNullTypes.kt")
         public void testDefinitelyNotNullTypes() throws Exception {
             runTest("compiler/testData/codegen/box/notNullAssertions/definitelyNotNullTypes.kt");

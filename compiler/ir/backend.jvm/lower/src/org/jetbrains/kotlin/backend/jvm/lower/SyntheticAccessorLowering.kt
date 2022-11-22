@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Opcodes
+import java.util.concurrent.ConcurrentHashMap
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -142,8 +143,10 @@ private class SyntheticAccessorTransformer(
         }
 
         val accessor = when {
-            callee is IrConstructor && callee.isOrShouldBeHidden ->
-                handleHiddenConstructor(callee).symbol
+            callee is IrConstructor && callee.isOrShouldBeHiddenAsSealedClassConstructor ->
+                handleHiddenConstructorOfSealedClass(callee).symbol
+            callee is IrConstructor && callee.isOrShouldBeHiddenSinceHasMangledParams ->
+                handleHiddenConstructorWithMangledParams(callee).symbol
             !expression.symbol.isAccessible(withSuper, thisSymbol) ->
                 createAccessor(expression)
             else ->
@@ -331,59 +334,80 @@ private class SyntheticAccessorTransformer(
     }
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
-        if (declaration.isOrShouldBeHidden) {
-            pendingAccessorsToAdd.add(handleHiddenConstructor(declaration))
-            declaration.visibility = DescriptorVisibilities.PRIVATE
+        when {
+            declaration.isOrShouldBeHiddenSinceHasMangledParams -> {
+                pendingAccessorsToAdd.add(handleHiddenConstructorWithMangledParams(declaration))
+                declaration.visibility = DescriptorVisibilities.PRIVATE
+            }
+            declaration.isOrShouldBeHiddenAsSealedClassConstructor -> {
+                pendingAccessorsToAdd.add(handleHiddenConstructorOfSealedClass(declaration))
+                declaration.visibility = DescriptorVisibilities.PRIVATE
+            }
         }
-
         return super.visitConstructor(declaration)
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         val function = expression.symbol.owner
 
-        if (!expression.origin.isLambda && function is IrConstructor && function.isOrShouldBeHidden) {
-            handleHiddenConstructor(function).let { accessor ->
-                expression.transformChildrenVoid()
-                return IrFunctionReferenceImpl(
-                    expression.startOffset, expression.endOffset, expression.type,
-                    accessor.symbol, accessor.typeParameters.size,
-                    accessor.valueParameters.size, accessor.symbol, expression.origin
-                )
-            }
+        if (!expression.origin.isLambda && function is IrConstructor
+            && (function.isOrShouldBeHiddenSinceHasMangledParams || function.isOrShouldBeHiddenAsSealedClassConstructor)
+        ) {
+            val accessor =
+                if (function.isOrShouldBeHiddenSinceHasMangledParams)
+                    handleHiddenConstructorWithMangledParams(function)
+                else
+                    handleHiddenConstructorOfSealedClass(function)
+            expression.transformChildrenVoid()
+            return IrFunctionReferenceImpl(
+                expression.startOffset, expression.endOffset, expression.type,
+                accessor.symbol, accessor.typeParameters.size,
+                accessor.valueParameters.size, accessor.symbol, expression.origin
+            )
         }
 
         return super.visitFunctionReference(expression)
     }
 
-    private val IrConstructor.isOrShouldBeHidden: Boolean
+    private val IrConstructor.isOrShouldBeHiddenSinceHasMangledParams: Boolean
         get() {
-            if (this in context.hiddenConstructors.keys)
-                return true
-
-            if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
-                origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-            ) {
-                return false
+            if (this in context.hiddenConstructorsWithMangledParams.keys) return true
+            return isShouldBeHidden {
+                !DescriptorVisibilities.isPrivate(visibility)
+                        && !constructedClass.isValue
+                        && hasMangledParameters()
+                        && !constructedClass.isAnonymousObject
             }
-
-            val constructedClass = constructedClass
-
-            if (!DescriptorVisibilities.isPrivate(visibility) && !constructedClass.isValue && hasMangledParameters() &&
-                !constructedClass.isAnonymousObject
-            ) return true
-
-            if (visibility != DescriptorVisibilities.PUBLIC && constructedClass.modality == Modality.SEALED)
-                return true
-
-            return false
         }
 
-    private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructor {
-        require(declaration.isOrShouldBeHidden, declaration::render)
-        return context.hiddenConstructors.getOrPut(declaration) {
+    private val IrConstructor.isOrShouldBeHiddenAsSealedClassConstructor: Boolean
+        get() {
+            if (this in context.hiddenConstructorsOfSealedClasses.keys) return true
+            return isShouldBeHidden { visibility != DescriptorVisibilities.PUBLIC && constructedClass.modality == Modality.SEALED }
+        }
+
+    private fun IrConstructor.isShouldBeHidden(additionalCheck: (IrConstructor) -> Boolean): Boolean {
+        if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
+            origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+        ) {
+            return false
+        }
+        return additionalCheck(this)
+    }
+
+    private fun handleHiddenConstructorWithMangledParams(declaration: IrConstructor) =
+        handleHiddenConstructor(declaration, context.hiddenConstructorsWithMangledParams)
+
+    private fun handleHiddenConstructorOfSealedClass(declaration: IrConstructor) =
+        handleHiddenConstructor(declaration, context.hiddenConstructorsOfSealedClasses)
+
+    private fun handleHiddenConstructor(
+        declaration: IrConstructor,
+        constructorToAccessorMap: ConcurrentHashMap<IrConstructor, IrConstructor>
+    ): IrConstructor {
+        return constructorToAccessorMap.getOrPut(declaration) {
             declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
                 if (declaration.constructedClass.modality != Modality.SEALED) {
                     // There's a special case in the JVM backend for serializing the metadata of hidden
