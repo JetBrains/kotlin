@@ -5,26 +5,109 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.ideSessionComponents
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.renderWithType
+import org.jetbrains.kotlin.fir.renderer.ConeIdFullRenderer
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-internal data class FirCallableSignature(private val idSignature: IdSignature) {
-    fun sameSignature(declaration: FirCallableDeclaration): Boolean = this == declaration.createSignature()
+/**
+ * **Note**: the signature doesn't contain a name. This check should be done externally.
+ */
+internal class FirCallableSignature private constructor(
+    private val receiverType: String?,
+    private val contextReceiverTypes: List<String>,
+    private val parameters: List<String>?,
+    private val typeParametersCount: Int,
+    private val returnType: String,
+) {
     fun sameSignature(declaration: FirCallableSymbol<*>): Boolean = sameSignature(declaration.fir)
+
+    fun sameSignature(declaration: FirCallableDeclaration): Boolean {
+        if ((receiverType == null) != (declaration.receiverParameter == null)) return false
+        if (contextReceiverTypes.size != declaration.contextReceivers.size) return false
+        if (typeParametersCount != declaration.typeParameters.size) return false
+        if (parameters?.size != (declaration as? FirFunction)?.valueParameters?.size) return false
+
+        declaration.lazyResolveToPhase(FirResolvePhase.TYPES)
+        if (receiverType != declaration.receiverParameter?.typeRef?.renderType()) return false
+
+        val receivers = declaration.contextReceivers
+        for ((index, parameter) in contextReceiverTypes.withIndex()) {
+            if (receivers[index].typeRef.renderType() != parameter) return false
+        }
+
+        if (declaration is FirFunction) {
+            requireNotNull(parameters)
+            for ((index, parameter) in declaration.valueParameters.withIndex()) {
+                if (parameters[index] != parameter.returnTypeRef.renderType()) return false
+            }
+        }
+
+        declaration.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+
+        return returnType == declaration.returnTypeRef.renderType()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FirCallableSignature) return false
+
+        if (receiverType != other.receiverType) return false
+        if (contextReceiverTypes != other.contextReceiverTypes) return false
+        if (parameters != other.parameters) return false
+        if (typeParametersCount != other.typeParametersCount) return false
+        return returnType == other.returnType
+
+    }
+
+    override fun hashCode(): Int {
+        var result = receiverType?.hashCode() ?: 0
+        result = 31 * result + contextReceiverTypes.hashCode()
+        result = 31 * result + parameters.hashCode()
+        result = 31 * result + typeParametersCount.hashCode()
+        result = 31 * result + returnType.hashCode()
+        return result
+    }
+
+    companion object {
+        fun createSignature(callableSymbol: FirCallableSymbol<*>): FirCallableSignature = createSignature(callableSymbol.fir)
+
+        fun createSignature(callableDeclaration: FirCallableDeclaration): FirCallableSignature {
+            callableDeclaration.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+
+            return FirCallableSignature(
+                receiverType = callableDeclaration.receiverParameter?.typeRef?.renderType(),
+                contextReceiverTypes = callableDeclaration.contextReceivers.map { it.typeRef.renderType() },
+                parameters = if (callableDeclaration is FirFunction) {
+                    callableDeclaration.valueParameters.map { it.returnTypeRef.renderType() }
+                } else {
+                    null
+                },
+                typeParametersCount = callableDeclaration.typeParameters.size,
+                returnType = callableDeclaration.returnTypeRef.renderType(),
+            )
+        }
+    }
 }
 
-internal fun FirCallableSymbol<*>.createSignature(): FirCallableSignature = fir.createSignature()
-
-internal fun FirCallableDeclaration.createSignature(): FirCallableSignature {
-    lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-    val signatureComposer = moduleData.session.ideSessionComponents.signatureComposer
-    return FirCallableSignature(
-        signatureComposer.composeSignature(this, allowLocalClasses = true)
-            ?: error("Could not compose signature for ${this.renderWithType()}, looks like it is private or local")
-    )
-}
+private fun FirTypeRef.renderType(): String = FirRenderer(
+    annotationRenderer = null,
+    bodyRenderer = null,
+    callArgumentsRenderer = null,
+    classMemberRenderer = null,
+    contractRenderer = null,
+    declarationRenderer = null,
+    idRenderer = ConeIdFullRenderer(),
+    modifierRenderer = null,
+    packageDirectiveRenderer = null,
+    propertyAccessorRenderer = null,
+    resolvePhaseRenderer = null,
+    typeRenderer = ConeTypeRenderer(),
+    valueParameterRenderer = null,
+    errorExpressionRenderer = null,
+).renderElementAsString(this)

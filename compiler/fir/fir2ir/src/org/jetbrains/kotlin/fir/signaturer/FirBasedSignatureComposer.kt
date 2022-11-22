@@ -85,13 +85,12 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         declaration: FirDeclaration,
         containingClass: ConeClassLikeLookupTag?,
         forceTopLevelPrivate: Boolean,
-        allowLocalClasses: Boolean,
     ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableDeclaration) {
             if (declaration.visibility == Visibilities.Local) return null
-            if (!allowLocalClasses && (declaration.dispatchReceiverClassLookupTagOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true)) return null
+            if (declaration.dispatchReceiverClassLookupTagOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
 
         val declarationWithParentId = FirDeclarationWithParentId(declaration, containingClass?.classId)

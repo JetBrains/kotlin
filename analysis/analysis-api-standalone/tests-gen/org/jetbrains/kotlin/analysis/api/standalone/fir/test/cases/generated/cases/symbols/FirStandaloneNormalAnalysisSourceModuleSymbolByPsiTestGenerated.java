@@ -245,6 +245,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("similarGenericSignature.kt")
+    public void testSimilarGenericSignature() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/similarGenericSignature.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelFunctions.kt")
     public void testTopLevelFunctions() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/topLevelFunctions.kt");
@@ -305,6 +311,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
         @TestMetadata("contextReceiversOnProperty.kt")
         public void testContextReceiversOnProperty() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/contextReceiversOnProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("similarSignatures.kt")
+        public void testSimilarSignatures() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/similarSignatures.kt");
         }
     }
 

@@ -18,7 +18,6 @@ interface Fir2IrSignatureComposer {
         declaration: FirDeclaration,
         containingClass: ConeClassLikeLookupTag? = null,
         forceTopLevelPrivate: Boolean = false,
-        allowLocalClasses: Boolean = false,
     ): IdSignature?
 
     fun composeAccessorSignature(

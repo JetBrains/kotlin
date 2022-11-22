@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.FirCallableSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelFunctionSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
@@ -96,11 +96,15 @@ internal class KtFirFunctionSymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFunctionSymbol>(this)?.let { return it }
 
         return when (val kind = symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> KtFirTopLevelFunctionSymbolPointer(firSymbol.callableId, firSymbol.createSignature())
+            KtSymbolKind.TOP_LEVEL -> KtFirTopLevelFunctionSymbolPointer(
+                firSymbol.callableId,
+                FirCallableSignature.createSignature(firSymbol),
+            )
+
             KtSymbolKind.CLASS_MEMBER -> KtFirMemberFunctionSymbolPointer(
                 requireOwnerPointer(),
                 firSymbol.name,
-                firSymbol.createSignature(),
+                FirCallableSignature.createSignature(firSymbol),
             )
 
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(

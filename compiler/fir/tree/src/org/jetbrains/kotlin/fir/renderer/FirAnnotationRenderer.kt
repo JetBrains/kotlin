@@ -39,11 +39,12 @@ open class FirAnnotationRenderer {
         annotation.annotationTypeRef.accept(visitor)
         when (annotation) {
             is FirAnnotationCall -> if (annotation.calleeReference.let { it is FirResolvedNamedReference || it is FirErrorNamedReference }) {
-                callArgumentsRenderer.renderArgumentMapping(annotation.argumentMapping)
+                callArgumentsRenderer?.renderArgumentMapping(annotation.argumentMapping)
             } else {
                 visitor.visitCall(annotation)
             }
-            else -> callArgumentsRenderer.renderArgumentMapping(annotation.argumentMapping)
+
+            else -> callArgumentsRenderer?.renderArgumentMapping(annotation.argumentMapping)
 
         }
         if (annotation.useSiteTarget == AnnotationUseSiteTarget.FILE) {

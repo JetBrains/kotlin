@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.FirCallableSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberPropertySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelPropertySymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -136,12 +136,16 @@ internal class KtFirKotlinPropertySymbol(
         }
 
         return when (val kind = symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> KtFirTopLevelPropertySymbolPointer(firSymbol.callableId, firSymbol.createSignature())
+            KtSymbolKind.TOP_LEVEL -> KtFirTopLevelPropertySymbolPointer(
+                firSymbol.callableId,
+                FirCallableSignature.createSignature(firSymbol),
+            )
+
             KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberPropertySymbolPointer(
                     requireOwnerPointer(),
                     firSymbol.name,
-                    firSymbol.createSignature(),
+                    FirCallableSignature.createSignature(firSymbol),
                 )
 
             else -> throw UnsupportedSymbolKind(this::class, kind)

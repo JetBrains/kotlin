@@ -31,18 +31,18 @@ class FirRenderer(
     builder: StringBuilder = StringBuilder(),
     override val annotationRenderer: FirAnnotationRenderer? = FirAnnotationRenderer(),
     override val bodyRenderer: FirBodyRenderer? = FirBodyRenderer(),
-    override val callArgumentsRenderer: FirCallArgumentsRenderer = FirCallArgumentsRenderer(),
-    override val classMemberRenderer: FirClassMemberRenderer = FirClassMemberRenderer(),
+    override val callArgumentsRenderer: FirCallArgumentsRenderer? = FirCallArgumentsRenderer(),
+    override val classMemberRenderer: FirClassMemberRenderer? = FirClassMemberRenderer(),
     override val contractRenderer: ConeContractRenderer? = ConeContractRenderer(),
-    override val declarationRenderer: FirDeclarationRenderer = FirDeclarationRenderer(),
+    override val declarationRenderer: FirDeclarationRenderer? = FirDeclarationRenderer(),
     override val idRenderer: ConeIdRenderer = ConeIdRendererForDebugging(),
-    override val modifierRenderer: FirModifierRenderer = FirAllModifierRenderer(),
+    override val modifierRenderer: FirModifierRenderer? = FirAllModifierRenderer(),
     override val packageDirectiveRenderer: FirPackageDirectiveRenderer? = null,
     override val propertyAccessorRenderer: FirPropertyAccessorRenderer? = FirPropertyAccessorRenderer(),
     override val resolvePhaseRenderer: FirResolvePhaseRenderer? = null,
     override val typeRenderer: ConeTypeRenderer = ConeTypeRendererForDebugging(),
-    override val valueParameterRenderer: FirValueParameterRenderer = FirValueParameterRenderer(),
-    override val errorExpressionRenderer: FirErrorExpressionRenderer = FirErrorExpressionOnlyErrorRenderer(),
+    override val valueParameterRenderer: FirValueParameterRenderer? = FirValueParameterRenderer(),
+    override val errorExpressionRenderer: FirErrorExpressionRenderer? = FirErrorExpressionOnlyErrorRenderer(),
 ) : FirRendererComponents {
 
     override val visitor = Visitor()
@@ -65,19 +65,19 @@ class FirRenderer(
     init {
         annotationRenderer?.components = this
         bodyRenderer?.components = this
-        callArgumentsRenderer.components = this
-        classMemberRenderer.components = this
+        callArgumentsRenderer?.components = this
+        classMemberRenderer?.components = this
         contractRenderer?.components = this
-        declarationRenderer.components = this
+        declarationRenderer?.components = this
         idRenderer.builder = builder
-        modifierRenderer.components = this
+        modifierRenderer?.components = this
         packageDirectiveRenderer?.components = this
         propertyAccessorRenderer?.components = this
         resolvePhaseRenderer?.components = this
         typeRenderer.builder = builder
         typeRenderer.idRenderer = idRenderer
-        valueParameterRenderer.components = this
-        errorExpressionRenderer.components = this
+        valueParameterRenderer?.components = this
+        errorExpressionRenderer?.components = this
     }
 
     fun renderElementAsString(element: FirElement): String {
@@ -200,7 +200,7 @@ class FirRenderer(
             }
 
             if (callableDeclaration is FirFunction) {
-                valueParameterRenderer.renderParameters(callableDeclaration.valueParameters)
+                valueParameterRenderer?.renderParameters(callableDeclaration.valueParameters)
             }
             print(": ")
             callableDeclaration.returnTypeRef.accept(this)
@@ -220,8 +220,8 @@ class FirRenderer(
         }
 
         override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
-            modifierRenderer.renderModifiers(memberDeclaration)
-            declarationRenderer.render(memberDeclaration)
+            modifierRenderer?.renderModifiers(memberDeclaration)
+            declarationRenderer?.render(memberDeclaration)
             when (memberDeclaration) {
                 is FirClassLikeDeclaration -> {
                     if (memberDeclaration is FirRegularClass) {
@@ -247,7 +247,7 @@ class FirRenderer(
             annotationRenderer?.render(regularClass)
             visitMemberDeclaration(regularClass)
             renderSupertypes(regularClass)
-            classMemberRenderer.render(regularClass)
+            classMemberRenderer?.render(regularClass)
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry) {
@@ -266,7 +266,7 @@ class FirRenderer(
             annotationRenderer?.render(anonymousObject)
             print("object : ")
             renderSeparated(anonymousObject.superTypeRefs, visitor)
-            classMemberRenderer.render(anonymousObject.declarations)
+            classMemberRenderer?.render(anonymousObject.declarations)
         }
 
         override fun visitVariable(variable: FirVariable) {
@@ -293,7 +293,7 @@ class FirRenderer(
         }
 
         override fun visitBackingField(backingField: FirBackingField) {
-            modifierRenderer.renderModifiers(backingField)
+            modifierRenderer?.renderModifiers(backingField)
             print("<explicit backing field>: ")
             backingField.returnTypeRef.accept(this)
 
@@ -319,11 +319,11 @@ class FirRenderer(
 
         override fun visitConstructor(constructor: FirConstructor) {
             annotationRenderer?.render(constructor)
-            modifierRenderer.renderModifiers(constructor)
-            declarationRenderer.render(constructor)
+            modifierRenderer?.renderModifiers(constructor)
+            declarationRenderer?.render(constructor)
 
             constructor.typeParameters.renderTypeParameters()
-            valueParameterRenderer.renderParameters(constructor.valueParameters)
+            valueParameterRenderer?.renderParameters(constructor.valueParameters)
             print(": ")
             constructor.returnTypeRef.accept(this)
             val body = constructor.body
@@ -336,9 +336,9 @@ class FirRenderer(
 
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
             annotationRenderer?.render(propertyAccessor)
-            modifierRenderer.renderModifiers(propertyAccessor)
-            declarationRenderer.render(propertyAccessor)
-            valueParameterRenderer.renderParameters(propertyAccessor.valueParameters)
+            modifierRenderer?.renderModifiers(propertyAccessor)
+            declarationRenderer?.render(propertyAccessor)
+            valueParameterRenderer?.renderParameters(propertyAccessor.valueParameters)
             print(": ")
             propertyAccessor.returnTypeRef.accept(this)
             contractRenderer?.render(propertyAccessor)
@@ -351,7 +351,7 @@ class FirRenderer(
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
             annotationRenderer?.render(anonymousFunction)
-            declarationRenderer.render(anonymousFunction)
+            declarationRenderer?.render(anonymousFunction)
             print(" ")
             val receiverParameter = anonymousFunction.receiverParameter
             if (receiverParameter != null) {
@@ -365,7 +365,7 @@ class FirRenderer(
             ) {
                 print("(<no-parameters>)")
             }
-            valueParameterRenderer.renderParameters(anonymousFunction.valueParameters)
+            valueParameterRenderer?.renderParameters(anonymousFunction.valueParameters)
             print(": ")
             anonymousFunction.returnTypeRef.accept(this)
             print(" <inline=${anonymousFunction.inlineStatus}")
@@ -377,8 +377,8 @@ class FirRenderer(
         }
 
         override fun visitFunction(function: FirFunction) {
-            valueParameterRenderer.renderParameters(function.valueParameters)
-            declarationRenderer.render(function)
+            valueParameterRenderer?.renderParameters(function.valueParameters)
+            declarationRenderer?.render(function)
             bodyRenderer?.render(function)
         }
 
@@ -401,7 +401,7 @@ class FirRenderer(
 
         override fun visitTypeParameter(typeParameter: FirTypeParameter) {
             annotationRenderer?.render(typeParameter)
-            modifierRenderer.renderModifiers(typeParameter)
+            modifierRenderer?.renderModifiers(typeParameter)
             resolvePhaseRenderer?.render(typeParameter)
             typeParameter.variance.renderVariance()
             print(typeParameter.name)
@@ -431,7 +431,7 @@ class FirRenderer(
         }
 
         override fun visitValueParameter(valueParameter: FirValueParameter) {
-            valueParameterRenderer.renderParameter(valueParameter)
+            valueParameterRenderer?.renderParameter(valueParameter)
         }
 
         override fun visitImport(import: FirImport) {
@@ -635,7 +635,7 @@ class FirRenderer(
         }
 
         override fun visitCall(call: FirCall) {
-            callArgumentsRenderer.renderArguments(call.arguments)
+            callArgumentsRenderer?.renderArguments(call.arguments)
         }
 
         override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall) {
@@ -704,7 +704,7 @@ class FirRenderer(
 
             annotationRenderer?.renderAnnotations(functionTypeRef.annotations.dropExtensionFunctionAnnotation())
             print("( ")
-            modifierRenderer.renderModifiers(functionTypeRef)
+            modifierRenderer?.renderModifiers(functionTypeRef)
             functionTypeRef.receiverTypeRef?.let {
                 it.accept(this)
                 print(".")
@@ -1025,7 +1025,7 @@ class FirRenderer(
         }
 
         override fun visitErrorExpression(errorExpression: FirErrorExpression) {
-            errorExpressionRenderer.renderErrorExpression(errorExpression)
+            errorExpressionRenderer?.renderErrorExpression(errorExpression)
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
