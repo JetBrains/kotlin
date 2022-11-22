@@ -150,7 +150,7 @@ open class IncrementalJvmCompilerRunner(
     keepIncrementalCompilationCachesChangesInMemory = keepIncrementalCompilationCachesChangesInMemory,
     preciseCompilationResultsBackup = preciseCompilationResultsBackup,
 ) {
-    override fun createCacheManager(args: K2JVMCompilerArguments, projectDir: File?): IncrementalJvmCachesManager =
+    override fun createCacheManager(args: K2JVMCompilerArguments, projectDir: File?, transaction: CompilationTransaction): IncrementalJvmCachesManager =
         IncrementalJvmCachesManager(
             cacheDirectory,
             projectDir,
@@ -158,7 +158,8 @@ open class IncrementalJvmCompilerRunner(
             reporter,
             storeFullFqNamesInLookupCache = withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled,
             trackChangesInLookupCache = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun,
-            keepChangesInMemory = keepIncrementalCompilationCachesChangesInMemory
+            keepChangesInMemory = keepIncrementalCompilationCachesChangesInMemory,
+            transaction = transaction,
         )
 
     override fun destinationDir(args: K2JVMCompilerArguments): File =

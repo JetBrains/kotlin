@@ -28,9 +28,10 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     cachesRootDir: File,
     rootProjectDir: File?,
     protected val reporter: ICReporter,
+    transaction: CompilationTransaction,
     storeFullFqNamesInLookupCache: Boolean = false,
     trackChangesInLookupCache: Boolean = false,
-    protected val keepChangesInMemory: Boolean = false
+    protected val keepChangesInMemory: Boolean = false,
 ) : Closeable {
     val pathConverter = IncrementalFileToPathConverter(rootProjectDir)
     private val caches = arrayListOf<BasicMapsOwner>()
@@ -48,7 +49,14 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
 
     val inputsCache: InputsCache = InputsCache(inputSnapshotsCacheDir, reporter, pathConverter, keepChangesInMemory).apply { registerCache() }
     val lookupCache: LookupStorage =
-        LookupStorage(lookupCacheDir, pathConverter, storeFullFqNamesInLookupCache, trackChangesInLookupCache, keepChangesInMemory).apply { registerCache() }
+        LookupStorage(
+            lookupCacheDir,
+            pathConverter,
+            storeFullFqNamesInLookupCache,
+            trackChangesInLookupCache,
+            keepChangesInMemory,
+            transaction,
+        ).apply { registerCache() }
     abstract val platformCache: PlatformCache
 
     @Suppress("UnstableApiUsage")
@@ -84,10 +92,12 @@ class IncrementalJvmCachesManager(
     storeFullFqNamesInLookupCache: Boolean = false,
     trackChangesInLookupCache: Boolean = false,
     keepChangesInMemory: Boolean = false,
+    transaction: CompilationTransaction = DummyCompilationTransaction(),
 ) : IncrementalCachesManager<IncrementalJvmCache>(
     cacheDirectory,
     rootProjectDir,
     reporter,
+    transaction,
     storeFullFqNamesInLookupCache,
     trackChangesInLookupCache,
     keepChangesInMemory = keepChangesInMemory,
@@ -103,13 +113,15 @@ class IncrementalJsCachesManager(
     serializerProtocol: SerializerExtensionProtocol,
     storeFullFqNamesInLookupCache: Boolean,
     keepChangesInMemory: Boolean = false,
+    transaction: CompilationTransaction = DummyCompilationTransaction(),
 ) : IncrementalCachesManager<IncrementalJsCache>(
     cachesRootDir,
     rootProjectDir,
     reporter,
+    transaction,
     storeFullFqNamesInLookupCache,
-    keepChangesInMemory = keepChangesInMemory
+    keepChangesInMemory = keepChangesInMemory,
 ) {
     private val jsCacheFile = File(cachesRootDir, "js").apply { mkdirs() }
-    override val platformCache = IncrementalJsCache(jsCacheFile, pathConverter, serializerProtocol, keepChangesInMemory).apply { registerCache() }
+    override val platformCache = IncrementalJsCache(jsCacheFile, pathConverter, serializerProtocol, keepChangesInMemory, transaction).apply { registerCache() }
 }

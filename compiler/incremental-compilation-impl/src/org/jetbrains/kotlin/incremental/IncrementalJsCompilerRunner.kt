@@ -101,7 +101,7 @@ class IncrementalJsCompilerRunner(
     preciseCompilationResultsBackup = preciseCompilationResultsBackup,
 ) {
 
-    override fun createCacheManager(args: K2JSCompilerArguments, projectDir: File?): IncrementalJsCachesManager {
+    override fun createCacheManager(args: K2JSCompilerArguments, projectDir: File?, transaction: CompilationTransaction): IncrementalJsCachesManager {
         val serializerProtocol = if (!args.isIrBackendEnabled()) JsSerializerProtocol else KlibMetadataSerializerProtocol
         return IncrementalJsCachesManager(
             cacheDirectory,
@@ -109,7 +109,8 @@ class IncrementalJsCompilerRunner(
             reporter,
             serializerProtocol,
             storeFullFqNamesInLookupCache = withAbiSnapshot,
-            keepChangesInMemory = keepIncrementalCompilationCachesChangesInMemory
+            keepChangesInMemory = keepIncrementalCompilationCachesChangesInMemory,
+            transaction = transaction,
         )
     }
 
