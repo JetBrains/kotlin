@@ -59,19 +59,15 @@ class LLFirLibrarySessionFactory(
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-            val providers = LLFirLibraryProviderFactory.createLibraryProvidersForSingleBinaryModule(
+            val symbolProvider = LLFirLibraryProviderFactory.createLibraryProvidersForScope(
                 this,
                 moduleData,
-                ktLibraryModule,
                 kotlinScopeProvider,
                 project,
-                builtinTypes
+                builtinTypes,
+                ktLibraryModule.contentScope,
+                builtinsSession.symbolProvider
             )
-
-            val symbolProvider = createCompositeSymbolProvider(this) {
-                addAll(providers)
-                add(builtinsSession.symbolProvider)
-            }
 
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
             register(FirProvider::class, LLFirLibrarySessionProvider(symbolProvider))

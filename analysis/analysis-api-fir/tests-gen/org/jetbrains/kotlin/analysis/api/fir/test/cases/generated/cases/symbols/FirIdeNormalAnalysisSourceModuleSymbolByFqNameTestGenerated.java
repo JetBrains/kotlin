@@ -77,6 +77,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
     }
 
     @Test
+    @TestMetadata("kclass.kt")
+    public void testKclass() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/kclass.kt");
+    }
+
+    @Test
     @TestMetadata("listOf.kt")
     public void testListOf() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByFqName/listOf.kt");
