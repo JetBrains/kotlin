@@ -148,43 +148,12 @@ object FirOptInUsageBaseChecker {
         if (!visited.add(fir)) return emptySet()
         val result = knownExperimentalities ?: SmartSet.create()
         val session = context.session
-        if (fir is FirCallableDeclaration) {
-            val parentClassSymbol = fir.containingClassLookupTag()?.toSymbol(session) as? FirRegularClassSymbol
-            if (fir is FirConstructor) {
-                // For other callable we check dispatch receiver type instead
-                parentClassSymbol?.loadExperimentalities(
-                    context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
-                )
-            } else {
-                // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
-                fir.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-                fir.receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
-            }
-            dispatchReceiverType?.addExperimentalities(context, result, visited)
-            if (fir is FirFunction) {
-                fir.valueParameters.forEach {
-                    it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
-                }
-            }
-            if (fromSetter && this is FirPropertySymbol) {
-                setterSymbol?.loadExperimentalities(
-                    context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
-                )
-            }
-        } else if (fir is FirClassLikeDeclaration) {
-            when (fir) {
-                is FirRegularClass -> if (this is FirRegularClassSymbol) {
-                    val parentClassSymbol = outerClassSymbol(context)
-                    parentClassSymbol?.loadExperimentalities(
-                        context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
-                    )
-                }
-                is FirTypeAlias -> {
-                    fir.expandedTypeRef.coneType.addExperimentalities(context, result, visited)
-                }
-                is FirAnonymousObject -> {
-                }
-            }
+        when (fir) {
+            is FirCallableDeclaration ->
+                fir.loadCallableSpecificExperimentalities(this, context, visited, fromSetter, dispatchReceiverType, result)
+            is FirClassLikeDeclaration ->
+                fir.loadClassLikeSpecificExperimentalities(this, context, visited, result)
+            is FirAnonymousInitializer, is FirFile, is FirTypeParameter -> {}
         }
 
         fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
@@ -201,6 +170,59 @@ object FirOptInUsageBaseChecker {
 
         // TODO: getAnnotationsOnContainingModule
         return result
+    }
+
+    private fun FirCallableDeclaration.loadCallableSpecificExperimentalities(
+        symbol: FirBasedSymbol<*>,
+        context: CheckerContext,
+        visited: MutableSet<FirDeclaration>,
+        fromSetter: Boolean,
+        dispatchReceiverType: ConeKotlinType?,
+        result: SmartSet<Experimentality>
+    ) {
+        val parentClassSymbol = containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol
+        if (this is FirConstructor) {
+            // For other callable we check dispatch receiver type instead
+            parentClassSymbol?.loadExperimentalities(
+                context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
+            )
+        } else {
+            // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
+            returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
+            receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
+        }
+        dispatchReceiverType?.addExperimentalities(context, result, visited)
+        if (this is FirFunction) {
+            valueParameters.forEach {
+                it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
+            }
+        }
+        if (fromSetter && symbol is FirPropertySymbol) {
+            symbol.setterSymbol?.loadExperimentalities(
+                context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
+            )
+        }
+    }
+
+    private fun FirClassLikeDeclaration.loadClassLikeSpecificExperimentalities(
+        symbol: FirBasedSymbol<*>,
+        context: CheckerContext,
+        visited: MutableSet<FirDeclaration>,
+        result: SmartSet<Experimentality>
+    ) {
+        when (this) {
+            is FirRegularClass -> if (symbol is FirRegularClassSymbol) {
+                val parentClassSymbol = symbol.outerClassSymbol(context)
+                parentClassSymbol?.loadExperimentalities(
+                    context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
+                )
+            }
+            is FirTypeAlias -> {
+                expandedTypeRef.coneType.addExperimentalities(context, result, visited)
+            }
+            is FirAnonymousObject -> {
+            }
+        }
     }
 
     private fun ConeKotlinType?.addExperimentalities(
