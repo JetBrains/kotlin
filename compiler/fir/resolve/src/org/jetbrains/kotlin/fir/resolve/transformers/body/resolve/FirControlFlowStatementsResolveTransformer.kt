@@ -68,7 +68,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             context.withWhenSubjectType(subjectType, components) {
                 when {
                     whenExpression.branches.isEmpty() -> {}
-                    whenExpression.isOneBranch() -> {
+                    whenExpression.isOneBranch() && data is ResolutionMode.ContextIndependent -> {
                         whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
                         whenExpression.resultType = whenExpression.branches.first().result.resultType
                         // when with one branch cannot be completed if it's not already complete in the first place
