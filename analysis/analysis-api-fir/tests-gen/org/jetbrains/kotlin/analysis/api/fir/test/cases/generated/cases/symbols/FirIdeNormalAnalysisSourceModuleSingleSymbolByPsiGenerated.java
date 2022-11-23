@@ -134,6 +134,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends 
         }
 
         @Test
+        @TestMetadata("isInstancePredicateContract.kt")
+        public void testIsInstancePredicateContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/isInstancePredicateContract.kt");
+        }
+
+        @Test
         @TestMetadata("referenceBooleanReceiverInContract.kt")
         public void testReferenceBooleanReceiverInContract() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceBooleanReceiverInContract.kt");

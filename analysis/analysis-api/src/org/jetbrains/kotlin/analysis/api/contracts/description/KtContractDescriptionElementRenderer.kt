@@ -55,7 +55,9 @@ internal fun Context.renderKtContratBooleanExpression(value: KtContractBooleanEx
         }
         is KtContractIsInstancePredicate -> printer.appendHeader(value::class) {
             appendProperty(value::argument, ::renderKtContractDescriptionValue)
-            with(session) { symbolRenderer.renderType(value.type) }
+            appendProperty(value::type, renderer = { type, _ ->
+                appendLine(with(session) { symbolRenderer.renderType(type) })
+            })
             appendSimpleProperty(value::isNegated, endWithNewLine)
         }
         is KtContractIsNullPredicate -> printer.appendHeader(value::class) {
