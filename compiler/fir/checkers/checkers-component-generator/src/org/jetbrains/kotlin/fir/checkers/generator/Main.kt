@@ -35,6 +35,7 @@ fun main(args: Array<String>) {
         alias<FirQualifiedAccessExpression>("QualifiedAccessExpressionChecker")
         alias<FirCall>("CallChecker")
         alias<FirFunctionCall>("FunctionCallChecker")
+        alias<FirPropertyAccessExpression>("PropertyAccessExpressionChecker")
         alias<FirIntegerLiteralOperatorCall>("IntegerLiteralOperatorCallChecker")
         alias<FirVariableAssignment>("VariableAssignmentChecker")
         alias<FirTryExpression>("TryExpressionChecker")

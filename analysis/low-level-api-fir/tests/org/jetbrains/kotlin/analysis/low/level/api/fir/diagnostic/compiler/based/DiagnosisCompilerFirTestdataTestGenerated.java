@@ -2160,6 +2160,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("propertyAccessWithExplicitTypeArguments.kt")
+            public void testPropertyAccessWithExplicitTypeArguments() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/propertyAccessWithExplicitTypeArguments.kt");
+            }
+
+            @Test
             @TestMetadata("protectedVisibility.kt")
             public void testProtectedVisibility() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/protectedVisibility.kt");

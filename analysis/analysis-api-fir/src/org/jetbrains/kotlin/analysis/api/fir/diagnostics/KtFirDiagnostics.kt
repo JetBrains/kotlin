@@ -2008,6 +2008,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = LocalVariableWithTypeParameters::class
     }
 
+    abstract class ExplicitTypeArgumentsInPropertyAccess : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ExplicitTypeArgumentsInPropertyAccess::class
+    }
+
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }

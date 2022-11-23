@@ -1881,6 +1881,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/privateVisibility.kt");
         }
 
+        @TestMetadata("propertyAccessWithExplicitTypeArguments.kt")
+        public void testPropertyAccessWithExplicitTypeArguments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/propertyAccessWithExplicitTypeArguments.kt");
+        }
+
         @TestMetadata("protectedVisibility.kt")
         public void testProtectedVisibility() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/protectedVisibility.kt");

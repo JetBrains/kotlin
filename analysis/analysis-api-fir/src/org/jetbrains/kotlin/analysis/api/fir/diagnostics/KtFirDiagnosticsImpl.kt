@@ -2418,6 +2418,11 @@ internal class LocalVariableWithTypeParametersImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.LocalVariableWithTypeParameters(), KtAbstractFirDiagnostic<KtProperty>
 
+internal class ExplicitTypeArgumentsInPropertyAccessImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExplicitTypeArgumentsInPropertyAccess(), KtAbstractFirDiagnostic<KtExpression>
+
 internal class ExpectedDeclarationWithBodyImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
