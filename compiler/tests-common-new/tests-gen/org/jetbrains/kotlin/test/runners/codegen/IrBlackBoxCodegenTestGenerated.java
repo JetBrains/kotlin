@@ -258,6 +258,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt55108.kt")
+        public void testKt55108() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/kt55108.kt");
+        }
+
+        @Test
         @TestMetadata("mustBeDocumented.kt")
         public void testMustBeDocumented() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/mustBeDocumented.kt");
