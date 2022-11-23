@@ -12,7 +12,7 @@ fun test() {
 }
 
 fun baz(arg: Array<Int> = <!UNSUPPORTED!>[]<!>) {
-    if (true) <!UNSUPPORTED!>["yes"]<!> else {<!UNSUPPORTED!>["no"]<!>}
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (true) <!UNSUPPORTED!>["yes"]<!> else {<!UNSUPPORTED!>["no"]<!>}<!>
 }
 
 class Foo(

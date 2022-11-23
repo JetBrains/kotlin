@@ -4,5 +4,5 @@ class Inv<I>
 fun <T> create(): Inv<T> = TODO()
 
 fun main() {
-    if (true) create() else null
+    <!NEW_INFERENCE_ERROR!>if (true) create() else null<!>
 }
