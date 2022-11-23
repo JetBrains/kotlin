@@ -732,11 +732,11 @@ fun case_37(x: Nothing?, y: Nothing?) {
 fun case_38() {
     val z = null
 
-    if (<!SENSELESS_COMPARISON!>Object.prop_2 != z<!>)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (<!SENSELESS_COMPARISON!>Object.prop_2 != z<!>)
     else {
         Object.prop_2
         Object.prop_2.java
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 39
