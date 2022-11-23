@@ -29,12 +29,15 @@ internal fun Context.renderKtContractEffectDeclaration(value: KtContractEffectDe
     }
 
 internal fun Context.renderKtContractDescriptionValue(value: KtContractDescriptionValue, endWithNewLine: Boolean = true): Unit =
-    printer.appendHeader(value::class) {
-        when (value) {
-            is KtContractConstantReference -> Unit
-            is KtContractAbstractValueParameterReference -> appendSimpleProperty(value::parameterIndex)
+    when (value) {
+        is KtContractConstantReference -> {
+            val append: (String) -> Unit = (if (endWithNewLine) printer::appendLine else printer::append)
+            append(value::class.simpleName ?: error("$value doesn't have simpleName"))
         }
-        appendSimpleProperty(value::name, endWithNewLine)
+        is KtContractAbstractValueParameterReference -> printer.appendHeader(value::class) {
+            appendSimpleProperty(value::parameterIndex)
+            appendSimpleProperty(value::name, endWithNewLine)
+        }
     }
 
 internal fun Context.renderKtContratBooleanExpression(value: KtContractBooleanExpression, endWithNewLine: Boolean = true): Unit =

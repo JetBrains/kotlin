@@ -10,8 +10,7 @@ KtFunctionSymbol:
       effect:
         KtContractReturnsContractEffectDeclaration:
           value:
-            KtTrue:
-              name: TRUE
+            KtTrue
       condition:
         KtContractIsNullPredicate:
           argument:

@@ -10,8 +10,7 @@ KtFunctionSymbol:
       effect:
         KtContractReturnsContractEffectDeclaration:
           value:
-            KtWildcard:
-              name: WILDCARD
+            KtWildcard
       condition:
         KtContractBooleanValueParameterReference:
           parameterIndex: -1
