@@ -242,6 +242,10 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
         return !(parent instanceof KtFile || parent instanceof KtClassBody);
     }
 
+    public boolean isAnonymous() {
+        return getName() == null && isLocal();
+    }
+
     public boolean isTopLevel() {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {

@@ -59,6 +59,12 @@ public class FirIdeDependentAnalysisSourceModuleDeclarationReturnTypeTestGenerat
     }
 
     @Test
+    @TestMetadata("functionWithoutParameterList.kt")
+    public void testFunctionWithoutParameterList() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/functionWithoutParameterList.kt");
+    }
+
+    @Test
     @TestMetadata("funtionType.kt")
     public void testFuntionType() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/funtionType.kt");
