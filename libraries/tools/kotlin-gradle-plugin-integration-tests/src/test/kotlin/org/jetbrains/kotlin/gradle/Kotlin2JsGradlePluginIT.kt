@@ -1050,6 +1050,22 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
+    @DisplayName("kotlin/js compiler warning")
+    @GradleTest
+    fun testKotlinJsCompilerWarn(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-compiler-warn",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(jsOptions = defaultJsOptions.copy(compileNoWarn = false, jsCompilerType = null))
+        ) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("assemble") {
+                assertOutputDoesNotContain("This project currently uses the Kotlin/JS Legacy")
+            }
+        }
+    }
+
     @DisplayName("dependencies are resolved to metadata")
     @GradleTest
     fun testResolveJsProjectDependencyToMetadata(gradleVersion: GradleVersion) {
