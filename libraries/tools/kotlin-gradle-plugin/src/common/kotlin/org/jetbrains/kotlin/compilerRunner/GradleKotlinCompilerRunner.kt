@@ -347,12 +347,13 @@ internal open class GradleCompilerRunner(
                             kotlinTask.abiSnapshotFile.get().asFile
                         )
                         val jarTask = project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask ?: continue
-                        jarToModule[jarTask.archivePathCompatible.canonicalFile] = module
+                        jarToModule[jarTask.archivePathCompatible.normalize().absoluteFile] = module
                         if (target is KotlinWithJavaTarget<*, *>) {
                             val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
-                            jarToClassListFile[jar.archivePathCompatible.canonicalFile] = target.defaultArtifactClassesListFile.get()
+                            jarToClassListFile[jar.archivePathCompatible.normalize().absoluteFile] =
+                                target.defaultArtifactClassesListFile.get()
                             //configure abiSnapshot mapping for jars
-                            jarToAbiSnapshot[jar.archivePathCompatible.canonicalFile] =
+                            jarToAbiSnapshot[jar.archivePathCompatible.normalize().absoluteFile] =
                                 target.buildDir.get().file(kotlinTask.abiSnapshotRelativePath).get().asFile
                         }
 
@@ -414,9 +415,9 @@ internal open class GradleCompilerRunner(
         internal fun getOrCreateClientFlagFile(log: Logger, projectName: String): File {
             if (clientIsAliveFlagFile == null || !clientIsAliveFlagFile!!.exists()) {
                 clientIsAliveFlagFile = newTmpFile(prefix = "kotlin-compiler-in-${projectName}-", suffix = ".alive")
-                log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
+                log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.normalize().absoluteFile }
             } else {
-                log.kotlinDebug { EXISTING_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
+                log.kotlinDebug { EXISTING_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.normalize().absoluteFile }
             }
 
             return clientIsAliveFlagFile!!
@@ -437,9 +438,9 @@ internal open class GradleCompilerRunner(
             if (sessionFlagFile == null || !sessionFlagFile!!.exists()) {
                 val sessionFilesDir = sessionsDir.apply { mkdirs() }
                 sessionFlagFile = newTmpFile(prefix = "kotlin-compiler-", suffix = ".salive", directory = sessionFilesDir)
-                log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrCanonical(projectCacheDirProvider) }
+                log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrAbsolute(projectCacheDirProvider) }
             } else {
-                log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrCanonical(projectCacheDirProvider) }
+                log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrAbsolute(projectCacheDirProvider) }
             }
 
             return sessionFlagFile!!

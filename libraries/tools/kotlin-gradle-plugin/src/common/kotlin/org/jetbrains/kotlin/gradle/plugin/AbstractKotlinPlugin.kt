@@ -81,7 +81,7 @@ internal abstract class AbstractKotlinPlugin(
         }
 
         val inspectTask = project.registerTask<InspectClassesForMultiModuleIC>(INSPECT_IC_CLASSES_TASK_NAME) { inspectTask ->
-            inspectTask.archivePath.set(jarTask.map { it.archivePathCompatible.canonicalPath })
+            inspectTask.archivePath.set(jarTask.map { it.archivePathCompatible.normalize().absolutePath })
             inspectTask.archivePath.disallowChanges()
 
             inspectTask.sourceSetName.set(SourceSet.MAIN_SOURCE_SET_NAME)

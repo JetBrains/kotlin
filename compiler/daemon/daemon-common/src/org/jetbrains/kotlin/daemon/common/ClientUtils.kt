@@ -126,7 +126,7 @@ class FileAgeComparator : Comparator<File> {
             leftTS == 0L || rightTS == 0L -> 0 // cannot read any file timestamp, => undecidable
             leftTS > rightTS -> -1
             leftTS < rightTS -> 1
-            else -> compareValues(left.canonicalPath, right.canonicalPath)
+            else -> compareValues(left.normalize().absolutePath, right.normalize().absolutePath)
         }
     }
 }
