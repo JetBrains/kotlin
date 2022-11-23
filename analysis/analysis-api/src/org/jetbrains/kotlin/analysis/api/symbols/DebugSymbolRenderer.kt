@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProviderMixIn
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.contracts.description.Context
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.contracts.description.renderKtEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.renderKtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
@@ -230,8 +230,8 @@ public class DebugSymbolRenderer(
             is KtSymbol -> renderSymbolTag(value, renderSymbolsFully)
             is KtType -> renderType(value)
             is KtAnnotationValue -> renderAnnotationValue(value)
-            is KtEffectDeclaration -> Context(this@KtAnalysisSession, this@renderValue, this@DebugSymbolRenderer)
-                .renderKtEffectDeclaration(value, endWithNewLine = false)
+            is KtContractEffectDeclaration -> Context(this@KtAnalysisSession, this@renderValue, this@DebugSymbolRenderer)
+                .renderKtContractEffectDeclaration(value, endWithNewLine = false)
             is KtNamedAnnotationValue -> renderNamedConstantValue(value)
             is KtInitializerValue -> renderKtInitializerValue(value)
             is KtContextReceiver -> rendeContextReceiver(value)

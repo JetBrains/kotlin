@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
@@ -54,7 +54,7 @@ internal class KtFirFunctionSymbol(
     override val isBuiltinFunctionInvoke: Boolean
         get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
 
-    override val contractEffects: List<KtEffectDeclaration> by cached {
+    override val contractEffects: List<KtContractEffectDeclaration> by cached {
         firSymbol.resolvedContractDescription?.effects
             ?.map(FirEffectDeclaration::effect)
             ?.map { it.coneEffectDeclarationToAnalysisApi(builder) }

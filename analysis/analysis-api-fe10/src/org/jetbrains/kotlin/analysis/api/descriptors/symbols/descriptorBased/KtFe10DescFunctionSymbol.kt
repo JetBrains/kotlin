@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.contracts.effectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -41,7 +41,7 @@ internal class KtFe10DescFunctionSymbol private constructor(
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 
-    override val contractEffects: List<KtEffectDeclaration> by cached {
+    override val contractEffects: List<KtContractEffectDeclaration> by cached {
         descriptor.getUserData(ContractProviderKey)?.getContractDescription()?.effects
             ?.map { it.effectDeclarationToAnalysisApi(analysisContext) }
             .orEmpty()

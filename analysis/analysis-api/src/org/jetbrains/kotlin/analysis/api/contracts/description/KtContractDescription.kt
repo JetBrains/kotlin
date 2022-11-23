@@ -17,10 +17,10 @@ public sealed interface KtContractDescriptionElement : KtLifetimeOwner
  * K1: [org.jetbrains.kotlin.contracts.description.EffectDeclaration]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration]
  */
-public sealed interface KtEffectDeclaration : KtContractDescriptionElement
+public sealed interface KtContractEffectDeclaration : KtContractDescriptionElement
 
 /**
  * K1: [org.jetbrains.kotlin.contracts.description.BooleanExpression]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression]
  */
-public sealed interface KtBooleanExpression : KtContractDescriptionElement
+public sealed interface KtContractBooleanExpression : KtContractDescriptionElement

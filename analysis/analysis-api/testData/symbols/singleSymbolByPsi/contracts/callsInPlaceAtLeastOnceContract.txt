@@ -6,9 +6,9 @@ KtFunctionSymbol:
   callableIdIfNonLocal: /atLeastOnceContract
   contextReceivers: []
   contractEffects: [
-    KtCallsEffectDeclaration:
+    KtContractCallsContractEffectDeclaration:
       valueParameterReference:
-        KtValueParameterReference:
+        KtContractValueParameterReference:
           parameterIndex: 0
           name: block
       kind: AT_LEAST_ONCE

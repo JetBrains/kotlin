@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtAbstractConstantReference.KtBooleanConstantReference
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractConstantReference.KtContractBooleanConstantReference
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
 
-internal fun ConeEffectDeclaration.coneEffectDeclarationToAnalysisApi(builder: KtSymbolByFirBuilder): KtEffectDeclaration =
+internal fun ConeEffectDeclaration.coneEffectDeclarationToAnalysisApi(builder: KtSymbolByFirBuilder): KtContractEffectDeclaration =
     accept(ConeContractDescriptionElementToAnalysisApi(builder), Unit).cast()
 
 private class ConeContractDescriptionElementToAnalysisApi(private val builder: KtSymbolByFirBuilder) :
@@ -20,16 +20,16 @@ private class ConeContractDescriptionElementToAnalysisApi(private val builder: K
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: ConeConditionalEffectDeclaration,
         data: Unit
-    ): KtContractDescriptionElement = KtConditionalEffectDeclaration(
+    ): KtContractDescriptionElement = KtContractConditionalContractEffectDeclaration(
         conditionalEffect.effect.accept(this, data).cast(),
         conditionalEffect.condition.accept(this, data).cast()
     )
 
     override fun visitReturnsEffectDeclaration(returnsEffect: ConeReturnsEffectDeclaration, data: Unit): KtContractDescriptionElement =
-        KtReturnsEffectDeclaration(returnsEffect.value.accept(this, data).cast())
+        KtContractReturnsContractEffectDeclaration(returnsEffect.value.accept(this, data).cast())
 
     override fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: Unit): KtContractDescriptionElement =
-        KtCallsEffectDeclaration(
+        KtContractCallsContractEffectDeclaration(
             callsEffect.valueParameterReference.accept(this, data).cast(),
             callsEffect.kind
         )
@@ -37,45 +37,45 @@ private class ConeContractDescriptionElementToAnalysisApi(private val builder: K
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: ConeBinaryLogicExpression,
         data: Unit
-    ): KtContractDescriptionElement = KtBinaryLogicExpression(
+    ): KtContractDescriptionElement = KtContractBinaryLogicExpression(
         binaryLogicExpression.left.accept(this, data).cast(),
         binaryLogicExpression.right.accept(this, data).cast(),
         when (binaryLogicExpression.kind) {
-            LogicOperationKind.AND -> KtBinaryLogicExpression.KtLogicOperationKind.AND
-            LogicOperationKind.OR -> KtBinaryLogicExpression.KtLogicOperationKind.OR
+            LogicOperationKind.AND -> KtContractBinaryLogicExpression.KtLogicOperationKind.AND
+            LogicOperationKind.OR -> KtContractBinaryLogicExpression.KtLogicOperationKind.OR
         }
     )
 
     override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Unit): KtContractDescriptionElement =
-        KtLogicalNot(logicalNot.arg.accept(this, data).cast())
+        KtContractLogicalNot(logicalNot.arg.accept(this, data).cast())
 
     override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Unit): KtContractDescriptionElement =
-        KtIsInstancePredicate(
+        KtContractIsInstancePredicate(
             isInstancePredicate.arg.accept(this, data).cast(),
             builder.typeBuilder.buildKtType(isInstancePredicate.type),
             isInstancePredicate.isNegated
         )
 
     override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Unit): KtContractDescriptionElement =
-        KtIsNullPredicate(isNullPredicate.arg.accept(this, data).cast(), isNullPredicate.isNegated)
+        KtContractIsNullPredicate(isNullPredicate.arg.accept(this, data).cast(), isNullPredicate.isNegated)
 
     override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Unit): KtContractDescriptionElement =
-        KtAbstractConstantReference.KtConstantReference(constantReference.name, builder.token)
+        KtContractAbstractConstantReference.KtContractConstantReference(constantReference.name, builder.token)
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: ConeBooleanConstantReference,
         data: Unit
     ): KtContractDescriptionElement =
         when (booleanConstantDescriptor) {
-            ConeBooleanConstantReference.TRUE -> KtBooleanConstantReference.KtTrue(builder.token)
-            ConeBooleanConstantReference.FALSE -> KtBooleanConstantReference.KtFalse(builder.token)
+            ConeBooleanConstantReference.TRUE -> KtContractBooleanConstantReference.KtTrue(builder.token)
+            ConeBooleanConstantReference.FALSE -> KtContractBooleanConstantReference.KtFalse(builder.token)
             else -> error("Can't convert $booleanConstantDescriptor to Analysis API")
         }
 
     override fun visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
         data: Unit
-    ): KtContractDescriptionElement = KtAbstractValueParameterReference.KtValueParameterReference(
+    ): KtContractDescriptionElement = KtContractAbstractValueParameterReference.KtContractValueParameterReference(
         valueParameterReference.parameterIndex,
         valueParameterReference.name,
         builder.token
@@ -84,7 +84,7 @@ private class ConeContractDescriptionElementToAnalysisApi(private val builder: K
     override fun visitBooleanValueParameterReference(
         booleanValueParameterReference: ConeBooleanValueParameterReference,
         data: Unit
-    ): KtContractDescriptionElement = KtAbstractValueParameterReference.KtBooleanValueParameterReference(
+    ): KtContractDescriptionElement = KtContractAbstractValueParameterReference.KtContractBooleanValueParameterReference(
         booleanValueParameterReference.parameterIndex,
         booleanValueParameterReference.name,
         builder.token

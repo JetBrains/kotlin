@@ -13,31 +13,31 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
  * K1: [org.jetbrains.kotlin.contracts.description.expressions.IsInstancePredicate]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeIsInstancePredicate]
  */
-public class KtIsInstancePredicate(
-    private val _argument: KtAbstractValueParameterReference,
+public class KtContractIsInstancePredicate(
+    private val _argument: KtContractAbstractValueParameterReference,
     private val _type: KtType,
     private val _isNegated: Boolean
-) : KtBooleanExpression {
+) : KtContractBooleanExpression {
     override val token: KtLifetimeToken get() = _type.token
 
-    public val argument: KtAbstractValueParameterReference get() = withValidityAssertion { _argument }
+    public val argument: KtContractAbstractValueParameterReference get() = withValidityAssertion { _argument }
     public val type: KtType get() = withValidityAssertion { _type }
     public val isNegated: Boolean get() = withValidityAssertion { _isNegated }
 
-    public fun negated(): KtIsInstancePredicate = KtIsInstancePredicate(argument, type, !isNegated)
+    public fun negated(): KtContractIsInstancePredicate = KtContractIsInstancePredicate(argument, type, !isNegated)
 }
 
 /**
  * K1: [org.jetbrains.kotlin.contracts.description.expressions.IsNullPredicate]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeIsNullPredicate]
  */
-public class KtIsNullPredicate(
-    private val _argument: KtAbstractValueParameterReference,
+public class KtContractIsNullPredicate(
+    private val _argument: KtContractAbstractValueParameterReference,
     private val _isNegated: Boolean
-) : KtBooleanExpression {
+) : KtContractBooleanExpression {
     override val token: KtLifetimeToken get() = _argument.token
-    public val argument: KtAbstractValueParameterReference get() = withValidityAssertion { _argument }
+    public val argument: KtContractAbstractValueParameterReference get() = withValidityAssertion { _argument }
     public val isNegated: Boolean get() = withValidityAssertion { _isNegated }
 
-    public fun negated(): KtIsNullPredicate = KtIsNullPredicate(argument, !isNegated)
+    public fun negated(): KtContractIsNullPredicate = KtContractIsNullPredicate(argument, !isNegated)
 }

@@ -11,18 +11,18 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-internal fun Context.renderKtEffectDeclaration(value: KtEffectDeclaration, endWithNewLine: Boolean = true): Unit =
+internal fun Context.renderKtContractEffectDeclaration(value: KtContractEffectDeclaration, endWithNewLine: Boolean = true): Unit =
     printer.appendHeader(value::class) {
         when (value) {
-            is KtCallsEffectDeclaration -> {
+            is KtContractCallsContractEffectDeclaration -> {
                 appendProperty(value::valueParameterReference, ::renderKtContractDescriptionValue)
                 appendSimpleProperty(value::kind, endWithNewLine)
             }
-            is KtConditionalEffectDeclaration -> {
-                appendProperty(value::effect, ::renderKtEffectDeclaration)
-                appendProperty(value::condition, ::renderKtBooleanExpression, endWithNewLine)
+            is KtContractConditionalContractEffectDeclaration -> {
+                appendProperty(value::effect, ::renderKtContractEffectDeclaration)
+                appendProperty(value::condition, ::renderKtContratBooleanExpression, endWithNewLine)
             }
-            is KtReturnsEffectDeclaration -> {
+            is KtContractReturnsContractEffectDeclaration -> {
                 appendProperty(value::value, ::renderKtContractDescriptionValue, endWithNewLine)
             }
         }
@@ -31,29 +31,29 @@ internal fun Context.renderKtEffectDeclaration(value: KtEffectDeclaration, endWi
 internal fun Context.renderKtContractDescriptionValue(value: KtContractDescriptionValue, endWithNewLine: Boolean = true): Unit =
     printer.appendHeader(value::class) {
         when (value) {
-            is KtAbstractConstantReference -> Unit
-            is KtAbstractValueParameterReference -> appendSimpleProperty(value::parameterIndex)
+            is KtContractAbstractConstantReference -> Unit
+            is KtContractAbstractValueParameterReference -> appendSimpleProperty(value::parameterIndex)
         }
         appendSimpleProperty(value::name, endWithNewLine)
     }
 
-internal fun Context.renderKtBooleanExpression(value: KtBooleanExpression, endWithNewLine: Boolean = true): Unit =
+internal fun Context.renderKtContratBooleanExpression(value: KtContractBooleanExpression, endWithNewLine: Boolean = true): Unit =
     when (value) {
         is KtContractDescriptionValue -> renderKtContractDescriptionValue(value, endWithNewLine)
-        is KtLogicalNot -> printer.appendHeader(value::class) {
-            appendProperty(value::argument, ::renderKtBooleanExpression, endWithNewLine)
+        is KtContractLogicalNot -> printer.appendHeader(value::class) {
+            appendProperty(value::argument, ::renderKtContratBooleanExpression, endWithNewLine)
         }
-        is KtBinaryLogicExpression -> printer.appendHeader(value::class) {
-            appendProperty(value::left, ::renderKtBooleanExpression)
-            appendProperty(value::right, ::renderKtBooleanExpression)
+        is KtContractBinaryLogicExpression -> printer.appendHeader(value::class) {
+            appendProperty(value::left, ::renderKtContratBooleanExpression)
+            appendProperty(value::right, ::renderKtContratBooleanExpression)
             appendSimpleProperty(value::kind, endWithNewLine)
         }
-        is KtIsInstancePredicate -> printer.appendHeader(value::class) {
+        is KtContractIsInstancePredicate -> printer.appendHeader(value::class) {
             appendProperty(value::argument, ::renderKtContractDescriptionValue)
             with(session) { symbolRenderer.renderType(value.type) }
             appendSimpleProperty(value::isNegated, endWithNewLine)
         }
-        is KtIsNullPredicate -> printer.appendHeader(value::class) {
+        is KtContractIsNullPredicate -> printer.appendHeader(value::class) {
             appendProperty(value::argument, ::renderKtContractDescriptionValue)
             appendSimpleProperty(value::isNegated, endWithNewLine)
         }

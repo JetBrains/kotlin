@@ -12,18 +12,18 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
  * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalOr] & [org.jetbrains.kotlin.contracts.description.expressions.LogicalAnd]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBinaryLogicExpression]
  */
-public class KtBinaryLogicExpression(
-    private val _left: KtBooleanExpression,
-    private val _right: KtBooleanExpression,
+public class KtContractBinaryLogicExpression(
+    private val _left: KtContractBooleanExpression,
+    private val _right: KtContractBooleanExpression,
     private val _kind: KtLogicOperationKind
-) : KtBooleanExpression {
+) : KtContractBooleanExpression {
     init {
         check(left.token === right.token) { "$left and $right should have the same lifetime token" }
     }
 
     override val token: KtLifetimeToken get() = _left.token
-    public val left: KtBooleanExpression get() = withValidityAssertion { _left }
-    public val right: KtBooleanExpression get() = withValidityAssertion { _right }
+    public val left: KtContractBooleanExpression get() = withValidityAssertion { _left }
+    public val right: KtContractBooleanExpression get() = withValidityAssertion { _right }
     public val kind: KtLogicOperationKind get() = withValidityAssertion { _kind }
 
     public enum class KtLogicOperationKind(public val token: String) {
@@ -35,7 +35,7 @@ public class KtBinaryLogicExpression(
  * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalNot]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeLogicalNot]
  */
-public class KtLogicalNot(private val _argument: KtBooleanExpression) : KtBooleanExpression {
+public class KtContractLogicalNot(private val _argument: KtContractBooleanExpression) : KtContractBooleanExpression {
     override val token: KtLifetimeToken get() = _argument.token
-    public val argument: KtBooleanExpression get() = withValidityAssertion { _argument }
+    public val argument: KtContractBooleanExpression get() = withValidityAssertion { _argument }
 }

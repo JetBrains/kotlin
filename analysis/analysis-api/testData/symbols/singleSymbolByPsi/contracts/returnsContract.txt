@@ -6,14 +6,14 @@ KtFunctionSymbol:
   callableIdIfNonLocal: /check
   contextReceivers: []
   contractEffects: [
-    KtConditionalEffectDeclaration:
+    KtContractConditionalContractEffectDeclaration:
       effect:
-        KtReturnsEffectDeclaration:
+        KtContractReturnsContractEffectDeclaration:
           value:
-            KtConstantReference:
+            KtContractConstantReference:
               name: WILDCARD
       condition:
-        KtBooleanValueParameterReference:
+        KtContractBooleanValueParameterReference:
           parameterIndex: 0
           name: value
   ]

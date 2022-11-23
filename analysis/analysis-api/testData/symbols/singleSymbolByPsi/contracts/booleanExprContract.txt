@@ -6,25 +6,25 @@ KtFunctionSymbol:
   callableIdIfNonLocal: /boolenExprContract
   contextReceivers: []
   contractEffects: [
-    KtConditionalEffectDeclaration:
+    KtContractConditionalContractEffectDeclaration:
       effect:
-        KtReturnsEffectDeclaration:
+        KtContractReturnsContractEffectDeclaration:
           value:
-            KtTrueBooleanConstantReference:
+            KtTrue:
               name: TRUE
       condition:
-        KtBinaryLogicExpression:
+        KtContractBinaryLogicExpression:
           left:
-            KtIsNullPredicate:
+            KtContractIsNullPredicate:
               argument:
-                KtValueParameterReference:
+                KtContractValueParameterReference:
                   parameterIndex: 0
                   name: foo
               isNegated: false
           right:
-            KtIsNullPredicate:
+            KtContractIsNullPredicate:
               argument:
-                KtValueParameterReference:
+                KtContractValueParameterReference:
                   parameterIndex: 1
                   name: bar
               isNegated: true

@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
  * K1: [org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration]
  */
-public class KtCallsEffectDeclaration(
-    private val _valueParameterReference: KtAbstractValueParameterReference,
+public class KtContractCallsContractEffectDeclaration(
+    private val _valueParameterReference: KtContractAbstractValueParameterReference,
     private val _kind: EventOccurrencesRange,
-) : KtEffectDeclaration {
+) : KtContractEffectDeclaration {
     override val token: KtLifetimeToken get() = _valueParameterReference.token
 
-    public val valueParameterReference: KtAbstractValueParameterReference get() = withValidityAssertion { _valueParameterReference }
+    public val valueParameterReference: KtContractAbstractValueParameterReference get() = withValidityAssertion { _valueParameterReference }
     public val kind: EventOccurrencesRange get() = withValidityAssertion { _kind }
 }
 
@@ -31,14 +31,14 @@ public class KtCallsEffectDeclaration(
  * K1: [org.jetbrains.kotlin.contracts.description.ConditionalEffectDeclaration]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration]
  */
-public class KtConditionalEffectDeclaration(
-    private val _effect: KtEffectDeclaration,
-    private val _condition: KtBooleanExpression
-) : KtEffectDeclaration {
+public class KtContractConditionalContractEffectDeclaration(
+    private val _effect: KtContractEffectDeclaration,
+    private val _condition: KtContractBooleanExpression
+) : KtContractEffectDeclaration {
     override val token: KtLifetimeToken get() = _effect.token
 
-    public val effect: KtEffectDeclaration get() = withValidityAssertion { _effect }
-    public val condition: KtBooleanExpression get() = withValidityAssertion { _condition }
+    public val effect: KtContractEffectDeclaration get() = withValidityAssertion { _effect }
+    public val condition: KtContractBooleanExpression get() = withValidityAssertion { _condition }
 }
 
 /**
@@ -47,7 +47,7 @@ public class KtConditionalEffectDeclaration(
  * K1: [org.jetbrains.kotlin.contracts.description.ReturnsEffectDeclaration]
  * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration]
  */
-public class KtReturnsEffectDeclaration(private val _value: KtContractDescriptionValue) : KtEffectDeclaration {
+public class KtContractReturnsContractEffectDeclaration(private val _value: KtContractDescriptionValue) : KtContractEffectDeclaration {
     override val token: KtLifetimeToken get() = _value.token
 
     public val value: KtContractDescriptionValue get() = withValidityAssertion { _value }

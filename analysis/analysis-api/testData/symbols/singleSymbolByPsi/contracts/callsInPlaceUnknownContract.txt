@@ -6,9 +6,9 @@ KtFunctionSymbol:
   callableIdIfNonLocal: /unknownContract
   contextReceivers: []
   contractEffects: [
-    KtCallsEffectDeclaration:
+    KtContractCallsContractEffectDeclaration:
       valueParameterReference:
-        KtValueParameterReference:
+        KtContractValueParameterReference:
           parameterIndex: 0
           name: block
       kind: UNKNOWN

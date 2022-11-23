@@ -6,9 +6,9 @@ KtFunctionSymbol:
   callableIdIfNonLocal: /referenceReceiverInContract
   contextReceivers: []
   contractEffects: [
-    KtCallsEffectDeclaration:
+    KtContractCallsContractEffectDeclaration:
       valueParameterReference:
-        KtValueParameterReference:
+        KtContractValueParameterReference:
           parameterIndex: -1
           name: this
       kind: EXACTLY_ONCE

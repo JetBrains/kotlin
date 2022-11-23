@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -50,7 +50,7 @@ internal class KtFe10PsiFunctionSymbol(
         bindingContext[BindingContext.FUNCTION, psi]
     }
 
-    override val contractEffects: List<KtEffectDeclaration> by cached {
+    override val contractEffects: List<KtContractEffectDeclaration> by cached {
         descriptor?.getUserData(ContractProviderKey)?.getContractDescription()?.effects
             ?.map { it.effectDeclarationToAnalysisApi(analysisContext) }
             .orEmpty()
