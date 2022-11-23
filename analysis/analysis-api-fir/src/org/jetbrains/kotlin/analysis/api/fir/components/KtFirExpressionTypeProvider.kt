@@ -119,7 +119,7 @@ internal class KtFirExpressionTypeProvider(
         contract {
             returns(true) implies (ktDeclaration is KtNamedFunction)
         }
-        return ktDeclaration is KtFunction && ktDeclaration.name == null
+        return ktDeclaration is KtNamedFunction && ktDeclaration.isAnonymous
     }
 
     private fun KtFunction.toFirAnonymousFunction(): FirAnonymousFunction {
