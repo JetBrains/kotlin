@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -40,6 +41,7 @@ internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
     private val library: KotlinLibrary,
     private val dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
+    private val mainModuleFriends: Collection<KotlinLibrary>,
     private val irFactory: IrFactory
 ) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -49,7 +51,14 @@ internal class JsIrLinkerLoader(
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, null)
+        return JsIrLinker(
+            currentModule = null,
+            messageLogger = compilerConfiguration.irMessageLogger,
+            builtIns = irBuiltIns,
+            symbolTable = symbolTable,
+            translationPluginContext = null,
+            friendModules = mapOf(library.uniqueName to mainModuleFriends.map { it.uniqueName })
+        )
     }
 
     private fun loadModules(): Map<ModuleDescriptor, KotlinLibrary> {

@@ -150,6 +150,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
     }
 
+    @TestMetadata("friendDependency")
+    public void testFriendDependency() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/friendDependency/");
+    }
+
     @TestMetadata("functionDefaultParams")
     public void testFunctionDefaultParams() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/functionDefaultParams/");

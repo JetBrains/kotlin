@@ -43,6 +43,7 @@ class ModuleInfo(val moduleName: String) {
 
     class ModuleStep(
         val id: Int,
+        val friends: Collection<String>,
         val dependencies: Collection<String>,
         val modifications: List<Modification>,
         val expectedFileStats: Map<String, Set<String>>
@@ -205,6 +206,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
     private fun parseSteps(firstId: Int, lastId: Int): List<ModuleInfo.ModuleStep> {
         val expectedFileStats = mutableMapOf<String, Set<String>>()
         val dependencies = mutableSetOf<String>()
+        val friends = mutableSetOf<String>()
         val modifications = mutableListOf<ModuleInfo.Modification>()
 
         loop { line ->
@@ -224,6 +226,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
             } else {
                 when (op) {
                     "dependencies" -> getOpArgs().forEach { dependencies.add(it) }
+                    "friends" -> getOpArgs().forEach { friends.add(it) }
                     "modifications" -> modifications.addAll(parseModifications())
                     else -> println(diagnosticMessage("Unknown op $op", line))
                 }
@@ -235,6 +238,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
         return (firstId..lastId).map {
             ModuleInfo.ModuleStep(
                 id = it,
+                friends = friends,
                 dependencies = dependencies,
                 modifications = modifications,
                 expectedFileStats = expectedFileStats

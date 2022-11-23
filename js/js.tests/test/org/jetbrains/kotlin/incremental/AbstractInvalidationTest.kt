@@ -127,6 +127,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private inner class TestStepInfo(
             val moduleName: String,
             val modulePath: String,
+            val friends: Collection<String>,
             val icCacheDir: String,
             val expectedFileStats: Map<String, Set<String>>
         )
@@ -143,9 +144,10 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
 
             val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) { resolveModuleArtifact(it, buildDir) }
+            val friends = moduleStep.friends.map { resolveModuleArtifact(it, buildDir) }
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
             val configuration = createConfiguration(module, projStep.language)
-            buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
+            buildArtifact(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
 
             val expectedFileStats = if (deletedFiles.isEmpty()) {
                 moduleStep.expectedFileStats
@@ -155,6 +157,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             return TestStepInfo(
                 module.safeModuleName,
                 outputKlibFile.canonicalPath,
+                friends.map { it.canonicalPath },
                 resolveModuleCache(module, buildDir).canonicalPath,
                 expectedFileStats
             )
@@ -235,6 +238,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val cacheUpdater = CacheUpdater(
                     mainModule = testInfo.last().modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },
+                    mainModuleFriends = testInfo.last().friends,
                     icCachePaths = testInfo.mapTo(mutableListOf(stdlibCacheDir)) { it.icCacheDir },
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
@@ -281,7 +285,12 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     private fun buildArtifact(
-        configuration: CompilerConfiguration, moduleName: String, sourceDir: File, dependencies: Collection<File>, outputKlibFile: File
+        configuration: CompilerConfiguration,
+        moduleName: String,
+        sourceDir: File,
+        dependencies: Collection<File>,
+        friends: Collection<File>,
+        outputKlibFile: File
     ) {
         if (outputKlibFile.exists()) outputKlibFile.delete()
 
@@ -290,7 +299,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it) }
 
         val sourceModule = prepareAnalyzedSourceModule(
-            projectJs, sourceFiles, configuration, dependencies.map { it.canonicalPath }, emptyList(), // TODO
+            projectJs, sourceFiles, configuration, dependencies.map { it.canonicalPath }, friends.map { it.canonicalPath },
             AnalyzerWithCompilerReport(configuration)
         )
 

@@ -50,6 +50,7 @@ enum class DirtyFileState(val str: String) {
 class CacheUpdater(
     mainModule: String,
     allModules: Collection<String>,
+    mainModuleFriends: Collection<String>,
     icCachePaths: Collection<String>,
     private val compilerConfiguration: CompilerConfiguration,
     private val irFactory: () -> IrFactory,
@@ -60,6 +61,11 @@ class CacheUpdater(
 
     private val libraries = loadLibraries(allModules)
     private val dependencyGraph = buildDependenciesGraph(libraries)
+    private val mainModuleFriendLibraries = libraries.values.let { libs ->
+        val friendPaths = mainModuleFriends.mapTo(HashSet(mainModuleFriends.size)) { File(it).canonicalPath }
+        libs.filter { it.libraryFile.canonicalPath in friendPaths }
+    }
+
     private val configHash = compilerConfiguration.configHashForIC()
 
     private val cacheMap = libraries.values.zip(icCachePaths).toMap()
@@ -684,7 +690,7 @@ class CacheUpdater(
         val modifiedFiles = loadModifiedFiles()
         val dirtyFileExports = collectExportedSymbolsForDirtyFiles(modifiedFiles)
 
-        val jsIrLinkerLoader = JsIrLinkerLoader(compilerConfiguration, mainLibrary, dependencyGraph, irFactory())
+        val jsIrLinkerLoader = JsIrLinkerLoader(compilerConfiguration, mainLibrary, dependencyGraph, mainModuleFriendLibraries, irFactory())
         var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
 
         eventCallback("initial loading of updated files")
@@ -746,7 +752,7 @@ fun rebuildCacheForDirtyFiles(
     val dirtySrcFiles = dirtyFiles?.map { KotlinSourceFile(it) } ?: KotlinLibraryHeader(library).sourceFiles
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
-    val jsIrLoader = JsIrLinkerLoader(configuration, library, dependencyGraph, irFactory)
+    val jsIrLoader = JsIrLinkerLoader(configuration, library, dependencyGraph, emptyList(), irFactory)
     val (jsIrLinker, irModules) = jsIrLoader.loadIr(KotlinSourceFileMap<KotlinSourceFileExports>(modifiedFiles), true)
 
     val currentIrModule = irModules[libFile] ?: notFoundIcError("loaded fragment", libFile)
