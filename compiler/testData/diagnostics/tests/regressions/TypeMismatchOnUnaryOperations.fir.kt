@@ -2,7 +2,7 @@ fun main() {
     val a : Int? = null;
     var v = 1
     val b : String = <!INITIALIZER_TYPE_MISMATCH!>v<!>;
-    val f : String = <!INITIALIZER_TYPE_MISMATCH!>a!!<!>;
+    val f : String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>a!!<!>;
     val g : String = <!INITIALIZER_TYPE_MISMATCH!>v++<!>;
     val g1 : String = <!INITIALIZER_TYPE_MISMATCH!>++v<!>;
     val h : String = <!INITIALIZER_TYPE_MISMATCH!>v--<!>;
