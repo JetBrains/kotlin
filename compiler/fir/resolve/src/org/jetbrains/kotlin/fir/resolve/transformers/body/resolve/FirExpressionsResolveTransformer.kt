@@ -662,8 +662,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // In FE1.0, it's only used for the right
         // But it seems a bit inconsistent (see KT-47409)
         // Also it's kind of complicated to transform different arguments with different expectType considering current FIR structure
-        equalityOperatorCall.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
-        equalityOperatorCall.argumentList.transformArguments(transformer, withExpectedType(builtinTypes.nullableAnyType))
+        equalityOperatorCall
+            .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+            .replaceArgumentList(equalityOperatorCall.argumentList.transform(transformer, withExpectedType(builtinTypes.nullableAnyType)))
         equalityOperatorCall.resultType = equalityOperatorCall.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type)
 
         dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall)
@@ -799,8 +800,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         dataFlowAnalyzer.enterCheckNotNullCall()
-        checkNotNullCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
-        checkNotNullCall.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+        checkNotNullCall
+            .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+            .replaceArgumentList(checkNotNullCall.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
         var callCompleted = false
         val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext)?.let {
@@ -1484,6 +1486,33 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
         dataFlowAnalyzer.exitAnonymousObjectExpression(anonymousObjectExpression)
         return anonymousObjectExpression
+    }
+
+    private val nonLambdaArgumentTransformer = object : FirTransformer<ResolutionMode>() {
+        override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E =
+            element.transform(this@FirExpressionsResolveTransformer, data)
+
+        override fun transformAnonymousFunctionExpression(
+            anonymousFunctionExpression: FirAnonymousFunctionExpression,
+            data: ResolutionMode
+        ): FirStatement = anonymousFunctionExpression
+    }
+
+    private val lambdaArgumentTransformer = object : FirTransformer<ResolutionMode>() {
+        override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E =
+            element
+
+        override fun transformAnonymousFunctionExpression(
+            anonymousFunctionExpression: FirAnonymousFunctionExpression,
+            data: ResolutionMode
+        ): FirStatement = this@FirExpressionsResolveTransformer.transformAnonymousFunctionExpression(anonymousFunctionExpression, data)
+    }
+
+    override fun transformArgumentList(argumentList: FirArgumentList, data: ResolutionMode): FirArgumentList {
+        // Transform all normal arguments first and then lambda to make CFG correct. See KT-46825
+        return argumentList
+            .transformArguments(nonLambdaArgumentTransformer, data)
+            .transformArguments(lambdaArgumentTransformer, data)
     }
 
     override fun transformAnonymousFunctionExpression(
