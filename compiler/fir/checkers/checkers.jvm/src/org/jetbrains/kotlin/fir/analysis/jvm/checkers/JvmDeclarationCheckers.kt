@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.*
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.FirJvmDelegateToDefaultsChecker
 
 object JvmDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
@@ -23,7 +24,8 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
 
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirStrictfpApplicabilityChecker
+            FirStrictfpApplicabilityChecker,
+            FirJvmDelegatedDefaultInterfaceMethodsAreOverriddenChecker
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>

@@ -52,6 +52,25 @@ class Impl12(): Impl11()
 
 <!NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD!>class Impl14<!>: Interface by (object: Interface {})
 
+<!NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD!>enum class Impl15<!>(val x: Interface): Interface by x {
+    A(Impl1()) {
+        override fun foo() {}
+    },
+    B(Impl1())
+}
+
+abstract <!NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD!>class Impl16<!>(): Interface by Impl1()
+
+class Impl17(): Impl16()
+
+sealed <!NO_OVERRIDE_FOR_DELEGATE_WITH_DEFAULT_METHOD!>class Impl18<!>(): Interface by Impl1()
+
+class Impl19(): Impl18()
+
+class Impl20(): Impl18() {
+    override fun foo() {}
+}
+
 class Annotated1 : Interface by @JvmDelegateToDefaults Impl1()
 
 class Annotated2 : Interface by @JvmDelegateToDefaults Impl4()
@@ -61,3 +80,7 @@ class Annotated3: Interface by @JvmDelegateToDefaults Impl8()
 class Annotated4: Interface by @JvmDelegateToDefaults Impl12()
 
 class Annotated5: Interface by (@JvmDelegateToDefaults object: Interface {})
+
+class Annotated6: Interface by @JvmDelegateToDefaults Impl1() {
+    override fun foo() {}
+}
