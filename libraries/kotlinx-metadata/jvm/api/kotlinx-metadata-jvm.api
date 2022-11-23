@@ -801,8 +801,7 @@ public final class kotlinx/metadata/KmType : kotlinx/metadata/KmTypeVisitor {
 	public fun visitAbbreviatedType (I)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitArgument (ILkotlinx/metadata/KmVariance;)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitClass (Ljava/lang/String;)V
-	public synthetic fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmTypeExtensionVisitor;
-	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/internal/extensions/KmTypeExtension;
+	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmTypeExtensionVisitor;
 	public fun visitFlexibleTypeUpperBound (ILjava/lang/String;)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitOuterType (I)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitStarProjection ()V
