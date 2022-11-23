@@ -8,8 +8,8 @@ public final class InlineMutableList {
     public static method add-impl(p0: java.util.List, p1: java.lang.Object): boolean
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
-    public static method addAll-impl(p0: InlineMutableList, p1: int, p2: java.util.Collection): boolean
-    public static method addAll-impl(p0: InlineMutableList, p1: java.util.Collection): boolean
+    public static method addAll-impl(p0: java.util.List, p1: int, p2: java.util.Collection): boolean
+    public static method addAll-impl(p0: java.util.List, p1: java.util.Collection): boolean
     public synthetic final static method box-impl(p0: java.util.List): InlineMutableList
     public method clear(): void
     public static method clear-impl(p0: java.util.List): void

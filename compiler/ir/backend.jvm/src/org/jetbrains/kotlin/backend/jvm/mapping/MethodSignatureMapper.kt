@@ -350,7 +350,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             extractTypeMappingModeFromAnnotation(
                 declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
             )
-                ?: if (declaration.isMethodWithDeclarationSiteWildcards && type.argumentsCount() != 0) {
+                ?: if (declaration.isMethodWithDeclarationSiteWildcards && !declaration.isStaticInlineClassReplacement && type.argumentsCount() != 0) {
                     TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
                 } else {
                     typeSystem.getOptimalModeForValueParameter(type)
