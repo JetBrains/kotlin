@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("LeakingThis") // All tasks should be inherited only by Gradle
+
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.file.RelativePath
-import org.gradle.api.logging.Logger
-import org.gradle.api.Project
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.io.IOException
 import java.io.Reader
-import java.net.URI
 import java.util.*
-import kotlin.concurrent.thread
 
 private val Family.platformLiteral: String
     get() = when (this) {
@@ -119,7 +117,7 @@ open class PodInstallTask : CocoapodsTask() {
 /**
  * The task generates a synthetic project with all cocoapods dependencies
  */
-open class PodGenTask : CocoapodsTask() {
+abstract class PodGenTask : CocoapodsTask() {
 
     init {
         onlyIf {
@@ -147,19 +145,20 @@ open class PodGenTask : CocoapodsTask() {
     internal lateinit var specRepos: Provider<SpecRepos>
 
     @get:Nested
-    val pods = project.objects.listProperty(CocoapodsDependency::class.java)
+    abstract val pods: ListProperty<CocoapodsDependency>
 
     @get:OutputDirectory
-    internal val podsXcodeProjDir: Provider<File>
-        get() = project.provider {
-            project.cocoapodsBuildDirs.synthetic(family)
-                .resolve("Pods")
-                .resolve("Pods.xcodeproj")
-        }
+    internal val outputDir: Provider<File> = project.provider { project.cocoapodsBuildDirs.synthetic(family) }
+
+    @get:Internal
+    internal val podsXcodeProjDir: Provider<File> = outputDir.map { it.resolve("Pods").resolve("Pods.xcodeproj") }
+
+    @get:Internal
+    val podfile: Provider<File> = outputDir.map { it.resolve("Podfile") }
 
     @TaskAction
     fun generate() {
-        val syntheticDir = project.cocoapodsBuildDirs.synthetic(family).apply { mkdirs() }
+        val syntheticDir = outputDir.get().apply { mkdirs() }
         val specRepos = specRepos.get().getAll()
 
         val projResource = "/cocoapods/project.pbxproj"
@@ -167,12 +166,12 @@ open class PodGenTask : CocoapodsTask() {
 
         projDestination.parentFile.mkdirs()
         projDestination.outputStream().use { file ->
-            javaClass.getResourceAsStream(projResource).use { resource ->
+            javaClass.getResourceAsStream(projResource)!!.use { resource ->
                 resource.copyTo(file)
             }
         }
 
-        val podfile = syntheticDir.resolve("Podfile")
+        val podfile = this.podfile.get()
         podfile.createNewFile()
 
         val podfileContent = getPodfileContent(specRepos, family.platformLiteral)
@@ -328,8 +327,9 @@ open class PodBuildTask : CocoapodsTask() {
     @get:Input
     internal lateinit var sdk: Provider<String>
 
+    @Suppress("unused") // declares an ouptut
     @get:OutputFiles
-    internal val buildResult: Provider<FileCollection>? = project.provider {
+    internal val buildResult: Provider<FileCollection> = project.provider {
         project.fileTree(buildDir.get()) {
             it.include("**/${pod.get().schemeName}.*/")
             it.include("**/${pod.get().schemeName}/")
@@ -522,16 +522,4 @@ private object CocoapodsErrorHandlingUtil {
         return null
     }
 
-    fun handlePodDownloadError(podName: String, command: String, retCode: Int, error: String): String {
-        return """
-            |'git clone' command failed with return code: $retCode
-            |
-            |       Full command: $command
-            |
-            |       Error: ${error.lines().filter { it.contains("fatal", true) }.joinToString("\n")}
-            |       
-            |       Possible reason: source of a pod '$podName' is invalid or inaccessible
-            |       
-        """.trimMargin()
-    }
 }

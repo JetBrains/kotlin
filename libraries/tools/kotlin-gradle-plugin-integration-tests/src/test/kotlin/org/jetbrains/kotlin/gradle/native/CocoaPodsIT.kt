@@ -397,6 +397,24 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
+    fun testPodGenInvalidatesUTD() {
+        with(project.gradleBuildScript()) {
+            addPod("AFNetworking")
+        }
+
+        hooks.addHook {
+            assertTasksExecuted(defaultPodGenTaskName)
+            assertTrue { fileInWorkingDir("build/cocoapods/synthetic/IOS/Pods/AFNetworking").deleteRecursively() }
+        }
+        project.testSynthetic(defaultPodGenTaskName)
+
+        hooks.rewriteHooks {
+            assertTasksExecuted(defaultPodGenTaskName)
+        }
+        project.testSynthetic(defaultPodGenTaskName)
+    }
+
+    @Test
     fun testUTDPodAdded() {
         with(project.gradleBuildScript()) {
             addPod(defaultPodName, produceGitBlock(defaultPodRepo))
