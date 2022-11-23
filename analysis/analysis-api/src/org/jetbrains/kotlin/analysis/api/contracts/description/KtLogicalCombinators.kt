@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
 /**
- * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalOr] & [org.jetbrains.kotlin.contracts.description.expressions.LogicalAnd]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBinaryLogicExpression]
+ * See: [KtContractBooleanExpression].
+ *
+ * * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalOr] & [org.jetbrains.kotlin.contracts.description.expressions.LogicalAnd]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBinaryLogicExpression]
  */
 public class KtContractBinaryLogicExpression(
     private val _left: KtContractBooleanExpression,
@@ -32,8 +34,10 @@ public class KtContractBinaryLogicExpression(
 }
 
 /**
- * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalNot]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeLogicalNot]
+ * See: [KtContractBooleanExpression].
+ *
+ * * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalNot]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeLogicalNot]
  */
 public class KtContractLogicalNot(private val _argument: KtContractBooleanExpression) : KtContractBooleanExpression {
     override val token: KtLifetimeToken get() = _argument.token

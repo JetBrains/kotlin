@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.api.contracts.description
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 /**
- * K1: [org.jetbrains.kotlin.contracts.description.expressions.IsInstancePredicate]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeIsInstancePredicate]
+ * See: [KtContractBooleanExpression].
+ *
+ * * K1: [org.jetbrains.kotlin.contracts.description.expressions.IsInstancePredicate]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeIsInstancePredicate]
  */
 public class KtContractIsInstancePredicate(
     private val _argument: KtContractAbstractValueParameterReference,
@@ -30,8 +30,10 @@ public class KtContractIsInstancePredicate(
 }
 
 /**
- * K1: [org.jetbrains.kotlin.contracts.description.expressions.IsNullPredicate]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeIsNullPredicate]
+ * See: [KtContractBooleanExpression].
+ *
+ * * K1: [org.jetbrains.kotlin.contracts.description.expressions.IsNullPredicate]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeIsNullPredicate]
  */
 public class KtContractIsNullPredicate(
     private val _argument: KtContractAbstractValueParameterReference,

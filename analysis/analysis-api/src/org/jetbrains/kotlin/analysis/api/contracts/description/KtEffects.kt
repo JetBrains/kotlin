@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 
 /**
- * [kotlin.contracts.ContractBuilder.callsInPlace]
+ * Represents [kotlin.contracts.ContractBuilder.callsInPlace].
  *
- * K1: [org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration]
+ * * K1: [org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration]
  */
 public class KtContractCallsContractEffectDeclaration(
     private val _valueParameterReference: KtContractAbstractValueParameterReference,
@@ -26,10 +26,10 @@ public class KtContractCallsContractEffectDeclaration(
 }
 
 /**
- * [kotlin.contracts.SimpleEffect.implies]
+ * Represents [kotlin.contracts.SimpleEffect.implies].
  *
- * K1: [org.jetbrains.kotlin.contracts.description.ConditionalEffectDeclaration]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration]
+ * * K1: [org.jetbrains.kotlin.contracts.description.ConditionalEffectDeclaration]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration]
  */
 public class KtContractConditionalContractEffectDeclaration(
     private val _effect: KtContractEffectDeclaration,
@@ -42,10 +42,10 @@ public class KtContractConditionalContractEffectDeclaration(
 }
 
 /**
- * [kotlin.contracts.ContractBuilder.returnsNotNull] & [kotlin.contracts.ContractBuilder.returns]
+ * Represents [kotlin.contracts.ContractBuilder.returnsNotNull] & [kotlin.contracts.ContractBuilder.returns].
  *
- * K1: [org.jetbrains.kotlin.contracts.description.ReturnsEffectDeclaration]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration]
+ * * K1: [org.jetbrains.kotlin.contracts.description.ReturnsEffectDeclaration]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration]
  */
 public class KtContractReturnsContractEffectDeclaration(private val _value: KtContractDescriptionValue) : KtContractEffectDeclaration {
     override val token: KtLifetimeToken get() = _value.token

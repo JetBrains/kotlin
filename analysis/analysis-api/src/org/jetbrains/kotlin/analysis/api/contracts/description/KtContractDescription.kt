@@ -8,19 +8,26 @@ package org.jetbrains.kotlin.analysis.api.contracts.description
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 
 /**
- * K1: [org.jetbrains.kotlin.contracts.description.ContractDescriptionElement]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement]
+ * This class hierarchy represents [kotlin.contracts] model.
+ *
+ * * K1: [org.jetbrains.kotlin.contracts.description.ContractDescriptionElement]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement]
  */
 public sealed interface KtContractDescriptionElement : KtLifetimeOwner
 
 /**
- * K1: [org.jetbrains.kotlin.contracts.description.EffectDeclaration]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration]
+ * Represents [kotlin.contracts.Effect].
+ *
+ * * K1: [org.jetbrains.kotlin.contracts.description.EffectDeclaration]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration]
  */
 public sealed interface KtContractEffectDeclaration : KtContractDescriptionElement
 
 /**
- * K1: [org.jetbrains.kotlin.contracts.description.BooleanExpression]
- * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression]
+ * Represents `booleanExpression` argument of [kotlin.contracts.SimpleEffect.implies]. `booleanExpression` forms a condition for
+ * [KtContractConditionalContractEffectDeclaration]. See [KtContractConditionalContractEffectDeclaration.condition]
+ *
+ * * K1: [org.jetbrains.kotlin.contracts.description.BooleanExpression]
+ * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression]
  */
 public sealed interface KtContractBooleanExpression : KtContractDescriptionElement
