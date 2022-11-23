@@ -59,8 +59,8 @@ object JsIrBuilder {
 
     fun buildConstructorCall(
         target: IrConstructorSymbol,
-        typeArguments: List<IrType>? = null,
-        constructorTypeArguments: List<IrType>? = null,
+        typeArguments: List<IrType?>? = null,
+        constructorTypeArguments: List<IrType?>? = null,
         origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
     ): IrConstructorCall {
         val owner = target.owner

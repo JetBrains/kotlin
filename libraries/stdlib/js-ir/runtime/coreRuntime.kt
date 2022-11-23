@@ -149,25 +149,38 @@ internal fun <T> objectCreate(proto: T?) =
     js("Object.create(proto)")
 
 @Suppress("UNUSED_PARAMETER")
-internal fun createThis(ctor: Ctor) =
-    js("Object.create(ctor.prototype)")
-
-@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
-internal fun Any?.externalSuper(parentCtor: Ctor, parameters: Array<Any?>, captured: Boolean) {
-    val selfCtor = if (captured) {
-        this.asDynamic().constructor
-    } else {
-        val ctor = js("function() {}")
-        ctor.prototype = this;
-        ctor
-    }
-    merge(this, js("Reflect.construct(parentCtor, parameters, selfCtor)"))
+internal fun createThis(ctor: Ctor, box: dynamic): dynamic {
+    val self = js("Object.create(ctor.prototype)")
+    if (box !== VOID) js("Object.assign(self, box)")
+    return self;
 }
 
-@Suppress("UNUSED_PARAMETER", "NOTHING_TO_INLINE")
-private inline fun merge(a: dynamic, b: dynamic) =
-    js("Object.assign(a, b)")
+@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
+internal fun createExternalThis(
+    ctor: Ctor,
+    superExternalCtor: Ctor,
+    parameters: Array<Any?>,
+    box: dynamic
+) {
+    val selfCtor = if (box === VOID) {
+        ctor
+    } else {
+        val newCtor = `Kotlin$createJsUtilityAnonymousClass`(ctor)
+        js("Object.assign(newCtor.prototype, box)")
+        newCtor.constructor = ctor
+        newCtor
+    }
+    return js("Reflect.construct(superExternalCtor, parameters, selfCtor)")
+}
 
 @Suppress("UNUSED_PARAMETER")
 internal fun defineProp(obj: Any, name: String, getter: Any?, setter: Any?) =
     js("Object.defineProperty(obj, name, { configurable: true, get: getter, set: setter })")
+
+// TODO: Support ES6 syntax inside the `js` function instead of the hack
+@JsPolyfill("""
+   function Kotlin${'$'}createJsUtilityAnonymousClass(parent) {
+     return class extends parent {}
+   }
+""")
+internal external fun `Kotlin$createJsUtilityAnonymousClass`(parent: Ctor): dynamic

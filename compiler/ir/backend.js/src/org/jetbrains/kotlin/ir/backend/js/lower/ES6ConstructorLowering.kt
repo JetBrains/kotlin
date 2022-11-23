@@ -5,54 +5,39 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private object ES6_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_CONSTRUCTOR_REPLACEMENT")
+private object ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT: IrStatementOriginImpl("ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT")
 
 val IrFunction.isSyntheticEs6Constructor: Boolean
     get() = origin == ES6_CONSTRUCTOR_REPLACEMENT
 
-class ES6ConstructorUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
-    private var IrConstructor.initFunction by context.mapping.constructorToInitFunction
-
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (container !is IrSimpleFunction) return
-
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                val replacement = expression.symbol.owner.initFunction ?: return super.visitDelegatingConstructorCall(expression)
-                return JsIrBuilder.buildCall(replacement.symbol).apply {
-                    copyValueArgumentsFrom(expression, symbol.owner)
-                    val currentDispatchReceiver = container.dispatchReceiverParameter ?: return@apply
-                    dispatchReceiver = JsIrBuilder.buildGetValue(currentDispatchReceiver.symbol)
-                }
-            }
-        })
-    }
-}
+val IrFunctionAccessExpression.isSyntheticDelegatingReplacement: Boolean
+    get() = origin == ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT
 
 class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
-    private var IrConstructor.initFunction by context.mapping.constructorToInitFunction
     private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -61,124 +46,88 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         hackEnums(declaration)
         hackExceptions(context, declaration)
 
-        val initMethod = declaration.generateInitMethod()
-        val factoryFunction = declaration.generateCreateFunction(initMethod)
-
-
-        return listOf(factoryFunction, initMethod)
+        return listOf(declaration.generateCreateFunction())
     }
 
-    private fun IrConstructor.generateInitMethod(): IrSimpleFunction {
+    private fun IrConstructor.generateCreateFunction(): IrFunction {
         val constructor = this
-        val parent = parentAsClass
-        val prefix = if (isPrimary) "primary" else "secondary"
-        val functionName = "\$${prefix}Init${parent.name}"
+        val irClass = parentAsClass
+        val type = irClass.defaultType
+        val constructorName = "new_${irClass.constructorPostfix}"
 
         return context.irFactory.buildFun {
-            name = Name.identifier(functionName)
-            returnType = context.irBuiltIns.unitType
-            visibility = DescriptorVisibilities.PRIVATE
+            name = Name.identifier(constructorName)
+            returnType = type
+            visibility = constructor.visibility
             modality = Modality.FINAL
             isInline = constructor.isInline
             isExternal = constructor.isExternal
             origin = ES6_CONSTRUCTOR_REPLACEMENT
         }.also { factory ->
-            factory.parent = parent
-            factory.copyTypeParametersFrom(parent)
-            factory.dispatchReceiverParameter = parent.thisReceiver?.copyTo(factory)
-            factory.valueParameters = valueParameters.map { it.copyTo(factory) }
-
-            factory.body = body?.deepCopyWithSymbols(factory)?.apply {
-                val remappingSchema = constructor.valueParameters.asSequence()
-                    .zip(factory.valueParameters.asSequence())
-                    .map { it.first.symbol to it.second.symbol }
-                    .plus(parent.thisReceiver!!.symbol to factory.dispatchReceiverParameter!!.symbol)
-                    .toMap<IrValueSymbol, IrValueSymbol>()
-
-                replaceExternalSuperCallWithRemapping(factory, remappingSchema)
-            }
+            factory.parent = irClass
+            factory.copyTypeParametersFrom(irClass)
+            factory.valueParameters += valueParameters.map { it.copyTo(factory) }
             factory.annotations = annotations
+            factory.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(factory)
 
-            constructor.initFunction = factory
-        }
-    }
-
-    private fun IrConstructor.generateCreateFunction(initMethod: IrSimpleFunction): IrFunction {
-        val irClass = parentAsClass
-        val throwableCtorField = irClass.declarations.findIsInstanceAnd<IrField> { it.origin == ES6_THROWABLE_CONSTRUCTOR_SLOT }
-
-        val function = if (isPrimary) {
-            this
-        } else {
-            val type = irClass.defaultType
-            val constructorName = "${irClass.name}_init"
-            val functionName = "${constructorName}_\$Create\$"
-            val constructor = this
-
-            context.irFactory.buildFun {
-                name = Name.identifier(functionName)
-                returnType = type
-                visibility = constructor.visibility
-                modality = Modality.FINAL
-                isInline = constructor.isInline
-                isExternal = constructor.isExternal
-            }.also { factory ->
-                factory.parent = irClass
-                factory.copyTypeParametersFrom(irClass)
-                factory.valueParameters += valueParameters.map { it.copyTo(factory) }
-                factory.annotations = annotations
-
-                constructorFactory = factory
+            val boxParameter = factory.generateBoxParameter(irClass).also { factory.valueParameters += it }
+            val selfParameter = runIf(irClass.superClass?.isExternal != true) {
+                JsIrBuilder.buildCall(context.intrinsics.jsCreateThisSymbol)
+                    .apply { putValueArgument(0, irClass.constructorRef) }
+                    .let { generateThisVariable(irClass, it) }
             }
-        }
 
-        function.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            val thisVariable = generateThisVariable().also { statements += it }
-
-            if (throwableCtorField != null) {
-                statements += JsIrBuilder.buildSetField(
-                    throwableCtorField.symbol,
-                    JsIrBuilder.buildGetValue(thisVariable.symbol),
-                    if (isPrimary) irClass.constructorRef else JsIrBuilder.buildRawReference(function.symbol, context.dynamicType),
-                    context.dynamicType
+            factory.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                val bodyCopy = constructor.body?.deepCopyWithSymbols(factory) ?: return@createBlockBody
+                val (self, isBoxUsed) = bodyCopy.replaceSuperCallsAndThisUsages(
+                    irClass,
+                    selfParameter?.symbol ?: boxParameter.symbol,
+                    factory
                 )
+
+                if (isBoxUsed) {
+                    boxParameter.defaultValue = createJsObjectLiteral()
+                }
+
+                statements.addAll(bodyCopy.statements)
+                statements.add(JsIrBuilder.buildReturn(factory.symbol, JsIrBuilder.buildGetValue(self), irClass.defaultType))
             }
 
-            statements += JsIrBuilder.buildCall(initMethod.symbol).apply {
-                dispatchReceiver = JsIrBuilder.buildGetValue(thisVariable.symbol)
-                function.valueParameters.forEachIndexed { i, p -> putValueArgument(i, JsIrBuilder.buildGetValue(p.symbol)) }
-            }
-            statements += JsIrBuilder.buildReturn(function.symbol, JsIrBuilder.buildGetValue(thisVariable.symbol), function.returnType)
+            constructorFactory = factory
         }
-
-        return function
     }
 
-    private fun IrConstructor.generateThisVariable(): IrVariable {
-        val currentClass = parentAsClass
-        val currentCtor = currentClass.constructorRef
-            .let {
-                if (!currentClass.isExported(context) || !isPrimary) {
-                    it
-                } else {
-                    JsIrBuilder.buildCall(context.intrinsics.jsNewTarget)
-                        .apply { putValueArgument(0, it) }
-                }
-            }
-
-
+    private fun IrFunction.generateThisVariable(irClass: IrClass, initializer: IrExpression): IrVariable {
         return JsIrBuilder.buildVar(
-            type = returnType,
+            type = irClass.defaultType,
             parent = this,
             name = Namer.SYNTHETIC_RECEIVER_NAME,
-            initializer = JsIrBuilder.buildCall(context.intrinsics.jsCreateThisSymbol).apply {
-                putValueArgument(0, currentCtor)
-            }
+            initializer = initializer
         )
     }
 
+    private fun IrFunction.generateBoxParameter(irClass: IrClass): IrValueParameter {
+        return JsIrBuilder.buildValueParameter(
+            parent = this,
+            name = "box",
+            index = valueParameters.size,
+            type = irClass.defaultType.makeNullable()
+        )
+    }
+
+    private fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
+        return with(parentAsClass) { isExternal || isExpect || context.inlineClassesUtils.isClassInlineLike(this) }
+    }
+
+    private val IrClass.constructorPostfix: String
+        get() = fqNameWhenAvailable?.asString()?.replace('.', '_') ?: name.toString()
+
+    private val IrFunctionAccessExpression.typeArguments: List<IrType?>
+        get() = List(typeArgumentsCount) { getTypeArgument(it) }
+
     private val IrFunctionAccessExpression.valueArguments: List<IrExpression>
         get() = List(valueArgumentsCount) { getValueArgument(it) ?: context.getVoid() }
+
 
     private val IrClass.constructorRef: IrExpression
         get() = JsIrBuilder.buildCall(context.intrinsics.jsClass).apply {
@@ -193,42 +142,65 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         )
     }
 
-    private fun IrBody.replaceExternalSuperCallWithRemapping(constructor: IrFunction, remappings: Map<IrValueSymbol, IrValueSymbol>) {
-        val selfParameter = constructor.dispatchReceiverParameter!!.symbol
+    private fun createJsObjectLiteral(): IrExpressionBody {
+        return JsIrBuilder.buildCall(context.intrinsics.jsCall)
+            .apply { putValueArgument(0, "{}".toIrConst(context.irBuiltIns.stringType)) }
+            .let { IrExpressionBodyImpl(it) }
+    }
 
-        transformChildrenVoid(object : ValueRemapper(remappings) {
-            var meetCapturing = false
+    private fun IrBody.replaceSuperCallsAndThisUsages(
+        irClass: IrClass,
+        boxParameterSymbol: IrValueSymbol,
+        constructorReplacement: IrSimpleFunction
+    ): Pair<IrValueSymbol, Boolean> {
+        var meetCapturing = false
+        var generatedThisValueSymbol = boxParameterSymbol
+        val selfParameterSymbol = irClass.thisReceiver!!.symbol
+
+        transformChildrenVoid(object : ValueRemapper(emptyMap()) {
+            override val map = mutableMapOf<IrValueSymbol, IrValueSymbol>(selfParameterSymbol to boxParameterSymbol)
 
             override fun visitSetField(expression: IrSetField): IrExpression {
                 val receiver = expression.receiver as? IrGetValue
-                if (receiver?.symbol == constructor.dispatchReceiverParameter?.symbol) {
+                if (receiver?.symbol == selfParameterSymbol) {
                     meetCapturing = true
                 }
                 return super.visitSetField(expression)
             }
 
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                val externalSuperCall = when {
-                    !expression.symbol.owner.isEffectivelyExternal() -> expression
-                    else ->
-                        JsIrBuilder.buildCall(context.intrinsics.externalSuperSymbol)
+                val newThisValue = when {
+                    expression.symbol.owner.isEffectivelyExternal() ->
+                        JsIrBuilder.buildCall(context.intrinsics.jsCreateExternalThisSymbol)
                             .apply {
-                                extensionReceiver = JsIrBuilder.buildGetValue(selfParameter)
-                                putValueArgument(0, expression.symbol.owner.parentAsClass.constructorRef)
-                                putValueArgument(1, irAnyArray(expression.valueArguments))
-                                putValueArgument(2, meetCapturing.toIrConst(context.irBuiltIns.booleanType))
+                                putValueArgument(0, JsIrBuilder.buildGetValue(constructorReplacement.dispatchReceiverParameter!!.symbol))
+                                putValueArgument(1, expression.symbol.owner.parentAsClass.constructorRef)
+                                putValueArgument(2, irAnyArray(expression.valueArguments))
+                                putValueArgument(3, JsIrBuilder.buildGetValue(boxParameterSymbol))
                             }
+                    else ->
+                        JsIrBuilder.buildConstructorCall(
+                            expression.symbol,
+                            null,
+                            expression.typeArguments,
+                            ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT
+                        ).apply {
+                            copyValueArgumentsFrom(expression, expression.symbol.owner)
+                        }
                 }
 
-                return super.visitExpression(externalSuperCall)
+                val newThisVariable = constructorReplacement.generateThisVariable(irClass, newThisValue)
+                    .also {
+                        map[selfParameterSymbol] = it.symbol
+                        generatedThisValueSymbol = it.symbol
+                    }
+
+                return super.visitComposite(JsIrBuilder.buildComposite(context.dynamicType, listOf(newThisVariable)))
             }
         })
-    }
-}
 
-private inline fun <reified R> Iterable<*>.findIsInstanceAnd(predicate: (R) -> Boolean): R? {
-    for (element in this) if (element is R && predicate(element)) return element
-    return null
+        return generatedThisValueSymbol to meetCapturing
+    }
 }
 
 private fun hackEnums(constructor: IrConstructor) {
@@ -265,8 +237,4 @@ private fun hackExceptions(context: JsIrBackendContext, constructor: IrConstruct
         statements[callIndex] = statements[superCallIndex]
         statements[superCallIndex] = tmp
     }
-}
-
-private fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
-    return with(parentAsClass) { isExternal || isExpect || context.inlineClassesUtils.isClassInlineLike(this) }
 }

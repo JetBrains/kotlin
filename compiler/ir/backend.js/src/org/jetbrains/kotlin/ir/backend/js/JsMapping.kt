@@ -20,8 +20,6 @@ class JsMapping : DefaultMapping() {
     val classToSyntheticPrimaryConstructor = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
     val privateMemberToCorrespondingStatic = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrFunction, IrSimpleFunction>()
 
-    val constructorToInitFunction = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
-
     val enumEntryToGetInstanceFun = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrEnumEntry, IrSimpleFunction>()
     val enumEntryToInstanceField = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrEnumEntry, IrField>()
     val enumConstructorToNewConstructor = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()

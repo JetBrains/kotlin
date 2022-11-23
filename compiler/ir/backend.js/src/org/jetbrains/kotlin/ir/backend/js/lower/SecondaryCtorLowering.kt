@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class SecondaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
@@ -257,7 +258,7 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
     private val IrConstructor.isSecondaryConstructorCall
         get() =
-            !isPrimary && this != defaultThrowableConstructor && !isExternal && !context.inlineClassesUtils.isClassInlineLike(parentAsClass)
+            (!isPrimary || context.es6mode) && this != defaultThrowableConstructor && !isExternal && !context.inlineClassesUtils.isClassInlineLike(parentAsClass)
 
     override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement = super.visitFunction(declaration, declaration)
 
@@ -286,11 +287,10 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
         return if (target.isSecondaryConstructorCall) {
             val klass = target.parentAsClass
             val delegate = with(context) {
-                if (es6mode) mapping.secondaryConstructorToDelegate[target]
-                    ?: compilationException(
-                        "Not found IrFunction for secondary ctor",
-                        expression
-                    )
+                if (es6mode) compilationException(
+                    "All delegating call should be lowered inside ES6ClassLowering",
+                    expression
+                )
                 else buildConstructorDelegate(target, klass)
             }
             val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, delegate.symbol)
@@ -315,16 +315,24 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
     private fun replaceSecondaryConstructorWithFactoryFunction(
         call: IrFunctionAccessExpression,
         newTarget: IrSimpleFunctionSymbol
-    ) = IrCallImpl(
-        call.startOffset, call.endOffset, call.type, newTarget,
-        typeArgumentsCount = call.typeArgumentsCount,
-        valueArgumentsCount = newTarget.owner.valueParameters.size
-    ).apply {
+    ): IrCall {
+        val irClass = call.symbol.owner.parentAsClass
+        return IrCallImpl(
+            call.startOffset, call.endOffset, call.type, newTarget,
+            typeArgumentsCount = call.typeArgumentsCount,
+            valueArgumentsCount = newTarget.owner.valueParameters.size,
+            superQualifierSymbol = irClass.symbol.takeIf { context.es6mode && call.isSyntheticDelegatingReplacement }
+        ).apply {
+            copyTypeArgumentsFrom(call)
 
-        copyTypeArgumentsFrom(call)
+            for (i in 0 until call.valueArgumentsCount) {
+                putValueArgument(i, call.getValueArgument(i))
+            }
 
-        for (i in 0 until call.valueArgumentsCount) {
-            putValueArgument(i, call.getValueArgument(i))
+            if (context.es6mode && superQualifierSymbol == null) {
+                dispatchReceiver = JsIrBuilder.buildCall(context.intrinsics.jsClass)
+                    .apply { putTypeArgument(0, irClass.defaultType) }
+            }
         }
     }
 }
