@@ -251,6 +251,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     // for return type of value parameters in lambdas
     object ImplicitReturnTypeOfLambdaValueParameter : KtFakeSourceElementKind()
+
+    // Synthetic calls for if/when/try/etc.
+    object SyntheticCall : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
@@ -503,4 +506,3 @@ inline fun LighterASTNode.toKtLightSourceElement(
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset
 ): KtLightSourceElement = KtLightSourceElement(this, startOffset, endOffset, tree, kind)
-
