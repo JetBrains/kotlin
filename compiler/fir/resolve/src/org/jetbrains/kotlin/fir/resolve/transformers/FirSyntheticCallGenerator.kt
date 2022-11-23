@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
@@ -204,7 +206,7 @@ class FirSyntheticCallGenerator(
             )
         }
 
-        return FirNamedReferenceWithCandidate(null, name, candidate)
+        return FirNamedReferenceWithCandidate(callSite.source?.fakeElement(KtFakeSourceElementKind.SyntheticCall), name, candidate)
     }
 
     private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate {
