@@ -35,5 +35,5 @@ val testIf4: String? = if (true) J.m[""] else J.m[""]
 val testWhen1: String = when { else -> J.s }
 val testWhen2: String? = when { else -> J.s }
 
-val testWhen3: String = <!INITIALIZER_TYPE_MISMATCH!>when { else -> J.m[""] }<!>
+val testWhen3: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>when { else -> J.m[""] }<!>
 val testWhen4: String? = when { else -> J.m[""] }

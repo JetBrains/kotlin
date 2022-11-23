@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import java.util.*
 import kotlin.comparisons.compareBy
 import kotlin.comparisons.nullsLast
