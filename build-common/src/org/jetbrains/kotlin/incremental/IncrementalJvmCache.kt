@@ -104,7 +104,7 @@ open class IncrementalJvmCache(
         className in multifileFacadeToParts
 
     override fun getClassFilePath(internalClassName: String): String {
-        return toSystemIndependentName(File(outputDir, "$internalClassName.class").canonicalPath)
+        return toSystemIndependentName(File(outputDir, "$internalClassName.class").normalize().absolutePath)
     }
 
     fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File) {

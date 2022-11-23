@@ -149,7 +149,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private fun compileWithDaemonOrFallbackImpl(messageCollector: MessageCollector): Pair<ExitCode, KotlinCompilerExecutionStrategy> {
         with(log) {
             kotlinDebug { "Kotlin compiler class: ${compilerClassName}" }
-            kotlinDebug { "Kotlin compiler classpath: ${compilerFullClasspath.joinToString { it.canonicalPath }}" }
+            kotlinDebug { "Kotlin compiler classpath: ${compilerFullClasspath.joinToString { it.normalize().absolutePath }}" }
             kotlinDebug { "$taskPath Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
         }
 

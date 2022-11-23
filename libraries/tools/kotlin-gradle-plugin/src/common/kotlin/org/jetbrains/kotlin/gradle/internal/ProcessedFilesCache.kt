@@ -198,7 +198,7 @@ internal open class ProcessedFilesCache(
                 state.remove(existedTarget)
             }
         }
-        state[hash] = Element(file.canonicalPath, key)
+        state[hash] = Element(file.normalize().absolutePath, key)
 
         return key
     }
