@@ -1001,6 +1001,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/initBlockAndInPlaceLambda.kt");
         }
 
+        @TestMetadata("inlineLambdasAreInplace.kt")
+        public void testInlineLambdasAreInplace() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/inlineLambdasAreInplace.kt");
+        }
+
         @TestMetadata("innerClassInAnonymousObject.kt")
         public void testInnerClassInAnonymousObject() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/innerClassInAnonymousObject.kt");

@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
+import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -377,7 +377,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
         if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
         functionCall.transformAnnotations(transformer, data)
-        functionCall.transformSingle(InvocationKindTransformer, null)
+        functionCall.replaceLambdaArgumentInvocationKinds(session)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterFunctionCall(functionCall)
         val (completeInference, callCompleted) =
