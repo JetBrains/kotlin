@@ -13,8 +13,14 @@ KtFunctionSymbol:
             KtWildcard
       condition:
         KtContractBooleanValueParameterReference:
-          parameterIndex: -1
-          name: this
+          parameterSymbol:
+            KtReceiverParameterSymbol:
+              annotationsList: []
+              origin: SOURCE
+              owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
+              type: kotlin/Boolean
+              getContainingModule: KtSourceModule "Sources of main"
+              deprecationStatus: null
   ]
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false

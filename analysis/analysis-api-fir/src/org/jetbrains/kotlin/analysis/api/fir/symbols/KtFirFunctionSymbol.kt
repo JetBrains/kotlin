@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -57,7 +56,7 @@ internal class KtFirFunctionSymbol(
     override val contractEffects: List<KtContractEffectDeclaration> by cached {
         firSymbol.resolvedContractDescription?.effects
             ?.map(FirEffectDeclaration::effect)
-            ?.map { it.coneEffectDeclarationToAnalysisApi(builder) }
+            ?.map { it.coneEffectDeclarationToAnalysisApi(builder, this) }
             .orEmpty()
     }
 

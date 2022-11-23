@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.contracts.description
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtParameterSymbol
 
 /**
  * Represents `value` argument of [kotlin.contracts.ContractBuilder.returns] and [kotlin.contracts.ContractBuilder.returnsNotNull].
@@ -56,12 +57,9 @@ public sealed class KtContractConstantReference(token: KtLifetimeToken) : KtCont
 }
 
 public sealed class KtContractAbstractValueParameterReference(
-    private val _parameterIndex: Int,
-    private val _name: String,
-    token: KtLifetimeToken
-) : KtContractDescriptionValue(token) {
-    public val parameterIndex: Int get() = withValidityAssertion { _parameterIndex }
-    public val name: String get() = withValidityAssertion { _name }
+    private val _parameterSymbol: KtParameterSymbol,
+) : KtContractDescriptionValue(_parameterSymbol.token) {
+    public val parameterSymbol: KtParameterSymbol get() = withValidityAssertion { _parameterSymbol }
 
     /**
      * Represents parameter reference passed to `value` argument of [kotlin.contracts.ContractBuilder.returns] or
@@ -70,8 +68,8 @@ public sealed class KtContractAbstractValueParameterReference(
      * * K1: [org.jetbrains.kotlin.contracts.description.expressions.VariableReference]
      * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeValueParameterReference]
      */
-    public class KtContractValueParameterReference(parameterIndex: Int, name: String, token: KtLifetimeToken) :
-        KtContractAbstractValueParameterReference(parameterIndex, name, token)
+    public class KtContractValueParameterReference(parameterSymbol: KtParameterSymbol) :
+        KtContractAbstractValueParameterReference(parameterSymbol)
 
     /**
      * Represents boolean parameter reference passed to `value` argument of [kotlin.contracts.ContractBuilder.returns] or
@@ -80,6 +78,6 @@ public sealed class KtContractAbstractValueParameterReference(
      * * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableReference]
      * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanValueParameterReference]
      */
-    public class KtContractBooleanValueParameterReference(parameterIndex: Int, name: String, token: KtLifetimeToken) :
-        KtContractAbstractValueParameterReference(parameterIndex, name, token), KtContractBooleanExpression
+    public class KtContractBooleanValueParameterReference(parameterSymbol: KtParameterSymbol) :
+        KtContractAbstractValueParameterReference(parameterSymbol), KtContractBooleanExpression
 }

@@ -9,8 +9,26 @@ KtFunctionSymbol:
     KtContractCallsContractEffectDeclaration:
       valueParameterReference:
         KtContractValueParameterReference:
-          parameterIndex: 0
-          name: block
+          parameterSymbol:
+            KtValueParameterSymbol:
+              annotationsList: []
+              callableIdIfNonLocal: null
+              contextReceivers: []
+              generatedPrimaryConstructorProperty: null
+              hasDefaultValue: false
+              isCrossinline: false
+              isExtension: false
+              isImplicitLambdaParameter: false
+              isNoinline: false
+              isVararg: false
+              name: block
+              origin: SOURCE
+              receiverParameter: null
+              returnType: kotlin/Function0<kotlin/Unit>
+              symbolKind: LOCAL
+              typeParameters: []
+              getContainingModule: KtSourceModule "Sources of main"
+              deprecationStatus: null
       kind: UNKNOWN
   ]
   hasStableParameterNames: true

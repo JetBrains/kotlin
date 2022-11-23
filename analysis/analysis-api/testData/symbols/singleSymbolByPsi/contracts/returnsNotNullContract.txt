@@ -15,8 +15,26 @@ KtFunctionSymbol:
         KtContractIsNullPredicate:
           argument:
             KtContractValueParameterReference:
-              parameterIndex: 0
-              name: foo
+              parameterSymbol:
+                KtValueParameterSymbol:
+                  annotationsList: []
+                  callableIdIfNonLocal: null
+                  contextReceivers: []
+                  generatedPrimaryConstructorProperty: null
+                  hasDefaultValue: false
+                  isCrossinline: false
+                  isExtension: false
+                  isImplicitLambdaParameter: false
+                  isNoinline: false
+                  isVararg: false
+                  name: foo
+                  origin: SOURCE
+                  receiverParameter: null
+                  returnType: kotlin/Any?
+                  symbolKind: LOCAL
+                  typeParameters: []
+                  getContainingModule: KtSourceModule "Sources of main"
+                  deprecationStatus: null
           isNegated: true
   ]
   hasStableParameterNames: true

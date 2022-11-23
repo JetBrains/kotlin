@@ -9,8 +9,14 @@ KtFunctionSymbol:
     KtContractCallsContractEffectDeclaration:
       valueParameterReference:
         KtContractValueParameterReference:
-          parameterIndex: -1
-          name: this
+          parameterSymbol:
+            KtReceiverParameterSymbol:
+              annotationsList: []
+              origin: SOURCE
+              owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
+              type: kotlin/Function0<kotlin/Unit>
+              getContainingModule: KtSourceModule "Sources of main"
+              deprecationStatus: null
       kind: EXACTLY_ONCE
   ]
   hasStableParameterNames: true

@@ -28,17 +28,19 @@ internal fun Context.renderKtContractEffectDeclaration(value: KtContractEffectDe
         }
     }
 
-internal fun Context.renderKtContractDescriptionValue(value: KtContractDescriptionValue, endWithNewLine: Boolean = true): Unit =
-    when (value) {
+internal fun Context.renderKtContractDescriptionValue(value: KtContractDescriptionValue, endWithNewLine: Boolean = true) {
+    val append: (String) -> Unit = (if (endWithNewLine) printer::appendLine else printer::append)
+    return when (value) {
         is KtContractConstantReference -> {
-            val append: (String) -> Unit = (if (endWithNewLine) printer::appendLine else printer::append)
             append(value::class.simpleName ?: error("$value doesn't have simpleName"))
         }
         is KtContractAbstractValueParameterReference -> printer.appendHeader(value::class) {
-            appendSimpleProperty(value::parameterIndex)
-            appendSimpleProperty(value::name, endWithNewLine)
+            appendProperty(value::parameterSymbol, renderer = { valueParameterSymbol, _ ->
+                append(with(session) { symbolRenderer.render(valueParameterSymbol) })
+            })
         }
     }
+}
 
 internal fun Context.renderKtContratBooleanExpression(value: KtContractBooleanExpression, endWithNewLine: Boolean = true): Unit =
     when (value) {
@@ -69,7 +71,7 @@ private fun PrettyPrinter.appendHeader(clazz: KClass<*>, body: PrettyPrinter.() 
     withIndent { body() }
 }
 
-private fun <T : KtContractDescriptionElement> PrettyPrinter.appendProperty(
+private fun <T> PrettyPrinter.appendProperty(
     prop: KProperty<T>,
     renderer: (T, Boolean) -> Unit,
     endWithNewLine: Boolean = true

@@ -6,16 +6,25 @@
 package org.jetbrains.kotlin.analysis.api.fir.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractValueParameterReference.KtContractBooleanValueParameterReference
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractValueParameterReference.KtContractValueParameterReference
 import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractConstantReference.KtContractBooleanConstantReference
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtParameterSymbol
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
 
-internal fun ConeEffectDeclaration.coneEffectDeclarationToAnalysisApi(builder: KtSymbolByFirBuilder): KtContractEffectDeclaration =
-    accept(ConeContractDescriptionElementToAnalysisApi(builder), Unit).cast()
+internal fun ConeEffectDeclaration.coneEffectDeclarationToAnalysisApi(
+    builder: KtSymbolByFirBuilder,
+    firFunctionSymbol: KtFirFunctionSymbol
+): KtContractEffectDeclaration =
+    accept(ConeContractDescriptionElementToAnalysisApi(builder, firFunctionSymbol), Unit).cast()
 
-private class ConeContractDescriptionElementToAnalysisApi(private val builder: KtSymbolByFirBuilder) :
-    ConeContractDescriptionVisitor<KtContractDescriptionElement, Unit>() {
+private class ConeContractDescriptionElementToAnalysisApi(
+    private val builder: KtSymbolByFirBuilder,
+    private val firFunctionSymbol: KtFirFunctionSymbol
+) : ConeContractDescriptionVisitor<KtContractDescriptionElement, Unit>() {
 
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: ConeConditionalEffectDeclaration,
@@ -80,19 +89,21 @@ private class ConeContractDescriptionElementToAnalysisApi(private val builder: K
     override fun visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
         data: Unit
-    ): KtContractDescriptionElement = KtContractAbstractValueParameterReference.KtContractValueParameterReference(
-        valueParameterReference.parameterIndex,
-        valueParameterReference.name,
-        builder.token
-    )
+    ): KtContractDescriptionElement = visitValueParameterReference(valueParameterReference, ::KtContractValueParameterReference)
 
     override fun visitBooleanValueParameterReference(
         booleanValueParameterReference: ConeBooleanValueParameterReference,
         data: Unit
-    ): KtContractDescriptionElement = KtContractAbstractValueParameterReference.KtContractBooleanValueParameterReference(
-        booleanValueParameterReference.parameterIndex,
-        booleanValueParameterReference.name,
-        builder.token
+    ): KtContractDescriptionElement =
+        visitValueParameterReference(booleanValueParameterReference, ::KtContractBooleanValueParameterReference)
+
+    private fun visitValueParameterReference(
+        valueParameterReference: ConeValueParameterReference,
+        constructor: (KtParameterSymbol) -> KtContractAbstractValueParameterReference
+    ): KtContractAbstractValueParameterReference = constructor(
+        if (valueParameterReference.parameterIndex == -1) firFunctionSymbol.receiverParameter
+            ?: error("$firFunctionSymbol should contain a receiver")
+        else firFunctionSymbol.valueParameters[valueParameterReference.parameterIndex]
     )
 }
 

@@ -13,8 +13,26 @@ KtFunctionSymbol:
             KtWildcard
       condition:
         KtContractBooleanValueParameterReference:
-          parameterIndex: 0
-          name: value
+          parameterSymbol:
+            KtValueParameterSymbol:
+              annotationsList: []
+              callableIdIfNonLocal: null
+              contextReceivers: []
+              generatedPrimaryConstructorProperty: null
+              hasDefaultValue: false
+              isCrossinline: false
+              isExtension: false
+              isImplicitLambdaParameter: false
+              isNoinline: false
+              isVararg: false
+              name: value
+              origin: SOURCE
+              receiverParameter: null
+              returnType: kotlin/Boolean
+              symbolKind: LOCAL
+              typeParameters: []
+              getContainingModule: KtSourceModule "Sources of main"
+              deprecationStatus: null
   ]
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false

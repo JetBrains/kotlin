@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractConstantReference.KtContractBooleanConstantReference
 import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractValueParameterReference.KtContractBooleanValueParameterReference
 import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractValueParameterReference.KtContractValueParameterReference
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractConstantReference.KtContractBooleanConstantReference
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KtParameterSymbol
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 
 internal fun EffectDeclaration.effectDeclarationToAnalysisApi(analysisContext: Fe10AnalysisContext): KtContractEffectDeclaration =
     accept(ContractDescriptionElementToAnalysisApi(analysisContext), Unit).cast()
@@ -90,16 +89,9 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
 
     private fun visitVariableReference(
         variableReference: VariableReference,
-        constructor: (Int, String, KtLifetimeToken) -> KtContractAbstractValueParameterReference
-    ): KtContractAbstractValueParameterReference = constructor(
-        when (val descriptor = variableReference.descriptor) {
-            is ValueParameterDescriptor -> descriptor.index
-            is ReceiverParameterDescriptor -> -1
-            else -> error("Can't find $variableReference index")
-        },
-        variableReference.descriptor.name.asStringStripSpecialMarkers(),
-        analysisContext.token
-    )
+        constructor: (KtParameterSymbol) -> KtContractAbstractValueParameterReference
+    ): KtContractAbstractValueParameterReference =
+        constructor(variableReference.descriptor.toKtSymbol(analysisContext) as KtParameterSymbol)
 }
 
 // Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.
