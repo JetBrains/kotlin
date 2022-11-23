@@ -222,6 +222,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("destructuringEntry.kt")
+        public void testDestructuringEntry() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/destructuringEntry.kt");
+        }
+
+        @Test
         @TestMetadata("objectLiteral.kt")
         public void testObjectLiteral() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/objectLiteral.kt");
