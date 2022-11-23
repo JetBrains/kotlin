@@ -21,6 +21,20 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
         )
 
         registerDependencyResolver(
+            resolver = IdeFriendSourceDependencyResolver,
+            constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        registerDependencyResolver(
+            resolver = IdeVisibleMultiplatformSourceDependencyResolver,
+            constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        registerDependencyResolver(
             resolver = IdeTransformedMetadataDependencyResolver,
             constraint = IdeMultiplatformImport.SourceSetConstraint.isMetadata,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,

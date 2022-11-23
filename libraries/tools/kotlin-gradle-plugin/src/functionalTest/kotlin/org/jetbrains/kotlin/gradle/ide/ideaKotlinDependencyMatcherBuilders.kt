@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.ide
 
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.ideSourceDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.project
 
 fun dependsOnDependency(sourceSet: KotlinSourceSet) =
     org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency(sourceSet.internal.project, sourceSet.name)

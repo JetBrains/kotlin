@@ -22,8 +22,22 @@ fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, project: Project,
     return IdeaKotlinSourceDependencyMatcher(type, project.path, sourceSetName)
 }
 
+fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, path: String): IdeaKotlinDependencyMatcher {
+    val segments = path.split(":")
+    val projectPath = segments.dropLast(1).joinToString(":")
+    val sourceSetName = segments.last()
+    return IdeaKotlinSourceDependencyMatcher(type, projectPath, sourceSetName)
+}
+
+fun regularSourceDependency(path: String) = ideSourceDependency(IdeaKotlinSourceDependency.Type.Regular, path)
+
+fun friendSourceDependency(path: String) = ideSourceDependency(IdeaKotlinSourceDependency.Type.Friend, path)
+
 fun dependsOnDependency(project: Project, sourceSetName: String) =
     ideSourceDependency(IdeaKotlinSourceDependency.Type.DependsOn, project, sourceSetName)
+
+fun dependsOnDependency(path: String) = ideSourceDependency(IdeaKotlinSourceDependency.Type.DependsOn, path)
+
 
 fun binaryCoordinates(regex: Regex): IdeaKotlinDependencyMatcher {
     return IdeaBinaryCoordinatesMatcher(regex)
