@@ -179,10 +179,10 @@ abstract class AbstractKotlinNativeCompile<
     )
 
     @get:Classpath
-    protected val friendModule: FileCollection = project.files({ compilation.friendPaths })
+    internal val friendModule: FileCollection = project.files({ compilation.friendPaths })
 
     @get:Classpath
-    protected val refinesModule: FileCollection = project.files({ compilation.refinesPaths })
+    internal val refinesModule: FileCollection = project.files({ compilation.refinesPaths })
 
     @get:Input
     val target: String by project.provider { konanTarget.name }

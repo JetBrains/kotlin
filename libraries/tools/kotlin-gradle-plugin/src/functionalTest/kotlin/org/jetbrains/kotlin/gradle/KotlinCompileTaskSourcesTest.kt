@@ -7,14 +7,12 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -129,6 +127,4 @@ class KotlinCompileTaskSourcesTest {
             linuxArm64CompileTask.sources.files.relativeTo(project)
         )
     }
-
-    private fun Set<File>.relativeTo(project: Project): Set<File> = map { it.relativeTo(project.projectDir) }.toSet()
 }

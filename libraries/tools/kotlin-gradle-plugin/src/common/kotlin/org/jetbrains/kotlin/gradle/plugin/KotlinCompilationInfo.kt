@@ -11,7 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAbstractFragmentMetadataCompilationData
@@ -76,7 +76,7 @@ internal sealed class KotlinCompilationInfo {
 
         override val refinesPaths: FileCollection
             get() = project.filesProvider files@{
-                val metadataTarget = project.multiplatformExtensionOrNull?.metadata() ?: return@files emptyList<Any>()
+                val metadataTarget = origin.target as? KotlinMetadataTarget ?: return@files emptyList<Any>()
                 origin.kotlinSourceSets.dependsOnClosure
                     .mapNotNull { sourceSet -> metadataTarget.compilations.findByName(sourceSet.name)?.output?.classesDirs }
             }
