@@ -7689,6 +7689,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("javaTypeParameterBy.kt")
+            public void testJavaTypeParameterBy() throws Exception {
+                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/javaTypeParameterBy.kt");
+            }
+
+            @Test
             @TestMetadata("LibraryProperty.kt")
             public void testLibraryProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");

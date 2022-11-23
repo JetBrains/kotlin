@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.Variance
-import java.util.*
 
 class FirTypeDeserializer(
     val moduleData: FirModuleData,
@@ -164,7 +163,7 @@ class FirTypeDeserializer(
         if (constructor is ConeTypeParameterLookupTag) {
             return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable).let {
                 if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
-                    ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext) ?: it
+                    ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext, avoidComprehensiveCheck = true) ?: it
                 else
                     it
             }
