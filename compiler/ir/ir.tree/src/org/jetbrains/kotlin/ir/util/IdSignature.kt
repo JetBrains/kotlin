@@ -248,7 +248,9 @@ sealed class IdSignature {
 
     open fun asPublic(): CommonSignature? = null
 
-    abstract fun render(): String
+    fun render(): String = buildString(this::renderInto)
+
+    abstract fun renderInto(builder: StringBuilder)
 
     fun Flags.test(): Boolean = decode(flags())
 
@@ -261,8 +263,16 @@ sealed class IdSignature {
     // TODO: this API is a bit hacky, consider to act somehow else
     open val visibleCrossFile: Boolean get() = true
 
-    override fun toString(): String =
-        "${if (isLocal) "local " else ""}${render()}"
+    protected fun renderAndMarkLocalIfNeededInto(builder: StringBuilder) {
+        builder.run {
+            if (isLocal) {
+                append("local ")
+            }
+            renderInto(this)
+        }
+    }
+
+    override fun toString(): String = buildString(this::renderAndMarkLocalIfNeededInto)
 
     /**
      * This signature corresponds to a publicly accessible Kotlin declaration.
@@ -304,7 +314,18 @@ sealed class IdSignature {
 
         override fun flags(): Long = mask
 
-        override fun render(): String = "$packageFqName/$declarationFqName|$id[${mask.toString(2)}]"
+        override fun renderInto(builder: StringBuilder) {
+            builder.run {
+                append(packageFqName)
+                append("/")
+                append(declarationFqName)
+                append("|")
+                append(id)
+                append("[")
+                append(mask.toString(2))
+                append("]")
+            }
+        }
 
         override fun asPublic(): CommonSignature = this
 
@@ -344,12 +365,12 @@ sealed class IdSignature {
             return if (container is FileSignature) inner.packageFqName() else container.packageFqName()
         }
 
-        override fun render(): String {
-            return buildString {
+        override fun renderInto(builder: StringBuilder) {
+            builder.run {
                 append("[ ")
-                append(container)
+                container.renderAndMarkLocalIfNeededInto(this)
                 append(" <- ")
-                append(inner)
+                inner.renderAndMarkLocalIfNeededInto(this)
                 append(" ]")
             }
         }
@@ -378,7 +399,9 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName = propertySignature.packageFqName()
 
-        override fun render(): String = accessorSignature.render()
+        override fun renderInto(builder: StringBuilder) {
+            accessorSignature.renderInto(builder)
+        }
 
         override fun flags(): Long = accessorSignature.mask
 
@@ -433,8 +456,12 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName = fqName
 
-        override fun render(): String {
-            return "File '$fileName'"
+        override fun renderInto(builder: StringBuilder) {
+            builder.run {
+                append("File '")
+                append(fileName)
+                append('\'')
+            }
         }
 
         override val hasTopLevel: Boolean
@@ -467,8 +494,8 @@ sealed class IdSignature {
             error("Illegal access: Local signature does not have package (${render()}")
         }
 
-        override fun render(): String {
-            return buildString {
+        override fun renderInto(builder: StringBuilder) {
+            builder.run {
                 append("Local[")
                 append(localFqn)
                 hashSig?.let {
@@ -533,8 +560,9 @@ sealed class IdSignature {
         override fun packageFqName(): FqName =
             memberSignature.packageFqName()
 
-        override fun render(): String =
-            memberSignature.render()
+        override fun renderInto(builder: StringBuilder) {
+            memberSignature.renderInto(builder)
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -582,7 +610,13 @@ sealed class IdSignature {
 
         override fun nearestPublicSig(): IdSignature = container.nearestPublicSig()
 
-        override fun render(): String = "${container.render()}:$id"
+        override fun renderInto(builder: StringBuilder) {
+            builder.run {
+                container.renderInto(this)
+                append(":")
+                append(id)
+            }
+        }
 
         override fun equals(other: Any?): Boolean =
             other is FileLocalSignature && id == other.id && container == other.container
@@ -614,7 +648,12 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName = error("Is not supported for Local ID")
 
-        override fun render(): String = "#$id"
+        override fun renderInto(builder: StringBuilder) {
+            builder.run {
+                append('#')
+                append(id)
+            }
+        }
 
         override fun equals(other: Any?): Boolean =
             other is ScopeLocalDeclaration && id == other.id
@@ -639,7 +678,16 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName = original.packageFqName()
 
-        override fun render(): String = "ic#$stage:${original.render()}-$index"
+        override fun renderInto(builder: StringBuilder) {
+            builder.run {
+                append("ic#")
+                append(stage)
+                append(':')
+                original.renderInto(this)
+                append('-')
+                append(index)
+            }
+        }
 
         override fun equals(other: Any?): Boolean {
             return other is LoweredDeclarationSignature && original == other.original && stage == other.stage && index == other.index

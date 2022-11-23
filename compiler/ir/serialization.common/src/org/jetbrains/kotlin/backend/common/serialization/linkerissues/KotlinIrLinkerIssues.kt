@@ -81,7 +81,9 @@ class SignatureIdNotFoundInModuleWithDependencies(
             buildString {
                 appendLine("Failed to compute the detailed error message. See the root cause exception.")
                 appendLine()
-                append("Shortly: The required symbol ${idSignature.render()} is missing in the module or module dependencies.")
+                append("Shortly: The required symbol ")
+                idSignature.renderInto(this)
+                append(" is missing in the module or module dependencies.")
                 append(" This could happen if the required dependency is missing in the project.")
                 append(" Or if there is a dependency that has a different version (without the required symbol) in the project")
                 append(" than the version (with the required symbol) that the module was initially compiled with.")
@@ -96,7 +98,11 @@ class SignatureIdNotFoundInModuleWithDependencies(
         val problemModuleIdWithVersion = allModules.getValue(problemModuleId).moduleIdWithVersion
 
         // cause:
-        append("Module \"$problemModuleId\" has a reference to symbol ${idSignature.render()}.")
+        append("Module \"")
+        append(problemModuleId)
+        append("\" has a reference to symbol ")
+        idSignature.renderInto(this)
+        append(".")
         append(" Neither the module itself nor its dependencies contain such declaration.")
 
         // explanation:
@@ -132,7 +138,11 @@ class SignatureIdNotFoundInModuleWithDependencies(
 class NoDeserializerForModule(moduleName: Name, idSignature: IdSignature?) : KotlinIrLinkerIssue(needStacktrace = false) {
     override val errorMessage = buildString {
         append("Could not load module ${moduleName.asString()}")
-        if (idSignature != null) append(" in an attempt to find deserializer for symbol ${idSignature.render()}.")
+        if (idSignature != null) {
+            append(" in an attempt to find deserializer for symbol ")
+            idSignature.renderInto(this)
+            append(".")
+        }
     }
 }
 
