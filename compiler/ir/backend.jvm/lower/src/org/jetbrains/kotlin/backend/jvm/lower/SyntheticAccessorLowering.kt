@@ -372,30 +372,21 @@ private class SyntheticAccessorTransformer(
     private val IrConstructor.isOrShouldBeHiddenSinceHasMangledParams: Boolean
         get() {
             if (this in context.hiddenConstructorsWithMangledParams.keys) return true
-            return isShouldBeHidden {
-                !DescriptorVisibilities.isPrivate(visibility)
-                        && !constructedClass.isValue
-                        && hasMangledParameters()
-                        && !constructedClass.isAnonymousObject
-            }
+            return isOrShouldBeHiddenDueToOrigin && !DescriptorVisibilities.isPrivate(visibility)
+                    && !constructedClass.isValue && hasMangledParameters() && !constructedClass.isAnonymousObject
         }
 
     private val IrConstructor.isOrShouldBeHiddenAsSealedClassConstructor: Boolean
         get() {
             if (this in context.hiddenConstructorsOfSealedClasses.keys) return true
-            return isShouldBeHidden { visibility != DescriptorVisibilities.PUBLIC && constructedClass.modality == Modality.SEALED }
+            return isOrShouldBeHiddenDueToOrigin && visibility != DescriptorVisibilities.PUBLIC && constructedClass.modality == Modality.SEALED
         }
 
-    private fun IrConstructor.isShouldBeHidden(additionalCheck: (IrConstructor) -> Boolean): Boolean {
-        if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
-            origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-        ) {
-            return false
-        }
-        return additionalCheck(this)
-    }
+    private val IrConstructor.isOrShouldBeHiddenDueToOrigin: Boolean
+        get() = !(origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
+                origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
 
     private fun handleHiddenConstructorWithMangledParams(declaration: IrConstructor) =
         handleHiddenConstructor(declaration, context.hiddenConstructorsWithMangledParams)
