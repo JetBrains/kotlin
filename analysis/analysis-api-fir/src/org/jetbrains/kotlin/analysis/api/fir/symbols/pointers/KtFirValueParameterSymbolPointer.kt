@@ -26,7 +26,7 @@ internal class KtFirValueParameterSymbolPointer(
         }
 
         val function = ownerSymbol.firSymbol.fir as? FirFunction ?: return null
-        val firValueParameterSymbol = function.valueParameters.getOrNull(index)?.takeIf { it.name == name } ?: return null
-        return analysisSession.firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(firValueParameterSymbol.symbol)
+        val firValueParameterSymbol = function.valueParameters.getOrNull(index)?.symbol?.takeIf { it.name == name } ?: return null
+        return analysisSession.firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(firValueParameterSymbol)
     }
 }

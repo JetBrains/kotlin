@@ -107,6 +107,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("delegatedProp.kt")
+    public void testDelegatedProp() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/delegatedProp.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/deprecated.kt");
