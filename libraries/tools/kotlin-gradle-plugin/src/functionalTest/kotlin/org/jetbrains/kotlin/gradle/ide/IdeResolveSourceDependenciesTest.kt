@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.regularSourceDependency
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class IdeResolveSourceDependenciesTest {
@@ -97,7 +96,6 @@ class IdeResolveSourceDependenciesTest {
         )
     }
 
-    @Ignore("No solution yet")
     @Test
     fun `test - multiplatform to multiplatform - sample 1 - jvmAndAndroid`() {
         assumeAndroidSdkAvailable()
@@ -109,18 +107,19 @@ class IdeResolveSourceDependenciesTest {
             androidLibrary { compileSdk = 33 }
 
             multiplatformExtension.apply {
-                targetHierarchy.default {
-                    common {
-                        group("jvmAndAndroid") {
-                            jvm()
-                            android()
-                        }
-                    }
-                }
+                targetHierarchy.default()
                 linuxX64()
                 linuxArm64()
                 jvm()
                 android()
+
+                sourceSets.getByName("commonMain").let { commonMain ->
+                    sourceSets.create("jvmAndAndroidMain").let { jvmAndAndroidMain ->
+                        jvmAndAndroidMain.dependsOn(commonMain)
+                        sourceSets.getByName("jvmMain").dependsOn(jvmAndAndroidMain)
+                        sourceSets.getByName("androidMain").dependsOn(jvmAndAndroidMain)
+                    }
+                }
             }
         }
 

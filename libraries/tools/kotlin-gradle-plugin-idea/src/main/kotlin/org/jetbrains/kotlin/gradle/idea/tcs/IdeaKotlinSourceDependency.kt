@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.gradle.idea.tcs
 
 import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.io.Serializable
 
 data class IdeaKotlinSourceDependency(
     val type: Type,
     override val coordinates: IdeaKotlinSourceCoordinates,
-    override val extras: MutableExtras
+    override val extras: MutableExtras = mutableExtrasOf()
 ) : IdeaKotlinDependency {
     enum class Type : Serializable {
         Regular, Friend, DependsOn;
