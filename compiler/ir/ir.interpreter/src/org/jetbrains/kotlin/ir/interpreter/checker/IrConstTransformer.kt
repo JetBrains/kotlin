@@ -119,14 +119,10 @@ class IrConstTransformer(
         if (elements.isEmpty()) return this
         val newIrVararg = IrVarargImpl(this.startOffset, this.endOffset, this.type, this.varargElementType)
         for (element in this.elements) {
-            when (element) {
-                is IrExpression -> newIrVararg.addElement(element.transformSingleArg(this.varargElementType))
-                is IrSpreadElement -> {
-                    when (val expression = element.expression) {
-                        is IrVararg -> expression.transformVarArg().elements.forEach { newIrVararg.addElement(it) }
-                        else -> newIrVararg.addElement(expression.transformSingleArg(this.varargElementType))
-                    }
-                }
+            when (val arg = (element as? IrSpreadElement)?.expression ?: element) {
+                is IrVararg -> arg.transformVarArg().elements.forEach { newIrVararg.addElement(it) }
+                is IrExpression -> newIrVararg.addElement(arg.transformSingleArg(this.varargElementType))
+                else -> newIrVararg.addElement(arg)
             }
         }
         return newIrVararg
