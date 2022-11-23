@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
-import com.google.common.collect.LinkedHashMultimap
-import com.google.common.collect.Multimap
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -21,10 +18,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer.Mode
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -33,7 +28,6 @@ import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
@@ -46,25 +40,9 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
 
     override fun process(files: Collection<FirFile>) {
         val transformer = FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession)
-        val registeredPluginAnnotations = session.registeredPluginAnnotations
-        if (!registeredPluginAnnotations.hasRegisteredAnnotations) {
-            files.forEach {
-                withFileAnalysisExceptionWrapping(it) {
-                    it.transformSingle(transformer, Mode.RegularAnnotations)
-                }
-            }
-            return
-        }
-        if (registeredPluginAnnotations.metaAnnotations.isNotEmpty()) {
-            files.forEach {
-                withFileAnalysisExceptionWrapping(it) {
-                    it.transformSingle(transformer, Mode.MetaAnnotations)
-                }
-            }
-        }
         files.forEach {
             withFileAnalysisExceptionWrapping(it) {
-                it.transformSingle(transformer, Mode.RegularAnnotations)
+                it.transformSingle(transformer, null)
             }
         }
     }
@@ -83,42 +61,21 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
 open class FirCompilerRequiredAnnotationsResolveTransformer(
     final override val session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractPhaseTransformer<Mode>(COMPILER_REQUIRED_ANNOTATIONS) {
-    enum class Mode {
-        MetaAnnotations,
-        RegularAnnotations
-    }
-
+) : FirAbstractPhaseTransformer<Nothing?>(COMPILER_REQUIRED_ANNOTATIONS) {
     private val annotationTransformer = FirAnnotationResolveTransformer(session, scopeSession)
     private val importTransformer = FirPartialImportResolveTransformer(session)
 
     val extensionService = session.extensionService
-    override fun <E : FirElement> transformElement(element: E, data: Mode): E {
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         throw IllegalStateException("Should not be here")
     }
 
-    override fun transformFile(file: FirFile, data: Mode): FirFile {
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         checkSessionConsistency(file)
         val registeredPluginAnnotations = session.registeredPluginAnnotations
-        val regularAnnotations: Set<AnnotationFqn>
-        val metaAnnotations: Set<AnnotationFqn>
-        when (data) {
-            Mode.MetaAnnotations -> {
-                regularAnnotations = emptySet()
-                metaAnnotations = registeredPluginAnnotations.metaAnnotations
-            }
-            Mode.RegularAnnotations -> {
-                regularAnnotations = registeredPluginAnnotations.annotations
-                metaAnnotations = emptySet()
-            }
-        }
+        val regularAnnotations = registeredPluginAnnotations.annotations
 
-        val newAnnotations = file.resolveAnnotations(regularAnnotations, metaAnnotations)
-        if (!newAnnotations.isEmpty) {
-            for (metaAnnotation in newAnnotations.keySet()) {
-                registeredPluginAnnotations.registerUserDefinedAnnotation(metaAnnotation, newAnnotations[metaAnnotation])
-            }
-        }
+        file.resolveAnnotations(regularAnnotations)
         return file
     }
 
@@ -128,27 +85,21 @@ open class FirCompilerRequiredAnnotationsResolveTransformer(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Mode): FirStatement {
-        return annotationTransformer.transformRegularClass(regularClass, LinkedHashMultimap.create())
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
+        return annotationTransformer.transformRegularClass(regularClass, null)
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Mode): FirStatement {
-        return annotationTransformer.transformTypeAlias(typeAlias, LinkedHashMultimap.create())
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirStatement {
+        return annotationTransformer.transformTypeAlias(typeAlias, null)
     }
 
-    private fun FirFile.resolveAnnotations(
-        annotations: Set<AnnotationFqn>,
-        metaAnnotations: Set<AnnotationFqn>
-    ): Multimap<AnnotationFqn, FirRegularClass> {
-        val acceptableNames = annotations + metaAnnotations
+    private fun FirFile.resolveAnnotations(annotations: Set<AnnotationFqn>) {
+        val acceptableNames = annotations
         importTransformer.acceptableFqNames = acceptableNames
         this.transformImports(importTransformer, null)
 
         annotationTransformer.acceptableFqNames = acceptableNames
-        annotationTransformer.metaAnnotations = metaAnnotations
-        val newAnnotations = LinkedHashMultimap.create<AnnotationFqn, FirRegularClass>()
-        this.transform<FirFile, Multimap<AnnotationFqn, FirRegularClass>>(annotationTransformer, newAnnotations)
-        return newAnnotations
+        this.transform<FirFile, Nothing?>(annotationTransformer, null)
     }
 }
 
@@ -164,9 +115,7 @@ private class FirPartialImportResolveTransformer(
 private class FirAnnotationResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>, PersistentList<FirDeclaration>>(
-    session, scopeSession
-) {
+) : FirAbstractAnnotationResolveTransformer<Nothing?, PersistentList<FirDeclaration>>(session, scopeSession) {
     companion object {
         private val REQUIRED_ANNOTATIONS: Set<ClassId> = setOf(
             Deprecated, DeprecatedSinceKotlin, WasExperimental, JvmRecord
@@ -178,7 +127,7 @@ private class FirAnnotationResolveTransformer(
     private val predicateBasedProvider = session.predicateBasedProvider
 
     var acceptableFqNames: Set<AnnotationFqn> = emptySet()
-    var metaAnnotations: Set<AnnotationFqn> = emptySet()
+
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
         session,
         errorTypeAsResolved = false
@@ -200,14 +149,11 @@ private class FirAnnotationResolveTransformer(
         owners = state
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Multimap<AnnotationFqn, FirRegularClass>): FirStatement {
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): FirStatement {
         return transformAnnotation(annotationCall, data)
     }
 
-    override fun transformAnnotation(
-        annotation: FirAnnotation,
-        data: Multimap<AnnotationFqn, FirRegularClass>
-    ): FirStatement {
+    override fun transformAnnotation(annotation: FirAnnotation, data: Nothing?): FirStatement {
         val annotationTypeRef = annotation.annotationTypeRef
         if (annotationTypeRef !is FirUserTypeRef) return annotation
         val name = annotationTypeRef.qualifier.last().name
@@ -224,36 +170,27 @@ private class FirAnnotationResolveTransformer(
         return transformedAnnotation
     }
 
-    override fun transformRegularClass(
-        regularClass: FirRegularClass,
-        data: Multimap<AnnotationFqn, FirRegularClass>
-    ): FirStatement {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
         withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
             return super.transformRegularClass(regularClass, data).also {
-                if (regularClass.classKind == ClassKind.ANNOTATION_CLASS && metaAnnotations.isNotEmpty()) {
-                    val annotations = regularClass.annotations.mapNotNull { it.fqName(session) }
-                    for (annotation in annotations.filter { it in metaAnnotations }) {
-                        data.put(annotation, regularClass)
-                    }
-                }
                 calculateDeprecations(regularClass)
             }
         }
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Multimap<AnnotationFqn, FirRegularClass>): FirTypeAlias {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirTypeAlias {
         return super.transformTypeAlias(typeAlias, data).also {
             calculateDeprecations(typeAlias)
         }
     }
 
-    override fun transformDeclaration(declaration: FirDeclaration, data: Multimap<AnnotationFqn, FirRegularClass>): FirDeclaration {
+    override fun transformDeclaration(declaration: FirDeclaration, data: Nothing?): FirDeclaration {
         return super.transformDeclaration(declaration, data).also {
             predicateBasedProvider.registerAnnotatedDeclaration(declaration, owners)
         }
     }
 
-    override fun transformFile(file: FirFile, data: Multimap<AnnotationFqn, FirRegularClass>): FirFile {
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         withFile(file) {
             return super.transformFile(file, data)
         }

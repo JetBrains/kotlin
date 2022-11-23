@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.annotatedOrUnder
-import org.jetbrains.kotlin.fir.extensions.predicate.metaAnnotatedOrUnder
-import org.jetbrains.kotlin.fir.extensions.predicate.or
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.name.FqName
@@ -22,7 +19,9 @@ import org.jetbrains.kotlin.name.FqName
 class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
     companion object {
         private val ALL_OPEN = FqName("org.jetbrains.kotlin.fir.plugin.AllOpen")
-        private val PREDICATE: DeclarationPredicate = annotatedOrUnder(ALL_OPEN) or metaAnnotatedOrUnder(ALL_OPEN)
+        private val PREDICATE = DeclarationPredicate.create {
+            annotatedOrUnder(ALL_OPEN) or metaAnnotated(ALL_OPEN)
+        }
     }
 
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {

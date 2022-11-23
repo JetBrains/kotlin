@@ -24,7 +24,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         if (!designationIterator.hasNext()) {
             val declaration = designation.declaration
             if (declaration is FirRegularClass || declaration is FirTypeAlias) {
-                declaration.transform<FirDeclaration, Mode>(this, Mode.RegularAnnotations)
+                declaration.transform<FirDeclaration, Nothing?>(this, null)
             }
             return
         }
@@ -63,5 +63,4 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         // todo add proper check that COMPILER_REQUIRED_ANNOTATIONS are resolved
 //        checkNestedDeclarationsAreResolved(declaration)
     }
-
 }

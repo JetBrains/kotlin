@@ -250,12 +250,6 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return listOf(copy.symbol)
     }
 
-    // FIXME: it seems that this list will always be used, why not provide it automatically?
-    private val matchedClasses by lazy {
-        session.predicateBasedProvider.getSymbolsByPredicate(FirSerializationPredicates.annotatedWithSerializableOrMeta)
-            .filterIsInstance<FirRegularClassSymbol>()
-    }
-
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val owner = context.owner
         val defaultObjectConstructor = buildPrimaryConstructor(
@@ -291,10 +285,15 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return listOf(defaultObjectConstructor.symbol)
     }
 
-    fun addSerializerImplClass(
-        classId: ClassId
-    ): FirClassLikeSymbol<*>? {
-        val owner = matchedClasses.firstOrNull { it.classId == classId.outerClassId } ?: return null
+    private fun getClassWithAnnotatedWithSerializableOrMeta(classId: ClassId?): FirRegularClassSymbol? {
+        if (classId == null) return null
+        return (session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol)?.takeIf {
+            session.predicateBasedProvider.matches(FirSerializationPredicates.annotatedWithSerializableOrMeta, it)
+        }
+    }
+
+    fun addSerializerImplClass(classId: ClassId): FirClassLikeSymbol<*>? {
+        val owner = getClassWithAnnotatedWithSerializableOrMeta(classId.outerClassId) ?: return null
         val hasTypeParams = owner.typeParameterSymbols.isNotEmpty()
         val serializerKind = if (hasTypeParams) ClassKind.CLASS else ClassKind.OBJECT
         val serializerFirClass = buildRegularClass {
@@ -332,7 +331,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
     fun generateCompanionDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
         if (classId.shortClassName != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) return null
-        val owner = matchedClasses.firstOrNull { it.classId == classId.outerClassId } ?: return null
+        val owner = getClassWithAnnotatedWithSerializableOrMeta(classId.outerClassId) ?: return null
         if (owner.companionObjectSymbol != null) return null
         val regularClass = buildRegularClass {
             moduleData = session.moduleData

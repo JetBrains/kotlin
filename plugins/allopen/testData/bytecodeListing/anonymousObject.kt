@@ -1,6 +1,6 @@
-// IGNORE_BACKEND_K2: JVM_IR
 //   FIR version does not go inside bodies
 //   Also it's quiestionable do we even need to transform local classes and anonymous objects
+
 annotation class AllOpen
 
 @AllOpen

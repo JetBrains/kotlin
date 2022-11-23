@@ -1,102 +1,103 @@
+Module: lib
 @java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class AllOpen {
-    // source: 'metaAnnotation.kt'
+    // source: 'module_lib_metaAnnotation_differentModules.kt'
 }
 
 @OtherComponent
 @java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class AnotherComponent {
-    // source: 'metaAnnotation.kt'
-}
-
-@Documented
-@kotlin.Metadata
-public final class ClassWithDocumented {
-    // source: 'metaAnnotation.kt'
-    public method <init>(): void
+    // source: 'module_lib_metaAnnotation_differentModules.kt'
 }
 
 @java.lang.annotation.Documented
 @java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class Documented {
-    // source: 'metaAnnotation.kt'
+    // source: 'module_lib_metaAnnotation_differentModules.kt'
 }
 
 @AllOpen
 @java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class MyComponent {
-    // source: 'metaAnnotation.kt'
-}
-
-@MyComponent
-@kotlin.Metadata
-public abstract class MyComponentBase {
-    // source: 'metaAnnotation.kt'
-    public method <init>(): void
-}
-
-@kotlin.Metadata
-public final class MyComponentImpl2_ShouldBeFinal {
-    // source: 'metaAnnotation.kt'
-    public method <init>(): void
-    public method method(): void
-}
-
-@kotlin.Metadata
-public class MyComponentImpl3_ShouldBeOpen {
-    // source: 'metaAnnotation.kt'
-    public method <init>(): void
-    public final method method_ShouldBeFinal(): void
-}
-
-@kotlin.Metadata
-public class MyComponentImpl_ShouldBeOpen {
-    // source: 'metaAnnotation.kt'
-    public method <init>(): void
-    public method method(): void
+    // source: 'module_lib_metaAnnotation_differentModules.kt'
 }
 
 @MyComponent
 @java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class OtherComponent {
-    // source: 'metaAnnotation.kt'
+    // source: 'module_lib_metaAnnotation_differentModules.kt'
+}
+Module: main
+@Documented
+@kotlin.Metadata
+public final class ClassWithDocumented {
+    // source: 'module_main_metaAnnotation_differentModules.kt'
+    public method <init>(): void
+}
+
+@MyComponent
+@kotlin.Metadata
+public abstract class MyComponentBase {
+    // source: 'module_main_metaAnnotation_differentModules.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class MyComponentImpl2_ShouldBeFinal {
+    // source: 'module_main_metaAnnotation_differentModules.kt'
+    public method <init>(): void
+    public method method(): void
+}
+
+@kotlin.Metadata
+public class MyComponentImpl3_ShouldBeOpen {
+    // source: 'module_main_metaAnnotation_differentModules.kt'
+    public method <init>(): void
+    public final method method_ShouldBeFinal(): void
+}
+
+@kotlin.Metadata
+public class MyComponentImpl_ShouldBeOpen {
+    // source: 'module_main_metaAnnotation_differentModules.kt'
+    public method <init>(): void
+    public method method(): void
 }
 
 @AllOpen
 @kotlin.Metadata
 public class TestAllOpen_ShouldBeOpen {
-    // source: 'metaAnnotation.kt'
+    // source: 'module_main_metaAnnotation_differentModules.kt'
     public method <init>(): void
 }
 
 @AnotherComponent
 @kotlin.Metadata
 public class TestAnotherComponent_ShouldBeOpen {
-    // source: 'metaAnnotation.kt'
+    // source: 'module_main_metaAnnotation_differentModules.kt'
     public method <init>(): void
 }
 
 @MyComponent
 @kotlin.Metadata
 public class TestMyComponent_ShouldBeOpen {
-    // source: 'metaAnnotation.kt'
+    // source: 'module_main_metaAnnotation_differentModules.kt'
     public method <init>(): void
 }
 
 @OtherComponent
 @kotlin.Metadata
 public class TestOtherComponent_ShouldBeOpen {
-    // source: 'metaAnnotation.kt'
+    // source: 'module_main_metaAnnotation_differentModules.kt'
     public method <init>(): void
 }
 
 @kotlin.Metadata
 public final class TestWithoutAnnotations_ShouldBeFinal {
-    // source: 'metaAnnotation.kt'
+    // source: 'module_main_metaAnnotation_differentModules.kt'
     public method <init>(): void
 }

@@ -95,7 +95,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
                 )
             )
 
-            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider())
+            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))

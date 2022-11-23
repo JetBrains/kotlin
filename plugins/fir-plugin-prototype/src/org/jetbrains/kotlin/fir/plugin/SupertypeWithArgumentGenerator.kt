@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.buildUserTypeFromQualifierParts
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -32,7 +30,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
     companion object {
         private val supertypeClassId = ClassId(FqName("foo"), Name.identifier("InterfaceWithArgument"))
         private val annotationClassId = ClassId.topLevel("SupertypeWithTypeArgument".fqn())
-        private val PREDICATE: DeclarationPredicate = annotated(annotationClassId.asSingleFqName())
+        private val PREDICATE = DeclarationPredicate.create { annotated(annotationClassId.asSingleFqName()) }
 
     }
 

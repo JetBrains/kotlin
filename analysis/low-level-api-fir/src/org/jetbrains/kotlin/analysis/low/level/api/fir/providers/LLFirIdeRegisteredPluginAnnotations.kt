@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.extensions.AbstractFirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 import org.jetbrains.kotlin.name.ClassId
@@ -26,24 +25,13 @@ internal class LLFirIdeRegisteredPluginAnnotations(
         get() = allAnnotationsCache.getValue()
 
     private val allAnnotationsCache: FirLazyValue<Set<AnnotationFqn>, Nothing?> = session.firCachesFactory.createLazyValue {
-        // at this point, both metaAnnotations and annotationsFromPlugins should be collected
-        val result = metaAnnotations.flatMapTo(mutableSetOf()) { getAnnotationsWithMetaAnnotation(it) }
-
-        if (result.isEmpty()) {
-            annotationsFromPlugins
-        } else {
-            result += annotationsFromPlugins
-            result
-        }
+        // at this point, annotationsFromPlugins should be collected
+        annotationsFromPlugins
     }
 
     // MetaAnnotation -> Annotations
     private val annotationsWithMetaAnnotationCache: FirCache<AnnotationFqn, Set<AnnotationFqn>, Nothing?> =
         session.firCachesFactory.createCache { metaAnnotation -> collectAnnotationsWithMetaAnnotation(metaAnnotation) }
-
-    override fun getAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Collection<AnnotationFqn> {
-        return annotationsWithMetaAnnotationCache.getValue(metaAnnotation)
-    }
 
     private fun collectAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Set<FqName> {
         val annotatedDeclarations = annotationsResolver.declarationsByAnnotation(ClassId.topLevel(metaAnnotation))
@@ -58,9 +46,5 @@ internal class LLFirIdeRegisteredPluginAnnotations(
 
     override fun saveAnnotationsFromPlugin(annotations: Collection<AnnotationFqn>) {
         annotationsFromPlugins += annotations
-    }
-
-    override fun registerUserDefinedAnnotation(metaAnnotation: AnnotationFqn, annotationClasses: Collection<FirRegularClass>) {
-        error("This method should never be called in IDE mode")
     }
 }

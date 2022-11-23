@@ -56,9 +56,15 @@ public class FirBytecodeListingTestForAllOpenGenerated extends AbstractFirByteco
     }
 
     @Test
-    @TestMetadata("metaAnnotation.kt")
-    public void testMetaAnnotation() throws Exception {
-        runTest("plugins/allopen/testData/bytecodeListing/metaAnnotation.kt");
+    @TestMetadata("metaAnnotation_differentModules.kt")
+    public void testMetaAnnotation_differentModules() throws Exception {
+        runTest("plugins/allopen/testData/bytecodeListing/metaAnnotation_differentModules.kt");
+    }
+
+    @Test
+    @TestMetadata("metaAnnotation_sameModule.kt")
+    public void testMetaAnnotation_sameModule() throws Exception {
+        runTest("plugins/allopen/testData/bytecodeListing/metaAnnotation_sameModule.kt");
     }
 
     @Test

@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.fir.extensions.predicate.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 
 object FirSerializationPredicates {
-    internal val serializerFor: DeclarationPredicate =
-        AnnotatedWith(setOf(SerializationAnnotations.serializerAnnotationFqName)) // @Serializer(for=...)
-    internal val generatedSerializer: DeclarationPredicate =
-        ancestorAnnotated(SerializationAnnotations.serializableAnnotationFqName) // @Serializable X.$serializer
-    internal val hasMetaAnnotation = metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName)
-    internal val annotatedWithSerializableOrMeta =
-        AnnotatedWith(setOf(SerializationAnnotations.serializableAnnotationFqName)) or metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName)
+    internal val serializerFor = DeclarationPredicate.create {
+        annotated(setOf(SerializationAnnotations.serializerAnnotationFqName)) // @Serializer(for=...)
+    }
+    internal val hasMetaAnnotation = DeclarationPredicate.create {
+        metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName)
+    }
+    internal val annotatedWithSerializableOrMeta = DeclarationPredicate.create {
+        annotated(setOf(SerializationAnnotations.serializableAnnotationFqName)) or metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName)
+    }
 }

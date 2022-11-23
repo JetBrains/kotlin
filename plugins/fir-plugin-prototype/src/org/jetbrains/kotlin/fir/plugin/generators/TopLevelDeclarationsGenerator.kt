@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.annotated
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.name.Name
  */
 class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val PREDICATE: DeclarationPredicate = annotated("DummyFunction".fqn())
+        private val PREDICATE = LookupPredicate.create { annotated("DummyFunction".fqn()) }
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider

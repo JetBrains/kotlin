@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.plugin.generators
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.annotated
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
@@ -40,7 +39,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         private val MATERIALIZE_NAME = Name.identifier("materialize")
         private val NESTED_NAME = Name.identifier("Nested")
 
-        private val PREDICATE: DeclarationPredicate = annotated("NestedClassAndMaterializeMember".fqn())
+        private val PREDICATE = LookupPredicate.create { annotated("NestedClassAndMaterializeMember".fqn()) }
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider

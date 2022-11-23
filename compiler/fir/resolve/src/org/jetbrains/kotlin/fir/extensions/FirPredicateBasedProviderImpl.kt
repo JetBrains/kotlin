@@ -12,17 +12,23 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.extensions.predicate.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolve.getCorrespondingClassSymbolOrNull
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 @NoMutableState
 class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
     private val registeredPluginAnnotations = session.registeredPluginAnnotations
     private val cache = Cache()
 
-    override fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>> {
-        val annotations = registeredPluginAnnotations.getAnnotationsForPredicate(predicate)
+    override fun getSymbolsByPredicate(predicate: LookupPredicate): List<FirBasedSymbol<*>> {
+        val annotations = predicate.annotations
         if (annotations.isEmpty()) return emptyList()
         val declarations = annotations.flatMapTo(mutableSetOf()) {
             cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it]
@@ -76,65 +82,74 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
 
     // ---------------------------------- Matching ----------------------------------
 
-    override fun matches(predicate: DeclarationPredicate, declaration: FirDeclaration): Boolean {
-        return predicate.accept(matcher, declaration)
+    override fun matches(predicate: AbstractPredicate<*>, declaration: FirDeclaration): Boolean {
+        return when (predicate) {
+            is DeclarationPredicate -> predicate.accept(declarationPredicateMatcher, declaration)
+            is LookupPredicate -> predicate.accept(lookupPredicateMatcher, declaration)
+        }
     }
 
-    private val matcher = Matcher()
+    private val declarationPredicateMatcher = Matcher<DeclarationPredicate>()
+    private val lookupPredicateMatcher = Matcher<LookupPredicate>()
 
-    private inner class Matcher : DeclarationPredicateVisitor<Boolean, FirDeclaration>() {
-        override fun visitPredicate(predicate: DeclarationPredicate, data: FirDeclaration): Boolean {
+    private inner class Matcher<P : AbstractPredicate<P>> : PredicateVisitor<P, Boolean, FirDeclaration>() {
+        override fun visitPredicate(predicate: AbstractPredicate<P>, data: FirDeclaration): Boolean {
             throw IllegalStateException("Should not be there")
         }
 
-        override fun visitAnd(predicate: DeclarationPredicate.And, data: FirDeclaration): Boolean {
+        override fun visitAnd(predicate: AbstractPredicate.And<P>, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) && predicate.b.accept(this, data)
         }
 
-        override fun visitOr(predicate: DeclarationPredicate.Or, data: FirDeclaration): Boolean {
+        override fun visitOr(predicate: AbstractPredicate.Or<P>, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) || predicate.b.accept(this, data)
         }
 
         // ------------------------------------ Annotated ------------------------------------
 
-        override fun visitAnnotatedWith(predicate: AnnotatedWith, data: FirDeclaration): Boolean {
+        override fun visitAnnotatedWith(predicate: AbstractPredicate.AnnotatedWith<P>, data: FirDeclaration): Boolean {
             return matchWith(data, predicate.annotations)
         }
 
-        override fun visitAncestorAnnotatedWith(predicate: AncestorAnnotatedWith, data: FirDeclaration): Boolean {
+        override fun visitAncestorAnnotatedWith(
+            predicate: AbstractPredicate.AncestorAnnotatedWith<P>,
+            data: FirDeclaration
+        ): Boolean {
             return matchUnder(data, predicate.annotations)
         }
 
-        override fun visitParentAnnotatedWith(predicate: ParentAnnotatedWith, data: FirDeclaration): Boolean {
+        override fun visitParentAnnotatedWith(
+            predicate: AbstractPredicate.ParentAnnotatedWith<P>,
+            data: FirDeclaration
+        ): Boolean {
             return matchParentWith(data, predicate.annotations)
         }
 
-        override fun visitHasAnnotatedWith(predicate: HasAnnotatedWith, data: FirDeclaration): Boolean {
+        override fun visitHasAnnotatedWith(predicate: AbstractPredicate.HasAnnotatedWith<P>, data: FirDeclaration): Boolean {
             return matchHasAnnotatedWith(data, predicate.annotations)
         }
 
-        // ------------------------------------ Meta Annotated ------------------------------------
+        // ------------------------------------ Meta-annotated ------------------------------------
 
-        override fun visitMetaAnnotatedWith(predicate: MetaAnnotatedWith, data: FirDeclaration): Boolean {
-            return matchWith(data, predicate.userDefinedAnnotations)
+        override fun visitMetaAnnotatedWith(predicate: AbstractPredicate.MetaAnnotatedWith<P>, data: FirDeclaration): Boolean {
+            val visited = mutableSetOf<FirRegularClassSymbol>()
+            return data.annotations.any { annotation ->
+                annotation.markedWithMetaAnnotation(predicate.metaAnnotations, visited)
+            }
         }
 
-        override fun visitAncestorMetaAnnotatedWith(predicate: AncestorMetaAnnotatedWith, data: FirDeclaration): Boolean {
-            return matchUnder(data, predicate.userDefinedAnnotations)
-        }
-
-        override fun visitParentMetaAnnotatedWith(predicate: ParentMetaAnnotatedWith, data: FirDeclaration): Boolean {
-            return matchParentWith(data, predicate.userDefinedAnnotations)
-        }
-
-        override fun visitHasMetaAnnotatedWith(predicate: HasMetaAnnotatedWith, data: FirDeclaration): Boolean {
-            return matchHasAnnotatedWith(data, predicate.userDefinedAnnotations)
+        private fun FirAnnotation.markedWithMetaAnnotation(
+            metaAnnotations: Set<AnnotationFqn>,
+            visited: MutableSet<FirRegularClassSymbol>
+        ): Boolean {
+            val symbol = this.getCorrespondingClassSymbolOrNull(session) ?: return false
+            if (!visited.add(symbol)) return false
+            if (symbol.classId.asSingleFqName() in metaAnnotations) return true
+            if (symbol.resolvedAnnotationsWithClassIds.any { it.markedWithMetaAnnotation(metaAnnotations, visited) }) return true
+            return false
         }
 
         // ------------------------------------ Utilities ------------------------------------
-
-        private val MetaAnnotated.userDefinedAnnotations: Set<AnnotationFqn>
-            get() = metaAnnotations.flatMapTo(mutableSetOf()) { registeredPluginAnnotations.getAnnotationsWithMetaAnnotation(it) }
 
         private fun matchWith(declaration: FirDeclaration, annotations: Set<AnnotationFqn>): Boolean {
             return cache.annotationsOfDeclaration[declaration].any { it in annotations }

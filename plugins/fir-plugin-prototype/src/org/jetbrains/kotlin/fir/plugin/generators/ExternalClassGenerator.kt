@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.annotated
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
@@ -43,7 +42,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         private val GENERATED_CLASS_ID = ClassId(FOO_PACKAGE, Name.identifier("AllOpenGenerated"))
         private val MATERIALIZE_NAME = Name.identifier("materialize")
 
-        private val PREDICATE: DeclarationPredicate = annotated("ExternalClassWithNested".fqn())
+        private val PREDICATE = LookupPredicate.create { annotated("ExternalClassWithNested".fqn()) }
     }
 
     object Key : GeneratedDeclarationKey() {

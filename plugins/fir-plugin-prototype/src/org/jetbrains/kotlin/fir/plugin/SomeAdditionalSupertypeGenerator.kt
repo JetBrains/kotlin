@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExtension(session) {
     companion object {
         private val myInterfaceClassId = ClassId(FqName("foo"), Name.identifier("MyInterface"))
-        private val PREDICATE: DeclarationPredicate = annotated("MyInterfaceSupertype".fqn())
+        private val PREDICATE = DeclarationPredicate.create { annotated("MyInterfaceSupertype".fqn()) }
 
     }
 

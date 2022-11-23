@@ -9,7 +9,7 @@ class A {
 
 @Open
 class B : A() {
-    override fun foo() {
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun foo() {
 
     }
 }

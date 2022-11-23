@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.predicate.annotated
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.name.Name
  */
 class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val SERIALIZABLE_PREDICATE = annotated("MySerializable".fqn())
-        private val CORE_SERIALIZER_PREDICATE = annotated("CoreSerializer".fqn())
+        private val SERIALIZABLE_PREDICATE = LookupPredicate.create { annotated("MySerializable".fqn()) }
+        private val CORE_SERIALIZER_PREDICATE = LookupPredicate.create { annotated("CoreSerializer".fqn()) }
 
         private val X_NAME = Name.identifier("x")
     }
