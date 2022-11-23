@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
-import org.jetbrains.kotlin.gradle.utils.canonicalPathWithoutExtension
+import org.jetbrains.kotlin.gradle.utils.absolutePathWithoutExtension
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
@@ -160,7 +160,7 @@ abstract class KotlinJsDce @Inject constructor(
             return false
         }
 
-        return File("${file.canonicalPathWithoutExtension()}.meta.js").exists()
+        return File("${file.absolutePathWithoutExtension()}.meta.js").exists()
     }
 
     companion object {

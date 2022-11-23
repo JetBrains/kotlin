@@ -33,7 +33,7 @@ class FilesSubpluginOption(
     key: String,
     val files: Iterable<File>,
     val kind: FilesOptionKind = FilesOptionKind.INTERNAL,
-    lazyValue: Lazy<String> = lazy { files.joinToString(File.pathSeparator) { it.canonicalPath } }
+    lazyValue: Lazy<String> = lazy { files.joinToString(File.pathSeparator) { it.normalize().absolutePath } }
 ) : SubpluginOption(key, lazyValue) {
 
     constructor(
@@ -41,7 +41,7 @@ class FilesSubpluginOption(
         files: List<File>,
         kind: FilesOptionKind = FilesOptionKind.INTERNAL,
         value: String? = null
-    ) : this(key, files, kind, lazy { value ?: files.joinToString(File.pathSeparator) { it.canonicalPath } })
+    ) : this(key, files, kind, lazy { value ?: files.joinToString(File.pathSeparator) { it.normalize().absolutePath } })
 }
 
 class CompositeSubpluginOption(
