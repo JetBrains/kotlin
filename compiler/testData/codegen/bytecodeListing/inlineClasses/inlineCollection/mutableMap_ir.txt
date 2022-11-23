@@ -32,7 +32,7 @@ public final class InlineMutableMap {
     public method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public static method put-impl(p0: java.util.Map, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public method putAll(p0: java.util.Map): void
-    public static method putAll-impl(p0: InlineMutableMap, p1: java.util.Map): void
+    public static method putAll-impl(p0: java.util.Map, p1: java.util.Map): void
     public method remove(p0: java.lang.Object): java.lang.Object
     public static method remove-impl(p0: java.util.Map, p1: java.lang.Object): java.lang.Object
     public synthetic bridge method size(): int
