@@ -1,0 +1,55 @@
+FILE: inlineLambdasAreInplace.kt
+    public final inline fun callsInPlaceInline(x: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        ^callsInPlaceInline R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final inline fun <T> any(x: R|T|): R|T| {
+        ^any R|<local>/x|
+    }
+    public final inline fun noinline(noinline x: R|() -> kotlin/Unit|): R|() -> kotlin/Unit| {
+        ^noinline R|<local>/x|
+    }
+    public final inline fun crossinline(crossinline x: R|() -> kotlin/Unit|): R|() -> kotlin/Unit| {
+        ^crossinline fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        }
+
+    }
+    public final fun testInline(): R|kotlin/Unit| {
+        lvar x: R|kotlin/String?| = Null(null)
+        R|/callsInPlaceInline|(<L> = callsInPlaceInline@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            R|<local>/x| = Null(null)
+        }
+        )
+        R|<local>/x| = String()
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun testGeneric(): R|kotlin/Unit| {
+        lvar x: R|kotlin/String?| = String()
+        lval lambda: R|() -> kotlin/Unit| = R|/any|<R|() -> kotlin/Unit|>(<L> = any@fun <anonymous>(): R|kotlin/Unit| <inline=Inline>  {
+            R|<local>/x| = Null(null)
+        }
+        )
+        R|<local>/x| = String()
+        R|<local>/lambda|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/x|.<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#
+    }
+    public final fun testNoinline(): R|kotlin/Unit| {
+        lvar x: R|kotlin/String?| = String()
+        lval lambda: R|() -> kotlin/Unit| = R|/noinline|(<L> = noinline@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/x| = Null(null)
+        }
+        )
+        R|<local>/x| = String()
+        R|<local>/lambda|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/x|.<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#
+    }
+    public final fun testCrossinline(): R|kotlin/Unit| {
+        lvar x: R|kotlin/String?| = String()
+        lval lambda: R|() -> kotlin/Unit| = R|/crossinline|(<L> = crossinline@fun <anonymous>(): R|kotlin/Unit| <inline=CrossInline>  {
+            R|<local>/x| = Null(null)
+        }
+        )
+        R|<local>/x| = String()
+        R|<local>/lambda|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/x|.<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#
+    }

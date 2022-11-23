@@ -43,14 +43,12 @@ digraph plusAssignWithLambdaInRhs_kt {
     7 -> {8 12 9} [style=dotted];
     7 -> {12} [style=dashed];
     8 -> {9} [style=dotted];
-    8 -> {7} [color=green style=dotted];
     9 -> {10} [style=dotted];
     10 -> {11} [style=dotted];
     12 -> {13} [style=dotted];
     13 -> {14} [style=dotted];
     14 -> {15} [style=dotted];
     15 -> {16} [style=dotted];
-    16 -> {8} [style=dotted];
 
     subgraph cluster_4 {
         color=red
@@ -120,7 +118,7 @@ digraph plusAssignWithLambdaInRhs_kt {
             31 [label="Postponed exit from lambda"];
             32 [label="Function call: R|/A.A|<R|T|>(...)" style="filled" fillcolor=yellow];
             33 [label="Jump: ^postpone R|/A.A|<R|T|>(<L> = A@fun <anonymous>(resolve: R|(T) -> kotlin/Unit|): R|kotlin/Unit| <inline=NoInline>  {
-    R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(A@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+    R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(A@fun <anonymous>(): R|kotlin/Unit| <inline=Inline>  {
         R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
     }
     )
@@ -149,7 +147,6 @@ digraph plusAssignWithLambdaInRhs_kt {
     40 -> {41 45 42};
     40 -> {45} [style=dashed];
     41 -> {42};
-    41 -> {40} [color=green style=dashed];
     42 -> {43};
     43 -> {44};
     45 -> {46};
@@ -157,6 +154,5 @@ digraph plusAssignWithLambdaInRhs_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    50 -> {41};
 
 }

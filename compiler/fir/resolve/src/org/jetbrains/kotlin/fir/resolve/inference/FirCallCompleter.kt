@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -24,11 +22,10 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -45,8 +42,6 @@ import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 class FirCallCompleter(
     private val transformer: FirAbstractBodyResolveTransformerDispatcher,
@@ -123,7 +118,9 @@ class FirCallCompleter(
         val completionMode = candidate.computeCompletionMode(session.inferenceComponents, expectedTypeRef, initialType)
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
-        call.transformSingle(InvocationKindTransformer, null)
+        if (call is FirFunctionCall) {
+            call.replaceLambdaArgumentInvocationKinds(session)
+        }
 
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {

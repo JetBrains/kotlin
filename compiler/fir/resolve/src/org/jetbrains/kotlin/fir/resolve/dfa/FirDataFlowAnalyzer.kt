@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -808,12 +809,6 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitResolvedQualifierNode(resolvedQualifier).mergeIncomingFlow()
     }
 
-    private tailrec fun FirExpression.getAnonymousFunction(): FirAnonymousFunction? = when (this) {
-        is FirAnonymousFunctionExpression -> anonymousFunction
-        is FirLambdaArgumentExpression -> expression.getAnonymousFunction()
-        else -> null
-    }
-
     private var functionCallLevel = 0
     private var resolvingAugmentedAssignmentOptions: Boolean = false
 
@@ -844,7 +839,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun enterFunctionCall(functionCall: FirFunctionCall) {
-        val lambdaArgs = functionCall.arguments.mapNotNullTo(mutableSetOf()) { it.getAnonymousFunction() }
+        val lambdaArgs = functionCall.arguments.mapNotNullTo(mutableSetOf()) { it.unwrapAnonymousFunctionExpression() }
         val localVariableAssignmentAnalyzer = context.firLocalVariableAssignmentAnalyzer
             ?: if (lambdaArgs.isNotEmpty()) getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first()) else null
         localVariableAssignmentAnalyzer?.enterFunctionCall(lambdaArgs, functionCallLevel)
