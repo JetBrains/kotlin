@@ -1,21 +1,26 @@
 internal fun publicToInternalTopLevelFunction() = "publicToInternalTopLevelFunction.v2"
+@PublishedApi internal fun publicToInternalPATopLevelFunction() = "publicToInternalPATopLevelFunction.v2"
 private fun publicToPrivateTopLevelFunction() = "publicToPrivateTopLevelFunction.v2"
 
 open class Container {
     protected fun publicToProtectedFunction() = "Container.publicToProtectedFunction.v2"
     internal fun publicToInternalFunction() = "Container.publicToInternalFunction.v2"
+    @PublishedApi internal fun publicToInternalPAFunction() = "Container.publicToInternalPAFunction.v2"
     private fun publicToPrivateFunction() = "Container.publicToPrivateFunction.v2"
 
     public fun protectedToPublicFunction() = "Container.protectedToPublicFunction.v2"
     internal fun protectedToInternalFunction() = "Container.protectedToInternalFunction.v2"
+    @PublishedApi internal fun protectedToInternalPAFunction() = "Container.protectedToInternalPAFunction.v2"
     private fun protectedToPrivateFunction() = "Container.protectedToPrivateFunction.v2"
 
     protected open fun publicToProtectedOverriddenFunction() = "Container.publicToProtectedOverriddenFunction.v2"
     internal open fun publicToInternalOverriddenFunction() = "Container.publicToInternalOverriddenFunction.v2"
+    @PublishedApi internal open fun publicToInternalPAOverriddenFunction() = "Container.publicToInternalPAOverriddenFunction.v2"
     private /*open*/ fun publicToPrivateOverriddenFunction() = "Container.publicToPrivateOverriddenFunction.v2"
 
     public open fun protectedToPublicOverriddenFunction() = "Container.protectedToPublicOverriddenFunction.v2"
     internal open fun protectedToInternalOverriddenFunction() = "Container.protectedToInternalOverriddenFunction.v2"
+    @PublishedApi internal open fun protectedToInternalPAOverriddenFunction() = "Container.protectedToInternalPAOverriddenFunction.v2"
     private /*open*/ fun protectedToPrivateOverriddenFunction() = "Container.protectedToPrivateOverriddenFunction.v2"
 
     public fun newPublicFunction() = "Container.newPublicFunction.v2"
@@ -24,5 +29,7 @@ open class Container {
     protected open fun newOpenProtectedFunction() = "Container.newOpenProtectedFunction.v2"
     internal fun newInternalFunction() = "Container.newInternalFunction.v2"
     internal open fun newOpenInternalFunction() = "Container.newOpenInternalFunction.v2"
+    @PublishedApi internal fun newInternalPAFunction() = "Container.newInternalPAFunction.v2"
+    @PublishedApi internal open fun newOpenInternalPAFunction() = "Container.newOpenInternalPAFunction.v2"
     private fun newPrivateFunction() = "Container.newPrivateFunction.v2"
 }
