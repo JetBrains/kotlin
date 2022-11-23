@@ -62,8 +62,8 @@ digraph initBlockAndInPlaceLambda_kt {
     9 -> {10};
     10 -> {11 15};
     11 -> {12};
-    12 -> {19};
-    12 -> {13} [color=red];
+    12 -> {19 14};
+    12 -> {13} [style=dotted];
     12 -> {19} [style=dashed];
     13 -> {14};
     14 -> {15};
@@ -77,8 +77,7 @@ digraph initBlockAndInPlaceLambda_kt {
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {14} [color=red];
-    25 -> {13} [color=green];
+    25 -> {13};
 
     subgraph cluster_7 {
         color=red

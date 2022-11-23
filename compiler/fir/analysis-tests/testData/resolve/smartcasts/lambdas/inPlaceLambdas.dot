@@ -87,8 +87,8 @@ digraph inPlaceLambdas_kt {
     15 -> {23};
     16 -> {17};
     17 -> {18};
-    18 -> {26};
-    18 -> {19} [color=red];
+    18 -> {26 20};
+    18 -> {19} [style=dotted];
     18 -> {26} [style=dashed];
     19 -> {20};
     20 -> {21};
@@ -102,8 +102,7 @@ digraph inPlaceLambdas_kt {
     29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {20} [color=red];
-    32 -> {19} [color=green];
+    32 -> {19};
 
     subgraph cluster_11 {
         color=red
@@ -135,8 +134,8 @@ digraph inPlaceLambdas_kt {
     }
     33 -> {34};
     34 -> {35};
-    35 -> {43};
-    35 -> {36} [color=red];
+    35 -> {43 37};
+    35 -> {36} [style=dotted];
     35 -> {43} [style=dashed];
     36 -> {37};
     37 -> {38};
@@ -149,8 +148,7 @@ digraph inPlaceLambdas_kt {
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {37} [color=red];
-    48 -> {36} [color=green];
+    48 -> {36};
 
     subgraph cluster_15 {
         color=red
@@ -214,8 +212,8 @@ digraph inPlaceLambdas_kt {
     56 -> {67};
     57 -> {58};
     58 -> {59};
-    59 -> {70};
-    59 -> {60} [color=red];
+    59 -> {70 61};
+    59 -> {60} [style=dotted];
     59 -> {70} [style=dashed];
     60 -> {61};
     61 -> {62};
@@ -235,7 +233,6 @@ digraph inPlaceLambdas_kt {
     76 -> {77};
     77 -> {78};
     78 -> {79};
-    79 -> {61} [color=red];
-    79 -> {60} [color=green];
+    79 -> {60};
 
 }

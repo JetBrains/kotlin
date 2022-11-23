@@ -227,7 +227,7 @@ digraph propertiesAndInitBlocks_kt {
         79 [label="Exit property" style="filled" fillcolor=red];
     }
     75 -> {76};
-    76 -> {77 24};
+    76 -> {77 24 78};
     76 -> {24} [style=dashed];
     77 -> {78};
     77 -> {76} [color=green style=dashed];

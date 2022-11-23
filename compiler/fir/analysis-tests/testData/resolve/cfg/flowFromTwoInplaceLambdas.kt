@@ -75,7 +75,7 @@ fun test5(x: Any?, q: String?) {
 fun test6() {
     val x: String
     // not necessarily initialized in second lambda (may call in any order)
-    run2({ x = ""; x.length }, { x.length })
+    run2({ x = ""; x.length }, { <!UNINITIALIZED_VARIABLE!>x<!>.length })
     x.length // initialized here
 }
 

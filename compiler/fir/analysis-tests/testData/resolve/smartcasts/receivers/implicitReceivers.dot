@@ -304,8 +304,8 @@ digraph implicitReceivers_kt {
     82 -> {83};
     83 -> {84};
     84 -> {85};
-    85 -> {90};
-    85 -> {86} [color=red];
+    85 -> {90 87};
+    85 -> {86} [style=dotted];
     85 -> {90} [style=dashed];
     86 -> {87};
     87 -> {88};
@@ -313,19 +313,19 @@ digraph implicitReceivers_kt {
     90 -> {91};
     91 -> {92};
     92 -> {93};
-    93 -> {98};
-    93 -> {94} [color=red];
+    93 -> {98 95};
+    93 -> {94} [style=dotted];
     93 -> {98} [style=dashed];
-    94 -> {95};
+    94 -> {87} [color=red];
+    94 -> {95} [color=green];
     95 -> {96};
     96 -> {97};
-    97 -> {87} [color=red];
-    97 -> {86} [color=green];
+    97 -> {86};
     98 -> {99};
     99 -> {100};
     100 -> {101};
-    101 -> {110};
-    101 -> {102} [color=red];
+    101 -> {110 103};
+    101 -> {102} [style=dotted];
     101 -> {110} [style=dashed];
     102 -> {103};
     103 -> {104};
@@ -334,7 +334,7 @@ digraph implicitReceivers_kt {
     106 -> {107};
     107 -> {108};
     108 -> {109};
-    109 -> {94} [color=green];
+    109 -> {94};
     110 -> {111};
     111 -> {112};
     112 -> {113};
@@ -344,8 +344,7 @@ digraph implicitReceivers_kt {
     116 -> {117};
     117 -> {118};
     118 -> {119};
-    119 -> {103} [color=red];
-    119 -> {102} [color=green];
+    119 -> {102};
 
     subgraph cluster_32 {
         color=red

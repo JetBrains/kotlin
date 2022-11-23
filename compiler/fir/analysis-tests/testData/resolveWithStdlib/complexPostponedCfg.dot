@@ -88,8 +88,8 @@ digraph complexPostponedCfg_kt {
     6 -> {7};
     7 -> {8};
     8 -> {9};
-    9 -> {18};
-    9 -> {10} [color=red];
+    9 -> {18 11};
+    9 -> {10} [style=dotted];
     9 -> {18} [style=dashed];
     10 -> {11};
     11 -> {12};
@@ -101,14 +101,14 @@ digraph complexPostponedCfg_kt {
     16 -> {17} [style=dotted];
     18 -> {19};
     19 -> {20};
-    20 -> {25};
-    20 -> {21} [color=red];
+    20 -> {22 25};
+    20 -> {21} [style=dotted];
     20 -> {25} [style=dashed];
-    21 -> {22};
+    21 -> {11} [color=red];
+    21 -> {22} [color=green];
     22 -> {23};
     23 -> {24};
-    24 -> {11} [color=red];
-    24 -> {10} [color=green];
+    24 -> {10};
     25 -> {26};
     26 -> {27};
     27 -> {28};
@@ -116,14 +116,13 @@ digraph complexPostponedCfg_kt {
     29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {37};
-    32 -> {33} [color=red];
+    32 -> {37 34};
+    32 -> {33} [style=dotted];
     32 -> {37} [style=dashed];
     33 -> {34};
     34 -> {35};
     35 -> {36};
-    36 -> {11} [color=red];
-    36 -> {21} [color=green];
+    36 -> {21};
     37 -> {38};
     38 -> {39};
     39 -> {40};
@@ -132,7 +131,6 @@ digraph complexPostponedCfg_kt {
     42 -> {43};
     43 -> {44};
     44 -> {45};
-    45 -> {34} [color=red];
-    45 -> {33} [color=green];
+    45 -> {33};
 
 }

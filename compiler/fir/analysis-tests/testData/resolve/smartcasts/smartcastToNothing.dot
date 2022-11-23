@@ -295,8 +295,8 @@ digraph smartcastToNothing_kt {
     91 -> {92};
     92 -> {93 97};
     93 -> {94};
-    94 -> {100};
-    94 -> {95} [color=red];
+    94 -> {100 96};
+    94 -> {95} [style=dotted];
     94 -> {100} [style=dashed];
     95 -> {96};
     96 -> {97};
@@ -307,8 +307,7 @@ digraph smartcastToNothing_kt {
     102 -> {103};
     103 -> {104};
     104 -> {105};
-    105 -> {96} [color=red];
-    105 -> {95} [color=green];
+    105 -> {95};
 
     subgraph cluster_26 {
         color=red
