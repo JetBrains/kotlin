@@ -1205,6 +1205,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/jsHelp.args");
         }
 
+        @TestMetadata("jsOldBackend.args")
+        public void testJsOldBackend() throws Exception {
+            runTest("compiler/testData/cli/js/jsOldBackend.args");
+        }
+
         @TestMetadata("kotlinHomeWithoutStdlib.args")
         public void testKotlinHomeWithoutStdlib() throws Exception {
             runTest("compiler/testData/cli/js/kotlinHomeWithoutStdlib.args");

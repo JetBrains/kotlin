@@ -182,6 +182,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return exitCode;
         }
 
+        LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
+
+        if (languageVersionSettings.getLanguageVersion().compareTo(LanguageVersion.KOTLIN_1_9) >= 0) {
+            messageCollector.report(ERROR, "Old Kotlin/JS compiler is no longer supported. Please migrate to the new JS IR backend", null);
+            return COMPILATION_ERROR;
+        }
+
         String deprecatedMessage = "==========\n" +
                                    "This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.\n" +
                                    "\n" +
