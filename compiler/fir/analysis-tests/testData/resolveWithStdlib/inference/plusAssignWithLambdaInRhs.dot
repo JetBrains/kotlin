@@ -40,7 +40,7 @@ digraph plusAssignWithLambdaInRhs_kt {
     4 -> {5} [style=dotted];
     5 -> {6} [style=dotted];
     6 -> {7} [style=dotted];
-    7 -> {8 12} [style=dotted];
+    7 -> {8 12 9} [style=dotted];
     7 -> {12} [style=dashed];
     8 -> {9} [style=dotted];
     8 -> {7} [color=green style=dotted];
@@ -135,7 +135,7 @@ digraph plusAssignWithLambdaInRhs_kt {
     27 -> {28};
     28 -> {29};
     29 -> {30};
-    30 -> {31 37};
+    30 -> {31 37 32};
     30 -> {37} [style=dashed];
     31 -> {32};
     32 -> {33};
@@ -146,7 +146,7 @@ digraph plusAssignWithLambdaInRhs_kt {
     37 -> {38};
     38 -> {39};
     39 -> {40};
-    40 -> {41 45};
+    40 -> {41 45 42};
     40 -> {45} [style=dashed];
     41 -> {42};
     41 -> {40} [color=green style=dashed];

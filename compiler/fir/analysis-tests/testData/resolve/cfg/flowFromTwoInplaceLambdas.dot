@@ -80,7 +80,6 @@ digraph flowFromTwoInplaceLambdas_kt {
                         }
                         45 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
-                    27 [label="Postponed exit from lambda"];
                     28 [label="Postponed enter to lambda"];
                     subgraph cluster_11 {
                         color=blue
@@ -97,6 +96,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                         53 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     29 [label="Postponed exit from lambda"];
+                    27 [label="Postponed exit from lambda"];
                     30 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
                     31 [label="Access variable R|<local>/p|"];
                     32 [label="Smart cast: R|<local>/p|"];
@@ -123,12 +123,12 @@ digraph flowFromTwoInplaceLambdas_kt {
     23 -> {36};
     24 -> {25};
     25 -> {26};
-    26 -> {39};
-    26 -> {27} [color=red];
+    26 -> {28 39};
+    26 -> {27} [style=dotted];
     26 -> {39} [style=dashed];
-    27 -> {28};
-    28 -> {46};
-    28 -> {29} [color=red];
+    27 -> {30};
+    28 -> {46 30};
+    28 -> {29} [style=dotted];
     28 -> {46} [style=dashed];
     29 -> {30};
     30 -> {31};
@@ -145,8 +145,7 @@ digraph flowFromTwoInplaceLambdas_kt {
     42 -> {43};
     43 -> {44};
     44 -> {45};
-    45 -> {30} [color=red];
-    45 -> {27} [color=green];
+    45 -> {27};
     46 -> {47};
     47 -> {48};
     48 -> {49};
@@ -154,8 +153,7 @@ digraph flowFromTwoInplaceLambdas_kt {
     50 -> {51};
     51 -> {52};
     52 -> {53};
-    53 -> {30} [color=red];
-    53 -> {29} [color=green];
+    53 -> {29};
 
     subgraph cluster_13 {
         color=red
@@ -196,7 +194,6 @@ digraph flowFromTwoInplaceLambdas_kt {
                         }
                         94 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
-                    68 [label="Postponed exit from lambda"];
                     69 [label="Postponed enter to lambda"];
                     subgraph cluster_20 {
                         color=blue
@@ -212,6 +209,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                         86 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     70 [label="Postponed exit from lambda"];
+                    68 [label="Postponed exit from lambda"];
                     71 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
                     72 [label="Access variable R|<local>/p|"];
                     73 [label="Smart cast: R|<local>/p|"];
@@ -238,12 +236,12 @@ digraph flowFromTwoInplaceLambdas_kt {
     64 -> {77};
     65 -> {66};
     66 -> {67};
-    67 -> {87};
-    67 -> {68} [color=red];
+    67 -> {69 87};
+    67 -> {68} [style=dotted];
     67 -> {87} [style=dashed];
-    68 -> {69};
-    69 -> {80};
-    69 -> {70} [color=red];
+    68 -> {71};
+    69 -> {80 71};
+    69 -> {70} [style=dotted];
     69 -> {80} [style=dashed];
     70 -> {71};
     71 -> {72};
@@ -260,8 +258,7 @@ digraph flowFromTwoInplaceLambdas_kt {
     83 -> {84};
     84 -> {85};
     85 -> {86};
-    86 -> {71} [color=red];
-    86 -> {70} [color=green];
+    86 -> {70};
     87 -> {88};
     88 -> {89};
     89 -> {90};
@@ -269,8 +266,7 @@ digraph flowFromTwoInplaceLambdas_kt {
     91 -> {92};
     92 -> {93};
     93 -> {94};
-    94 -> {71} [color=red];
-    94 -> {68} [color=green];
+    94 -> {68};
 
     subgraph cluster_22 {
         color=red
@@ -296,7 +292,6 @@ digraph flowFromTwoInplaceLambdas_kt {
                 }
                 122 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            102 [label="Postponed exit from lambda"];
             103 [label="Postponed enter to lambda"];
             subgraph cluster_26 {
                 color=blue
@@ -312,6 +307,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                 129 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             104 [label="Postponed exit from lambda"];
+            102 [label="Postponed exit from lambda"];
             105 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
             106 [label="Access variable R|<local>/p|"];
             107 [label="Smart cast: R|<local>/p|"];
@@ -331,12 +327,12 @@ digraph flowFromTwoInplaceLambdas_kt {
     98 -> {99};
     99 -> {100};
     100 -> {101};
-    101 -> {116};
-    101 -> {102} [color=red];
+    101 -> {103 116};
+    101 -> {102} [style=dotted];
     101 -> {116} [style=dashed];
-    102 -> {103};
-    103 -> {123};
-    103 -> {104} [color=red];
+    102 -> {105};
+    103 -> {123 105};
+    103 -> {104} [style=dotted];
     103 -> {123} [style=dashed];
     104 -> {105};
     105 -> {106};
@@ -355,16 +351,14 @@ digraph flowFromTwoInplaceLambdas_kt {
     119 -> {120};
     120 -> {121};
     121 -> {122};
-    122 -> {105} [color=red];
-    122 -> {102} [color=green];
+    122 -> {102};
     123 -> {124};
     124 -> {125};
     125 -> {126};
     126 -> {127};
     127 -> {128};
     128 -> {129};
-    129 -> {105} [color=red];
-    129 -> {104} [color=green];
+    129 -> {104};
 
     subgraph cluster_28 {
         color=red
@@ -390,7 +384,6 @@ digraph flowFromTwoInplaceLambdas_kt {
                 }
                 157 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            137 [label="Postponed exit from lambda"];
             138 [label="Postponed enter to lambda"];
             subgraph cluster_32 {
                 color=blue
@@ -406,6 +399,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                 164 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             139 [label="Postponed exit from lambda"];
+            137 [label="Postponed exit from lambda"];
             140 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
             141 [label="Access variable R|<local>/p|"];
             142 [label="Smart cast: R|<local>/p|"];
@@ -425,12 +419,12 @@ digraph flowFromTwoInplaceLambdas_kt {
     133 -> {134};
     134 -> {135};
     135 -> {136};
-    136 -> {151};
-    136 -> {137} [color=red];
+    136 -> {138 151};
+    136 -> {137} [style=dotted];
     136 -> {151} [style=dashed];
-    137 -> {138};
-    138 -> {158};
-    138 -> {139} [color=red];
+    137 -> {140};
+    138 -> {158 140};
+    138 -> {139} [style=dotted];
     138 -> {158} [style=dashed];
     139 -> {140};
     140 -> {141};
@@ -449,16 +443,14 @@ digraph flowFromTwoInplaceLambdas_kt {
     154 -> {155};
     155 -> {156};
     156 -> {157};
-    157 -> {140} [color=red];
-    157 -> {137} [color=green];
+    157 -> {137};
     158 -> {159};
     159 -> {160};
     160 -> {161};
     161 -> {162};
     162 -> {163};
     163 -> {164};
-    164 -> {140} [color=red];
-    164 -> {139} [color=green];
+    164 -> {139};
 
     subgraph cluster_34 {
         color=red
@@ -501,7 +493,6 @@ digraph flowFromTwoInplaceLambdas_kt {
                 }
                 197 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            176 [label="Postponed exit from lambda"];
             177 [label="Postponed enter to lambda"];
             subgraph cluster_40 {
                 color=blue
@@ -520,6 +511,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                 207 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             178 [label="Postponed exit from lambda"];
+            176 [label="Postponed exit from lambda"];
             179 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
             180 [label="Access variable R|<local>/x|"];
             181 [label="Smart cast: R|<local>/x|"];
@@ -537,12 +529,12 @@ digraph flowFromTwoInplaceLambdas_kt {
     172 -> {173};
     173 -> {174};
     174 -> {175};
-    175 -> {188};
-    175 -> {176} [color=red];
+    175 -> {177 188};
+    175 -> {176} [style=dotted];
     175 -> {188} [style=dashed];
-    176 -> {177};
-    177 -> {198};
-    177 -> {178} [color=red];
+    176 -> {179};
+    177 -> {198 179};
+    177 -> {178} [style=dotted];
     177 -> {198} [style=dashed];
     178 -> {179};
     179 -> {180};
@@ -562,8 +554,7 @@ digraph flowFromTwoInplaceLambdas_kt {
     194 -> {195};
     195 -> {196};
     196 -> {197};
-    197 -> {179} [color=red];
-    197 -> {176} [color=green];
+    197 -> {176};
     198 -> {199};
     199 -> {200};
     200 -> {201};
@@ -573,8 +564,7 @@ digraph flowFromTwoInplaceLambdas_kt {
     204 -> {205};
     205 -> {206};
     206 -> {207};
-    207 -> {179} [color=red];
-    207 -> {178} [color=green];
+    207 -> {178};
 
     subgraph cluster_42 {
         color=red
@@ -600,7 +590,6 @@ digraph flowFromTwoInplaceLambdas_kt {
                 }
                 235 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            215 [label="Postponed exit from lambda"];
             216 [label="Postponed enter to lambda"];
             subgraph cluster_46 {
                 color=blue
@@ -616,6 +605,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                 242 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             217 [label="Postponed exit from lambda"];
+            215 [label="Postponed exit from lambda"];
             218 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
             219 [label="Access variable R|<local>/p|"];
             220 [label="Smart cast: R|<local>/p|"];
@@ -635,12 +625,12 @@ digraph flowFromTwoInplaceLambdas_kt {
     211 -> {212};
     212 -> {213};
     213 -> {214};
-    214 -> {229};
-    214 -> {215} [color=red];
+    214 -> {216 229};
+    214 -> {215} [style=dotted];
     214 -> {229} [style=dashed];
-    215 -> {216};
-    216 -> {236};
-    216 -> {217} [color=red];
+    215 -> {218};
+    216 -> {236 218};
+    216 -> {217} [style=dotted];
     216 -> {236} [style=dashed];
     217 -> {218};
     218 -> {219};
@@ -659,16 +649,14 @@ digraph flowFromTwoInplaceLambdas_kt {
     232 -> {233};
     233 -> {234};
     234 -> {235};
-    235 -> {218} [color=red];
-    235 -> {215} [color=green];
+    235 -> {215};
     236 -> {237};
     237 -> {238};
     238 -> {239};
     239 -> {240};
     240 -> {241};
     241 -> {242};
-    242 -> {218} [color=red];
-    242 -> {217} [color=green];
+    242 -> {217};
 
     subgraph cluster_48 {
         color=red
@@ -692,7 +680,6 @@ digraph flowFromTwoInplaceLambdas_kt {
                 }
                 262 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            247 [label="Postponed exit from lambda"];
             248 [label="Postponed enter to lambda"];
             subgraph cluster_52 {
                 color=blue
@@ -707,6 +694,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                 268 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             249 [label="Postponed exit from lambda"];
+            247 [label="Postponed exit from lambda"];
             250 [label="Function call: R|/run2|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
             251 [label="Access variable R|<local>/x|"];
             252 [label="Access variable R|kotlin/String.length|"];
@@ -717,12 +705,12 @@ digraph flowFromTwoInplaceLambdas_kt {
     243 -> {244};
     244 -> {245};
     245 -> {246};
-    246 -> {255};
-    246 -> {247} [color=red];
+    246 -> {248 255};
+    246 -> {247} [style=dotted];
     246 -> {255} [style=dashed];
-    247 -> {248};
-    248 -> {263};
-    248 -> {249} [color=red];
+    247 -> {250};
+    248 -> {263 250};
+    248 -> {249} [style=dotted];
     248 -> {263} [style=dashed];
     249 -> {250};
     250 -> {251};
@@ -736,15 +724,13 @@ digraph flowFromTwoInplaceLambdas_kt {
     259 -> {260};
     260 -> {261};
     261 -> {262};
-    262 -> {250} [color=red];
-    262 -> {247} [color=green];
+    262 -> {247};
     263 -> {264};
     264 -> {265};
     265 -> {266};
     266 -> {267};
     267 -> {268};
-    268 -> {250} [color=red];
-    268 -> {249} [color=green];
+    268 -> {249};
 
     subgraph cluster_54 {
         color=red
@@ -768,7 +754,6 @@ digraph flowFromTwoInplaceLambdas_kt {
                 }
                 300 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            275 [label="Postponed exit from lambda"];
             276 [label="Postponed enter to lambda"];
             subgraph cluster_58 {
                 color=blue
@@ -783,6 +768,7 @@ digraph flowFromTwoInplaceLambdas_kt {
                 306 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             277 [label="Postponed exit from lambda"];
+            275 [label="Postponed exit from lambda"];
             278 [label="Function call: R|/run2|<R|kotlin/Unit|>(...)" style="filled" fillcolor=yellow];
             subgraph cluster_60 {
                 color=blue
@@ -816,12 +802,12 @@ digraph flowFromTwoInplaceLambdas_kt {
     271 -> {272};
     272 -> {273};
     273 -> {274};
-    274 -> {295};
-    274 -> {275} [color=red];
+    274 -> {276 295};
+    274 -> {275} [style=dotted];
     274 -> {295} [style=dashed];
-    275 -> {276};
-    276 -> {301};
-    276 -> {277} [color=red];
+    275 -> {278};
+    276 -> {301 278};
+    276 -> {277} [style=dotted];
     276 -> {301} [style=dashed];
     277 -> {278};
     278 -> {279};
@@ -845,15 +831,13 @@ digraph flowFromTwoInplaceLambdas_kt {
     297 -> {298};
     298 -> {299};
     299 -> {300};
-    300 -> {278} [color=red];
-    300 -> {275} [color=green];
+    300 -> {275};
     301 -> {302};
     302 -> {303};
     303 -> {306};
     303 -> {304} [style=dotted];
     304 -> {305} [style=dotted];
     305 -> {306} [style=dotted];
-    306 -> {278} [color=red];
-    306 -> {277} [color=green];
+    306 -> {277};
 
 }

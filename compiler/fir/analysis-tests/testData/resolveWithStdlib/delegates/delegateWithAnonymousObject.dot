@@ -229,9 +229,10 @@ digraph delegateWithAnonymousObject_kt {
         78 [label="Exit property" style="filled" fillcolor=red];
     }
     71 -> {72};
-    72 -> {73};
+    72 -> {73 74};
     72 -> {26} [style=dashed];
-    73 -> {74};
+    73 -> {77} [color=red];
+    73 -> {74} [color=green];
     74 -> {75};
     75 -> {76};
     76 -> {77};

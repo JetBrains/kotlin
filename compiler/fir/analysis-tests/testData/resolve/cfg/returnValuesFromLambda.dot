@@ -91,8 +91,8 @@ digraph returnValuesFromLambda_kt {
     }
     12 -> {13};
     13 -> {14};
-    14 -> {20};
-    14 -> {15} [color=red];
+    14 -> {20 16};
+    14 -> {15} [style=dotted];
     14 -> {20} [style=dashed];
     15 -> {16};
     16 -> {17};
@@ -116,8 +116,7 @@ digraph returnValuesFromLambda_kt {
     34 -> {35};
     35 -> {36};
     36 -> {37};
-    37 -> {16} [color=red];
-    37 -> {15} [color=green];
+    37 -> {15};
 
     subgraph cluster_12 {
         color=red
@@ -148,8 +147,8 @@ digraph returnValuesFromLambda_kt {
     }
     38 -> {39};
     39 -> {40};
-    40 -> {46};
-    40 -> {41} [color=red];
+    40 -> {46 42};
+    40 -> {41} [style=dotted];
     40 -> {46} [style=dashed];
     41 -> {42};
     42 -> {43};
@@ -162,8 +161,7 @@ digraph returnValuesFromLambda_kt {
     49 -> {50} [style=dotted];
     50 -> {51} [style=dotted];
     51 -> {52} [style=dotted];
-    52 -> {42} [color=red];
-    52 -> {41} [color=green];
+    52 -> {41};
 
     subgraph cluster_16 {
         color=red
@@ -195,7 +193,7 @@ digraph returnValuesFromLambda_kt {
     53 -> {54};
     54 -> {55};
     55 -> {62};
-    55 -> {56} [color=red];
+    55 -> {56 57} [style=dotted];
     55 -> {62} [style=dashed];
     56 -> {57} [style=dotted];
     57 -> {58} [style=dotted];
@@ -209,6 +207,6 @@ digraph returnValuesFromLambda_kt {
     64 -> {65} [style=dotted];
     65 -> {66} [style=dotted];
     66 -> {67} [style=dotted];
-    67 -> {56 57} [style=dotted];
+    67 -> {56} [style=dotted];
 
 }

@@ -129,7 +129,10 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     open var flow: PersistentFlow
         get() = _flow ?: throw IllegalStateException("flow for $this not initialized - traversing nodes in wrong order?")
         @CfgInternals
-        set(value) { _flow = value } // TODO: forbid reassignment
+        set(value) {
+            assert(_flow == null) { "reassigning flow for $this" }
+            _flow = value
+        }
 
     @CfgInternals
     fun updateDeadStatus() {
@@ -240,7 +243,7 @@ class ExitDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirVal
 
 // ----------------------------------- Anonymous function -----------------------------------
 
-class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNodeWithSubgraphs<FirAnonymousFunction>(owner, level, id) {
+class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int, id: Int) : CFGNodeWithSubgraphs<FirAnonymousFunctionExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPostponedLambdaEnterNode(this, data)
     }

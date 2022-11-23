@@ -99,10 +99,11 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     21 -> {29};
     22 -> {23};
     23 -> {24};
-    24 -> {33};
-    24 -> {25} [color=red];
+    24 -> {33 26};
+    24 -> {25} [style=dotted];
     24 -> {33} [style=dashed];
-    25 -> {26};
+    25 -> {29} [color=red];
+    25 -> {26} [color=green];
     26 -> {27};
     27 -> {28};
     28 -> {29};
@@ -113,8 +114,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     34 -> {35};
     35 -> {36};
     36 -> {37};
-    37 -> {29} [color=red];
-    37 -> {25} [color=green];
+    37 -> {25};
 
     subgraph cluster_11 {
         color=red
@@ -173,10 +173,11 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     40 -> {41 48};
     41 -> {42};
     42 -> {43};
-    43 -> {58};
-    43 -> {44} [color=red];
+    43 -> {58 45};
+    43 -> {44} [style=dotted];
     43 -> {58} [style=dashed];
-    44 -> {45};
+    44 -> {54} [color=red];
+    44 -> {45} [color=green];
     45 -> {46};
     46 -> {47};
     47 -> {54 48};
@@ -194,8 +195,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     59 -> {60};
     60 -> {61};
     61 -> {62};
-    62 -> {54} [color=red];
-    62 -> {44} [color=green];
+    62 -> {44};
 
     subgraph cluster_20 {
         color=red
@@ -225,10 +225,11 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     }
     63 -> {64};
     64 -> {65};
-    65 -> {72};
-    65 -> {66} [color=red];
+    65 -> {72 67};
+    65 -> {66} [style=dotted];
     65 -> {72} [style=dashed];
-    66 -> {67};
+    66 -> {68} [color=red];
+    66 -> {67} [color=green];
     67 -> {68};
     68 -> {69};
     69 -> {70};
@@ -237,7 +238,6 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     73 -> {74};
     74 -> {75};
     75 -> {76};
-    76 -> {68} [color=red];
-    76 -> {66} [color=green];
+    76 -> {66};
 
 }

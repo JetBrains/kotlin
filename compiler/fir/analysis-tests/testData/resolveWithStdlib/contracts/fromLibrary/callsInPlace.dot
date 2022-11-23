@@ -34,8 +34,8 @@ digraph callsInPlace_kt {
     0 -> {1};
     1 -> {2};
     2 -> {3};
-    3 -> {10};
-    3 -> {4} [color=red];
+    3 -> {10 5};
+    3 -> {4} [style=dotted];
     3 -> {10} [style=dashed];
     4 -> {5};
     5 -> {6};
@@ -47,8 +47,7 @@ digraph callsInPlace_kt {
     12 -> {13};
     13 -> {14};
     14 -> {15};
-    15 -> {5} [color=red];
-    15 -> {4} [color=green];
+    15 -> {4};
 
     subgraph cluster_4 {
         color=red
@@ -78,7 +77,7 @@ digraph callsInPlace_kt {
     16 -> {17};
     17 -> {18};
     18 -> {19};
-    19 -> {20 24};
+    19 -> {20 24 21};
     19 -> {24} [style=dashed];
     20 -> {21};
     20 -> {19} [color=green style=dashed];
@@ -108,8 +107,8 @@ digraph callsInPlace_kt {
                 }
                 41 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            32 [label="Postponed exit from lambda"];
             33 [label="Const: Int(10)"];
+            32 [label="Postponed exit from lambda"];
             34 [label="Function call: R|kotlin/repeat|(...)" style="filled" fillcolor=yellow];
             35 [label="Exit block"];
         }
@@ -117,9 +116,9 @@ digraph callsInPlace_kt {
     }
     29 -> {30};
     30 -> {31};
-    31 -> {32 37};
+    31 -> {32 33 37};
     31 -> {37} [style=dashed];
-    32 -> {33};
+    32 -> {34};
     32 -> {31} [color=green style=dashed];
     33 -> {34};
     34 -> {35};
@@ -162,8 +161,8 @@ digraph callsInPlace_kt {
     42 -> {43};
     43 -> {44};
     44 -> {45};
-    45 -> {50};
-    45 -> {46} [color=red];
+    45 -> {50 47};
+    45 -> {46} [style=dotted];
     45 -> {50} [style=dashed];
     46 -> {47};
     47 -> {48};
@@ -176,8 +175,7 @@ digraph callsInPlace_kt {
     55 -> {56};
     56 -> {57};
     57 -> {58};
-    58 -> {47} [color=red];
-    58 -> {46} [color=green];
+    58 -> {46};
 
     subgraph cluster_16 {
         color=red
@@ -211,8 +209,8 @@ digraph callsInPlace_kt {
     59 -> {60};
     60 -> {61};
     61 -> {62};
-    62 -> {67};
-    62 -> {63} [color=red];
+    62 -> {67 64};
+    62 -> {63} [style=dotted];
     62 -> {67} [style=dashed];
     63 -> {64};
     64 -> {65};
@@ -225,8 +223,7 @@ digraph callsInPlace_kt {
     72 -> {73};
     73 -> {74};
     74 -> {75};
-    75 -> {64} [color=red];
-    75 -> {63} [color=green];
+    75 -> {63};
 
     subgraph cluster_20 {
         color=red
@@ -264,7 +261,6 @@ digraph callsInPlace_kt {
                 }
                 100 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            85 [label="Postponed exit from lambda"];
             86 [label="Postponed enter to lambda"];
             subgraph cluster_26 {
                 color=blue
@@ -278,6 +274,7 @@ digraph callsInPlace_kt {
                 95 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             87 [label="Postponed exit from lambda"];
+            85 [label="Postponed exit from lambda"];
             88 [label="Function call: R|/myRun|(...)" style="filled" fillcolor=yellow];
             89 [label="Exit block"];
         }
@@ -285,11 +282,11 @@ digraph callsInPlace_kt {
     }
     82 -> {83};
     83 -> {84};
-    84 -> {85 96};
+    84 -> {85 86 96};
     84 -> {96} [style=dashed];
-    85 -> {86};
+    85 -> {88};
     85 -> {84} [color=green style=dashed];
-    86 -> {87 91};
+    86 -> {87 91 88};
     86 -> {91} [style=dashed];
     87 -> {88};
     87 -> {86} [color=green style=dashed];
@@ -324,7 +321,6 @@ digraph callsInPlace_kt {
                 }
                 114 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            104 [label="Postponed exit from lambda"];
             105 [label="Postponed enter to lambda"];
             subgraph cluster_32 {
                 color=blue
@@ -338,6 +334,7 @@ digraph callsInPlace_kt {
                 119 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             106 [label="Postponed exit from lambda"];
+            104 [label="Postponed exit from lambda"];
             107 [label="Function call: R|/myRun|(...)" style="filled" fillcolor=yellow];
             108 [label="Exit block"];
         }
@@ -345,11 +342,11 @@ digraph callsInPlace_kt {
     }
     101 -> {102};
     102 -> {103};
-    103 -> {104 110};
+    103 -> {104 105 110};
     103 -> {110} [style=dashed];
-    104 -> {105};
+    104 -> {107};
     104 -> {103} [color=green style=dashed];
-    105 -> {106 115};
+    105 -> {106 115 107};
     105 -> {115} [style=dashed];
     106 -> {107};
     106 -> {105} [color=green style=dashed];
@@ -408,7 +405,7 @@ digraph callsInPlace_kt {
     }
     125 -> {126};
     126 -> {127};
-    127 -> {128 132};
+    127 -> {128 132 129};
     127 -> {132} [style=dashed];
     128 -> {129};
     129 -> {130};
