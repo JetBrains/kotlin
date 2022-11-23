@@ -488,6 +488,24 @@ class StateMachineBuilder(
         transformLastExpression { expression.apply { receiver = it } }
     }
 
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?) {
+        if (expression !in suspendableNodes) return addStatement(expression)
+        expression.acceptChildrenVoid(this)
+        transformLastExpression { expression.apply { receiver = it } }
+    }
+
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression) {
+        if (expression !in suspendableNodes) return addStatement(expression)
+
+        val newArguments = transformArguments(expression.arguments.toTypedArray())
+
+        for (i in 0 until expression.arguments.size) {
+            expression.arguments[i] = newArguments[i]!!
+        }
+
+        addStatement(expression)
+    }
+
     override fun visitGetClass(expression: IrGetClass) {
         if (expression !in suspendableNodes) return addStatement(expression)
         expression.acceptChildrenVoid(this)
