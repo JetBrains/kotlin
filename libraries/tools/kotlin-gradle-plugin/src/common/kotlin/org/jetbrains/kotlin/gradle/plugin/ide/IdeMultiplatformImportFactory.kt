@@ -28,6 +28,13 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
         )
 
         registerDependencyResolver(
+            resolver = IdeOriginalMetadataDependencyResolver,
+            constraint = IdeMultiplatformImport.SourceSetConstraint.isMetadata,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+        )
+
+        registerDependencyResolver(
             resolver = IdePlatformBinaryDependencyResolver(),
             constraint = IdeMultiplatformImport.SourceSetConstraint.isPlatform,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
