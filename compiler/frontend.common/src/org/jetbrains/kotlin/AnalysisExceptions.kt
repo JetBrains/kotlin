@@ -25,7 +25,6 @@ inline fun <R> whileAnalysing(element: KtSourceElement?, block: () -> R): R {
 
 fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
     is SourceCodeAnalysisException -> this
-    is ProcessCanceledException -> this // KT-38483
     is IndexNotReadyException -> this
     is ControlFlowException -> this
     is VirtualMachineError -> this
@@ -72,7 +71,6 @@ fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
         else -> FileAnalysisException(filePath, cause, linesMapping(source.startOffset))
     }
 
-    this is ProcessCanceledException -> this // KT-38483
     this is IndexNotReadyException -> this
     this is ControlFlowException -> this
     this is VirtualMachineError -> this

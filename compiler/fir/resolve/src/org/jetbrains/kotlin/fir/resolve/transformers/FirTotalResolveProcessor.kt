@@ -30,9 +30,9 @@ class FirTotalResolveProcessor(session: FirSession) {
             processor.beforePhase()
             when (processor) {
                 is FirTransformerBasedResolveProcessor -> {
-                    files.forEach {
-                        withFileAnalysisExceptionWrapping(it) {
-                            processor.processFile(it)
+                    for (file in files) {
+                        withFileAnalysisExceptionWrapping(file) {
+                            processor.processFile(file)
                         }
                     }
                 }
