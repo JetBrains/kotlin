@@ -143,8 +143,8 @@ internal open class KaptConfig<TASK : KaptTask>(
 
 //Have to avoid using FileUtil because it is required system property reading that is not allowed for configuration cache
 private fun isAncestor(dir: File, file: File): Boolean {
-    val path = file.canonicalPath
-    val prefix = dir.canonicalPath
+    val path = file.normalize().absolutePath
+    val prefix = dir.normalize().absolutePath
     val pathLength = path.length
     val prefixLength = prefix.length
     val caseSensitive = true
