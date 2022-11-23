@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractConstantReference.KtContractBooleanConstantReference
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractConstantReference.KtContractBooleanConstantReference
 import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractValueParameterReference.KtContractBooleanValueParameterReference
 import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractValueParameterReference.KtContractValueParameterReference
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -63,7 +63,12 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
         KtContractIsNullPredicate(isNullPredicate.arg.accept(this, data).cast(), isNullPredicate.isNegated)
 
     override fun visitConstantDescriptor(constantReference: ConstantReference, data: Unit): KtContractDescriptionElement =
-        KtContractAbstractConstantReference.KtContractConstantReference(constantReference.name, analysisContext.token)
+        when (constantReference) {
+            ConstantReference.WILDCARD -> KtContractConstantReference.KtWildcard(analysisContext.token)
+            ConstantReference.NOT_NULL -> KtContractConstantReference.KtNotNull(analysisContext.token)
+            ConstantReference.NULL -> KtContractConstantReference.KtNull(analysisContext.token)
+            else -> error("Can't convert $constantReference to Analysis API")
+        }
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: BooleanConstantReference,

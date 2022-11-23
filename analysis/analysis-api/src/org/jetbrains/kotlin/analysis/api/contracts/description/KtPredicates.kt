@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.contracts.description
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * K1: [org.jetbrains.kotlin.contracts.description.expressions.IsInstancePredicate]

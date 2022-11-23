@@ -164,6 +164,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
         }
 
         @Test
+        @TestMetadata("returnsNullContract.kt")
+        public void testReturnsNullContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsNullContract.kt");
+        }
+
+        @Test
         @TestMetadata("returnsTrueContract.kt")
         public void testReturnsTrueContract() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/returnsTrueContract.kt");

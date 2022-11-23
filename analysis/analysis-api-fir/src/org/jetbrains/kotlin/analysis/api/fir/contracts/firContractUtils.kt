@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractConstantReference.KtContractBooleanConstantReference
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractConstantReference.KtContractBooleanConstantReference
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
@@ -60,7 +60,12 @@ private class ConeContractDescriptionElementToAnalysisApi(private val builder: K
         KtContractIsNullPredicate(isNullPredicate.arg.accept(this, data).cast(), isNullPredicate.isNegated)
 
     override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Unit): KtContractDescriptionElement =
-        KtContractAbstractConstantReference.KtContractConstantReference(constantReference.name, builder.token)
+        when (constantReference) {
+            ConeConstantReference.NULL -> KtContractConstantReference.KtNull(builder.token)
+            ConeConstantReference.NOT_NULL -> KtContractConstantReference.KtNotNull(builder.token)
+            ConeConstantReference.WILDCARD -> KtContractConstantReference.KtWildcard(builder.token)
+            else -> error("Can't convert $constantReference to Analysis API")
+        }
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: ConeBooleanConstantReference,

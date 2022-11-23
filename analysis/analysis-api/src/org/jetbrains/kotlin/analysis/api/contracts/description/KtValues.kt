@@ -19,19 +19,21 @@ public sealed class KtContractDescriptionValue(
     public val name: String get() = withValidityAssertion { _name }
 }
 
-public sealed class KtContractAbstractConstantReference(name: String, token: KtLifetimeToken) : KtContractDescriptionValue(name, token) {
-    /**
-     * K1: [org.jetbrains.kotlin.contracts.description.expressions.ConstantReference]
-     * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference]
-     */
-    public class KtContractConstantReference(name: String, token: KtLifetimeToken) : KtContractAbstractConstantReference(name, token)
+/**
+ * K1: [org.jetbrains.kotlin.contracts.description.expressions.ConstantReference]
+ * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference]
+ */
+public sealed class KtContractConstantReference(name: String, token: KtLifetimeToken) : KtContractDescriptionValue(name, token) {
+    public class KtNull(token: KtLifetimeToken) : KtContractConstantReference("NULL", token)
+    public class KtWildcard(token: KtLifetimeToken) : KtContractConstantReference("WILDCARD", token)
+    public class KtNotNull(token: KtLifetimeToken) : KtContractConstantReference("NOT_NULL", token)
 
     /**
      * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference]
      * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference]
      */
     public sealed class KtContractBooleanConstantReference(name: String, token: KtLifetimeToken) :
-        KtContractAbstractConstantReference(name, token), KtContractBooleanExpression {
+        KtContractConstantReference(name, token), KtContractBooleanExpression {
         public class KtTrue(token: KtLifetimeToken) : KtContractBooleanConstantReference("TRUE", token)
         public class KtFalse(token: KtLifetimeToken) : KtContractBooleanConstantReference("FALSE", token)
     }
