@@ -979,6 +979,24 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-55071: Shared Native Compilations: Use default parameters declared in dependsOn source set")
+    fun `test shared native compilation with default parameters declared in dependsOn source set`(gradleVersion: GradleVersion) {
+        with(project("kt-55071-compileSharedNative-withDefaultParameters", gradleVersion = gradleVersion)) {
+            build(":producer:publish") {
+                assertTasksExecuted(":producer:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":producer:compileSecondCommonMainKotlinMetadata")
+                assertTasksExecuted(":producer:compileNativeMainKotlinMetadata")
+            }
+
+            build(":consumer:assemble") {
+                assertTasksExecuted(":consumer:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":consumer:compileNativeMainKotlinMetadata")
+            }
+        }
+    }
+
+
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
         check: BuildResult.(reports: Iterable<DependencyTransformationReport>) -> Unit
