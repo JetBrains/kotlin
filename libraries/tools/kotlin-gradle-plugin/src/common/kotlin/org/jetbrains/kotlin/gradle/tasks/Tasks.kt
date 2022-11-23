@@ -1150,7 +1150,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         val dependencies = libraries
             .filter { it.exists() && libraryFilter(it) }
-            .map { it.canonicalPath }
+            .map { it.normalize().absolutePath }
 
         args.libraries = dependencies.distinct().let {
             if (it.isNotEmpty())

@@ -527,7 +527,7 @@ class CompileServiceServerSideImpl(
                                 daemon.scheduleShutdown(true)
                                 log.fine("other : SHUTDOWN_OK")
                             } catch (e: Throwable) {
-                                log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
+                                log.info("Cannot connect to a daemon, assuming dying ('${runFile.normalize().absolutePath}'): ${e.message}")
                             }
                         }
                     }

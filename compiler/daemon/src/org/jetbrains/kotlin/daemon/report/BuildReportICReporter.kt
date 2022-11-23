@@ -37,7 +37,7 @@ class BuildReportICReporter(
         icLogLines.add("Compile iteration:")
         for (file in sourceFiles) {
             val reason = recompilationReason[file]?.let { " <- $it" } ?: ""
-            icLogLines.add("  ${file.relativeOrCanonical()}$reason")
+            icLogLines.add("  ${file.relativeOrAbsolute()}$reason")
         }
         recompilationReason.clear()
     }

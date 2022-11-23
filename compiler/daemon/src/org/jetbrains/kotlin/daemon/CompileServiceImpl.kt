@@ -1063,7 +1063,7 @@ class CompileServiceImpl(
                             }
                             daemon.scheduleShutdown(true)
                         } catch (e: Throwable) {
-                            log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
+                            log.info("Cannot connect to a daemon, assuming dying ('${runFile.normalize().absolutePath}'): ${e.message}")
                         }
                     }
                 }

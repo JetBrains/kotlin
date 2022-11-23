@@ -144,7 +144,7 @@ open class RewriteSourceMapFilterReader(
     protected open fun transformString(value: String): String {
         val sourceFileResolved = File(srcSourceRoot)
             .resolve(value)
-            .canonicalFile
+            .normalize().absoluteFile
 
         val transformedPath = sourceFileResolved.relativeToOrNull(File(targetSourceRoot))?.path ?: return sourceFileResolved.path
 

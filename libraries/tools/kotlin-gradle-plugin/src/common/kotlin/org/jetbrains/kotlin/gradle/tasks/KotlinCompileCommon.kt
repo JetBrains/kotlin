@@ -82,7 +82,7 @@ abstract class KotlinCompileCommon @Inject constructor(
 
         with(args) {
             classpath = classpathList.joinToString(File.pathSeparator)
-            destination = destinationDirectory.get().asFile.canonicalPath
+            destination = destinationDirectory.get().asFile.normalize().absolutePath
 
             friendPaths = this@KotlinCompileCommon.friendPaths.files.map { it.absolutePath }.toTypedArray()
             refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
