@@ -140,6 +140,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
         }
 
         @Test
+        @TestMetadata("logicalNotContract.kt")
+        public void testLogicalNotContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/logicalNotContract.kt");
+        }
+
+        @Test
         @TestMetadata("referenceBooleanReceiverInContract.kt")
         public void testReferenceBooleanReceiverInContract() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/referenceBooleanReceiverInContract.kt");
