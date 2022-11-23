@@ -77,7 +77,7 @@ class FirCallResolver(
         val functionCall = if (needTransformArguments) {
             functionCall.transformExplicitReceiver().also {
                 components.dataFlowAnalyzer.enterQualifiedAccessExpression()
-                functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+                functionCall.replaceArgumentList(functionCall.argumentList.transform(transformer, ResolutionMode.ContextDependent))
             }
         } else {
             functionCall
@@ -539,7 +539,7 @@ class FirCallResolver(
 
     fun resolveAnnotationCall(annotation: FirAnnotationCall): FirAnnotationCall? {
         val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
-        annotation.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+        annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
         val callInfo = CallInfo(
             annotation,
