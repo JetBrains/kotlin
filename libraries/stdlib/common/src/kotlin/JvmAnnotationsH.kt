@@ -196,6 +196,6 @@ public expect annotation class JvmSerializableLambda
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 @SinceKotlin("1.8")
-@RequireKotlin("1.8", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@RequireKotlin("1.8.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @OptionalExpectation
 public expect annotation class JvmDelegateToDefaults
