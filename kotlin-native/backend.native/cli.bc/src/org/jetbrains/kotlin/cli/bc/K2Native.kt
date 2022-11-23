@@ -257,7 +257,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
 
                 if(arguments.refinesPaths != null)
-                    put(REFINES_MODULES, arguments.refinesPaths!!.split(File.pathSeparator).filterNot(String::isEmpty))
+                    put(REFINES_MODULES, arguments.refinesPaths!!.filterNot(String::isEmpty))
 
                 put(EXPORTED_LIBRARIES, selectExportedLibraries(configuration, arguments, outputKind))
                 put(INCLUDED_LIBRARIES, selectIncludes(configuration, arguments, outputKind))
