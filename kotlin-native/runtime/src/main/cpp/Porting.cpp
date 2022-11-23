@@ -507,4 +507,34 @@ extern "C" {
     }
 #endif // KONAN_ZEPHYR
 
+#if defined(KONAN_MIPS32) || defined(KONAN_MIPSEL32)
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Watomic-alignment"
+
+// By some reasons clang generates __sync functions instead of __atomic ones,
+// but they are not actually available on mips. So let's implement them ourselfs using existing __atomic ones.
+
+
+int64_t replace_sync_fetch_and_add_8(int64_t *ptr, int64_t value) asm("__sync_fetch_and_add_8");
+RUNTIME_USED int64_t replace_sync_fetch_and_add_8(int64_t *ptr, int64_t value) {
+    return __atomic_fetch_add(ptr, value, __ATOMIC_SEQ_CST);
+}
+int64_t replace_sync_val_compare_and_swap(int64_t *ptr, int64_t oldval, int64_t newval) asm("__sync_val_compare_and_swap_8");
+RUNTIME_USED int64_t replace_sync_val_compare_and_swap (int64_t *ptr, int64_t oldval, int64_t newval) {
+    __atomic_compare_exchange_n(ptr, &oldval, newval, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+    return oldval;
+}
+
+int64_t replace_sync_lock_test_and_set(int64_t *ptr, int64_t value) asm("__sync_lock_test_and_set_8");
+RUNTIME_USED int64_t replace_sync_lock_test_and_set(int64_t *ptr, int64_t value) {
+    return __atomic_exchange_n(ptr, value, __ATOMIC_SEQ_CST);
+}
+
+
+#pragma clang diagnostic pop
+
+#endif
+
+
 }  // extern "C"
