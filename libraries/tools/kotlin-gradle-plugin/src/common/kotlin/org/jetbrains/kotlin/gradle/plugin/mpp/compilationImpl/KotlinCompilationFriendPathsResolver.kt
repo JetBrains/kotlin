@@ -10,8 +10,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal interface KotlinCompilationFriendPathsResolver {
@@ -71,19 +69,6 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
             val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(compilation.defaultSourceSet)
             return compilation.project.files(
                 friendSourceSets.mapNotNull { compilation.target.compilations.findByName(it.name)?.output?.classesDirs }
-            )
-        }
-    }
-
-    object AdditionalSharedNativeMetadataFriendArtifactResolver : FriendArtifactResolver {
-        override fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection {
-            // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
-            //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(compilation.defaultSourceSet) +
-                    compilation.defaultSourceSet.internal.dependsOnClosure
-
-            return compilation.project.files(
-                friendSourceSets.mapNotNull { compilation.project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs }
             )
         }
     }

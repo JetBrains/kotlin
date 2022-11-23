@@ -23,7 +23,8 @@ internal class CompilerPluginData(
 
 internal class SharedCompilationData(
     val manifestFile: File,
-    val isAllowCommonizer: Boolean
+    val isAllowCommonizer: Boolean,
+    val refinesPaths: FileCollection
 )
 
 internal fun buildKotlinNativeKlibCompilerArgs(
@@ -61,6 +62,13 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     val friends = friendModule.files
     if (friends.isNotEmpty()) {
         addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
+    }
+
+    if (sharedCompilationData != null) {
+        val refinesPaths = sharedCompilationData.refinesPaths.files
+        if (refinesPaths.isNotEmpty()) {
+            addArg("-Xrefines-paths", refinesPaths.joinToString(File.pathSeparator) { it.absolutePath })
+        }
     }
 
     addAll(buildKotlinNativeCompileCommonArgs(enableEndorsedLibs, languageSettings, compilerOptions, compilerPlugins))

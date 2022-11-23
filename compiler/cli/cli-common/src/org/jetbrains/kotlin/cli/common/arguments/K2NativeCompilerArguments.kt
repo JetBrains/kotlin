@@ -281,6 +281,16 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var friendModules: String? = null
 
+    /**
+     * @see K2MetadataCompilerArguments.refinesPaths
+     */
+    @Argument(
+        value = "-Xrefines-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for refined modules (whose expects this module can actualize)"
+    )
+    var refinesPaths: String? = null
+
     @Argument(value = "-Xdebug-info-version", description = "generate debug info of given version (1, 2)")
     var debugInfoFormatVersion: String = "1" /* command line parser doesn't accept kotlin.Int type */
 

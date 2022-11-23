@@ -43,7 +43,7 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
             compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
                 friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
                     DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,
-                    DefaultKotlinCompilationFriendPathsResolver.AdditionalSharedNativeMetadataFriendArtifactResolver
+                    DefaultKotlinCompilationFriendPathsResolver.AdditionalMetadataFriendArtifactResolver
                 )
             ),
 

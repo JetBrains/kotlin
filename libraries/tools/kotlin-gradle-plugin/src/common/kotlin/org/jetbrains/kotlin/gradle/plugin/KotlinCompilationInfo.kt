@@ -11,10 +11,13 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAbstractFragmentMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
+import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
@@ -30,6 +33,7 @@ internal sealed class KotlinCompilationInfo {
     abstract val compileAllTaskName: String
     abstract val languageSettings: LanguageSettings
     abstract val friendPaths: FileCollection
+    abstract val refinesPaths: FileCollection
     abstract val isMain: Boolean
     abstract val classesDirs: ConfigurableFileCollection
     abstract val compileDependencyFiles: FileCollection
@@ -69,6 +73,13 @@ internal sealed class KotlinCompilationInfo {
 
         override val friendPaths: FileCollection
             get() = project.filesProvider { origin.internal.friendPaths }
+
+        override val refinesPaths: FileCollection
+            get() = project.filesProvider files@{
+                val metadataTarget = project.multiplatformExtensionOrNull?.metadata() ?: return@files emptyList<Any>()
+                origin.kotlinSourceSets.dependsOnClosure
+                    .mapNotNull { sourceSet -> metadataTarget.compilations.findByName(sourceSet.name)?.output?.classesDirs }
+            }
 
         override val isMain: Boolean
             get() = origin.isMain()
@@ -116,6 +127,17 @@ internal sealed class KotlinCompilationInfo {
 
         override val friendPaths: FileCollection
             get() = project.filesProvider { origin.friendPaths }
+
+        override val refinesPaths: FileCollection
+            get() = project.filesProvider files@{
+                val compilationData = origin as? GradleKpmAbstractFragmentMetadataCompilationData<*> ?: return@files emptyList<Any>()
+                val fragment = compilationData.fragment
+
+                fragment.refinesClosure.minus(fragment).map {
+                    val compilation = compilationData.metadataCompilationRegistry.getForFragmentOrNull(it) ?: return@map project.files()
+                    compilation.output.classesDirs
+                }
+            }
 
         override val isMain: Boolean
             get() = origin.compilationPurpose == GradleKpmModule.MAIN_MODULE_NAME

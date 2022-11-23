@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
@@ -31,7 +32,7 @@ internal object TopDownAnalyzerFacadeForKonan {
 
     fun analyzeFiles(files: Collection<KtFile>, context: Context): AnalysisResult {
         val config = context.config
-        val moduleName = Name.special("<${config.moduleId}>") 
+        val moduleName = Name.special("<${config.moduleId}>")
 
         val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
@@ -41,13 +42,19 @@ internal object TopDownAnalyzerFacadeForKonan {
 
         val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
                 config.resolvedLibraries, projectContext.storageManager, module.builtIns, config.languageVersionSettings,
-                config.friendModuleFiles, config.resolve.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
+                config.friendModuleFiles, config.refinesModuleFiles,
+                config.resolve.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
                 isForMetadataCompilation = config.metadataKlib)
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
         if (!module.isNativeStdlib()) {
-            val dependencies = listOf(module) + resolvedModuleDescriptors.resolvedDescriptors + resolvedModuleDescriptors.forwardDeclarationsModule
-            module.setDependencies(dependencies, resolvedModuleDescriptors.friendModules)
+            module.setDependencies(ModuleDependenciesImpl(
+                    allDependencies =
+                    listOf(module) + resolvedModuleDescriptors.resolvedDescriptors + resolvedModuleDescriptors.forwardDeclarationsModule,
+                    modulesWhoseInternalsAreVisible = resolvedModuleDescriptors.friendModules,
+                    directExpectedByDependencies = resolvedModuleDescriptors.refinesModules.toList(),
+                    allExpectedByDependencies = resolvedModuleDescriptors.refinesModules
+            ))
         } else {
             assert(resolvedModuleDescriptors.resolvedDescriptors.isEmpty())
             moduleContext.setDependencies(module)
@@ -70,7 +77,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         // we print out each file we compile if frontend phase is verbose
         files.takeIf {
             context.shouldPrintFiles()
-        } ?.forEach(::println)
+        }?.forEach(::println)
 
         val container = createTopDownAnalyzerProviderForKonan(
                 moduleContext, trace,
