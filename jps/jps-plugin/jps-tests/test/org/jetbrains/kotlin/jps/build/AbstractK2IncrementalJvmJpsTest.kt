@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 
 abstract class AbstractK2IncrementalJvmJpsTest(
@@ -22,4 +23,7 @@ abstract class AbstractK2IncrementalJvmJpsTest(
         additionalCommandLineArguments = additionalCommandLineArguments + listOf("-Xuse-k2", "-Xuse-fir-ic", "-Xuse-fir-lt")
         super.updateCommandLineArguments(arguments)
     }
+
+    override val buildLogFinder: BuildLogFinder
+        get() = BuildLogFinder(isJpsBuild = true/*, isFirEnabled = true*/) //TODO: add flags
 }
