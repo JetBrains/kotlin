@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -31,7 +33,6 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null
 ) : RawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
-
     companion object {
         fun buildWithReplacement(
             session: FirSession,
@@ -95,7 +96,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
     }
 
-    private inner class VisitorWithReplacement : Visitor() {
+    private inner class VisitorWithReplacement(private val containingClass: FirRegularClass?) : Visitor() {
         override fun convertElement(element: KtElement): FirElement? =
             super.convertElement(replacementApplier?.tryReplace(element) ?: element)
 
@@ -130,11 +131,27 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 additionalAnnotations = additionalAnnotations
             )
         }
+
+        override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit?): FirElement {
+            val owner = containingClass ?: buildErrorWithAttachment("Enum entry outside of class") {
+                withPsiEntry("enumEntry", enumEntry)
+            }
+            val classOrObject = owner.psi as KtClassOrObject
+            val primaryConstructor = classOrObject.primaryConstructor
+            val ownerClassHasDefaultConstructor =
+                primaryConstructor?.valueParameters?.isEmpty() ?: classOrObject.secondaryConstructors.let { constructors ->
+                    constructors.isEmpty() || constructors.any { it.valueParameters.isEmpty() }
+                }
+            val typeParameters = mutableListOf<FirTypeParameterRef>()
+            context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
+            val selfType = classOrObject.toDelegatedSelfType(typeParameters, owner.symbol)
+            return enumEntry.toFirEnumEntry(selfType, ownerClassHasDefaultConstructor)
+        }
     }
 
     private fun moveNext(iterator: Iterator<FirDeclaration>, containingClass: FirRegularClass?): FirDeclaration {
         if (!iterator.hasNext()) {
-            val visitor = VisitorWithReplacement()
+            val visitor = VisitorWithReplacement(containingClass)
             return when (declarationToBuild) {
                 is KtProperty -> {
                     val ownerSymbol = containingClass?.symbol

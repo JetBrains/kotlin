@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
@@ -118,6 +119,20 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
+    fun calculateLazyInitializerForEnumEntry(designation: FirDeclarationDesignation) {
+        val enumEntry = designation.declaration as FirEnumEntry
+        require(enumEntry.initializer is FirLazyExpression)
+        val newEntry = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+            session = enumEntry.moduleData.session,
+            scopeProvider = enumEntry.moduleData.session.kotlinScopeProvider,
+            designation = designation,
+            rootNonLocalDeclaration = enumEntry.psi as KtEnumEntry,
+        ) as FirEnumEntry
+        enumEntry.apply {
+            replaceInitializer(newEntry.initializer)
+        }
+    }
+
     fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
         firProperty.getter?.body is FirLazyBlock
                 || firProperty.setter?.body is FirLazyBlock
@@ -178,5 +193,13 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
 
     override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: PersistentList<FirDeclaration>): FirStatement {
         return propertyAccessor.also { transformProperty(it.propertySymbol.fir, data) }
+    }
+
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
+        if (enumEntry.initializer is FirLazyExpression) {
+            val designation = FirDeclarationDesignation(data, enumEntry)
+            FirLazyBodiesCalculator.calculateLazyInitializerForEnumEntry(designation)
+        }
+        return enumEntry
     }
 }

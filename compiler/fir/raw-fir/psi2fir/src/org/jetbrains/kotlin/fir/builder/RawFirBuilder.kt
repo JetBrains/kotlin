@@ -306,9 +306,7 @@ open class RawFirBuilder(
                         primaryConstructor?.valueParameters?.isEmpty() ?: owner.secondaryConstructors.let { constructors ->
                             constructors.isEmpty() || constructors.any { it.valueParameters.isEmpty() }
                         }
-                    disabledLazyMode {
-                        toFirEnumEntry(delegatedSelfType, ownerClassHasDefaultConstructor)
-                    }
+                    toFirEnumEntry(delegatedSelfType, ownerClassHasDefaultConstructor)
                 }
                 is KtProperty -> {
                     convertProperty(
@@ -1003,7 +1001,7 @@ open class RawFirBuilder(
             }
         }
 
-        private fun KtEnumEntry.toFirEnumEntry(
+        protected fun KtEnumEntry.toFirEnumEntry(
             delegatedEnumSelfTypeRef: FirResolvedTypeRef,
             ownerClassHasDefaultConstructor: Boolean
         ): FirDeclaration {
@@ -1026,49 +1024,55 @@ open class RawFirBuilder(
                     return@buildEnumEntry
                 }
                 extractAnnotationsTo(this)
-                initializer = withChildClassName(nameAsSafeName, isExpect = false) {
-                    buildAnonymousObjectExpression {
-                        val enumEntrySource = toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
-                        source = enumEntrySource
-                        anonymousObject = buildAnonymousObject {
+                initializer = buildOrLazyExpression(toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)) {
+                    withChildClassName(nameAsSafeName, isExpect = false) {
+                        buildAnonymousObjectExpression {
+                            val enumEntrySource = toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
                             source = enumEntrySource
-                            moduleData = baseModuleData
-                            origin = FirDeclarationOrigin.Source
-                            classKind = ClassKind.ENUM_ENTRY
-                            scopeProvider = this@RawFirBuilder.baseScopeProvider
-                            symbol = FirAnonymousObjectSymbol()
-                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            anonymousObject = buildAnonymousObject {
+                                source = enumEntrySource
+                                moduleData = baseModuleData
+                                origin = FirDeclarationOrigin.Source
+                                classKind = ClassKind.ENUM_ENTRY
+                                scopeProvider = this@RawFirBuilder.baseScopeProvider
+                                symbol = FirAnonymousObjectSymbol()
+                                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
 
-                            val delegatedEntrySelfType = buildResolvedTypeRef {
-                                type =
-                                    ConeClassLikeTypeImpl(this@buildAnonymousObject.symbol.toLookupTag(), emptyArray(), isNullable = false)
-                            }
-                            registerSelfType(delegatedEntrySelfType)
+                                val delegatedEntrySelfType = buildResolvedTypeRef {
+                                    type =
+                                        ConeClassLikeTypeImpl(
+                                            this@buildAnonymousObject.symbol.toLookupTag(),
+                                            emptyArray(),
+                                            isNullable = false
+                                        )
+                                }
+                                registerSelfType(delegatedEntrySelfType)
 
-                            superTypeRefs += delegatedEnumSelfTypeRef
-                            val superTypeCallEntry = superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
-                            val correctedEnumSelfTypeRef = buildResolvedTypeRef {
-                                source = superTypeCallEntry?.calleeExpression?.typeReference?.toFirSourceElement()
-                                type = delegatedEnumSelfTypeRef.type
-                            }
-                            declarations += primaryConstructor.toFirConstructor(
-                                superTypeCallEntry,
-                                correctedEnumSelfTypeRef,
-                                delegatedEntrySelfType,
-                                owner = ktEnumEntry,
-                                typeParameters,
-                                containingClassIsExpectClass
-                            )
-                            // Use ANONYMOUS_OBJECT_NAME for the owner class id for enum entry declarations (see KT-42351)
-                            withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
-                                for (declaration in ktEnumEntry.declarations) {
-                                    declarations += declaration.toFirDeclaration(
-                                        correctedEnumSelfTypeRef,
-                                        delegatedSelfType = delegatedEntrySelfType,
-                                        ktEnumEntry,
-                                        ownerClassBuilder = this,
-                                        ownerTypeParameters = emptyList()
-                                    )
+                                superTypeRefs += delegatedEnumSelfTypeRef
+                                val superTypeCallEntry = superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
+                                val correctedEnumSelfTypeRef = buildResolvedTypeRef {
+                                    source = superTypeCallEntry?.calleeExpression?.typeReference?.toFirSourceElement()
+                                    type = delegatedEnumSelfTypeRef.type
+                                }
+                                declarations += primaryConstructor.toFirConstructor(
+                                    superTypeCallEntry,
+                                    correctedEnumSelfTypeRef,
+                                    delegatedEntrySelfType,
+                                    owner = ktEnumEntry,
+                                    typeParameters,
+                                    containingClassIsExpectClass
+                                )
+                                // Use ANONYMOUS_OBJECT_NAME for the owner class id for enum entry declarations (see KT-42351)
+                                withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
+                                    for (declaration in ktEnumEntry.declarations) {
+                                        declarations += declaration.toFirDeclaration(
+                                            correctedEnumSelfTypeRef,
+                                            delegatedSelfType = delegatedEntrySelfType,
+                                            ktEnumEntry,
+                                            ownerClassBuilder = this,
+                                            ownerTypeParameters = emptyList()
+                                        )
+                                    }
                                 }
                             }
                         }

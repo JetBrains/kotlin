@@ -106,6 +106,12 @@ public class FirLazyBodiesCalculatorTestGenerated extends AbstractFirLazyBodiesC
         }
 
         @Test
+        @TestMetadata("enums3.kt")
+        public void testEnums3() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/enums3.kt");
+        }
+
+        @Test
         @TestMetadata("expectActual.kt")
         public void testExpectActual() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectActual.kt");
