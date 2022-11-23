@@ -35,9 +35,8 @@ class KaptPathsTest {
 
             val symlinkToOtherJava = Files.createSymbolicLink(File(tempDir, "Other.java").toPath(), otherJava.toPath()).toFile()
             val symlinkToNotJava = Files.createSymbolicLink(File(tempDir, "NotJava.java").toPath(), notJava.toPath()).toFile()
-            val symlinkToJavaRootDir = Files.createSymbolicLink(File(tempDir, "java2").toPath(), javaRootDir.toPath()).toFile()
 
-            val javaRoots = listOf(simpleJava, symlinkToOtherJava, symlinkToNotJava, symlinkToJavaRootDir, javaRootDir)
+            val javaRoots = listOf(simpleJava, symlinkToOtherJava, symlinkToNotJava, javaRootDir)
 
             val paths = KaptOptions.Builder().apply {
                 javaSourceRoots.addAll(javaRoots)
@@ -53,7 +52,7 @@ class KaptPathsTest {
                 assertTrue(javaSourceFiles.any { it.toRelativeString(tempDir) == path }) { "Can't find path $path\nAvailable: $available" }
             }
 
-            assertEquals(4, javaSourceFiles.size)
+            assertEquals(4, javaSourceFiles.size, "Actual content: ${javaSourceFiles}")
             assertContains("Simple.java")
             assertContains("Other.java")
             assertContains("NotJava.java")
