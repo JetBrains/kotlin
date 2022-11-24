@@ -117,9 +117,7 @@ var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
     val classId = getClassId() ?: return null
-    return executeWithoutPCE {
-        provider.getFirClassifierByFqName(classId) as? FirRegularClass
-    }
+    return provider.getFirClassifierByFqName(classId) as? FirRegularClass
 }
 
 
