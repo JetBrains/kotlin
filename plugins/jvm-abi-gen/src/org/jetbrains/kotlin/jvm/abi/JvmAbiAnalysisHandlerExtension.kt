@@ -232,8 +232,8 @@ class JvmAbiAnalysisHandlerExtension(
 
         fun flush(outputItemsCollector: OutputItemsCollector?) {
             val bytes = bytes ?: return
-            FileUtil.writeToFile(file, bytes)
             outputItemsCollector?.add(sources, file)
+            FileUtil.writeToFile(file, bytes)
         }
     }
 }
