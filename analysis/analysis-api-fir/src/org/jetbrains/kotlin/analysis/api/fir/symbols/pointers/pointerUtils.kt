@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
@@ -24,7 +23,7 @@ internal inline fun <reified D : FirCallableDeclaration> FirScope.findDeclaratio
     var foundSymbol: D? = null
     processor { symbol ->
         val declaration = symbol.fir
-        if (declaration is D && signature.sameSignature(declaration)) {
+        if (declaration is D && signature.hasTheSameSignature(declaration)) {
             foundSymbol = declaration
         }
     }
@@ -48,7 +47,7 @@ internal inline fun <reified D : FirCallableDeclaration> Collection<FirCallableS
 ): D? {
     for (symbol in this) {
         val declaration = symbol.fir
-        if (declaration is D && signature.sameSignature(declaration)) {
+        if (declaration is D && signature.hasTheSameSignature(declaration)) {
             return declaration
         }
     }

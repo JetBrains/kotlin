@@ -25,9 +25,9 @@ internal class FirCallableSignature private constructor(
     private val typeParametersCount: Int,
     private val returnType: String,
 ) {
-    fun sameSignature(declaration: FirCallableSymbol<*>): Boolean = sameSignature(declaration.fir)
+    fun hasTheSameSignature(declaration: FirCallableSymbol<*>): Boolean = hasTheSameSignature(declaration.fir)
 
-    fun sameSignature(declaration: FirCallableDeclaration): Boolean {
+    fun hasTheSameSignature(declaration: FirCallableDeclaration): Boolean {
         if ((receiverType == null) != (declaration.receiverParameter == null)) return false
         if (contextReceiverTypes.size != declaration.contextReceivers.size) return false
         if (typeParametersCount != declaration.typeParameters.size) return false
