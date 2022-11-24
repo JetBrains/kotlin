@@ -15,6 +15,6 @@ annotation class SamWithReceiver
 fun test() {
     val e = Exec()
 
-    e.exec <!TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>a<!> -> System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>) }<!>
+    e.exec <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE!>a<!> -> System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(a) }<!>
     e.exec { System.out.println(this) }
 }

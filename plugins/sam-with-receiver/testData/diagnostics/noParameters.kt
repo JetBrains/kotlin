@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 
-// FILE: SamConstructor.kt
+// FILE: Sam.java
 @SamWithReceiver
 public interface Sam {
     void run();

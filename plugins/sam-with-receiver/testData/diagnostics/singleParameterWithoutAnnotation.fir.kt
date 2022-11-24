@@ -11,6 +11,6 @@ fun test() {
 
     Sam {
         val a = <!NO_THIS!>this<!>
-        System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
+        System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(a)
     }
 }

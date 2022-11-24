@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -24,14 +25,19 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractSamWithReceiverTest : AbstractDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configurePlugin()
+        with(builder) {
+            configurePlugin()
+        }
     }
 }
 
 abstract class AbstractFirSamWithReceiverTest : AbstractFirDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configurePlugin()
+        with(builder) {
+            configurePlugin()
+            configurationForClassicAndFirTestsAlongside()
+        }
     }
 }
 
