@@ -51,12 +51,12 @@ internal class SymbolLightSimpleMethod(
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
-            withFunctionSymbol { functionSymbol ->
-                SymbolLightTypeParameterList(
-                    owner = this@SymbolLightSimpleMethod,
-                    symbolWithTypeParameterList = functionSymbol,
-                )
-            }
+            SymbolLightTypeParameterList(
+                owner = this,
+                symbolWithTypeParameterPointer = functionSymbolPointer,
+                ktModule = ktModule,
+                ktDeclaration = functionDeclaration,
+            )
         }
     }
 

@@ -89,12 +89,12 @@ internal class SymbolLightAccessorMethod(
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
-            analyzeForLightClasses(ktModule) {
-                SymbolLightTypeParameterList(
-                    owner = this@SymbolLightAccessorMethod,
-                    symbolWithTypeParameterList = propertySymbol(),
-                )
-            }
+            SymbolLightTypeParameterList(
+                owner = this,
+                symbolWithTypeParameterPointer = containingPropertySymbolPointer,
+                ktModule = ktModule,
+                ktDeclaration = containingPropertyDeclaration,
+            )
         }
     }
 

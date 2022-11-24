@@ -14,6 +14,8 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -42,10 +45,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtClassOrObject, ktModule: KtModule) :
     SymbolLightClassBase(ktModule, classOrObject.manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
-    protected fun <T> withClassOrObjectSymbol(action: KtAnalysisSession.(KtClassOrObjectSymbol) -> T): T =
-        analyzeForLightClasses(ktModule) {
-            action(requireNotNull(classOrObject.getClassOrObjectSymbol()))
-        }
+    private val classOrObjectSymbolPointer: KtSymbolPointer<KtClassOrObjectSymbol> = classOrObject.symbolPointer()
+
+    protected fun <T> withClassOrObjectSymbol(action: KtAnalysisSession.(KtClassOrObjectSymbol) -> T): T {
+        return classOrObjectSymbolPointer.withSymbol(ktModule, action)
+    }
 
     protected fun <T> withNamedClassOrObjectSymbol(action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
         analyzeForLightClasses(ktModule) {
@@ -82,12 +86,12 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
-            withClassOrObjectSymbol {
-                SymbolLightTypeParameterList(
-                    owner = this@SymbolLightClassForClassOrObject,
-                    symbolWithTypeParameterList = it,
-                )
-            }
+            SymbolLightTypeParameterList(
+                owner = this,
+                symbolWithTypeParameterPointer = classOrObjectSymbolPointer,
+                ktModule = ktModule,
+                ktDeclaration = classOrObject,
+            )
         }
     }
 
