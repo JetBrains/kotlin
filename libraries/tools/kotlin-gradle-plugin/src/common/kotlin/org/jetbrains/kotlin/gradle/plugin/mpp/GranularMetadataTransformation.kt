@@ -308,8 +308,12 @@ internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): P
 internal fun resolvableMetadataConfiguration(
     project: Project,
     sourceSets: Iterable<KotlinSourceSet>,
-    scopes: Iterable<KotlinDependencyScope>
-) = resolvableMetadataConfiguration(
+    scopes: Iterable<KotlinDependencyScope> = setOf(
+        KotlinDependencyScope.API_SCOPE,
+        KotlinDependencyScope.IMPLEMENTATION_SCOPE,
+        KotlinDependencyScope.COMPILE_ONLY_SCOPE
+    )
+): Configuration = resolvableMetadataConfiguration(
     project,
     commonMetadataDependenciesConfigurationForScopes(project, scopes),
     sourceSets.flatMapTo(mutableListOf()) { requestedDependencies(project, it, scopes) }

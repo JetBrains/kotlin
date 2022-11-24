@@ -5,29 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.KeepOriginalDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedMetadataLibraryDirectoryForIde
 import org.jetbrains.kotlin.gradle.plugin.mpp.read
-import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> =
-        collectMetadataDependencyResolutions<ChooseVisibleSourceSets>(sourceSet)
+        sourceSet.resolveMetadata<ChooseVisibleSourceSets>()
             .flatMap { resolution -> resolve(sourceSet, resolution) }
             .toSet()
 
@@ -63,43 +56,3 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
         }
     }
 }
-
-object IdeOriginalMetadataDependencyResolver : IdeDependencyResolver {
-    override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        val metadataDependenciesConfiguration = resolvableMetadataConfiguration(
-            sourceSet.project,
-            listOf(sourceSet),
-            metadataDependencyScopes,
-        )
-
-        val keptOriginalDependencyResolutionIds = collectMetadataDependencyResolutions<KeepOriginalDependency>(sourceSet)
-            .map { it.dependency.id }.toSet()
-
-        val artifactsView = metadataDependenciesConfiguration.incoming.artifactView { view ->
-            view.componentFilter { id -> id in keptOriginalDependencyResolutionIds }
-            view.isLenient = true
-        }
-
-        return artifactsView.artifacts.mapNotNull { artifact ->
-            val moduleId = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@mapNotNull null
-            IdeaKotlinResolvedBinaryDependency(
-                binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
-                binaryFile = artifact.file,
-                coordinates = IdeaKotlinBinaryCoordinates(moduleId)
-            )
-        }.toSet()
-    }
-}
-
-private inline fun <reified T : MetadataDependencyResolution> collectMetadataDependencyResolutions(sourceSet: KotlinSourceSet): List<T> {
-    if (sourceSet !is DefaultKotlinSourceSet) return emptyList()
-    return metadataDependencyScopes.flatMap { scope ->
-        sourceSet.dependencyTransformations[scope]?.metadataDependencyResolutions?.toList().orEmpty()
-    }.filterIsInstance<T>()
-}
-
-private val metadataDependencyScopes = listOf(
-    API_SCOPE,
-    IMPLEMENTATION_SCOPE,
-    COMPILE_ONLY_SCOPE,
-)

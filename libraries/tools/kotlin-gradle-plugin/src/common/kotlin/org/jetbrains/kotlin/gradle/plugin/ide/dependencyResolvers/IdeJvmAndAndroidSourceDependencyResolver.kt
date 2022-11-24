@@ -15,17 +15,13 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinSourceCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
 object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (!sourceSet.isJvmAndAndroid) return emptySet()
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
-        return sourceSet.dependencyTransformations[API_SCOPE]?.metadataDependencyResolutions?.toList().orEmpty()
-            .plus(sourceSet.dependencyTransformations[IMPLEMENTATION_SCOPE]?.metadataDependencyResolutions?.toList().orEmpty())
-            .plus(sourceSet.dependencyTransformations[COMPILE_ONLY_SCOPE]?.metadataDependencyResolutions?.toList().orEmpty())
-            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+        return sourceSet.resolveMetadata<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .flatMap { chooseVisibleSourceSets ->
                 val projectDependency = chooseVisibleSourceSets.projectDependency ?: return@flatMap emptyList<IdeaKotlinDependency>()
                 val kotlin = projectDependency.multiplatformExtensionOrNull ?: return@flatMap emptyList<IdeaKotlinDependency>()
