@@ -3,8 +3,8 @@
 
 package org.jetbrains.kotlin.gradle.idea.proto.generated.tcs;
 
-public interface IdeaKotlinSourceCoordinatesProtoOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto)
+public interface IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -23,19 +23,19 @@ public interface IdeaKotlinSourceCoordinatesProtoOrBuilder extends
   org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProtoOrBuilder getProjectOrBuilder();
 
   /**
-   * <code>optional string source_set_name = 2;</code>
-   * @return Whether the sourceSetName field is set.
+   * <code>optional string artifact_file = 2;</code>
+   * @return Whether the artifactFile field is set.
    */
-  boolean hasSourceSetName();
+  boolean hasArtifactFile();
   /**
-   * <code>optional string source_set_name = 2;</code>
-   * @return The sourceSetName.
+   * <code>optional string artifact_file = 2;</code>
+   * @return The artifactFile.
    */
-  java.lang.String getSourceSetName();
+  java.lang.String getArtifactFile();
   /**
-   * <code>optional string source_set_name = 2;</code>
-   * @return The bytes for sourceSetName.
+   * <code>optional string artifact_file = 2;</code>
+   * @return The bytes for artifactFile.
    */
   com.google.protobuf.ByteString
-      getSourceSetNameBytes();
+      getArtifactFileBytes();
 }

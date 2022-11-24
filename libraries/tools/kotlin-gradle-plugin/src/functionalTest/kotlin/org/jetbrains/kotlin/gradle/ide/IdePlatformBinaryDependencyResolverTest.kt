@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.kpm.idea.mavenCentralCacheRedirector
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdePlatformBinaryDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdePlatformDependencyResolver
 import kotlin.test.Test
 
 class IdePlatformBinaryDependencyResolverTest {
@@ -46,7 +46,7 @@ class IdePlatformBinaryDependencyResolverTest {
         }
 
         /* This resolver shall refuse to resolve for dependencies for metadata based dependencies */
-        IdePlatformBinaryDependencyResolver().resolve(commonMain).assertMatches()
+        IdePlatformDependencyResolver().resolve(commonMain).assertMatches()
 
         val jvmDependencies = listOf(
             binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.0.2"),
@@ -72,9 +72,9 @@ class IdePlatformBinaryDependencyResolverTest {
             binaryCoordinates("com.arkivanov.essenty:utils-internal-linuxx64:0.4.2"),
         )
 
-        IdePlatformBinaryDependencyResolver().resolve(jvmMain).assertMatches(jvmDependencies)
-        IdePlatformBinaryDependencyResolver().resolve(jvmTest).assertMatches(jvmDependencies)
-        IdePlatformBinaryDependencyResolver().resolve(linuxX64Main).assertMatches(linuxDependencies)
-        IdePlatformBinaryDependencyResolver().resolve(linuxX64Test).assertMatches(linuxDependencies)
+        IdePlatformDependencyResolver().resolve(jvmMain).assertMatches(jvmDependencies)
+        IdePlatformDependencyResolver().resolve(jvmTest).assertMatches(jvmDependencies)
+        IdePlatformDependencyResolver().resolve(linuxX64Main).assertMatches(linuxDependencies)
+        IdePlatformDependencyResolver().resolve(linuxX64Test).assertMatches(linuxDependencies)
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.proto.tcs
 
 import org.jetbrains.kotlin.gradle.idea.proto.AbstractSerializationTest
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
 import org.junit.Test
 
@@ -20,9 +21,11 @@ class IdeaKotlinSourceCoordinatesSerializationTest : AbstractSerializationTest<I
     @Test
     fun `sample 0`() = testSerialization(
         IdeaKotlinSourceCoordinates(
-            buildId = "myBuildId",
-            projectPath = "myProjectPath",
-            projectName = "myProjectName",
+            project = IdeaKotlinProjectCoordinates(
+                buildId = "myBuildId",
+                projectPath = "myProjectPath",
+                projectName = "myProjectName"
+            ),
             sourceSetName = "mySourceSetName"
         )
     )

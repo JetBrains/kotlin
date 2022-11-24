@@ -40,8 +40,12 @@ fun buildProjectWithKPM(projectBuilder: ProjectBuilder.() -> Unit = { }, code: P
 }
 
 fun buildProjectWithJvm(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
-    project.plugins.apply(KotlinPlatformJvmPlugin::class.java)
+    project.applyKotlinJvmPlugin()
     code()
+}
+
+fun Project.applyKotlinJvmPlugin() {
+    project.plugins.apply(KotlinPlatformJvmPlugin::class.java)
 }
 
 fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {

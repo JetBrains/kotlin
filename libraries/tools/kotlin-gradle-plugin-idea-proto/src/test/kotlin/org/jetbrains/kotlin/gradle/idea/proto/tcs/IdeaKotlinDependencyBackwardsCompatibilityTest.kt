@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.proto.tcs
 
 import org.jetbrains.kotlin.gradle.idea.proto.classLoaderForBackwardsCompatibleClasses
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectArtifactDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
@@ -51,6 +52,18 @@ class IdeaKotlinDependencyBackwardsCompatibilityTest {
         val binary = TestIdeaKotlinDependencySerializer().serialize(dependency)
         val deserialized = deserializeIdeaKotlinDependencyWithBackwardsCompatibleClasses(binary)
         val deserializedCopied = deserialized.copy<IdeaKotlinSourceDependency>()
+
+        assertEquals(dependency.type, deserializedCopied.type)
+        assertEquals(dependency.coordinates, deserializedCopied.coordinates)
+        assertEquals(dependency.extras, deserializedCopied.extras)
+    }
+
+    @Test
+    fun `test - simple project artifact dependency`() {
+        val dependency = TestIdeaKotlinInstances.simpleProjectArtifactDependency
+        val binary = TestIdeaKotlinDependencySerializer().serialize(dependency)
+        val deserialized = deserializeIdeaKotlinDependencyWithBackwardsCompatibleClasses(binary)
+        val deserializedCopied = deserialized.copy<IdeaKotlinProjectArtifactDependency>()
 
         assertEquals(dependency.type, deserializedCopied.type)
         assertEquals(dependency.coordinates, deserializedCopied.coordinates)

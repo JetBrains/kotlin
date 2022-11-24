@@ -23,79 +23,33 @@ object IdeaKotlinSourceCoordinatesProtoKt {
     internal fun _build(): org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto = _builder.build()
 
     /**
-     * <code>optional string build_id = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto project = 1;</code>
      */
-    var buildId: kotlin.String
-      @JvmName("getBuildId")
-      get() = _builder.getBuildId()
-      @JvmName("setBuildId")
+    var project: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto
+      @JvmName("getProject")
+      get() = _builder.getProject()
+      @JvmName("setProject")
       set(value) {
-        _builder.setBuildId(value)
+        _builder.setProject(value)
       }
     /**
-     * <code>optional string build_id = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto project = 1;</code>
      */
-    fun clearBuildId() {
-      _builder.clearBuildId()
+    fun clearProject() {
+      _builder.clearProject()
     }
     /**
-     * <code>optional string build_id = 1;</code>
-     * @return Whether the buildId field is set.
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto project = 1;</code>
+     * @return Whether the project field is set.
      */
-    fun hasBuildId(): kotlin.Boolean {
-      return _builder.hasBuildId()
+    fun hasProject(): kotlin.Boolean {
+      return _builder.hasProject()
     }
+    val IdeaKotlinSourceCoordinatesProtoKt.Dsl.projectOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto?
+      get() = _builder.projectOrNull
 
     /**
-     * <code>optional string project_path = 2;</code>
-     */
-    var projectPath: kotlin.String
-      @JvmName("getProjectPath")
-      get() = _builder.getProjectPath()
-      @JvmName("setProjectPath")
-      set(value) {
-        _builder.setProjectPath(value)
-      }
-    /**
-     * <code>optional string project_path = 2;</code>
-     */
-    fun clearProjectPath() {
-      _builder.clearProjectPath()
-    }
-    /**
-     * <code>optional string project_path = 2;</code>
-     * @return Whether the projectPath field is set.
-     */
-    fun hasProjectPath(): kotlin.Boolean {
-      return _builder.hasProjectPath()
-    }
-
-    /**
-     * <code>optional string project_name = 3;</code>
-     */
-    var projectName: kotlin.String
-      @JvmName("getProjectName")
-      get() = _builder.getProjectName()
-      @JvmName("setProjectName")
-      set(value) {
-        _builder.setProjectName(value)
-      }
-    /**
-     * <code>optional string project_name = 3;</code>
-     */
-    fun clearProjectName() {
-      _builder.clearProjectName()
-    }
-    /**
-     * <code>optional string project_name = 3;</code>
-     * @return Whether the projectName field is set.
-     */
-    fun hasProjectName(): kotlin.Boolean {
-      return _builder.hasProjectName()
-    }
-
-    /**
-     * <code>optional string source_set_name = 4;</code>
+     * <code>optional string source_set_name = 2;</code>
      */
     var sourceSetName: kotlin.String
       @JvmName("getSourceSetName")
@@ -105,13 +59,13 @@ object IdeaKotlinSourceCoordinatesProtoKt {
         _builder.setSourceSetName(value)
       }
     /**
-     * <code>optional string source_set_name = 4;</code>
+     * <code>optional string source_set_name = 2;</code>
      */
     fun clearSourceSetName() {
       _builder.clearSourceSetName()
     }
     /**
-     * <code>optional string source_set_name = 4;</code>
+     * <code>optional string source_set_name = 2;</code>
      * @return Whether the sourceSetName field is set.
      */
     fun hasSourceSetName(): kotlin.Boolean {
@@ -122,4 +76,7 @@ object IdeaKotlinSourceCoordinatesProtoKt {
 @kotlin.jvm.JvmSynthetic
 inline fun org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto.copy(block: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProtoKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto =
   org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProtoKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+
+val org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProtoOrBuilder.projectOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto?
+  get() = if (hasProject()) getProject() else null
 

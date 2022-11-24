@@ -36,6 +36,11 @@ class IdeaKotlinDependencySerializationTest : AbstractSerializationTest<IdeaKotl
     )
 
     @Test
+    fun `sample - project artifact dependency`() = testSerialization(
+        TestIdeaKotlinInstances.simpleProjectArtifactDependency
+    )
+
+    @Test
     fun `bad data - returns null`() {
         assertNull(IdeaKotlinDependency(byteArrayOf()))
         if (logger.reports.size != 1) fail("Expected exactly one report in logger. Found ${logger.reports}")

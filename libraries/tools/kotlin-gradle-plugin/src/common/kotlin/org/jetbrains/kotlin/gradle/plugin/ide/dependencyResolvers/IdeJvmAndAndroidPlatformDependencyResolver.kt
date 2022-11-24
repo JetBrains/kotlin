@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.gradle.utils.named
  * Resolves dependencies of jvm and Android source sets from the perspective jvm
  */
 internal fun IdeJvmAndAndroidPlatformBinaryDependencyResolver(project: Project): IdeDependencyResolver =
-    IdePlatformBinaryDependencyResolver(
+    IdePlatformDependencyResolver(
         binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
-        artifactResolutionStrategy = IdePlatformBinaryDependencyResolver.ArtifactResolutionStrategy.PlatformLikeSourceSet(
+        artifactResolutionStrategy = IdePlatformDependencyResolver.ArtifactResolutionStrategy.PlatformLikeSourceSet(
             setupPlatformResolutionAttributes = {
                 attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
                 attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))

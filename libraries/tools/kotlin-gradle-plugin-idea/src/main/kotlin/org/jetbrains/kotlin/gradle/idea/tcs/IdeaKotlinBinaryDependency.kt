@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.idea.tcs
 
 import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.io.File
 
 sealed class IdeaKotlinBinaryDependency : IdeaKotlinDependency {
@@ -15,8 +16,8 @@ sealed class IdeaKotlinBinaryDependency : IdeaKotlinDependency {
 data class IdeaKotlinResolvedBinaryDependency(
     val binaryType: String,
     val binaryFile: File,
-    override val extras: MutableExtras,
-    override val coordinates: IdeaKotlinBinaryCoordinates?
+    override val coordinates: IdeaKotlinBinaryCoordinates?,
+    override val extras: MutableExtras = mutableExtrasOf()
 ) : IdeaKotlinBinaryDependency() {
     internal companion object {
         const val serialVersionUID = 0L
@@ -26,7 +27,7 @@ data class IdeaKotlinResolvedBinaryDependency(
 data class IdeaKotlinUnresolvedBinaryDependency(
     val cause: String?,
     override val coordinates: IdeaKotlinBinaryCoordinates?,
-    override val extras: MutableExtras
+    override val extras: MutableExtras = mutableExtrasOf()
 ) : IdeaKotlinBinaryDependency() {
     internal companion object {
         const val serialVersionUID = 0L

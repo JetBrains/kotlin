@@ -8,9 +8,7 @@ internal fun IdeaKotlinSourceCoordinatesProto(
     coordinates: IdeaKotlinSourceCoordinates
 ): IdeaKotlinSourceCoordinatesProto {
     return ideaKotlinSourceCoordinatesProto {
-        this.buildId = coordinates.buildId
-        this.projectPath = coordinates.projectPath
-        this.projectName = coordinates.projectName
+        this.project = IdeaKotlinProjectCoordinatesProto(coordinates.project)
         this.sourceSetName = coordinates.sourceSetName
     }
 }
@@ -19,9 +17,7 @@ internal fun IdeaKotlinSourceCoordinates(
     proto: IdeaKotlinSourceCoordinatesProto
 ): IdeaKotlinSourceCoordinates {
     return IdeaKotlinSourceCoordinates(
-        buildId = proto.buildId,
-        projectPath = proto.projectPath,
-        projectName = proto.projectName,
+        project = IdeaKotlinProjectCoordinates(proto.project),
         sourceSetName = proto.sourceSetName
     )
 }

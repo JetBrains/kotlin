@@ -56,7 +56,7 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
         )
 
         registerDependencyResolver(
-            resolver = IdePlatformBinaryDependencyResolver(),
+            resolver = IdePlatformDependencyResolver(),
             constraint = IdeMultiplatformImport.SourceSetConstraint.isPlatform,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default

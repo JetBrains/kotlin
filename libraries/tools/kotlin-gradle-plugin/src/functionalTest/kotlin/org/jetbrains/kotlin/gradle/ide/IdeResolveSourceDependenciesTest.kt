@@ -10,11 +10,10 @@ package org.jetbrains.kotlin.gradle.ide
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.regularSourceDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import kotlin.test.Test
 
@@ -55,44 +54,92 @@ class IdeResolveSourceDependenciesTest {
         producer.evaluate()
         consumer.evaluate()
 
-        consumer.resolveSourceDependencies("commonMain").assertMatches(
-            regularSourceDependency(":producer:commonMain")
+        consumer.resolveDependencies("commonMain").assertMatches(
+            regularSourceDependency(":producer/commonMain")
         )
 
-        consumer.resolveSourceDependencies("nativeMain").assertMatches(
-            regularSourceDependency(":producer:commonMain"),
-            regularSourceDependency(":producer:nativeMain"),
-            regularSourceDependency(":producer:linuxMain"),
-            dependsOnDependency(":consumer:commonMain"),
+        consumer.resolveDependencies("nativeMain").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/nativeMain"),
+            regularSourceDependency(":producer/linuxMain"),
+            dependsOnDependency(":consumer/commonMain"),
         )
 
-        consumer.resolveSourceDependencies("nativeTest").assertMatches(
-            regularSourceDependency(":producer:commonMain"),
-            regularSourceDependency(":producer:nativeMain"),
-            regularSourceDependency(":producer:linuxMain"),
-            friendSourceDependency(":consumer:commonMain"),
-            friendSourceDependency(":consumer:nativeMain"),
-            friendSourceDependency(":consumer:linuxMain"),
-            dependsOnDependency(":consumer:commonTest"),
+        consumer.resolveDependencies("nativeTest").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/nativeMain"),
+            regularSourceDependency(":producer/linuxMain"),
+            friendSourceDependency(":consumer/commonMain"),
+            friendSourceDependency(":consumer/nativeMain"),
+            friendSourceDependency(":consumer/linuxMain"),
+            dependsOnDependency(":consumer/commonTest"),
         )
 
-        consumer.resolveSourceDependencies("linuxMain").assertMatches(
-            regularSourceDependency(":producer:commonMain"),
-            regularSourceDependency(":producer:nativeMain"),
-            regularSourceDependency(":producer:linuxMain"),
-            dependsOnDependency(":consumer:commonMain"),
-            dependsOnDependency(":consumer:nativeMain"),
+        consumer.resolveDependencies("linuxMain").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/nativeMain"),
+            regularSourceDependency(":producer/linuxMain"),
+            dependsOnDependency(":consumer/commonMain"),
+            dependsOnDependency(":consumer/nativeMain"),
         )
 
-        consumer.resolveSourceDependencies("linuxTest").assertMatches(
-            regularSourceDependency(":producer:commonMain"),
-            regularSourceDependency(":producer:nativeMain"),
-            regularSourceDependency(":producer:linuxMain"),
-            friendSourceDependency(":consumer:commonMain"),
-            friendSourceDependency(":consumer:nativeMain"),
-            friendSourceDependency(":consumer:linuxMain"),
-            dependsOnDependency(":consumer:commonTest"),
-            dependsOnDependency(":consumer:nativeTest"),
+        consumer.resolveDependencies("linuxTest").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/nativeMain"),
+            regularSourceDependency(":producer/linuxMain"),
+            friendSourceDependency(":consumer/commonMain"),
+            friendSourceDependency(":consumer/nativeMain"),
+            friendSourceDependency(":consumer/linuxMain"),
+            dependsOnDependency(":consumer/commonTest"),
+            dependsOnDependency(":consumer/nativeTest"),
+        )
+
+        consumer.resolveDependencies("linuxX64Main").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/nativeMain"),
+            regularSourceDependency(":producer/linuxMain"),
+            dependsOnDependency(":consumer/commonMain"),
+            dependsOnDependency(":consumer/nativeMain"),
+            dependsOnDependency(":consumer/linuxMain"),
+            projectArtifactDependency(Regular, ":producer", Regex(".*/linuxX64/main/klib/producer.klib"))
+        )
+
+        consumer.resolveDependencies("linuxX64Test").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/nativeMain"),
+            regularSourceDependency(":producer/linuxMain"),
+            friendSourceDependency(":consumer/commonMain"),
+            friendSourceDependency(":consumer/nativeMain"),
+            friendSourceDependency(":consumer/linuxMain"),
+            friendSourceDependency(":consumer/linuxX64Main"),
+            dependsOnDependency(":consumer/commonTest"),
+            dependsOnDependency(":consumer/nativeTest"),
+            dependsOnDependency(":consumer/linuxTest"),
+            projectArtifactDependency(Regular, ":producer", Regex(".*/linuxX64/main/klib/producer.klib"))
+        )
+
+        consumer.resolveDependencies("linuxArm64Main").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/nativeMain"),
+            regularSourceDependency(":producer/linuxMain"),
+            dependsOnDependency(":consumer/commonMain"),
+            dependsOnDependency(":consumer/nativeMain"),
+            dependsOnDependency(":consumer/linuxMain"),
+            projectArtifactDependency(Regular, ":producer", Regex(".*/linuxArm64/main/klib/producer.klib"))
+        )
+
+        consumer.resolveDependencies("linuxArm64Test").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/nativeMain"),
+            regularSourceDependency(":producer/linuxMain"),
+            friendSourceDependency(":consumer/commonMain"),
+            friendSourceDependency(":consumer/nativeMain"),
+            friendSourceDependency(":consumer/linuxMain"),
+            friendSourceDependency(":consumer/linuxArm64Main"),
+            dependsOnDependency(":consumer/commonTest"),
+            dependsOnDependency(":consumer/nativeTest"),
+            dependsOnDependency(":consumer/linuxTest"),
+            projectArtifactDependency(Regular, ":producer", Regex(".*/linuxArm64/main/klib/producer.klib"))
         )
     }
 
@@ -133,16 +180,53 @@ class IdeResolveSourceDependenciesTest {
         producer.evaluate()
         consumer.evaluate()
 
-        consumer.resolveSourceDependencies("jvmAndAndroidMain").assertMatches(
-            regularSourceDependency(":producer:commonMain"),
-            regularSourceDependency(":producer:jvmAndAndroidMain"),
-            dependsOnDependency(":consumer:commonMain")
+        consumer.resolveDependencies("jvmAndAndroidMain").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/jvmAndAndroidMain"),
+            dependsOnDependency(":consumer/commonMain")
+        )
+    }
+
+    @Test
+    fun `test - multiplatform to kotlin jvm - sample 0`() {
+        val root = buildProject()
+
+        val producer = buildProject({ withParent(root).withName("producer") }) {
+            enableDefaultStdlibDependency(false)
+            applyKotlinJvmPlugin()
+        }
+
+        val consumer = buildProject({ withParent(root).withName("consumer") }) {
+            enableDefaultStdlibDependency(false)
+            applyMultiplatformPlugin()
+            multiplatformExtension.jvm()
+            multiplatformExtension.sourceSets.getByName("commonMain").dependencies {
+                implementation(project(":producer"))
+            }
+        }
+
+        root.evaluate()
+        producer.evaluate()
+        consumer.evaluate()
+
+        consumer.resolveDependencies("commonMain").assertMatches(emptyList<Any>())
+
+        consumer.resolveDependencies("jvmMain").assertMatches(
+            dependsOnDependency(":consumer/commonMain"),
+            projectArtifactDependency(Regular, ":producer", Regex(""".*/build/libs/producer.jar"""))
+        )
+
+        consumer.resolveDependencies("jvmTest").assertMatches(
+            friendSourceDependency(":consumer/commonMain"),
+            friendSourceDependency(":consumer/jvmMain"),
+            dependsOnDependency(":consumer/commonTest"),
+            projectArtifactDependency(Regular, ":producer", Regex(""".*/build/libs/producer.jar"""))
         )
     }
 }
 
-private fun Project.resolveSourceDependencies(sourceSetName: String): List<IdeaKotlinSourceDependency> {
+private fun Project.resolveDependencies(sourceSetName: String): Iterable<IdeaKotlinDependency> {
     return kotlinIdeMultiplatformImport
         .resolveDependencies(multiplatformExtension.sourceSets.getByName(sourceSetName))
-        .filterIsInstance<IdeaKotlinSourceDependency>()
+        .filter { it !is IdeaKotlinBinaryDependency }
 }

@@ -6,21 +6,22 @@
 package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectArtifactDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 
-internal class IdeaKotlinSourceDependencyMatcher(
+internal class IdeaKotlinProjectArtifactDependencyMatcher(
     val type: IdeaKotlinSourceDependency.Type,
     val projectPath: String,
-    val sourceSetName: String
+    val artifactFilePath: Regex
 ) : IdeaKotlinDependencyMatcher {
-    override val description: String =
-        "source($type)::$projectPath/$sourceSetName"
+    override val description: String
+        get() = "project($type)::$projectPath/${artifactFilePath.pattern}"
 
     override fun matches(dependency: IdeaKotlinDependency): Boolean {
-        if (dependency !is IdeaKotlinSourceDependency) return false
+        if (dependency !is IdeaKotlinProjectArtifactDependency) return false
         return dependency.type == type &&
-                dependency.coordinates.projectPath == projectPath &&
-                dependency.coordinates.sourceSetName == sourceSetName
+                dependency.coordinates.project.projectPath == projectPath &&
+                dependency.coordinates.artifactFile.path.matches(artifactFilePath)
+
     }
 }
-

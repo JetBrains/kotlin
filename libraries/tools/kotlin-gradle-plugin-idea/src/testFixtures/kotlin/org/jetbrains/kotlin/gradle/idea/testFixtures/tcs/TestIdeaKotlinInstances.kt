@@ -19,6 +19,12 @@ object TestIdeaKotlinInstances {
         extrasKeyOf<String>() withValue "Cash"
     )
 
+    val simpleProjectCoordinates = IdeaKotlinProjectCoordinates(
+        buildId = "myBuildId",
+        projectPath = "my:project:path",
+        projectName = "myProjectName"
+    )
+
     val simpleBinaryCoordinates = IdeaKotlinBinaryCoordinates(
         group = "myGroup",
         module = "myModule",
@@ -27,10 +33,14 @@ object TestIdeaKotlinInstances {
     )
 
     val simpleSourceCoordinates = IdeaKotlinSourceCoordinates(
-        buildId = "myBuildId",
-        projectPath = "my:project:path",
-        projectName = "myProjectName",
+        project = simpleProjectCoordinates,
         sourceSetName = "mySourceSetName"
+    )
+
+
+    val simpleProjectArtifactCoordinates = IdeaKotlinProjectArtifactCoordinates(
+        project = simpleProjectCoordinates,
+        artifactFile = File("myArtifactFile.klib")
     )
 
     val simpleUnresolvedBinaryDependency = IdeaKotlinUnresolvedBinaryDependency(
@@ -48,6 +58,12 @@ object TestIdeaKotlinInstances {
 
     val simpleSourceDependency = IdeaKotlinSourceDependency(
         coordinates = simpleSourceCoordinates,
+        type = IdeaKotlinSourceDependency.Type.Regular,
+        extras = extrasWithIntAndStrings.toMutableExtras()
+    )
+
+    val simpleProjectArtifactDependency = IdeaKotlinProjectArtifactDependency(
+        coordinates = simpleProjectArtifactCoordinates,
         type = IdeaKotlinSourceDependency.Type.Regular,
         extras = extrasWithIntAndStrings.toMutableExtras()
     )

@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.ArtifactView
-import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal class IdePlatformBinaryDependencyResolver(
+internal class IdePlatformDependencyResolver(
     private val binaryType: String = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
     private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation()
 ) : IdeDependencyResolver {
@@ -76,12 +77,35 @@ internal class IdePlatformBinaryDependencyResolver(
             }.toSet()
 
         val resolvedDependencies = artifacts.artifacts.mapNotNull { artifact ->
-            IdeaKotlinResolvedBinaryDependency(
-                coordinates = artifact.variant.owner.toIdeaKotlinBinaryCoordinatesOrNull(),
-                binaryType = binaryType,
-                binaryFile = artifact.file,
-                extras = mutableExtrasOf()
-            )
+            when (val componentId = artifact.id.componentIdentifier) {
+                is ProjectComponentIdentifier -> {
+                    IdeaKotlinProjectArtifactDependency(
+                        type = IdeaKotlinSourceDependency.Type.Regular,
+                        coordinates = IdeaKotlinProjectArtifactCoordinates(
+                            project = IdeaKotlinProjectCoordinates(componentId),
+                            artifactFile = artifact.file
+                        )
+                    )
+                }
+
+                is ModuleComponentIdentifier -> {
+                    IdeaKotlinResolvedBinaryDependency(
+                        coordinates = IdeaKotlinBinaryCoordinates(componentId),
+                        binaryType = binaryType,
+                        binaryFile = artifact.file,
+                    )
+                }
+
+                is OpaqueComponentArtifactIdentifier -> {
+                    /* Such dependencies *would* require implementing a resolver */
+                    null
+                }
+
+                else -> {
+                    logger.warn("Unhandled componentId: ${componentId.javaClass}")
+                    null
+                }
+            }
         }.toSet()
 
         return resolvedDependencies + unresolvedDependencies
@@ -108,7 +132,6 @@ internal class IdePlatformBinaryDependencyResolver(
 
         return compilation.internal.configurations.compileDependencyConfiguration.incoming.artifactView { view ->
             view.isLenient = true
-            view.componentFilter { id -> id is ModuleComponentIdentifier }
             view.attributes.setupArtifactViewAttributes(sourceSet)
         }
     }
@@ -139,19 +162,12 @@ internal class IdePlatformBinaryDependencyResolver(
 
         return sourceSetCompileDependencies.incoming.artifactView { view ->
             view.isLenient = true
-            view.componentFilter { id -> id is ModuleComponentIdentifier }
             view.attributes.setupArtifactViewAttributes(sourceSet)
         }
     }
 
-    private fun ComponentIdentifier.toIdeaKotlinBinaryCoordinatesOrNull(): IdeaKotlinBinaryCoordinates? {
-        return when (this) {
-            is ModuleComponentIdentifier -> IdeaKotlinBinaryCoordinates(group, module, version)
-            else -> null
-        }
-    }
 
     private companion object {
-        val logger = Logging.getLogger(IdePlatformBinaryDependencyResolver::class.java)
+        val logger: Logger = Logging.getLogger(IdePlatformDependencyResolver::class.java)
     }
 }

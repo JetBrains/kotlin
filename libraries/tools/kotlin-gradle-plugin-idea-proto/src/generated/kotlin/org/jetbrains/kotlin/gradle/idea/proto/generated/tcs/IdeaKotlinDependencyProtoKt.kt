@@ -93,6 +93,30 @@ object IdeaKotlinDependencyProtoKt {
     fun hasUnresolvedBinaryDependency(): kotlin.Boolean {
       return _builder.hasUnresolvedBinaryDependency()
     }
+
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    var projectArtifactDependency: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto
+      @JvmName("getProjectArtifactDependency")
+      get() = _builder.getProjectArtifactDependency()
+      @JvmName("setProjectArtifactDependency")
+      set(value) {
+        _builder.setProjectArtifactDependency(value)
+      }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    fun clearProjectArtifactDependency() {
+      _builder.clearProjectArtifactDependency()
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     * @return Whether the projectArtifactDependency field is set.
+     */
+    fun hasProjectArtifactDependency(): kotlin.Boolean {
+      return _builder.hasProjectArtifactDependency()
+    }
     val dependencyCase: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependencyProto.DependencyCase
       @JvmName("getDependencyCase")
       get() = _builder.getDependencyCase()
@@ -114,4 +138,7 @@ val org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependencyPro
 
 val org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependencyProtoOrBuilder.unresolvedBinaryDependencyOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinUnresolvedBinaryDependencyProto?
   get() = if (hasUnresolvedBinaryDependency()) getUnresolvedBinaryDependency() else null
+
+val org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependencyProtoOrBuilder.projectArtifactDependencyOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto?
+  get() = if (hasProjectArtifactDependency()) getProjectArtifactDependency() else null
 

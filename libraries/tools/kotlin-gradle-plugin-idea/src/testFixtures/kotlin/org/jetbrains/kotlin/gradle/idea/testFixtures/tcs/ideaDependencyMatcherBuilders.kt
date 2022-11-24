@@ -23,8 +23,8 @@ fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, project: Project,
 }
 
 fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, path: String): IdeaKotlinDependencyMatcher {
-    val segments = path.split(":")
-    val projectPath = segments.dropLast(1).joinToString(":")
+    val segments = path.split("/")
+    val projectPath = segments.dropLast(1).joinToString("/")
     val sourceSetName = segments.last()
     return IdeaKotlinSourceDependencyMatcher(type, projectPath, sourceSetName)
 }
@@ -38,6 +38,13 @@ fun dependsOnDependency(project: Project, sourceSetName: String) =
 
 fun dependsOnDependency(path: String) = ideSourceDependency(IdeaKotlinSourceDependency.Type.DependsOn, path)
 
+fun projectArtifactDependency(
+    type: IdeaKotlinSourceDependency.Type = IdeaKotlinSourceDependency.Type.Regular, projectPath: String, artifactFilePath: Regex
+): IdeaKotlinDependencyMatcher = IdeaKotlinProjectArtifactDependencyMatcher(
+    type = type,
+    projectPath = projectPath,
+    artifactFilePath = artifactFilePath
+)
 
 fun binaryCoordinates(regex: Regex): IdeaKotlinDependencyMatcher {
     return IdeaBinaryCoordinatesMatcher(regex)

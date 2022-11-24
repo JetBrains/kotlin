@@ -18,11 +18,7 @@ internal fun IdeaKotlinSerializationContext.IdeaKotlinSourceDependencyProto(
 ): IdeaKotlinSourceDependencyProto {
     return ideaKotlinSourceDependencyProto {
         this.extras = IdeaExtrasProto(dependency.extras)
-        this.type = when (dependency.type) {
-            IdeaKotlinSourceDependency.Type.Regular -> IdeaKotlinSourceDependencyProto.Type.REGULAR
-            IdeaKotlinSourceDependency.Type.Friend -> IdeaKotlinSourceDependencyProto.Type.FRIEND
-            IdeaKotlinSourceDependency.Type.DependsOn -> IdeaKotlinSourceDependencyProto.Type.DEPENDS_ON
-        }
+        this.type = dependency.type.toProto()
         this.coordinates = IdeaKotlinSourceCoordinatesProto(dependency.coordinates)
     }
 }
@@ -32,15 +28,7 @@ internal fun IdeaKotlinSerializationContext.IdeaKotlinSourceDependency(
 ): IdeaKotlinSourceDependency {
     return IdeaKotlinSourceDependency(
         extras = Extras(proto.extras).toMutableExtras(),
-        type = when (proto.type) {
-            IdeaKotlinSourceDependencyProto.Type.REGULAR -> IdeaKotlinSourceDependency.Type.Regular
-            IdeaKotlinSourceDependencyProto.Type.FRIEND -> IdeaKotlinSourceDependency.Type.Friend
-            IdeaKotlinSourceDependencyProto.Type.DEPENDS_ON -> IdeaKotlinSourceDependency.Type.DependsOn
-            IdeaKotlinSourceDependencyProto.Type.UNRECOGNIZED, null -> {
-                logger.warn("Unexpected ${IdeaKotlinSourceDependencyProto.Type::class.java.name}: ${proto.type}")
-                IdeaKotlinSourceDependency.Type.Regular
-            }
-        },
+        type = IdeaKotlinSourceDependencyType(proto.type),
         coordinates = IdeaKotlinSourceCoordinates(proto.coordinates),
     )
 }

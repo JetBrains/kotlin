@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependencyProto.DependencyCase
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ideaKotlinDependencyProto
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 
 internal fun IdeaKotlinSerializationContext.IdeaKotlinDependencyProto(dependency: IdeaKotlinDependency): IdeaKotlinDependencyProto {
     return ideaKotlinDependencyProto {
@@ -22,7 +19,8 @@ internal fun IdeaKotlinSerializationContext.IdeaKotlinDependencyProto(dependency
             is IdeaKotlinResolvedBinaryDependency -> resolvedBinaryDependency = IdeaKotlinResolvedBinaryDependencyProto(dependency)
             is IdeaKotlinUnresolvedBinaryDependency -> unresolvedBinaryDependency = IdeaKotlinUnresolvedBinaryDependencyProto(dependency)
             is IdeaKotlinSourceDependency -> sourceDependency = IdeaKotlinSourceDependencyProto(dependency)
-        }
+            is IdeaKotlinProjectArtifactDependency -> projectArtifactDependency = IdeaKotlinProjectArtifactDependencyProto(dependency)
+        }.let { }
     }
 }
 
@@ -31,6 +29,7 @@ internal fun IdeaKotlinSerializationContext.IdeaKotlinDependency(proto: IdeaKotl
         DependencyCase.SOURCE_DEPENDENCY -> IdeaKotlinSourceDependency(proto.sourceDependency)
         DependencyCase.RESOLVED_BINARY_DEPENDENCY -> IdeaKotlinResolvedBinaryDependency(proto.resolvedBinaryDependency)
         DependencyCase.UNRESOLVED_BINARY_DEPENDENCY -> IdeaKotlinUnresolvedBinaryDependency(proto.unresolvedBinaryDependency)
+        DependencyCase.PROJECT_ARTIFACT_DEPENDENCY -> IdeaKotlinProjectArtifactDependency(proto.projectArtifactDependency)
         DependencyCase.DEPENDENCY_NOT_SET -> {
             logger.error("Dependency not set")
             null

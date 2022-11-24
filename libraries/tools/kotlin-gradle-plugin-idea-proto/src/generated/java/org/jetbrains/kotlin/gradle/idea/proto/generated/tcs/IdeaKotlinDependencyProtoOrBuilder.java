@@ -52,5 +52,20 @@ public interface IdeaKotlinDependencyProtoOrBuilder extends
    */
   org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinUnresolvedBinaryDependencyProtoOrBuilder getUnresolvedBinaryDependencyOrBuilder();
 
+  /**
+   * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+   * @return Whether the projectArtifactDependency field is set.
+   */
+  boolean hasProjectArtifactDependency();
+  /**
+   * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+   * @return The projectArtifactDependency.
+   */
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto getProjectArtifactDependency();
+  /**
+   * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+   */
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProtoOrBuilder getProjectArtifactDependencyOrBuilder();
+
   public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinDependencyProto.DependencyCase getDependencyCase();
 }

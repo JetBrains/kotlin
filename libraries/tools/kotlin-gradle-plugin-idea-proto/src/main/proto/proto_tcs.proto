@@ -9,6 +9,7 @@ message IdeaKotlinDependencyProto {
     IdeaKotlinSourceDependencyProto source_dependency = 1;
     IdeaKotlinResolvedBinaryDependencyProto resolved_binary_dependency = 2;
     IdeaKotlinUnresolvedBinaryDependencyProto unresolved_binary_dependency = 3;
+    IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;
   }
 }
 
@@ -37,6 +38,18 @@ message IdeaKotlinResolvedBinaryDependencyProto {
   optional string binary_file = 4;
 }
 
+message IdeaKotlinProjectArtifactDependencyProto {
+  optional IdeaExtrasProto extras = 1;
+  optional IdeaKotlinSourceDependencyProto.Type type = 2;
+  optional IdeaKotlinProjectArtifactCoordinatesProto coordinates = 3;
+}
+
+message IdeaKotlinProjectCoordinatesProto {
+  optional string build_id = 1;
+  optional string project_path = 2;
+  optional string project_name = 3;
+}
+
 message IdeaKotlinBinaryCoordinatesProto {
   optional string group = 1;
   optional string module = 2;
@@ -45,8 +58,11 @@ message IdeaKotlinBinaryCoordinatesProto {
 }
 
 message IdeaKotlinSourceCoordinatesProto {
-  optional string build_id = 1;
-  optional string project_path = 2;
-  optional string project_name = 3;
-  optional string source_set_name = 4;
+  optional IdeaKotlinProjectCoordinatesProto project = 1;
+  optional string source_set_name = 2;
+}
+
+message IdeaKotlinProjectArtifactCoordinatesProto {
+  optional IdeaKotlinProjectCoordinatesProto project = 1;
+  optional string artifact_file = 2;
 }

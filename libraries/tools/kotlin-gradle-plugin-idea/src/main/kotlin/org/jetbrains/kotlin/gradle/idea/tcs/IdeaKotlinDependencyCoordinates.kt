@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.tcs
 
+import java.io.File
 import java.io.Serializable
 
 sealed interface IdeaKotlinDependencyCoordinates : Serializable
@@ -22,18 +23,30 @@ data class IdeaKotlinBinaryCoordinates(
     internal companion object {
         const val serialVersionUID = 0L
     }
-
 }
 
 data class IdeaKotlinSourceCoordinates(
-    val buildId: String,
-    val projectPath: String,
-    val projectName: String,
+    val project: IdeaKotlinProjectCoordinates,
     val sourceSetName: String
 ) : IdeaKotlinDependencyCoordinates {
+
+    val buildId: String get() = project.buildId
+    val projectPath: String get() = project.projectPath
+    val projectName: String get() = project.projectName
+
     override fun toString(): String {
-        return "${buildId.takeIf { it != ":" }.orEmpty()}$projectPath/$sourceSetName"
+        return "$project/$sourceSetName"
     }
+
+    internal companion object {
+        const val serialVersionUID = 0L
+    }
+}
+
+data class IdeaKotlinProjectArtifactCoordinates(
+    val project: IdeaKotlinProjectCoordinates,
+    val artifactFile: File
+) : IdeaKotlinDependencyCoordinates {
 
     internal companion object {
         const val serialVersionUID = 0L

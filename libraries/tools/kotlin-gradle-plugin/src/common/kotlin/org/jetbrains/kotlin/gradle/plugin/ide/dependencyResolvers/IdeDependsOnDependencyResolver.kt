@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import org.jetbrains.kotlin.gradle.plugin.sources.project
 
 internal object IdeDependsOnDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
@@ -20,12 +20,9 @@ internal object IdeDependsOnDependencyResolver : IdeDependencyResolver {
             IdeaKotlinSourceDependency(
                 type = IdeaKotlinSourceDependency.Type.DependsOn,
                 coordinates = IdeaKotlinSourceCoordinates(
-                    buildId = dependsOnSourceSet.internal.project.currentBuildId().name,
-                    projectPath = dependsOnSourceSet.internal.project.path,
-                    projectName = dependsOnSourceSet.internal.project.name,
+                    project = IdeaKotlinProjectCoordinates(dependsOnSourceSet.project),
                     sourceSetName = dependsOnSourceSet.name
-                ),
-                extras = mutableExtrasOf()
+                )
             )
         }.toSet()
     }

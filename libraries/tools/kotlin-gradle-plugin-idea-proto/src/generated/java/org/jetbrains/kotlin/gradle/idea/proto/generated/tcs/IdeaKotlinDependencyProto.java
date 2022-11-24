@@ -51,6 +51,7 @@ private static final long serialVersionUID = 0L;
     SOURCE_DEPENDENCY(1),
     RESOLVED_BINARY_DEPENDENCY(2),
     UNRESOLVED_BINARY_DEPENDENCY(3),
+    PROJECT_ARTIFACT_DEPENDENCY(4),
     DEPENDENCY_NOT_SET(0);
     private final int value;
     private DependencyCase(int value) {
@@ -71,6 +72,7 @@ private static final long serialVersionUID = 0L;
         case 1: return SOURCE_DEPENDENCY;
         case 2: return RESOLVED_BINARY_DEPENDENCY;
         case 3: return UNRESOLVED_BINARY_DEPENDENCY;
+        case 4: return PROJECT_ARTIFACT_DEPENDENCY;
         case 0: return DEPENDENCY_NOT_SET;
         default: return null;
       }
@@ -179,6 +181,37 @@ private static final long serialVersionUID = 0L;
     return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinUnresolvedBinaryDependencyProto.getDefaultInstance();
   }
 
+  public static final int PROJECT_ARTIFACT_DEPENDENCY_FIELD_NUMBER = 4;
+  /**
+   * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+   * @return Whether the projectArtifactDependency field is set.
+   */
+  @java.lang.Override
+  public boolean hasProjectArtifactDependency() {
+    return dependencyCase_ == 4;
+  }
+  /**
+   * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+   * @return The projectArtifactDependency.
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto getProjectArtifactDependency() {
+    if (dependencyCase_ == 4) {
+       return (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto) dependency_;
+    }
+    return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.getDefaultInstance();
+  }
+  /**
+   * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProtoOrBuilder getProjectArtifactDependencyOrBuilder() {
+    if (dependencyCase_ == 4) {
+       return (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto) dependency_;
+    }
+    return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.getDefaultInstance();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -202,6 +235,9 @@ private static final long serialVersionUID = 0L;
     if (dependencyCase_ == 3) {
       output.writeMessage(3, (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinUnresolvedBinaryDependencyProto) dependency_);
     }
+    if (dependencyCase_ == 4) {
+      output.writeMessage(4, (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto) dependency_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -222,6 +258,10 @@ private static final long serialVersionUID = 0L;
     if (dependencyCase_ == 3) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(3, (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinUnresolvedBinaryDependencyProto) dependency_);
+    }
+    if (dependencyCase_ == 4) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto) dependency_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -252,6 +292,10 @@ private static final long serialVersionUID = 0L;
         if (!getUnresolvedBinaryDependency()
             .equals(other.getUnresolvedBinaryDependency())) return false;
         break;
+      case 4:
+        if (!getProjectArtifactDependency()
+            .equals(other.getProjectArtifactDependency())) return false;
+        break;
       case 0:
       default:
     }
@@ -278,6 +322,10 @@ private static final long serialVersionUID = 0L;
       case 3:
         hash = (37 * hash) + UNRESOLVED_BINARY_DEPENDENCY_FIELD_NUMBER;
         hash = (53 * hash) + getUnresolvedBinaryDependency().hashCode();
+        break;
+      case 4:
+        hash = (37 * hash) + PROJECT_ARTIFACT_DEPENDENCY_FIELD_NUMBER;
+        hash = (53 * hash) + getProjectArtifactDependency().hashCode();
         break;
       case 0:
       default:
@@ -419,6 +467,9 @@ private static final long serialVersionUID = 0L;
       if (unresolvedBinaryDependencyBuilder_ != null) {
         unresolvedBinaryDependencyBuilder_.clear();
       }
+      if (projectArtifactDependencyBuilder_ != null) {
+        projectArtifactDependencyBuilder_.clear();
+      }
       dependencyCase_ = 0;
       dependency_ = null;
       return this;
@@ -466,6 +517,13 @@ private static final long serialVersionUID = 0L;
           result.dependency_ = dependency_;
         } else {
           result.dependency_ = unresolvedBinaryDependencyBuilder_.build();
+        }
+      }
+      if (dependencyCase_ == 4) {
+        if (projectArtifactDependencyBuilder_ == null) {
+          result.dependency_ = dependency_;
+        } else {
+          result.dependency_ = projectArtifactDependencyBuilder_.build();
         }
       }
       result.dependencyCase_ = dependencyCase_;
@@ -530,6 +588,10 @@ private static final long serialVersionUID = 0L;
           mergeUnresolvedBinaryDependency(other.getUnresolvedBinaryDependency());
           break;
         }
+        case PROJECT_ARTIFACT_DEPENDENCY: {
+          mergeProjectArtifactDependency(other.getProjectArtifactDependency());
+          break;
+        }
         case DEPENDENCY_NOT_SET: {
           break;
         }
@@ -581,6 +643,13 @@ private static final long serialVersionUID = 0L;
               dependencyCase_ = 3;
               break;
             } // case 26
+            case 34: {
+              input.readMessage(
+                  getProjectArtifactDependencyFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              dependencyCase_ = 4;
+              break;
+            } // case 34
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1036,6 +1105,148 @@ private static final long serialVersionUID = 0L;
       dependencyCase_ = 3;
       onChanged();;
       return unresolvedBinaryDependencyBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProtoOrBuilder> projectArtifactDependencyBuilder_;
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     * @return Whether the projectArtifactDependency field is set.
+     */
+    @java.lang.Override
+    public boolean hasProjectArtifactDependency() {
+      return dependencyCase_ == 4;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     * @return The projectArtifactDependency.
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto getProjectArtifactDependency() {
+      if (projectArtifactDependencyBuilder_ == null) {
+        if (dependencyCase_ == 4) {
+          return (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto) dependency_;
+        }
+        return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.getDefaultInstance();
+      } else {
+        if (dependencyCase_ == 4) {
+          return projectArtifactDependencyBuilder_.getMessage();
+        }
+        return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    public Builder setProjectArtifactDependency(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto value) {
+      if (projectArtifactDependencyBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        dependency_ = value;
+        onChanged();
+      } else {
+        projectArtifactDependencyBuilder_.setMessage(value);
+      }
+      dependencyCase_ = 4;
+      return this;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    public Builder setProjectArtifactDependency(
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.Builder builderForValue) {
+      if (projectArtifactDependencyBuilder_ == null) {
+        dependency_ = builderForValue.build();
+        onChanged();
+      } else {
+        projectArtifactDependencyBuilder_.setMessage(builderForValue.build());
+      }
+      dependencyCase_ = 4;
+      return this;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    public Builder mergeProjectArtifactDependency(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto value) {
+      if (projectArtifactDependencyBuilder_ == null) {
+        if (dependencyCase_ == 4 &&
+            dependency_ != org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.getDefaultInstance()) {
+          dependency_ = org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.newBuilder((org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto) dependency_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          dependency_ = value;
+        }
+        onChanged();
+      } else {
+        if (dependencyCase_ == 4) {
+          projectArtifactDependencyBuilder_.mergeFrom(value);
+        } else {
+          projectArtifactDependencyBuilder_.setMessage(value);
+        }
+      }
+      dependencyCase_ = 4;
+      return this;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    public Builder clearProjectArtifactDependency() {
+      if (projectArtifactDependencyBuilder_ == null) {
+        if (dependencyCase_ == 4) {
+          dependencyCase_ = 0;
+          dependency_ = null;
+          onChanged();
+        }
+      } else {
+        if (dependencyCase_ == 4) {
+          dependencyCase_ = 0;
+          dependency_ = null;
+        }
+        projectArtifactDependencyBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.Builder getProjectArtifactDependencyBuilder() {
+      return getProjectArtifactDependencyFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProtoOrBuilder getProjectArtifactDependencyOrBuilder() {
+      if ((dependencyCase_ == 4) && (projectArtifactDependencyBuilder_ != null)) {
+        return projectArtifactDependencyBuilder_.getMessageOrBuilder();
+      } else {
+        if (dependencyCase_ == 4) {
+          return (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto) dependency_;
+        }
+        return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto project_artifact_dependency = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProtoOrBuilder> 
+        getProjectArtifactDependencyFieldBuilder() {
+      if (projectArtifactDependencyBuilder_ == null) {
+        if (!(dependencyCase_ == 4)) {
+          dependency_ = org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.getDefaultInstance();
+        }
+        projectArtifactDependencyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProtoOrBuilder>(
+                (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactDependencyProto) dependency_,
+                getParentForChildren(),
+                isClean());
+        dependency_ = null;
+      }
+      dependencyCase_ = 4;
+      onChanged();;
+      return projectArtifactDependencyBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

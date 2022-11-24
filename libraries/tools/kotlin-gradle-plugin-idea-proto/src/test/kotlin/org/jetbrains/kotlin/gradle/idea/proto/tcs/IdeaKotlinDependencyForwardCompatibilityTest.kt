@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.idea.proto.tcs
 
 import org.jetbrains.kotlin.gradle.idea.proto.classLoaderForBackwardsCompatibleClasses
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinDependencySerializer
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinInstances
@@ -49,6 +46,16 @@ class IdeaKotlinDependencyForwardCompatibilityTest {
         assertEquals(TestIdeaKotlinInstances.simpleSourceDependency.type, deserialized.type)
         assertEquals(TestIdeaKotlinInstances.simpleSourceDependency.coordinates, deserialized.coordinates)
         assertEquals(TestIdeaKotlinInstances.simpleSourceDependency.extras, deserialized.extras)
+    }
+
+    @Test
+    fun `test - simple project artifact dependency`() {
+        val binary = oldBinaryOf(TestIdeaKotlinInstances::simpleProjectArtifactDependency)
+        val deserialized = deserializeOrFail<IdeaKotlinProjectArtifactDependency>(binary)
+
+        assertEquals(TestIdeaKotlinInstances.simpleProjectArtifactDependency.type, deserialized.type)
+        assertEquals(TestIdeaKotlinInstances.simpleProjectArtifactDependency.coordinates, deserialized.coordinates)
+        assertEquals(TestIdeaKotlinInstances.simpleProjectArtifactDependency.extras, deserialized.extras)
     }
 }
 

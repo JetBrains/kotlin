@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 
@@ -34,9 +34,7 @@ object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver {
             IdeaKotlinSourceDependency(
                 type = IdeaKotlinSourceDependency.Type.Regular,
                 coordinates = IdeaKotlinSourceCoordinates(
-                    buildId = project.currentBuildId().toString(),
-                    projectPath = project.path,
-                    projectName = project.name,
+                    project = IdeaKotlinProjectCoordinates(project),
                     sourceSetName = visibleSourceSetName
                 )
             )

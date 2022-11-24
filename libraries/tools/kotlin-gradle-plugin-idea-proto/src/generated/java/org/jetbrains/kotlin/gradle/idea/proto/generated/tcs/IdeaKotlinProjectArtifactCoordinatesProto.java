@@ -4,26 +4,26 @@
 package org.jetbrains.kotlin.gradle.idea.proto.generated.tcs;
 
 /**
- * Protobuf type {@code org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto}
+ * Protobuf type {@code org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto}
  */
-public final class IdeaKotlinSourceCoordinatesProto extends
+public final class IdeaKotlinProjectArtifactCoordinatesProto extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto)
-    IdeaKotlinSourceCoordinatesProtoOrBuilder {
+    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto)
+    IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use IdeaKotlinSourceCoordinatesProto.newBuilder() to construct.
-  private IdeaKotlinSourceCoordinatesProto(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use IdeaKotlinProjectArtifactCoordinatesProto.newBuilder() to construct.
+  private IdeaKotlinProjectArtifactCoordinatesProto(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private IdeaKotlinSourceCoordinatesProto() {
-    sourceSetName_ = "";
+  private IdeaKotlinProjectArtifactCoordinatesProto() {
+    artifactFile_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new IdeaKotlinSourceCoordinatesProto();
+    return new IdeaKotlinProjectArtifactCoordinatesProto();
   }
 
   @java.lang.Override
@@ -33,15 +33,15 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_descriptor;
+    return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_fieldAccessorTable
+    return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto.class, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto.Builder.class);
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.class, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.Builder.class);
   }
 
   private int bitField0_;
@@ -71,46 +71,46 @@ private static final long serialVersionUID = 0L;
     return project_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.getDefaultInstance() : project_;
   }
 
-  public static final int SOURCE_SET_NAME_FIELD_NUMBER = 2;
-  private volatile java.lang.Object sourceSetName_;
+  public static final int ARTIFACT_FILE_FIELD_NUMBER = 2;
+  private volatile java.lang.Object artifactFile_;
   /**
-   * <code>optional string source_set_name = 2;</code>
-   * @return Whether the sourceSetName field is set.
+   * <code>optional string artifact_file = 2;</code>
+   * @return Whether the artifactFile field is set.
    */
   @java.lang.Override
-  public boolean hasSourceSetName() {
+  public boolean hasArtifactFile() {
     return ((bitField0_ & 0x00000002) != 0);
   }
   /**
-   * <code>optional string source_set_name = 2;</code>
-   * @return The sourceSetName.
+   * <code>optional string artifact_file = 2;</code>
+   * @return The artifactFile.
    */
   @java.lang.Override
-  public java.lang.String getSourceSetName() {
-    java.lang.Object ref = sourceSetName_;
+  public java.lang.String getArtifactFile() {
+    java.lang.Object ref = artifactFile_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      sourceSetName_ = s;
+      artifactFile_ = s;
       return s;
     }
   }
   /**
-   * <code>optional string source_set_name = 2;</code>
-   * @return The bytes for sourceSetName.
+   * <code>optional string artifact_file = 2;</code>
+   * @return The bytes for artifactFile.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getSourceSetNameBytes() {
-    java.lang.Object ref = sourceSetName_;
+      getArtifactFileBytes() {
+    java.lang.Object ref = artifactFile_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      sourceSetName_ = b;
+      artifactFile_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -135,7 +135,7 @@ private static final long serialVersionUID = 0L;
       output.writeMessage(1, getProject());
     }
     if (((bitField0_ & 0x00000002) != 0)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sourceSetName_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, artifactFile_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -151,7 +151,7 @@ private static final long serialVersionUID = 0L;
         .computeMessageSize(1, getProject());
     }
     if (((bitField0_ & 0x00000002) != 0)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sourceSetName_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, artifactFile_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -163,20 +163,20 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto)) {
+    if (!(obj instanceof org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto)) {
       return super.equals(obj);
     }
-    org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto other = (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto) obj;
+    org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto other = (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto) obj;
 
     if (hasProject() != other.hasProject()) return false;
     if (hasProject()) {
       if (!getProject()
           .equals(other.getProject())) return false;
     }
-    if (hasSourceSetName() != other.hasSourceSetName()) return false;
-    if (hasSourceSetName()) {
-      if (!getSourceSetName()
-          .equals(other.getSourceSetName())) return false;
+    if (hasArtifactFile() != other.hasArtifactFile()) return false;
+    if (hasArtifactFile()) {
+      if (!getArtifactFile()
+          .equals(other.getArtifactFile())) return false;
     }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
@@ -193,78 +193,78 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + PROJECT_FIELD_NUMBER;
       hash = (53 * hash) + getProject().hashCode();
     }
-    if (hasSourceSetName()) {
-      hash = (37 * hash) + SOURCE_SET_NAME_FIELD_NUMBER;
-      hash = (53 * hash) + getSourceSetName().hashCode();
+    if (hasArtifactFile()) {
+      hash = (37 * hash) + ARTIFACT_FILE_FIELD_NUMBER;
+      hash = (53 * hash) + getArtifactFile().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(byte[] data)
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseDelimitedFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseDelimitedFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto parseFrom(
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -277,7 +277,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto prototype) {
+  public static Builder newBuilder(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -293,26 +293,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto}
+   * Protobuf type {@code org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto)
-      org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProtoOrBuilder {
+      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto)
+      org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProtoOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_descriptor;
+      return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_fieldAccessorTable
+      return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto.class, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto.Builder.class);
+              org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.class, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.Builder.class);
     }
 
-    // Construct using org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto.newBuilder()
+    // Construct using org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -337,7 +337,7 @@ private static final long serialVersionUID = 0L;
         projectBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000001);
-      sourceSetName_ = "";
+      artifactFile_ = "";
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -345,17 +345,17 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinSourceCoordinatesProto_descriptor;
+      return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.ProtoTcs.internal_static_org_jetbrains_kotlin_gradle_idea_proto_generated_tcs_IdeaKotlinProjectArtifactCoordinatesProto_descriptor;
     }
 
     @java.lang.Override
-    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto.getDefaultInstance();
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.getDefaultInstance();
     }
 
     @java.lang.Override
-    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto build() {
-      org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto result = buildPartial();
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto build() {
+      org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -363,8 +363,8 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto buildPartial() {
-      org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto result = new org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto(this);
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto buildPartial() {
+      org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto result = new org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) != 0)) {
@@ -378,7 +378,7 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000002) != 0)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.sourceSetName_ = sourceSetName_;
+      result.artifactFile_ = artifactFile_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -418,22 +418,22 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto) {
-        return mergeFrom((org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto)other);
+      if (other instanceof org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto) {
+        return mergeFrom((org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto other) {
-      if (other == org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto other) {
+      if (other == org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto.getDefaultInstance()) return this;
       if (other.hasProject()) {
         mergeProject(other.getProject());
       }
-      if (other.hasSourceSetName()) {
+      if (other.hasArtifactFile()) {
         bitField0_ |= 0x00000002;
-        sourceSetName_ = other.sourceSetName_;
+        artifactFile_ = other.artifactFile_;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -470,7 +470,7 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 10
             case 18: {
-              sourceSetName_ = input.readStringRequireUtf8();
+              artifactFile_ = input.readStringRequireUtf8();
               bitField0_ |= 0x00000002;
               break;
             } // case 18
@@ -611,85 +611,85 @@ private static final long serialVersionUID = 0L;
       return projectBuilder_;
     }
 
-    private java.lang.Object sourceSetName_ = "";
+    private java.lang.Object artifactFile_ = "";
     /**
-     * <code>optional string source_set_name = 2;</code>
-     * @return Whether the sourceSetName field is set.
+     * <code>optional string artifact_file = 2;</code>
+     * @return Whether the artifactFile field is set.
      */
-    public boolean hasSourceSetName() {
+    public boolean hasArtifactFile() {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>optional string source_set_name = 2;</code>
-     * @return The sourceSetName.
+     * <code>optional string artifact_file = 2;</code>
+     * @return The artifactFile.
      */
-    public java.lang.String getSourceSetName() {
-      java.lang.Object ref = sourceSetName_;
+    public java.lang.String getArtifactFile() {
+      java.lang.Object ref = artifactFile_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        sourceSetName_ = s;
+        artifactFile_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>optional string source_set_name = 2;</code>
-     * @return The bytes for sourceSetName.
+     * <code>optional string artifact_file = 2;</code>
+     * @return The bytes for artifactFile.
      */
     public com.google.protobuf.ByteString
-        getSourceSetNameBytes() {
-      java.lang.Object ref = sourceSetName_;
+        getArtifactFileBytes() {
+      java.lang.Object ref = artifactFile_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        sourceSetName_ = b;
+        artifactFile_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>optional string source_set_name = 2;</code>
-     * @param value The sourceSetName to set.
+     * <code>optional string artifact_file = 2;</code>
+     * @param value The artifactFile to set.
      * @return This builder for chaining.
      */
-    public Builder setSourceSetName(
+    public Builder setArtifactFile(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000002;
-      sourceSetName_ = value;
+      artifactFile_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string source_set_name = 2;</code>
+     * <code>optional string artifact_file = 2;</code>
      * @return This builder for chaining.
      */
-    public Builder clearSourceSetName() {
+    public Builder clearArtifactFile() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      sourceSetName_ = getDefaultInstance().getSourceSetName();
+      artifactFile_ = getDefaultInstance().getArtifactFile();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string source_set_name = 2;</code>
-     * @param value The bytes for sourceSetName to set.
+     * <code>optional string artifact_file = 2;</code>
+     * @param value The bytes for artifactFile to set.
      * @return This builder for chaining.
      */
-    public Builder setSourceSetNameBytes(
+    public Builder setArtifactFileBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       bitField0_ |= 0x00000002;
-      sourceSetName_ = value;
+      artifactFile_ = value;
       onChanged();
       return this;
     }
@@ -706,23 +706,23 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto)
+    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto)
   }
 
-  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto)
-  private static final org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto)
+  private static final org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto();
+    DEFAULT_INSTANCE = new org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto();
   }
 
-  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto getDefaultInstance() {
+  public static org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<IdeaKotlinSourceCoordinatesProto>
-      PARSER = new com.google.protobuf.AbstractParser<IdeaKotlinSourceCoordinatesProto>() {
+  private static final com.google.protobuf.Parser<IdeaKotlinProjectArtifactCoordinatesProto>
+      PARSER = new com.google.protobuf.AbstractParser<IdeaKotlinProjectArtifactCoordinatesProto>() {
     @java.lang.Override
-    public IdeaKotlinSourceCoordinatesProto parsePartialFrom(
+    public IdeaKotlinProjectArtifactCoordinatesProto parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -741,17 +741,17 @@ private static final long serialVersionUID = 0L;
     }
   };
 
-  public static com.google.protobuf.Parser<IdeaKotlinSourceCoordinatesProto> parser() {
+  public static com.google.protobuf.Parser<IdeaKotlinProjectArtifactCoordinatesProto> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<IdeaKotlinSourceCoordinatesProto> getParserForType() {
+  public com.google.protobuf.Parser<IdeaKotlinProjectArtifactCoordinatesProto> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto getDefaultInstanceForType() {
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectArtifactCoordinatesProto getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

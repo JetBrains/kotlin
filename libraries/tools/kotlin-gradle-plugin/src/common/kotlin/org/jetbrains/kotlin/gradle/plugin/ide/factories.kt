@@ -5,16 +5,44 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 
+
+internal fun IdeaKotlinProjectCoordinates(identifier: ProjectComponentIdentifier): IdeaKotlinProjectCoordinates {
+    return IdeaKotlinProjectCoordinates(
+        buildId = identifier.build.name,
+        projectPath = identifier.projectPath,
+        projectName = identifier.projectName
+    )
+}
+
+internal fun IdeaKotlinProjectCoordinates(project: Project): IdeaKotlinProjectCoordinates {
+    return IdeaKotlinProjectCoordinates(
+        buildId = project.currentBuildId().name,
+        projectPath = project.path,
+        projectName = project.name
+    )
+}
+
 internal fun IdeaKotlinSourceCoordinates(sourceSet: KotlinSourceSet): IdeaKotlinSourceCoordinates {
     return IdeaKotlinSourceCoordinates(
-        buildId = sourceSet.project.currentBuildId().toString(),
-        projectPath = sourceSet.project.path,
-        projectName = sourceSet.project.name,
+        project = IdeaKotlinProjectCoordinates(sourceSet.project),
         sourceSetName = sourceSet.name
+    )
+}
+
+fun IdeaKotlinBinaryCoordinates(identifier: ModuleComponentIdentifier): IdeaKotlinBinaryCoordinates {
+    return IdeaKotlinBinaryCoordinates(
+        group = identifier.group,
+        module = identifier.module,
+        version = identifier.version
     )
 }
