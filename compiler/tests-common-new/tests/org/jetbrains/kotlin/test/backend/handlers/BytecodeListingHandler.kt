@@ -44,19 +44,29 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
         if (multiModuleInfoDumper.isEmpty()) return
 
         val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val extension =
-            if (testServices.defaultsProvider.defaultFrontend == FrontendKinds.FIR && FIR_IDENTICAL !in testServices.moduleStructure.allDirectives) ".fir.txt" else ".txt"
-        val defaultTxtFile = sourceFile.withExtension(extension)
+        val defaultTxtFile = sourceFile.withExtension(".txt")
+        val irTxtFile = sourceFile.withSuffixAndExtension("_ir", ".txt")
+        val firTxtFile = sourceFile.withExtension(".fir.txt")
+
+        val isFir = testServices.defaultsProvider.defaultFrontend == FrontendKinds.FIR
         val isIr = testServices.defaultsProvider.defaultTargetBackend?.isIR == true
-        val txtFile =
-            if (isIr) sourceFile.withSuffixAndExtension("_ir", extension).takeIf(File::exists) ?: defaultTxtFile
-            else defaultTxtFile
 
-        assertions.assertEqualsToFile(txtFile, multiModuleInfoDumper.generateResultingDump())
+        val actualFile = when {
+            isFir -> firTxtFile.takeIf { it.exists() } ?: irTxtFile.takeIf { it.exists() } ?: defaultTxtFile
+            isIr -> irTxtFile.takeIf { it.exists() } ?: defaultTxtFile
+            else -> defaultTxtFile
+        }
 
-        if (isIr && txtFile != defaultTxtFile) {
-            if (txtFile.readText() == defaultTxtFile.readText()) assertions.fail {
-                "JVM and JVM_IR golden files are identical. Remove $txtFile."
+        val goldenFile = when {
+            isFir -> irTxtFile.takeIf { it.exists() } ?: defaultTxtFile
+            else -> defaultTxtFile
+        }
+
+        assertions.assertEqualsToFile(actualFile, multiModuleInfoDumper.generateResultingDump())
+
+        if (actualFile != goldenFile) {
+            if (actualFile.readText().trim() == goldenFile.readText().trim()) assertions.fail {
+                "JVM and JVM_IR golden files are identical. Remove $actualFile."
             }
         }
     }
