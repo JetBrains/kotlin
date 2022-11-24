@@ -98,13 +98,13 @@ internal object EmptyIntersectionTypeChecker {
                     typeCheckerState, secondType.lowerBoundIfFlexible(), firstTypeConstructor
                 ).singleOrNull()
 
-                val anyInference = firstTypeConstructor.isInterface() || secondTypeConstructor.isInterface()
+                val atLeastOneInterface = firstTypeConstructor.isInterface() || secondTypeConstructor.isInterface()
 
                 // Two classes can't have a common subtype if neither is a subtype of another
-                if (superTypeByFirstConstructor == null && superTypeBySecondConstructor == null && !anyInference)
+                if (superTypeByFirstConstructor == null && superTypeBySecondConstructor == null && !atLeastOneInterface)
                     return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.MULTIPLE_CLASSES, firstType, secondType)
 
-                if (anyInference) {
+                if (atLeastOneInterface) {
                     val incompatibleSupertypes = getIncompatibleSuperTypes(firstType, secondType)
                     if (incompatibleSupertypes != null) {
                         return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.INCOMPATIBLE_SUPERTYPES, *incompatibleSupertypes)
