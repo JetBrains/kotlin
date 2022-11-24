@@ -91,17 +91,17 @@ internal object EmptyIntersectionTypeChecker {
                     return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.MULTIPLE_CLASSES, firstType, secondType)
                 }
 
-                val superTypeByFirstConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
+                val firstSuperTypeWithSecondConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
                     typeCheckerState, firstType.lowerBoundIfFlexible(), secondTypeConstructor
                 ).singleOrNull()
-                val superTypeBySecondConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
+                val secondSuperTypeByFirstConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
                     typeCheckerState, secondType.lowerBoundIfFlexible(), firstTypeConstructor
                 ).singleOrNull()
 
                 val atLeastOneInterface = firstTypeConstructor.isInterface() || secondTypeConstructor.isInterface()
 
                 // Two classes can't have a common subtype if neither is a subtype of another
-                if (superTypeByFirstConstructor == null && superTypeBySecondConstructor == null && !atLeastOneInterface)
+                if (firstSuperTypeWithSecondConstructor == null && secondSuperTypeByFirstConstructor == null && !atLeastOneInterface)
                     return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.MULTIPLE_CLASSES, firstType, secondType)
 
                 if (atLeastOneInterface) {
@@ -111,7 +111,7 @@ internal object EmptyIntersectionTypeChecker {
                     }
                 }
 
-                if (superTypeByFirstConstructor == null || superTypeBySecondConstructor == null) {
+                if (firstSuperTypeWithSecondConstructor == null || secondSuperTypeByFirstConstructor == null) {
                     // don't have incompatible supertypes so can have a common subtype only if all types are interfaces
                     if (firstTypeConstructor.isFinalClassConstructor() || secondTypeConstructor.isFinalClassConstructor()) {
                         possibleEmptyIntersectionKind =
@@ -121,7 +121,7 @@ internal object EmptyIntersectionTypeChecker {
                 }
 
                 val argumentsIntersectionKind =
-                    computeByCheckingTypeArguments(superTypeByFirstConstructor, superTypeBySecondConstructor) ?: continue
+                    computeByCheckingTypeArguments(firstSuperTypeWithSecondConstructor, secondSuperTypeByFirstConstructor) ?: continue
 
                 if (argumentsIntersectionKind.kind.isDefinitelyEmpty())
                     return argumentsIntersectionKind
