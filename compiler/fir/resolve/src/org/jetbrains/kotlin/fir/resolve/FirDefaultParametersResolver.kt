@@ -31,7 +31,12 @@ class FirDefaultParametersResolver : FirSessionComponent {
             // imported from object case
             is FirAbstractImportingScope -> {
                 val containingClass = function.getContainingClass(session) ?: return false
-                containingClass.scopeForClass(ConeSubstitutor.Empty, session, scopeSession, derivedClassLookupTag = null)
+                containingClass.scopeForClass(
+                    ConeSubstitutor.Empty,
+                    session,
+                    scopeSession,
+                    containingClass.symbol.toLookupTag()
+                )
             }
             else -> return false
         }

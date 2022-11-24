@@ -269,7 +269,7 @@ private fun processConstructors(
                             substitutor,
                             session,
                             bodyResolveComponents.scopeSession,
-                            derivedClassLookupTag = null
+                            firClass.symbol.toLookupTag()
                         )
                     }
                 }

@@ -111,14 +111,14 @@ fun FirClass.scopeForClass(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    derivedClassLookupTag: ConeClassLikeLookupTag?
+    memberOwnerLookupTag: ConeClassLikeLookupTag
 ): FirTypeScope = scopeForClassImpl(
     substitutor, useSiteSession, scopeSession,
     skipPrivateMembers = false,
     classFirDispatchReceiver = this,
     // TODO: why it's always false?
     isFromExpectClass = false,
-    derivedClassLookupTag = derivedClassLookupTag
+    memberOwnerLookupTag = memberOwnerLookupTag
 )
 
 fun ConeKotlinType.scopeForSupertype(
@@ -143,7 +143,7 @@ fun ConeKotlinType.scopeForSupertype(
         skipPrivateMembers = true,
         classFirDispatchReceiver = derivedClass,
         isFromExpectClass = (derivedClass as? FirRegularClass)?.isExpect == true,
-        derivedClassLookupTag = derivedClass.symbol.toLookupTag()
+        memberOwnerLookupTag = derivedClass.symbol.toLookupTag()
     )
 }
 
@@ -160,7 +160,7 @@ private fun FirClass.scopeForClassImpl(
     skipPrivateMembers: Boolean,
     classFirDispatchReceiver: FirClass,
     isFromExpectClass: Boolean,
-    derivedClassLookupTag: ConeClassLikeLookupTag?
+    memberOwnerLookupTag: ConeClassLikeLookupTag?
 ): FirTypeScope {
     val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
@@ -169,7 +169,7 @@ private fun FirClass.scopeForClassImpl(
         classFirDispatchReceiver.symbol.toLookupTag(),
         isFromExpectClass,
         substitutor,
-        derivedClassLookupTag
+        memberOwnerLookupTag
     )
 
     return scopeSession.getOrBuild(this, key) {
@@ -180,7 +180,7 @@ private fun FirClass.scopeForClassImpl(
             substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()).lowerBoundIfFlexible() as ConeClassLikeType,
             skipPrivateMembers,
             makeExpect = isFromExpectClass,
-            derivedClassLookupTag ?: classFirDispatchReceiver.symbol.toLookupTag()
+            memberOwnerLookupTag ?: classFirDispatchReceiver.symbol.toLookupTag()
         )
     }
 }
