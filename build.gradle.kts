@@ -606,7 +606,6 @@ tasks {
             ":compiler:tests-spec:test",
             ":compiler:tests-against-klib:test"
         )
-        dependsOn(":plugins:jvm-abi-gen:test")
     }
 
     register("testsForBootstrapBuildTest") {
@@ -644,8 +643,6 @@ tasks {
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
-        dependsOn(":plugins:fir-plugin-prototype:test")
-        dependsOn(":plugins:fir-plugin-prototype:fir-plugin-ic-test:test")
     }
 
     register("firAllTest") {
@@ -656,8 +653,6 @@ tasks {
             ":compiler:fir:analysis-tests:test",
             ":compiler:fir:analysis-tests:legacy-fir-tests:test",
             ":compiler:fir:fir2ir:test",
-            ":plugins:fir-plugin-prototype:test",
-            ":plugins:fir-plugin-prototype:fir-plugin-ic-test:test"
         )
     }
 
@@ -713,13 +708,27 @@ tasks {
 
         dependsOn("jvmCompilerIntegrationTest")
 
-        dependsOn(":plugins:parcelize:parcelize-compiler:test")
-        dependsOn(":kotlinx-serialization-compiler-plugin:test")
+        dependsOn("compilerPluginTest")
 
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
 
         dependsOn(":generators:test")
+    }
+
+    register("compilerPluginTest") {
+        dependsOn(":kotlin-allopen-compiler-plugin:test")
+        dependsOn(":kotlin-assignment-compiler-plugin:test")
+        dependsOn(":kotlinx-atomicfu-compiler-plugin:test")
+        dependsOn(":plugins:fir-plugin-prototype:test")
+        dependsOn(":plugins:fir-plugin-prototype:fir-plugin-ic-test:test")
+        dependsOn(":kotlin-imports-dumper-compiler-plugin:test")
+        dependsOn(":plugins:jvm-abi-gen:test")
+        dependsOn(":kotlinx-serialization-compiler-plugin:test")
+        dependsOn(":kotlin-lombok-compiler-plugin:test")
+        dependsOn(":kotlin-noarg-compiler-plugin:test")
+        dependsOn(":plugins:parcelize:parcelize-compiler:test")
+        dependsOn(":kotlin-sam-with-receiver-compiler-plugin:test")
     }
 
     register("toolsTest") {
