@@ -185,6 +185,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("functionWithTypeAlias.kt")
+    public void testFunctionWithTypeAlias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionWithTypeAlias.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithTypeParams.kt")
     public void testFunctionWithTypeParams() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionWithTypeParams.kt");
