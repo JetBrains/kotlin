@@ -35,18 +35,15 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class DataFlowAnalyzerContext(
-    val graphBuilder: ControlFlowGraphBuilder,
-    variableStorage: VariableStorageImpl,
-    val preliminaryLoopVisitor: PreliminaryLoopVisitor,
-    val variablesClearedBeforeLoop: Stack<List<RealVariable>>,
-) {
-    var variableStorage = variableStorage
+class DataFlowAnalyzerContext(session: FirSession) {
+    val graphBuilder = ControlFlowGraphBuilder()
+    val preliminaryLoopVisitor = PreliminaryLoopVisitor()
+    val variablesClearedBeforeLoop = stackOf<List<RealVariable>>()
+    internal val variableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
+
+    var variableStorage = VariableStorageImpl(session)
         private set
-
-    internal var firLocalVariableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer? = null
 
     private var assignmentCounter = 0
 
@@ -56,18 +53,10 @@ class DataFlowAnalyzerContext(
 
     fun reset() {
         graphBuilder.reset()
-        variableStorage = variableStorage.clear()
         preliminaryLoopVisitor.resetState()
         variablesClearedBeforeLoop.reset()
-        firLocalVariableAssignmentAnalyzer = null
-    }
-
-    companion object {
-        fun empty(session: FirSession): DataFlowAnalyzerContext =
-            DataFlowAnalyzerContext(
-                ControlFlowGraphBuilder(), VariableStorageImpl(session),
-                PreliminaryLoopVisitor(), stackOf()
-            )
+        variableAssignmentAnalyzer.reset()
+        variableStorage = variableStorage.clear()
     }
 }
 
@@ -136,11 +125,8 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Requests -----------------------------------
 
-    fun isAccessToUnstableLocalVariable(expression: FirExpression): Boolean {
-        val analyzer = context.firLocalVariableAssignmentAnalyzer ?: return false
-        val realFir = expression.unwrapElement() as? FirQualifiedAccessExpression ?: return false
-        return analyzer.isAccessToUnstableLocalVariable(realFir)
-    }
+    fun isAccessToUnstableLocalVariable(expression: FirExpression): Boolean =
+        context.variableAssignmentAnalyzer.isAccessToUnstableLocalVariable(expression)
 
     open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
         val flow = graphBuilder.lastNode.flow
@@ -164,25 +150,38 @@ abstract class FirDataFlowAnalyzer(
 
     fun enterFunction(function: FirFunction) {
         if (function is FirDefaultPropertyAccessor) return
-        if (function is FirAnonymousFunction) {
-            enterAnonymousFunction(function)
-            return
-        }
-        // All non-lambda function are treated as concurrent since we do not make any assumption about when and how it's invoked.
-        getOrCreateLocalVariableAssignmentAnalyzer(function)?.enterLocalFunction(function)
 
-        val (functionEnterNode, localFunctionNode) = graphBuilder.enterFunction(function)
+        val (localFunctionNode, functionEnterNode) = if (function is FirAnonymousFunction) {
+            graphBuilder.enterAnonymousFunction(function)
+        } else {
+            graphBuilder.enterFunction(function)
+        }
         localFunctionNode?.mergeIncomingFlow()
-        functionEnterNode.mergeIncomingFlow()
+        functionEnterNode.mergeIncomingFlow {
+            // TODO: ||?
+            if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
+                enterCapturingStatement(it, function)
+            }
+        }
+        context.variableAssignmentAnalyzer.enterFunction(function)
     }
 
     fun exitFunction(function: FirFunction): FirControlFlowGraphReference? {
         if (function is FirDefaultPropertyAccessor) return null
-        if (function is FirAnonymousFunction) {
-            return exitAnonymousFunction(function)
+
+        context.variableAssignmentAnalyzer.exitFunction()
+        // TODO: ||?
+        if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
+            exitCapturingStatement(function)
         }
-        // All non-lambda function are treated as concurrent since we do not make any assumption about when and how it's invoked.
-        getOrCreateLocalVariableAssignmentAnalyzer(function)?.exitLocalFunction(function)
+
+        if (function is FirAnonymousFunction) {
+            val (functionExitNode, postponedLambdaExitNode, graph) = graphBuilder.exitAnonymousFunction(function)
+            functionExitNode.mergeIncomingFlow()
+            postponedLambdaExitNode?.mergeIncomingFlow()
+            resetReceivers() // roll back to state before function
+            return FirControlFlowGraphReferenceImpl(graph)
+        }
 
         val (node, graph) = graphBuilder.exitFunction(function)
         node.mergeIncomingFlow()
@@ -202,35 +201,7 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Anonymous function -----------------------------------
 
-    private fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-        getOrCreateLocalVariableAssignmentAnalyzer(anonymousFunction)?.apply {
-            finishPostponedAnonymousFunction()
-            enterLocalFunction(anonymousFunction)
-        }
-        val (functionDeclarationNode, functionEnterNode) = graphBuilder.enterAnonymousFunction(anonymousFunction)
-        functionDeclarationNode?.mergeIncomingFlow()
-        functionEnterNode.mergeIncomingFlow {
-            if (anonymousFunction.invocationKind?.canBeRevisited() != false) {
-                enterCapturingStatement(it, anonymousFunction)
-            }
-        }
-    }
-
-    private fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): FirControlFlowGraphReference {
-        getOrCreateLocalVariableAssignmentAnalyzer(anonymousFunction)?.exitLocalFunction(anonymousFunction)
-        val (functionExitNode, postponedLambdaExitNode, graph) = graphBuilder.exitAnonymousFunction(anonymousFunction)
-        if (anonymousFunction.invocationKind?.canBeRevisited() != false) {
-            exitCapturingStatement(anonymousFunction)
-        }
-        functionExitNode.mergeIncomingFlow()
-        postponedLambdaExitNode?.mergeIncomingFlow()
-        resetReceivers() // roll back to state before function
-        return FirControlFlowGraphReferenceImpl(graph)
-    }
-
     fun visitPostponedAnonymousFunction(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
-        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
-        getOrCreateLocalVariableAssignmentAnalyzer(anonymousFunction)?.visitPostponedAnonymousFunction(anonymousFunction)
         graphBuilder.visitPostponedAnonymousFunction(anonymousFunctionExpression).mergeIncomingFlow()
     }
 
@@ -809,7 +780,6 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitResolvedQualifierNode(resolvedQualifier).mergeIncomingFlow()
     }
 
-    private var functionCallLevel = 0
     private var resolvingAugmentedAssignmentOptions: Boolean = false
 
     // The expected sequence of calls for augmented assignment:
@@ -822,10 +792,7 @@ abstract class FirDataFlowAnalyzer(
     //  7. exitFunctionCall(top-level call in the chosen option)
     fun enterAugmentedAssignmentCall() {
         graphBuilder.enterCall()
-        // Add an extra space in the local variable assignment analyzer. That way all postponed
-        // lambdas from all alternatives ([get+]plusAssign/[get+]plus[+set]) will be collected
-        // into that space and only removed when `exitFunctionCall` finalizes the chosen option.
-        functionCallLevel++
+        context.variableAssignmentAnalyzer.enterFunctionCall(emptyList())
     }
 
     fun enterSelectAugmentedAssignmentCall() {
@@ -839,23 +806,16 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun enterFunctionCall(functionCall: FirFunctionCall) {
-        val lambdaArgs = functionCall.arguments.mapNotNullTo(mutableSetOf()) { it.unwrapAnonymousFunctionExpression() }
-        val localVariableAssignmentAnalyzer = context.firLocalVariableAssignmentAnalyzer
-            ?: if (lambdaArgs.isNotEmpty()) getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first()) else null
-        localVariableAssignmentAnalyzer?.enterFunctionCall(lambdaArgs, functionCallLevel)
-        functionCallLevel++
-        if (!resolvingAugmentedAssignmentOptions) {
-            graphBuilder.enterCall()
-        }
+        if (resolvingAugmentedAssignmentOptions) return // shouldn't be any lambda arguments anyway, they're visited before that
+        context.variableAssignmentAnalyzer.enterFunctionCall(functionCall.arguments.mapNotNull { it.unwrapAnonymousFunctionExpression() })
+        graphBuilder.enterCall()
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
-        functionCallLevel--
-        context.firLocalVariableAssignmentAnalyzer?.exitFunctionCall(callCompleted)
-        if (!resolvingAugmentedAssignmentOptions) {
-            graphBuilder.exitFunctionCall(functionCall, callCompleted).mergeIncomingFlow {
-                processConditionalContract(it, functionCall)
-            }
+        if (resolvingAugmentedAssignmentOptions) return
+        context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
+        graphBuilder.exitFunctionCall(functionCall, callCompleted).mergeIncomingFlow {
+            processConditionalContract(it, functionCall)
         }
     }
 
@@ -1179,16 +1139,6 @@ abstract class FirDataFlowAnalyzer(
     }
 
     // ------------------------------------------------------ Utils ------------------------------------------------------
-
-    private fun getOrCreateLocalVariableAssignmentAnalyzer(firFunction: FirFunction): FirLocalVariableAssignmentAnalyzer? {
-        // Only return analyzer for nested functions so that we won't waste time on functions that don't contain any lambda or local
-        // function.
-        val rootFunction = components.containingDeclarations.firstIsInstanceOrNull<FirFunction>() ?: return null
-        if (rootFunction == firFunction) return null
-        return context.firLocalVariableAssignmentAnalyzer ?: FirLocalVariableAssignmentAnalyzer.analyzeFunction(rootFunction).also {
-            context.firLocalVariableAssignmentAnalyzer = it
-        }
-    }
 
     private val CFGNode<*>.livePreviousFlows: List<PersistentFlow>
         get() = previousNodes.mapNotNull { it.takeIf { this.isDead || !it.isDead }?.flow }

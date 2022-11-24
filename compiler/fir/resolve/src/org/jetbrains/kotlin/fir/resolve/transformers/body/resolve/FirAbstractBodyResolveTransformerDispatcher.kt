@@ -37,7 +37,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
 ) : FirAbstractBodyResolveTransformer(phase) {
 
     final override val context: BodyResolveContext =
-        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext.empty(session))
+        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session))
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context)
 
