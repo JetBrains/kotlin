@@ -243,9 +243,10 @@ class ExitDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirVal
 
 // ----------------------------------- Anonymous function -----------------------------------
 
-class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int, id: Int) : CFGNodeWithSubgraphs<FirAnonymousFunctionExpression>(owner, level, id) {
+class SplitPostponedLambdasNode(owner: ControlFlowGraph, override val fir: FirStatement, val lambdas: List<FirAnonymousFunction>, level: Int, id: Int)
+    : CFGNodeWithSubgraphs<FirStatement>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitPostponedLambdaEnterNode(this, data)
+        return visitor.visitSplitPostponedLambdasNode(this, data)
     }
 }
 
@@ -261,9 +262,9 @@ class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: F
     }
 }
 
-class AnonymousFunctionExpressionExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int, id: Int) : CFGNode<FirAnonymousFunctionExpression>(owner, level, id) {
+class AnonymousFunctionExpressionNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int, id: Int) : CFGNodeWithSubgraphs<FirAnonymousFunctionExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitAnonymousFunctionExpressionExitNode(this, data)
+        return visitor.visitAnonymousFunctionExpressionNode(this, data)
     }
 }
 

@@ -36,7 +36,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
 
     // ----------------------------------- Anonymous function -----------------------------------
 
-    open fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode, data: D): R {
+    open fun visitSplitPostponedLambdasNode(node: SplitPostponedLambdasNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -48,7 +48,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitAnonymousFunctionExpressionExitNode(node: AnonymousFunctionExpressionExitNode, data: D): R {
+    open fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode, data: D): R {
         return visitNode(node, data)
     }
 

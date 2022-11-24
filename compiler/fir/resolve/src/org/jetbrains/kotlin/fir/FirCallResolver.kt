@@ -68,21 +68,7 @@ class FirCallResolver(
     val conflictResolver: ConeCallConflictResolver =
         session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents, components)
 
-    @PrivateForInline
-    var needTransformArguments: Boolean = true
-
-    @OptIn(PrivateForInline::class)
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
-        @Suppress("NAME_SHADOWING")
-        val functionCall = if (needTransformArguments) {
-            functionCall.transformExplicitReceiver().also {
-                components.dataFlowAnalyzer.enterQualifiedAccessExpression()
-                functionCall.replaceArgumentList(functionCall.argumentList.transform(transformer, ResolutionMode.ContextDependent))
-            }
-        } else {
-            functionCall
-        }
-
         val name = functionCall.calleeReference.name
         val result = collectCandidates(functionCall, name, origin = functionCall.origin)
 
@@ -130,29 +116,6 @@ class FirCallResolver(
         }
 
         return resultFunctionCall
-    }
-
-    private inline fun <reified Q : FirQualifiedAccess> Q.transformExplicitReceiver(): Q {
-        val explicitReceiver =
-            explicitReceiver as? FirQualifiedAccessExpression
-                ?: return transformExplicitReceiver(transformer, ResolutionMode.ReceiverResolution) as Q
-
-        (explicitReceiver.calleeReference as? FirSuperReference)?.let {
-            transformer.transformSuperReceiver(it, explicitReceiver, this)
-            return this
-        }
-
-        if (explicitReceiver is FirPropertyAccessExpression) {
-            this.replaceExplicitReceiver(
-                transformer.transformQualifiedAccessExpression(
-                    explicitReceiver, ResolutionMode.ReceiverResolution,
-                    isUsedAsReceiver = true
-                ) as FirExpression
-            )
-            return this
-        }
-
-        return transformExplicitReceiver(transformer, ResolutionMode.ReceiverResolution) as Q
     }
 
     private data class ResolutionResult(
@@ -249,7 +212,7 @@ class FirCallResolver(
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         @Suppress("NAME_SHADOWING")
-        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver<FirQualifiedAccess>()
+        val qualifiedAccess = transformer.transformExplicitReceiver(qualifiedAccess)
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
@@ -603,17 +566,6 @@ class FirCallResolver(
         )
         val applicability = components.resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext)
         return ResolutionResult(callInfo, applicability, listOf(candidate))
-    }
-
-    @OptIn(PrivateForInline::class)
-    inline fun <T> withNoArgumentsTransform(block: () -> T): T {
-        val oldValue = needTransformArguments
-        needTransformArguments = false
-        return try {
-            block()
-        } finally {
-            needTransformArguments = oldValue
-        }
     }
 
     private fun selectDelegatingConstructorCall(

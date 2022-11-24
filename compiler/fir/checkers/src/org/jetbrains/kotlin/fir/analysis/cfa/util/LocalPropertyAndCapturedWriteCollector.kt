@@ -39,11 +39,15 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
         symbols[node.fir.symbol] = lambdaOrLocalFunctionStack.lastOrNull() == null
     }
 
-    override fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode) {
+    override fun visitSplitPostponedLambdasNode(node: SplitPostponedLambdasNode) {
+        lambdaOrLocalFunctionStack.addAll(node.lambdas)
+    }
+
+    override fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode) {
         lambdaOrLocalFunctionStack.add(node.fir.anonymousFunction)
     }
 
-    override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: Nothing?) {
+    override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode) {
         lambdaOrLocalFunctionStack.add(node.fir)
     }
 
