@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.KeepOriginalDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.KeepOriginalDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedMetadataLibraryDirectoryForIde
 import org.jetbrains.kotlin.gradle.plugin.mpp.read
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
@@ -79,17 +80,12 @@ object IdeOriginalMetadataDependencyResolver : IdeDependencyResolver {
             view.isLenient = true
         }
 
-        return artifactsView.artifacts.map { artifact ->
-            val artifactId = artifact.variant.owner as ModuleComponentIdentifier
+        return artifactsView.artifacts.mapNotNull { artifact ->
+            val moduleId = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@mapNotNull null
             IdeaKotlinResolvedBinaryDependency(
                 binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
                 binaryFile = artifact.file,
-                extras = mutableExtrasOf(),
-                coordinates = IdeaKotlinBinaryCoordinates(
-                    group = artifactId.group,
-                    module = artifactId.module,
-                    version = artifactId.version,
-                )
+                coordinates = IdeaKotlinBinaryCoordinates(moduleId)
             )
         }.toSet()
     }
