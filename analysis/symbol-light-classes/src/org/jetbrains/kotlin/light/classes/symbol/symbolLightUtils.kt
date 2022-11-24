@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAn
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiExpression
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiLiteral
-import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner

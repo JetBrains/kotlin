@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
-import org.jetbrains.kotlin.light.classes.symbol.allowLightClassesOnEdt
+import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
@@ -34,7 +34,7 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
     private class SymbolLightClassesLazyCreator(private val project: Project) : KotlinClassInnerStuffCache.LazyCreator() {
         override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = object : Lazy<T> {
             private val cachedValue = PsiCachedValueImpl(PsiManager.getInstance(project)) {
-                CachedValueProvider.Result.create(allowLightClassesOnEdt(initializer), dependencies)
+                CachedValueProvider.Result.create(initializer(), dependencies)
             }
 
             override val value: T get() = cachedValue.value ?: error("Unexpected null value from PsiCachedValueImpl")

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.light.classes.symbol.allowLightClassesOnEdt
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameterList
@@ -39,9 +38,7 @@ internal class SymbolLightParameterList(
             }
         }
 
-        allowLightClassesOnEdt {
-            parameterPopulator.invoke(builder)
-        }
+        parameterPopulator.invoke(builder)
 
         builder
     }
