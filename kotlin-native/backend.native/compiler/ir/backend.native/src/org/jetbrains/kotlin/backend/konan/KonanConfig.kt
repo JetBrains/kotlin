@@ -232,6 +232,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val fullExportedNamePrefix: String
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
 
+    val objcFqnames: Boolean
+        get() = configuration.getBoolean(KonanConfigKeys.OBJC_FQNAMES)
+
     val moduleId: String
         get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: implicitModuleName
 

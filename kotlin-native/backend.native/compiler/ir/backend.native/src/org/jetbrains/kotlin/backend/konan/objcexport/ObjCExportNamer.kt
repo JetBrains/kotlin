@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.shortName
+import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -51,6 +54,7 @@ interface ObjCExportNamer {
         val topLevelNamePrefix: String
         fun getAdditionalPrefix(module: ModuleDescriptor): String?
         val objcGenerics: Boolean
+        val useFqname: Boolean
     }
 
     val topLevelNamePrefix: String
@@ -83,35 +87,19 @@ interface ObjCExportNamer {
     }
 }
 
-fun createNamer(moduleDescriptor: ModuleDescriptor,
-                topLevelNamePrefix: String): ObjCExportNamer =
-        createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
-
-fun createNamer(
-        moduleDescriptor: ModuleDescriptor,
-        exportedDependencies: List<ModuleDescriptor>,
-        topLevelNamePrefix: String
-): ObjCExportNamer = ObjCExportNamerImpl(
-        (exportedDependencies + moduleDescriptor).toSet(),
-        moduleDescriptor.builtIns,
-        ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT),
-        topLevelNamePrefix,
-        local = true
-)
-
 // Note: this class duplicates some of ObjCExportNamerImpl logic,
 // but operates on different representation.
 internal open class ObjCExportNameTranslatorImpl(
         private val configuration: ObjCExportNamer.Configuration
 ) : ObjCExportNameTranslator {
 
-    private val helper = ObjCExportNamingHelper(configuration.topLevelNamePrefix, configuration.objcGenerics)
+    private val helper = ObjCExportNamingHelper(configuration.topLevelNamePrefix, configuration.objcGenerics, configuration.useFqname)
 
     override fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName =
-            helper.getFileClassName(file)
+            helper.getFileClassName(file.name, file.packageFqName)
 
     override fun getCategoryName(file: KtFile): String =
-            helper.translateFileName(file)
+            helper.translateFileName(file.name, file.packageFqName)
 
     override fun getClassOrProtocolName(ktClassOrObject: KtClassOrObject): ObjCExportNamer.ClassOrProtocolName =
             ObjCExportNamer.ClassOrProtocolName(
@@ -135,7 +123,12 @@ internal open class ObjCExportNameTranslatorImpl(
             if (outerClass != null) {
                 appendNameWithContainer(ktClassOrObject, objCName, outerClass, forSwift)
             } else {
-                if (!forSwift) append(configuration.topLevelNamePrefix)
+                if (!forSwift) {
+                    append(configuration.topLevelNamePrefix)
+                    if (configuration.useFqname) {
+                        append(ktClassOrObject.containingKtFile.packageFqName.pathSegments().joinToString("_", postfix = "_"))
+                    }
+                }
                 append(objCName.asIdentifier(forSwift))
             }
         }
@@ -166,21 +159,21 @@ internal open class ObjCExportNameTranslatorImpl(
 
 private class ObjCExportNamingHelper(
         private val topLevelNamePrefix: String,
-        private val objcGenerics: Boolean
+        private val objcGenerics: Boolean,
+        private val useFqname: Boolean
 ) {
 
-    fun translateFileName(fileName: String): String =
-            PackagePartClassUtils.getFilePartShortName(fileName).toIdentifier()
+    fun translateFileName(fileName: String, packageFqName: FqName): String =
+            if (useFqname) {
+                PackagePartClassUtils.getPackagePartFqName(packageFqName, fileName).pathSegments().joinToString("_").toIdentifier()
+            } else {
+                PackagePartClassUtils.getFilePartShortName(fileName).toIdentifier()
+            }
 
-    fun translateFileName(file: KtFile): String = translateFileName(file.name)
-
-    fun getFileClassName(fileName: String): ObjCExportNamer.ClassOrProtocolName {
-        val baseName = translateFileName(fileName)
+    fun getFileClassName(fileName: String, packageFqName: FqName): ObjCExportNamer.ClassOrProtocolName {
+        val baseName = translateFileName(fileName, packageFqName)
         return ObjCExportNamer.ClassOrProtocolName(swiftName = baseName, objCName = "$topLevelNamePrefix$baseName")
     }
-
-    fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName =
-            getFileClassName(file.name)
 
     fun <T> appendNameWithContainer(
             builder: StringBuilder,
@@ -274,7 +267,8 @@ internal class ObjCExportNamerImpl(
             mapper: ObjCExportMapper,
             topLevelNamePrefix: String,
             local: Boolean,
-            objcGenerics: Boolean = false
+            objcGenerics: Boolean = false,
+            useFqnames: Boolean = false,
     ) : this(
             object : ObjCExportNamer.Configuration {
                 override val topLevelNamePrefix: String
@@ -286,6 +280,8 @@ internal class ObjCExportNamerImpl(
                 override val objcGenerics: Boolean
                     get() = objcGenerics
 
+                override val useFqname = useFqnames
+
             },
             builtIns,
             mapper,
@@ -294,11 +290,15 @@ internal class ObjCExportNamerImpl(
 
     private val objcGenerics get() = configuration.objcGenerics
     override val topLevelNamePrefix get() = configuration.topLevelNamePrefix
-    private val helper = ObjCExportNamingHelper(configuration.topLevelNamePrefix, objcGenerics)
+    private val helper = ObjCExportNamingHelper(configuration.topLevelNamePrefix, objcGenerics, configuration.useFqname)
 
     private fun String.toSpecialStandardClassOrProtocolName() = ObjCExportNamer.ClassOrProtocolName(
             swiftName = "Kotlin$this",
-            objCName = "${topLevelNamePrefix}$this"
+            objCName = if (configuration.useFqname) {
+                "${topLevelNamePrefix}Kotlin$this"
+            } else {
+                "${topLevelNamePrefix}$this"
+            }
     )
 
     override val kotlinAnyName = "Base".toSpecialStandardClassOrProtocolName()
@@ -384,15 +384,18 @@ internal class ObjCExportNamerImpl(
 
     override fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName {
         val candidate by lazy {
-            val fileName = when (file) {
+            when (file) {
                 is PsiSourceFile -> {
                     val psiFile = file.psiFile
                     val ktFile = psiFile as? KtFile ?: error("PsiFile '$psiFile' is not KtFile")
-                    ktFile.name
+                    helper.getFileClassName(ktFile.name, ktFile.packageFqName)
                 }
-                else -> file.name ?: error("$file has no name")
+                is DeserializedSourceFile -> {
+                    val fileName = file.name ?: error("$file has no name")
+                    helper.getFileClassName(fileName, file.packageFqName)
+                }
+                else -> error("$file is unexpected type")
             }
-            helper.getFileClassName(fileName)
         }
 
         val objCName = objCClassNames.getOrPut(file) {
@@ -461,7 +464,12 @@ internal class ObjCExportNamerImpl(
                         append(getClassOrProtocolObjCName(containingDeclaration))
                                 .append(objCName.asIdentifier(false).replaceFirstChar(Char::uppercaseChar))
                     } else if (containingDeclaration is PackageFragmentDescriptor) {
-                        append(topLevelNamePrefix).appendTopLevelClassBaseName(descriptor, objCName, false)
+                        append(topLevelNamePrefix)
+                        // Classes in the stdlib are handled by objCExportAdditionalNamePrefix below
+                        if (configuration.useFqname && !descriptor.module.isNativeStdlib()) {
+                            descriptor.containingPackage()?.let { append(it.pathSegments().joinToString("_", postfix = "_")) }
+                        }
+                        appendTopLevelClassBaseName(descriptor, objCName, false)
                     } else {
                         error("unexpected class parent: $containingDeclaration")
                     }

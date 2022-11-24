@@ -375,6 +375,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xruntime-logs", valueDescription = "<tag1=level1,tag2=level2,...>", description = "Enable logging for runtime with tags.")
     var runtimeLogs: String? = null
 
+    @Argument(value = "-Xtop-level-prefix", valueDescription = "<prefix>", description = "Top level prefix for generated Objective-C classes and C functions.")
+    var topLevelPrefix: String? = null
+
+    @Argument(value = "-Xobjc-fqnames", description = "Use Fully Qualified Kotlin Class names when generating ObjC Classes.")
+    var objcFqnames: Boolean = false
+
     @Argument(
         value = "-Xdump-tests-to",
         valueDescription = "<path>",

@@ -147,8 +147,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         arguments.singleLinkerArguments.toNonNullList())
                 arguments.moduleName?.let{ put(MODULE_NAME, it) }
 
-                // TODO: allow overriding the prefix directly.
-                arguments.moduleName?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
+                (arguments.topLevelPrefix ?: arguments.moduleName)?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
+
+                put(OBJC_FQNAMES, arguments.objcFqnames)
 
                 arguments.target?.let{ put(TARGET, it) }
 

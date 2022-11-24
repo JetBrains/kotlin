@@ -36,7 +36,7 @@ val ModuleDescriptor.isForwardDeclarationModule get() =
 private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
     val fragment = descriptor.findPackage() as KlibMetadataDeserializedPackageFragment
     val fileName = fragment.proto.strings.stringList[index]
-    return DeserializedSourceFile(fileName, descriptor.module.kotlinLibrary)
+    return DeserializedSourceFile(fileName, descriptor.module.kotlinLibrary, fragment.fqName)
 }
 
 fun CallableMemberDescriptor.findSourceFile(): SourceFile {

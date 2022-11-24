@@ -6,9 +6,10 @@ package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.name.FqName
 
 class DeserializedSourceFile(
-    val name_: String, val library: KotlinLibrary
+    val name_: String, val library: KotlinLibrary, val packageFqName: FqName
 ) : SourceFile {
     override fun getName(): String? = name_
 

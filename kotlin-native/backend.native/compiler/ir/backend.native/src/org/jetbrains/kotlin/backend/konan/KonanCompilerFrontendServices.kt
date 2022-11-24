@@ -41,6 +41,9 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
 
             override val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
                 get() = config.unitSuspendFunctionObjCExport
+
+            override val objcFqnames: Boolean
+                get() = config.objcFqnames
         })
     }
 }
