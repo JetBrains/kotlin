@@ -61,10 +61,11 @@ class FirCallCompleter(
         call: T,
         expectedTypeRef: FirTypeRef?,
         expectedTypeMismatchIsReportedInChecker: Boolean = false,
+        returnTargetIfFromReturnType: FirFunction? = null,
     ): CompletionResult<T> where T : FirResolvable, T : FirStatement =
         completeCall(
-            call, expectedTypeRef, mayBeCoercionToUnitApplied = false, expectedTypeMismatchIsReportedInChecker, isFromCast = false
-        ,
+            call, expectedTypeRef, mayBeCoercionToUnitApplied = false,
+            expectedTypeMismatchIsReportedInChecker, returnTargetIfFromReturnType, isFromCast = false,
             shouldEnforceExpectedType = true,
         )
 
@@ -74,6 +75,7 @@ class FirCallCompleter(
             data.expectedType(components, allowFromCast = true),
             (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true,
             (data as? ResolutionMode.WithExpectedType)?.expectedTypeMismatchIsReportedInChecker == true,
+            (data as? ResolutionMode.WithExpectedType)?.returnTargetIfFromReturnType,
             isFromCast = data is ResolutionMode.WithExpectedTypeFromCast,
             shouldEnforceExpectedType = data !is ResolutionMode.WithSuggestedType,
         )
@@ -82,6 +84,7 @@ class FirCallCompleter(
         call: T, expectedTypeRef: FirTypeRef?,
         mayBeCoercionToUnitApplied: Boolean,
         expectedTypeMismatchIsReportedInChecker: Boolean,
+        returnTargetIfFromReturnType: FirFunction?,
         isFromCast: Boolean,
         shouldEnforceExpectedType: Boolean,
     ): CompletionResult<T>
@@ -105,6 +108,7 @@ class FirCallCompleter(
 
         addConstraintFromExpectedType(
             expectedTypeMismatchIsReportedInChecker,
+            returnTargetIfFromReturnType,
             expectedTypeRef,
             shouldEnforceExpectedType,
             candidate,
@@ -157,6 +161,7 @@ class FirCallCompleter(
 
     private fun addConstraintFromExpectedType(
         expectedTypeMismatchIsReportedInChecker: Boolean,
+        returnTargetIfFromReturnType: FirFunction?,
         expectedTypeRef: FirTypeRef?,
         shouldEnforceExpectedType: Boolean,
         candidate: Candidate,
@@ -165,7 +170,10 @@ class FirCallCompleter(
         mayBeCoercionToUnitApplied: Boolean
     ) {
         val expectedType = expectedTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
-        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker)
+        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(
+            expectedTypeMismatchIsReportedInChecker,
+            returnTargetIfFromReturnType,
+        )
 
         val system = candidate.system
         when {

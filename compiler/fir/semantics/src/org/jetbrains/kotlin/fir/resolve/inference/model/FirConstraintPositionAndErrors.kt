@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference.model
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -18,7 +19,8 @@ class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVaria
 class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintPosition<FirElement>(argument)
 
 class ConeExpectedTypeConstraintPosition(
-    val expectedTypeMismatchIsReportedInChecker: Boolean
+    val expectedTypeMismatchIsReportedInChecker: Boolean,
+    val returnTargetIfFromReturnType: FirFunction? = null,
 ) : ExpectedTypeConstraintPosition<Nothing?>(null)
 
 class ConeExplicitTypeParameterConstraintPosition(
