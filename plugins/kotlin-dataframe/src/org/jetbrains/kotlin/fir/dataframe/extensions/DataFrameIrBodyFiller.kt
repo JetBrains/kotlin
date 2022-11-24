@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.DataColumn
+import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 
 class DataFrameIrBodyFiller : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
@@ -99,7 +100,9 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
         if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameExtensionsGenerator.DataFramePlugin)) return declaration
         val getter = declaration.getter ?: return declaration
         val returnType = getter.returnType
-        val isDataColumn = returnType.classFqName!!.asString() == DataColumn::class.qualifiedName!!
+        val isDataColumn = returnType.classFqName!!.asString().let {
+            it == DataColumn::class.qualifiedName!! || it == ColumnGroup::class.qualifiedName!!
+        }
 
         val get = if (isDataColumn) {
             context

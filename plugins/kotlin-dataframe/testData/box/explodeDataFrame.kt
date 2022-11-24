@@ -15,5 +15,6 @@ fun box(): String {
     val df = DataFrame.readJsonDefault("/home/nikitak/IdeaProjects/dataframe-examples/datasets/achievements_all.json")
 
     val df1 = df.explode { achievements }
+    df1.achievements.order
     return "OK"
 }

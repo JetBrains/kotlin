@@ -7,6 +7,7 @@ FILE: explodeDataFrame.kt
             ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope499.achievements|
         }
         )
+        (this@R|org/jetbrains/kotlinx/dataframe/box|, (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/Scope497.achievements|).R|org/jetbrains/kotlinx/dataframe/Scope496.order|
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt
