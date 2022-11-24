@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 
 class Foo<T>
@@ -12,5 +13,5 @@ fun <K : <!FINAL_UPPER_BOUND!>Inv<out Inv<out Int>><!>> main() {
     fun <T, S : T> Bar<T>.takeFoo(foo: Foo<in S>): String = ""
 
     val foo = Foo<K>()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>Bar<Inv<in Inv<in Number>>>().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>takeFoo<!>(foo)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>Bar<Inv<in Inv<in Number>>>().takeFoo(foo)<!>
 }

@@ -1,4 +1,4 @@
-// RENDER_DIAGNOSTICS_FULL_TEXT
+// FIR_IDENTICAL
 class Foo<T>
 
 class Bar<T> {
@@ -9,5 +9,5 @@ class Inv<O>
 
 fun <K : <!FINAL_UPPER_BOUND!>Inv<out Inv<out Int>><!>> main() {
     val foo = Foo<K>()
-    Bar<Inv<in Inv<in Number>>>().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>takeFoo<!>(foo) // error in 1.3.72, no error in 1.4.31
+    Bar<Inv<in Inv<in Number>>>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
 }

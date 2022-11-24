@@ -107,18 +107,10 @@ internal object EmptyIntersectionTypeChecker {
                 ).singleOrNull()
 
                 when {
-                    firstSuperTypeWithSecondConstructor != null && secondSuperTypeByFirstConstructor != null -> {
-                        val argumentsIntersectionKind = computeByCheckingTypeArguments(
-                            firstSuperTypeWithSecondConstructor, secondSuperTypeByFirstConstructor
-                        ) ?: continue
-
-                        if (argumentsIntersectionKind.kind.isDefinitelyEmpty())
-                            return argumentsIntersectionKind
-
-                        if (possibleEmptyIntersectionKind == null && argumentsIntersectionKind.kind.isPossiblyEmpty())
-                            possibleEmptyIntersectionKind = argumentsIntersectionKind
+                    firstSuperTypeWithSecondConstructor != null || secondSuperTypeByFirstConstructor != null -> {
+                        continue
                     }
-                    firstSuperTypeWithSecondConstructor == null && secondSuperTypeByFirstConstructor == null && !atLeastOneInterface -> {
+                    !atLeastOneInterface -> {
                         // Two classes can't have a common subtype if neither is a subtype of another
                         return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.MULTIPLE_CLASSES, firstType, secondType)
                     }
@@ -138,70 +130,6 @@ internal object EmptyIntersectionTypeChecker {
         }
 
         return possibleEmptyIntersectionKind
-    }
-
-    private fun TypeSystemInferenceExtensionContext.computeByCheckingTypeArguments(
-        firstType: KotlinTypeMarker,
-        secondType: KotlinTypeMarker,
-    ): EmptyIntersectionTypeInfo? {
-        require(firstType.typeConstructor() == secondType.typeConstructor()) {
-            "Type constructors of the passed types should be the same to compare their arguments"
-        }
-
-        fun isSubtypeOf(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker) =
-            AbstractTypeChecker.isSubtypeOf(this, firstType, secondType)
-
-        fun areEqualTypes(firstType: KotlinTypeMarker, secondType: KotlinTypeMarker) =
-            AbstractTypeChecker.equalTypes(this, firstType, secondType)
-
-        fun Boolean.toEmptyIntersectionKind(vararg types: KotlinTypeMarker) =
-            if (this) null else EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.INCOMPATIBLE_TYPE_ARGUMENTS, *types)
-
-        var possibleEmptyIntersectionTypeInfo: EmptyIntersectionTypeInfo? = null
-
-        for ((i, argumentOfFirst) in firstType.getArguments().withIndex()) {
-            @Suppress("NAME_SHADOWING")
-            val argumentOfFirst = uncaptureIfNeeded(argumentOfFirst)
-            val argumentOfSecond = uncaptureIfNeeded(secondType.getArgument(i))
-
-            if (argumentOfFirst == argumentOfSecond || argumentOfFirst.isStarProjection() || argumentOfSecond.isStarProjection())
-                continue
-
-            val argumentTypeOfFirst = argumentOfFirst.getType()
-            val argumentTypeOfSecond = argumentOfSecond.getType()
-            val intersectionKindOfArguments = when {
-                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.INV) ->
-                    areEqualTypes(argumentTypeOfFirst, argumentTypeOfSecond)
-                        .toEmptyIntersectionKind(argumentTypeOfFirst, argumentTypeOfSecond)
-                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.OUT) ->
-                    isSubtypeOf(argumentTypeOfFirst, argumentTypeOfSecond)
-                        .toEmptyIntersectionKind(argumentTypeOfFirst, argumentTypeOfSecond)
-                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.INV, TypeVariance.IN) ->
-                    isSubtypeOf(argumentTypeOfSecond, argumentTypeOfFirst)
-                        .toEmptyIntersectionKind(argumentTypeOfFirst, argumentTypeOfSecond)
-                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.IN, TypeVariance.OUT) -> {
-                    if (argumentTypeOfFirst.argumentsCount() == 0 && argumentTypeOfSecond.argumentsCount() == 0) {
-                        isSubtypeOf(argumentTypeOfFirst, argumentTypeOfSecond)
-                            .toEmptyIntersectionKind(argumentTypeOfFirst, argumentTypeOfSecond)
-                    } else {
-                        computeByHavingCommonSubtype(argumentTypeOfFirst, argumentTypeOfSecond)
-                    }
-                }
-                areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.OUT, TypeVariance.OUT)
-                        || areArgumentsOfSpecifiedVariances(firstType, secondType, i, TypeVariance.IN, TypeVariance.IN) -> {
-                    computeByHavingCommonSubtype(argumentTypeOfFirst, argumentTypeOfSecond)
-                }
-                else -> true.toEmptyIntersectionKind(argumentTypeOfFirst, argumentTypeOfSecond)
-            } ?: continue
-
-            if (intersectionKindOfArguments.kind.isDefinitelyEmpty())
-                return intersectionKindOfArguments
-
-            if (possibleEmptyIntersectionTypeInfo == null && intersectionKindOfArguments.kind.isPossiblyEmpty())
-                possibleEmptyIntersectionTypeInfo = intersectionKindOfArguments
-        }
-
-        return possibleEmptyIntersectionTypeInfo
     }
 
     private fun TypeSystemInferenceExtensionContext.getIncompatibleSuperTypes(
@@ -268,30 +196,6 @@ internal object EmptyIntersectionTypeChecker {
         return !typeConstructor.isAnyConstructor() && !typeConstructor.isNothingConstructor()
     }
 
-    private fun TypeSystemInferenceExtensionContext.areArgumentsOfSpecifiedVariances(
-        firstType: KotlinTypeMarker,
-        secondType: KotlinTypeMarker,
-        argumentIndex: Int,
-        variance1: TypeVariance,
-        variance2: TypeVariance,
-    ): Boolean {
-        fun getEffectiveVariance(type: KotlinTypeMarker): TypeVariance? {
-            val argument = uncaptureIfNeeded(type.getArgument(argumentIndex))
-            val parameter = type.typeConstructor().getParameter(argumentIndex)
-            return AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
-        }
-
-        val effectiveVariance1 = getEffectiveVariance(firstType)
-        val effectiveVariance2 = getEffectiveVariance(secondType)
-
-        return (effectiveVariance1 == variance1 && effectiveVariance2 == variance2)
-                || (effectiveVariance1 == variance2 && effectiveVariance2 == variance1)
-    }
-
-    private fun TypeSystemInferenceExtensionContext.uncaptureIfNeeded(argument: TypeArgumentMarker): TypeArgumentMarker {
-        val type = argument.getType()
-        return if (type is CapturedTypeMarker) type.typeConstructorProjection() else argument
-    }
 }
 
 class EmptyIntersectionTypeInfo(val kind: EmptyIntersectionTypeKind, vararg val casingTypes: KotlinTypeMarker)
