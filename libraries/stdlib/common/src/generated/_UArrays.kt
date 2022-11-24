@@ -5345,6 +5345,10 @@ public fun UShortArray.withIndex(): Iterable<IndexedValue<UShort>> {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 @SinceKotlin("1.3")
@@ -5357,6 +5361,10 @@ public inline fun UIntArray.all(predicate: (UInt) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
@@ -5371,6 +5379,10 @@ public inline fun ULongArray.all(predicate: (ULong) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 @SinceKotlin("1.3")
@@ -5383,6 +5395,10 @@ public inline fun UByteArray.all(predicate: (UByte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */

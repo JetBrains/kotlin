@@ -157,6 +157,10 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(des
 /**
  * Returns `true` if all entries match the given [predicate].
  * 
+ * Note that if the map contains no entries, the function returns `true`
+ * because there are no entries in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {

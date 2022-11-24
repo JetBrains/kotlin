@@ -1054,6 +1054,10 @@ public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
 /**
  * Returns `true` if all characters match the given [predicate].
  * 
+ * Note that if the char sequence contains no characters, the function returns `true`
+ * because there are no characters in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
