@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.utils.SmartList;
 import java.util.*;
 
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
+
+    private final String creationThreadName = Thread.currentThread().getName();
+
     private List<TypeParameterDescriptor> typeParameters;
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
     private KotlinType unsubstitutedReturnType;
@@ -301,7 +304,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         List<TypeParameterDescriptor> parameters = typeParameters;
         // Diagnostics for EA-141456
         if (parameters == null) {
-            throw new IllegalStateException("typeParameters == null for " + this);
+            throw new IllegalStateException("typeParameters is null for " + this
+                                            + " at '" + Thread.currentThread().getName()
+                                            + "', created at '" + creationThreadName + "'");
         }
         return parameters;
     }

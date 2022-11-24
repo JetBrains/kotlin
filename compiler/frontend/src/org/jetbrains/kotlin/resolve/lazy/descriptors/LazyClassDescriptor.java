@@ -63,6 +63,9 @@ import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromM
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
+
+    private final String creationThreadName = Thread.currentThread().getName();
+
     private static final Function1<KotlinType, Boolean> VALID_SUPERTYPE = type -> {
         assert !KotlinTypeKt.isError(type) : "Error types must be filtered out in DescriptorResolver";
         return TypeUtils.getClassDescriptor(type) != null;
@@ -697,7 +700,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public String toString() {
         // not using DescriptorRenderer to preserve laziness
-        return (isExpect ? "expect " : isActual ? "actual " : "") + "class " + getName().toString();
+        return (isExpect ? "expect " : isActual ? "actual " : "") + "class " + getName();
     }
 
     @Override
@@ -752,7 +755,14 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
-        return parameters.invoke();
+        NotNullLazyValue<List<TypeParameterDescriptor>> lazyValue = parameters;
+        // Diagnostics for EA-757831
+        if (lazyValue == null) {
+            throw new IllegalStateException("parameters is null for " + this
+                                            + " at '" + Thread.currentThread().getName()
+                                            + "', created at '" + creationThreadName + "'");
+        }
+        return lazyValue.invoke();
     }
 
     private class LazyClassTypeConstructor extends AbstractClassTypeConstructor {

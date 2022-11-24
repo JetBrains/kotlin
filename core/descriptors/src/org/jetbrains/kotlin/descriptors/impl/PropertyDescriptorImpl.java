@@ -37,6 +37,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 
 @SuppressWarnings("deprecation")
 public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImpl implements PropertyDescriptor {
+    private final String creationThreadName = Thread.currentThread().getName();
     private final Modality modality;
     private DescriptorVisibility visibility;
     private Collection<? extends PropertyDescriptor> overriddenProperties = null;
@@ -180,7 +181,9 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         List<TypeParameterDescriptor> parameters = typeParameters;
         // Diagnostics for EA-212070
         if (parameters == null) {
-            throw new IllegalStateException("typeParameters == null for " + this.toString());
+            throw new IllegalStateException("typeParameters is null for " + this
+                                            + " at '" + Thread.currentThread().getName()
+                                            + "', created at '" + creationThreadName + "'");
         }
         return parameters;
     }
