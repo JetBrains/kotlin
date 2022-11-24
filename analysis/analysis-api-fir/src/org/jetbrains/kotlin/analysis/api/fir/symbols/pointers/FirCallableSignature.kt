@@ -48,9 +48,7 @@ internal class FirCallableSignature private constructor(
             }
         }
 
-        declaration.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-
-        return returnType == declaration.returnTypeRef.renderType()
+        return returnType == declaration.symbol.resolvedReturnTypeRef.renderType()
     }
 
     override fun equals(other: Any?): Boolean {
