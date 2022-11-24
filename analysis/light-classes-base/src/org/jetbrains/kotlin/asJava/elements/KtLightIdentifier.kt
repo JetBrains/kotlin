@@ -7,28 +7,16 @@ package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.light.LightIdentifier
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-abstract class KtLightIdentifierBase(
+open class KtLightIdentifier @JvmOverloads constructor(
     private val lightOwner: PsiElement,
-    text: String?
-) : LightIdentifier(lightOwner.manager, text), PsiElementWithOrigin<PsiElement> {
-    override fun isPhysical() = true
-    override fun getParent() = lightOwner
-    override fun getContainingFile() = lightOwner.containingFile
-    override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
-    override fun getTextOffset(): Int = origin?.textOffset ?: -1
-    abstract override fun copy(): PsiElement
-}
-
-open class KtLightIdentifier(
-    lightOwner: PsiElement,
-    private val ktDeclaration: KtDeclaration?
-) : KtLightIdentifierBase(lightOwner, ktDeclaration?.name) {
-    override fun copy(): PsiElement = KtLightIdentifier(parent, ktDeclaration)
-
+    private val ktDeclaration: KtDeclaration?,
+    private val name: String? = ktDeclaration?.name,
+) : LightIdentifier(lightOwner.manager, name), PsiElementWithOrigin<PsiElement> {
     override val origin: PsiElement?
         get() = when (ktDeclaration) {
             is KtSecondaryConstructor -> ktDeclaration.getConstructorKeyword()
@@ -40,4 +28,12 @@ open class KtLightIdentifier(
             is KtNamedDeclaration -> ktDeclaration.nameIdentifier
             else -> null
         }
+
+    override fun copy(): PsiElement = KtLightIdentifier(parent, ktDeclaration, name)
+    override fun isPhysical(): Boolean = true
+    override fun getParent(): PsiElement = lightOwner
+    override fun getContainingFile(): PsiFile = lightOwner.containingFile
+    override fun getTextRange(): TextRange = origin?.textRange ?: TextRange.EMPTY_RANGE
+
+    override fun getTextOffset(): Int = origin?.textOffset ?: -1
 }
