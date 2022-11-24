@@ -302,7 +302,6 @@ class FirSignatureEnhancement(
                     typeParameters += firMethod.typeParameters.map { typeParameter ->
                         buildTypeParameterCopy(typeParameter) {
                             origin = FirDeclarationOrigin.Enhancement
-                            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                             containingDeclarationSymbol = functionSymbol
                         }
                     }
