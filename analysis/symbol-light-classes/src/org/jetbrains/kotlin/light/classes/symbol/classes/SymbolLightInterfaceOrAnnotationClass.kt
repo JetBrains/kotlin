@@ -25,8 +25,8 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(classOrObject: KtC
     }
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        withNamedClassOrObjectSymbol { classOrObjectSymbol ->
-            val lazyModifiers = lazy {
+        val lazyModifiers = lazy {
+            withNamedClassOrObjectSymbol { classOrObjectSymbol ->
                 buildSet {
                     add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
                     add(PsiModifier.ABSTRACT)
@@ -35,17 +35,19 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(classOrObject: KtC
                     }
                 }
             }
+        }
 
-            val lazyAnnotations = lazyPub {
+        val lazyAnnotations = lazyPub {
+            withNamedClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
                     parent = this@SymbolLightInterfaceOrAnnotationClass,
                     nullability = NullabilityType.Unknown,
                     annotationUseSiteTarget = null,
                 )
             }
-
-            SymbolLightClassModifierList(this@SymbolLightInterfaceOrAnnotationClass, lazyModifiers, lazyAnnotations)
         }
+
+        SymbolLightClassModifierList(this@SymbolLightInterfaceOrAnnotationClass, lazyModifiers, lazyAnnotations)
     }
 
     override fun isInterface(): Boolean = true

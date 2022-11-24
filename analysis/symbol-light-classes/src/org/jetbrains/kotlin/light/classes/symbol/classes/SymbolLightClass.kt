@@ -51,8 +51,8 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
     }
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        withNamedClassOrObjectSymbol { classOrObjectSymbol ->
-            val lazyModifiers = lazy {
+        val lazyModifiers = lazy {
+            withNamedClassOrObjectSymbol { classOrObjectSymbol ->
                 buildSet {
                     add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
                     addIfNotNull(classOrObjectSymbol.computeSimpleModality())
@@ -61,17 +61,19 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
                     }
                 }
             }
+        }
 
-            val lazyAnnotations = lazyPub {
+        val lazyAnnotations = lazyPub {
+            withNamedClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
                     parent = this@SymbolLightClass,
                     nullability = NullabilityType.Unknown,
                     annotationUseSiteTarget = null,
                 )
             }
-
-            SymbolLightClassModifierList(this@SymbolLightClass, lazyModifiers, lazyAnnotations)
         }
+
+        SymbolLightClassModifierList(this@SymbolLightClass, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
