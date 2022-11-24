@@ -1716,6 +1716,10 @@ public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the collection contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
