@@ -23,7 +23,8 @@ inline fun <R> whileAnalysing(element: KtSourceElement?, block: () -> R): R {
     }
 }
 
-fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
+@PublishedApi
+internal fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
     is SourceCodeAnalysisException -> this
     is IndexNotReadyException -> this
     is ControlFlowException -> this
@@ -59,7 +60,8 @@ inline fun <R> withFileAnalysisExceptionWrapping(
     }
 }
 
-fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
+@PublishedApi
+internal fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
     filePath: String?,
     fileSource: AbstractKtSourceElement?,
     linesMapping: (Int) -> Pair<Int, Int>?,
