@@ -28,6 +28,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("explodeDataFrame.kt")
+    public void testExplodeDataFrame() throws Exception {
+        runTest("testData/box/explodeDataFrame.kt");
+    }
+
+    @Test
     @TestMetadata("flexibleReturnType.kt")
     public void testFlexibleReturnType() throws Exception {
         runTest("testData/box/flexibleReturnType.kt");
