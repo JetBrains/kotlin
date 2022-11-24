@@ -179,4 +179,4 @@ internal expect annotation class JvmPackageName(val name: String)
 @Retention(AnnotationRetention.SOURCE)
 @SinceKotlin("1.8")
 @OptionalExpectation
-public expect annotation class JvmSerializableLambda
+public expect annotation class JvmSerializableLambda()
