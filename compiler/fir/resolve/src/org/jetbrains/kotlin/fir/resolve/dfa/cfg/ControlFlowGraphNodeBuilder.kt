@@ -223,11 +223,14 @@ fun ControlFlowGraphBuilder.createEnterSafeCallNode(fir: FirSafeCallExpression):
 fun ControlFlowGraphBuilder.createPostponedLambdaExitNode(fir: FirAnonymousFunctionExpression): PostponedLambdaExitNode =
     PostponedLambdaExitNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createPostponedLambdaEnterNode(fir: FirAnonymousFunctionExpression): PostponedLambdaEnterNode =
-    PostponedLambdaEnterNode(currentGraph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createSplitPostponedLambdasNode(fir: FirStatement, lambdas: List<FirAnonymousFunction>): SplitPostponedLambdasNode =
+    SplitPostponedLambdasNode(currentGraph, fir, lambdas, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createAnonymousFunctionExpressionExitNode(fir: FirAnonymousFunctionExpression): AnonymousFunctionExpressionExitNode =
-    AnonymousFunctionExpressionExitNode(currentGraph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createMergePostponedLambdaExitsNode(fir: FirElement): MergePostponedLambdaExitsNode =
+    MergePostponedLambdaExitsNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createAnonymousFunctionExpressionNode(fir: FirAnonymousFunctionExpression): AnonymousFunctionExpressionNode =
+    AnonymousFunctionExpressionNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createAnonymousObjectEnterNode(fir: FirAnonymousObject): AnonymousObjectEnterNode =
     AnonymousObjectEnterNode(currentGraph, fir, levelCounter, createId())
@@ -243,9 +246,6 @@ fun ControlFlowGraphBuilder.createScriptEnterNode(fir: FirScript): ScriptEnterNo
 
 fun ControlFlowGraphBuilder.createScriptExitNode(fir: FirScript): ScriptExitNode =
     ScriptExitNode(currentGraph, fir, levelCounter, createId())
-
-fun ControlFlowGraphBuilder.createMergePostponedLambdaExitsNode(fir: FirElement): MergePostponedLambdaExitsNode =
-    MergePostponedLambdaExitsNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createClassEnterNode(fir: FirClass): ClassEnterNode =
     ClassEnterNode(currentGraph, fir, levelCounter, createId())

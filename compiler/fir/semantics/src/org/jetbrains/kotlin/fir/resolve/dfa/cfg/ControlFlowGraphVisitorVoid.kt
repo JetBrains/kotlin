@@ -20,9 +20,13 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
+    open fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode) {
+        visitNode(node)
+    }
+
     // ----------------------------------- Anonymous function -----------------------------------
 
-    open fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode) {
+    open fun visitSplitPostponedLambdasNode(node: SplitPostponedLambdasNode) {
         visitNode(node)
     }
 
@@ -31,6 +35,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
     }
 
     open fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode) {
+        visitNode(node)
+    }
+
+    open fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode) {
         visitNode(node)
     }
 
@@ -313,10 +321,14 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitFunctionExitNode(node)
     }
 
+    final override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: Nothing?) {
+        visitLocalFunctionDeclarationNode(node)
+    }
+
     // ----------------------------------- Anonymous function -----------------------------------
 
-    final override fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode, data: Nothing?) {
-        visitPostponedLambdaEnterNode(node)
+    final override fun visitSplitPostponedLambdasNode(node: SplitPostponedLambdasNode, data: Nothing?) {
+        visitSplitPostponedLambdasNode(node)
     }
 
     final override fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode, data: Nothing?) {
@@ -325,6 +337,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode, data: Nothing?) {
         visitMergePostponedLambdaExitsNode(node)
+    }
+
+    final override fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode, data: Nothing?) {
+        visitAnonymousFunctionExpressionNode(node)
     }
 
     // ----------------------------------- Anonymous object -----------------------------------

@@ -152,7 +152,7 @@ abstract class FirDataFlowAnalyzer(
         if (function is FirDefaultPropertyAccessor) return
 
         val (localFunctionNode, functionEnterNode) = if (function is FirAnonymousFunction) {
-            graphBuilder.enterAnonymousFunction(function)
+            null to graphBuilder.enterAnonymousFunction(function)
         } else {
             graphBuilder.enterFunction(function)
         }
@@ -201,12 +201,8 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Anonymous function -----------------------------------
 
-    fun visitPostponedAnonymousFunction(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
-        graphBuilder.visitPostponedAnonymousFunction(anonymousFunctionExpression).mergeIncomingFlow()
-    }
-
-    fun exitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
-        graphBuilder.exitAnonymousFunctionExpression(anonymousFunctionExpression).mergeIncomingFlow()
+    fun enterAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
+        graphBuilder.enterAnonymousFunctionExpression(anonymousFunctionExpression)?.mergeIncomingFlow()
     }
 
     // ----------------------------------- Classes -----------------------------------
@@ -739,9 +735,6 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Resolvable call -----------------------------------
 
-    // Intentionally left empty for potential future needs (call sites are preserved)
-    fun enterQualifiedAccessExpression() {}
-
     fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
         graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow { flow ->
             processConditionalContract(flow, qualifiedAccessExpression)
@@ -780,50 +773,26 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitResolvedQualifierNode(resolvedQualifier).mergeIncomingFlow()
     }
 
-    private var resolvingAugmentedAssignmentOptions: Boolean = false
-
-    // The expected sequence of calls for augmented assignment:
-    //  1. enterAugmentedAssignmentCall()
-    //  2. resolve arguments
-    //  3. enterSelectAugmentedAssignmentCall()
-    //  4. resolve all options for calls in context-independent mode
-    //  5. exitSelectAugmentedAssignmentCall()
-    //  6. complete the chosen version
-    //  7. exitFunctionCall(top-level call in the chosen option)
-    fun enterAugmentedAssignmentCall() {
+    fun enterCallArguments(call: FirStatement, arguments: List<FirExpression>) {
+        val lambdas = arguments.mapNotNull { it.unwrapAnonymousFunctionExpression() }
+        context.variableAssignmentAnalyzer.enterFunctionCall(lambdas)
         graphBuilder.enterCall()
-        context.variableAssignmentAnalyzer.enterFunctionCall(emptyList())
+        graphBuilder.enterCallArguments(call, lambdas)
     }
 
-    fun enterSelectAugmentedAssignmentCall() {
-        assert(!resolvingAugmentedAssignmentOptions) { "resolving augmented assignment while resolving augmented assignment?" }
-        resolvingAugmentedAssignmentOptions = true
-    }
-
-    fun exitSelectAugmentedAssignmentCall() {
-        assert(resolvingAugmentedAssignmentOptions) { "no enterSelectAugmentedAssignmentCall before exitSelectAugmentedAssignmentCall" }
-        resolvingAugmentedAssignmentOptions = false
-    }
-
-    fun enterFunctionCall(functionCall: FirFunctionCall) {
-        if (resolvingAugmentedAssignmentOptions) return // shouldn't be any lambda arguments anyway, they're visited before that
-        context.variableAssignmentAnalyzer.enterFunctionCall(functionCall.arguments.mapNotNull { it.unwrapAnonymousFunctionExpression() })
-        graphBuilder.enterCall()
+    fun exitCallArguments() {
+        graphBuilder.exitCallArguments()?.mergeIncomingFlow()
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
-        if (resolvingAugmentedAssignmentOptions) return
         context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
         graphBuilder.exitFunctionCall(functionCall, callCompleted).mergeIncomingFlow {
             processConditionalContract(it, functionCall)
         }
     }
 
-    fun enterDelegatedConstructorCall() {
-        graphBuilder.enterCall()
-    }
-
     fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean) {
+        context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
         graphBuilder.exitDelegatedConstructorCall(call, callCompleted).mergeIncomingFlow()
     }
 

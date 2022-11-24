@@ -95,7 +95,8 @@ digraph callsInPlace_kt {
         subgraph cluster_9 {
             color=blue
             30 [label="Enter block"];
-            31 [label="Postponed enter to lambda"];
+            31 [label="Const: Int(10)"];
+            32 [label="Postponed enter to lambda"];
             subgraph cluster_10 {
                 color=blue
                 37 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
@@ -107,8 +108,7 @@ digraph callsInPlace_kt {
                 }
                 41 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            33 [label="Const: Int(10)"];
-            32 [label="Postponed exit from lambda"];
+            33 [label="Postponed exit from lambda"];
             34 [label="Function call: R|kotlin/repeat|(...)" style="filled" fillcolor=yellow];
             35 [label="Exit block"];
         }
@@ -116,18 +116,18 @@ digraph callsInPlace_kt {
     }
     29 -> {30};
     30 -> {31};
-    31 -> {32 33 37};
-    31 -> {37} [style=dashed];
-    32 -> {34};
-    32 -> {31} [color=green style=dashed];
+    31 -> {32};
+    32 -> {33 37 34};
+    32 -> {37} [style=dashed];
     33 -> {34};
+    33 -> {32} [color=green style=dashed];
     34 -> {35};
     35 -> {36};
     37 -> {38};
     38 -> {39};
     39 -> {40};
     40 -> {41};
-    41 -> {32};
+    41 -> {33};
 
     subgraph cluster_12 {
         color=red
@@ -252,167 +252,161 @@ digraph callsInPlace_kt {
             84 [label="Postponed enter to lambda"];
             subgraph cluster_24 {
                 color=blue
-                96 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                95 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_25 {
                     color=blue
-                    97 [label="Enter block"];
-                    98 [label="Const: String(test_6_2)"];
-                    99 [label="Exit block"];
+                    96 [label="Enter block"];
+                    97 [label="Const: String(test_6_2)"];
+                    98 [label="Exit block"];
                 }
-                100 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                99 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            86 [label="Postponed enter to lambda"];
             subgraph cluster_26 {
                 color=blue
-                91 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                90 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_27 {
                     color=blue
-                    92 [label="Enter block"];
-                    93 [label="Const: String(test_6_1)"];
-                    94 [label="Exit block"];
+                    91 [label="Enter block"];
+                    92 [label="Const: String(test_6_1)"];
+                    93 [label="Exit block"];
                 }
-                95 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                94 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            87 [label="Postponed exit from lambda"];
             85 [label="Postponed exit from lambda"];
-            88 [label="Function call: R|/myRun|(...)" style="filled" fillcolor=yellow];
-            89 [label="Exit block"];
+            86 [label="Postponed exit from lambda"];
+            87 [label="Function call: R|/myRun|(...)" style="filled" fillcolor=yellow];
+            88 [label="Exit block"];
         }
-        90 [label="Exit function test_6" style="filled" fillcolor=red];
+        89 [label="Exit function test_6" style="filled" fillcolor=red];
     }
     82 -> {83};
     83 -> {84};
-    84 -> {85 86 96};
-    84 -> {96} [style=dashed];
-    85 -> {88};
+    84 -> {86 85 90 95 87};
+    84 -> {90 95} [style=dashed];
+    85 -> {87};
     85 -> {84} [color=green style=dashed];
-    86 -> {87 91 88};
-    86 -> {91} [style=dashed];
+    86 -> {87};
+    86 -> {84} [color=green style=dashed];
     87 -> {88};
-    87 -> {86} [color=green style=dashed];
     88 -> {89};
-    89 -> {90};
+    90 -> {91};
     91 -> {92};
     92 -> {93};
     93 -> {94};
-    94 -> {95};
-    95 -> {87};
+    94 -> {86};
+    95 -> {96};
     96 -> {97};
     97 -> {98};
     98 -> {99};
-    99 -> {100};
-    100 -> {85};
+    99 -> {85};
 
     subgraph cluster_28 {
         color=red
-        101 [label="Enter function test_7" style="filled" fillcolor=red];
+        100 [label="Enter function test_7" style="filled" fillcolor=red];
         subgraph cluster_29 {
             color=blue
-            102 [label="Enter block"];
-            103 [label="Postponed enter to lambda"];
+            101 [label="Enter block"];
+            102 [label="Postponed enter to lambda"];
             subgraph cluster_30 {
                 color=blue
-                110 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                113 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_31 {
                     color=blue
-                    111 [label="Enter block"];
-                    112 [label="Const: String(test_7_2)"];
-                    113 [label="Exit block"];
+                    114 [label="Enter block"];
+                    115 [label="Const: String(test_7_1)"];
+                    116 [label="Exit block"];
                 }
-                114 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                117 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            105 [label="Postponed enter to lambda"];
             subgraph cluster_32 {
                 color=blue
-                115 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                108 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_33 {
                     color=blue
-                    116 [label="Enter block"];
-                    117 [label="Const: String(test_7_1)"];
-                    118 [label="Exit block"];
+                    109 [label="Enter block"];
+                    110 [label="Const: String(test_7_2)"];
+                    111 [label="Exit block"];
                 }
-                119 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                112 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            106 [label="Postponed exit from lambda"];
+            103 [label="Postponed exit from lambda"];
             104 [label="Postponed exit from lambda"];
-            107 [label="Function call: R|/myRun|(...)" style="filled" fillcolor=yellow];
-            108 [label="Exit block"];
+            105 [label="Function call: R|/myRun|(...)" style="filled" fillcolor=yellow];
+            106 [label="Exit block"];
         }
-        109 [label="Exit function test_7" style="filled" fillcolor=red];
+        107 [label="Exit function test_7" style="filled" fillcolor=red];
     }
+    100 -> {101};
     101 -> {102};
-    102 -> {103};
-    103 -> {104 105 110};
-    103 -> {110} [style=dashed];
-    104 -> {107};
-    104 -> {103} [color=green style=dashed];
-    105 -> {106 115 107};
-    105 -> {115} [style=dashed];
+    102 -> {104 103 108 113 105};
+    102 -> {108 113} [style=dashed];
+    103 -> {105};
+    103 -> {102} [color=green style=dashed];
+    104 -> {105};
+    104 -> {102} [color=green style=dashed];
+    105 -> {106};
     106 -> {107};
-    106 -> {105} [color=green style=dashed];
-    107 -> {108};
     108 -> {109};
+    109 -> {110};
     110 -> {111};
     111 -> {112};
-    112 -> {113};
+    112 -> {104};
     113 -> {114};
-    114 -> {104};
+    114 -> {115};
     115 -> {116};
     116 -> {117};
-    117 -> {118};
-    118 -> {119};
-    119 -> {106};
+    117 -> {103};
 
     subgraph cluster_34 {
         color=red
-        120 [label="Enter function myDummyRun" style="filled" fillcolor=red];
+        118 [label="Enter function myDummyRun" style="filled" fillcolor=red];
         subgraph cluster_35 {
             color=blue
-            121 [label="Enter block"];
-            122 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            123 [label="Exit block"];
+            119 [label="Enter block"];
+            120 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            121 [label="Exit block"];
         }
-        124 [label="Exit function myDummyRun" style="filled" fillcolor=red];
+        122 [label="Exit function myDummyRun" style="filled" fillcolor=red];
     }
+    118 -> {119};
+    119 -> {120};
     120 -> {121};
     121 -> {122};
-    122 -> {123};
-    123 -> {124};
 
     subgraph cluster_36 {
         color=red
-        125 [label="Enter function test_8" style="filled" fillcolor=red];
+        123 [label="Enter function test_8" style="filled" fillcolor=red];
         subgraph cluster_37 {
             color=blue
-            126 [label="Enter block"];
-            127 [label="Postponed enter to lambda"];
+            124 [label="Enter block"];
+            125 [label="Postponed enter to lambda"];
             subgraph cluster_38 {
                 color=blue
-                132 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                130 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 subgraph cluster_39 {
                     color=blue
-                    133 [label="Enter block"];
-                    134 [label="Const: String(test_8)"];
-                    135 [label="Exit block"];
+                    131 [label="Enter block"];
+                    132 [label="Const: String(test_8)"];
+                    133 [label="Exit block"];
                 }
-                136 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                134 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            128 [label="Postponed exit from lambda"];
-            129 [label="Function call: R|/myDummyRun|(...)" style="filled" fillcolor=yellow];
-            130 [label="Exit block"];
+            126 [label="Postponed exit from lambda"];
+            127 [label="Function call: R|/myDummyRun|(...)" style="filled" fillcolor=yellow];
+            128 [label="Exit block"];
         }
-        131 [label="Exit function test_8" style="filled" fillcolor=red];
+        129 [label="Exit function test_8" style="filled" fillcolor=red];
     }
-    125 -> {126};
+    123 -> {124};
+    124 -> {125};
+    125 -> {126 130 127};
+    125 -> {130} [style=dashed];
     126 -> {127};
-    127 -> {128 132 129};
-    127 -> {132} [style=dashed];
+    127 -> {128};
     128 -> {129};
-    129 -> {130};
     130 -> {131};
+    131 -> {132};
     132 -> {133};
     133 -> {134};
-    134 -> {135};
-    135 -> {136};
 
 }

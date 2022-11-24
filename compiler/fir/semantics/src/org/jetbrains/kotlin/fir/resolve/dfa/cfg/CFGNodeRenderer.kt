@@ -98,12 +98,10 @@ fun CFGNode<*>.render(): String =
 
                 is WhenSubjectExpressionExitNode -> "Exit ${'$'}subj"
 
-                is PostponedLambdaEnterNode -> "Postponed enter to lambda"
+                is SplitPostponedLambdasNode -> "Postponed enter to lambda"
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
-
-                is AnonymousFunctionExpressionExitNode -> "Exit anonymous function expression"
-
                 is MergePostponedLambdaExitsNode -> "Merge postponed lambda exits"
+                is AnonymousFunctionExpressionNode -> "Exit anonymous function expression"
 
                 is ClassEnterNode -> "Enter class ${owner.name}"
                 is ClassExitNode -> "Exit class ${owner.name}"
