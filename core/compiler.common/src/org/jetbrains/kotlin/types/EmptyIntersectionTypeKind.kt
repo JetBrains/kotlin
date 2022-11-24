@@ -9,8 +9,7 @@ enum class EmptyIntersectionTypeKind(val description: String) {
     MULTIPLE_CLASSES("multiple incompatible classes"),
     INCOMPATIBLE_SUPERTYPES("incompatible supertypes"),
     INCOMPATIBLE_TYPE_ARGUMENTS("incompatible type arguments"),
-    FINAL_CLASS_AND_INTERFACE("final class and interface"),
-    SINGLE_FINAL_CLASS("final class and non-final class")
+    FINAL_CLASS_AND_INTERFACE("final class and interface")
 }
 
 fun EmptyIntersectionTypeKind.isDefinitelyEmpty(): Boolean =
@@ -18,5 +17,4 @@ fun EmptyIntersectionTypeKind.isDefinitelyEmpty(): Boolean =
             || this == EmptyIntersectionTypeKind.INCOMPATIBLE_SUPERTYPES
             || this == EmptyIntersectionTypeKind.INCOMPATIBLE_TYPE_ARGUMENTS
 
-fun EmptyIntersectionTypeKind.isPossiblyEmpty(): Boolean =
-    this == EmptyIntersectionTypeKind.SINGLE_FINAL_CLASS || this == EmptyIntersectionTypeKind.FINAL_CLASS_AND_INTERFACE
+fun EmptyIntersectionTypeKind.isPossiblyEmpty(): Boolean = this == EmptyIntersectionTypeKind.FINAL_CLASS_AND_INTERFACE

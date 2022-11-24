@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.isDefinitelyEmpty
 import org.jetbrains.kotlin.types.isPossiblyEmpty
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 
 internal object EmptyIntersectionTypeChecker {
@@ -91,39 +92,24 @@ internal object EmptyIntersectionTypeChecker {
                     return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.MULTIPLE_CLASSES, firstType, secondType)
                 }
 
-                val atLeastOneInterface = firstTypeConstructor.isInterface() || secondTypeConstructor.isInterface()
-                if (atLeastOneInterface) {
-                    val incompatibleSupertypes = getIncompatibleSuperTypes(firstType, secondType)
-                    if (incompatibleSupertypes != null) {
-                        return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.INCOMPATIBLE_SUPERTYPES, *incompatibleSupertypes)
-                    }
-                }
-
-                val firstSuperTypeWithSecondConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
-                    typeCheckerState, firstType.lowerBoundIfFlexible(), secondTypeConstructor
-                ).singleOrNull()
-                val secondSuperTypeByFirstConstructor = AbstractTypeChecker.findCorrespondingSupertypes(
-                    typeCheckerState, secondType.lowerBoundIfFlexible(), firstTypeConstructor
-                ).singleOrNull()
-
                 when {
-                    firstSuperTypeWithSecondConstructor != null || secondSuperTypeByFirstConstructor != null -> {
-                        continue
+                    firstType.lowerBoundIfFlexible().isSubtypeOfIgnoringArguments(typeCheckerState, secondTypeConstructor) ||
+                            secondType.lowerBoundIfFlexible().isSubtypeOfIgnoringArguments(typeCheckerState, firstTypeConstructor) -> {
                     }
-                    !atLeastOneInterface -> {
+                    !firstTypeConstructor.isInterface() && !secondTypeConstructor.isInterface() -> {
                         // Two classes can't have a common subtype if neither is a subtype of another
                         return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.MULTIPLE_CLASSES, firstType, secondType)
                     }
-                    else -> {
-                        // don't have incompatible supertypes so can have a common subtype only if all types are interfaces
-                        if (firstTypeConstructor.isFinalClassConstructor() || secondTypeConstructor.isFinalClassConstructor()) {
-                            possibleEmptyIntersectionKind = EmptyIntersectionTypeInfo(
-                                if (atLeastOneInterface) EmptyIntersectionTypeKind.FINAL_CLASS_AND_INTERFACE
-                                else EmptyIntersectionTypeKind.SINGLE_FINAL_CLASS,
-                                firstType, secondType
-                            )
+                    firstTypeConstructor.isFinalClassConstructor() || secondTypeConstructor.isFinalClassConstructor() -> {
+                        val incompatibleSupertypes = getIncompatibleSuperTypes(firstType, secondType)
+                        if (incompatibleSupertypes != null) {
+                            return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.INCOMPATIBLE_SUPERTYPES, *incompatibleSupertypes)
                         }
-                        continue
+                        // don't have incompatible supertypes so can have a common subtype only if all types are interfaces
+                        possibleEmptyIntersectionKind = EmptyIntersectionTypeInfo(
+                            EmptyIntersectionTypeKind.FINAL_CLASS_AND_INTERFACE,
+                            firstType, secondType
+                        )
                     }
                 }
             }
@@ -131,6 +117,13 @@ internal object EmptyIntersectionTypeChecker {
 
         return possibleEmptyIntersectionKind
     }
+
+    private fun SimpleTypeMarker.isSubtypeOfIgnoringArguments(
+        typeCheckerState: TypeCheckerState,
+        otherConstructorMarker: TypeConstructorMarker
+    ): Boolean = AbstractTypeChecker.findCorrespondingSupertypes(
+        typeCheckerState, this, otherConstructorMarker
+    ).isNotEmpty()
 
     private fun TypeSystemInferenceExtensionContext.getIncompatibleSuperTypes(
         firstType: KotlinTypeMarker, secondType: KotlinTypeMarker
