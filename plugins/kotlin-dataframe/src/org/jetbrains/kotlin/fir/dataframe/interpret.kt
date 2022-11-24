@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolved
+import org.jetbrains.kotlin.fir.scopes.collectAllProperties
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -223,13 +225,7 @@ private fun KotlinTypeFacade.extracted(result: FirPropertyAccessExpression): Lis
         val column = when {
             it.classId == Names.DATA_COLUMN_CLASS_ID -> {
                 val arg = it.typeArguments.single() as ConeClassLikeType
-                when {
-                    arg.classId == Names.DF_CLASS_ID -> TODO()
-                    else -> SimpleCol(
-                        f(result),
-                        TypeApproximationImpl(arg.lookupTag.classId.asFqNameString(), arg.isNullable)
-                    )
-                }
+                SimpleCol(f(result),Marker(arg))
             }
 
             it.classId == Names.COLUM_GROUP_CLASS_ID -> TODO()
@@ -249,7 +245,8 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
         Names.DF_CLASS_ID -> {
             val nestedColumns = it.resolvedReturnType.typeArguments[0].type
                 ?.toRegularClassSymbol(session)
-                ?.declarationSymbols
+                ?.declaredMemberScope(session)
+                ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.map { columnOf(it) }
                 ?: emptyList()
@@ -259,7 +256,8 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
         Names.DATA_ROW_CLASS_ID -> {
             val nestedColumns = it.resolvedReturnType.typeArguments[0].type
                 ?.toRegularClassSymbol(session)
-                ?.declarationSymbols
+                ?.declaredMemberScope(session)
+                ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.map { columnOf(it) }
                 ?: emptyList()
