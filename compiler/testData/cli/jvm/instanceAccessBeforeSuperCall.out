@@ -16,9 +16,6 @@ class B(other: B = this)
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:10:32: error: argument type mismatch: actual type is kotlin/Function0<ERROR CLASS: Cannot access ''<this>'' before the instance has been initialized> but kotlin/Int was expected
     constructor(x: Int) : this({
                                ^
-compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:12:9: error: argument type mismatch: actual type is ERROR CLASS: Cannot access ''<this>'' before the instance has been initialized but ERROR CLASS: Unknown return lambda parameter type was expected
-        this
-        ^
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:12:9: error: cannot access '<this>' before the instance has been initialized
         this
         ^
