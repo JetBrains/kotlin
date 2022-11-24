@@ -864,6 +864,8 @@ class BodyGenerator(
                                 WasmImmediate.MemArg(0u, 0u)
                             WasmImmediateKind.STRUCT_TYPE_IDX ->
                                 WasmImmediate.GcType(getReferenceGcType())
+                            WasmImmediateKind.HEAP_TYPE ->
+                                WasmImmediate.HeapType(WasmHeapType.Type(getReferenceGcType()))
                             WasmImmediateKind.TYPE_IDX ->
                                 WasmImmediate.TypeIdx(getReferenceGcType())
 
