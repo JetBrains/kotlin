@@ -145,14 +145,14 @@ fun illegalConstantBlock(): String {
     return <!RETURN_TYPE_MISMATCH!>1<!>
 }
 fun illegalIfBody(): Int =
-        <!RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1.0 }<!>
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1.0 }<!>
 fun illegalIfBlock(): Boolean {
     if (1 < 2)
         return false
     else { return <!RETURN_TYPE_MISMATCH!>1<!> }
 }
 fun illegalReturnIf(): Char {
-    return if (1 < 2) 'a' else { 1 }
+    return <!RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1 }<!>
 }
 
 fun returnNothing(): Nothing {

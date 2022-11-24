@@ -141,10 +141,10 @@ fun getStringLength(obj : Any) : Char? {
 }
 
 fun toInt(i: Int?): Int = if (i != null) i else 0
-fun illegalWhenBody(a: Any): Int = <!NO_ELSE_IN_WHEN!>when<!>(a) {
+fun illegalWhenBody(a: Any): Int = <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(a) {
     is Int -> a
     is String -> a
-}
+}<!>
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
         is Int -> return a
