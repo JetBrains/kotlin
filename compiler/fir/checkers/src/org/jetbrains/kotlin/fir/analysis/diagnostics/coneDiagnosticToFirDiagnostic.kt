@@ -467,9 +467,9 @@ private fun reportInferredIntoEmptyIntersectionError(
         (typeVariable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.name?.asString()
             ?: typeVariable.toString()
     val causingTypesText = if (incompatibleTypes == causingTypes) "" else ": ${causingTypes.joinToString()}"
-    val factory = if (kind.isPossiblyEmpty())
-        FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION else
-        FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
+    val factory =
+        if (kind.isPossiblyEmpty()) FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
+        else FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
 
     return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText)
 }
