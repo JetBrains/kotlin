@@ -124,7 +124,11 @@ class Kapt3ExtensionForTests(
         Kapt3ExtensionForTests::class.java.classLoader
     )
 
-    override fun saveStubs(kaptContext: KaptContext, stubs: List<ClassFileToSourceStubConverter.KaptStub>) {
+    override fun saveStubs(
+        kaptContext: KaptContextForStubGeneration,
+        stubs: List<ClassFileToSourceStubConverter.KaptStub>,
+        messageCollector: MessageCollector,
+    ) {
         if (this.savedStubs != null) {
             error("Stubs are already saved")
         }
@@ -134,7 +138,7 @@ class Kapt3ExtensionForTests(
             .sorted()
             .joinToString(FILE_SEPARATOR)
 
-        super.saveStubs(kaptContext, stubs)
+        super.saveStubs(kaptContext, stubs, messageCollector)
     }
 
     override fun saveIncrementalData(

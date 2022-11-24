@@ -23,7 +23,6 @@ import com.sun.tools.javac.tree.Pretty
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.base.kapt3.AptMode.APT_ONLY
 import org.jetbrains.kotlin.base.kapt3.AptMode.WITH_COMPILATION
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
 import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
-import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation.Companion.KAPT_METADATA_EXTENSION
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt3.base.util.info
@@ -307,11 +305,20 @@ abstract class AbstractKapt3Extension(
         logger.info { "Java stub generation took $stubGenerationTime ms" }
         logger.info { "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.file.sourcefile.name } }
 
-        saveStubs(kaptContext, kaptStubs)
+        saveStubs(kaptContext, kaptStubs, logger.messageCollector)
         saveIncrementalData(kaptContext, logger.messageCollector, converter)
     }
 
-    protected open fun saveStubs(kaptContext: KaptContext, stubs: List<KaptStub>) {
+    protected open fun saveStubs(
+        kaptContext: KaptContextForStubGeneration,
+        stubs: List<KaptStub>,
+        messageCollector: MessageCollector,
+    ) {
+        val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
+        val outputFiles = if (reportOutputFiles) kaptContext.generationState.factory.asList().associateBy {
+            it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
+        } else null
+
         for (kaptStub in stubs) {
             val stub = kaptStub.file
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
@@ -322,9 +329,24 @@ abstract class AbstractKapt3Extension(
             packageDir.mkdirs()
 
             val sourceFile = File(packageDir, "$className.java")
+            val classFilePathWithoutExtension = if (packageName.isEmpty()) {
+                className
+            } else {
+                "${packageName.replace('.', '/')}/$className"
+            }
+
+            fun reportStubsOutputForIC(generatedFile: File) {
+                if (!reportOutputFiles) return
+                if (classFilePathWithoutExtension == "error/NonExistentClass") return
+                val sourceFiles = (outputFiles?.get(classFilePathWithoutExtension)
+                    ?: error("The `outputFiles` map is not properly initialized (key = $classFilePathWithoutExtension)")).sourceFiles
+                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sourceFiles, generatedFile))
+            }
+
+            reportStubsOutputForIC(sourceFile)
             sourceFile.writeText(stub.prettyPrint(kaptContext.context))
 
-            kaptStub.writeMetadataIfNeeded(forSource = sourceFile)
+            kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
         }
     }
 
@@ -338,19 +360,7 @@ abstract class AbstractKapt3Extension(
         val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         kaptContext.generationState.factory.writeAll(
             incrementalDataOutputDir,
-            if (!reportOutputFiles) null else fun(file: OutputFile, sources: List<File>, output: File) {
-                val stubFileObject = converter.bindings[file.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")]
-                if (stubFileObject != null) {
-                    val stubFile = File(options.stubsOutputDir, stubFileObject.name)
-                    val lineMappingsFile = File(stubFile.parentFile, stubFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
-
-                    for (outputFile in listOf(stubFile, lineMappingsFile)) {
-                        if (outputFile.exists()) {
-                            messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, outputFile))
-                        }
-                    }
-                }
-
+            if (!reportOutputFiles) null else fun(sources: List<File>, output: File) {
                 messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
             }
         )
