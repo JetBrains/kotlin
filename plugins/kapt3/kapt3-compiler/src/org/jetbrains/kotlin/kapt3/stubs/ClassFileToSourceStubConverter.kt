@@ -172,7 +172,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     }
 
     class KaptStub(val file: JCCompilationUnit, private val kaptMetadata: ByteArray? = null) {
-        fun writeMetadataIfNeeded(forSource: File) {
+        fun writeMetadataIfNeeded(forSource: File, report: ((File) -> Unit)? = null) {
             if (kaptMetadata == null) {
                 return
             }
@@ -182,6 +182,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 forSource.nameWithoutExtension + KaptStubLineInformation.KAPT_METADATA_EXTENSION
             )
 
+            report?.invoke(metadataFile)
             metadataFile.writeBytes(kaptMetadata)
         }
     }
