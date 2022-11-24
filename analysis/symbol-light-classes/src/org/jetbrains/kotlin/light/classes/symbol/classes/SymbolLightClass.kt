@@ -186,7 +186,7 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
     context(KtAnalysisSession)
     private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         fun createDelegateMethod(ktFunctionSymbol: KtFunctionSymbol) {
-            val kotlinOrigin = ktFunctionSymbol.psi as? KtDeclaration ?: classOrObject
+            val kotlinOrigin = ktFunctionSymbol.psiSafe<KtDeclaration>() ?: classOrObject
             val lightMemberOrigin = LightMemberOriginForDeclaration(kotlinOrigin, JvmDeclarationOriginKind.DELEGATION)
             result.add(
                 SymbolLightSimpleMethod(

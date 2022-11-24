@@ -16,6 +16,7 @@ import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
@@ -42,7 +43,7 @@ internal class SymbolLightTypeParameter(
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>? get() = invalidAccess()
 
-    override val kotlinOrigin: KtTypeParameter? = typeParameterSymbol.psi as? KtTypeParameter
+    override val kotlinOrigin: KtTypeParameter? = typeParameterSymbol.psiSafe()
 
     override fun copy(): PsiElement =
         SymbolLightTypeParameter(parent, index, typeParameterSymbol)

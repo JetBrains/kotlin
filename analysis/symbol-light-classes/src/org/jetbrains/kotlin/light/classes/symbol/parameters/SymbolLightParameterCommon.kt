@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -33,7 +34,7 @@ internal abstract class SymbolLightParameterCommon(
 
     override fun hasModifierProperty(name: String): Boolean = modifierList.hasModifierProperty(name)
 
-    override val kotlinOrigin: KtParameter? = parameterDeclaration ?: parameterSymbol.psi as? KtParameter
+    override val kotlinOrigin: KtParameter? = parameterDeclaration ?: parameterSymbol.psiSafe()
 
     abstract override fun getModifierList(): PsiModifierList
 
