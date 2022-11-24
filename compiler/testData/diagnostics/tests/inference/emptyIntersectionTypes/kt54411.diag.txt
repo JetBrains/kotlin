@@ -1,0 +1,9 @@
+/kt54411.kt:5:68: warning: parameter 'createNewSegment' is never used
+inline fun <F : Segment<F>> AtomicRef<F>.findSegmentAndMoveForward(createNewSegment: (prev: F?) -> F) = null
+                                                                   ^
+/kt54411.kt:14:14: warning: type argument for a type parameter F has possible incompatible upper bounds: Segment<OneElementSegment<Q>>, OneElementSegment<Q>? (final class and non-final class: Segment<OneElementSegment<out Any?>>, OneElementSegment<out Any?>)
+        tail.findSegmentAndMoveForward(::createSegment)
+             ^
+/kt54411.kt:18:31: warning: parameter 'prev' is never used
+private fun <C> createSegment(prev: OneElementSegment<C>?) = OneElementSegment<C>()
+                              ^

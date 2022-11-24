@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// !RENDER_DIAGNOSTICS_FULL_TEXT
 class AtomicRef<T>(val value: T)
 
 inline fun <F : Segment<F>> AtomicRef<F>.findSegmentAndMoveForward(createNewSegment: (prev: F?) -> F) = null
