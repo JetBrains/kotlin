@@ -484,7 +484,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement = whileAnalysing(regularClass) {
-        context.withContainingClass(regularClass) {
+        return context.withContainingClass(regularClass) {
             if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
                 return regularClass.runAllPhasesForLocalClass(
                     transformer,
