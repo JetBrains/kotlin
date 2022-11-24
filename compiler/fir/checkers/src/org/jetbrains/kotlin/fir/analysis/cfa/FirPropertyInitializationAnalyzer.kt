@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa
 
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
 import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -37,14 +35,8 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
         capturedWrites: Set<FirVariableAssignment>,
         context: CheckerContext
     ) {
-        val localData = data.filter {
-            val symbol = it.key.fir as? FirVariableSymbol<*>
-            symbol == null || !symbol.isInitialized()
-        }
-
         val localProperties = properties.filterNotTo(mutableSetOf()) { it.isInitialized() }
-
-        val reporterVisitor = PropertyReporter(localData, localProperties, capturedWrites, reporter, context)
+        val reporterVisitor = PropertyReporter(data, localProperties, capturedWrites, reporter, context)
         graph.traverse(TraverseDirection.Forward, reporterVisitor)
     }
 
@@ -63,68 +55,36 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
-        override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
-
-        private fun getPropertySymbol(node: CFGNode<*>): FirPropertySymbol? {
-            return (node.fir as? FirQualifiedAccess)?.referredPropertySymbol
+        override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {
+            // TODO: f({ x = 1 }, { x = 2 }) - which to report?
+            //  Also this is currently indistinguishable from x = 1; f({}, {}).
         }
+
+        private val CFGNode<*>.propertySymbol: FirPropertySymbol?
+            get() = (fir as? FirQualifiedAccess)?.referredPropertySymbol
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val symbol = getPropertySymbol(node) ?: return
-            val pathAwareInfo = data.getValue(node)
-            for (label in pathAwareInfo.keys) {
-                if (investigateVariableAssignment(pathAwareInfo[label]!!, symbol, node)) {
-                    // To avoid duplicate reports, stop investigating remaining paths if the property is re-initialized at any path.
-                    break
-                }
-            }
-        }
+            val symbol = node.propertySymbol ?: return
+            if (!symbol.fir.isVal) return
 
-        private fun investigateVariableAssignment(
-            info: PropertyInitializationInfo,
-            symbol: FirPropertySymbol,
-            node: VariableAssignmentNode
-        ): Boolean {
-            if (symbol.fir.isVal && node.fir in capturedWrites) {
+            if (node.fir in capturedWrites) {
                 if (symbol.fir.isLocal) {
                     reporter.reportOn(node.fir.lValue.source, FirErrors.CAPTURED_VAL_INITIALIZATION, symbol, context)
                 } else {
                     reporter.reportOn(node.fir.lValue.source, FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION, symbol, context)
                 }
-                return true
-            }
-            val kind = info[symbol] ?: EventOccurrencesRange.ZERO
-            if (symbol.fir.isVal && (symbol is FirSyntheticPropertySymbol || kind.canBeRevisited())) {
+            } else if (symbol is FirSyntheticPropertySymbol || data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
                 reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
-                return true
             }
-            return false
         }
 
         override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
-            val symbol = getPropertySymbol(node) ?: return
-            if (symbol !in localProperties) return
-            if (symbol.fir.isLateInit) return
-            val pathAwareInfo = data.getValue(node)
-            for (info in pathAwareInfo.values) {
-                if (investigateVariableAccess(info, symbol, node)) {
-                    // To avoid duplicate reports, stop investigating remaining paths if the property is not initialized at any path.
-                    break
-                }
-            }
-        }
-
-        private fun investigateVariableAccess(
-            info: PropertyInitializationInfo,
-            symbol: FirPropertySymbol,
-            node: QualifiedAccessNode
-        ): Boolean {
-            val kind = info[symbol] ?: EventOccurrencesRange.ZERO
-            if (symbol !is FirSyntheticPropertySymbol && !kind.isDefinitelyVisited()) {
+            val symbol = node.propertySymbol ?: return
+            if (symbol in localProperties && !symbol.fir.isLateInit && symbol !is FirSyntheticPropertySymbol &&
+                !data.getValue(node).values.all { it[symbol]?.isDefinitelyVisited() == true }
+            ) {
                 reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
-                return true
             }
-            return false
         }
     }
 }
