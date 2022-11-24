@@ -137,10 +137,10 @@ fun FirDeclarationStatus.copy(
     }
 }
 
-inline fun <R> whileAnalysing(element: FirElement, block: () -> R) = whileAnalysing(element.source, block)
+inline fun <R> whileAnalysing(element: FirElement, block: () -> R) = org.jetbrains.kotlin.util.whileAnalysing(element.source, block)
 
 inline fun <R> withFileAnalysisExceptionWrapping(file: FirFile, block: () -> R): R {
-    return withFileAnalysisExceptionWrapping(
+    return org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping(
         file.sourceFile?.path,
         file.source,
         { file.sourceFileLinesMapping?.getLineAndColumnByOffset(it) },

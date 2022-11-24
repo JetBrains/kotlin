@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.withSourceCodeAnalysisExceptionUnwrapping
+import org.jetbrains.kotlin.util.withSourceCodeAnalysisExceptionUnwrapping
 
 internal abstract class FileStructureElementDiagnosticRetriever {
     abstract fun retrieve(
