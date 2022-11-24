@@ -45,7 +45,7 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
 
         val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
         val defaultTxtFile = sourceFile.withExtension(".txt")
-        val irTxtFile = sourceFile.withSuffixAndExtension("_ir", ".txt")
+        val irTxtFile = sourceFile.withExtension(".ir.txt")
         val firTxtFile = sourceFile.withExtension(".fir.txt")
 
         val isFir = testServices.defaultsProvider.defaultFrontend == FrontendKinds.FIR
