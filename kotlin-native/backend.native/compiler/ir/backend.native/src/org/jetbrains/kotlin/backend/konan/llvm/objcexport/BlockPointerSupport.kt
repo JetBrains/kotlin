@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
-import llvm.*
+import llvm.LLVMLinkage
+import llvm.LLVMSetLinkage
+import llvm.LLVMStoreSizeOfType
+import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.BlockPointerBridge
-import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.simpleFunctions
+import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(

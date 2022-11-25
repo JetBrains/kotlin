@@ -1,6 +1,5 @@
-package org.jetbrains.kotlin.backend.common.serialization.metadata.impl
+package org.jetbrains.kotlin.library.metadata.impl
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataDeserializedPackageFragmentsFactory
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 
@@ -188,4 +186,3 @@ enum class ExportedForwardDeclarationChecker(val fqName: FqName) {
             getAllSuperClassifiers().any { it.fqNameSafe == cStructVarFqName }
     }
 }
-
