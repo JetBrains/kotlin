@@ -101,7 +101,7 @@ class IdeResolveSourceDependenciesTest {
             dependsOnDependency(":consumer/commonMain"),
             dependsOnDependency(":consumer/nativeMain"),
             dependsOnDependency(":consumer/linuxMain"),
-            projectArtifactDependency(Regular, ":producer", Regex(".*/linuxX64/main/klib/producer.klib"))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxX64/main/klib/producer.klib"))
         )
 
         consumer.resolveDependencies("linuxX64Test").assertMatches(
@@ -115,7 +115,7 @@ class IdeResolveSourceDependenciesTest {
             dependsOnDependency(":consumer/commonTest"),
             dependsOnDependency(":consumer/nativeTest"),
             dependsOnDependency(":consumer/linuxTest"),
-            projectArtifactDependency(Regular, ":producer", Regex(".*/linuxX64/main/klib/producer.klib"))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxX64/main/klib/producer.klib"))
         )
 
         consumer.resolveDependencies("linuxArm64Main").assertMatches(
@@ -125,7 +125,7 @@ class IdeResolveSourceDependenciesTest {
             dependsOnDependency(":consumer/commonMain"),
             dependsOnDependency(":consumer/nativeMain"),
             dependsOnDependency(":consumer/linuxMain"),
-            projectArtifactDependency(Regular, ":producer", Regex(".*/linuxArm64/main/klib/producer.klib"))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxArm64/main/klib/producer.klib"))
         )
 
         consumer.resolveDependencies("linuxArm64Test").assertMatches(
@@ -139,7 +139,7 @@ class IdeResolveSourceDependenciesTest {
             dependsOnDependency(":consumer/commonTest"),
             dependsOnDependency(":consumer/nativeTest"),
             dependsOnDependency(":consumer/linuxTest"),
-            projectArtifactDependency(Regular, ":producer", Regex(".*/linuxArm64/main/klib/producer.klib"))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxArm64/main/klib/producer.klib"))
         )
     }
 
@@ -213,14 +213,14 @@ class IdeResolveSourceDependenciesTest {
 
         consumer.resolveDependencies("jvmMain").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
-            projectArtifactDependency(Regular, ":producer", Regex(""".*/build/libs/producer.jar"""))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/build/libs/producer.jar"))
         )
 
         consumer.resolveDependencies("jvmTest").assertMatches(
             friendSourceDependency(":consumer/commonMain"),
             friendSourceDependency(":consumer/jvmMain"),
             dependsOnDependency(":consumer/commonTest"),
-            projectArtifactDependency(Regular, ":producer", Regex(""".*/build/libs/producer.jar"""))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/build/libs/producer.jar"))
         )
     }
 }

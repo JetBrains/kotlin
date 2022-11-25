@@ -8,20 +8,49 @@ package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectArtifactDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
+import java.io.File
 
 internal class IdeaKotlinProjectArtifactDependencyMatcher(
     val type: IdeaKotlinSourceDependency.Type,
     val projectPath: String,
-    val artifactFilePath: Regex
+    val artifactFilePath: FilePathRegex
 ) : IdeaKotlinDependencyMatcher {
     override val description: String
-        get() = "project($type)::$projectPath/${artifactFilePath.pattern}"
+        get() = "project($type)::$projectPath/${artifactFilePath}"
 
     override fun matches(dependency: IdeaKotlinDependency): Boolean {
         if (dependency !is IdeaKotlinProjectArtifactDependency) return false
         return dependency.type == type &&
                 dependency.coordinates.project.projectPath == projectPath &&
-                dependency.coordinates.artifactFile.path.matches(artifactFilePath)
+                artifactFilePath.matches(dependency.coordinates.artifactFile)
 
+    }
+}
+
+
+fun FilePathRegex(pattern: String): FilePathRegex = FilePathRegex.from(pattern)
+
+class FilePathRegex private constructor(private val normalizedRegex: Regex) {
+    override fun toString(): String {
+        return normalizedRegex.toString()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is FilePathRegex) return false
+        return normalizedRegex == other.normalizedRegex
+    }
+
+    override fun hashCode(): Int {
+        return normalizedRegex.hashCode()
+    }
+
+    fun matches(file: File) = normalizedRegex.matches(file.path)
+
+    fun matches(path: String) = normalizedRegex.matches(path)
+
+    companion object {
+        fun from(pattern: String): FilePathRegex {
+            return FilePathRegex(Regex(pattern.replace("/", Regex.escape(File.separator))))
+        }
     }
 }

@@ -39,7 +39,7 @@ fun dependsOnDependency(project: Project, sourceSetName: String) =
 fun dependsOnDependency(path: String) = ideSourceDependency(IdeaKotlinSourceDependency.Type.DependsOn, path)
 
 fun projectArtifactDependency(
-    type: IdeaKotlinSourceDependency.Type = IdeaKotlinSourceDependency.Type.Regular, projectPath: String, artifactFilePath: Regex
+    type: IdeaKotlinSourceDependency.Type = IdeaKotlinSourceDependency.Type.Regular, projectPath: String, artifactFilePath: FilePathRegex
 ): IdeaKotlinDependencyMatcher = IdeaKotlinProjectArtifactDependencyMatcher(
     type = type,
     projectPath = projectPath,
