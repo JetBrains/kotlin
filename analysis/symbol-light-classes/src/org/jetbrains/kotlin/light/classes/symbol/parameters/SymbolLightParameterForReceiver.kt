@@ -53,7 +53,7 @@ internal class SymbolLightParameterForReceiver private constructor(
         }
     }
 
-    private val _name: String by lazyPub {
+    private val _name: String by lazy {
         AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
     }
 

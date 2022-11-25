@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -27,7 +26,7 @@ internal class SymbolLightNoArgConstructor(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
-    private val _identifier: PsiIdentifier by lazyPub {
+    private val _identifier: PsiIdentifier by lazy {
         KtLightIdentifier(this, ktDeclaration = null)
     }
 
@@ -41,8 +40,8 @@ internal class SymbolLightNoArgConstructor(
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    private val _parameterList: PsiParameterList by lazyPub {
-        SymbolLightParameterList(parent = this@SymbolLightNoArgConstructor)
+    private val _parameterList: PsiParameterList by lazy {
+        SymbolLightParameterList(parent = this)
     }
 
     override fun getParameterList(): PsiParameterList = _parameterList

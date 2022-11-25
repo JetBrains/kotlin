@@ -111,7 +111,7 @@ class SymbolLightClassForFacade(
         }
     }
 
-    private val multiFileClass: Boolean by lazyPub {
+    private val multiFileClass: Boolean by lazy {
         files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
     }
 

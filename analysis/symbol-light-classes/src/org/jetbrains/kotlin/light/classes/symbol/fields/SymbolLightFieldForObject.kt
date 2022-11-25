@@ -45,7 +45,7 @@ internal class SymbolLightFieldForObject(
             }
         }
 
-        val lazyAnnotations = lazyPub {
+        val lazyAnnotations = lazy {
             val notNullAnnotation = SymbolLightSimpleAnnotation(NotNull::class.java.name, this)
             listOf(notNullAnnotation)
         }
@@ -53,7 +53,7 @@ internal class SymbolLightFieldForObject(
         SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
-    private val _isDeprecated: Boolean by lazyPub {
+    private val _isDeprecated: Boolean by lazy {
         withObjectDeclarationSymbol { objectSymbol ->
             objectSymbol.hasDeprecatedAnnotation()
         }

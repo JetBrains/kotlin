@@ -76,7 +76,7 @@ internal class SymbolLightFieldForProperty private constructor(
         }
     }
 
-    private val _isDeprecated: Boolean by lazyPub {
+    private val _isDeprecated: Boolean by lazy {
         withPropertySymbol { propertySymbol ->
             propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD)
         }

@@ -103,7 +103,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun getName(): String = _name
 
-    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
+    private val _typeParameterList: PsiTypeParameterList? by lazy {
         hasTypeParameters().ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,
@@ -193,7 +193,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun isConstructor(): Boolean = false
 
-    private val _isDeprecated: Boolean by lazyPub {
+    private val _isDeprecated: Boolean by lazy {
         analyzeForLightClasses(ktModule) {
             propertySymbol().hasDeprecatedAnnotation(accessorSite)
         }
@@ -201,7 +201,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun isDeprecated(): Boolean = _isDeprecated
 
-    private val _identifier: PsiIdentifier by lazyPub {
+    private val _identifier: PsiIdentifier by lazy {
         KtLightIdentifier(this, containingPropertyDeclaration)
     }
 

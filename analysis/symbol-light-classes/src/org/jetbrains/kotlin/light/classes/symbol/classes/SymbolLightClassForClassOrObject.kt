@@ -66,7 +66,7 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
     internal val isAnnotation: Boolean get() = classOrObject is KtClass && classOrObject.isAnnotation()
     internal val isEnum: Boolean get() = classOrObject is KtClass && classOrObject.isEnum()
 
-    private val _isDeprecated: Boolean by lazyPub {
+    private val _isDeprecated: Boolean by lazy {
         withClassOrObjectSymbol { it.hasDeprecatedAnnotation() }
     }
 
@@ -76,7 +76,7 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
     abstract override fun getOwnFields(): List<KtLightField>
     abstract override fun getOwnMethods(): List<PsiMethod>
 
-    private val _identifier: PsiIdentifier by lazyPub {
+    private val _identifier: PsiIdentifier by lazy {
         KtLightIdentifier(this, classOrObject)
     }
 
@@ -85,7 +85,7 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
     abstract override fun getExtendsList(): PsiReferenceList?
     abstract override fun getImplementsList(): PsiReferenceList?
 
-    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
+    private val _typeParameterList: PsiTypeParameterList? by lazy {
         hasTypeParameters().ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,

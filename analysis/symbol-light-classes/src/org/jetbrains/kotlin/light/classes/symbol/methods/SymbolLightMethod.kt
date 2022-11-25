@@ -107,7 +107,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
         KtLightIdentifier(this@SymbolLightMethod, functionDeclaration)
     }
 
-    private val _isDeprecated: Boolean by lazyPub {
+    private val _isDeprecated: Boolean by lazy {
         withFunctionSymbol { functionSymbol ->
             functionSymbol.hasDeprecatedAnnotation()
         }

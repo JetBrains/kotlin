@@ -56,7 +56,7 @@ internal class SymbolLightFieldForEnumEntry(
 
     private val hasBody: Boolean get() = enumEntry.body != null
 
-    private val _initializingClass: PsiEnumConstantInitializer? by lazyPub {
+    private val _initializingClass: PsiEnumConstantInitializer? by lazy {
         hasBody.ifTrue {
             SymbolLightClassForEnumEntry(
                 enumConstant = this@SymbolLightFieldForEnumEntry,
