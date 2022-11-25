@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.fir.extensions.predicate
 
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
     abstract override val annotations: Set<AnnotationFqn>
     final override val metaAnnotations: Set<AnnotationFqn>
-        get() = shouldNotBeCalled()
+        get() = emptySet()
 
     abstract override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R
 

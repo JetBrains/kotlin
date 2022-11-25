@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-enum class FirAnnotationResolveStatus {
+enum class FirAnnotationResolvePhase {
     Unresolved,
-    PartiallyResolved, // only literals, annotations, class literals and enums
-    Resolved
+    CompilerRequiredAnnotations,
+    Types
 }

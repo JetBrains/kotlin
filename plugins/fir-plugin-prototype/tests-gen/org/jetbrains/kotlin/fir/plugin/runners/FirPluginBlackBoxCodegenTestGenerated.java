@@ -44,6 +44,12 @@ public class FirPluginBlackBoxCodegenTestGenerated extends AbstractFirPluginBlac
     }
 
     @Test
+    @TestMetadata("metaAnnotationFromLibrary.kt")
+    public void testMetaAnnotationFromLibrary() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/metaAnnotationFromLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("newSupertype.kt")
     public void testNewSupertype() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/newSupertype.kt");

@@ -126,8 +126,7 @@ open class FirStatusResolveTransformer(
 open class FirDesignatedStatusResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
-    private val designation: Iterator<FirDeclaration>,
-    private val targetClass: FirClassLikeDeclaration,
+    private val designation: DesignationState,
     statusComputationSession: StatusComputationSession,
     designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
     scopeForLocalClass: FirScope?,
@@ -138,44 +137,26 @@ open class FirDesignatedStatusResolveTransformer(
     designationMapForLocalClasses,
     scopeForLocalClass
 ) {
-    private var currentElement: FirDeclaration? = null
-    private var classLocated = false
-
-    private fun shouldSkipClass(declaration: FirDeclaration): Boolean {
-        if (classLocated) return declaration != targetClass
-        if (currentElement == null && designation.hasNext()) {
-            currentElement = designation.next()
-        }
-        val result = currentElement == declaration
-        if (result) {
-            if (currentElement == targetClass) {
-                classLocated = true
-            }
-            currentElement = null
-        }
-        return !result
-    }
-
     override fun FirDeclaration.needResolveMembers(): Boolean {
-        return classLocated
+        return designation.classLocated
     }
 
     override fun FirDeclaration.needResolveNestedClassifiers(): Boolean {
-        return !classLocated
+        return !designation.classLocated
     }
 
     override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: FirResolvedDeclarationStatus?
     ): FirStatement = whileAnalysing(regularClass) {
-        if (shouldSkipClass(regularClass)) return regularClass
+        if (designation.shouldSkipClass(regularClass)) return regularClass
         regularClass.symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
-        val classLocated = this.classLocated
+        val classLocated = designation.classLocated
         /*
          * In designated status resolve we should resolve status only of target class and it's members
          */
         if (classLocated) {
-            assert(regularClass == targetClass)
+            assert(regularClass == designation.targetClass)
             val computationStatus = statusComputationSession.startComputing(regularClass)
             forceResolveStatusesOfSupertypes(regularClass)
             if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
@@ -411,36 +392,17 @@ abstract class AbstractFirStatusResolveTransformer(
             statusComputationSession.endComputing(regularClass)
             return
         }
-        val symbol = regularClass.symbol
-        val designation = if (regularClass.isLocal) buildList {
-            var klass: FirClassLikeDeclaration = regularClass
-            while (true) {
-                this.add(klass)
-                klass = designationMapForLocalClasses[klass]?.takeIf { it !is FirAnonymousObject } ?: break
-            }
-            reverse()
-        } else buildList<FirDeclaration> {
-            val firProvider = regularClass.moduleData.session.firProvider
-            val outerClasses = generateSequence(symbol.classId) { classId ->
-                classId.outerClassId
-            }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it) }
-            val file = firProvider.getFirClassifierContainerFileIfAny(regularClass.symbol)
-            requireNotNull(file) { "Containing file was not found for\n${regularClass.render()}" }
-            this += outerClasses.filterNotNull().asReversed()
-        }
-
-        if (designation.isEmpty()) return
+        val designation = DesignationState.create(regularClass.symbol, designationMapForLocalClasses, includeFile = false) ?: return
 
         val transformer = FirDesignatedStatusResolveTransformer(
             session,
             scopeSession,
-            designation.iterator(),
-            regularClass,
+            designation,
             statusComputationSession,
             designationMapForLocalClasses,
             scopeForLocalClass
         )
-        designation.first().transformSingle(transformer, null)
+        designation.firstDeclaration.transformSingle(transformer, null)
         statusComputationSession.endComputing(regularClass)
     }
 

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.ClassId
@@ -102,3 +101,4 @@ val emptyAnnotationArgumentMappingType = type("fir.expressions.impl", "FirEmptyA
 val firPropertySymbolType = type("fir.symbols.impl", "FirPropertySymbol")
 val errorTypeRefImplType = type("fir.types.impl", "FirErrorTypeRefImpl", firType = true)
 
+val annotationResolvePhaseType = generatedType("expressions", "FirAnnotationResolvePhase")

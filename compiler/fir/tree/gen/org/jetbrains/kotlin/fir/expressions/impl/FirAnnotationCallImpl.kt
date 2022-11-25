@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -31,6 +32,7 @@ internal class FirAnnotationCallImpl(
     override var argumentList: FirArgumentList,
     override var calleeReference: FirReference,
     override var argumentMapping: FirAnnotationArgumentMapping,
+    override var annotationResolvePhase: FirAnnotationResolvePhase,
 ) : FirAnnotationCall() {
     override val typeRef: FirTypeRef get() = annotationTypeRef
     override val annotations: List<FirAnnotation> get() = emptyList()
@@ -71,6 +73,10 @@ internal class FirAnnotationCallImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
+    override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef) {
+        annotationTypeRef = newAnnotationTypeRef
+    }
+
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
@@ -86,5 +92,9 @@ internal class FirAnnotationCallImpl(
 
     override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping) {
         argumentMapping = newArgumentMapping
+    }
+
+    override fun replaceAnnotationResolvePhase(newAnnotationResolvePhase: FirAnnotationResolvePhase) {
+        annotationResolvePhase = newAnnotationResolvePhase
     }
 }

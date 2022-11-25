@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.FirEmptyPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
+import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -99,6 +100,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+            register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.Empty)
         }
     }
 

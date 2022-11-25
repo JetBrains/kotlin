@@ -48,8 +48,17 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
     val resolvedAnnotationsWithClassIds: List<FirAnnotation>
         get() = fir.resolvedAnnotationsWithClassIds(this)
 
+    val resolvedCompilerAnnotationsWithClassIds: List<FirAnnotation>
+        get() = fir.resolvedCompilerRequiredAnnotations(this)
+
     val resolvedAnnotationClassIds: List<ClassId>
         get() = fir.resolvedAnnotationClassIds(this)
+}
+
+@SymbolInternals
+fun FirAnnotationContainer.resolvedCompilerRequiredAnnotations(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
+    anchorElement.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+    return annotations
 }
 
 @SymbolInternals

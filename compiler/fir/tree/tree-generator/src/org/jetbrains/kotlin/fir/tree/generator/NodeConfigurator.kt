@@ -487,13 +487,14 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         annotation.configure {
             +field("useSiteTarget", annotationUseSiteTargetType, nullable = true)
-            +field("annotationTypeRef", typeRef).withTransform()
+            +field("annotationTypeRef", typeRef, withReplace = true).withTransform()
             +field("argumentMapping", annotationArgumentMapping, withReplace = true)
             +typeArguments.withTransform()
         }
 
         annotationCall.configure {
             +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+            +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
         }
 
         errorAnnotationCall.configure {

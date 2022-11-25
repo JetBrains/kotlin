@@ -28,6 +28,7 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
     abstract override val argumentMapping: FirAnnotationArgumentMapping
+    abstract val annotationResolvePhase: FirAnnotationResolvePhase
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationCall(this, data)
 
@@ -37,6 +38,8 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
+
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
@@ -44,6 +47,8 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)
+
+    abstract fun replaceAnnotationResolvePhase(newAnnotationResolvePhase: FirAnnotationResolvePhase)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 

@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.fir.plugin
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
@@ -20,13 +25,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /*
- * Adds MyInterface supertype for all classes annotated with @MyInterfaceSupertype
+ * Adds MyInterface supertype for all classes annotated with @MyInterfaceSupertype or meta-annotated with MetaSupertype
  */
 class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExtension(session) {
     companion object {
         private val myInterfaceClassId = ClassId(FqName("foo"), Name.identifier("MyInterface"))
-        private val PREDICATE = DeclarationPredicate.create { annotated("MyInterfaceSupertype".fqn()) }
-
+        private val PREDICATE = DeclarationPredicate.create {
+            annotated("MyInterfaceSupertype".fqn()) or metaAnnotated("MetaSupertype".fqn())
+        }
     }
 
     context(TypeResolveServiceContainer)
@@ -35,6 +41,16 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>
     ): List<FirResolvedTypeRef> {
+        if (classLikeDeclaration !is FirRegularClass) return emptyList()
+        when (classLikeDeclaration.classKind) {
+            ClassKind.CLASS,
+            ClassKind.INTERFACE,
+            ClassKind.OBJECT-> {}
+
+            ClassKind.ENUM_CLASS,
+            ClassKind.ENUM_ENTRY,
+            ClassKind.ANNOTATION_CLASS -> return emptyList()
+        }
         if (resolvedSupertypes.any { it.type.classId == myInterfaceClassId }) return emptyList()
         return listOf(
             buildResolvedTypeRef {

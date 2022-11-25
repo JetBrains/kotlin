@@ -59,6 +59,10 @@ internal class FirAnnotationImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
+    override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef) {
+        annotationTypeRef = newAnnotationTypeRef
+    }
+
     override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping) {
         argumentMapping = newArgumentMapping
     }

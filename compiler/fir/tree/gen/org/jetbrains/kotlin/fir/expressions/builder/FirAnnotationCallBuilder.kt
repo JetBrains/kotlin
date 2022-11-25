@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
@@ -41,6 +42,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var calleeReference: FirReference
     var argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping
+    var annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Unresolved
 
     override fun build(): FirAnnotationCall {
         return FirAnnotationCallImpl(
@@ -51,6 +53,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
             argumentList,
             calleeReference,
             argumentMapping,
+            annotationResolvePhase,
         )
     }
 
@@ -87,5 +90,6 @@ inline fun buildAnnotationCallCopy(original: FirAnnotationCall, init: FirAnnotat
     copyBuilder.argumentList = original.argumentList
     copyBuilder.calleeReference = original.calleeReference
     copyBuilder.argumentMapping = original.argumentMapping
+    copyBuilder.annotationResolvePhase = original.annotationResolvePhase
     return copyBuilder.apply(init).build()
 }

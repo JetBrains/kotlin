@@ -112,6 +112,12 @@ public class FirPluginDiagnosticTestGenerated extends AbstractFirPluginDiagnosti
         }
 
         @Test
+        @TestMetadata("metaAnnotationClashesWithSupertype.kt")
+        public void testMetaAnnotationClashesWithSupertype() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/status/metaAnnotationClashesWithSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("simpleAnnotation.kt")
         public void testSimpleAnnotation() throws Exception {
             runTest("plugins/fir-plugin-prototype/testData/diagnostics/status/simpleAnnotation.kt");
@@ -131,6 +137,12 @@ public class FirPluginDiagnosticTestGenerated extends AbstractFirPluginDiagnosti
         @Test
         public void testAllFilesPresentInSupertypes() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/diagnostics/supertypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("metaAnnotationOrder.kt")
+        public void testMetaAnnotationOrder() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/supertypes/metaAnnotationOrder.kt");
         }
 
         @Test

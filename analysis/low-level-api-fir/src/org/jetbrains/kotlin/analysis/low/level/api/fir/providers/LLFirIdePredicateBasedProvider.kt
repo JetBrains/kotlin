@@ -22,20 +22,15 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
-import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
-import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
-import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.getCorrespondingClassSymbolOrNull
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
@@ -138,21 +133,9 @@ internal class LLFirIdePredicateBasedProvider(
         }
 
         override fun visitMetaAnnotatedWith(predicate: AbstractPredicate.MetaAnnotatedWith<P>, data: FirDeclaration): Boolean {
-            val visited = mutableSetOf<FirRegularClassSymbol>()
             return data.annotations.any { annotation ->
-                annotation.markedWithMetaAnnotation(predicate.metaAnnotations, visited)
+                annotation.markedWithMetaAnnotation(session, data, predicate.metaAnnotations)
             }
-        }
-
-        private fun FirAnnotation.markedWithMetaAnnotation(
-            metaAnnotations: Set<AnnotationFqn>,
-            visited: MutableSet<FirRegularClassSymbol>
-        ): Boolean {
-            val symbol = this.getCorrespondingClassSymbolOrNull(session) ?: return false
-            if (!visited.add(symbol)) return false
-            if (symbol.classId.asSingleFqName() in metaAnnotations) return true
-            if (symbol.resolvedAnnotationsWithClassIds.any { it.markedWithMetaAnnotation(metaAnnotations, visited) }) return true
-            return false
         }
 
         override fun visitParentAnnotatedWith(predicate: AbstractPredicate.ParentAnnotatedWith<P>, data: FirDeclaration): Boolean {

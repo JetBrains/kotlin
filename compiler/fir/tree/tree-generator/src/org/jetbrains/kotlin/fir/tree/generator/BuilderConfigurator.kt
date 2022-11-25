@@ -129,6 +129,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             }
             default("argumentMapping", "FirEmptyAnnotationArgumentMapping")
             default("annotationTypeRef", "FirImplicitTypeRefImpl(null)")
+            default("annotationResolvePhase", "FirAnnotationResolvePhase.Unresolved")
             useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, implicitTypeRefType)
             withCopy()
         }

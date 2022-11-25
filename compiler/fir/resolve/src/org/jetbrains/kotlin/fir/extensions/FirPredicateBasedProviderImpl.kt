@@ -12,15 +12,19 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
 import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.fir.resolve.getCorrespondingClassSymbolOrNull
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 @NoMutableState
 class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
@@ -132,21 +136,9 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         // ------------------------------------ Meta-annotated ------------------------------------
 
         override fun visitMetaAnnotatedWith(predicate: AbstractPredicate.MetaAnnotatedWith<P>, data: FirDeclaration): Boolean {
-            val visited = mutableSetOf<FirRegularClassSymbol>()
             return data.annotations.any { annotation ->
-                annotation.markedWithMetaAnnotation(predicate.metaAnnotations, visited)
+                annotation.markedWithMetaAnnotation(session, data, predicate.metaAnnotations)
             }
-        }
-
-        private fun FirAnnotation.markedWithMetaAnnotation(
-            metaAnnotations: Set<AnnotationFqn>,
-            visited: MutableSet<FirRegularClassSymbol>
-        ): Boolean {
-            val symbol = this.getCorrespondingClassSymbolOrNull(session) ?: return false
-            if (!visited.add(symbol)) return false
-            if (symbol.classId.asSingleFqName() in metaAnnotations) return true
-            if (symbol.resolvedAnnotationsWithClassIds.any { it.markedWithMetaAnnotation(metaAnnotations, visited) }) return true
-            return false
         }
 
         // ------------------------------------ Utilities ------------------------------------
@@ -187,4 +179,28 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
 
         val filesWithPluginAnnotations: MutableSet<FirFile> = mutableSetOf()
     }
+}
+
+fun FirAnnotation.markedWithMetaAnnotation(
+    session: FirSession,
+    containingDeclaration: FirDeclaration,
+    metaAnnotations: Set<AnnotationFqn>
+): Boolean {
+    containingDeclaration.symbol.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+    return annotationTypeRef.coneTypeSafe<ConeKotlinType>()
+        ?.toRegularClassSymbol(session)
+        .markedWithMetaAnnotationImpl(session, metaAnnotations, mutableSetOf())
+}
+
+fun FirRegularClassSymbol?.markedWithMetaAnnotationImpl(
+    session: FirSession,
+    metaAnnotations: Set<AnnotationFqn>,
+    visited: MutableSet<FirRegularClassSymbol>
+): Boolean {
+    if (this == null) return false
+    if (!visited.add(this)) return false
+    if (this.classId.asSingleFqName() in metaAnnotations) return true
+    return this.resolvedCompilerAnnotationsWithClassIds
+        .mapNotNull { it.annotationTypeRef.coneTypeSafe<ConeKotlinType>()?.toRegularClassSymbol(session) }
+        .any { it.markedWithMetaAnnotationImpl(session, metaAnnotations, visited) }
 }

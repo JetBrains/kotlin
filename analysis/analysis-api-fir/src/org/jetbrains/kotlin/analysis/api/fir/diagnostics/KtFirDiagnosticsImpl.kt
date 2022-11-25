@@ -837,6 +837,13 @@ internal class AnnotationInWhereClauseErrorImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.AnnotationInWhereClauseError(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
+internal class PluginAnnotationAmbiguityImpl(
+    override val typeFromCompilerPhase: KtType,
+    override val typeFromTypesPhase: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.PluginAnnotationAmbiguity(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,

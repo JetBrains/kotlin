@@ -243,3 +243,15 @@ class ConeAmbiguousAlteredAssign(val altererNames: List<String?>) : ConeDiagnost
 object ConeForbiddenIntersection : ConeDiagnostic {
     override val reason: String get() = "Such an intersection type is not allowed"
 }
+
+class ConeAmbiguouslyResolvedAnnotationFromPlugin(
+    val typeFromCompilerPhase: ConeKotlinType,
+    val typeFromTypesPhase: ConeKotlinType
+) : ConeDiagnostic {
+    override val reason: String
+        get() = """
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: $typeFromCompilerPhase
+              - types stage: $typeFromTypesPhase
+        """
+}

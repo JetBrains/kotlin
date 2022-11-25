@@ -697,6 +697,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AnnotationInWhereClauseError::class
     }
 
+    abstract class PluginAnnotationAmbiguity : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = PluginAnnotationAmbiguity::class
+        abstract val typeFromCompilerPhase: KtType
+        abstract val typeFromTypesPhase: KtType
+    }
+
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName

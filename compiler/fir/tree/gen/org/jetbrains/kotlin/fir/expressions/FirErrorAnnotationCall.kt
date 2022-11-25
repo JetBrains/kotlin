@@ -29,6 +29,7 @@ abstract class FirErrorAnnotationCall : FirAnnotationCall(), FirDiagnosticHolder
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
+    abstract override val annotationResolvePhase: FirAnnotationResolvePhase
     abstract override val diagnostic: ConeDiagnostic
     abstract override val argumentMapping: FirAnnotationArgumentMapping
 
@@ -40,11 +41,15 @@ abstract class FirErrorAnnotationCall : FirAnnotationCall(), FirDiagnosticHolder
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
+
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    abstract override fun replaceAnnotationResolvePhase(newAnnotationResolvePhase: FirAnnotationResolvePhase)
 
     abstract override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)
 

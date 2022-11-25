@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -21,7 +22,9 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.whileAnalysing
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirTypeResolveProcessor(
     session: FirSession,
@@ -226,12 +229,45 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformAnnotation(annotation: FirAnnotation, data: Any?): FirStatement {
-        annotation.transformAnnotationTypeRef(this, data)
-        return annotation
+        shouldNotBeCalled()
     }
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement = whileAnalysing(annotationCall) {
-        return transformAnnotation(annotationCall, data)
+        when (val originalTypeRef = annotationCall.annotationTypeRef) {
+            is FirResolvedTypeRef -> {
+                when (annotationCall.annotationResolvePhase) {
+                    FirAnnotationResolvePhase.Unresolved -> when (originalTypeRef){
+                        is FirErrorTypeRef -> return annotationCall.also { it.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types) }
+                        else -> shouldNotBeCalled()
+                    }
+                    FirAnnotationResolvePhase.CompilerRequiredAnnotations -> {
+                        annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
+                        val alternativeResolvedTypeRef = originalTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: return annotationCall
+                        val coneTypeFromCompilerRequiredPhase = originalTypeRef.coneType
+                        val coneTypeFromTypesPhase = alternativeResolvedTypeRef.coneType
+                        if (coneTypeFromTypesPhase != coneTypeFromCompilerRequiredPhase) {
+                            val errorTypeRef = buildErrorTypeRef {
+                                source = originalTypeRef.source
+                                type = coneTypeFromCompilerRequiredPhase
+                                delegatedTypeRef = originalTypeRef.delegatedTypeRef
+                                diagnostic = ConeAmbiguouslyResolvedAnnotationFromPlugin(
+                                    coneTypeFromCompilerRequiredPhase,
+                                    coneTypeFromTypesPhase
+                                )
+                            }
+                            annotationCall.replaceAnnotationTypeRef(errorTypeRef)
+                        }
+                    }
+                    FirAnnotationResolvePhase.Types -> {}
+                }
+            }
+            else -> {
+                val transformedTypeRef = originalTypeRef.transformSingle(this, data)
+                annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
+                annotationCall.replaceAnnotationTypeRef(transformedTypeRef)
+            }
+        }
+        return annotationCall
     }
 
     private inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
