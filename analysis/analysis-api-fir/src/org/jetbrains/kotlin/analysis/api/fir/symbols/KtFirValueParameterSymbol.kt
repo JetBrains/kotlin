@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -87,17 +86,15 @@ internal class KtFirValueParameterSymbol(
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtValueParameterSymbol>(this)?.let { return it }
 
-        analyze(firResolveSession.useSiteKtModule) {
-            when (val owner = getContainingSymbol()) {
-                is KtFunctionLikeSymbol ->
-                    KtFirValueParameterSymbolPointer(
-                        owner.createPointer(),
-                        name,
-                        (owner.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
-                    )
+        when (val owner = getContainingSymbol()) {
+            is KtFunctionLikeSymbol ->
+                KtFirValueParameterSymbolPointer(
+                    owner.createPointer(),
+                    name,
+                    (owner.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
+                )
 
-                else -> error("${requireNotNull(owner)::class}")
-            }
+            else -> error("${requireNotNull(owner)::class}")
         }
     }
 
