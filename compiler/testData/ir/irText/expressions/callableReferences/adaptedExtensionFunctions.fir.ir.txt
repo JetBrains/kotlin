@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
   FUN name:testExtensionVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        f: FUN_EXPR type=kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+        f: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:extensionVararg visibility:local modality:FINAL <> (p0:<root>.C, p1:kotlin.Int) returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<root>.C
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
   FUN name:testExtensionDefault visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        f: FUN_EXPR type=kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+        f: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:extensionDefault visibility:local modality:FINAL <> (p0:<root>.C, p1:kotlin.Int) returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<root>.C
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
   FUN name:testExtensionBoth visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        f: FUN_EXPR type=kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+        f: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:extensionBoth visibility:local modality:FINAL <> (p0:<root>.C, p1:kotlin.Int) returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<root>.C
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
