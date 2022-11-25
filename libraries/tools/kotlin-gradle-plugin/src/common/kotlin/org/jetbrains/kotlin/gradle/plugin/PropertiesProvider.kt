@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
@@ -424,7 +425,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     }
 
     val jvmTargetValidationMode: JvmTargetValidationMode
-        get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.ERROR)
+        get() = enumProperty(
+            "kotlin.jvm.target.validation.mode",
+            if (GradleVersion.current().baseVersion >= GradleVersion.version("8.0")) JvmTargetValidationMode.ERROR else JvmTargetValidationMode.WARNING
+        )
 
     val kotlinDaemonJvmArgs: String?
         get() = this.property("kotlin.daemon.jvmargs")

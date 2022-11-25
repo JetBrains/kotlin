@@ -23,6 +23,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.api.tasks.util.PatternSet
+import org.gradle.util.GradleVersion
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -644,7 +645,7 @@ abstract class KotlinCompile @Inject constructor(
     @get:Internal
     internal abstract val associatedJavaCompileTaskName: Property<String>
 
-    @get:Internal
+    @get:Input
     internal abstract val jvmTargetValidationMode: Property<PropertiesProvider.JvmTargetValidationMode>
 
     @get:Internal
@@ -794,10 +795,18 @@ abstract class KotlinCompile @Inject constructor(
             val jvmTarget = args.jvmTarget ?: JvmTarget.DEFAULT.toString()
             if (normalizedJavaTarget != jvmTarget) {
                 val javaTaskName = associatedJavaCompileTaskName.get()
-                val errorMessage = "'$javaTaskName' task (current target is $targetCompatibility) and " +
-                        "'$name' task (current target is $jvmTarget) " +
-                        "jvm target compatibility should be set to the same Java version.\n" +
-                        "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
+
+                val errorMessage = buildString {
+                    append("'$javaTaskName' task (current target is $targetCompatibility) and ")
+                    append("'$name' task (current target is $jvmTarget) ")
+                    appendLine("jvm target compatibility should be set to the same Java version.")
+                    if (GradleVersion.current().baseVersion < GradleVersion.version("8.0")) {
+                        append("By default will become an error since Gradle 8.0+! ")
+                        appendLine("Read more: https://kotl.in/gradle/jvm/target-validation")
+                    }
+                    appendLine("Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain")
+                }
+
                 when (jvmTargetValidationMode.get()) {
                     PropertiesProvider.JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
                     PropertiesProvider.JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
