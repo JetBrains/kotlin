@@ -19,25 +19,19 @@ import org.jetbrains.kotlin.psi.psiUtil.hasBody
 
 internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
     containingDeclaration: T,
-    private val modifiers: Set<String>,
-    private val annotations: List<PsiAnnotation>
+    private val lazyModifiers: Lazy<Set<String>>,
+    lazyAnnotations: Lazy<List<PsiAnnotation>>
 ) : SymbolLightModifierList<T>(containingDeclaration) {
-    init {
-        annotations.forEach {
-            (it as? KtLightElementBase)?.parent = this
-        }
+    private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazy {
+        lazyAnnotations.value.onEach { (it as? KtLightElementBase)?.parent = this }
     }
 
-    override fun hasModifierProperty(name: String): Boolean {
-        return when {
-            name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
-            // Pretend this method behaves like a `default` method
-            name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
-            // TODO: FINAL && isPossiblyAffectedByAllOpen
-            else -> {
-                name in modifiers
-            }
-        }
+    override fun hasModifierProperty(name: String): Boolean = when {
+        name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
+        // Pretend this method behaves like a `default` method
+        name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
+        // TODO: FINAL && isPossiblyAffectedByAllOpen
+        else -> name in lazyModifiers.value
     }
 
     private fun isImplementationInInterface(): Boolean {
@@ -49,12 +43,12 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
         return if (name == PsiModifier.DEFAULT) false else super.hasExplicitModifier(name)
     }
 
-    override val givenAnnotations: List<KtLightAbstractAnnotation>?
-        get() = invalidAccess()
+    override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
 
-    override fun getAnnotations(): Array<out PsiAnnotation> = annotations.toTypedArray()
+    override fun getAnnotations(): Array<out PsiAnnotation> = lazyAnnotations.value.toTypedArray()
 
-    override fun findAnnotation(qualifiedName: String) = annotations.firstOrNull { it.qualifiedName == qualifiedName }
+    override fun findAnnotation(qualifiedName: String): PsiAnnotation? =
+        lazyAnnotations.value.firstOrNull { it.qualifiedName == qualifiedName }
 
     private inline fun <R> getTextVariantFromModifierListOfPropertyAccessorIfNeeded(
         retriever: (KtModifierList) -> R

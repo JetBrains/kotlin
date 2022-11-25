@@ -32,16 +32,18 @@ internal class SymbolLightFieldForEnumEntry(
         action(enumEntry.getEnumEntrySymbol())
     }
 
-    private val _modifierList by lazyPub {
+    private val _modifierList by lazy {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightFieldForEnumEntry,
-            modifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
-            annotations = withEnumEntrySymbol { enumEntrySymbol ->
-                enumEntrySymbol.computeAnnotations(
-                    this@SymbolLightFieldForEnumEntry,
-                    nullability = NullabilityType.Unknown, // there is no need to add nullability annotations on enum entries
-                    annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD
-                )
+            lazyModifiers = lazyOf(setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)),
+            lazyAnnotations = lazyPub {
+                withEnumEntrySymbol { enumEntrySymbol ->
+                    enumEntrySymbol.computeAnnotations(
+                        this@SymbolLightFieldForEnumEntry,
+                        nullability = NullabilityType.Unknown, // there is no need to add nullability annotations on enum entries
+                        annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
+                    )
+                }
             }
         )
     }

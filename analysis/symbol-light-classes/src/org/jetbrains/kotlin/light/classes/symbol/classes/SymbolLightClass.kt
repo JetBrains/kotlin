@@ -50,7 +50,7 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
         require(classOrObject !is KtClass || !classOrObject.isInterface() && !classOrObject.isAnnotation())
     }
 
-    private val _modifierList: PsiModifierList? by lazyPub {
+    private val _modifierList: PsiModifierList? by lazy {
         val lazyModifiers = lazy {
             withNamedClassOrObjectSymbol { classOrObjectSymbol ->
                 buildSet {
@@ -73,7 +73,7 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
             }
         }
 
-        SymbolLightClassModifierList(this@SymbolLightClass, lazyModifiers, lazyAnnotations)
+        SymbolLightClassModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList

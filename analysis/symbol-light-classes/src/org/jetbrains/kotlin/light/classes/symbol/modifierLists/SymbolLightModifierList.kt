@@ -19,31 +19,16 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     protected val owner: T
 ) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
-
-    override val kotlinOrigin: KtModifierList?
-        get() = owner.kotlinOrigin?.modifierList
-
+    override val kotlinOrigin: KtModifierList? get() = owner.kotlinOrigin?.modifierList
     override fun getParent() = owner
-
     override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
-
     override fun setModifierProperty(name: String, value: Boolean) = cannotModify()
     override fun checkSetModifierProperty(name: String, value: Boolean) = throw IncorrectOperationException()
     override fun addAnnotation(qualifiedName: String): PsiAnnotation = cannotModify()
-
     override fun getApplicableAnnotations(): Array<out PsiAnnotation> = annotations
-
-    override fun getAnnotations(): Array<out PsiAnnotation> = emptyArray() //TODO()
-    override fun findAnnotation(qualifiedName: String): PsiAnnotation? = null //TODO()
-
-    override fun isEquivalentTo(another: PsiElement?) =
-        another is SymbolLightModifierList<*> && owner == another.owner
-
+    override fun isEquivalentTo(another: PsiElement?) = another is SymbolLightModifierList<*> && owner == another.owner
     override fun isWritable() = false
-
     override fun toString() = "Light modifier list of $owner"
-
     abstract override fun equals(other: Any?): Boolean
-
     abstract override fun hashCode(): Int
 }

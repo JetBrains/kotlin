@@ -183,10 +183,10 @@ internal class SymbolLightAccessorMethod private constructor(
         modifiers
     }
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        val modifiers = computeModifiers()
-        val annotations = computeAnnotations(modifiers.contains(PsiModifier.PRIVATE))
-        SymbolLightMemberModifierList(this, modifiers, annotations)
+    private val _modifierList: PsiModifierList by lazy {
+        val lazyModifiers = lazyPub { computeModifiers() }
+        val lazyAnnotations = lazyPub { computeAnnotations(PsiModifier.PRIVATE in lazyModifiers.value) }
+        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

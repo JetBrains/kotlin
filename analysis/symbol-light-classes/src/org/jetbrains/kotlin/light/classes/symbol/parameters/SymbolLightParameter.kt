@@ -25,28 +25,27 @@ internal class SymbolLightParameter(
 ) : SymbolLightParameterCommon(ktAnalysisSession, parameterSymbol, containingMethod) {
     private val isConstructorParameterSymbol = containingMethod.isConstructor
 
-    private val _annotations: List<PsiAnnotation> by lazyPub {
-
-        val annotationSite = isConstructorParameterSymbol.ifTrue {
-            AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-        }
-
-        parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
-            val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
-
-            parameterSymbol.computeAnnotations(
-                parent = this@SymbolLightParameter,
-                nullability = nullability,
-                annotationUseSiteTarget = annotationSite,
-                includeAnnotationsWithoutSite = true
-            )
-        }
-    }
-
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyOf(_annotations))
+    private val _modifierList: PsiModifierList by lazy {
+        val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
+            val annotationSite = isConstructorParameterSymbol.ifTrue {
+                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+            }
+
+            parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
+                val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
+
+                parameterSymbol.computeAnnotations(
+                    parent = this@SymbolLightParameter,
+                    nullability = nullability,
+                    annotationUseSiteTarget = annotationSite,
+                    includeAnnotationsWithoutSite = true,
+                )
+            }
+        }
+
+        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
     private val isVararg: Boolean by lazy {

@@ -36,11 +36,11 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun toString(): String = "SymbolLightClassForEnumEntry:$name"
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    private val _modifierList: PsiModifierList by lazy {
         SymbolLightClassModifierList(
             containingDeclaration = this,
             lazyModifiers = lazyOf(setOf(PsiModifier.STATIC, PsiModifier.FINAL)),
-            lazyAnnotations = lazyOf(emptyList())
+            lazyAnnotations = lazyOf(emptyList()),
         )
     }
 

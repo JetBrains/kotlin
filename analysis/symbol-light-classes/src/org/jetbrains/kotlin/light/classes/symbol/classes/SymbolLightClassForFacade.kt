@@ -62,11 +62,11 @@ class SymbolLightClassForFacade(
             action(files.map { it.getFileSymbol() })
         }
 
-    private val firstFileInFacade by lazyPub { files.first() }
+    private val firstFileInFacade by lazy { files.first() }
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    private val _modifierList: PsiModifierList by lazy {
         if (multiFileClass)
-            return@lazyPub LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
+            return@lazy LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
 
         val lazyModifiers = lazyOf(setOf(PsiModifier.PUBLIC, PsiModifier.FINAL))
 
@@ -83,7 +83,7 @@ class SymbolLightClassForFacade(
             }
         }
 
-        SymbolLightClassModifierList(this@SymbolLightClassForFacade, lazyModifiers, lazyAnnotations)
+        SymbolLightClassModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

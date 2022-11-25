@@ -119,12 +119,20 @@ internal class SymbolLightSimpleMethod(
         return modifiers
     }
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        withFunctionSymbol { functionSymbol ->
-            val modifiers = computeModifiers(functionSymbol)
-            val annotations = computeAnnotations(functionSymbol, modifiers.contains(PsiModifier.PRIVATE))
-            SymbolLightMemberModifierList(this@SymbolLightSimpleMethod, modifiers, annotations)
+    private val _modifierList: PsiModifierList by lazy {
+        val lazyModifiers = lazyPub {
+            withFunctionSymbol { functionSymbol ->
+                computeModifiers(functionSymbol)
+            }
         }
+
+        val lazyAnnotations = lazyPub {
+            withFunctionSymbol { functionSymbol ->
+                computeAnnotations(functionSymbol, PsiModifier.PRIVATE in lazyModifiers.value)
+            }
+        }
+
+        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

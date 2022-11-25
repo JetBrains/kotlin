@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
@@ -36,9 +33,9 @@ internal class SymbolLightFieldForProperty private constructor(
     private val fieldName: String,
     containingClass: SymbolLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
-    isTopLevel: Boolean,
-    forceStatic: Boolean,
-    takePropertyVisibility: Boolean,
+    private val isTopLevel: Boolean,
+    private val forceStatic: Boolean,
+    private val takePropertyVisibility: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
@@ -91,49 +88,53 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun getName(): String = fieldName
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        withPropertySymbol { propertySymbol ->
-            val modifiers = mutableSetOf<String>()
-
+    private fun computeModifiers(): Set<String> = withPropertySymbol { propertySymbol ->
+        buildSet {
             val suppressFinal = !propertySymbol.isVal
 
             propertySymbol.computeModalityForMethod(
                 isTopLevel = isTopLevel,
                 suppressFinal = suppressFinal,
-                result = modifiers
+                result = this
             )
 
             if (forceStatic) {
-                modifiers.add(PsiModifier.STATIC)
+                add(PsiModifier.STATIC)
             }
 
             val visibility = if (takePropertyVisibility) propertySymbol.toPsiVisibilityForMember() else PsiModifier.PRIVATE
-            modifiers.add(visibility)
+            add(visibility)
 
             if (!suppressFinal) {
-                modifiers.add(PsiModifier.FINAL)
+                add(PsiModifier.FINAL)
             }
 
             if (propertySymbol.hasAnnotation(TRANSIENT_ANNOTATION_CLASS_ID, null)) {
-                modifiers.add(PsiModifier.TRANSIENT)
+                add(PsiModifier.TRANSIENT)
             }
 
             if (propertySymbol.hasAnnotation(VOLATILE_ANNOTATION_CLASS_ID, null)) {
-                modifiers.add(PsiModifier.VOLATILE)
+                add(PsiModifier.VOLATILE)
             }
-
-            val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
-                getTypeNullability(propertySymbol.returnType)
-            } else NullabilityType.Unknown
-
-            val annotations = propertySymbol.computeAnnotations(
-                parent = this@SymbolLightFieldForProperty,
-                nullability = nullability,
-                annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
-            )
-
-            SymbolLightMemberModifierList(this@SymbolLightFieldForProperty, modifiers, annotations)
         }
+    }
+
+    private fun computeAnnotations(): List<PsiAnnotation> = withPropertySymbol { propertySymbol ->
+        val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
+            getTypeNullability(propertySymbol.returnType)
+        } else NullabilityType.Unknown
+
+        propertySymbol.computeAnnotations(
+            parent = this@SymbolLightFieldForProperty,
+            nullability = nullability,
+            annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
+        )
+    }
+
+    private val _modifierList: PsiModifierList by lazy {
+        val lazyModifiers = lazyPub { computeModifiers() }
+        val lazyAnnotations = lazyPub { computeAnnotations() }
+        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

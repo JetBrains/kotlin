@@ -39,29 +39,29 @@ internal class SymbolLightSetterParameter(
         }
     }
 
-    private val _annotations: List<PsiAnnotation> by lazyPub {
-        analyzeForLightClasses(ktModule) {
-            val annotationsFromSetter = parameterSymbolPointer.restoreSymbolOrThrowIfDisposed().computeAnnotations(
-                parent = this@SymbolLightSetterParameter,
-                nullability = NullabilityType.Unknown,
-                annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
-            )
-
-            val annotationsFromProperty = containingPropertySymbolPointer.restoreSymbolOrThrowIfDisposed().computeAnnotations(
-                parent = this@SymbolLightSetterParameter,
-                nullability = nullabilityType,
-                annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
-                includeAnnotationsWithoutSite = false,
-            )
-
-            annotationsFromSetter + annotationsFromProperty
-        }
-    }
-
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyOf(_annotations))
+    private val _modifierList: PsiModifierList by lazy {
+        val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
+            analyzeForLightClasses(ktModule) {
+                val annotationsFromSetter = parameterSymbolPointer.restoreSymbolOrThrowIfDisposed().computeAnnotations(
+                    parent = this@SymbolLightSetterParameter,
+                    nullability = NullabilityType.Unknown,
+                    annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
+                )
+
+                val annotationsFromProperty = containingPropertySymbolPointer.restoreSymbolOrThrowIfDisposed().computeAnnotations(
+                    parent = this@SymbolLightSetterParameter,
+                    nullability = nullabilityType,
+                    annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
+                    includeAnnotationsWithoutSite = false,
+                )
+
+                annotationsFromSetter + annotationsFromProperty
+            }
+        }
+
+        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
     override fun isVarArgs() = false

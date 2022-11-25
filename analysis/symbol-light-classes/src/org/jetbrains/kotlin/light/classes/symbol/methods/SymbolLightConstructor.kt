@@ -43,31 +43,31 @@ internal class SymbolLightConstructor(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
-    private val _annotations: List<PsiAnnotation> by lazyPub {
-        withFunctionSymbol { constructorSymbol ->
-            constructorSymbol.computeAnnotations(
-                parent = this@SymbolLightConstructor,
-                nullability = NullabilityType.Unknown,
-                annotationUseSiteTarget = null,
-            )
-        }
-    }
-
-    private val _modifiers: Set<String> by lazyPub {
-        // FIR treats an enum entry as an anonymous object w/ its own ctor (not default one).
-        // On the other hand, FE 1.0 doesn't add anything; then ULC adds default ctor w/ package local visibility.
-        // Technically, an enum entry should not be instantiated anywhere else, and thus FIR's modeling makes sense.
-        // But, to be backward compatible, we manually force the visibility of enum entry ctor to be package private.
-        if (containingClass is SymbolLightClassForEnumEntry)
-            setOf(PsiModifier.PACKAGE_LOCAL)
-        else
+    private val _modifierList: PsiModifierList by lazy {
+        val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
             withFunctionSymbol { constructorSymbol ->
-                setOf(constructorSymbol.toPsiVisibilityForMember())
+                constructorSymbol.computeAnnotations(
+                    parent = this@SymbolLightConstructor,
+                    nullability = NullabilityType.Unknown,
+                    annotationUseSiteTarget = null,
+                )
             }
-    }
+        }
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightMemberModifierList(this, _modifiers, _annotations)
+        val lazyModifiers: Lazy<Set<String>> = lazy {
+            // FIR treats an enum entry as an anonymous object w/ its own ctor (not default one).
+            // On the other hand, FE 1.0 doesn't add anything; then ULC adds default ctor w/ package local visibility.
+            // Technically, an enum entry should not be instantiated anywhere else, and thus FIR's modeling makes sense.
+            // But, to be backward compatible, we manually force the visibility of enum entry ctor to be package private.
+            if (containingClass is SymbolLightClassForEnumEntry)
+                setOf(PsiModifier.PACKAGE_LOCAL)
+            else
+                withFunctionSymbol { constructorSymbol ->
+                    setOf(constructorSymbol.toPsiVisibilityForMember())
+                }
+        }
+
+        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

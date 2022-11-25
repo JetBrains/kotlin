@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
-import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAbstractAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeNullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
@@ -66,21 +66,21 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     override val kotlinOrigin: KtParameter? = null
 
-    private val _annotations: List<PsiAnnotation> by lazyPub {
-        withReceiverSymbol { receiver ->
-            buildList {
-                receiver.type.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let(::add)
-                receiver.annotations.mapTo(this) {
-                    SymbolLightAnnotationForAnnotationCall(it, this@SymbolLightParameterForReceiver)
-                }
-            }
-        }
-    }
-
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazy {
-        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyOf(_annotations))
+        val lazyAnnotations: Lazy<List<SymbolLightAbstractAnnotation>> = lazyPub {
+            withReceiverSymbol { receiver ->
+                buildList {
+                    receiver.type.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let(::add)
+                    receiver.annotations.mapTo(this) {
+                        SymbolLightAnnotationForAnnotationCall(it, this@SymbolLightParameterForReceiver)
+                    }
+                }
+            }
+        }
+
+        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
     private val _type: PsiType by lazy {

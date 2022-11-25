@@ -24,7 +24,7 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(classOrObject: KtC
         require(isInterface || isAnnotation)
     }
 
-    private val _modifierList: PsiModifierList? by lazyPub {
+    private val _modifierList: PsiModifierList? by lazy {
         val lazyModifiers = lazy {
             withNamedClassOrObjectSymbol { classOrObjectSymbol ->
                 buildSet {
@@ -47,7 +47,7 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(classOrObject: KtC
             }
         }
 
-        SymbolLightClassModifierList(this@SymbolLightInterfaceOrAnnotationClass, lazyModifiers, lazyAnnotations)
+        SymbolLightClassModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun isInterface(): Boolean = true
