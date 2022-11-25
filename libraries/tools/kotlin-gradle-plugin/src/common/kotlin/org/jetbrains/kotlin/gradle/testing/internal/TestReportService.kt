@@ -76,6 +76,7 @@ internal abstract class TestReportService : BuildService<TestReportService.TestR
 
     private fun readPreviouslyFailedTasks(): MutableSet<String> {
         val failedTasksSet: MutableSet<String> = ConcurrentHashMap.newKeySet()
+        if (!binaryStateFile.exists()) return failedTasksSet
         try {
             ObjectInputStream(FileInputStream(binaryStateFile)).use {
                 @Suppress("UNCHECKED_CAST")
