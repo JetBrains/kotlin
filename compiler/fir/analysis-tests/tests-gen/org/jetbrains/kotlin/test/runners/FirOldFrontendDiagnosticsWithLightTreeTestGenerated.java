@@ -3082,6 +3082,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("noKFunctionForAdaptation.kt")
+                public void testNoKFunctionForAdaptation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/adapted/noKFunctionForAdaptation.kt");
+                }
+
+                @Test
                 @TestMetadata("simpleAdaptationOutsideOfCall.kt")
                 public void testSimpleAdaptationOutsideOfCall() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/adapted/simpleAdaptationOutsideOfCall.kt");
