@@ -177,6 +177,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                         event, parameters.projectName.get(), buildUuid, parameters.label.orNull,
                         parameters.kotlinVersion.get(),
                         parameters.buildMetricsService.get().buildOperationRecords,
+                        metrics = buildScanSettings.metrics
                     )
                 }
                 log.debug("Collect data takes $collectDataDuration: $compileStatData")

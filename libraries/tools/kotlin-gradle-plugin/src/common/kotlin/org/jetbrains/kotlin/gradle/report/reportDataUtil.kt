@@ -34,7 +34,8 @@ internal fun prepareData(
     label: String?,
     kotlinVersion: String,
     buildOperationRecords: Collection<BuildOperationRecord>,
-    additionalTags: List<StatTag> = emptyList()
+    additionalTags: List<StatTag> = emptyList(),
+    metrics: List<String>? = null
 ): CompileStatisticsData? {
     val result = event.result
     val taskPath = event.descriptor.taskPath
@@ -57,8 +58,11 @@ internal fun prepareData(
     val taskExecutionResult = TaskExecutionResults[taskPath]
     val buildMetrics = buildOperationRecords.firstOrNull { it.path == taskPath }?.buildMetrics
 
-    val performanceMetrics = collectBuildPerformanceMetrics(taskExecutionResult, buildMetrics)
-    val buildTimesMetrics = collectBuildMetrics(taskExecutionResult, buildMetrics, performanceMetrics, result.startTime, System.currentTimeMillis())
+    val performanceMetrics = collectBuildPerformanceMetrics(taskExecutionResult, buildMetrics, metrics)
+    val buildTimesMetrics = collectBuildMetrics(
+        taskExecutionResult, buildMetrics, performanceMetrics, result.startTime,
+        System.currentTimeMillis(), metrics
+    )
     val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
         is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
         else -> emptyList<String>()
@@ -86,12 +90,13 @@ internal fun prepareData(
 private fun collectBuildPerformanceMetrics(
     taskExecutionResult: TaskExecutionResult?,
     buildMetrics: BuildMetrics?,
+    metrics: List<String>?,
 ): Map<BuildPerformanceMetric, Long> {
     val taskBuildPerformanceMetrics = HashMap<BuildPerformanceMetric, Long>()
     taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.let { taskBuildPerformanceMetrics.putAll(it) }
     buildMetrics?.buildPerformanceMetrics?.asMap()?.let { taskBuildPerformanceMetrics.putAll(it) }
-    taskBuildPerformanceMetrics.filterValues { value -> value != 0L }
-    return taskBuildPerformanceMetrics
+    return (metrics?.let { metricsToShow -> taskBuildPerformanceMetrics.filterKeys { metricsToShow.contains(it.name) }} ?: taskBuildPerformanceMetrics)
+        .filterValues { value -> value != 0L }
 }
 private fun collectBuildMetrics(
     taskExecutionResult: TaskExecutionResult?,
@@ -99,6 +104,7 @@ private fun collectBuildMetrics(
     performanceMetrics: Map<BuildPerformanceMetric, Long>,
     gradleTaskStartTime: Long? = null,
     taskFinishEventTime: Long? = null,
+    metrics: List<String>?
 ): Map<BuildTime, Long> {
     val taskBuildMetrics = HashMap<BuildTime, Long>()
     taskExecutionResult?.buildMetrics?.buildTimes?.asMapMs()?.let { taskBuildMetrics.putAll(it) }
@@ -119,8 +125,9 @@ private fun collectBuildMetrics(
         }
 
     }
-    taskBuildMetrics.filterValues { value -> value != 0L }
-    return taskBuildMetrics
+    return (metrics?.let { metricsToShow -> taskBuildMetrics.filterKeys { metricsToShow.contains(it.name) } } ?: taskBuildMetrics)
+        .filterValues { value -> value != 0L }
+
 }
 
 private fun collectTags(

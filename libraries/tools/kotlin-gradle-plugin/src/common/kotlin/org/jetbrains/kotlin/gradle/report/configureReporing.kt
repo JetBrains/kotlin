@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
 
+val availableMetrics = BuildTime.values().map { it.name } + BuildPerformanceMetric.values().map { it.name }
 internal fun reportingSettings(rootProject: Project): ReportingSettings {
     val properties = PropertiesProvider(rootProject)
     val buildReportOutputTypes = properties.buildReportOutputs.map {
@@ -41,7 +44,13 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
     }
 
     val buildScanSettings = if (buildReportOutputTypes.contains(BuildReportType.BUILD_SCAN)) {
-        BuildScanSettings(properties.buildReportBuildScanCustomValuesLimit)
+        val metrics = properties.buildReportBuildScanMetrics?.split(",")
+        metrics?.forEach {
+            if (!availableMetrics.contains(it.trim().toUpperCase())) {
+                throw IllegalStateException("Unknown metric: '$it', list of available metrics: $availableMetrics")
+            }
+        }
+        BuildScanSettings(properties.buildReportBuildScanCustomValuesLimit, metrics)
     } else {
         null
     }
