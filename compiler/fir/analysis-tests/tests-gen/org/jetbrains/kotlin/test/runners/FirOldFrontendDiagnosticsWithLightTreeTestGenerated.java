@@ -3073,6 +3073,22 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/callableReference/adapted")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Adapted {
+                @Test
+                public void testAllFilesPresentInAdapted() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("simpleAdaptationOutsideOfCall.kt")
+                public void testSimpleAdaptationOutsideOfCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/adapted/simpleAdaptationOutsideOfCall.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/callableReference/bound")
             @TestDataPath("$PROJECT_ROOT")
             public class Bound {
