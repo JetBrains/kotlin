@@ -13,6 +13,16 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.unresolvedDependencies
+import java.security.MessageDigest
+
+private fun MessageDigest.digestFile(file: File) =
+        if (file.isDirectory) digestDirectory(file) else update(file.readBytes())
+
+private fun MessageDigest.digestDirectory(directory: File): Unit =
+        directory.listFiles.sortedBy { it.name }.forEach { digestFile(it) }
+
+private fun MessageDigest.digestLibrary(library: KotlinLibrary) = digestFile(library.libraryFile)
 
 private fun getArtifactName(target: KonanTarget, baseName: String, kind: CompilerOutputKind) =
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
@@ -21,11 +31,13 @@ class CachedLibraries(
         private val target: KonanTarget,
         allLibraries: List<KotlinLibrary>,
         explicitCaches: Map<KotlinLibrary, String>,
-        implicitCacheDirectories: List<File>
+        implicitCacheDirectories: List<File>,
+        autoCacheDirectory: File,
+        autoCacheableFrom: List<File>
 ) {
     enum class Kind { DYNAMIC, STATIC }
 
-    sealed class Cache(protected val target: KonanTarget, val kind: Kind, val path: String) {
+    sealed class Cache(protected val target: KonanTarget, val kind: Kind, val path: String, val rootDirectory: String) {
         val bitcodeDependencies by lazy { computeBitcodeDependencies() }
         val binariesPaths by lazy { computeBinariesPaths() }
         val serializedInlineFunctionBodies by lazy { computeSerializedInlineFunctionBodies() }
@@ -43,7 +55,9 @@ class CachedLibraries(
             Kind.STATIC -> CompilerOutputKind.STATIC_CACHE
         }
 
-        class Monolithic(target: KonanTarget, kind: Kind, path: String) : Cache(target, kind, path) {
+        class Monolithic(target: KonanTarget, kind: Kind, path: String)
+            : Cache(target, kind, path, File(path).parentFile.parentFile.absolutePath)
+        {
             override fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency> {
                 val directory = File(path).absoluteFile.parentFile
                 val data = directory.child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
@@ -71,9 +85,9 @@ class CachedLibraries(
             }
         }
 
-        class PerFile(target: KonanTarget, kind: Kind, path: String) : Cache(target, kind, path) {
-            private val fileDirs by lazy { File(path).listFiles.filter { it.isDirectory }.sortedBy { it.name } }
-
+        class PerFile(target: KonanTarget, kind: Kind, path: String, private val fileDirs: List<File>)
+            : Cache(target, kind, path, File(path).absolutePath)
+        {
             private val perFileBitcodeDependencies by lazy {
                 fileDirs.associate {
                     val data = it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
@@ -120,6 +134,7 @@ class CachedLibraries(
     }
 
     private val cacheDirsContents = mutableMapOf<String, Set<String>>()
+    private val librariesFileDirs = mutableMapOf<KotlinLibrary, List<File>>()
 
     private fun selectCache(library: KotlinLibrary, cacheDir: File): Cache? {
         // See Linker.renameOutput why is it ok to have an empty cache directory.
@@ -141,7 +156,13 @@ class CachedLibraries(
         return when {
             dynamicFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.DYNAMIC, dynamicFile.absolutePath)
             staticFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.STATIC, staticFile.absolutePath)
-            else -> Cache.PerFile(target, Kind.STATIC, cacheDir.absolutePath)
+            else -> {
+                val libraryFileDirs = librariesFileDirs.getOrPut(library) {
+                    library.getFilesWithFqNames().map { cacheDir.child(CacheSupport.cacheFileId(it.fqName, it.filePath)) }
+                }
+                Cache.PerFile(target, Kind.STATIC, cacheDir.absolutePath, libraryFileDirs)
+                        .takeIf { cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePath }) }
+            }
         }
     }
 
@@ -152,9 +173,16 @@ class CachedLibraries(
             selectCache(library, File(explicitPath))
                     ?: error("No cache found for library ${library.libraryName} at $explicitPath")
         } else {
-            implicitCacheDirectories.firstNotNullOfOrNull { dir ->
+            val libraryPath = library.libraryFile.absolutePath
+            if (autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) }) {
+                val dir = computeVersionedCacheDirectory(autoCacheDirectory, library, allLibraries)
                 selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
                         ?: selectCache(library, dir.child(getCachedLibraryName(library)))
+            } else {
+                implicitCacheDirectories.firstNotNullOfOrNull { dir ->
+                    selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
+                            ?: selectCache(library, dir.child(getCachedLibraryName(library)))
+                }
             }
         }
 
@@ -185,6 +213,37 @@ class CachedLibraries(
         fun getPerFileCachedLibraryName(library: KotlinLibrary): String = "${library.uniqueName}-per-file-cache"
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
+
+        private fun getAllDependencies(library: KotlinLibrary, allLibraries: List<KotlinLibrary>): List<KotlinLibrary> {
+            val uniqueNameToLibrary = allLibraries.associateBy { it.uniqueName }
+            val allDependencies = mutableSetOf<KotlinLibrary>()
+
+            fun traverseDependencies(library: KotlinLibrary) {
+                library.unresolvedDependencies.forEach {
+                    val dependency = uniqueNameToLibrary[it.path]!!
+                    if (dependency !in allDependencies) {
+                        allDependencies += dependency
+                        traverseDependencies(dependency)
+                    }
+                }
+            }
+
+            traverseDependencies(library)
+            return allDependencies.toList()
+        }
+
+        @OptIn(ExperimentalUnsignedTypes::class)
+        fun computeVersionedCacheDirectory(baseCacheDirectory: File, library: KotlinLibrary, allLibraries: List<KotlinLibrary>): File {
+            val dependencies = getAllDependencies(library, allLibraries)
+            val messageDigest = MessageDigest.getInstance("SHA-256")
+            messageDigest.digestLibrary(library)
+            dependencies.sortedBy { it.uniqueName }.forEach { messageDigest.digestLibrary(it) }
+
+            val version = library.versions.libraryVersion ?: "unspecified"
+            val hashString = messageDigest.digest().asUByteArray()
+                    .joinToString("") { it.toString(radix = 16).padStart(2, '0') }
+            return baseCacheDirectory.child(library.uniqueName).child(version).child(hashString)
+        }
 
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
         const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"

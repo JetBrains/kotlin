@@ -2782,7 +2782,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 }
 
                 val cache = context.config.cachedLibraries.getLibraryCache(library)
-                        ?: error("Library $library is expected to be cached")
+                        ?: error("Library ${library.libraryFile} is expected to be cached")
 
                 when (cache) {
                     is CachedLibraries.Cache.Monolithic -> listOf(addCtorFunction(ctorName))
