@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -333,61 +332,87 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
 /**
  * Redirect usages of complex declarations to top-level functions
  */
-class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) : BodyLoweringPass {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid()
-                return transformCall(expression)
-            }
+class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) : FileLoweringPass {
+    private val nestedExternalToNewTopLevelFunctions = context.mapping.wasmNestedExternalToNewTopLevelFunction
+    private val objectToGetInstanceFunctions = context.mapping.wasmExternalObjectToGetInstanceFunction
 
-            override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-                expression.transformChildrenVoid()
-                return transformCall(expression)
-            }
+    override fun lower(irFile: IrFile) {
+        irFile.acceptVoid(declarationTransformer)
+    }
 
-            override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-                val externalGetInstance = context.mapping.wasmExternalObjectToGetInstanceFunction[expression.symbol.owner]
-                return if (externalGetInstance != null) {
-                    IrCallImpl(
-                        expression.startOffset,
-                        expression.endOffset,
-                        expression.type,
-                        externalGetInstance.symbol,
-                        valueArgumentsCount = 0,
-                        typeArgumentsCount = 0
-                    )
+    private val declarationTransformer = object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitFile(declaration: IrFile) {
+            process(declaration)
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            if (!declaration.isExternal) {
+                process(declaration)
+            }
+        }
+
+        private fun process(container: IrDeclarationContainer) {
+            container.declarations.transformFlat { member ->
+                if (nestedExternalToNewTopLevelFunctions.keys.contains(member)) {
+                    emptyList()
                 } else {
-                    expression
+                    member.acceptVoid(this)
+                    null
                 }
             }
+        }
 
-            fun transformCall(call: IrFunctionAccessExpression): IrExpression {
-                val oldFun = call.symbol.owner.realOverrideTarget
-                val newFun: IrSimpleFunction? =
-                    context.mapping.wasmNestedExternalToNewTopLevelFunction[oldFun]
+        override fun visitBody(body: IrBody) {
+            body.transformChildrenVoid(usagesTransformer)
+        }
+    }
 
-                return if (newFun != null) {
-                    val newCall = irCall(call, newFun, receiversAsArguments = true)
+    private val usagesTransformer = object : IrElementTransformerVoid() {
+        override fun visitCall(expression: IrCall): IrExpression {
+            expression.transformChildrenVoid()
+            return transformCall(expression)
+        }
 
-                    // Add default arguments flags if needed
-                    val numDefaultParameters = numDefaultParametersForExternalFunction(oldFun)
-                    val firstDefaultFlagArgumentIdx = newFun.valueParameters.size - numDefaultParameters
-                    val firstOldDefaultArgumentIdx = call.valueArgumentsCount - numDefaultParameters
-                    repeat(numDefaultParameters) {
-                        val value = if (call.getValueArgument(firstOldDefaultArgumentIdx + it) == null) 1 else 0
-                        newCall.putValueArgument(
-                            firstDefaultFlagArgumentIdx + it,
-                            IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
-                        )
-                    }
+        override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+            expression.transformChildrenVoid()
+            return transformCall(expression)
+        }
 
-                    newCall
-                } else {
-                    call
-                }
+        override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
+            val externalGetInstance = objectToGetInstanceFunctions[expression.symbol.owner] ?: return expression
+            return IrCallImpl(
+                startOffset = expression.startOffset,
+                endOffset = expression.endOffset,
+                type = expression.type,
+                symbol = externalGetInstance.symbol,
+                valueArgumentsCount = 0,
+                typeArgumentsCount = 0
+            )
+        }
+
+        fun transformCall(call: IrFunctionAccessExpression): IrExpression {
+            val oldFun = call.symbol.owner.realOverrideTarget
+            val newFun: IrSimpleFunction = nestedExternalToNewTopLevelFunctions[oldFun] ?: return call
+
+            val newCall = irCall(call, newFun, receiversAsArguments = true)
+
+            // Add default arguments flags if needed
+            val numDefaultParameters = numDefaultParametersForExternalFunction(oldFun)
+            val firstDefaultFlagArgumentIdx = newFun.valueParameters.size - numDefaultParameters
+            val firstOldDefaultArgumentIdx = call.valueArgumentsCount - numDefaultParameters
+            repeat(numDefaultParameters) {
+                val value = if (call.getValueArgument(firstOldDefaultArgumentIdx + it) == null) 1 else 0
+                newCall.putValueArgument(
+                    firstDefaultFlagArgumentIdx + it,
+                    IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
+                )
             }
-        })
+            return newCall
+        }
     }
 }
 
