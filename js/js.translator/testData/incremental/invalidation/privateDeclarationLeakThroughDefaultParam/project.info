@@ -1,0 +1,5 @@
+MODULES: main
+
+STEP 0..13:
+    libs: main
+    dirty js: main

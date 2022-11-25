@@ -53,9 +53,9 @@ internal class IdSignatureHashCalculator {
     }
 
     private inner class InlineFunctionCallGraphBuilder : IrElementVisitor<Unit, MutableSet<IrFunction>> {
-        var inlineFunctionCallDepth: Int = 0
-
-        override fun visitElement(element: IrElement, data: MutableSet<IrFunction>) = element.acceptChildren(this, data)
+        override fun visitElement(element: IrElement, data: MutableSet<IrFunction>) {
+            element.acceptChildren(this, data)
+        }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction, data: MutableSet<IrFunction>) {
             if (declaration in inlineFunctionCallGraph) {
@@ -70,20 +70,13 @@ internal class IdSignatureHashCalculator {
             val callee = expression.symbol.owner
             if (callee.isInline) {
                 data += callee
-                inlineFunctionCallDepth += 1
             }
             expression.acceptChildren(this, data)
-            if (callee.isInline) {
-                inlineFunctionCallDepth -= 1
-                if (inlineFunctionCallDepth < 0) {
-                    icError("inline function calls depth inconsistent")
-                }
-            }
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: MutableSet<IrFunction>) {
             val reference = expression.symbol.owner
-            if (inlineFunctionCallDepth > 0 && reference.isInline) {
+            if (reference.isInline) {
                 // this if is fine, because fake overrides are not inlined as function reference calls even as inline function args
                 if (!reference.isFakeOverride) {
                     data += reference
