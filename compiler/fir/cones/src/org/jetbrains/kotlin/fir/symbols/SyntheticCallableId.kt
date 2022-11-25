@@ -34,4 +34,9 @@ object SyntheticCallableId {
         syntheticPackageName,
         Name.identifier("ID_CALL")
     )
+
+    val ACCEPT_SPECIFIC_TYPE = CallableId(
+        syntheticPackageName,
+        Name.identifier("ACCEPT_SPECIFIC_TYPE_CALL")
+    )
 }
