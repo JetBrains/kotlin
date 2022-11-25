@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 
 internal object CheckCallableReferenceExpectedType : CheckerStage() {
@@ -370,25 +371,25 @@ class FirFakeArgumentForCallableReference(
         get() = null
 
     override val typeRef: FirTypeRef
-        get() = error("should not be called")
+        get() = shouldNotBeCalled()
 
     override val annotations: List<FirAnnotation>
-        get() = error("should not be called")
+        get() = shouldNotBeCalled()
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        error("should not be called")
+        shouldNotBeCalled()
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression {
-        error("should not be called")
+        shouldNotBeCalled()
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        error("should not be called")
+        shouldNotBeCalled()
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        error("should not be called")
+        shouldNotBeCalled()
     }
 }
 

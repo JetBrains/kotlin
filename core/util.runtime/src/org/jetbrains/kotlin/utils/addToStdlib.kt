@@ -296,3 +296,7 @@ fun <E> MutableList<E>.popLast(): E = removeAt(lastIndex)
 
 fun <K : Enum<K>, V> enumMapOf(vararg pairs: Pair<K, V>): EnumMap<K, V> = EnumMap(mapOf(*pairs))
 fun <T : Enum<T>> enumSetOf(element: T, vararg elements: T): EnumSet<T> = EnumSet.of(element, *elements)
+
+fun shouldNotBeCalled(message: String = "should not be called"): Nothing {
+    error(message)
+}

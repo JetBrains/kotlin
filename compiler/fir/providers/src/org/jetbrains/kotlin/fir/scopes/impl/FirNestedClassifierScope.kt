@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession: FirSession) : FirContainingNamesAwareScope() {
     protected abstract fun getNestedClassSymbol(name: Name): FirClassLikeSymbol<*>?
@@ -69,7 +70,7 @@ class FirCompositeNestedClassifierScope(
     useSiteSession: FirSession
 ) : FirNestedClassifierScope(klass, useSiteSession) {
     override fun getNestedClassSymbol(name: Name): FirRegularClassSymbol? {
-        error("Should not be called")
+        shouldNotBeCalled()
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {

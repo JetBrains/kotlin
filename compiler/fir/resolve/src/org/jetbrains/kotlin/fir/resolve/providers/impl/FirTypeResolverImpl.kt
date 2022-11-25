@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @ThreadSafeMutableState
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
@@ -557,7 +558,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             get() = emptyList()
 
         override val callInfo: AbstractCallInfo
-            get() = throw UnsupportedOperationException("Should not be called")
+            get() = shouldNotBeCalled()
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrPluginContext(
     private val components: Fir2IrComponents,
@@ -94,7 +95,7 @@ class Fir2IrPluginContext(
         return referenceCallableSymbols(
             classId,
             getCallablesFromScope = { getDeclaredConstructors() },
-            getCallablesFromProvider = { error("should not be called") },
+            getCallablesFromProvider = { shouldNotBeCalled() },
             Fir2IrDeclarationStorage::getIrConstructorSymbol
         )
     }
