@@ -12,6 +12,7 @@
 # OWNER_LIST: "Kotlin IDE"
 # OWNER_LIST: "Kotlin Release"
 # OWNER_LIST: "Kotlin Multiplatform"
+# OWNER_LIST: "Kotlin Language Evolution"
 # OWNER_LIST: Mikhail.Glukhikh
 # OWNER_LIST: Yan.Zhulanow
 # OWNER_LIST: Alexander.Udalov
@@ -204,6 +205,7 @@
 /compiler/tests-mutes/ "Kotlin Build Infrastructure"
 /compiler/tests-spec/ "Kotlin Compiler Core"
 /compiler/util/ "Kotlin Compiler Core"
+/compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /compiler/util-io/ "Kotlin Native"
 /compiler/util-klib/ "Kotlin Native"
 /compiler/util-klib-metadata/ "Kotlin Native"
