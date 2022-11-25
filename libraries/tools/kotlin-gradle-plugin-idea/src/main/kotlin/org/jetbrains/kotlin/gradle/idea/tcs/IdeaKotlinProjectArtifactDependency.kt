@@ -21,6 +21,13 @@ data class IdeaKotlinProjectArtifactDependency(
             fun byName(resolveSourceSetName: (IdeaKotlinProjectArtifactDependency) -> String?): Resolver {
                 return DefaultProjectArtifactDependencyResolver(resolveSourceSetName)
             }
+
+            fun composite(vararg resolver: Resolver?) =
+                composite(resolver.toList())
+
+            fun composite(resolvers: Iterable<Resolver?>): Resolver =
+                CompositeProjectArtifactDependencyResolver(resolvers.filterNotNull())
+
         }
     }
 
@@ -45,5 +52,13 @@ private class DefaultProjectArtifactDependencyResolver(
             ),
             extras = dependency.extras
         )
+    }
+}
+
+private class CompositeProjectArtifactDependencyResolver(
+    private val resolvers: List<IdeaKotlinProjectArtifactDependency.Resolver>
+) : IdeaKotlinProjectArtifactDependency.Resolver {
+    override fun resolve(dependency: IdeaKotlinProjectArtifactDependency): IdeaKotlinSourceDependency? {
+        return resolvers.firstNotNullOfOrNull { resolver -> resolver.resolve(dependency) }
     }
 }
