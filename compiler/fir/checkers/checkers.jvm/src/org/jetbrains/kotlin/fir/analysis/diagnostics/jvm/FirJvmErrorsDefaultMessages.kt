@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_IN_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET
@@ -285,6 +286,14 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE,
             "Java SAM interface constructor references are prohibited"
+        )
+        map.put(
+            JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE,
+            "It's impossible to refer here a protected Java field from class ''{0}'', " +
+                    "because an invisible property from class ''{1}'' shadows it. " +
+                    "Rename the property from class ''{1}'' or change visibility of the field from class ''{0}''",
+            TO_STRING,
+            TO_STRING
         )
         map.put(
             REDUNDANT_REPEATABLE_ANNOTATION,

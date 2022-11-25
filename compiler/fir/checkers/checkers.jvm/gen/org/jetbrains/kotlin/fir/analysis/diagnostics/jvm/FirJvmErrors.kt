@@ -129,6 +129,7 @@ object FirJvmErrors {
     val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError0<PsiElement>(ProhibitConcurrentHashMapContains)
     val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError0<PsiElement>(ProhibitSpreadOnSignaturePolymorphicCall, SourceElementPositioningStrategies.SPREAD_OPERATOR)
     val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error0<PsiElement>()
+    val JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE by error2<PsiElement, ClassId, ClassId>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJvmErrorsDefaultMessages)

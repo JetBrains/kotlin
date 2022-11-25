@@ -92,11 +92,22 @@ fun lookupSuperTypes(
     }
 }
 
+fun FirClassSymbol<*>.isSubclassOf(
+    ownerLookupTag: ConeClassLikeLookupTag,
+    session: FirSession,
+    isStrict: Boolean,
+    lookupInterfaces: Boolean
+): Boolean {
+    lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+    return fir.isSubclassOf(ownerLookupTag, session, isStrict, SupertypeSupplier.Default, lookupInterfaces)
+}
+
 fun FirClass.isSubclassOf(
     ownerLookupTag: ConeClassLikeLookupTag,
     session: FirSession,
     isStrict: Boolean,
-    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+    lookupInterfaces: Boolean = true,
 ): Boolean {
     if (classId.isSame(ownerLookupTag.classId)) {
         return !isStrict
@@ -104,7 +115,7 @@ fun FirClass.isSubclassOf(
 
     return lookupSuperTypes(
         this,
-        lookupInterfaces = true,
+        lookupInterfaces = lookupInterfaces,
         deep = true,
         session,
         substituteTypes = false,

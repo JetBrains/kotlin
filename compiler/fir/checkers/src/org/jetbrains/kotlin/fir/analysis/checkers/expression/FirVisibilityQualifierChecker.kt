@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -32,7 +31,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val firFile = context.containingDeclarations.firstOrNull() as? FirFile ?: return
+        val firFile = context.containingFile ?: return
         val firClassLikeDeclaration = symbol.fir
 
         if (!context.session.visibilityChecker.isClassLikeVisible(
