@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.fir.extensions.predicate
 
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 
+/**
+ * For reference read KDoc to [AbstractPredicate]
+ * @see [AbstractPredicate]
+ */
 sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
     abstract override val annotations: Set<AnnotationFqn>
     final override val metaAnnotations: Set<AnnotationFqn>
@@ -36,10 +40,6 @@ sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
         }
     }
 
-    /**
-     * Base class for all predicates with specific annotations
-     *  Declaration will be matched if at least one of [annotations] is found
-     */
     sealed class Annotated(final override val annotations: Set<AnnotationFqn>) : LookupPredicate(), AbstractPredicate.Annotated<LookupPredicate> {
         init {
             require(annotations.isNotEmpty()) {
@@ -52,100 +52,24 @@ sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
         }
     }
 
-    /**
-     * Matches declarations, which are annotated with [annotations]
-     *
-     * @Ann
-     * fun foo() {}
-     *
-     * fun bar(@Ann param: Int) {}
-     *
-     * @Ann
-     * class A {
-     *      fun baz() {}
-     *
-     *      class Nested {
-     *          fun foobar() {}
-     *      }
-     * }
-     *
-     * Matched symbols: [fun foo, parameter `param` from fun bar, class A]
-     */
     class AnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.AnnotatedWith<LookupPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
             return visitor.visitAnnotatedWith(this, data)
         }
     }
 
-    /**
-     * Matches declaration, if one of its containers annotated with [annotations]
-     *
-     * @Ann
-     * fun foo() {}
-     *
-     * fun bar(@Ann param: Int) {}
-     *
-     * @Ann
-     * class A {
-     *      fun baz() {}
-     *
-     *      class Nested {
-     *          fun foobar() {}
-     *      }
-     * }
-     *
-     * Matched symbols: [fun A.baz, class Nested, fun Nested.foobar]
-     */
     class AncestorAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.AncestorAnnotatedWith<LookupPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
             return visitor.visitAncestorAnnotatedWith(this, data)
         }
     }
 
-    /**
-     * Matches declaration, if its direct container annotated with [annotations]
-     *
-     * @Ann
-     * fun foo() {}
-     *
-     * fun bar(@Ann param: Int) {}
-     *
-     * @Ann
-     * class A {
-     *      fun baz() {}
-     *
-     *      class Nested {
-     *          fun foobar() {}
-     *      }
-     * }
-     *
-     * Matched symbols: [fun A.baz, class Nested]
-     */
     class ParentAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.ParentAnnotatedWith<LookupPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
             return visitor.visitParentAnnotatedWith(this, data)
         }
     }
 
-    /**
-     * Matches declaration, if one of its direct child declarations annotated with [annotations]
-     *
-     * @Ann
-     * fun foo() {}
-     *
-     * fun bar(@Ann param: Int) {}
-     *
-     * class A {
-     *      @Ann
-     *      fun baz() {}
-     *
-     *      class Nested {
-     *          fun foobar() {}
-     *      }
-     * }
-     *
-     * Matched symbols: [fun bar, class A]
-     */
 
     class HasAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.HasAnnotatedWith<LookupPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {

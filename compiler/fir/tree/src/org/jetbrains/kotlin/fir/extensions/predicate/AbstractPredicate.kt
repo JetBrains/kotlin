@@ -6,13 +6,31 @@
 package org.jetbrains.kotlin.fir.extensions.predicate
 
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
+import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 
+/**
+ * Predicates are the mechanism for compiler plugins which allows to search for annotated declarations
+ *   or check if some declaration matches some predicate or not.
+ * There are two different kinds of predicates: [LookupPredicate] and [DeclarationPredicate]
+ *
+ * [LookupPredicate] allows user to get all declarations in current module, which matches this predicate
+ * Both [LookupPredicate] and [DeclarationPredicate] allow user to check if some declaration matches the predicate
+ * The main component which can be used with predicate is [FirPredicateBasedProvider]
+ *
+ * The main difference between [LookupPredicate] and [DeclarationPredicate] is that [DeclarationPredicate] allows
+ *   to create predicate with meta annotations, and [LookupPredicate] allows to use only annotations with predefined
+ *   qualified names
+ */
 sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
     val annotations: Set<AnnotationFqn>
     val metaAnnotations: Set<AnnotationFqn>
 
     fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R
 
+    /**
+     * Boolean combinator OR for two predicates, matches declaration if
+     *   [a] matches declaration or [b] matches declaration
+     */
     sealed interface Or<P : AbstractPredicate<P>> : AbstractPredicate<P> {
         val a: P
         val b: P
@@ -22,6 +40,10 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
         }
     }
 
+    /**
+     * Boolean combinator AND for two predicates, matches declaration if
+     *   [a] matches declaration and [b] matches declaration
+     */
     sealed interface And<P : AbstractPredicate<P>> : AbstractPredicate<P> {
         val a: P
         val b: P
@@ -33,31 +55,110 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
 
     // ------------------------------------ Annotated ------------------------------------
 
+    /**
+     * Base class for all predicates with specific annotations
+     *  Declaration will be matched if at least one of [annotations] is found
+     */
     sealed interface Annotated<P : AbstractPredicate<P>> : AbstractPredicate<P> {
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitAnnotated(this, data)
         }
     }
 
+    /**
+     * Matches declarations, which are annotated with [annotations]
+     *
+     * @Ann
+     * fun foo() {}
+     *
+     * fun bar(@Ann param: Int) {}
+     *
+     * @Ann
+     * class A {
+     *      fun baz() {}
+     *
+     *      class Nested {
+     *          fun foobar() {}
+     *      }
+     * }
+     *
+     * Matched symbols: [fun foo, parameter `param` from fun bar, class A]
+     */
     sealed interface AnnotatedWith<P : AbstractPredicate<P>> : Annotated<P> {
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitAnnotatedWith(this, data)
         }
     }
 
+    /**
+     * Matches declaration, if one of its containers annotated with [annotations]
+     *
+     * @Ann
+     * fun foo() {}
+     *
+     * fun bar(@Ann param: Int) {}
+     *
+     * @Ann
+     * class A {
+     *      fun baz() {}
+     *
+     *      class Nested {
+     *          fun foobar() {}
+     *      }
+     * }
+     *
+     * Matched symbols: [fun A.baz, class Nested, fun Nested.foobar]
+     */
     sealed interface AncestorAnnotatedWith<P : AbstractPredicate<P>> : Annotated<P> {
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitAncestorAnnotatedWith(this, data)
         }
     }
 
-
+    /**
+     * Matches declaration, if its direct container annotated with [annotations]
+     *
+     * @Ann
+     * fun foo() {}
+     *
+     * fun bar(@Ann param: Int) {}
+     *
+     * @Ann
+     * class A {
+     *      fun baz() {}
+     *
+     *      class Nested {
+     *          fun foobar() {}
+     *      }
+     * }
+     *
+     * Matched symbols: [fun A.baz, class Nested]
+     */
     sealed interface ParentAnnotatedWith<P : AbstractPredicate<P>> : Annotated<P> {
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitParentAnnotatedWith(this, data)
         }
     }
 
+    /**
+     * Matches declaration, if one of its direct child declarations annotated with [annotations]
+     *
+     * @Ann
+     * fun foo() {}
+     *
+     * fun bar(@Ann param: Int) {}
+     *
+     * class A {
+     *      @Ann
+     *      fun baz() {}
+     *
+     *      class Nested {
+     *          fun foobar() {}
+     *      }
+     * }
+     *
+     * Matched symbols: [fun bar, class A]
+     */
     sealed interface HasAnnotatedWith<P : AbstractPredicate<P>> : Annotated<P> {
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitHasAnnotatedWith(this, data)
@@ -66,6 +167,38 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
 
     // ------------------------------------ MetaAnnotated ------------------------------------
 
+    /**
+     * Matches declarations, which are annotated with annotations which are annotated with [metaAnnotations]
+     * Relation "annotation with meta annotation" is transitive. E.g. in snippet below some declaration will
+     *   be matched with predicate MetaAnnotatedWith("Ann") if it is annotated with `@Ann`, `@Some` or `@Other`
+     *
+     * @Ann
+     * annotation class Some
+     *
+     * @Some
+     * annotation class Other
+     *
+     *
+     * @Some
+     * fun foo() {}
+     *
+     * fun bar(@Ann param: Int) {}
+     *
+     * @Some
+     * class A {
+     *      fun baz() {}
+     *
+     *      class Nested {
+     *          @Other
+     *          fun foobar() {}
+     *      }
+     * }
+     *
+     * Matched symbols: [fun foo, class A, fun A.Nested.foobar]
+     *
+     * Note that [MetaAnnotatedWith] predicate has no implementation in [LookupPredicate] hierarchy
+     *   and can not be used for global lookup
+     */
     sealed interface MetaAnnotatedWith<P : AbstractPredicate<P>> : AbstractPredicate<P> {
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitMetaAnnotatedWith(this, data)

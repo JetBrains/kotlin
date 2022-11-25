@@ -44,6 +44,7 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         return file in cache.filesWithPluginAnnotations
     }
 
+    @FirExtensionApiInternals
     override fun registerAnnotatedDeclaration(declaration: FirDeclaration, owners: PersistentList<FirDeclaration>) {
         cache.ownersForDeclaration[declaration] = owners
         registerOwnersDeclarations(declaration, owners)

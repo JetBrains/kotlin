@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
-import org.jetbrains.kotlin.fir.extensions.markedWithMetaAnnotationImpl
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
-import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
@@ -157,6 +154,7 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         } as FirTypeAlias
     }
 
+    @OptIn(FirExtensionApiInternals::class)
     override fun transformDeclaration(declaration: FirDeclaration, data: Nothing?): FirDeclaration {
         return (transformAnnotationContainer(declaration, data) as FirDeclaration).also {
             predicateBasedProvider.registerAnnotatedDeclaration(declaration, owners)
