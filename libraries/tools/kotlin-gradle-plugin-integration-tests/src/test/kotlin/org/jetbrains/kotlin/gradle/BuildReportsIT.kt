@@ -223,4 +223,16 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("build scan metrics validation")
+    @GradleTest
+    fun testBuildScanMetricsValidation(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildAndFail(
+                "compileKotlin", "-Pkotlin.build.report.output=BUILD_SCAN", "-Pkotlin.build.report.build_scan.metrics=unknown_prop"
+            ) {
+                assertOutputContains("Unknown metric: 'unknown_prop', list of available metrics")
+            }
+        }
+    }
+
 }
