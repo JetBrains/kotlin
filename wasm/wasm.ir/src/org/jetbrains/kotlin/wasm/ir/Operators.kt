@@ -365,7 +365,8 @@ enum class WasmOp(
     ARRAY_COPY("array.copy", 0xFB_18, listOf(STRUCT_TYPE_IDX, STRUCT_TYPE_IDX)),
     ARRAY_NEW_DATA("array.new_data", 0xFB_1D, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
     ARRAY_NEW_FIXED("array.new_fixed", 0xFB_1A, listOf(STRUCT_TYPE_IDX, CONST_I32)),
-    ARRAY_NEW_ELEM("array.new_elem", 0xFB_1F, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
+// Not yet supported by Binaryen (supported as 0xFB_10)
+//    ARRAY_NEW_ELEM("array.new_elem", 0xFB_1F, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
 
     I31_NEW("i31.new", 0xFB_20),
     I31_GET_S("i31.get_s", 0xFB_21),
