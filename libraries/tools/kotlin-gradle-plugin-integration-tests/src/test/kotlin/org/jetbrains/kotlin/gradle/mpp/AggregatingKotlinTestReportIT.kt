@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -45,6 +46,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                     ":${nativeTarget}Test"
                 )
                 assertTasksFailed(":allTests")
+                assertNoTestsStateFileException()
             }
 
             buildAndFail(":allTests") {
@@ -63,6 +65,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                     ":${nativeTarget}Test",
                 )
                 assertTasksFailed(":allTests")
+                assertNoTestsStateFileException()
             }
 
             buildAndFail(":allTests") {
@@ -81,6 +84,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                     ":${nativeTarget}Test",
                 )
                 assertTasksFailed(":allTests")
+                assertNoTestsStateFileException()
             }
 
             buildAndFail(":jvmWithoutJavaTest") {
@@ -92,6 +96,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                 assertTasksFailed(
                     ":jvmWithoutJavaTest",
                 )
+                assertNoTestsStateFileException()
             }
         }
     }
@@ -114,6 +119,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                     ":${nativeTarget}Test",
                     ":allTests",
                 )
+                assertNoTestsStateFileException()
             }
 
             build(":allTests") {
@@ -124,25 +130,35 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
                     ":${nativeTarget}Test",
                     ":allTests",
                 )
+                assertNoTestsStateFileException()
             }
 
             build(":jvmWithoutJavaTest") {
                 assertTasksUpToDate(
                     ":jvmWithoutJavaTest",
                 )
+                assertNoTestsStateFileException()
             }
 
             build(":jsTest") {
                 assertTasksUpToDate(
                     ":jsNodeTest",
                 )
+                assertNoTestsStateFileException()
             }
 
             build(":${nativeTarget}Test") {
                 assertTasksUpToDate(
                     ":${nativeTarget}Test",
                 )
+                assertNoTestsStateFileException()
             }
         }
     }
+}
+
+private fun BuildResult.assertNoTestsStateFileException() {
+    // KT-55134
+    assertOutputDoesNotContain("Cannot read test tasks state from")
+    assertOutputDoesNotContain("Cannot store test tasks state into")
 }
