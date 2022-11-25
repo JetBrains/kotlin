@@ -17,7 +17,7 @@ internal fun IdeaKotlinProjectCoordinatesProto(coordinates: IdeaKotlinProjectCoo
     }
 }
 
-fun IdeaKotlinProjectCoordinates(proto: IdeaKotlinProjectCoordinatesProto): IdeaKotlinProjectCoordinates {
+internal fun IdeaKotlinProjectCoordinates(proto: IdeaKotlinProjectCoordinatesProto): IdeaKotlinProjectCoordinates {
     return IdeaKotlinProjectCoordinates(
         buildId = proto.buildId,
         projectPath = proto.projectPath,
