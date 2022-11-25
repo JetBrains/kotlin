@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
@@ -1576,6 +1577,7 @@ class Fir2IrDeclarationStorage(
             val signature = signatureComposer.composeSignature(script)!!
             symbolTable.declareScript(signature, { Fir2IrScriptSymbol(signature) }) { symbol ->
                 IrScriptImpl(symbol, script.name, irFactory, startOffset, endOffset).also { irScript ->
+                    irScript.origin = SCRIPT_K2_ORIGIN
                     irScript.metadata = FirMetadataSource.Script(script)
                     irScript.explicitCallParameters = emptyList()
                     irScript.implicitReceiversParameters = emptyList()

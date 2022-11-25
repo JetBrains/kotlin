@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 
 private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("SCRIPT") {}
+val SCRIPT_K2_ORIGIN = object : IrDeclarationOriginImpl("SCRIPT_K2") {}
 
 class IrScriptImpl(
     override val symbol: IrScriptSymbol,
