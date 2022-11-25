@@ -277,8 +277,8 @@
 /libraries/reflect/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/scripting/ "Kotlin Compiler Core"
 /libraries/stdlib/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
-libraries/stdlib/wasm/builtins/ "Kotlin Wasm"
-libraries/stdlib/wasm/internal/ "Kotlin Wasm"
+/libraries/stdlib/wasm/builtins/ "Kotlin Wasm"
+/libraries/stdlib/wasm/internal/ "Kotlin Wasm"
 
 /libraries/tools/atomicfu/ "Kotlin Libraries"
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
