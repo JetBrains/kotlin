@@ -65,8 +65,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
         val nullableNothingType = context.session.builtinTypes.nullableNothingType.coneType
         for (varargParameter in varargParameters) {
             val varargParameterType = varargParameter.returnTypeRef.coneType.arrayElementType() ?: continue
-            if (AbstractTypeChecker.isSubtypeOf(context.session.typeContext, varargParameterType, nullableNothingType) ||
-                (varargParameterType.isInlineClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
+            if (AbstractTypeChecker.isSubtypeOf(context.session.typeContext, varargParameterType, nullableNothingType)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {

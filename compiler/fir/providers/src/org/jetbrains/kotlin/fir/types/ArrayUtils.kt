@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 val ConeKotlinType.isArrayOrPrimitiveArray: Boolean
@@ -23,6 +24,9 @@ fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiv
                 StandardClassIds.primitiveArrayTypeByElementType[classId] ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
             if (primitiveArrayId != null) {
                 return primitiveArrayId.constructClassLikeType(emptyArray(), nullable)
+            }
+            if (classId.asString().contains("IC")) {
+                return classId.createNestedClassId(Name.identifier("Array")).constructClassLikeType(emptyArray(), nullable)
             }
         }
     }

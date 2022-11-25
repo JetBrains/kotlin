@@ -25,19 +25,19 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
-import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.Variance
@@ -206,7 +206,8 @@ open class RawFirBuilder(
             defaultTypeRef: FirTypeRef? = null,
             valueParameterDeclaration: ValueParameterDeclaration,
             additionalAnnotations: List<FirAnnotation> = emptyList()
-        ): FirValueParameter = valueParameter.toFirValueParameter(defaultTypeRef, functionSymbol, valueParameterDeclaration, additionalAnnotations)
+        ): FirValueParameter =
+            valueParameter.toFirValueParameter(defaultTypeRef, functionSymbol, valueParameterDeclaration, additionalAnnotations)
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
             convertSafe() ?: buildImplicitTypeRef {
@@ -1208,6 +1209,44 @@ open class RawFirBuilder(
                             ).generate()
                         }
 
+                        if (classOrObject.hasModifier(VALUE_KEYWORD)) {
+                            val arrayClassId = context.currentClassId.createNestedClassId(Name.identifier("Array"))
+                            addDeclaration(buildRegularClass {
+                                name = arrayClassId.shortClassName
+                                origin = FirDeclarationOrigin.Synthetic
+                                symbol = FirRegularClassSymbol(arrayClassId)
+                                scopeProvider = baseScopeProvider
+                                this.classKind = ClassKind.CLASS
+                                moduleData = baseModuleData
+                                this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                                addDeclaration(buildSimpleFunction {
+                                    val functionName = Name.identifier("get")
+                                    name = functionName
+                                    origin = FirDeclarationOrigin.Synthetic
+                                    symbol = FirNamedFunctionSymbol(CallableId(arrayClassId, functionName))
+                                    this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply { isOperator = true }
+                                    moduleData = baseModuleData
+                                    valueParameters.add(buildValueParameter {
+                                        containingFunctionSymbol = this@buildSimpleFunction.symbol
+                                        origin = FirDeclarationOrigin.Synthetic
+                                        name = Name.identifier("index")
+                                        symbol = FirValueParameterSymbol(name)
+                                        isCrossinline = false
+                                        isNoinline = false
+                                        isVararg = false
+                                        moduleData = baseModuleData
+                                        returnTypeRef = FirImplicitIntTypeRef(source = null)
+                                    })
+                                    val inlineClassType =
+                                        FirRegularClassSymbol(context.currentClassId).constructType(emptyArray(), isNullable = false)
+                                    returnTypeRef = buildResolvedTypeRef { this.type = inlineClassType }
+                                    dispatchReceiverType =
+                                        FirRegularClassSymbol(arrayClassId).constructType(emptyArray(), isNullable = false)
+                                    body = buildEmptyExpressionBlock()
+                                })
+                            })
+                        }
+
                         if (classOrObject.hasModifier(ENUM_KEYWORD)) {
                             generateValuesFunction(
                                 baseModuleData,
@@ -1593,7 +1632,7 @@ open class RawFirBuilder(
         }
 
         private fun KtDeclarationWithInitializer.toInitializerExpression() =
-            runIf (hasInitializer()) {
+            runIf(hasInitializer()) {
                 buildOrLazyExpression(initializer?.toFirSourceElement()) {
                     initializer.toFirExpression("Should have initializer")
                 }

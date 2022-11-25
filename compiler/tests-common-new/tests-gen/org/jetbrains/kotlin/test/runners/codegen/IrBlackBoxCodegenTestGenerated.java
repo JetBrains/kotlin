@@ -21762,6 +21762,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineVarargParam.kt")
+        public void testInlineVarargParam() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineVarargParam.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
         public void testIterateOverArrayOfInlineClassValues() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
