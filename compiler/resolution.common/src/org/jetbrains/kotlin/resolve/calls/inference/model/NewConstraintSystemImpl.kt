@@ -206,46 +206,64 @@ class NewConstraintSystemImpl(
         state = beforeState
     }
 
-    override fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean {
-        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        val beforeState = state
-        val beforeInitialConstraintCount = storage.initialConstraints.size
-        val beforeErrorsCount = storage.errors.size
-        val beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints
-        val beforeTypeVariablesTransactionSize = typeVariablesTransaction.size
-        val beforeMissedConstraintsCount = storage.missedConstraints.size
-        val beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount }
-        val beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size
-
-        state = State.TRANSACTION
-        // typeVariablesTransaction is clear
-        if (runOperations()) {
-            closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
-            return true
+    private inner class TransactionState(
+        private val beforeState: State,
+        private val beforeInitialConstraintCount: Int,
+        private val beforeErrorsCount: Int,
+        private val beforeMaxTypeDepthFromInitialConstraints: Int,
+        private val beforeTypeVariablesTransactionSize: Int,
+        private val beforeMissedConstraintsCount: Int,
+        private val beforeConstraintCountByVariables: Map<TypeConstructorMarker, Int>,
+        private val beforeConstraintsFromAllForks: Int,
+    ) : ConstraintSystemTransaction() {
+        override fun closeTransaction() {
+            checkState(State.TRANSACTION)
+            typeVariablesTransaction.trimToSize(beforeTypeVariablesTransactionSize)
+            state = beforeState
         }
 
-        for (addedTypeVariable in typeVariablesTransaction.subList(beforeTypeVariablesTransactionSize, typeVariablesTransaction.size)) {
-            storage.allTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
-            storage.notFixedTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
-        }
-        storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
-        storage.errors.trimToSize(beforeErrorsCount)
-        storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
-        storage.constraintsFromAllForkPoints.trimToSize(beforeConstraintsFromAllForks)
-
-        val addedInitialConstraints = storage.initialConstraints.subList(beforeInitialConstraintCount, storage.initialConstraints.size)
-
-        for (variableWithConstraint in storage.notFixedTypeVariables.values) {
-            val sinceIndexToRemoveConstraints =
-                beforeConstraintCountByVariables[variableWithConstraint.typeVariable.freshTypeConstructor()]
-            if (sinceIndexToRemoveConstraints != null) {
-                variableWithConstraint.removeLastConstraints(sinceIndexToRemoveConstraints)
+        override fun rollbackTransaction() {
+            for (addedTypeVariable in typeVariablesTransaction.subList(beforeTypeVariablesTransactionSize, typeVariablesTransaction.size)) {
+                storage.allTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
+                storage.notFixedTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
             }
-        }
+            storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
+            storage.errors.trimToSize(beforeErrorsCount)
+            storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
+            storage.constraintsFromAllForkPoints.trimToSize(beforeConstraintsFromAllForks)
 
-        addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
-        closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
-        return false
+            val addedInitialConstraints = storage.initialConstraints.subList(
+                beforeInitialConstraintCount,
+                storage.initialConstraints.size
+            )
+
+            for (variableWithConstraint in storage.notFixedTypeVariables.values) {
+                val sinceIndexToRemoveConstraints =
+                    beforeConstraintCountByVariables[variableWithConstraint.typeVariable.freshTypeConstructor()]
+                if (sinceIndexToRemoveConstraints != null) {
+                    variableWithConstraint.removeLastConstraints(sinceIndexToRemoveConstraints)
+                }
+            }
+
+            addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
+            closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
+        }
+    }
+
+    override fun prepareTransaction(): ConstraintSystemTransaction {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        return TransactionState(
+            beforeState = state,
+            beforeInitialConstraintCount = storage.initialConstraints.size,
+            beforeErrorsCount = storage.errors.size,
+            beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints,
+            beforeTypeVariablesTransactionSize = typeVariablesTransaction.size,
+            beforeMissedConstraintsCount = storage.missedConstraints.size,
+            beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount },
+            beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size,
+        ).also {
+            state = State.TRANSACTION
+        }
     }
 
     // ConstraintSystemBuilder, KotlinConstraintSystemCompleter.Context
