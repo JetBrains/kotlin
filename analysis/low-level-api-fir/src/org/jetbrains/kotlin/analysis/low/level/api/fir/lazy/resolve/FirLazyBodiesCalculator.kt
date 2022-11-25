@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi.*
 
 internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesInside(designation: FirDeclarationDesignation) {
@@ -133,6 +130,20 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
+    fun calculateLazyBodyForAnonymousInitializer(designation: FirDeclarationDesignation) {
+        val initializer = designation.declaration as FirAnonymousInitializer
+        require(initializer.body is FirLazyBlock)
+        val newInitializer = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+            session = initializer.moduleData.session,
+            scopeProvider = initializer.moduleData.session.kotlinScopeProvider,
+            designation = designation,
+            rootNonLocalDeclaration = initializer.psi as KtAnonymousInitializer,
+        ) as FirAnonymousInitializer
+        initializer.apply {
+            replaceBody(newInitializer.body)
+        }
+    }
+
     fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
         firProperty.getter?.body is FirLazyBlock
                 || firProperty.setter?.body is FirLazyBlock
@@ -201,5 +212,15 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             FirLazyBodiesCalculator.calculateLazyInitializerForEnumEntry(designation)
         }
         return enumEntry
+    }
+
+    override fun transformAnonymousInitializer(
+        anonymousInitializer: FirAnonymousInitializer, data: PersistentList<FirDeclaration>
+    ): FirAnonymousInitializer {
+        if (anonymousInitializer.body is FirLazyBlock) {
+            val designation = FirDeclarationDesignation(data, anonymousInitializer)
+            FirLazyBodiesCalculator.calculateLazyBodyForAnonymousInitializer(designation)
+        }
+        return anonymousInitializer
     }
 }

@@ -437,7 +437,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         anonymousInitializer.configure {
-            +body(nullable = true)
+            +body(nullable = true, withReplace = true)
             +symbol("FirAnonymousInitializerSymbol")
         }
 

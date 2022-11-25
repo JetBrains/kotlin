@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
-    private val originalDeclaration: FirTypeParameterRefsOwner,
+    private val originalDeclarationIfParamertized: FirTypeParameterRefsOwner?,
     private val declarationToBuild: KtDeclaration,
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null
@@ -45,7 +45,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.declaration as FirTypeParameterRefsOwner,
+                originalDeclarationIfParamertized = designation.declaration as? FirTypeParameterRefsOwner,
                 declarationToBuild = rootNonLocalDeclaration,
                 replacementApplier = replacementApplier
             )
@@ -70,7 +70,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.declaration as FirTypeParameterRefsOwner,
+                originalDeclarationIfParamertized = designation.declaration as? FirTypeParameterRefsOwner,
                 declarationToBuild = rootNonLocalDeclaration,
                 functionsToRebind = functionsToRebind,
             )
@@ -89,8 +89,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         declarationSource: KtSourceElement?,
         currentFirTypeParameters: List<FirTypeParameterRef>
     ) {
-        if (declarationSource?.psi == originalDeclaration.psi) {
-            super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
+        if (originalDeclarationIfParamertized != null && declarationSource?.psi == originalDeclarationIfParamertized.psi) {
+            super.addCapturedTypeParameters(status, declarationSource, originalDeclarationIfParamertized.typeParameters)
         } else {
             super.addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
         }

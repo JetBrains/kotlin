@@ -4,8 +4,7 @@ FILE: constructorInObject.kt
             super<R|kotlin/Any|>()
         }
 
-        init {
-        }
+        init { LAZY_BLOCK }
 
     }
     public? final? enum class B : R|kotlin/Enum<B>| {
