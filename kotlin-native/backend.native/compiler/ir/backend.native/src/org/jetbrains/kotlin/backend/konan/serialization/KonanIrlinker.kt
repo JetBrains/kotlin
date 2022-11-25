@@ -699,6 +699,13 @@ internal class KonanIrLinker(
             deserializedSymbols[idSig]?.let { return it }
 
             val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
+            if (partialLinkageSupport.partialLinkageEnabled
+                    && descriptor.isTopLevelInPackage()
+                    && (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == DescriptorVisibilities.PRIVATE
+                    && with(KonanManglerDesc) { !descriptor.isPlatformSpecificExport() }
+            ) {
+                return null // Fixes case #1 in KT-54469
+            }
 
             descriptorSignatures[descriptor] = idSig
 
