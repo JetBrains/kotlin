@@ -122,6 +122,15 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                     context
                 )
             }
+            is ConeInapplicableWrongReceiver -> {
+                reporter.reportOn(
+                    source,
+                    FirErrors.COMPONENT_FUNCTION_MISSING,
+                    diagnostic.candidates.first().callInfo.name,
+                    destructuringDeclarationType,
+                    context
+                )
+            }
             is ConeAmbiguityError -> {
                 reporter.reportOn(
                     source,
