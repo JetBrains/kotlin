@@ -98,8 +98,7 @@ internal class AdapterGenerator(
      * At the use site, instead of referenced, we can put the suspend lambda as an adapter.
      */
     private fun needSuspendConversion(type: IrSimpleType, function: IrFunction): Boolean =
-        // TODO: should refer to LanguageVersionSettings.SuspendConversion
-        type.isKSuspendFunction() && !function.isSuspend
+        type.isSuspendFunction() && !function.isSuspend
 
     /**
      * For example,
@@ -132,9 +131,6 @@ internal class AdapterGenerator(
             value is ResolvedCallArgument.VarargArgument || value is ResolvedCallArgument.DefaultArgument
         }
     }
-
-    internal fun ConeKotlinType.kFunctionTypeToFunctionType(): IrSimpleType =
-        reflectFunctionTypeToNonReflectFunctionType(session).toIrType() as IrSimpleType
 
     internal fun generateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,

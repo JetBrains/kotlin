@@ -46,7 +46,7 @@ fun withVararg(vararg xs: Int): Int {
 fun test1() {
   { // BLOCK
     val <array>: A = A
-    val <index_0>: KFunction1<Int, Unit> = local fun withVararg(p0: Int) {
+    val <index_0>: Function1<Int, Unit> = local fun withVararg(p0: Int) {
       withVararg(xs = [p0])
     }
 
@@ -57,7 +57,7 @@ fun test1() {
 fun test2() {
   { // BLOCK
     val <array>: B = B
-    val <index_0>: KFunction1<Int, Unit> = local fun withVararg(p0: Int) {
+    val <index_0>: Function1<Int, Unit> = local fun withVararg(p0: Int) {
       withVararg(xs = [p0])
     }
 
