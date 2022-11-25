@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -45,19 +44,9 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SymbolInternals::class)
 class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
-    companion object {
-        private val allowedKindsForDebugInfo = setOf(
-            KtRealSourceElementKind,
-            KtFakeSourceElementKind.DesugaredCompoundAssignment,
-            KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
-            KtFakeSourceElementKind.SmartCastExpression
-        )
-    }
-
     private val globalMetadataInfoHandler: GlobalMetadataInfoHandler
         get() = testServices.globalMetadataInfoHandler
 
@@ -146,19 +135,19 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeComparingModeEnabled: Boolean
     ) {
         val result = mutableListOf<KtDiagnostic>()
-        val diagnosedRangesToDiagnosticNames = globalMetadataInfoHandler.getExistingMetaInfosForFile(testFile).groupBy(
-            keySelector = { it.start..it.end },
-            valueTransform = { it.tag }
-        ).mapValues { (_, it) -> it.toSet() }
+
+        val diagnosedRangesToDiagnosticNames = globalMetadataInfoHandler.getExistingMetaInfosForFile(testFile)
+            .groupBy(keySelector = { it.start..it.end }, valueTransform = { it.tag })
+            .mapValues { (_, value) -> value.toSet() }
+
+        val consumer = DebugDiagnosticConsumer(result, diagnosedRangesToDiagnosticNames)
+
         object : FirDefaultVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (element is FirExpression) {
-                    result.addIfNotNull(
-                        createExpressionTypeDiagnosticIfExpected(
-                            element, diagnosedRangesToDiagnosticNames
-                        )
-                    )
+                    consumer.reportExpressionTypeDiagnostic(element)
                 }
+
                 if (element is FirSmartCastExpression) {
                     element.originalExpression.acceptChildren(this)
                 } else {
@@ -167,9 +156,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             }
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
-                result.addIfNotNull(
-                    createCallDiagnosticIfExpected(functionCall, functionCall.calleeReference, diagnosedRangesToDiagnosticNames)
-                )
+                consumer.reportCallDiagnostic(functionCall, functionCall.calleeReference)
 
                 super.visitFunctionCall(functionCall)
             }
@@ -177,118 +164,47 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
                 val selector = safeCallExpression.selector
                 if (selector is FirQualifiedAccess) {
-                    result.addIfNotNull(
-                        createCallDiagnosticIfExpected(
-                            safeCallExpression,
-                            selector.calleeReference as FirNamedReference,
-                            diagnosedRangesToDiagnosticNames
-                        )
-                    )
+                    val reference = selector.calleeReference as FirNamedReference
+                    consumer.reportCallDiagnostic(safeCallExpression, reference)
                 }
 
                 super.visitSafeCallExpression(safeCallExpression)
             }
         }.let(firFile::accept)
-        globalMetadataInfoHandler.addMetadataInfosForFile(
-            testFile,
-            result.flatMap { it.toMetaInfos(
+
+        val codeMetaInfos = result.flatMap { diagnostic ->
+            diagnostic.toMetaInfos(
                 testFile,
                 globalMetadataInfoHandler,
                 lightTreeEnabled,
                 lightTreeComparingModeEnabled,
                 forceRenderArguments = true
-            ) }
-        )
-    }
-
-    fun createExpressionTypeDiagnosticIfExpected(
-        element: FirExpression,
-        diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
-    ): KtDiagnosticWithParameters1<String>? =
-        DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
-            element.typeRef.renderAsString((element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.typeRef)
+            )
         }
 
-    private fun FirTypeRef.renderAsString(originalTypeRef: FirTypeRef?): String {
-        val type = coneTypeSafe<ConeKotlinType>() ?: return "Type is unknown"
-        val rendered = type.renderForDebugInfo()
-        val originalTypeRendered = originalTypeRef?.coneTypeSafe<ConeKotlinType>()?.renderForDebugInfo() ?: return rendered
-
-        return "$originalTypeRendered & $rendered"
+        globalMetadataInfoHandler.addMetadataInfosForFile(testFile, codeMetaInfos)
     }
 
-    private fun createCallDiagnosticIfExpected(
-        element: FirElement,
-        reference: FirNamedReference,
-        diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
-    ): KtDiagnosticWithParameters1<String>? =
-        DebugInfoDiagnosticFactory1.CALL.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
+    private fun DebugDiagnosticConsumer.reportExpressionTypeDiagnostic(element: FirExpression) {
+        report(DebugInfoDiagnosticFactory1.EXPRESSION_TYPE, element) {
+            val originalTypeRef = (element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.typeRef
+
+            val type = element.typeRef.coneTypeSafe<ConeKotlinType>()
+            val originalType = originalTypeRef?.coneTypeSafe<ConeKotlinType>()
+
+            if (type != null && originalType != null) {
+                "${originalType.renderForDebugInfo()} & ${type.renderForDebugInfo()}"
+            } else {
+                type?.renderForDebugInfo() ?: "Type is unknown"
+            }
+        }
+    }
+
+    private fun DebugDiagnosticConsumer.reportCallDiagnostic(element: FirElement, reference: FirNamedReference) {
+        report(DebugInfoDiagnosticFactory1.CALL, element) {
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val fqName = resolvedSymbol?.fqNameUnsafe()
             Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
-        }
-
-    private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: KtSourceElement): KtSourceElement {
-        val elementType = sourceElement.elementType
-        return if (this === DebugInfoDiagnosticFactory1.CALL
-            && (elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION || elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
-        ) {
-            if (sourceElement is KtPsiSourceElement) {
-                val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression
-                psi?.let { KtRealPsiSourceElement(it) } ?: sourceElement
-            } else {
-                val tree = sourceElement.treeStructure
-                val selector = tree.selector(sourceElement.lighterASTNode)
-                if (selector == null) {
-                    sourceElement
-                } else {
-                    val startDelta = tree.getStartOffset(selector) - tree.getStartOffset(sourceElement.lighterASTNode)
-                    val endDelta = tree.getEndOffset(selector) - tree.getEndOffset(sourceElement.lighterASTNode)
-                    KtLightSourceElement(
-                        selector, sourceElement.startOffset + startDelta, sourceElement.endOffset + endDelta, tree
-                    )
-                }
-            }
-        } else {
-            sourceElement
-        }
-    }
-
-    private inline fun DebugInfoDiagnosticFactory1.createDebugInfoDiagnostic(
-        element: FirElement,
-        diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>,
-        argument: () -> String,
-    ): KtDiagnosticWithParameters1<String>? {
-        val sourceElement = element.source ?: return null
-        if (sourceElement.kind !in allowedKindsForDebugInfo) return null
-
-        // Lambda argument is always (?) duplicated by function literal
-        // Block expression is always (?) duplicated by single block expression
-        if (sourceElement.elementType == KtNodeTypes.LAMBDA_ARGUMENT || sourceElement.elementType == KtNodeTypes.BLOCK) return null
-        // Unfortunately I had to repeat positioning strategy logic here
-        // (we need to check diagnostic range before applying it)
-        val positionedElement = getPositionedElement(sourceElement)
-        if (diagnosedRangesToDiagnosticNames[positionedElement.startOffset..positionedElement.endOffset]?.contains(this.name) != true) {
-            return null
-        }
-
-        val argumentText = argument()
-        val factory = KtDiagnosticFactory1<String>(name, severity, AbstractSourceElementPositioningStrategy.DEFAULT, PsiElement::class)
-        return when (positionedElement) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
-                positionedElement,
-                argumentText,
-                severity,
-                factory,
-                factory.defaultPositioningStrategy
-            )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
-                positionedElement,
-                argumentText,
-                severity,
-                factory,
-                factory.defaultPositioningStrategy
-            )
         }
     }
 
@@ -326,6 +242,89 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+}
+
+private class DebugDiagnosticConsumer(
+    private val result: MutableList<KtDiagnostic>,
+    private val diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
+) {
+    private companion object {
+        private val allowedKindsForDebugInfo = setOf(
+            KtRealSourceElementKind,
+            KtFakeSourceElementKind.DesugaredCompoundAssignment,
+            KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
+            KtFakeSourceElementKind.SmartCastExpression
+        )
+    }
+
+    fun report(debugFactory: DebugInfoDiagnosticFactory1, element: FirElement, argumentFactory: () -> String) {
+        val sourceElement = element.source?.takeIf { it.kind in allowedKindsForDebugInfo } ?: return
+
+        // Lambda argument is always (?) duplicated by function literal
+        // Block expression is always (?) duplicated by single block expression
+        if (sourceElement.elementType == KtNodeTypes.LAMBDA_ARGUMENT || sourceElement.elementType == KtNodeTypes.BLOCK) return
+
+        // Unfortunately I had to repeat positioning strategy logic here
+        // (we need to check diagnostic range before applying it)
+        val positionedElement = debugFactory.getPositionedElement(sourceElement)
+
+        val availableDiagnostics = diagnosedRangesToDiagnosticNames[positionedElement.startOffset..positionedElement.endOffset]
+        if (availableDiagnostics == null || debugFactory.name !in availableDiagnostics) {
+            return
+        }
+
+        val factory = KtDiagnosticFactory1<String>(
+            name = debugFactory.name,
+            severity = debugFactory.severity,
+            defaultPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT,
+            psiType = PsiElement::class
+        )
+
+        val diagnostic = when (positionedElement) {
+            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
+                positionedElement,
+                argumentFactory(),
+                debugFactory.severity,
+                factory,
+                factory.defaultPositioningStrategy
+            )
+            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
+                positionedElement,
+                argumentFactory(),
+                debugFactory.severity,
+                factory,
+                factory.defaultPositioningStrategy
+            )
+        }
+
+        result.add(diagnostic)
+    }
+
+    private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: KtSourceElement): KtSourceElement {
+        val elementType = sourceElement.elementType
+        return if (this === DebugInfoDiagnosticFactory1.CALL
+            && (elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION || elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
+        ) {
+            if (sourceElement is KtPsiSourceElement) {
+                val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression
+                psi?.let { KtRealPsiSourceElement(it) } ?: sourceElement
+            } else {
+                val tree = sourceElement.treeStructure
+                val selector = tree.selector(sourceElement.lighterASTNode)
+                if (selector == null) {
+                    sourceElement
+                } else {
+                    val startDelta = tree.getStartOffset(selector) - tree.getStartOffset(sourceElement.lighterASTNode)
+                    val endDelta = tree.getEndOffset(selector) - tree.getEndOffset(sourceElement.lighterASTNode)
+                    KtLightSourceElement(
+                        selector, sourceElement.startOffset + startDelta, sourceElement.endOffset + endDelta, tree
+                    )
+                }
+            }
+        } else {
+            sourceElement
+        }
+    }
 }
 
 class PsiLightTreeMetaInfoProcessor(testServices: TestServices) : AbstractTwoAttributesMetaInfoProcessor(testServices) {
