@@ -13,15 +13,11 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 
 object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
-        return sourceSet.dependencyTransformations[API_SCOPE]?.metadataDependencyResolutions?.toList().orEmpty()
-            .plus(sourceSet.dependencyTransformations[IMPLEMENTATION_SCOPE]?.metadataDependencyResolutions?.toList().orEmpty())
-            .plus(sourceSet.dependencyTransformations[COMPILE_ONLY_SCOPE]?.metadataDependencyResolutions?.toList().orEmpty())
-            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+        return sourceSet.resolveMetadata<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .flatMap { resolution -> resolveSourceDependencies(resolution) }
             .toSet()
     }
