@@ -111,4 +111,7 @@ afterEvaluate {
             apiVersion = "1.4"
         }
     }
+    tasks.withType<JavaCompile>().configureEach {
+        targetCompatibility = "1.8"
+    }
 }
