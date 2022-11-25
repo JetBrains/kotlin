@@ -136,7 +136,7 @@ private fun buildReflectionType(
                 ?: FunctionTypeKind.Function
 
             return createFunctionType(
-                baseFunctionTypeKind.reflectKind(),
+                if (callableReferenceAdaptation == null) baseFunctionTypeKind.reflectKind() else baseFunctionTypeKind.nonReflectKind(),
                 parameters,
                 receiverType = receiverType.takeIf { fir.receiverParameter != null },
                 rawReturnType = returnType,
@@ -239,9 +239,11 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
     }
 
+    var isThereVararg = mappedVarargElements.isNotEmpty()
     for (valueParameter in function.valueParameters) {
         if (valueParameter.isVararg && valueParameter !in mappedArguments) {
             mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(emptyList())
+            isThereVararg = true
         }
     }
 
@@ -262,6 +264,14 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         CallableReferenceConversionStrategy.CustomConversion(expectedTypeFunctionKind)
     } else {
         CallableReferenceConversionStrategy.NoConversion
+    }
+
+    if (defaults == 0 && !isThereVararg &&
+        coercionStrategy == CoercionStrategy.NO_COERCION && conversionStrategy == CallableReferenceConversionStrategy.NoConversion
+    ) {
+        // Do not create adaptation for trivial (id) conversion as it makes resulting type FunctionN instead of KFunctionN
+        // It happens because adapted references do not support reflection (see KT-40406)
+        return null
     }
 
     @Suppress("UNCHECKED_CAST")

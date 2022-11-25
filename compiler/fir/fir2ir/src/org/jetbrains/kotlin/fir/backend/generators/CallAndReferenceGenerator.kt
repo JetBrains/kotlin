@@ -156,7 +156,8 @@ class CallAndReferenceGenerator(
                     if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
                         // Receivers are being applied inside
                         with(adapterGenerator) {
-                            val adaptedType = callableReferenceAccess.typeRef.coneType.kFunctionTypeToFunctionType()
+                            // TODO: Figure out why `adaptedType` is different from the `type`?
+                            val adaptedType = callableReferenceAccess.typeRef.coneType.toIrType() as IrSimpleType
                             generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, symbol, adaptedType)
                         }
                     } else {

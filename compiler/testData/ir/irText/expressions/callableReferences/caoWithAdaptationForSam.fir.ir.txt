@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
       BLOCK type=kotlin.Unit origin=null
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
-        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> [val]
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Function1<kotlin.Int, kotlin.Unit> [val]
           FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
@@ -118,19 +118,19 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
         CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
           $receiver: GET_VAR 'val tmp_0: <root>.A [val] declared in <root>.test1' type=<root>.A origin=null
           i: TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-            GET_VAR 'val tmp_1: kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> [val] declared in <root>.test1' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null
+            GET_VAR 'val tmp_1: kotlin.Function1<kotlin.Int, kotlin.Unit> [val] declared in <root>.test1' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
           newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CALL 'public final fun get (i: <root>.IFoo): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
               $receiver: GET_VAR 'val tmp_0: <root>.A [val] declared in <root>.test1' type=<root>.A origin=null
               i: TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-                GET_VAR 'val tmp_1: kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> [val] declared in <root>.test1' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null
+                GET_VAR 'val tmp_1: kotlin.Function1<kotlin.Int, kotlin.Unit> [val] declared in <root>.test1' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
             other: CONST Int type=kotlin.Int value=1
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=null
         VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.B [val]
           GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.B
-        VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> [val]
+        VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Function1<kotlin.Int, kotlin.Unit> [val]
           FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
@@ -141,12 +141,12 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
         CALL 'public final fun set (i: <root>.IFoo2, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
           $receiver: GET_VAR 'val tmp_2: <root>.B [val] declared in <root>.test2' type=<root>.B origin=null
           i: TYPE_OP type=<root>.IFoo2 origin=SAM_CONVERSION typeOperand=<root>.IFoo2
-            GET_VAR 'val tmp_3: kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> [val] declared in <root>.test2' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null
+            GET_VAR 'val tmp_3: kotlin.Function1<kotlin.Int, kotlin.Unit> [val] declared in <root>.test2' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
           newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CALL 'public final fun get (i: <root>.IFoo): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
               $receiver: GET_VAR 'val tmp_2: <root>.B [val] declared in <root>.test2' type=<root>.B origin=null
               i: TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-                GET_VAR 'val tmp_3: kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> [val] declared in <root>.test2' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null
+                GET_VAR 'val tmp_3: kotlin.Function1<kotlin.Int, kotlin.Unit> [val] declared in <root>.test2' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
             other: CONST Int type=kotlin.Int value=1
   FUN name:test3 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
