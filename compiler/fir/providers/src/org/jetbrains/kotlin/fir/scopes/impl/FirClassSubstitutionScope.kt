@@ -311,7 +311,7 @@ class FirClassSubstitutionScope(
         val newReturnType = returnType?.substitute() ?: return original
 
         return FirFakeOverrideGenerator.createSubstitutionOverrideField(
-            session, member, original, newReturnType, newOwnerClassId, withInitializer = false
+            session, member, original, newReturnType, newOwnerClassId
         )
     }
 

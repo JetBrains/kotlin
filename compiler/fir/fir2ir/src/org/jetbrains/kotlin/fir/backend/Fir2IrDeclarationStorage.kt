@@ -1110,7 +1110,7 @@ class Fir2IrDeclarationStorage(
                 } else {
                     fieldStaticOverrideCache[field.name to classId] = this
                 }
-                val initializer = field.initializer
+                val initializer = field.unwrapFakeOverrides().initializer
                 if (initializer is FirConstExpression<*>) {
                     this.initializer = factory.createExpressionBody(initializer.toIrConst(type))
                 }

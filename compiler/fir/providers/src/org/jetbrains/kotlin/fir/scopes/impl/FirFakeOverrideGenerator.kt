@@ -487,8 +487,7 @@ object FirFakeOverrideGenerator {
         baseField: FirField,
         baseSymbol: FirFieldSymbol,
         newReturnType: ConeKotlinType?,
-        derivedClassId: ClassId?,
-        withInitializer: Boolean
+        derivedClassId: ClassId?
     ): FirFieldSymbol {
         val symbol = FirFieldSymbol(
             CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseField.name)
@@ -508,9 +507,6 @@ object FirFakeOverrideGenerator {
             annotations += baseField.annotations
             attributes = baseField.attributes.copy()
             dispatchReceiverType = baseField.dispatchReceiverType
-            if (withInitializer) {
-                initializer = baseField.initializer
-            }
         }.apply {
             originalForSubstitutionOverrideAttr = baseField
             if (isStatic && derivedClassId != null) {

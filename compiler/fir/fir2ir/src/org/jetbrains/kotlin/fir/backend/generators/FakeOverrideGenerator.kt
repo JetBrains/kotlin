@@ -173,7 +173,7 @@ class FakeOverrideGenerator(
                             FirFakeOverrideGenerator.createSubstitutionOverrideField(
                                 session, firField, callableSymbol,
                                 newReturnType = firField.returnTypeRef.coneType,
-                                firClass.symbol.classId, withInitializer = true
+                                derivedClassId = firClass.symbol.classId
                             )
                         },
                         baseStaticFieldSymbols,
