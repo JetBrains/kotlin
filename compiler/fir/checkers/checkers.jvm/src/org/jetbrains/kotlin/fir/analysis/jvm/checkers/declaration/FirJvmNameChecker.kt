@@ -67,6 +67,6 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
     }
 
     private fun FirRegularClass.isInlineThatRequiresMangling(): Boolean {
-        return isInline && name == StandardClassIds.Result.shortClassName
+        return isInline && name != StandardClassIds.Result.shortClassName
     }
 }
