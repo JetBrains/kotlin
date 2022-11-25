@@ -33,10 +33,18 @@ class JvmTargetValidationTest : KGPBaseTest() {
             setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
             useToolchainToCompile(11)
 
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
             buildAndFail("assemble") {
                 assertOutputContains(
                     "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
                             "should be set to the same Java version.\n" +
+                            "By default will become an error since Gradle 8.0+! " +
+                            "Read more: https://kotl.in/gradle/jvm/target-validation\n" +
                             "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
                 )
             }
@@ -63,8 +71,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             build("assemble") {
                 assertOutputContains(
                     "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version.\n" +
-                            "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
+                            "should be set to the same Java version.\n"
                 )
             }
         }
@@ -106,6 +113,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleVersion = gradleVersion
         ) {
             useToolchainToCompile(11)
+
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
 
             build("build") {
                 assertOutputDoesNotContain(
@@ -184,6 +197,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
             build("build")
         }
     }
@@ -197,6 +216,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
         ) {
             setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
             useToolchainToCompile(11)
+
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
 
             kotlinSourcesDir().toFile().deleteRecursively()
             javaSourcesDir().resolve("demo/HelloWorld.java").deleteExisting()
@@ -240,8 +265,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             build("assemble") {
                 assertOutputContains(
                     "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility " +
-                            "should be set to the same Java version.\n" +
-                            "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
+                            "should be set to the same Java version.\n"
                 )
             }
         }
@@ -309,6 +333,13 @@ class JvmTargetValidationTest : KGPBaseTest() {
             } else {
                 16
             }
+
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
             buildGradle.append(
                 """
                 
@@ -339,6 +370,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimMargin()
             )
 
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
             buildAndFail(":lib:compileKotlinJvmWithJava") {
                 assertOutputContains("'compileJava' task (current target is 17) and 'compileKotlinJvmWithJava' task" +
                             " (current target is 1.8) jvm target compatibility should be set to the same Java version.")
@@ -359,6 +396,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 |    sourceCompatibility = JavaVersion.VERSION_17
                 |}
                 """.trimMargin()
+            )
+
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
             )
 
             build(":lib:compileKotlinPlainJvm")
