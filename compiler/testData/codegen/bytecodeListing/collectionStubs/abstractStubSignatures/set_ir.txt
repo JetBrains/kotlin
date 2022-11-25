@@ -2,8 +2,8 @@
 public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Set<TT;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  GenericSet {
     // source: 'set.kt'
     public <()Ljava/util/Iterator<TT;>;> method iterator(): java.util.Iterator
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method removeAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <(Ljava/util/Collection<+TT;>;)Z> method addAll(p0: java.util.Collection): boolean
     public <(TT;)Z> method add(p0: java.lang.Object): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -19,9 +19,9 @@ public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Set<TT;
 public abstract class<Ljava/lang/Object;Ljava/util/Set<Ljava/lang/Integer;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  IntSet {
     // source: 'set.kt'
     public <()Ljava/util/Iterator<Ljava/lang/Integer;>;> method iterator(): java.util.Iterator
+    public <(Ljava/util/Collection<*>;)Z> method removeAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <(Ljava/util/Collection<+Ljava/lang/Integer;>;)Z> method addAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
     public <null> method add(p0: int): boolean
@@ -39,8 +39,8 @@ public abstract class<Ljava/lang/Object;Ljava/util/Set<Ljava/lang/Integer;>;Lkot
 public abstract class<Ljava/lang/Object;Ljava/util/Set<Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  StringSet {
     // source: 'set.kt'
     public <()Ljava/util/Iterator<Ljava/lang/String;>;> method iterator(): java.util.Iterator
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method removeAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <(Ljava/util/Collection<+Ljava/lang/String;>;)Z> method addAll(p0: java.util.Collection): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void

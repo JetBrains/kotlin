@@ -16,7 +16,7 @@ class MyList<T>(val v: T): List<T> {
     override fun equals(other: Any?): Boolean = false
 
     public fun add(e: T): Boolean = true
-    public fun remove(o: T): Boolean = true
+    public fun remove(o: T): Boolean = true // So apparently there was a bug here, the compiled form contained a generic type which would have tripped up Java subclasses
     public fun addAll(c: Collection<T>): Boolean = true
     public fun addAll(index: Int, c: Collection<T>): Boolean = true
     public fun removeAll(c: Collection<T>): Boolean = true

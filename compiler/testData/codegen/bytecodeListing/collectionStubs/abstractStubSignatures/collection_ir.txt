@@ -2,9 +2,9 @@
 public abstract class<Ljava/lang/Object;Ljava/util/Collection<Ljava/lang/Double;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  DoubleCollection {
     // source: 'collection.kt'
     public <()Ljava/util/Iterator<Ljava/lang/Double;>;> method iterator(): java.util.Iterator
+    public <(Ljava/util/Collection<*>;)Z> method removeAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <(Ljava/util/Collection<+Ljava/lang/Double;>;)Z> method addAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
     public <null> method add(p0: double): boolean
@@ -22,8 +22,8 @@ public abstract class<Ljava/lang/Object;Ljava/util/Collection<Ljava/lang/Double;
 public abstract class<Ljava/lang/Object;Ljava/util/Collection<Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  StringCollection {
     // source: 'collection.kt'
     public <()Ljava/util/Iterator<Ljava/lang/String;>;> method iterator(): java.util.Iterator
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method removeAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <(Ljava/util/Collection<+Ljava/lang/String;>;)Z> method addAll(p0: java.util.Collection): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void

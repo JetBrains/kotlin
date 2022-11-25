@@ -1,0 +1,101 @@
+@kotlin.Metadata
+public interface<null>  I {
+    // source: 'withoutPlatformDependentDeclarations.kt'
+}
+
+@kotlin.Metadata
+public abstract class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  T1 {
+    // source: 'withoutPlatformDependentDeclarations.kt'
+    public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
+    public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method entrySet(): java.util.Set
+    public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
+    public final <(TK;I)I> method getOrDefault(p0: java.lang.Object, p1: int): int
+    public final <(TK;I)Z> method remove(p0: java.lang.Object, p1: int): boolean
+    public final <(TK;TV;)TV;> method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final <(TK;TV;)Z> method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public <null> method <init>(): void
+    public abstract <null> method containsKey(p0: java.lang.Object): boolean
+    public abstract <null> method containsValue(p0: java.lang.Object): boolean
+    public abstract <null> method get(p0: java.lang.Object): java.lang.Object
+    public abstract <null> method getEntries(): java.util.Set
+    public abstract <null> method getKeys(): java.util.Set
+    public abstract <null> method getSize(): int
+    public abstract <null> method getValues(): java.util.Collection
+    public abstract <null> method remove(p0: java.lang.Object): java.lang.Object
+    public bridge final <null> method size(): int
+}
+
+@kotlin.Metadata
+public abstract class<<V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  T2 {
+    // source: 'withoutPlatformDependentDeclarations.kt'
+    public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
+    public bridge final <()Ljava/util/Set<Ljava/lang/String;>;> method keySet(): java.util.Set
+    public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<Ljava/lang/String;TV;>;>;> method entrySet(): java.util.Set
+    public final <(Ljava/lang/Integer;TV;)TV;> method getOrDefault(@org.jetbrains.annotations.Nullable p0: java.lang.Integer, p1: java.lang.Object): java.lang.Object
+    public final <(Ljava/lang/Integer;TV;)Z> method remove(@org.jetbrains.annotations.Nullable p0: java.lang.Integer, p1: java.lang.Object): boolean
+    public bridge final <(Ljava/lang/Object;)TV;> method get(p0: java.lang.Object): java.lang.Object
+    public bridge final <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
+    public final <(Ljava/lang/String;TV;)TV;> method getOrDefault(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: java.lang.Object): java.lang.Object
+    public final <(Ljava/lang/String;TV;)Z> method remove(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: java.lang.Object): boolean
+    public <null> method <init>(): void
+    public bridge final <null> method containsKey(p0: java.lang.Object): boolean
+    public abstract <null> method containsKey(p0: java.lang.String): boolean
+    public abstract <null> method containsValue(p0: java.lang.Object): boolean
+    public abstract <null> method get(p0: java.lang.String): java.lang.Object
+    public abstract <null> method getEntries(): java.util.Set
+    public abstract <null> method getKeys(): java.util.Set
+    public abstract <null> method getSize(): int
+    public abstract <null> method getValues(): java.util.Collection
+    public abstract <null> method remove(p0: java.lang.String): java.lang.Object
+    public bridge final <null> method size(): int
+}
+
+@kotlin.Metadata
+public abstract class<<K:Ljava/lang/Object;V::LI;>Ljava/lang/Object;Ljava/util/Map<TK;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  T3 {
+    // source: 'withoutPlatformDependentDeclarations.kt'
+    public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
+    public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method entrySet(): java.util.Set
+    public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
+    public bridge final <(Ljava/lang/Object;)TV;> method get(p0: java.lang.Object): java.lang.Object
+    public bridge final <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable <(TK;I)LI;> method getOrDefault(p0: java.lang.Object, p1: int): I
+    public final <(TK;I)Z> method remove(p0: java.lang.Object, p1: int): boolean
+    public final @org.jetbrains.annotations.NotNull <(TK;TV;)TV;> method getOrDefault(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: I): I
+    public final <(TK;TV;)Z> method remove(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: I): boolean
+    public <null> method <init>(): void
+    public abstract <null> method containsKey(p0: java.lang.Object): boolean
+    public abstract <null> method containsValue(p0: I): boolean
+    public bridge final <null> method containsValue(p0: java.lang.Object): boolean
+    public abstract <null> method get(p0: java.lang.Object): I
+    public abstract <null> method getEntries(): java.util.Set
+    public abstract <null> method getKeys(): java.util.Set
+    public abstract <null> method getSize(): int
+    public abstract <null> method getValues(): java.util.Collection
+    public abstract <null> method remove(p0: java.lang.Object): I
+    public bridge final <null> method size(): int
+}
+
+@kotlin.Metadata
+public abstract class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;TV;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  T4 {
+    // source: 'withoutPlatformDependentDeclarations.kt'
+    public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
+    public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method entrySet(): java.util.Set
+    public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
+    public <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
+    public <(Ljava/util/Map<+TK;+TV;>;)V> method putAll(p0: java.util.Map): void
+    public final <(TK;I)I> method getOrDefault(p0: java.lang.Object, p1: int): int
+    public final <(TK;I)Z> method remove(p0: java.lang.Object, p1: int): boolean
+    public final <(TK;TV;)TV;> method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public <(TK;TV;)TV;> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final <(TK;TV;)Z> method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public <null> method <init>(): void
+    public <null> method clear(): void
+    public abstract <null> method containsKey(p0: java.lang.Object): boolean
+    public abstract <null> method containsValue(p0: java.lang.Object): boolean
+    public abstract <null> method get(p0: java.lang.Object): java.lang.Object
+    public abstract <null> method getEntries(): java.util.Set
+    public abstract <null> method getKeys(): java.util.Set
+    public abstract <null> method getSize(): int
+    public abstract <null> method getValues(): java.util.Collection
+    public bridge final <null> method size(): int
+}
