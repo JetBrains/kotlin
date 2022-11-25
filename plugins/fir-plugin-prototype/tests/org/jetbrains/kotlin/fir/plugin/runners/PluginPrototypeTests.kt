@@ -10,11 +10,24 @@ import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
+
+open class AbstractFirPluginBlackBoxCodegenTest : AbstractFirBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonFirWithPluginFrontendConfiguration()
+    }
+}
+
+abstract class AbstractFirPluginDiagnosticTest : AbstractFirDiagnosticTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonFirWithPluginFrontendConfiguration()
+    }
+}
 
 fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
-    baseFirDiagnosticTestConfiguration()
-
     defaultDirectives {
         +ENABLE_PLUGIN_PHASES
         +FIR_DUMP
