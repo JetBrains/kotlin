@@ -4,7 +4,6 @@
 fun main(b: Boolean) {
     callWithLambda {
         // The only relevant case for KT-55729, Unit conversion should work, but doesn't in K1 1.8.0
-        // For K2, it still doesn't work (see KT-55936)
         ::test1
     }
 
@@ -23,7 +22,7 @@ fun main(b: Boolean) {
     }
 
     callWithLambda {
-        // That hasn't been working ever in K1 nor K2
+        // Doesn't work in K1, but does in K2
         (<!TYPE_MISMATCH, TYPE_MISMATCH!>::<!TYPE_MISMATCH!>test1<!><!>)
     }
 }
