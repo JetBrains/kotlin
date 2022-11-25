@@ -1,10 +1,8 @@
-package org.jetbrains.kotlin.library.resolver.impl
+package org.jetbrains.kotlin.library.metadata.resolver.impl
 
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
-import org.jetbrains.kotlin.library.metadata.parsePackageFragment
-import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
-import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
 class KotlinResolvedLibraryImpl(override val library: KotlinLibrary): KotlinResolvedLibrary {
 

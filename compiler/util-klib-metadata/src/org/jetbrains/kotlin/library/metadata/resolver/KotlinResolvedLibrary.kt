@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.library.resolver
+package org.jetbrains.kotlin.library.metadata.resolver
 
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler

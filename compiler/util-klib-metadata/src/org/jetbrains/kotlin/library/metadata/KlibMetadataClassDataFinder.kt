@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
