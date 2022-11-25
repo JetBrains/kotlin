@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -95,7 +97,6 @@ enum class FakeOverridesStrategy {
 // it's not valid kotlin -- for the cases when used some syntax which is invalid in Kotlin, maybe they are worth to reconsider
 
 /* TODO:
-    * don't crash on unbound symbols
     * origin : class, function, property, ...
         * option?
     * don't print members of kotlin.Any in interfaces? // or just print something like  /* Any members */
@@ -117,6 +118,31 @@ enum class FakeOverridesStrategy {
  */
 
 private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
+    private val IrSymbol.safeName get() = if (!isBound) {
+        "/* ERROR: unbound symbol $signature */"
+    } else {
+        (owner as? IrDeclarationWithName)?.name?.toString() ?: "/* ERROR: unnamed symbol $signature */"
+    }
+
+    private val IrFunctionSymbol.safeValueParameters get() = if (!isBound) {
+        emptyList()
+    } else {
+        owner.valueParameters
+    }
+
+    private val IrSymbol.safeParentClassName get() = if (!isBound) {
+        "/* ERROR: unbound symbol $signature */"
+    } else {
+        (owner as? IrDeclaration)?.parentClassOrNull?.name?.toString() ?: "/* ERROR: unexpected parent for $safeName */"
+    }
+
+    private val IrSymbol.safeParentClassOrNull  get() = if (!isBound) {
+        null
+    } else {
+        (owner as? IrDeclaration)?.parentClassOrNull
+    }
+
+
     fun printElement(element: IrElement) {
         element.accept(this, null)
     }
@@ -421,7 +447,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     p.printWithNoIndent("(")
                 }
 
-                p.printWithNoIndent((classifier.owner as IrDeclarationWithName).name.asString())
+                p.printWithNoIndent(classifier.safeName)
 
                 if (arguments.isNotEmpty()) {
                     p.printWithNoIndent("<")
@@ -927,8 +953,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitCall(expression: IrCall, data: IrDeclaration?) {
         // TODO process specially builtin symbols
         expression.printMemberAccessExpressionWithNoIndent(
-            expression.symbol.owner.name.asString(),
-            expression.symbol.owner.valueParameters,
+            expression.symbol.safeName,
+            expression.symbol.safeValueParameters,
             expression.superQualifierSymbol,
             omitAllBracketsIfNoArguments = false,
             data = data,
@@ -936,12 +962,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?) {
-        val clazz = expression.symbol.owner.parentAsClass
         expression.printMemberAccessExpressionWithNoIndent(
-            clazz.name.asString(),
-            expression.symbol.owner.valueParameters,
+            expression.symbol.safeParentClassName,
+            expression.symbol.safeValueParameters,
             superQualifierSymbol = null,
-            omitAllBracketsIfNoArguments = clazz.isAnnotationClass,
+            omitAllBracketsIfNoArguments = expression.symbol.safeParentClassOrNull?.isAnnotationClass == true,
             data = data,
         )
     }
@@ -967,7 +992,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         superQualifierSymbol?.let {
             // TODO which supper? smart mode?
-            p.printWithNoIndent("super<${it.owner.name}>")
+            p.printWithNoIndent("super<${it.safeName}>")
         }
 
         dispatchReceiver?.let {
@@ -1049,9 +1074,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         data: IrDeclaration?
     ) {
         // TODO flag to omit comment block?
-        val delegatingClass = symbol.owner.parentAsClass
+        val delegatingClass = symbol.safeParentClassOrNull
         val currentClass = data?.parent as? IrClass
-        val delegatingClassName = delegatingClass.name.asString()
+        val delegatingClassName = symbol.safeParentClassName
 
         val name = if (data is IrConstructor) {
             when (currentClass) {
@@ -1066,7 +1091,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         printMemberAccessExpressionWithNoIndent(
             name,
-            symbol.owner.valueParameters,
+            symbol.safeValueParameters,
             superQualifierSymbol = null,
             omitAllBracketsIfNoArguments = false,
             data = data,
@@ -1111,7 +1136,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             // TODO which supper? smart mode?
             // it's not valid kotlin
             if (receiver != null) p.printWithNoIndent("(")
-            p.printWithNoIndent("super<${it.owner.name}>")
+            p.printWithNoIndent("super<${it.safeName}>")
             if (receiver != null) p.printWithNoIndent(")")
         }
 
@@ -1120,15 +1145,15 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
 
         // it's not valid kotlin
-        p.printWithNoIndent("#" + symbol.owner.name.asString())
+        p.printWithNoIndent("#" + symbol.safeName)
     }
 
     override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?) {
-        p.printWithNoIndent(expression.symbol.owner.name.asString())
+        p.printWithNoIndent(expression.symbol.safeName)
     }
 
     override fun visitSetValue(expression: IrSetValue, data: IrDeclaration?) {
-        p.printWithNoIndent(expression.symbol.owner.name.asString() + " = ")
+        p.printWithNoIndent(expression.symbol.safeName + " = ")
         expression.value.accept(this, data)
     }
 
@@ -1138,10 +1163,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrDeclaration?) {
-        val enumEntry = expression.symbol.owner
-        p.printWithNoIndent(enumEntry.parentAsClass.name.asString())
+        p.printWithNoIndent(expression.symbol.safeParentClassName)
         p.printWithNoIndent(".")
-        p.printWithNoIndent(enumEntry.name.asString())
+        p.printWithNoIndent(expression.symbol.safeName)
     }
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration?) {
@@ -1344,13 +1368,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitClassReference(expression: IrClassReference, data: IrDeclaration?) {
         // TODO use classType
-        p.printWithNoIndent((expression.symbol.owner as IrDeclarationWithName).name.asString())
+        p.printWithNoIndent(expression.symbol.safeName)
         p.printWithNoIndent("::class")
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) {
         // TODO reflectionTarget
-        expression.printCallableReferenceWithNoIndent(expression.symbol.owner.valueParameters, data)
+        expression.printCallableReferenceWithNoIndent(expression.symbol.safeValueParameters, data)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclaration?) {
@@ -1367,7 +1391,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO where from to get type arguments for a class?
         // TODO rendering for references to constructors
         if (dispatchReceiver == null && extensionReceiver == null) {
-            (symbol.owner as IrDeclaration).parentClassOrNull?.let {
+            symbol.safeParentClassOrNull?.let {
                 p.printWithNoIndent(it.name.asString())
             }
         }
