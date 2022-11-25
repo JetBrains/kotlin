@@ -67,8 +67,11 @@ class FirCallCompleter(
         expectedTypeMismatchIsReportedInChecker: Boolean = false,
     ): CompletionResult<T> where T : FirResolvable, T : FirStatement =
         completeCall(
-            call, expectedTypeRef, mayBeCoercionToUnitApplied = false, expectedTypeMismatchIsReportedInChecker, isFromCast = false
-        ,
+            call,
+            expectedTypeRef,
+            mayBeCoercionToUnitApplied = false,
+            expectedTypeMismatchIsReportedInChecker,
+            isFromCast = false,
             shouldEnforceExpectedType = true,
         )
 
