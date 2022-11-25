@@ -6,6 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -23,7 +24,7 @@ open class KotlinJvmCompilation @Inject internal constructor(
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
     KotlinCompilationWithResources<KotlinJvmOptions> {
 
-    override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
+    final override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 
     override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
@@ -42,6 +43,10 @@ open class KotlinJvmCompilation @Inject internal constructor(
     override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<KotlinJvmCompilerOptions>>
         get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinJvmCompilerOptions>>
 
+    /**
+     * **Note**: requesting this too early (right after target creation and before any target configuration) may falsely return `null`
+     * value, but later target will be configured to run with Java enabled. If possible, please use [compileJavaTaskProviderSafe].
+     */
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
         get() = if (target.withJavaEnabled) {
             val project = target.project
@@ -51,6 +56,19 @@ open class KotlinJvmCompilation @Inject internal constructor(
             val javaSourceSet = javaSourceSets.getByName(compilationName)
             project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
         } else null
+
+    /**
+     * Alternative to [compileJavaTaskProvider] to safely receive [JavaCompile] task provider  when [KotlinJvmTarget.withJavaEnabled]
+     * will be enabled after call to this method.
+     */
+    internal val compileJavaTaskProviderSafe: Provider<JavaCompile> = target.project.providers
+        .provider { if (target.withJavaEnabled) Unit else null }
+        .map {
+            project.javaSourceSets.getByName(compilationName).compileJavaTaskName
+        }
+        .flatMap {
+            project.tasks.named(it, JavaCompile::class.java)
+        }
 
     override val processResourcesTaskName: String
         get() = compilation.processResourcesTaskName ?: error("Missing 'processResourcesTaskName'")

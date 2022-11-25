@@ -70,7 +70,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
     constructor(compilationInfo: KotlinCompilationInfo) : super(compilationInfo) {
         val javaTaskProvider = when (val compilation = compilationInfo.tcsOrNull?.compilation) {
-            is KotlinJvmCompilation -> compilation.compileJavaTaskProvider
+            is KotlinJvmCompilation -> compilation.compileJavaTaskProviderSafe
             is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
             is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider
             else -> null
@@ -78,9 +78,9 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
         configureTaskProvider { taskProvider ->
             taskProvider.configure { task ->
-                javaTaskProvider?.let {
-                    task.associatedJavaCompileTaskTargetCompatibility.value(javaTaskProvider.map { it.targetCompatibility })
-                    task.associatedJavaCompileTaskName.value(javaTaskProvider.name)
+                javaTaskProvider?.let { javaTask ->
+                    task.associatedJavaCompileTaskTargetCompatibility.value(javaTask.map { it.targetCompatibility })
+                    task.associatedJavaCompileTaskName.value(javaTask.map { it.name })
                 }
 
                 @Suppress("DEPRECATION")

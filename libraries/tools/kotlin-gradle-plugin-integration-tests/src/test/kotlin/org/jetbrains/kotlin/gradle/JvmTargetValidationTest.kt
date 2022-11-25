@@ -321,7 +321,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Validation should work correctly for KaptGenerateStubs task")
-    @GradleTestVersions
     @GradleTest
     internal fun kaptGenerateStubsValidateCorrect(gradleVersion: GradleVersion) {
         project(
@@ -384,6 +383,59 @@ class JvmTargetValidationTest : KGPBaseTest() {
                     )
                 }
             }
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("Validation should show error for MPP JVM target withJava")
+    @GradleTest
+    internal fun mppWithJavaFailValidation(gradleVersion: GradleVersion) {
+        project("kt-31468-multiple-jvm-targets-with-java", gradleVersion) {
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            subProject("lib").buildGradleKts.appendText(
+                """
+                |
+                |java {
+                |    targetCompatibility = JavaVersion.VERSION_17
+                |    sourceCompatibility = JavaVersion.VERSION_17
+                |}
+                """.trimMargin()
+            )
+
+            buildAndFail(":lib:compileKotlinJvmWithJava") {
+                assertOutputContains("'compileJava' task (current target is 17) and 'compileKotlinJvmWithJava' task" +
+                            " (current target is 1.8) jvm target compatibility should be set to the same Java version.")
+            }
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("Validation should not run MPP JVM target without withJava")
+    @GradleTest
+    internal fun mppJvmNotFailValidation(gradleVersion: GradleVersion) {
+        project("kt-31468-multiple-jvm-targets-with-java", gradleVersion) {
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            subProject("lib").buildGradleKts.appendText(
+                """
+                |
+                |java {
+                |    targetCompatibility = JavaVersion.VERSION_17
+                |    sourceCompatibility = JavaVersion.VERSION_17
+                |}
+                """.trimMargin()
+            )
+
+            build(":lib:compileKotlinPlainJvm")
         }
     }
 
