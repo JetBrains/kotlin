@@ -136,7 +136,7 @@ private fun buildReflectionType(
                 parameters,
                 receiverType = receiverType.takeIf { fir.receiverParameter != null },
                 rawReturnType = returnType,
-                isKFunctionType = true,
+                isKFunctionType = callableReferenceAdaptation == null,
                 isSuspend = isSuspend,
                 contextReceivers = fir.contextReceivers.map { it.typeRef.coneType }
             ) to callableReferenceAdaptation
@@ -237,9 +237,11 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
     }
 
+    var isThereVararg = mappedVarargElements.isNotEmpty()
     for (valueParameter in function.valueParameters) {
         if (valueParameter.isVararg && valueParameter !in mappedArguments) {
             mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(emptyList())
+            isThereVararg = true
         }
     }
 
@@ -257,6 +259,14 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         SuspendConversionStrategy.SUSPEND_CONVERSION
     else
         SuspendConversionStrategy.NO_CONVERSION
+
+    if (defaults == 0 && !isThereVararg &&
+        coercionStrategy == CoercionStrategy.NO_COERCION && suspendConversionStrategy == SuspendConversionStrategy.NO_CONVERSION
+    ) {
+        // Do not create adaptation for trivial (id) conversion as it makes resulting type FunctionN instead of KFunctionN
+        // It happens because adapted references do not support reflection (see KT-40406)
+        return null
+    }
 
     @Suppress("UNCHECKED_CAST")
     return CallableReferenceAdaptation(
