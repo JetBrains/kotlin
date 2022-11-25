@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.impl.FakeK2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -138,6 +137,7 @@ private fun readV2AndLaterConfig(
         this.targetPlatform = targetPlatform
         readElementsList(element, "implements", "implement")?.let { implementedModuleNames = it }
         readElementsList(element, "dependsOnModuleNames", "dependsOn")?.let { dependsOnModuleNames = it }
+        readElementsList(element, "additionalVisibleModuleNames", "friend")?.let { additionalVisibleModuleNames = it.toSet() }
         element.getChild("externalSystemTestTasks")?.let {
             val testRunTasks = it.getChildren("externalSystemTestTask")
                 .mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
@@ -312,6 +312,7 @@ private fun KotlinFacetSettings.writeConfig(element: Element) {
     }
     saveElementsList(element, implementedModuleNames, "implements", "implement")
     saveElementsList(element, dependsOnModuleNames, "dependsOnModuleNames", "dependsOn")
+    saveElementsList(element, additionalVisibleModuleNames.toList(), "additionalVisibleModuleNames", "friend")
 
     if (sourceSetNames.isNotEmpty()) {
         element.addContent(

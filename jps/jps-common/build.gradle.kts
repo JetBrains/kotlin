@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -30,6 +29,7 @@ dependencies {
     testImplementation(project(":compiler:cli-common"))
     testImplementation(jpsModelSerialization())
     testImplementation(commonDependency("junit:junit"))
+    testImplementation(kotlin("test-junit"))
 }
 
 sourceSets {
