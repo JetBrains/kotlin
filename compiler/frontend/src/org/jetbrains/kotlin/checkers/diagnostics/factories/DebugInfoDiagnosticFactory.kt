@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.checkers.diagnostics.factories
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
@@ -16,7 +16,7 @@ interface DebugInfoDiagnosticFactory {
     val withExplicitDefinitionOnly: Boolean
 
     fun createDiagnostic(
-        expression: KtExpression,
+        element: KtElement,
         bindingContext: BindingContext,
         dataFlowValueFactory: DataFlowValueFactory?,
         languageVersionSettings: LanguageVersionSettings?,
