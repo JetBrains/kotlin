@@ -51,10 +51,7 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -109,7 +106,9 @@ class Fir2IrDeclarationStorage(
 
     private val fieldCache = ConcurrentHashMap<FirField, IrField>()
 
-    private val fieldStaticOverrideCache = ConcurrentHashMap<Pair<Name, ClassId>, IrField>()
+    private data class FieldStaticOverrideKey(val lookupTag: ConeClassLikeLookupTag, val name: Name)
+
+    private val fieldStaticOverrideCache = ConcurrentHashMap<FieldStaticOverrideKey, IrField>()
 
     private val localStorage by threadLocal { Fir2IrLocalStorage() }
 
@@ -1018,19 +1017,9 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrDelegateOrBackingField(field: FirField): IrField? = fieldCache[field]
 
-    fun getCachedIrField(
-        field: FirField,
-        // Always should be null for non-static
-        // For static null means "take containing class instead"
-        staticFakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
-    ): IrField? {
-        val classId = (staticFakeOverrideOwnerLookupTag ?: field.containingClassLookupTag())?.classId
-        if (classId == null || !field.isStatic ||
-            !field.isSubstitutionOrIntersectionOverride && staticFakeOverrideOwnerLookupTag == field.containingClassLookupTag()
-        ) {
-            return fieldCache[field]
-        }
-        return fieldStaticOverrideCache[field.name to classId]
+    fun getCachedIrFieldStaticFakeOverrideByDeclaration(field: FirField): IrField? {
+        val ownerLookupTag = field.containingClassLookupTag() ?: return null
+        return fieldStaticOverrideCache[FieldStaticOverrideKey(ownerLookupTag, field.name)]
     }
 
     fun createIrFieldAndDelegatedMembers(field: FirField, owner: FirClass, irClass: IrClass): IrField? {
@@ -1078,8 +1067,8 @@ class Fir2IrDeclarationStorage(
     ): IrField = convertCatching(field) {
         val type = typeRef.toIrType()
         val classId = (irParent as? IrClass)?.classId
-        val containingClass = classId?.let { ConeClassLikeLookupTagImpl(it) }
-        val signature = signatureComposer.composeSignature(field, containingClass)
+        val containingClassLookupTag = classId?.let { ConeClassLikeLookupTagImpl(it) }
+        val signature = signatureComposer.composeSignature(field, containingClassLookupTag)
         return field.convertWithOffsets { startOffset, endOffset ->
             if (signature != null) {
                 symbolTable.declareField(
@@ -1102,12 +1091,11 @@ class Fir2IrDeclarationStorage(
                     isStatic = field.isStatic
                 )
             }.apply {
-                if (classId == null || !field.isStatic ||
-                    !field.isSubstitutionOrIntersectionOverride && classId == field.containingClassLookupTag()?.classId
-                ) {
+                val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
+                if (staticFakeOverrideKey == null) {
                     fieldCache[field] = this
                 } else {
-                    fieldStaticOverrideCache[field.name to classId] = this
+                    fieldStaticOverrideCache[staticFakeOverrideKey] = this
                 }
                 val initializer = field.unwrapFakeOverrides().initializer
                 if (initializer is FirConstExpression<*>) {
@@ -1116,6 +1104,14 @@ class Fir2IrDeclarationStorage(
                 setAndModifyParent(irParent)
             }
         }
+    }
+
+    // This function returns null if this field/ownerClassId combination does not describe static fake override
+    private fun getFieldStaticFakeOverrideKey(field: FirField, ownerLookupTag: ConeClassLikeLookupTag?): FieldStaticOverrideKey? {
+        if (ownerLookupTag == null || !field.isStatic ||
+            !field.isSubstitutionOrIntersectionOverride && ownerLookupTag == field.containingClassLookupTag()
+        ) return null
+        return FieldStaticOverrideKey(ownerLookupTag, field.name)
     }
 
     internal fun createIrParameter(
@@ -1545,18 +1541,13 @@ class Fir2IrDeclarationStorage(
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrFieldSymbol {
         val fir = firFieldSymbol.fir
-        val unmatchedOwner = fakeOverrideOwnerLookupTag != null && fakeOverrideOwnerLookupTag != firFieldSymbol.containingClassLookupTag()
-        if (!fir.isStatic || !unmatchedOwner) {
+        val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(fir, fakeOverrideOwnerLookupTag)
+        if (staticFakeOverrideKey == null) {
             fieldCache[fir]?.let { return it.symbol }
-        }
-
-        if (fir.isStatic) {
+        } else {
             generateLazyFakeOverrides(fir.name, fakeOverrideOwnerLookupTag)
-            if (fakeOverrideOwnerLookupTag != null && fakeOverrideOwnerLookupTag !is ConeClassLookupTagWithFixedSymbol) {
-                getCachedIrField(fir, fakeOverrideOwnerLookupTag)?.let {
-                    return it.symbol
-                }
-            }
+            // Lazy static fake override should always exist
+            return fieldStaticOverrideCache[staticFakeOverrideKey]!!.symbol
         }
         // In case of type parameters from the parent as the field's return type, find the parent ahead to cache type parameters.
         val irParent = findIrParent(fir)

@@ -165,7 +165,7 @@ class FakeOverrideGenerator(
                     if (!propertyOrFieldSymbol.isStatic) return@processPropertiesByName
                     createFakeOverriddenIfNeeded(
                         firClass, irClass, isLocal, propertyOrFieldSymbol,
-                        { field, _, _ -> declarationStorage.getCachedIrField(field, staticFakeOverrideOwnerLookupTag = null) },
+                        { field, _, _ -> declarationStorage.getCachedIrFieldStaticFakeOverrideByDeclaration(field) },
                         { field, irParent, _, _, _ ->
                             declarationStorage.createIrField(field, irParent)
                         },
