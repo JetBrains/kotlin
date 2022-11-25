@@ -14,7 +14,36 @@ data class IdeaKotlinProjectArtifactDependency(
     override val extras: MutableExtras = mutableExtrasOf()
 ) : IdeaKotlinDependency {
 
+    fun interface Resolver {
+        fun resolve(dependency: IdeaKotlinProjectArtifactDependency): IdeaKotlinSourceDependency?
+
+        companion object {
+            fun byName(resolveSourceSetName: (IdeaKotlinProjectArtifactDependency) -> String?): Resolver {
+                return DefaultProjectArtifactDependencyResolver(resolveSourceSetName)
+            }
+        }
+    }
+
     internal companion object {
         const val serialVersionUID = 0L
+    }
+}
+
+fun IdeaKotlinProjectArtifactDependency.resolved(resolver: IdeaKotlinProjectArtifactDependency.Resolver): IdeaKotlinSourceDependency? {
+    return resolver.resolve(this)
+}
+
+private class DefaultProjectArtifactDependencyResolver(
+    private val resolveSourceSetName: (IdeaKotlinProjectArtifactDependency) -> String?
+) : IdeaKotlinProjectArtifactDependency.Resolver {
+    override fun resolve(dependency: IdeaKotlinProjectArtifactDependency): IdeaKotlinSourceDependency? {
+        return IdeaKotlinSourceDependency(
+            type = dependency.type,
+            coordinates = IdeaKotlinSourceCoordinates(
+                project = dependency.coordinates.project,
+                sourceSetName = resolveSourceSetName(dependency) ?: return null
+            ),
+            extras = dependency.extras
+        )
     }
 }
