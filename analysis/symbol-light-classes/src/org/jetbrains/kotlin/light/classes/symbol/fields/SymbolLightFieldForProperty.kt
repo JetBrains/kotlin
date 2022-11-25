@@ -31,17 +31,35 @@ import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
-internal class SymbolLightFieldForProperty(
-    propertySymbol: KtPropertySymbol,
+internal class SymbolLightFieldForProperty private constructor(
+    private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
     private val fieldName: String,
     containingClass: SymbolLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
     isTopLevel: Boolean,
     forceStatic: Boolean,
     takePropertyVisibility: Boolean,
+    override val kotlinOrigin: KtCallableDeclaration?,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
-    override val kotlinOrigin: KtCallableDeclaration? = propertySymbol.sourcePsiSafe<KtCallableDeclaration>()
-    private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol> = propertySymbol.createPointer()
+    internal constructor(
+        ktAnalysisSession: KtAnalysisSession,
+        propertySymbol: KtPropertySymbol,
+        fieldName: String,
+        containingClass: SymbolLightClassBase,
+        lightMemberOrigin: LightMemberOrigin?,
+        isTopLevel: Boolean,
+        forceStatic: Boolean,
+        takePropertyVisibility: Boolean,
+    ) : this(
+        propertySymbolPointer = with(ktAnalysisSession) { propertySymbol.createPointer() },
+        fieldName = fieldName,
+        containingClass = containingClass,
+        lightMemberOrigin = lightMemberOrigin,
+        isTopLevel = isTopLevel,
+        forceStatic = forceStatic,
+        takePropertyVisibility = takePropertyVisibility,
+        kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
+    )
 
     private fun <T> withPropertySymbol(action: context (KtAnalysisSession) (KtPropertySymbol) -> T): T {
         return propertySymbolPointer.withSymbol(ktModule, action)

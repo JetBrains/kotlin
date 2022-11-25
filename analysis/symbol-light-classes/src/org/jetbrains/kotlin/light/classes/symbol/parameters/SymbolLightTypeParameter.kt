@@ -42,10 +42,15 @@ internal class SymbolLightTypeParameter private constructor(
 ) : LightElement(parent.manager, KotlinLanguage.INSTANCE), PsiTypeParameter,
     KtLightDeclaration<KtTypeParameter, PsiTypeParameter> {
 
-    constructor(parent: SymbolLightTypeParameterList, index: Int, typeParameterSymbol: KtTypeParameterSymbol) : this(
+    constructor(
+        ktAnalysisSession: KtAnalysisSession,
+        parent: SymbolLightTypeParameterList,
+        index: Int,
+        typeParameterSymbol: KtTypeParameterSymbol,
+    ) : this(
         parent = parent,
         index = index,
-        typeParameterSymbolPointer = typeParameterSymbol.createPointer(),
+        typeParameterSymbolPointer = with(ktAnalysisSession) { typeParameterSymbol.createPointer() },
         typeParameterDeclaration = typeParameterSymbol.sourcePsiSafe(),
         kotlinOrigin = typeParameterSymbol.psiSafe(),
     )

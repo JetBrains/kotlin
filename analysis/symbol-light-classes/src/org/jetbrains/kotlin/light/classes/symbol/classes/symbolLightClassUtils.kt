@@ -71,7 +71,7 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     return (targetField as? SymbolLightFieldForEnumEntry)?.initializingClass as? KtLightClass
 }
 
-context(KtAnalysisSession)
+context(ktAnalysisSession@KtAnalysisSession)
 internal fun SymbolLightClassForClassOrObject.createConstructors(
     declarations: Sequence<KtConstructorSymbol>,
     result: MutableList<KtLightMethod>,
@@ -87,6 +87,7 @@ internal fun SymbolLightClassForClassOrObject.createConstructors(
 
         result.add(
             SymbolLightConstructor(
+                ktAnalysisSession = this@ktAnalysisSession,
                 constructorSymbol = constructor,
                 lightMemberOrigin = null,
                 containingClass = this@createConstructors,
@@ -96,6 +97,7 @@ internal fun SymbolLightClassForClassOrObject.createConstructors(
 
         createJvmOverloadsIfNeeded(constructor, result) { methodIndex, argumentSkipMask ->
             SymbolLightConstructor(
+                ktAnalysisSession = this@ktAnalysisSession,
                 constructorSymbol = constructor,
                 lightMemberOrigin = null,
                 containingClass = this@createConstructors,
@@ -152,7 +154,7 @@ private fun SymbolLightClassForClassOrObject.noArgConstructor(
     methodIndex,
 )
 
-context(KtAnalysisSession)
+context(ktAnalysisSession@KtAnalysisSession)
 internal fun SymbolLightClassBase.createMethods(
     declarations: Sequence<KtCallableSymbol>,
     result: MutableList<KtLightMethod>,
@@ -161,7 +163,7 @@ internal fun SymbolLightClassBase.createMethods(
 ) {
     val (ctorProperties, regularMembers) = declarations.partition { it is KtPropertySymbol && it.isFromPrimaryConstructor }
 
-    fun handleDeclaration(declaration: KtCallableSymbol) {
+    fun KtAnalysisSession.handleDeclaration(declaration: KtCallableSymbol) {
         when (declaration) {
             is KtFunctionSymbol -> {
                 // TODO: check if it has expect modifier
@@ -170,6 +172,7 @@ internal fun SymbolLightClassBase.createMethods(
 
                 result.add(
                     SymbolLightSimpleMethod(
+                        ktAnalysisSession = this,
                         functionSymbol = declaration,
                         lightMemberOrigin = null,
                         containingClass = this@createMethods,
@@ -181,6 +184,7 @@ internal fun SymbolLightClassBase.createMethods(
 
                 createJvmOverloadsIfNeeded(declaration, result) { methodIndex, argumentSkipMask ->
                     SymbolLightSimpleMethod(
+                        ktAnalysisSession = this,
                         functionSymbol = declaration,
                         lightMemberOrigin = null,
                         containingClass = this@createMethods,
@@ -206,11 +210,11 @@ internal fun SymbolLightClassBase.createMethods(
 
     // Regular members
     regularMembers.forEach {
-        handleDeclaration(it)
+        this@ktAnalysisSession.handleDeclaration(it)
     }
     // Then, properties from the primary constructor parameters
     ctorProperties.forEach {
-        handleDeclaration(it)
+        this@ktAnalysisSession.handleDeclaration(it)
     }
 }
 
@@ -232,7 +236,7 @@ private inline fun <T : KtFunctionLikeSymbol> SymbolLightClassBase.createJvmOver
     }
 }
 
-context(KtAnalysisSession)
+context(ktAnalysisSession@KtAnalysisSession)
 internal fun SymbolLightClassBase.createPropertyAccessors(
     result: MutableList<KtLightMethod>,
     declaration: KtPropertySymbol,
@@ -257,8 +261,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
         if (declaration.hasReifiedParameters) return false
         if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
         if (declaration.isHiddenOrSynthetic(siteTarget)) return false
-        if (isHiddenOrSynthetic()) return false
-        return true
+        return !isHiddenOrSynthetic()
     }
 
     val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
@@ -267,25 +270,28 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
         it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_GETTER)
     }
 
-    if (getter != null) {
+    fun createSymbolLightAccessorMethod(accessor: KtPropertyAccessorSymbol): SymbolLightAccessorMethod {
         val lightMemberOrigin = originalElement?.let {
             LightMemberOriginForDeclaration(
                 originalElement = it,
                 originKind = JvmDeclarationOriginKind.OTHER,
-                auxiliaryOriginalElement = getter.sourcePsiSafe<KtDeclaration>()
+                auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>()
             )
         }
 
-        result.add(
-            SymbolLightAccessorMethod(
-                propertyAccessorSymbol = getter,
-                containingPropertySymbol = declaration,
-                lightMemberOrigin = lightMemberOrigin,
-                containingClass = this@createPropertyAccessors,
-                isTopLevel = isTopLevel,
-                suppressStatic = suppressStatic,
-            )
+        return SymbolLightAccessorMethod(
+            ktAnalysisSession = this@ktAnalysisSession,
+            propertyAccessorSymbol = accessor,
+            containingPropertySymbol = declaration,
+            lightMemberOrigin = lightMemberOrigin,
+            containingClass = this@createPropertyAccessors,
+            isTopLevel = isTopLevel,
+            suppressStatic = suppressStatic,
         )
+    }
+
+    if (getter != null) {
+        result.add(createSymbolLightAccessorMethod(getter))
     }
 
     val setter = declaration.setter?.takeIf {
@@ -293,28 +299,11 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     }
 
     if (isMutable && setter != null) {
-        val lightMemberOrigin = originalElement?.let {
-            LightMemberOriginForDeclaration(
-                originalElement = it,
-                originKind = JvmDeclarationOriginKind.OTHER,
-                auxiliaryOriginalElement = setter.sourcePsiSafe<KtDeclaration>()
-            )
-        }
-
-        result.add(
-            SymbolLightAccessorMethod(
-                propertyAccessorSymbol = setter,
-                containingPropertySymbol = declaration,
-                lightMemberOrigin = lightMemberOrigin,
-                containingClass = this@createPropertyAccessors,
-                isTopLevel = isTopLevel,
-                suppressStatic = suppressStatic,
-            )
-        )
+        result.add(createSymbolLightAccessorMethod(setter))
     }
 }
 
-context(KtAnalysisSession)
+context(ktAnalysisSession@KtAnalysisSession)
 internal fun SymbolLightClassBase.createField(
     declaration: KtPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
@@ -348,6 +337,7 @@ internal fun SymbolLightClassBase.createField(
 
     result.add(
         SymbolLightFieldForProperty(
+            ktAnalysisSession = this@ktAnalysisSession,
             propertySymbol = declaration,
             fieldName = fieldName,
             containingClass = this,

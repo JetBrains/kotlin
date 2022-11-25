@@ -132,7 +132,7 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
         }
     }
 
-    context(KtAnalysisSession)
+    context(ktAnalysisSession@KtAnalysisSession)
     private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         if (!classOrObjectSymbol.isData) return
 
@@ -141,6 +141,7 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
             val lightMemberOrigin = LightMemberOriginForDeclaration(classOrObject, JvmDeclarationOriginKind.OTHER)
             result.add(
                 SymbolLightSimpleMethod(
+                    ktAnalysisSession = this@ktAnalysisSession,
                     ktFunctionSymbol, lightMemberOrigin, this, METHOD_INDEX_BASE, false,
                     suppressStatic = false
                 )
@@ -185,13 +186,14 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
     private val Name.isFromAny: Boolean
         get() = this == EQUALS || this == HASHCODE_NAME || this == TO_STRING
 
-    context(KtAnalysisSession)
+    context(ktAnalysisSession@KtAnalysisSession)
     private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         fun createDelegateMethod(ktFunctionSymbol: KtFunctionSymbol) {
             val kotlinOrigin = ktFunctionSymbol.psiSafe<KtDeclaration>() ?: classOrObject
             val lightMemberOrigin = LightMemberOriginForDeclaration(kotlinOrigin, JvmDeclarationOriginKind.DELEGATION)
             result.add(
                 SymbolLightSimpleMethod(
+                    ktAnalysisSession = this@ktAnalysisSession,
                     ktFunctionSymbol,
                     lightMemberOrigin,
                     this,

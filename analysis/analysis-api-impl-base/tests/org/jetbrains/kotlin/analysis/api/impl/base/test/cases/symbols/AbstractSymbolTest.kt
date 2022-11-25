@@ -60,17 +60,17 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
             }
         }
 
-        fun KtSymbol.safePointer(): PointerWrapper? {
-            val regularPointer = runCatching {
-                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = false, action = ::createPointer)
+        fun KtAnalysisSession.safePointer(ktSymbol: KtSymbol): PointerWrapper? {
+            val regularPointer = ktSymbol.runCatching {
+                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = false) { ktSymbol.createPointer() }
             }.let {
                 if (directiveToIgnoreSymbolRestore == null) it.getOrThrow() else it.getOrNull()
             } ?: return null
 
             val nonPsiPointer = kotlin.runCatching {
-                if (this is KtFileSymbol) return@runCatching null
+                if (ktSymbol is KtFileSymbol) return@runCatching null
 
-                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = true, action = ::createPointer)
+                KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = true) { ktSymbol.createPointer() }
             }
 
             return PointerWrapper(
@@ -96,7 +96,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
                     .distinctBy { it.first }
                     .map { (symbol, shouldBeRendered) ->
                         PointerWithRenderedSymbol(
-                            pointer = symbol.safePointer(),
+                            pointer = safePointer(symbol),
                             rendered = renderSymbolForComparison(symbol),
                             shouldBeRendered = shouldBeRendered,
                         )
@@ -105,7 +105,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
                 val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
                     PointerWithRenderedSymbol(
-                        symbol.safePointer(),
+                        safePointer(symbol),
                         when (symbol) {
                             is KtDeclarationSymbol -> symbol.render(prettyRenderOptions)
                             is KtFileSymbol -> prettyPrint {

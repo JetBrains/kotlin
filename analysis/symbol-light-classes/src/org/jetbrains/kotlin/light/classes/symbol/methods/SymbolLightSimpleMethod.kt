@@ -27,14 +27,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 internal class SymbolLightSimpleMethod(
+    ktAnalysisSession: KtAnalysisSession,
     functionSymbol: KtFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     private val isTopLevel: Boolean,
     argumentsSkipMask: BitSet? = null,
-    private val suppressStatic: Boolean = false
+    private val suppressStatic: Boolean = false,
 ) : SymbolLightMethod<KtFunctionSymbol>(
+    ktAnalysisSession = ktAnalysisSession,
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,

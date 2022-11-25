@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
@@ -18,11 +19,21 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterCommon(
-    parameterSymbol: KtValueParameterSymbol,
-    private val containingMethod: SymbolLightMethodBase
+    protected val parameterSymbolPointer: KtSymbolPointer<KtValueParameterSymbol>,
+    protected val parameterDeclaration: KtParameter?,
+    private val containingMethod: SymbolLightMethodBase,
+    override val kotlinOrigin: KtParameter?,
 ) : SymbolLightParameterBase(containingMethod) {
-    protected val parameterSymbolPointer: KtSymbolPointer<KtValueParameterSymbol> = parameterSymbol.createPointer()
-    protected val parameterDeclaration: KtParameter? = parameterSymbol.sourcePsiSafe()
+    internal constructor(
+        ktAnalysisSession: KtAnalysisSession,
+        parameterSymbol: KtValueParameterSymbol,
+        containingMethod: SymbolLightMethodBase,
+    ) : this(
+        parameterSymbolPointer = with(ktAnalysisSession) { parameterSymbol.createPointer() },
+        parameterDeclaration = parameterSymbol.sourcePsiSafe(),
+        containingMethod = containingMethod,
+        kotlinOrigin = parameterSymbol.psiSafe(),
+    )
 
     private val _name: String by lazy {
         parameterSymbolPointer.withSymbol(ktModule) {
@@ -33,8 +44,6 @@ internal abstract class SymbolLightParameterCommon(
     override fun getName(): String = _name
 
     override fun hasModifierProperty(name: String): Boolean = modifierList.hasModifierProperty(name)
-
-    override val kotlinOrigin: KtParameter? = parameterDeclaration ?: parameterSymbol.psiSafe()
 
     abstract override fun getModifierList(): PsiModifierList
 

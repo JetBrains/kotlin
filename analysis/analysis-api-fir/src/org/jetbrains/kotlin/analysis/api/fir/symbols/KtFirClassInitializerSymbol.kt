@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
@@ -28,6 +29,7 @@ internal class KtFirClassInitializerSymbol(
 ) : KtClassInitializerSymbol(), KtFirSymbol<FirAnonymousInitializerSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtClassInitializerSymbol>(this)?.let { return it }
         TODO("Figure out how to create such a pointer. Should we give an index to class initializers?")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -61,10 +62,10 @@ internal class KtFe10DescSamConstructorSymbol(
         get() = withValidityAssertion { descriptor.typeParameters.map { KtFe10DescTypeParameterSymbol(it, analysisContext) } }
 
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol> = withValidityAssertion {
-        val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource<KtSamConstructorSymbol>(this)
-        if (pointerByPsi != null) {
-            return pointerByPsi
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtSamConstructorSymbol>(this)?.let {
+            return it
         }
 
         val classId = descriptor.baseDescriptorForSynthetic.classId

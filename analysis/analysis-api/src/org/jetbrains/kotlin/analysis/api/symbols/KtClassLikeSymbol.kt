@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
@@ -21,6 +22,7 @@ public val KtClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
 
 public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>
 
     final override val typeParameters: List<KtTypeParameterSymbol>
@@ -34,6 +36,7 @@ public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbo
 public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, KtPossibleMemberSymbol {
     public abstract val classIdIfNonLocal: ClassId?
 
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtClassLikeSymbol>
 }
 
@@ -47,6 +50,7 @@ public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(),
      */
     public abstract val expandedType: KtType
 
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol>
 }
 
@@ -55,6 +59,7 @@ public sealed class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithMem
     public abstract val classKind: KtClassKind
     public abstract val superTypes: List<KtType>
 
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol>
 }
 
@@ -67,6 +72,7 @@ public abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol>
 }
 
@@ -85,6 +91,7 @@ public abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
 
     public abstract val companionObject: KtNamedClassOrObjectSymbol?
 
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol>
 }
 

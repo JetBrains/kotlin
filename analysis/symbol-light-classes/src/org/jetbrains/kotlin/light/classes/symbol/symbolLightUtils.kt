@@ -311,5 +311,5 @@ internal fun <T : KtSymbol> compareSymbolPointers(ktModule: KtModule, left: KtSy
 
 internal inline fun <T : KtSymbol, R> KtSymbolPointer<T>.withSymbol(
     ktModule: KtModule,
-    crossinline action: context(KtAnalysisSession) (T) -> R,
+    crossinline action: KtAnalysisSession.(T) -> R,
 ): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed()) }

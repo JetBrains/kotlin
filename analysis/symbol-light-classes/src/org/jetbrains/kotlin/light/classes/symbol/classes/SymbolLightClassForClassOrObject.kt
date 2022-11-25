@@ -161,6 +161,7 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
             }
             ?.mapTo(result) {
                 SymbolLightFieldForProperty(
+                    ktAnalysisSession = this,
                     propertySymbol = it,
                     fieldName = it.name.asString(),
                     containingClass = this@SymbolLightClassForClassOrObject,

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -65,13 +66,18 @@ internal class KtFirConstructorSymbol(
     override val typeParameters by cached { firSymbol.createKtTypeParameters(builder) }
 
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtConstructorSymbol>(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {
             throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("constructor")
         }
 
-        KtFirConstructorSymbolPointer(requireOwnerPointer(), isPrimary, FirCallableSignature.createSignature(firSymbol))
+        KtFirConstructorSymbolPointer(
+            requireOwnerPointer(),
+            isPrimary,
+            FirCallableSignature.createSignature(firSymbol),
+        )
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

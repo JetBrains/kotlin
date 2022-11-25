@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -18,9 +19,10 @@ import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightParameter(
+    ktAnalysisSession: KtAnalysisSession,
     parameterSymbol: KtValueParameterSymbol,
     containingMethod: SymbolLightMethodBase
-) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
+) : SymbolLightParameterCommon(ktAnalysisSession, parameterSymbol, containingMethod) {
     private val isConstructorParameterSymbol = containingMethod.isConstructor
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
@@ -33,7 +35,7 @@ internal class SymbolLightParameter(
             val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
 
             parameterSymbol.computeAnnotations(
-                parent = this,
+                parent = this@SymbolLightParameter,
                 nullability = nullability,
                 annotationUseSiteTarget = annotationSite,
                 includeAnnotationsWithoutSite = true

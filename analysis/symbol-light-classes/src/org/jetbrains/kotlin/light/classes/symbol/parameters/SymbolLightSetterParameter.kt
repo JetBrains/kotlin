@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -22,10 +23,11 @@ import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.SpecialNames
 
 internal class SymbolLightSetterParameter(
+    ktAnalysisSession: KtAnalysisSession,
     private val containingPropertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
     parameterSymbol: KtValueParameterSymbol,
     containingMethod: SymbolLightMethodBase,
-) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
+) : SymbolLightParameterCommon(ktAnalysisSession, parameterSymbol, containingMethod) {
     override fun getName(): String {
         if (isDefaultSetterParameter) return SpecialNames.IMPLICIT_SET_PARAMETER.asString()
         return super.getName()

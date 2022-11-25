@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -37,6 +38,7 @@ internal class KtFirAnonymousObjectSymbol(
 
     override val superTypes: List<KtType> by cached { firSymbol.superTypesList(builder) }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousObjectSymbol>(this)?.let { return it }
         if (firSymbol.source?.kind == KtFakeSourceElementKind.EnumInitializer) {

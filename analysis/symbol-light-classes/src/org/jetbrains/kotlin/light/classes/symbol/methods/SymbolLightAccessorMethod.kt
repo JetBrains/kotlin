@@ -39,30 +39,47 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-internal class SymbolLightAccessorMethod(
-    propertyAccessorSymbol: KtPropertyAccessorSymbol,
-    containingPropertySymbol: KtPropertySymbol,
+internal class SymbolLightAccessorMethod private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
+    methodIndex: Int,
+    private val isGetter: Boolean,
+    private val propertyAccessorDeclaration: KtPropertyAccessor?,
+    private val propertyAccessorSymbolPointer: KtSymbolPointer<KtPropertyAccessorSymbol>,
+    private val containingPropertyDeclaration: KtCallableDeclaration?,
+    private val containingPropertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
     private val isTopLevel: Boolean,
-    private val suppressStatic: Boolean = false,
+    private val suppressStatic: Boolean,
 ) : SymbolLightMethodBase(
     lightMemberOrigin,
     containingClass,
-    if (propertyAccessorSymbol is KtPropertyGetterSymbol) METHOD_INDEX_FOR_GETTER else METHOD_INDEX_FOR_SETTER,
+    methodIndex,
 ) {
-    private val isGetter: Boolean = propertyAccessorSymbol is KtPropertyGetterSymbol
-
-    private val propertyAccessorDeclaration: KtPropertyAccessor? = propertyAccessorSymbol.sourcePsiSafe()
-    private val propertyAccessorSymbolPointer: KtSymbolPointer<KtPropertyAccessorSymbol> = propertyAccessorSymbol.createPointer()
+    internal constructor(
+        ktAnalysisSession: KtAnalysisSession,
+        propertyAccessorSymbol: KtPropertyAccessorSymbol,
+        containingPropertySymbol: KtPropertySymbol,
+        lightMemberOrigin: LightMemberOrigin?,
+        containingClass: SymbolLightClassBase,
+        isTopLevel: Boolean,
+        suppressStatic: Boolean = false,
+    ) : this(
+        lightMemberOrigin,
+        containingClass,
+        methodIndex = if (propertyAccessorSymbol is KtPropertyGetterSymbol) METHOD_INDEX_FOR_GETTER else METHOD_INDEX_FOR_SETTER,
+        isGetter = propertyAccessorSymbol is KtPropertyGetterSymbol,
+        propertyAccessorDeclaration = propertyAccessorSymbol.sourcePsiSafe(),
+        propertyAccessorSymbolPointer = with(ktAnalysisSession) { propertyAccessorSymbol.createPointer() },
+        containingPropertyDeclaration = containingPropertySymbol.sourcePsiSafe(),
+        containingPropertySymbolPointer = with(ktAnalysisSession) { containingPropertySymbol.createPointer() },
+        isTopLevel = isTopLevel,
+        suppressStatic = suppressStatic,
+    )
 
     context(KtAnalysisSession)
     private fun propertyAccessorSymbol(): KtPropertyAccessorSymbol {
         return propertyAccessorSymbolPointer.restoreSymbolOrThrowIfDisposed()
     }
-
-    private val containingPropertyDeclaration: KtCallableDeclaration? = containingPropertySymbol.sourcePsiSafe()
-    private val containingPropertySymbolPointer: KtSymbolPointer<KtPropertySymbol> = containingPropertySymbol.createPointer()
 
     context(KtAnalysisSession)
     private fun propertySymbol(): KtPropertySymbol {
@@ -226,7 +243,10 @@ internal class SymbolLightAccessorMethod(
                     if (propertyParameter != null) {
                         builder.addParameter(
                             SymbolLightSetterParameter(
-                                containingPropertySymbolPointer, propertyParameter, this@SymbolLightAccessorMethod
+                                ktAnalysisSession = this,
+                                containingPropertySymbolPointer = containingPropertySymbolPointer,
+                                parameterSymbol = propertyParameter,
+                                containingMethod = this@SymbolLightAccessorMethod,
                             )
                         )
                     }

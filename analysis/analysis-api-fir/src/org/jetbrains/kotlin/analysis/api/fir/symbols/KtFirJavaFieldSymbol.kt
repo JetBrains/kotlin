@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
@@ -52,6 +53,7 @@ internal class KtFirJavaFieldSymbol(
 
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> = withValidityAssertion {
         KtFirJavaFieldSymbolPointer(requireOwnerPointer(), name)
     }

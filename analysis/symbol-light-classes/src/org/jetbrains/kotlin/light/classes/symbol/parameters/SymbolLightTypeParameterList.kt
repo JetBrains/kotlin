@@ -43,7 +43,8 @@ internal class SymbolLightTypeParameterList(
         symbolWithTypeParameterPointer.withSymbol(ktModule) {
             it.typeParameters.mapIndexed { index, parameter ->
                 SymbolLightTypeParameter(
-                    parent = this,
+                    ktAnalysisSession = this,
+                    parent = this@SymbolLightTypeParameterList,
                     index = index,
                     typeParameterSymbol = parameter,
                 )

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
@@ -105,6 +106,7 @@ internal class KtFe10PsiDefaultPropertySetterSymbol(
             descriptor?.let { KtFe10AnnotationsList.create(it.annotations, token) } ?: KtEmptyAnnotationsList(token)
         }
 
+    context(KtAnalysisSession)
     @OptIn(KtAnalysisApiInternals::class)
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromPsi<KtPropertySymbol>(propertyPsi)?.let {
@@ -153,6 +155,7 @@ internal class KtFe10PsiDefaultPropertySetterSymbol(
                 descriptor?.let { KtFe10AnnotationsList.create(it.annotations, token) } ?: KtEmptyAnnotationsList(token)
             }
 
+        context(KtAnalysisSession)
         @OptIn(KtAnalysisApiInternals::class)
         override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
             KtPsiBasedSymbolPointer.createForSymbolFromPsi<KtPropertySymbol>(propertyPsi)?.let {

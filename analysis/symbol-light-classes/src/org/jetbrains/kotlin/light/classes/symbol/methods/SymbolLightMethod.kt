@@ -28,21 +28,38 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
 
-internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
-    functionSymbol: FType,
+internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private constructor(
+    protected val functionSymbolPointer: KtSymbolPointer<FType>,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    private val argumentsSkipMask: BitSet? = null,
+    private val argumentsSkipMask: BitSet?,
+    protected val functionDeclaration: KtCallableDeclaration?,
+    override val kotlinOrigin: KtDeclaration?,
 ) : SymbolLightMethodBase(
     lightMemberOrigin,
     containingClass,
     methodIndex,
 ) {
-    protected val functionDeclaration: KtCallableDeclaration? = functionSymbol.sourcePsiSafe()
-
-    @Suppress("UNCHECKED_CAST")
-    protected val functionSymbolPointer: KtSymbolPointer<FType> = functionSymbol.createPointer() as KtSymbolPointer<FType>
+    internal constructor(
+        ktAnalysisSession: KtAnalysisSession,
+        functionSymbol: FType,
+        lightMemberOrigin: LightMemberOrigin?,
+        containingClass: SymbolLightClassBase,
+        methodIndex: Int,
+        argumentsSkipMask: BitSet? = null,
+    ) : this(
+        functionSymbolPointer = with(ktAnalysisSession) {
+            @Suppress("UNCHECKED_CAST")
+            functionSymbol.createPointer() as KtSymbolPointer<FType>
+        },
+        lightMemberOrigin = lightMemberOrigin,
+        containingClass = containingClass,
+        methodIndex = methodIndex,
+        argumentsSkipMask = argumentsSkipMask,
+        functionDeclaration = functionSymbol.sourcePsiSafe(),
+        kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
+    )
 
     protected fun <T> withFunctionSymbol(action: KtAnalysisSession.(FType) -> T): T = functionSymbolPointer.withSymbol(ktModule, action)
 
@@ -65,6 +82,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
                     if (!needToSkip) {
                         builder.addParameter(
                             SymbolLightParameter(
+                                ktAnalysisSession = this,
                                 parameterSymbol = parameter,
                                 containingMethod = this@SymbolLightMethod,
                             )
@@ -100,9 +118,6 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol>(
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     override fun getParameterList(): PsiParameterList = _parametersList
-
-    override val kotlinOrigin: KtDeclaration? =
-        functionDeclaration ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>()
 
     override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: functionSymbolPointer.isValid(ktModule)
 
