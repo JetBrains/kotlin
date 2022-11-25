@@ -61,7 +61,7 @@ internal class IdePlatformDependencyResolver(
         val artifacts = artifactResolutionStrategy.createArtifactView(sourceSet.internal)?.artifacts ?: return emptySet()
 
         val unresolvedDependencies = artifacts.failures
-            .onEach { reason -> sourceSet.project.logger.error("Failed to resolve dependency", reason) }
+            .onEach { reason -> sourceSet.project.logger.error("Failed to resolve platform dependency on ${sourceSet.name}", reason) }
             .map { reason ->
                 val selector = (reason as? ModuleVersionResolveException)?.selector as? ModuleComponentSelector
                 /* Can't figure out the dependency here :( */
