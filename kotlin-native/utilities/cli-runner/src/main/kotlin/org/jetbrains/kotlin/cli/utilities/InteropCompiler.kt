@@ -74,6 +74,7 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
         (if (nopack) arrayOf("-$NOPACK") else emptyArray()) +
         moduleName?.let { arrayOf("-module-name", it) }.orEmpty() +
         shortModuleName?.let { arrayOf("${K2NativeCompilerArguments.SHORT_MODULE_NAME_ARG}=$it") }.orEmpty() +
+        "-library-version=${arguments.libraryVersion}" +
         arguments.kotlincOption
 }
 

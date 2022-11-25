@@ -48,6 +48,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .multiple().delimiter(",")
     val library by argParser.option(ArgType.String, shortName = "l", description = "library to use for building")
             .multiple()
+    val libraryVersion by argParser.option(ArgType.String, shortName = "lv", description = "resulting interop library version")
+            .default("unspecified")
     val repo by argParser.option(ArgType.String, shortName = "r", description = "repository to resolve dependencies")
             .multiple()
     val mode by argParser.option(ArgType.Choice<GenerationMode>(), description = "the way interop library is generated")

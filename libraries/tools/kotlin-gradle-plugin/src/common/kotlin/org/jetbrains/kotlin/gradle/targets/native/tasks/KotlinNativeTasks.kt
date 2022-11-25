@@ -232,6 +232,9 @@ abstract class AbstractKotlinNativeCompile<
         get() = project.konanVersion.toString()
 
     @get:Input
+    val artifactVersion = project.version.toString()
+
+    @get:Input
     internal val useEmbeddableCompilerJar: Boolean
         get() = project.nativeUseEmbeddableCompilerJar
 
@@ -487,6 +490,7 @@ internal constructor(
             moduleName,
             shortModuleName,
             friendModule,
+            artifactVersion,
             createSharedCompilationDataOrNull(),
             sources.asFileTree,
             commonSourcesTree
@@ -989,6 +993,10 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
 
     @Suppress("unused")
     @get:Input
+    val libraryVersion = project.version.toString()
+
+    @Suppress("unused")
+    @get:Input
     val interopName: String = params.settings.name
 
     @get:Input
@@ -1088,6 +1096,9 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
             if (konanVersion.isAtLeast(1, 4, 0)) {
                 addArg("-Xmodule-name", moduleName)
             }
+
+            // TODO: uncomment after advancing bootstrap.
+            //addArg("-libraryVersion", libraryVersion)
 
             addAll(extraOpts)
         }
