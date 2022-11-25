@@ -14,6 +14,7 @@ data class IdeaKotlinProjectArtifactDependency(
     override val extras: MutableExtras = mutableExtrasOf()
 ) : IdeaKotlinDependency {
 
+    @IdeaKotlinService
     fun interface Resolver {
         fun resolve(dependency: IdeaKotlinProjectArtifactDependency): IdeaKotlinSourceDependency?
 

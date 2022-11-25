@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.tcs
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import java.io.Serializable
 
+@IdeaKotlinModel
 sealed interface IdeaKotlinDependency : Serializable {
     val coordinates: IdeaKotlinDependencyCoordinates?
     val extras: MutableExtras

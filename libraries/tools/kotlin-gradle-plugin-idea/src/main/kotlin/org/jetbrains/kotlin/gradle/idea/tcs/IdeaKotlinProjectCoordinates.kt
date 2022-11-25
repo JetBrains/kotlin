@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.tcs
 
 import java.io.Serializable
 
+@IdeaKotlinModel
 data class IdeaKotlinProjectCoordinates(
     val buildId: String,
     val projectPath: String,

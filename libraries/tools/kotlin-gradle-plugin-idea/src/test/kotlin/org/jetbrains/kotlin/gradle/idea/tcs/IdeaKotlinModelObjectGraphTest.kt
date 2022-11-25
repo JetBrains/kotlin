@@ -5,26 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.idea.tcs
 
+import org.jetbrains.kotlin.gradle.idea.tcs.ReflectionTestUtils.displayName
+import org.jetbrains.kotlin.gradle.idea.tcs.ReflectionTestUtils.ideaTcsReflections
+import org.jetbrains.kotlin.gradle.idea.tcs.ReflectionTestUtils.kotlinReflections
 import org.jetbrains.kotlin.tooling.core.AbstractExtras
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
-import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import java.io.Serializable
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @RunWith(Parameterized::class)
-class IdeaKotlinObjectGraphTest(private val node: KClass<*>, private val clazzName: String) {
+class IdeaKotlinModelObjectGraphTest(private val node: KClass<*>, private val clazzName: String) {
 
     @Test
     fun `test - node implements Serializable`() {
@@ -76,8 +75,6 @@ class IdeaKotlinObjectGraphTest(private val node: KClass<*>, private val clazzNa
 
 
     companion object {
-        private val reflections = Reflections("org.jetbrains.kotlin")
-        private val ideaTcsReflections = Reflections("org.jetbrains.kotlin.gradle.idea.tcs")
         private val ignoredNodes = setOf(
             /*
              Extras interface and AbstractExtras are okay for now:
@@ -95,8 +92,8 @@ class IdeaKotlinObjectGraphTest(private val node: KClass<*>, private val clazzNa
 
             resolveQueue += ideaTcsReflections.getAll(Scanners.SubTypes)
                 .map { Class.forName(it) }
-                .filter { it.name.startsWith("org.jetbrains.kotlin.gradle.idea.tcs") }
                 .map { it.kotlin }
+                .filter { it.isIdeaKotlinModel }
 
             while (resolveQueue.isNotEmpty()) {
                 val next = resolveQueue.removeFirst()
@@ -105,7 +102,7 @@ class IdeaKotlinObjectGraphTest(private val node: KClass<*>, private val clazzNa
                 next.resolveReachableClasses().forEach { child ->
                     resolveQueue.add(child)
                     if (child.java.isInterface || Modifier.isAbstract(child.java.modifiers)) {
-                        val subtypes = reflections.getSubTypesOf(child.java).map { it.kotlin }
+                        val subtypes = kotlinReflections.getSubTypesOf(child.java).map { it.kotlin }
                         assertTrue(subtypes.isNotEmpty(), "Missing implementations for $child")
                         resolveQueue.addAll(subtypes)
                     }
@@ -117,13 +114,6 @@ class IdeaKotlinObjectGraphTest(private val node: KClass<*>, private val clazzNa
                 .map { clazz -> arrayOf(clazz, checkNotNull(clazz.displayName())) }
 
         }
-
-        private fun KClass<*>.displayName() = java.name
-            .removePrefix("org.jetbrains.kotlin")
-            .removePrefix(".gradle")
-            .removePrefix(".idea")
-            .removePrefix(".tcs")
-            .removePrefix(".")
 
         private fun KClass<*>.resolveReachableClasses(): Set<KClass<*>> {
             return this.memberProperties

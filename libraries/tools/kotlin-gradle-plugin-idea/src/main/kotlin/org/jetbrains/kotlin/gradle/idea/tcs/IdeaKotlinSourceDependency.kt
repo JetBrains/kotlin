@@ -14,6 +14,8 @@ data class IdeaKotlinSourceDependency(
     override val coordinates: IdeaKotlinSourceCoordinates,
     override val extras: MutableExtras = mutableExtrasOf()
 ) : IdeaKotlinDependency {
+
+    @IdeaKotlinModel
     enum class Type : Serializable {
         Regular, Friend, DependsOn;
 

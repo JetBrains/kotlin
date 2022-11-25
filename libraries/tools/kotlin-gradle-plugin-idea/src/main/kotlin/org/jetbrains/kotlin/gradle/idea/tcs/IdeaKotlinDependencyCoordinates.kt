@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.tcs
 import java.io.File
 import java.io.Serializable
 
+@IdeaKotlinModel
 sealed interface IdeaKotlinDependencyCoordinates : Serializable
 
 data class IdeaKotlinBinaryCoordinates(
