@@ -34,6 +34,7 @@ interface IrDeclarationOrigin {
     object ERROR_CLASS : IrDeclarationOriginImpl("ERROR_CLASS")
 
     object SCRIPT_CLASS : IrDeclarationOriginImpl("SCRIPT_CLASS")
+    object SCRIPT_THIS_RECEIVER : IrDeclarationOriginImpl("SCRIPT_THIS_RECEIVER")
     object SCRIPT_STATEMENT : IrDeclarationOriginImpl("SCRIPT_STATEMENT")
     object SCRIPT_EARLIER_SCRIPTS : IrDeclarationOriginImpl("SCRIPT_EARLIER_SCRIPTS")
     object SCRIPT_CALL_PARAMETER : IrDeclarationOriginImpl("SCRIPT_CALL_PARAMETER")
