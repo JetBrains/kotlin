@@ -55,7 +55,6 @@ org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSou
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testSeveralWithSource,,, FLAKY
 org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleGroovy.testMultiplatformApplication,,,
 org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleKts.testMultiplatformApplication,,,
-org.jetbrains.kotlin.gradle.NewMultiplatformIT.testJavaSupportInJvmTargets,,,
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testJvmOverloadsFunctions,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testReturnInnerClasses,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testThrowsOnGenericMethod,,, FLAKY

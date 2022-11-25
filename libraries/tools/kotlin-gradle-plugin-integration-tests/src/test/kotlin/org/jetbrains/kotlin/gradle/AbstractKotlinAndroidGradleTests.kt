@@ -559,6 +559,12 @@ open class KotlinAndroid41GradleIT : KotlinAndroid4GradleIT() {
     fun testJvmWithJava() = with(Project("mppJvmWithJava")) {
         setupWorkingDir()
 
+        gradleProperties().appendText(
+            """
+            kotlin.jvm.target.validation.mode = warning
+            """.trimIndent()
+        )
+
         build("build") {
             assertSuccessful()
         }

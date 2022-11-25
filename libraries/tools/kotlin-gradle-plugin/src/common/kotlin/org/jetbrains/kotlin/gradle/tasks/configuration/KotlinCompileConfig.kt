@@ -61,19 +61,19 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
     }
 
     constructor(compilation: KotlinCompilationData<*>) : super(compilation) {
-        val javaTaskProvider = when (compilation) {
-            is KotlinJvmCompilation -> compilation.compileJavaTaskProvider
-            is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
-            is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider
-            else -> null
-        }
+        val javaTaskProvider = project.providers.provider {
+            when (compilation) {
+                is KotlinJvmCompilation -> compilation.compileJavaTaskProvider
+                is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
+                is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider
+                else -> null
+            }
+        }.flatMap { it }
 
         configureTaskProvider { taskProvider ->
             taskProvider.configure { task ->
-                javaTaskProvider?.let {
-                    task.associatedJavaCompileTaskTargetCompatibility.value(javaTaskProvider.map { it.targetCompatibility })
-                    task.associatedJavaCompileTaskName.value(javaTaskProvider.name)
-                }
+                task.associatedJavaCompileTaskTargetCompatibility.value(javaTaskProvider.map { it.targetCompatibility })
+                task.associatedJavaCompileTaskName.value(javaTaskProvider.map { it.name })
                 task.ownModuleName.value(
                     (compilation.compilerOptions.options as KotlinJvmCompilerOptions).moduleName.convention(compilation.ownModuleName)
                 )
