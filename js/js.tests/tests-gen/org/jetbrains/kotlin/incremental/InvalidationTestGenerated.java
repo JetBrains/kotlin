@@ -190,6 +190,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/inlineBecomeNonInline/");
     }
 
+    @TestMetadata("inlineFunctionAsFunctionReference")
+    public void testInlineFunctionAsFunctionReference() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsFunctionReference/");
+    }
+
     @TestMetadata("inlineFunctionAsParam")
     public void testInlineFunctionAsParam() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsParam/");
@@ -253,6 +258,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
     @TestMetadata("nonInlineBecomeInline")
     public void testNonInlineBecomeInline() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/nonInlineBecomeInline/");
+    }
+
+    @TestMetadata("privateDeclarationLeakThroughDefaultParam")
+    public void testPrivateDeclarationLeakThroughDefaultParam() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/privateDeclarationLeakThroughDefaultParam/");
     }
 
     @TestMetadata("privateInlineFunction1")
