@@ -23457,6 +23457,40 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/override/derivedClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            public class DerivedClasses {
+                @Test
+                public void testAllFilesPresentInDerivedClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/derivedClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("Constructor.kt")
+                public void testConstructor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/derivedClasses/Constructor.kt");
+                }
+
+                @Test
+                @TestMetadata("DelegatedConstructor.kt")
+                public void testDelegatedConstructor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/derivedClasses/DelegatedConstructor.kt");
+                }
+
+                @Test
+                @TestMetadata("EnumValues.kt")
+                public void testEnumValues() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/derivedClasses/EnumValues.kt");
+                }
+
+                @Test
+                @TestMetadata("Instance.kt")
+                public void testInstance() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/derivedClasses/Instance.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/override/parameterNames")
             @TestDataPath("$PROJECT_ROOT")
             public class ParameterNames {

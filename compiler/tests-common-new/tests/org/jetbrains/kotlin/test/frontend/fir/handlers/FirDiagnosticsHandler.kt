@@ -11,17 +11,16 @@ import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFa
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.renderForDebugInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -156,7 +155,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             }
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
-                consumer.reportCallDiagnostic(functionCall, functionCall.calleeReference)
+                val reference = functionCall.calleeReference
+                consumer.reportCallDiagnostic(functionCall, reference)
+                consumer.reportDerivedClassDiagnostic(functionCall, reference)
 
                 super.visitFunctionCall(functionCall)
             }
@@ -166,9 +167,17 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 if (selector is FirQualifiedAccess) {
                     val reference = selector.calleeReference as FirNamedReference
                     consumer.reportCallDiagnostic(safeCallExpression, reference)
+                    consumer.reportDerivedClassDiagnostic(safeCallExpression, reference)
                 }
 
                 super.visitSafeCallExpression(safeCallExpression)
+            }
+
+            override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+                val reference = delegatedConstructorCall.calleeReference as FirNamedReference
+                consumer.reportDerivedClassDiagnostic(delegatedConstructorCall, reference)
+
+                super.visitDelegatedConstructorCall(delegatedConstructorCall)
             }
         }.let(firFile::accept)
 
@@ -205,6 +214,18 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val fqName = resolvedSymbol?.fqNameUnsafe()
             Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
+        }
+    }
+
+    private fun DebugDiagnosticConsumer.reportDerivedClassDiagnostic(element: FirElement, reference: FirNamedReference) {
+        report(DebugInfoDiagnosticFactory1.CALLABLE_OWNER, element) {
+            val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
+            val callable = resolvedSymbol?.fir as? FirCallableDeclaration ?: return@report ""
+            DebugInfoDiagnosticFactory1.renderCallableOwner(
+                callable.symbol.callableId,
+                callable.containingClassLookupTag()?.classId,
+                callable.containingClassForStaticMemberAttr == null
+            )
         }
     }
 
@@ -253,7 +274,8 @@ private class DebugDiagnosticConsumer(
             KtRealSourceElementKind,
             KtFakeSourceElementKind.DesugaredCompoundAssignment,
             KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
-            KtFakeSourceElementKind.SmartCastExpression
+            KtFakeSourceElementKind.SmartCastExpression,
+            KtFakeSourceElementKind.DelegatingConstructorCall
         )
     }
 

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
@@ -25,13 +25,13 @@ class DebugInfoDiagnosticFactory0 private constructor(
     override val withExplicitDefinitionOnly: Boolean = false
 
     override fun createDiagnostic(
-        expression: KtExpression,
+        element: KtElement,
         bindingContext: BindingContext,
         dataFlowValueFactory: DataFlowValueFactory?,
         languageVersionSettings: LanguageVersionSettings?,
         moduleDescriptor: ModuleDescriptorImpl?
     ): Diagnostic {
-        return DebugInfoDiagnostic(expression, this)
+        return DebugInfoDiagnostic(element, this)
     }
 
     override val name: String

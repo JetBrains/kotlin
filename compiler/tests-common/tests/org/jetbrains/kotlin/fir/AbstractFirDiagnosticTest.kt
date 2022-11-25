@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -133,7 +132,7 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(file, actualText)
     }
 
-    protected fun collectDebugInfoDiagnostics(
+    private fun collectDebugInfoDiagnostics(
         firFile: FirFile,
         diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
     ): List<KtDiagnostic> {
@@ -154,11 +153,19 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             }
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
-                result.addIfNotNull(
-                    createCallDiagnosticIfExpected(functionCall, functionCall.calleeReference, diagnosedRangesToDiagnosticNames)
-                )
+                val reference = functionCall.calleeReference
+                result.addIfNotNull(createCallDiagnosticIfExpected(functionCall, reference, diagnosedRangesToDiagnosticNames))
+                result.addIfNotNull(createDerivedClassDiagnosticIfExpected(functionCall, reference, diagnosedRangesToDiagnosticNames))
 
                 super.visitFunctionCall(functionCall)
+            }
+
+            override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+                val reference = delegatedConstructorCall.calleeReference as FirNamedReference
+                result.addIfNotNull(
+                    createDerivedClassDiagnosticIfExpected(delegatedConstructorCall, reference, diagnosedRangesToDiagnosticNames))
+
+                super.visitDelegatedConstructorCall(delegatedConstructorCall)
             }
         }.let(firFile::accept)
 
@@ -185,13 +192,29 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         element: FirElement,
         reference: FirNamedReference,
         diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
-    ): KtDiagnosticWithParameters1<String>? =
-        DebugInfoDiagnosticFactory1.CALL.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
-
+    ): KtDiagnostic? {
+        return DebugInfoDiagnosticFactory1.CALL.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val fqName = resolvedSymbol?.fqNameUnsafe()
             Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
         }
+    }
+
+    private fun createDerivedClassDiagnosticIfExpected(
+        element: FirElement,
+        reference: FirNamedReference,
+        diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
+    ): KtDiagnostic? {
+        return DebugInfoDiagnosticFactory1.CALLABLE_OWNER.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
+            val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
+            val callable = resolvedSymbol?.fir as? FirCallableDeclaration ?: return@createDebugInfoDiagnostic ""
+            DebugInfoDiagnosticFactory1.renderCallableOwner(
+                callable.symbol.callableId,
+                callable.containingClassLookupTag()?.classId,
+                callable.containingClassForStaticMemberAttr == null
+            )
+        }
+    }
 
     private fun DebugInfoDiagnosticFactory1.createDebugInfoDiagnostic(
         element: FirElement,
