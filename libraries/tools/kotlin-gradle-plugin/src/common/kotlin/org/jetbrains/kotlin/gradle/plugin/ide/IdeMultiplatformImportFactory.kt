@@ -59,6 +59,13 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
 
+        registerDependencyResolver(
+            resolver = IdeNativeStdlibDependencyResolver,
+            constraint = IdeMultiplatformImport.SourceSetConstraint.isNative,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+        )
+
         registerExtrasSerializationExtension {
             register(kotlinDebugKey, IdeaKotlinExtrasSerializer.javaIoSerializable())
         }
