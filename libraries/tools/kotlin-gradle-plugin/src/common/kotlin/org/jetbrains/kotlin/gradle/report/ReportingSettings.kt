@@ -46,6 +46,7 @@ data class HttpReportSettings(
 
 data class BuildScanSettings(
     val customValueLimit: Int,
+    val metrics: Set<String>?
 ): Serializable {
     companion object {
         const val serialVersionUID: Long = 0

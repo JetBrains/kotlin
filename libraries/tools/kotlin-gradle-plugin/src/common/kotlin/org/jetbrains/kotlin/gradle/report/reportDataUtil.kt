@@ -32,7 +32,8 @@ internal fun prepareData(
     label: String?,
     kotlinVersion: String,
     buildOperationRecords: Collection<BuildOperationRecord>,
-    additionalTags: List<StatTag> = emptyList()
+    additionalTags: List<StatTag> = emptyList(),
+    metricsToShow: Set<String>? = null
 ): CompileStatisticsData? {
     val result = event.result
     val taskPath = event.descriptor.taskPath
@@ -56,9 +57,11 @@ internal fun prepareData(
     val buildMetrics = buildOperationRecords.firstOrNull { it.path == taskPath }?.buildMetrics
 
     val performanceMetrics = collectBuildPerformanceMetrics(taskExecutionResult, buildMetrics)
-    val buildTimesMetrics = collectBuildMetrics(taskExecutionResult, buildMetrics, performanceMetrics, result.startTime, System.currentTimeMillis())
+    val buildTimesMetrics = collectBuildMetrics(
+        taskExecutionResult, buildMetrics, performanceMetrics, result.startTime,
+        System.currentTimeMillis()
+    )
     val buildAttributes = collectBuildAttributes(taskExecutionResult, buildMetrics)
-
     val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
         is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
         else -> emptyList<String>()
@@ -67,13 +70,13 @@ internal fun prepareData(
         durationMs = durationMs,
         taskResult = taskResult.name,
         label = label,
-        buildTimesMetrics = buildTimesMetrics,
-        performanceMetrics = performanceMetrics,
+        buildTimesMetrics = filterMetrics(metricsToShow, buildTimesMetrics),
+        performanceMetrics = filterMetrics(metricsToShow, performanceMetrics),
         projectName = projectName,
         taskName = taskPath,
         changes = changes,
         tags = collectTags(taskExecutionResult, buildMetrics, additionalTags).map { it.name },
-        nonIncrementalAttributes = collectBuildAttributes(taskExecutionResult, buildMetrics),
+        nonIncrementalAttributes = buildAttributes,
         hostName = BuildReportsService.hostName,
         kotlinVersion = kotlinVersion,
         buildUuid = uuid,
@@ -81,6 +84,11 @@ internal fun prepareData(
         compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList()
     )
 }
+
+private fun <E : Enum<E>> filterMetrics(
+    expectedMetrics: Set<String>?,
+    buildTimesMetrics: Map<E, Long>
+): Map<E, Long> = expectedMetrics?.let { buildTimesMetrics.filterKeys { metric -> it.contains(metric.name) } } ?: buildTimesMetrics
 
 private fun collectBuildAttributes(taskExecutionResult: TaskExecutionResult?, buildMetrics: BuildMetrics?): Set<BuildAttribute> {
     val attributes = HashSet<BuildAttribute>()
@@ -92,13 +100,12 @@ private fun collectBuildAttributes(taskExecutionResult: TaskExecutionResult?, bu
 
 private fun collectBuildPerformanceMetrics(
     taskExecutionResult: TaskExecutionResult?,
-    buildMetrics: BuildMetrics?,
+    buildMetrics: BuildMetrics?
 ): Map<BuildPerformanceMetric, Long> {
     val taskBuildPerformanceMetrics = HashMap<BuildPerformanceMetric, Long>()
     taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.let { taskBuildPerformanceMetrics.putAll(it) }
     buildMetrics?.buildPerformanceMetrics?.asMap()?.let { taskBuildPerformanceMetrics.putAll(it) }
-    taskBuildPerformanceMetrics.filterValues { value -> value != 0L }
-    return taskBuildPerformanceMetrics
+    return taskBuildPerformanceMetrics.filterValues { value -> value != 0L }
 }
 private fun collectBuildMetrics(
     taskExecutionResult: TaskExecutionResult?,
@@ -124,10 +131,9 @@ private fun collectBuildMetrics(
         performanceMetrics[BuildPerformanceMetric.START_WORKER_EXECUTION]?.let { startWorkerExecutionTime ->
             taskBuildMetrics.put(BuildTime.RUN_WORKER_DELAY, TimeUnit.NANOSECONDS.toMillis(startWorkerExecutionTime - callWorkerTime))
         }
-
     }
-    taskBuildMetrics.filterValues { value -> value != 0L }
-    return taskBuildMetrics
+    return taskBuildMetrics.filterValues { value -> value != 0L }
+
 }
 
 private fun collectTags(

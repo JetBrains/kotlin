@@ -118,6 +118,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportBuildScanCustomValuesLimit: Int
         get() = property("kotlin.build.report.build_scan.custom_values_limit")?.toInt() ?: 1000
 
+    val buildReportBuildScanMetrics: String?
+        get() = property("kotlin.build.report.build_scan.metrics")
+
     val buildReportMetrics: Boolean
         get() = booleanProperty("kotlin.build.report.metrics") ?: false
 
