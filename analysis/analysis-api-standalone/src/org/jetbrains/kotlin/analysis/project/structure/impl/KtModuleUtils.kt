@@ -49,6 +49,7 @@ internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServ
     return when {
         isJvm() -> JvmPlatformAnalyzerServices
         isJs() -> JsPlatformAnalyzerServices
+        isWasm() -> WasmPlatformAnalyzerServices
         isNative() -> NativePlatformAnalyzerServices
         isCommon() -> CommonPlatformAnalyzerServices
         else -> error("Unknown target platform: $this")
