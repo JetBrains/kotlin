@@ -202,3 +202,35 @@ fun <T> Nothing?.unsafeCast(): Dynamic? = null
  * Reinterprets Dynamic type value as a value of the specified type [T] without any actual type checking.
  */
 fun <T> Dynamic.unsafeCast(): T = this as T
+
+@JsFun("e => { throw e; }")
+private external fun jsThrow(e: Dynamic)
+
+@JsFun("""(f) => {
+    let result = null;
+    try { 
+        f();
+    } catch (e) {
+       result = e;
+    }
+    return result;
+}""")
+private external fun jsCatch(f: () -> Unit): Dynamic?
+
+/**
+ * For a Dynamic value caught in JS, returns the corresponding [Throwable]
+ * if it was thrown from Kotlin, or null otherwise.
+ */
+public fun Dynamic.toThrowableOrNull(): Throwable? {
+    val thisAny: Any = this
+    if (thisAny is Throwable) return thisAny
+    var result: Throwable? = null
+    jsCatch {
+        try {
+            jsThrow(this)
+        } catch (e: Throwable) {
+            result = e
+        }
+    }
+    return result
+}

@@ -5,8 +5,6 @@
 
 package kotlin.js
 
-external class Promise<T>
-
 @PublishedApi
 internal val undefined: Nothing? = null
 
