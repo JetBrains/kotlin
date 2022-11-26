@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-internal class SymbolLightInlineClass : SymbolLightClassForClassOrObject {
+internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject {
     constructor(
         classOrObject: KtClassOrObject,
         ktModule: KtModule,
@@ -94,6 +94,6 @@ internal class SymbolLightInlineClass : SymbolLightClassForClassOrObject {
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
-    override fun copy(): SymbolLightInlineClass =
-        SymbolLightInlineClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+    override fun copy(): SymbolLightClassForInlineClass =
+        SymbolLightClassForInlineClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 }
