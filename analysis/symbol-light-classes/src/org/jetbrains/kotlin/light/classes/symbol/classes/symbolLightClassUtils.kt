@@ -57,7 +57,7 @@ internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktMod
 internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule: KtModule): SymbolLightClassBase = when {
     ktClassOrObject.hasModifier(INLINE_KEYWORD) -> SymbolLightClassForInlineClass(ktClassOrObject, ktModule)
     ktClassOrObject is KtClass && ktClassOrObject.isAnnotation() -> SymbolLightAnnotationClass(ktClassOrObject, ktModule)
-    ktClassOrObject is KtClass && ktClassOrObject.isInterface() -> SymbolLightInterfaceClass(ktClassOrObject, ktModule)
+    ktClassOrObject is KtClass && ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
     else -> SymbolLightClassForClassOrObject(ktClassOrObject, ktModule)
 }
 
@@ -67,7 +67,7 @@ internal fun createLightClassNoCache(
     ktModule: KtModule,
     manager: PsiManager,
 ): SymbolLightClassBase = when (ktClassOrObjectSymbol.classKind) {
-    KtClassKind.INTERFACE -> SymbolLightInterfaceClass(
+    KtClassKind.INTERFACE -> SymbolLightClassForInterface(
         ktAnalysisSession = this@ktAnalysisSession,
         ktModule = ktModule,
         classOrObjectSymbol = ktClassOrObjectSymbol,
@@ -463,7 +463,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(
         ?.getFlag(JvmAnalysisFlags.jvmDefaultMode)
         ?: JvmDefaultMode.DEFAULT
 
-    if (containingClass is SymbolLightInterfaceClass &&
+    if (containingClass is SymbolLightClassForInterface &&
         classOrObject?.hasInterfaceDefaultImpls == true &&
         jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE
     ) {

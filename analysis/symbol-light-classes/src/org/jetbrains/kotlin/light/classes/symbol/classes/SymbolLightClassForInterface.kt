@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal open class SymbolLightInterfaceClass : SymbolLightClassForInterfaceOrAnnotationClass {
+internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,
@@ -67,8 +67,8 @@ internal open class SymbolLightInterfaceClass : SymbolLightClassForInterfaceOrAn
 
     override fun getOwnMethods(): List<PsiMethod> = _ownMethods
 
-    override fun copy(): SymbolLightInterfaceClass =
-        SymbolLightInterfaceClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+    override fun copy(): SymbolLightClassForInterface =
+        SymbolLightClassForInterface(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 
     private val _extendsList: PsiReferenceList by lazyPub {
         withClassOrObjectSymbol { classOrObjectSymbol ->

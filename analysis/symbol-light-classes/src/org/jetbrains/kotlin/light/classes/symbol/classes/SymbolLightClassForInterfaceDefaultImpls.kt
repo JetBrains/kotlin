@@ -10,8 +10,8 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 
-internal class SymbolLightClassForInterfaceDefaultImpls(private val containingClass: SymbolLightInterfaceClass) :
-    SymbolLightInterfaceClass(
+internal class SymbolLightClassForInterfaceDefaultImpls(private val containingClass: SymbolLightClassForInterface) :
+    SymbolLightClassForInterface(
         containingClass.classOrObjectDeclaration,
         containingClass.classOrObjectSymbolPointer,
         containingClass.ktModule,
