@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-internal class SymbolLightInlineClass : SymbolLightClass {
+internal class SymbolLightInlineClass : SymbolLightClassForClassOrObject {
     constructor(
         classOrObject: KtClassOrObject,
         ktModule: KtModule,

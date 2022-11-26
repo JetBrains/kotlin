@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-internal open class SymbolLightClass : SymbolLightClassForNamedClassOrObject {
+internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassOrObject {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,
@@ -101,7 +101,7 @@ internal open class SymbolLightClass : SymbolLightClassForNamedClassOrObject {
         val lazyAnnotations = lazyPub {
             withClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
-                    parent = this@SymbolLightClass,
+                    parent = this@SymbolLightClassForClassOrObject,
                     nullability = NullabilityType.Unknown,
                     annotationUseSiteTarget = null,
                 )
@@ -346,5 +346,5 @@ internal open class SymbolLightClass : SymbolLightClassForNamedClassOrObject {
 
     override fun isAnnotationType(): Boolean = false
 
-    override fun copy(): SymbolLightClass = SymbolLightClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 }

@@ -58,7 +58,7 @@ internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule:
     ktClassOrObject.hasModifier(INLINE_KEYWORD) -> SymbolLightInlineClass(ktClassOrObject, ktModule)
     ktClassOrObject is KtClass && ktClassOrObject.isAnnotation() -> SymbolLightAnnotationClass(ktClassOrObject, ktModule)
     ktClassOrObject is KtClass && ktClassOrObject.isInterface() -> SymbolLightInterfaceClass(ktClassOrObject, ktModule)
-    else -> SymbolLightClass(ktClassOrObject, ktModule)
+    else -> SymbolLightClassForClassOrObject(ktClassOrObject, ktModule)
 }
 
 context(ktAnalysisSession@KtAnalysisSession)
@@ -81,7 +81,7 @@ internal fun createLightClassNoCache(
         manager = manager,
     )
 
-    else -> SymbolLightClass(
+    else -> SymbolLightClassForClassOrObject(
         ktAnalysisSession = this@ktAnalysisSession,
         ktModule = ktModule,
         classOrObjectSymbol = ktClassOrObjectSymbol,
@@ -92,7 +92,7 @@ internal fun createLightClassNoCache(
 private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     if (ktEnumEntry.body == null) return null
 
-    val symbolLightClass = ktEnumEntry.containingClass()?.toLightClass() as? SymbolLightClass ?: return null
+    val symbolLightClass = ktEnumEntry.containingClass()?.toLightClass() as? SymbolLightClassForClassOrObject ?: return null
     val targetField = symbolLightClass.ownFields.firstOrNull {
         it is SymbolLightFieldForEnumEntry && it.kotlinOrigin == ktEnumEntry
     } ?: return null

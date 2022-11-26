@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 
 internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
-    private val enumClass: SymbolLightClass,
+    private val enumClass: SymbolLightClassForClassOrObject,
     ktModule: KtModule,
-) : SymbolLightClass(
+) : SymbolLightClassForClassOrObject(
     enumConstant.kotlinOrigin,
     ktModule,
 ), PsiEnumConstantInitializer {
