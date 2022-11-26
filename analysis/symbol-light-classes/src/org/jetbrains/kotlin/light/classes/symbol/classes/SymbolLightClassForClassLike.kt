@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-abstract class SymbolLightClassForClassOrObject<SType : KtClassOrObjectSymbol> protected constructor(
+abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> protected constructor(
     internal val classOrObjectDeclaration: KtClassOrObject?,
     internal val classOrObjectSymbolPointer: KtSymbolPointer<SType>,
     ktModule: KtModule,
@@ -141,7 +141,7 @@ abstract class SymbolLightClassForClassOrObject<SType : KtClassOrObjectSymbol> p
 
     private val _ownInnerClasses: List<SymbolLightClassBase> by lazyPub {
         withClassOrObjectSymbol {
-            it.createInnerClasses(manager, this@SymbolLightClassForClassOrObject, classOrObjectDeclaration)
+            it.createInnerClasses(manager, this@SymbolLightClassForClassLike, classOrObjectDeclaration)
         }
     }
 
@@ -159,7 +159,7 @@ abstract class SymbolLightClassForClassOrObject<SType : KtClassOrObjectSymbol> p
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightClassForClassOrObject<*> || other.ktModule != ktModule || other.manager != manager) return false
+        if (other !is SymbolLightClassForClassLike<*> || other.ktModule != ktModule || other.manager != manager) return false
         if (classOrObjectDeclaration != null) {
             return other.classOrObjectDeclaration == classOrObjectDeclaration
         }
@@ -218,5 +218,5 @@ abstract class SymbolLightClassForClassOrObject<SType : KtClassOrObjectSymbol> p
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
         baseClass?.let { InheritanceImplUtil.isInheritorDeep(this, it, classToByPass) } ?: false
 
-    abstract override fun copy(): SymbolLightClassForClassOrObject<*>
+    abstract override fun copy(): SymbolLightClassForClassLike<*>
 }

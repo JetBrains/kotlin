@@ -101,7 +101,7 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
 }
 
 context(ktAnalysisSession@KtAnalysisSession)
-internal fun SymbolLightClassForClassOrObject<*>.createConstructors(
+internal fun SymbolLightClassForClassLike<*>.createConstructors(
     declarations: Sequence<KtConstructorSymbol>,
     result: MutableList<KtLightMethod>,
 ) {
@@ -158,7 +158,7 @@ private fun SymbolLightClassBase.shouldGenerateNoArgOverload(
             !primaryConstructor.hasJvmOverloadsAnnotation()
 }
 
-private fun SymbolLightClassForClassOrObject<*>.defaultConstructor(): KtLightMethod {
+private fun SymbolLightClassForClassLike<*>.defaultConstructor(): KtLightMethod {
     val classOrObject = kotlinOrigin
     val visibility = when {
         isObject || isEnum -> PsiModifier.PRIVATE
@@ -170,7 +170,7 @@ private fun SymbolLightClassForClassOrObject<*>.defaultConstructor(): KtLightMet
     return noArgConstructor(visibility, METHOD_INDEX_FOR_DEFAULT_CTOR)
 }
 
-private fun SymbolLightClassForClassOrObject<*>.noArgConstructor(
+private fun SymbolLightClassForClassLike<*>.noArgConstructor(
     visibility: String,
     methodIndex: Int,
 ): KtLightMethod = SymbolLightNoArgConstructor(
@@ -381,7 +381,7 @@ internal fun SymbolLightClassBase.createField(
 }
 
 context(KtAnalysisSession)
-internal fun SymbolLightClassForClassOrObject<*>.createInheritanceList(
+internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
     forExtendsList: Boolean,
     superTypes: List<KtType>,
 ): PsiReferenceList {

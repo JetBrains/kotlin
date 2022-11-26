@@ -19,12 +19,12 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassLike
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
 internal class SymbolLightFieldForObject private constructor(
-    containingClass: SymbolLightClassForClassOrObject<*>,
+    containingClass: SymbolLightClassForClassLike<*>,
     private val name: String,
     lightMemberOrigin: LightMemberOrigin?,
     private val objectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
@@ -35,7 +35,7 @@ internal class SymbolLightFieldForObject private constructor(
         objectSymbol: KtNamedClassOrObjectSymbol,
         name: String,
         lightMemberOrigin: LightMemberOrigin?,
-        containingClass: SymbolLightClassForClassOrObject<*>,
+        containingClass: SymbolLightClassForClassLike<*>,
     ) : this(
         containingClass = containingClass,
         name = name,

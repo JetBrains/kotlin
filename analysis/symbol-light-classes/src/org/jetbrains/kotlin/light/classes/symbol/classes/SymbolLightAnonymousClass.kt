@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotati
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class SymbolLightAnonymousClass : SymbolLightClassForClassOrObject<KtAnonymousObjectSymbol>, PsiAnonymousClass {
+internal class SymbolLightAnonymousClass : SymbolLightClassForClassLike<KtAnonymousObjectSymbol>, PsiAnonymousClass {
     constructor(
         anonymousObjectDeclaration: KtClassOrObject,
         ktModule: KtModule,
