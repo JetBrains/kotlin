@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotati
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class SymbolLightAnonymousClass : SymbolLightClassForClassLike<KtAnonymousObjectSymbol>, PsiAnonymousClass {
+internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KtAnonymousObjectSymbol>, PsiAnonymousClass {
     constructor(
         anonymousObjectDeclaration: KtClassOrObject,
         ktModule: KtModule,
@@ -111,5 +111,5 @@ internal class SymbolLightAnonymousClass : SymbolLightClassForClassLike<KtAnonym
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getQualifiedName(): String? = null
-    override fun copy() = SymbolLightAnonymousClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 }

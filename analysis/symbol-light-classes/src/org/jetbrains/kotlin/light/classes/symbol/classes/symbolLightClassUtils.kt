@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import java.util.*
 
 internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktModule: KtModule): KtLightClass? = when {
-    classOrObject.isObjectLiteral() -> SymbolLightAnonymousClass(classOrObject, ktModule)
+    classOrObject.isObjectLiteral() -> SymbolLightClassForAnonymousObject(classOrObject, ktModule)
     classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
     else -> createLightClassNoCache(classOrObject, ktModule)
 }
