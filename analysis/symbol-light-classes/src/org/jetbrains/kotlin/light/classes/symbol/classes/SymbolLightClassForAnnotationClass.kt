@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class SymbolLightAnnotationClass : SymbolLightClassForInterfaceOrAnnotationClass {
+internal class SymbolLightClassForAnnotationClass : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,
@@ -70,7 +70,7 @@ internal class SymbolLightAnnotationClass : SymbolLightClassForInterfaceOrAnnota
 
     override fun getExtendsList(): PsiReferenceList? = null
 
-    override fun copy(): SymbolLightAnnotationClass = SymbolLightAnnotationClass(
+    override fun copy(): SymbolLightClassForAnnotationClass = SymbolLightClassForAnnotationClass(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classOrObjectSymbolPointer = classOrObjectSymbolPointer,
         ktModule = ktModule,
