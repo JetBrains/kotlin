@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForPrope
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-abstract class SymbolLightClassForNamedClassOrObject : SymbolLightClassForClassLike<KtNamedClassOrObjectSymbol> {
+abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<KtNamedClassOrObjectSymbol> {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal abstract class SymbolLightInterfaceOrAnnotationClass : SymbolLightClassForNamedClassOrObject {
+internal abstract class SymbolLightInterfaceOrAnnotationClass : SymbolLightClassForNamedClassLike {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,

@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassOrObject {
+internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,
