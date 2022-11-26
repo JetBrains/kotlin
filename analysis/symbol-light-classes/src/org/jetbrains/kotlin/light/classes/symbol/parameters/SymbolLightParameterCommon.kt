@@ -90,13 +90,13 @@ internal abstract class SymbolLightParameterCommon(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightParameterCommon) return false
+        if (other !is SymbolLightParameterCommon || other.ktModule != ktModule) return false
 
         if (parameterDeclaration != null) {
-            return parameterDeclaration == other.parameterDeclaration && ktModule == other.ktModule
+            return parameterDeclaration == other.parameterDeclaration
         }
 
-        return ktModule == other.ktModule && compareSymbolPointers(ktModule, parameterSymbolPointer, other.parameterSymbolPointer)
+        return other.parameterDeclaration == null && compareSymbolPointers(ktModule, parameterSymbolPointer, other.parameterSymbolPointer)
     }
 
     override fun hashCode(): Int = parameterDeclaration?.hashCode() ?: _name.hashCode()

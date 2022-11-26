@@ -169,15 +169,13 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightFieldForProperty) return false
+        if (other !is SymbolLightFieldForProperty || other.ktModule != ktModule || other.fieldName != fieldName) return false
         if (kotlinOrigin != null) {
-            return kotlinOrigin == other.kotlinOrigin && ktModule == other.ktModule
+            return kotlinOrigin == other.kotlinOrigin
         }
 
         return other.kotlinOrigin == null &&
-                fieldName == other.fieldName &&
                 containingClass == other.containingClass &&
-                ktModule == other.ktModule &&
                 compareSymbolPointers(ktModule, propertySymbolPointer, other.propertySymbolPointer)
     }
 

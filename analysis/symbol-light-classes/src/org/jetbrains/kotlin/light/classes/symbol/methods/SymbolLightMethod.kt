@@ -125,22 +125,19 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightMethod<*>) return false
+        if (other !is SymbolLightMethod<*> ||
+            other.methodIndex != methodIndex ||
+            other.ktModule != ktModule ||
+            other.argumentsSkipMask != argumentsSkipMask
+        ) return false
 
         if (functionDeclaration != null) {
-            return functionDeclaration == other.functionDeclaration && fieldsEquals(other)
+            return functionDeclaration == other.functionDeclaration
         }
 
         return other.functionDeclaration == null &&
-                fieldsEquals(other) &&
                 containingClass == other.containingClass &&
                 compareSymbolPointers(ktModule, functionSymbolPointer, other.functionSymbolPointer)
-    }
-
-    private fun fieldsEquals(other: SymbolLightMethod<*>): Boolean {
-        return methodIndex == other.methodIndex &&
-                ktModule == other.ktModule &&
-                argumentsSkipMask == other.argumentsSkipMask
     }
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()

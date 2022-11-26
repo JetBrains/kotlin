@@ -51,7 +51,7 @@ internal open class SymbolLightClass : SymbolLightClassForNamedClassOrObject {
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,
         classOrObjectSymbol: KtNamedClassOrObjectSymbol,
-        manager: PsiManager
+        manager: PsiManager,
     ) : super(
         ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
@@ -137,8 +137,7 @@ internal open class SymbolLightClass : SymbolLightClassForNamedClassOrObject {
 
             val visibleDeclarations = declaredMemberScope.getCallableSymbols().applyIf(isEnum) {
                 filterNot { function ->
-                    function is KtFunctionSymbol &&
-                            (function.name == ENUM_VALUES || function.name == ENUM_VALUE_OF)
+                    function is KtFunctionSymbol && (function.name == ENUM_VALUES || function.name == ENUM_VALUE_OF)
                 }
             }.applyIf(isObject) {
                 filterNot {
@@ -239,7 +238,7 @@ internal open class SymbolLightClass : SymbolLightClassForNamedClassOrObject {
                     METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
                     false,
                     argumentsSkipMask = null,
-                    suppressStatic = false
+                    suppressStatic = false,
                 )
             )
         }
@@ -282,6 +281,7 @@ internal open class SymbolLightClass : SymbolLightClassForNamedClassOrObject {
                 // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
                 filter { containingClass?.isInterface == true && !it.hasJvmFieldAnnotation() }
             }
+
         val propertyGroups = propertySymbols.groupBy { it.isFromPrimaryConstructor }
 
         val nameGenerator = SymbolLightField.FieldNameGenerator()
@@ -337,7 +337,7 @@ internal open class SymbolLightClass : SymbolLightClassForNamedClassOrObject {
                 SymbolLightFieldForEnumEntry(
                     enumEntry = enumEntry,
                     enumEntryName = name,
-                    containingClass = this@SymbolLightClass,
+                    containingClass = this,
                 )
             }
     }

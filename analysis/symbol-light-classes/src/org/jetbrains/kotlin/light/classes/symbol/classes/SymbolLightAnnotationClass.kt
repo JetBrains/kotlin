@@ -70,6 +70,10 @@ internal class SymbolLightAnnotationClass : SymbolLightInterfaceOrAnnotationClas
 
     override fun getExtendsList(): PsiReferenceList? = null
 
-    override fun copy(): SymbolLightAnnotationClass =
-        SymbolLightAnnotationClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+    override fun copy(): SymbolLightAnnotationClass = SymbolLightAnnotationClass(
+        classOrObjectDeclaration = classOrObjectDeclaration,
+        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        ktModule = ktModule,
+        manager = manager,
+    )
 }

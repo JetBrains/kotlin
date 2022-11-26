@@ -69,11 +69,9 @@ abstract class SymbolLightClassForNamedClassOrObject : SymbolLightClassForClassO
         }
     }
 
-    private val KtPropertySymbol.isConstOrJvmField: Boolean
-        get() = isConst || hasJvmFieldAnnotation()
+    private val KtPropertySymbol.isConstOrJvmField: Boolean get() = isConst || hasJvmFieldAnnotation()
 
-    private val KtPropertySymbol.isConst: Boolean
-        get() = (this as? KtKotlinPropertySymbol)?.isConst == true
+    private val KtPropertySymbol.isConst: Boolean get() = (this as? KtKotlinPropertySymbol)?.isConst == true
 
     context(ktAnalysisSession@KtAnalysisSession)
     protected fun addFieldsFromCompanionIfNeeded(

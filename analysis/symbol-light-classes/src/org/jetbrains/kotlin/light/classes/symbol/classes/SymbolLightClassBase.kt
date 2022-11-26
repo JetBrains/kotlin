@@ -51,7 +51,7 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
     private val myInnersCache = KotlinClassInnerStuffCache(
         myClass = this@SymbolLightClassBase,
         dependencies = listOf(manager.project.createProjectWideOutOfBlockModificationTracker()),
-        lazyCreator = SymbolLightClassesLazyCreator(project)
+        lazyCreator = SymbolLightClassesLazyCreator(project),
     )
 
     override fun getFields(): Array<PsiField> = myInnersCache.fields
@@ -68,29 +68,24 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClassImplUtil.getAllInnerClasses(this)
 
-    override fun findFieldByName(name: String, checkBases: Boolean) =
-        myInnersCache.findFieldByName(name, checkBases)
+    override fun findFieldByName(name: String, checkBases: Boolean) = myInnersCache.findFieldByName(name, checkBases)
 
-    override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> =
-        myInnersCache.findMethodsByName(name, checkBases)
+    override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
 
-    override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? =
-        myInnersCache.findInnerClassByName(name, checkBases)
+    override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
 
     override fun processDeclarations(
         processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement
-    ): Boolean {
-        return PsiClassImplUtil.processDeclarationsInClass(
-            this,
-            processor,
-            state,
-            null,
-            lastParent,
-            place,
-            PsiUtil.getLanguageLevel(place),
-            false
-        )
-    }
+    ): Boolean = PsiClassImplUtil.processDeclarationsInClass(
+        /* aClass = */ this,
+        /* processor = */ processor,
+        /* state = */ state,
+        /* visited = */ null,
+        /* last = */ lastParent,
+        /* place = */ place,
+        /* languageLevel = */ PsiUtil.getLanguageLevel(place),
+        /* isRaw = */ false,
+    )
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         if (manager.areElementsEquivalent(baseClass, this)) return false
@@ -161,9 +156,8 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     override fun findMethodsAndTheirSubstitutorsByName(
         @NonNls name: String?,
-        checkBases: Boolean
-    ): List<Pair<PsiMethod?, PsiSubstitutor?>?> =
-        PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
+        checkBases: Boolean,
+    ): List<Pair<PsiMethod?, PsiSubstitutor?>?> = PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
 
     override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod?, PsiSubstitutor?>?> {
         return PsiClassImplUtil.getAllWithSubstitutorsByMap(this, PsiClassImplUtil.MemberType.METHOD)
@@ -175,8 +169,7 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     override fun getInitializers(): Array<PsiClassInitializer> = PsiClassInitializer.EMPTY_ARRAY
 
-    override fun getElementIcon(flags: Int): Icon? =
-        throw UnsupportedOperationException("This should be done by KotlinIconProvider")
+    override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by KotlinIconProvider")
 
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 

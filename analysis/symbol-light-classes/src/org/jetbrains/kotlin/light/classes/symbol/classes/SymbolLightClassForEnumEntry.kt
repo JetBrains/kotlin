@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
@@ -24,9 +22,7 @@ internal class SymbolLightClassForEnumEntry(
     ktModule: KtModule,
 ) : SymbolLightClass(
     enumConstant.kotlinOrigin,
-    symbolPointer<KtNamedClassOrObjectSymbol> { null },
     ktModule,
-    enumClass.manager,
 ), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
@@ -40,6 +36,11 @@ internal class SymbolLightClassForEnumEntry(
     override fun isInQualifiedNew(): Boolean = false
 
     override fun copy() = SymbolLightClassForEnumEntry(enumConstant, enumClass, ktModule)
+
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is SymbolLightClassForEnumEntry && other.enumConstant == enumConstant
+
+    override fun hashCode(): Int = enumConstant.hashCode()
 
     override fun toString(): String = "SymbolLightClassForEnumEntry:$name"
 

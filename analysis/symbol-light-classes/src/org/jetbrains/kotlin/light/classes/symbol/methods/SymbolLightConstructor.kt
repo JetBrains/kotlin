@@ -31,7 +31,7 @@ internal class SymbolLightConstructor(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    argumentsSkipMask = argumentsSkipMask
+    argumentsSkipMask = argumentsSkipMask,
 ) {
     private val _name: String? = containingClass.name
 

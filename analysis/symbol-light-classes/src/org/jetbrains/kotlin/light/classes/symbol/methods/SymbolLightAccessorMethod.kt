@@ -222,14 +222,12 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightAccessorMethod) return false
+        if (other !is SymbolLightAccessorMethod || other.ktModule != ktModule || other.isGetter != isGetter) return false
         if (propertyAccessorDeclaration != null) {
-            return propertyAccessorDeclaration == other.propertyAccessorDeclaration && ktModule == other.ktModule
+            return propertyAccessorDeclaration == other.propertyAccessorDeclaration
         }
 
-        return isGetter == other.isGetter &&
-                other.propertyAccessorDeclaration == null &&
-                ktModule == other.ktModule &&
+        return other.propertyAccessorDeclaration == null &&
                 compareSymbolPointers(ktModule, propertyAccessorSymbolPointer, other.propertyAccessorSymbolPointer)
     }
 
