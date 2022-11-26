@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiReferenceList
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -15,18 +21,52 @@ import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal abstract class SymbolLightInterfaceOrAnnotationClass(classOrObject: KtClassOrObject, ktModule: KtModule) :
-    SymbolLightClassForClassOrObject(classOrObject, ktModule) {
-
-    init {
-        require(isInterface || isAnnotation)
+internal abstract class SymbolLightInterfaceOrAnnotationClass : SymbolLightClassForNamedClassOrObject {
+    constructor(
+        ktAnalysisSession: KtAnalysisSession,
+        ktModule: KtModule,
+        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+        manager: PsiManager
+    ) : super(
+        ktAnalysisSession = ktAnalysisSession,
+        ktModule = ktModule,
+        classOrObjectSymbol = classOrObjectSymbol,
+        manager = manager,
+    ) {
+        val classKind = classOrObjectSymbol.classKind
+        require(classKind == KtClassKind.INTERFACE || classKind == KtClassKind.ANNOTATION_CLASS)
     }
+
+    constructor(
+        classOrObject: KtClassOrObject,
+        ktModule: KtModule,
+    ) : this(
+        classOrObjectDeclaration = classOrObject,
+        classOrObjectSymbolPointer = classOrObject.symbolPointerOfType(),
+        ktModule = ktModule,
+        manager = classOrObject.manager,
+    ) {
+        require(classOrObject is KtClass && (classOrObject.isInterface() || classOrObject.isAnnotation()))
+    }
+
+    protected constructor(
+        classOrObjectDeclaration: KtClassOrObject?,
+        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+        ktModule: KtModule,
+        manager: PsiManager,
+    ) : super(
+        classOrObjectDeclaration = classOrObjectDeclaration,
+        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        ktModule = ktModule,
+        manager = manager,
+    )
 
     private val _modifierList: PsiModifierList? by lazy {
         val lazyModifiers = lazy {
-            withNamedClassOrObjectSymbol { classOrObjectSymbol ->
+            withClassOrObjectSymbol { classOrObjectSymbol ->
                 buildSet {
                     add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
                     add(PsiModifier.ABSTRACT)
@@ -38,7 +78,7 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(classOrObject: KtC
         }
 
         val lazyAnnotations = lazyPub {
-            withNamedClassOrObjectSymbol { classOrObjectSymbol ->
+            withClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
                     parent = this@SymbolLightInterfaceOrAnnotationClass,
                     nullability = NullabilityType.Unknown,
@@ -56,9 +96,11 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(classOrObject: KtC
     override fun getModifierList(): PsiModifierList? = _modifierList
 
     private val _ownFields: List<KtLightField> by lazyPub {
-        mutableListOf<KtLightField>().also {
-            addCompanionObjectFieldIfNeeded(it)
-            addFieldsFromCompanionIfNeeded(it)
+        withClassOrObjectSymbol { classOrObjectSymbol ->
+            buildList {
+                addCompanionObjectFieldIfNeeded(this, classOrObjectSymbol)
+                addFieldsFromCompanionIfNeeded(this, classOrObjectSymbol)
+            }
         }
     }
 

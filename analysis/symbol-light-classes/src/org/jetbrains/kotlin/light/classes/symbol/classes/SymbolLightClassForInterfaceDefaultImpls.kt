@@ -11,13 +11,23 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 internal class SymbolLightClassForInterfaceDefaultImpls(private val containingClass: SymbolLightInterfaceClass) :
-    SymbolLightInterfaceClass(containingClass.kotlinOrigin, containingClass.ktModule) {
+    SymbolLightInterfaceClass(
+        containingClass.classOrObjectDeclaration,
+        containingClass.classOrObjectSymbolPointer,
+        containingClass.ktModule,
+        containingClass.manager,
+    ) {
     override fun getQualifiedName(): String? = containingClass.qualifiedName?.let { it + ".${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}" }
 
     override fun getName() = JvmAbi.DEFAULT_IMPLS_CLASS_NAME
     override fun getParent() = containingClass
 
     override fun copy() = SymbolLightClassForInterfaceDefaultImpls(containingClass)
+
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is SymbolLightClassForInterfaceDefaultImpls && other.containingClass == containingClass
+
+    override fun hashCode(): Int = containingClass.hashCode()
 
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()

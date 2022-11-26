@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -17,8 +20,23 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotati
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class SymbolLightAnonymousClass(classOrObject: KtClassOrObject, ktModule: KtModule) :
-    SymbolLightClassForClassOrObject(classOrObject, ktModule), PsiAnonymousClass {
+internal class SymbolLightAnonymousClass : SymbolLightClassForClassOrObject<KtAnonymousObjectSymbol>, PsiAnonymousClass {
+    constructor(
+        anonymousObjectDeclaration: KtClassOrObject,
+        ktModule: KtModule,
+    ) : this(
+        classOrObjectDeclaration = anonymousObjectDeclaration,
+        classOrObjectSymbolPointer = anonymousObjectDeclaration.symbolPointerOfType(),
+        ktModule = ktModule,
+        manager = anonymousObjectDeclaration.manager,
+    )
+
+    private constructor(
+        classOrObjectDeclaration: KtClassOrObject?,
+        classOrObjectSymbolPointer: KtSymbolPointer<KtAnonymousObjectSymbol>,
+        ktModule: KtModule,
+        manager: PsiManager,
+    ) : super(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 
     private val _baseClassType: PsiClassType by lazyPub {
         extendsListTypes.firstOrNull()
@@ -43,8 +61,8 @@ internal class SymbolLightAnonymousClass(classOrObject: KtClassOrObject, ktModul
         }
     }
 
-    override fun getExtendsList(): PsiReferenceList = _extendsList
-    override fun getImplementsList(): PsiReferenceList = _implementsList
+    override fun getExtendsList(): PsiReferenceList? = _extendsList
+    override fun getImplementsList(): PsiReferenceList? = _implementsList
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
     override fun getOwnMethods(): List<PsiMethod> = _ownMethods
@@ -74,7 +92,7 @@ internal class SymbolLightAnonymousClass(classOrObject: KtClassOrObject, ktModul
                         isTopLevel = false,
                         forceStatic = false,
                         takePropertyVisibility = propertySymbol.hasJvmFieldAnnotation(),
-                        result
+                        result,
                     )
                 }
 
@@ -82,7 +100,7 @@ internal class SymbolLightAnonymousClass(classOrObject: KtClassOrObject, ktModul
         }
     }
 
-    override fun getParent(): PsiElement? = kotlinOrigin.let(::getParentForLocalDeclaration)
+    override fun getParent(): PsiElement? = kotlinOrigin?.let(::getParentForLocalDeclaration)
     override fun getArgumentList(): PsiExpressionList? = null
     override fun isInQualifiedNew(): Boolean = false
     override fun getName(): String? = null
@@ -93,5 +111,5 @@ internal class SymbolLightAnonymousClass(classOrObject: KtClassOrObject, ktModul
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getQualifiedName(): String? = null
-    override fun copy() = SymbolLightAnonymousClass(classOrObject, ktModule)
+    override fun copy() = SymbolLightAnonymousClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 }

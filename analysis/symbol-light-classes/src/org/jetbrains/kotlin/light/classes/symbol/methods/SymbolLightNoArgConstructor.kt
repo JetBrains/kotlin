@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMember
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
 internal class SymbolLightNoArgConstructor(
-    lightMemberOrigin: LightMemberOrigin,
-    containingClass: SymbolLightClassForClassOrObject,
+    lightMemberOrigin: LightMemberOrigin?,
+    containingClass: SymbolLightClassForClassOrObject<*>,
     private val visibility: String,
     methodIndex: Int,
 ) : SymbolLightMethodBase(lightMemberOrigin, containingClass, methodIndex) {

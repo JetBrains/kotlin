@@ -5,23 +5,52 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class SymbolLightAnnotationClass(
-    classOrObject: KtClassOrObject,
-    ktModule: KtModule,
-) : SymbolLightInterfaceOrAnnotationClass(classOrObject, ktModule) {
-    init {
-        require(isAnnotation)
+internal class SymbolLightAnnotationClass : SymbolLightInterfaceOrAnnotationClass {
+    constructor(
+        ktAnalysisSession: KtAnalysisSession,
+        ktModule: KtModule,
+        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+        manager: PsiManager
+    ) : super(
+        ktAnalysisSession = ktAnalysisSession,
+        ktModule = ktModule,
+        classOrObjectSymbol = classOrObjectSymbol,
+        manager = manager,
+    ) {
+        require(classOrObjectSymbol.classKind == KtClassKind.ANNOTATION_CLASS)
     }
+
+    constructor(classOrObject: KtClassOrObject, ktModule: KtModule) : super(classOrObject, ktModule) {
+        require(classOrObject is KtClass && classOrObject.isAnnotation())
+    }
+
+    private constructor(
+        classOrObjectDeclaration: KtClassOrObject?,
+        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+        ktModule: KtModule,
+        manager: PsiManager,
+    ) : super(
+        classOrObjectDeclaration = classOrObjectDeclaration,
+        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        ktModule = ktModule,
+        manager = manager,
+    )
 
     override fun isAnnotationType(): Boolean = true
 
@@ -41,5 +70,6 @@ internal class SymbolLightAnnotationClass(
 
     override fun getExtendsList(): PsiReferenceList? = null
 
-    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightAnnotationClass(classOrObject, ktModule)
+    override fun copy(): SymbolLightAnnotationClass =
+        SymbolLightAnnotationClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 }

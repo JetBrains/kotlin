@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -26,8 +25,7 @@ internal class SymbolLightFieldForEnumEntry(
     private val enumEntry: KtEnumEntry,
     private val enumEntryName: String,
     containingClass: SymbolLightClass,
-    override val lightMemberOrigin: LightMemberOrigin?,
-) : SymbolLightField(containingClass, lightMemberOrigin), PsiEnumConstant {
+) : SymbolLightField(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
     internal fun <T> withEnumEntrySymbol(action: KtAnalysisSession.(KtEnumEntrySymbol) -> T): T = analyzeForLightClasses(ktModule) {
         action(enumEntry.getEnumEntrySymbol())
     }

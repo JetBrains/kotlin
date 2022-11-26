@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
@@ -20,7 +22,12 @@ internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
     private val enumClass: SymbolLightClass,
     ktModule: KtModule,
-) : SymbolLightClass(enumConstant.kotlinOrigin, ktModule), PsiEnumConstantInitializer {
+) : SymbolLightClass(
+    enumConstant.kotlinOrigin,
+    symbolPointer<KtNamedClassOrObjectSymbol> { null },
+    ktModule,
+    enumClass.manager,
+), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
     override fun getBaseClassReference(): PsiJavaCodeReferenceElement =
@@ -63,7 +70,7 @@ internal class SymbolLightClassForEnumEntry(
         } ?: return@lazyPub null
 
         KotlinSuperTypeListBuilder(
-            kotlinOrigin = enumClass.kotlinOrigin.getSuperTypeList(),
+            kotlinOrigin = enumClass.kotlinOrigin?.getSuperTypeList(),
             manager = manager,
             language = language,
             role = PsiReferenceList.Role.EXTENDS_LIST

@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -16,10 +20,30 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-internal class SymbolLightInlineClass(classOrObject: KtClassOrObject, ktModule: KtModule) : SymbolLightClass(classOrObject, ktModule) {
-    init {
+internal class SymbolLightInlineClass : SymbolLightClass {
+    constructor(
+        classOrObject: KtClassOrObject,
+        ktModule: KtModule,
+    ) : this(
+        classOrObjectDeclaration = classOrObject,
+        classOrObjectSymbolPointer = classOrObject.symbolPointerOfType(),
+        ktModule = ktModule,
+        manager = classOrObject.manager,
+    ) {
         require(classOrObject.hasModifier(KtTokens.INLINE_KEYWORD))
     }
+
+    private constructor(
+        classOrObjectDeclaration: KtClassOrObject?,
+        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+        ktModule: KtModule,
+        manager: PsiManager,
+    ) : super(
+        classOrObjectDeclaration = classOrObjectDeclaration,
+        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        ktModule = ktModule,
+        manager = manager,
+    )
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
         withClassOrObjectSymbol { classOrObjectSymbol ->
@@ -59,7 +83,7 @@ internal class SymbolLightInlineClass(classOrObject: KtClassOrObject, ktModule: 
     }
 
     private val _ownFields: List<KtLightField> by lazyPub {
-        withNamedClassOrObjectSymbol { classOrObjectSymbol ->
+        withClassOrObjectSymbol { classOrObjectSymbol ->
             mutableListOf<KtLightField>().apply {
                 addPropertyBackingFields(this, classOrObjectSymbol)
             }
@@ -70,5 +94,6 @@ internal class SymbolLightInlineClass(classOrObject: KtClassOrObject, ktModule: 
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
-    override fun copy(): SymbolLightInlineClass = SymbolLightInlineClass(classOrObject, ktModule)
+    override fun copy(): SymbolLightInlineClass =
+        SymbolLightInlineClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 }
