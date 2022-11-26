@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal abstract class SymbolLightInterfaceOrAnnotationClass : SymbolLightClassForNamedClassLike {
+internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLightClassForNamedClassLike {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,
@@ -80,7 +80,7 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass : SymbolLightClass
         val lazyAnnotations = lazyPub {
             withClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
-                    parent = this@SymbolLightInterfaceOrAnnotationClass,
+                    parent = this@SymbolLightClassForInterfaceOrAnnotationClass,
                     nullability = NullabilityType.Unknown,
                     annotationUseSiteTarget = null,
                 )

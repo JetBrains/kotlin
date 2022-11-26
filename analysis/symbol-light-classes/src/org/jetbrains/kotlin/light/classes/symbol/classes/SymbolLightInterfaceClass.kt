@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal open class SymbolLightInterfaceClass : SymbolLightInterfaceOrAnnotationClass {
+internal open class SymbolLightInterfaceClass : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
         ktAnalysisSession: KtAnalysisSession,
         ktModule: KtModule,
