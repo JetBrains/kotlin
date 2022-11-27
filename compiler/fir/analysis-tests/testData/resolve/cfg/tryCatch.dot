@@ -27,12 +27,12 @@ digraph tryCatch_kt {
                 subgraph cluster_5 {
                     color=blue
                     9 [label="Catch enter"];
-                    10 [label="Variable declaration: e: R|kotlin/Exception|"];
+                    10 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
                     subgraph cluster_6 {
                         color=blue
                         11 [label="Enter block"];
-                        12 [label="Const: Int(3)"];
-                        13 [label="Variable declaration: lval z: R|kotlin/Int|"];
+                        12 [label="Const: Int(2)"];
+                        13 [label="Variable declaration: lval y: R|kotlin/Int|"];
                         14 [label="Exit block"];
                     }
                     15 [label="Catch exit"];
@@ -40,12 +40,12 @@ digraph tryCatch_kt {
                 subgraph cluster_7 {
                     color=blue
                     16 [label="Catch enter"];
-                    17 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
+                    17 [label="Variable declaration: e: R|kotlin/Exception|"];
                     subgraph cluster_8 {
                         color=blue
                         18 [label="Enter block"];
-                        19 [label="Const: Int(2)"];
-                        20 [label="Variable declaration: lval y: R|kotlin/Int|"];
+                        19 [label="Const: Int(3)"];
+                        20 [label="Variable declaration: lval z: R|kotlin/Int|"];
                         21 [label="Exit block"];
                     }
                     22 [label="Catch exit"];
@@ -224,11 +224,11 @@ digraph tryCatch_kt {
                             subgraph cluster_31 {
                                 color=blue
                                 84 [label="Catch enter"];
-                                85 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
+                                85 [label="Variable declaration: e: R|kotlin/Exception|"];
                                 subgraph cluster_32 {
                                     color=blue
                                     86 [label="Enter block"];
-                                    87 [label="Jump: break@@@[Boolean(true)] "];
+                                    87 [label="Jump: continue@@@[Boolean(true)] "];
                                     88 [label="Stub" style="filled" fillcolor=gray];
                                     89 [label="Exit block" style="filled" fillcolor=gray];
                                 }
@@ -236,32 +236,32 @@ digraph tryCatch_kt {
                             }
                             subgraph cluster_33 {
                                 color=blue
-                                95 [label="Catch enter"];
-                                96 [label="Variable declaration: e: R|kotlin/Exception|"];
+                                91 [label="Catch enter"];
+                                92 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
                                 subgraph cluster_34 {
                                     color=blue
-                                    97 [label="Enter block"];
-                                    98 [label="Jump: continue@@@[Boolean(true)] "];
-                                    99 [label="Stub" style="filled" fillcolor=gray];
-                                    100 [label="Exit block" style="filled" fillcolor=gray];
+                                    93 [label="Enter block"];
+                                    94 [label="Jump: break@@@[Boolean(true)] "];
+                                    100 [label="Stub" style="filled" fillcolor=gray];
+                                    101 [label="Exit block" style="filled" fillcolor=gray];
                                 }
-                                101 [label="Catch exit" style="filled" fillcolor=gray];
+                                102 [label="Catch exit" style="filled" fillcolor=gray];
                             }
-                            102 [label="Try expression exit"];
+                            103 [label="Try expression exit"];
                         }
-                        103 [label="Const: Int(2)"];
-                        104 [label="Variable declaration: lval y: R|kotlin/Int|"];
-                        105 [label="Exit block"];
+                        104 [label="Const: Int(2)"];
+                        105 [label="Variable declaration: lval y: R|kotlin/Int|"];
+                        106 [label="Exit block"];
                     }
-                    106 [label="Exit loop block"];
+                    107 [label="Exit loop block"];
                 }
-                91 [label="Exit whileloop"];
+                95 [label="Exit whileloop"];
             }
-            92 [label="Const: Int(3)"];
-            93 [label="Variable declaration: lval z: R|kotlin/Int|"];
-            94 [label="Exit block"];
+            96 [label="Const: Int(3)"];
+            97 [label="Variable declaration: lval z: R|kotlin/Int|"];
+            98 [label="Exit block"];
         }
-        107 [label="Exit function test_3" style="filled" fillcolor=red];
+        99 [label="Exit function test_3" style="filled" fillcolor=red];
     }
     44 -> {45};
     45 -> {46};
@@ -269,10 +269,10 @@ digraph tryCatch_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    49 -> {91} [style=dotted];
+    49 -> {95} [style=dotted];
     50 -> {51};
     51 -> {52};
-    52 -> {53 84 95};
+    52 -> {53 84 91};
     53 -> {54};
     54 -> {55};
     55 -> {56};
@@ -282,7 +282,7 @@ digraph tryCatch_kt {
     59 -> {66};
     60 -> {61};
     61 -> {62};
-    62 -> {107};
+    62 -> {99};
     62 -> {63} [style=dotted];
     63 -> {64} [style=dotted];
     64 -> {65} [style=dotted];
@@ -298,40 +298,40 @@ digraph tryCatch_kt {
     74 -> {81};
     75 -> {76};
     76 -> {77};
-    77 -> {91};
+    77 -> {95};
     77 -> {78} [style=dotted];
     78 -> {79} [style=dotted];
     79 -> {80} [style=dotted];
     80 -> {81} [style=dotted];
     81 -> {82};
     82 -> {83};
-    83 -> {84 95 102};
+    83 -> {84 91 103};
     84 -> {85};
-    84 -> {107} [label="onUncaughtException"];
+    84 -> {99} [label="onUncaughtException"];
     85 -> {86};
     86 -> {87};
-    87 -> {91};
+    87 -> {47} [color=green style=dashed];
     87 -> {88} [style=dotted];
     88 -> {89} [style=dotted];
     89 -> {90} [style=dotted];
-    90 -> {102} [style=dotted];
+    90 -> {103} [style=dotted];
     91 -> {92};
+    91 -> {99} [label="onUncaughtException"];
     92 -> {93};
     93 -> {94};
-    94 -> {107};
+    94 -> {95};
+    94 -> {100} [style=dotted];
     95 -> {96};
-    95 -> {107} [label="onUncaughtException"];
     96 -> {97};
     97 -> {98};
-    98 -> {47} [color=green style=dashed];
-    98 -> {99} [style=dotted];
-    99 -> {100} [style=dotted];
+    98 -> {99};
     100 -> {101} [style=dotted];
     101 -> {102} [style=dotted];
-    102 -> {103};
+    102 -> {103} [style=dotted];
     103 -> {104};
     104 -> {105};
     105 -> {106};
-    106 -> {47} [color=green style=dashed];
+    106 -> {107};
+    107 -> {47} [color=green style=dashed];
 
 }

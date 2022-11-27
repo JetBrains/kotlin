@@ -75,12 +75,10 @@ class ControlFlowGraphBuilder {
     private val binaryLogicExpressionExitNodes: Stack<AbstractBinaryExitNode<FirBinaryLogicExpression>> = stackOf()
 
     private val tryExitNodes: NodeStorage<FirTryExpression, TryExpressionExitNode> = NodeStorage()
-    private val tryMainExitNodes: NodeStorage<FirTryExpression, TryMainBlockExitNode> = NodeStorage()
-    private val catchNodeStorages: Stack<NodeStorage<FirCatch, CatchClauseEnterNode>> = stackOf()
-    private val catchNodeStorage: NodeStorage<FirCatch, CatchClauseEnterNode> get() = catchNodeStorages.top()
-    private val catchExitNodeStorages: Stack<NodeStorage<FirCatch, CatchClauseExitNode>> = stackOf()
+    private val catchNodes: Stack<List<CatchClauseEnterNode>> = stackOf()
+    private val catchBlocksInProgress: Stack<CatchClauseEnterNode> = stackOf()
     private val finallyEnterNodes: Stack<FinallyBlockEnterNode> = stackOf()
-    private val finallyExitNodes: NodeStorage<FirTryExpression, FinallyBlockExitNode> = NodeStorage()
+    private val finallyBlocksInProgress: Stack<FinallyBlockEnterNode> = stackOf()
 
     private val initBlockExitNodes: Stack<InitBlockExitNode> = stackOf()
 
@@ -684,12 +682,7 @@ class ControlFlowGraphBuilder {
 
     fun exitJump(jump: FirJump<*>): JumpNode {
         val node = createJumpNode(jump)
-        val nextNode = when (jump) {
-            is FirReturnExpression -> exitTargetsForReturn[jump.target.labeledElement.symbol]
-            is FirContinueExpression -> loopConditionEnterNodes[jump.target.labeledElement.condition]
-            is FirBreakExpression -> loopExitNodes[jump.target.labeledElement]
-            else -> throw IllegalArgumentException("Unknown jump type: ${jump.render()}")
-        }
+        addNonTerminatingNode(node)
 
         if (jump is FirReturnExpression && jump.target.labeledElement is FirAnonymousFunction) {
             // TODO: these should be DFA-only edges; they should be pointed into the postponed function exit node?
@@ -698,32 +691,40 @@ class ControlFlowGraphBuilder {
             postponedLambdaExits.pop()
         }
 
-        val labelForFinallyBlock = when (jump) {
-            is FirReturnExpression -> ReturnPath(jump.target.labeledElement.symbol)
-            is FirLoopJump -> LoopPath(jump)
-            else -> NormalPath
+        val nextNode = when (jump) {
+            is FirReturnExpression -> exitTargetsForReturn[jump.target.labeledElement.symbol]
+            is FirContinueExpression -> loopConditionEnterNodes[jump.target.labeledElement.condition]
+            is FirBreakExpression -> loopExitNodes[jump.target.labeledElement]
+            else -> throw IllegalArgumentException("Unknown jump type: ${jump.render()}")
+        } ?: return node
+        val nextFinally = finallyEnterNodes.topOrNull()?.takeIf { it.level > nextNode.level }
+        if (nextFinally != null) {
+            addEdge(node, nextFinally, propagateDeadness = false, label = nextNode.returnPathLabel)
+            nonDirectJumps.put(nextNode, node)
+        } else if (nextNode.returnPathIsBackwards) {
+            addBackEdge(node, nextNode)
+        } else {
+            addEdge(node, nextNode, propagateDeadness = false)
         }
-
-        // while (...) continue // <- jump back
-        // do continue while (...) // <- jump forward (block exit node not created yet)
-        // do ... while (continue) // <- jump back (to itself), believe it or not
-        val isBack = nextNode is LoopConditionEnterNode &&
-                (nextNode.loop !is FirDoWhileLoop || nextNode.previousNodes.any { it is LoopBlockExitNode })
-        popAndAddEdge(node)
-        if (nextNode != null) {
-            if (isBack) {
-                addBackEdge(node, nextNode) // TODO: shouldn't this go through finally too?
-            } else {
-                val hadFinally = addEdgeThroughFinally(node, nextNode, labelForFinallyBlock = labelForFinallyBlock)
-                if (hadFinally && jump is FirReturnExpression) {
-                    //actually we can store all returns like this, but not sure if it makes anything better
-                    nonDirectJumps.put(nextNode, node)
-                }
-            }
-        }
-        addWithStub(node)
         return node
     }
+
+    private val CFGNode<*>.returnPathLabel: EdgeLabel
+        get() = when (this) {
+            is FunctionExitNode -> ReturnPath(fir.symbol)
+            is LoopConditionEnterNode -> LoopContinuePath(loop)
+            is LoopExitNode -> LoopBreakPath(fir)
+            else -> throw IllegalStateException("not a labeled jump target: $this")
+        }
+
+    // while (x) { continue }
+    //       ^------------/ back
+    // do { continue } while (x)
+    //             \---------^ forward
+    // do { x } while (continue)
+    //                ^-------/ back
+    private val CFGNode<*>.returnPathIsBackwards: Boolean
+        get() = this is LoopConditionEnterNode && (loop !is FirDoWhileLoop || previousNodes.any { it is LoopBlockExitNode })
 
     // ----------------------------------- When -----------------------------------
 
@@ -923,144 +924,159 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Try-catch-finally -----------------------------------
 
     fun enterTryExpression(tryExpression: FirTryExpression): Pair<TryExpressionEnterNode, TryMainBlockEnterNode> {
-        catchNodeStorages.push(NodeStorage())
-        catchExitNodeStorages.push(NodeStorage())
         val enterTryExpressionNode = createTryExpressionEnterNode(tryExpression)
+        val exitTryExpressionNode = createTryExpressionExitNode(tryExpression)
         addNewSimpleNode(enterTryExpressionNode)
-        val tryExitNode = createTryExpressionExitNode(tryExpression)
-        tryExitNodes.push(tryExitNode)
-        levelCounter++
-        val enterTryNodeBlock = createTryMainBlockEnterNode(tryExpression)
-        addNewSimpleNode(enterTryNodeBlock)
-
-        val exitTryNodeBlock = createTryMainBlockExitNode(tryExpression)
-        tryMainExitNodes.push(exitTryNodeBlock)
-
-        for (catch in tryExpression.catches) {
-            val catchNode = createCatchClauseEnterNode(catch)
-            catchNodeStorage.push(catchNode)
-            // a flow where an exception of interest is thrown and caught before executing any of try-main block.
-            addEdge(enterTryExpressionNode, catchNode)
-        }
+        tryExitNodes.push(exitTryExpressionNode)
         levelCounter++
 
+        val enterTryMainBlockNode = createTryMainBlockEnterNode(tryExpression)
+        addNewSimpleNode(enterTryMainBlockNode)
+
+        catchNodes.push(tryExpression.catches.map { createCatchClauseEnterNode(it) })
         if (tryExpression.finallyBlock != null) {
-            val finallyEnterNode = createFinallyBlockEnterNode(tryExpression)
-            // a flow where an uncaught exception is thrown before executing any of try-main block.
-            addEdge(enterTryExpressionNode, finallyEnterNode, propagateDeadness = false, label = UncaughtExceptionPath)
-            finallyEnterNodes.push(finallyEnterNode)
-            finallyExitNodes.push(createFinallyBlockExitNode(tryExpression))
+            finallyEnterNodes.push(createFinallyBlockEnterNode(tryExpression))
         }
+
+        for (catchEnterNode in catchNodes.top()) {
+            addEdge(enterTryExpressionNode, catchEnterNode)
+        }
+        if (tryExpression.finallyBlock != null) {
+            addEdge(enterTryExpressionNode, finallyEnterNodes.top(), label = UncaughtExceptionPath)
+        }
+
         notCompletedFunctionCalls.push(mutableListOf())
         splitDataFlowForPostponedLambdas()
-        return enterTryExpressionNode to enterTryNodeBlock
+        levelCounter++
+        return enterTryExpressionNode to enterTryMainBlockNode
     }
 
     fun exitTryMainBlock(): TryMainBlockExitNode {
         levelCounter--
-        val node = tryMainExitNodes.top()
+        val exitTryExpressionNode = tryExitNodes.top()
+        val node = createTryMainBlockExitNode(exitTryExpressionNode.fir)
         popAndAddEdge(node)
-        node.updateDeadStatus()
-        val finallyEnterNode = finallyEnterNodes.topOrNull()
-        // NB: Check the level to avoid adding an edge to the finally block at an upper level.
-        if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
-            // TODO: in case of return/continue/break in try main block, we need a unique label.
-            addEdge(node, finallyEnterNode)
-            //in case try exit is dead, but there is other edges to finally (eg return)
-            // actually finallyEnterNode can't be dead, except for the case when the whole try is dead
-            finallyEnterNode.updateDeadStatus()
-        } else {
-            addEdge(node, tryExitNodes.top(), propagateDeadness = false)
+        // try { a } catch (e) { b } [finally { c }]
+        //         \-----------------^
+        val nextNode = if (node.fir.finallyBlock != null) finallyEnterNodes.top() else exitTryExpressionNode
+        addEdge(node, nextNode, propagateDeadness = false)
+        for (catchEnterNode in catchNodes.pop().asReversed()) {
+            catchBlocksInProgress.push(catchEnterNode)
+            // At least merge the data flow from enter + exit...but this doesn't really help,
+            // see the comment for `addExceptionEdgesFrom`.
+            addEdge(node, catchEnterNode, propagateDeadness = false)
         }
         return node
     }
 
     fun enterCatchClause(catch: FirCatch): CatchClauseEnterNode {
-        return catchNodeStorage[catch]!!.also {
-            val tryMainExitNode = tryMainExitNodes.top()
-            // a flow where an exception of interest is thrown and caught after executing all of try-main block.
-            addEdge(tryMainExitNode, it)
-            //tryMainExitNode might be dead (eg main block contains return), but it doesn't mean catch block is also dead
-            it.updateDeadStatus()
-            val finallyEnterNode = finallyEnterNodes.topOrNull()
-            // a flow where an uncaught exception is thrown before executing any of catch clause.
-            // NB: Check the level to avoid adding an edge to the finally block at an upper level.
-            if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
-                addEdge(it, finallyEnterNode, propagateDeadness = false, label = UncaughtExceptionPath)
-            } else {
-                addEdge(it, exitTargetsForTry.top(), label = UncaughtExceptionPath)
-            }
-            lastNodes.push(it)
-            levelCounter++
+        val catchEnterNode = catchBlocksInProgress.pop()
+        assert(catchEnterNode.fir == catch)
+        if (tryExitNodes.top().fir.finallyBlock != null) {
+            // TODO: not sure this does anything?
+            addEdge(catchEnterNode, finallyEnterNodes.top(), propagateDeadness = false, label = UncaughtExceptionPath)
+        } else {
+            // TODO: this DEFINITELY does nothing, and is in fact incorrect if there are outer try-finally.
+            addEdge(catchEnterNode, exitTargetsForTry.top(), propagateDeadness = false, label = UncaughtExceptionPath)
         }
+        lastNodes.push(catchEnterNode)
+        levelCounter++
+        return catchEnterNode
     }
 
     fun exitCatchClause(catch: FirCatch): CatchClauseExitNode {
         levelCounter--
-        return createCatchClauseExitNode(catch).also {
-            popAndAddEdge(it)
-            val finallyEnterNode = finallyEnterNodes.topOrNull()
-            // NB: Check the level to avoid adding an edge to the finally block at an upper level.
-            if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
-                // TODO: in case of return/continue/break in catch clause, we need a unique label.
-                addEdge(it, finallyEnterNode, propagateDeadness = false)
-            } else {
-                addEdge(it, tryExitNodes.top(), propagateDeadness = false)
-            }
-            catchExitNodeStorages.top().push(it)
-        }
+        val exitTryExpressionNode = tryExitNodes.top()
+        val catchExitNode = createCatchClauseExitNode(catch)
+        popAndAddEdge(catchExitNode)
+        // try { a } catch (e1) { b } catch (e2) { c } [finally { d }]
+        //                          \------------------^
+        val nextNode = if (exitTryExpressionNode.fir.finallyBlock != null) finallyEnterNodes.top() else exitTryExpressionNode
+        addEdge(catchExitNode, nextNode, propagateDeadness = false)
+        return catchExitNode
     }
 
     fun enterFinallyBlock(): FinallyBlockEnterNode {
-        val enterNode = finallyEnterNodes.pop()
-        lastNodes.push(enterNode)
-        return enterNode
+        return finallyEnterNodes.pop().also {
+            lastNodes.push(it)
+            finallyBlocksInProgress.push(it)
+        }
     }
 
     fun exitFinallyBlock(): FinallyBlockExitNode {
-        return finallyExitNodes.pop().also { finallyExit ->
-            popAndAddEdge(finallyExit)
-            val tryExitNode = tryExitNodes.top()
-            // a flow where either there wasn't any exception or caught if any.
-            addEdge(finallyExit, tryExitNode)
-            if (finallyExit.isDead) {
-                //refresh forward links, which were created before finalizing try expression (eg created by `break`)
-                propagateDeadnessForward(finallyExit)
+        val enterNode = finallyBlocksInProgress.pop()
+        val tryExitNode = tryExitNodes.top()
+        val exitNode = createFinallyBlockExitNode(enterNode.fir)
+        popAndAddEdge(exitNode)
+        val allNormalInputsAreDead = enterNode.previousNodes.all {
+            val edge = enterNode.incomingEdges.getValue(it)
+            edge.kind.isDead || edge.label != NormalPath
+        }
+        addEdge(exitNode, tryExitNode, isDead = allNormalInputsAreDead)
+        val nextExitLevel = addUncaughtExceptionEdgeFrom(exitNode)
+        //                   /-----------v
+        // f@ { try { return@f } finally { b }; c }
+        //                                   \-----^
+        exitNode.addReturnEdges(exitTargetsForReturn, nextExitLevel)
+        //                               /-----------v
+        // f@ while (x) { try { continue@f } finally { b }; c }
+        //          ^------------------------------------/
+        exitNode.addReturnEdges(loopConditionEnterNodes, nextExitLevel)
+        //                            /-----------v
+        // f@ while (x) { try { break@f } finally { b }; c }
+        //                                            \-----^
+        exitNode.addReturnEdges(loopExitNodes, nextExitLevel)
+        return exitNode
+    }
+
+    private fun <T : CFGNode<*>> CFGNode<*>.addReturnEdges(nodes: Stack<T>, minLevel: Int) {
+        for (node in nodes.all()) {
+            when {
+                node.level <= minLevel -> break
+                node !in nonDirectJumps -> continue
+                node.returnPathIsBackwards -> addBackEdge(this, node, label = node.returnPathLabel)
+                else -> addEdge(this, node, propagateDeadness = false, label = node.returnPathLabel)
             }
-            // a flow that exits to the exit target while there was an uncaught exception.
-            //todo this edge might exist already if try has jump outside, so we effectively lose labeled edge here
-            addEdgeIfNotExist(finallyExit, exitTargetsForTry.top(), propagateDeadness = false, label = UncaughtExceptionPath)
-            // TODO: differentiate flows that return/(re)throw in try main block and/or catch clauses
-            //   To do so, we need mappings from such distinct label to original exit target (fun exit or loop)
-            //   Also, CFG should support multiple edges towards the same destination node
         }
     }
 
     fun exitTryExpression(callCompleted: Boolean): TryExpressionExitNode {
         levelCounter--
-        catchNodeStorages.pop()
-        val catchExitNodes = catchExitNodeStorages.pop()
-        val tryMainExitNode = tryMainExitNodes.pop()
-
         notCompletedFunctionCalls.pop().forEach(::completeFunctionCall)
-
         val node = tryExitNodes.pop()
         mergeDataFlowFromPostponedLambdas(node, callCompleted)
         node.updateDeadStatus()
         lastNodes.push(node)
-
-        val allCatchesAreDead = tryMainExitNode.fir.catches.all { catch -> catchExitNodes[catch]!!.isDead }
-        val tryMainBlockIsDead = tryMainExitNode.previousNodes.all { prev ->
-            prev.isDead || tryMainExitNode.incomingEdges.getValue(prev).label != NormalPath
-        }
-        if (tryMainBlockIsDead && allCatchesAreDead) {
-            //if try expression doesn't have any regular non-dead exits, we add stub to make everything after dead
-            val stub = createStubNode()
-            popAndAddEdge(stub)
-            lastNodes.push(stub)
-        }
-
         return node
+    }
+
+    private fun addUncaughtExceptionEdgeFrom(node: CFGNode<*>): Int {
+        val nextExit = exitTargetsForTry.top()
+        val nextFinally = finallyEnterNodes.topOrNull()
+        // TODO: this edge is probably redundant if chose `nextExit`
+        val nextNode = if (nextFinally != null && nextFinally.level > nextExit.level) nextFinally else nextExit
+        addEdge(node, nextNode, propagateDeadness = false, label = UncaughtExceptionPath)
+        return nextNode.level
+    }
+
+    // TODO: these edges are true for literally any node in the graph. Their existence for *some* nodes
+    //  might lead to a false sense of security, but things are broken. This should be some sort of implicit knowledge
+    //  instead of requiring a ton of edges?
+    //    x = ""
+    //    try {
+    //      x = null
+    //      f() // throws
+    //      x = ""
+    //    } catch (e: Throwable) { x.length } // oops
+    //  Just look at `enterTryExpression` - the edges it adds are literally `addExceptionEdgesFrom(tryExpressionEnterNode)`.
+    private fun addExceptionEdgesFrom(node: CFGNode<*>) {
+        val nextCatch = catchNodes.topOrNull()
+        if (nextCatch != null) {
+            for (catchEnterNode in nextCatch) {
+                addEdge(node, catchEnterNode, propagateDeadness = false)
+            }
+        }
+        addUncaughtExceptionEdgeFrom(node)
     }
 
     //this is a workaround to make function call dead when call is completed _after_ building its node in the graph
@@ -1076,10 +1092,9 @@ class ControlFlowGraphBuilder {
         CFGNode.addEdge(node, stub, EdgeKind.DeadForward, propagateDeadness = false)
         for ((to, edge) in edges) {
             val kind = if (edge.kind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
-            // TODO: `propagateDeadness` should be redundant if `propagateDeadnessForward` was correct, but it's not.
             CFGNode.addEdge(stub, to, kind, propagateDeadness = true, label = edge.label)
+            propagateDeadnessForward(to)
         }
-        stub.followingNodes.forEach { propagateDeadnessForward(it, deep = true) }
     }
 
     // ----------------------------------- Resolvable call -----------------------------------
@@ -1088,7 +1103,7 @@ class ControlFlowGraphBuilder {
         val returnsNothing = qualifiedAccessExpression.resultType.isNothing
         val node = createQualifiedAccessNode(qualifiedAccessExpression)
         if (returnsNothing) {
-            addNodeThatReturnsNothing(node)
+            addNonSuccessfullyTerminatingNode(node)
         } else {
             addNewSimpleNode(node)
         }
@@ -1099,7 +1114,7 @@ class ControlFlowGraphBuilder {
         val returnsNothing = smartCastExpression.resultType.isNothing
         val node = createSmartCastExitNode(smartCastExpression)
         if (returnsNothing) {
-            addNodeThatReturnsNothing(node)
+            addNonSuccessfullyTerminatingNode(node)
         } else {
             addNewSimpleNode(node)
         }
@@ -1135,7 +1150,7 @@ class ControlFlowGraphBuilder {
         val node = createFunctionCallNode(functionCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)
         if (returnsNothing) {
-            addNodeThatReturnsNothing(node)
+            addNonSuccessfullyTerminatingNode(node)
         } else {
             addNewSimpleNode(node)
         }
@@ -1174,7 +1189,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression): ThrowExceptionNode {
-        return createThrowExceptionNode(throwExpression).also { addNodeThatReturnsNothing(it) }
+        return createThrowExceptionNode(throwExpression).also { addNonSuccessfullyTerminatingNode(it) }
     }
 
     fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, callCompleted: Boolean): CheckNotNullCallNode {
@@ -1182,7 +1197,7 @@ class ControlFlowGraphBuilder {
         val node = createCheckNotNullCallNode(checkNotNullCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)
         if (checkNotNullCall.resultType.isNothing) {
-            addNodeThatReturnsNothing(node)
+            addNonSuccessfullyTerminatingNode(node)
         } else {
             addNewSimpleNode(node)
         }
@@ -1395,109 +1410,20 @@ class ControlFlowGraphBuilder {
         addNewSimpleNode(newNode)
     }
 
-    private fun addWithStub(node: CFGNode<*>) {
+    private fun addNonTerminatingNode(node: CFGNode<*>) {
+        popAndAddEdge(node)
         val stub = createStubNode()
         addEdge(node, stub)
         lastNodes.push(stub)
     }
 
-    private fun addNodeThatReturnsNothing(node: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
-        // If an expression, which returns Nothing, ...(1)
-        val targetNode = when {
-            tryExitNodes.isEmpty -> {
-                // (1)... isn't inside a try expression, that is an uncaught exception path.
-                exitTargetsForTry.top()
-            }
-            // (1)... inside a try expression...(2)
-            finallyEnterNodes.topOrNull()?.level == levelCounter -> {
-                // (2)... with finally
-                // Either in try-main or catch. Route to `finally`
-                // TODO: that doesn't seem right?
-                //   fun bar(): Nothing = throw RuntimeException()
-                //   fun main() {
-                //     val x: Int
-                //     try {
-                //       try {
-                //         x = 1
-                //         println(x)
-                //         bar() // addNodeThatReturnsNothing
-                //       } finally {} // to this finally?
-                //     } finally { // but what about this one?
-                //       x = 2
-                //       println(x)
-                //     }
-                //   }
-                //   -> compiles and prints 1 then 2
-                //  Guessing that there should already be an UncaughtExceptionPath edge from finally 1 to finally 2
-                //  regardless of `bar()`, but there isn't.
-                finallyEnterNodes.top()
-            }
-            // (2)... without finally or within finally ...(3)
-            tryExitNodes.top().fir.finallyBlock == null -> {
-                // (3)... without finally ...(4)
-                // Either in try-main or catch.
-                val tryMainExitNode = tryMainExitNodes.top()
-                if (tryMainExitNode.followingNodes.isNotEmpty()) {
-                    // (4)... in catch, i.e., re-throw.
-                    exitTargetsForTry.top()
-                } else {
-                    // (4)... in try-main. Route to exit of try main block.
-                    // We already have edges from the exit of try main block to each catch clause.
-                    // This edge makes the remaining part of try main block, e.g., following `when` branches, marked as dead.
-                    tryMainExitNode
-                }
-            }
-            // (3)... within finally.
-            else -> exitTargetsForTry.top()
-        }
-        popAndAddEdge(node, preferredKind)
-        if (targetNode is TryMainBlockExitNode) {
-            val catches = targetNode.fir.catches
-            if (catches.isEmpty()) {
-                addEdgeThroughFinally(node, exitTargetsForTry.top(), label = UncaughtExceptionPath)
-            } else {
-                for (catch in catches) {
-                    addEdge(node, catchNodeStorage[catch]!!, propagateDeadness = false, label = UncaughtExceptionPath)
-                }
-            }
-        } else {
-            addEdgeThroughFinally(node, targetNode, label = UncaughtExceptionPath)
-        }
-        addWithStub(node)
-    }
-
-    private fun addEdgeThroughFinally(
-        node: CFGNode<*>,
-        targetNode: CFGNode<*>,
-        label: EdgeLabel = NormalPath,
-        labelForFinallyBlock: EdgeLabel = label
-    ): Boolean {
-        var next = node
-        for (finallyEnter in finallyEnterNodes.all()) {
-            if (finallyEnter.level <= targetNode.level) {
-                break
-            }
-            addEdgeIfNotExist(next, finallyEnter, propagateDeadness = false, label = labelForFinallyBlock)
-            next = finallyExitNodes[finallyEnter.fir]!!
-        }
-        addEdgeIfNotExist(next, targetNode, propagateDeadness = false, label = if (next == node) label else labelForFinallyBlock)
-        return next != node
+    private fun addNonSuccessfullyTerminatingNode(node: CFGNode<*>) {
+        addNonTerminatingNode(node)
+        addExceptionEdgesFrom(node)
     }
 
     private fun popAndAddEdge(to: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
         addEdge(lastNodes.pop(), to, preferredKind = preferredKind)
-    }
-
-    private fun addEdgeIfNotExist(
-        from: CFGNode<*>,
-        to: CFGNode<*>,
-        propagateDeadness: Boolean = true,
-        preferredKind: EdgeKind = EdgeKind.Forward,
-        label: EdgeLabel = NormalPath
-    ) {
-        if (!from.followingNodes.contains(to)) {
-            addEdge(from, to, propagateDeadness, preferredKind = preferredKind, label = label)
-        }
     }
 
     private fun addEdge(
@@ -1514,22 +1440,26 @@ class ControlFlowGraphBuilder {
         CFGNode.addEdge(from, to, kind, propagateDeadness, label)
     }
 
-    private fun addBackEdge(from: CFGNode<*>, to: CFGNode<*>, isDead: Boolean = false) {
+    private fun addBackEdge(from: CFGNode<*>, to: CFGNode<*>, isDead: Boolean = false, label: EdgeLabel = LoopBackPath) {
         val kind = if (isDead || from.isDead || to.isDead) EdgeKind.DeadBackward else EdgeKind.CfgBackward
-        CFGNode.addEdge(from, to, kind, propagateDeadness = false, label = LoopBackPath)
+        CFGNode.addEdge(from, to, kind, propagateDeadness = false, label = label)
     }
 
-    private fun propagateDeadnessForward(node: CFGNode<*>, deep: Boolean = false) {
+    private fun propagateDeadnessForward(node: CFGNode<*>) {
         if (!node.isDead) return
-        node.followingNodes
-            .filter { node.outgoingEdges.getValue(it).kind == EdgeKind.Forward }
-            .forEach { target ->
-                CFGNode.addJustKindEdge(node, target, EdgeKind.DeadForward, false)
-                target.updateDeadStatus()
-                if (deep) {
-                    propagateDeadnessForward(target, true)
+        for (next in node.followingNodes) {
+            val kind = node.outgoingEdges.getValue(next).kind
+            if (kind.isDead) continue
+            if (kind.isBack) {
+                CFGNode.addJustKindEdge(node, next, EdgeKind.DeadBackward, propagateDeadness = false)
+            } else {
+                CFGNode.addJustKindEdge(node, next, EdgeKind.DeadForward, propagateDeadness = false)
+                if (kind.usedInCfa) {
+                    next.updateDeadStatus()
+                    propagateDeadnessForward(next)
                 }
             }
+        }
     }
 
     // ----------------------------------- Utils -----------------------------------

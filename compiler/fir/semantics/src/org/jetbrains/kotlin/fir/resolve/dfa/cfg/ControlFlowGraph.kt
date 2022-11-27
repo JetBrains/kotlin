@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
-import org.jetbrains.kotlin.fir.expressions.FirLoopJump
+import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
@@ -146,15 +145,10 @@ object LoopBackPath : EdgeLabel(label = null) {
 
 object UncaughtExceptionPath : EdgeLabel(label = "onUncaughtException")
 
-class LoopPath(
-    firLoopJump: FirLoopJump
-) : EdgeLabel((if (firLoopJump is FirBreakExpression) "break" else "continue") +
-                      (firLoopJump.target.labeledElement.label?.let { "@${it.name}" } ?: ""))
-
 // TODO: Label `return`ing edge with this.
-class ReturnPath(
-    returnTargetSymbol: FirFunctionSymbol<*>
-) : EdgeLabel(label = "return@${returnTargetSymbol.callableId}")
+data class ReturnPath(val target: FirFunctionSymbol<*>) : EdgeLabel(label = "return@${target.callableId}")
+data class LoopBreakPath(val loop: FirLoop) : EdgeLabel(loop.label?.let { "break@${it.name}" } ?: "break")
+data class LoopContinuePath(val loop: FirLoop) : EdgeLabel(loop.label?.let { "continue@${it.name}" } ?: "continue")
 
 enum class EdgeKind(
     val usedInDfa: Boolean, // propagate flow to alive nodes
