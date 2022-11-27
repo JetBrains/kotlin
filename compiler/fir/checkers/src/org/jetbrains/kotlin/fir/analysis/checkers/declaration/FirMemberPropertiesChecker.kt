@@ -232,7 +232,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             else -> null
         }
         val cfg = controlFlowGraphReference?.controlFlowGraph ?: return emptySet()
-        return cfg.exitNode.incomingEdges.keys
+        return cfg.exitNode.previousNodes
             .map { it.fir }
             .filter { it.isDeadEnd() }
             .toSet()
@@ -246,10 +246,6 @@ object FirMemberPropertiesChecker : FirClassChecker() {
      */
     private fun FirElement.isDeadEnd(): Boolean {
         val cfg = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return false
-        cfg.exitNode.incomingEdges.keys.find { it is BlockExitNode }?.let {
-            return it.isDead
-        }
-
-        return cfg.exitNode.incomingEdges.keys.any { it.isDead }
+        return cfg.exitNode.previousNodes.find { it is BlockExitNode }?.isDead ?: cfg.exitNode.previousNodes.any { it.isDead }
     }
 }

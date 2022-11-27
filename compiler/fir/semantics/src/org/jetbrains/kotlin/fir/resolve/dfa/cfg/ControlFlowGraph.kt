@@ -176,7 +176,7 @@ private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
     while (stack.isNotEmpty()) {
         val node = stack.removeFirst()
         val previousNodes = node.previousNodes
-        if (previousNodes.any { it !in visitedNodes && it.owner == this && !node.incomingEdges.getValue(it).kind.isBack }) {
+        if (previousNodes.any { it !in visitedNodes && it.owner == this && !node.edgeFrom(it).kind.isBack }) {
             stack.addLast(node)
             continue
         }

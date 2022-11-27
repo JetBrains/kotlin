@@ -122,7 +122,7 @@ class FirControlFlowGraphRenderVisitor(
 
     private fun Printer.renderEdges(graph: ControlFlowGraph) {
         for (node in graph.nodes) {
-            for ((style, group) in node.followingNodes.groupBy { node.outgoingEdges.getValue(it).style }.entries.sortedBy { it.key }) {
+            for ((style, group) in node.followingNodes.groupBy { node.edgeTo(it).style }.entries.sortedBy { it.key }) {
                 val mappedGroup = group.map { indices.getValue(it) }.sorted()
                 print(indices.getValue(node), EDGE, mappedGroup.joinToString(prefix = "{", postfix = "}", separator = " "))
                 style?.let { printWithNoIndent(" $it") }

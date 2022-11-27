@@ -72,8 +72,8 @@ private fun <I> ControlFlowGraph.collectDataForNodeInternal(
         val previousData =
             previousNodes.mapNotNull {
                 val k = when (direction) {
-                    TraverseDirection.Forward -> node.incomingEdges[it]?.label ?: NormalPath
-                    TraverseDirection.Backward -> node.outgoingEdges[it]?.label ?: NormalPath
+                    TraverseDirection.Forward -> node.edgeFrom(it).label
+                    TraverseDirection.Backward -> node.edgeTo(it).label
                 }
                 val v = nodeMap[it] ?: return@mapNotNull null
                 k to v
