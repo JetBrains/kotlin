@@ -214,23 +214,23 @@ digraph smartcastToNothing_kt {
                                     color=blue
                                     82 [label="Enter block" style="filled" fillcolor=gray];
                                     83 [label="Jump: break@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()] " style="filled" fillcolor=gray];
-                                    84 [label="Stub" style="filled" fillcolor=gray];
-                                    85 [label="Exit block" style="filled" fillcolor=gray];
+                                    94 [label="Stub" style="filled" fillcolor=gray];
+                                    95 [label="Exit block" style="filled" fillcolor=gray];
                                 }
-                                86 [label="Exit when branch result" style="filled" fillcolor=gray];
-                                87 [label="Exit when" style="filled" fillcolor=gray];
+                                96 [label="Exit when branch result" style="filled" fillcolor=gray];
+                                97 [label="Exit when" style="filled" fillcolor=gray];
                             }
-                            88 [label="Exit block" style="filled" fillcolor=gray];
+                            98 [label="Exit block" style="filled" fillcolor=gray];
                         }
-                        89 [label="Exit loop block" style="filled" fillcolor=gray];
+                        99 [label="Exit loop block" style="filled" fillcolor=gray];
                     }
-                    90 [label="Exit whileloop"];
+                    84 [label="Exit whileloop"];
                 }
-                91 [label="Exit block"];
+                85 [label="Exit block"];
             }
-            92 [label="Access variable R|<local>/s|"];
-            93 [label="Enter safe call"];
-            94 [label="Postponed enter to lambda"];
+            86 [label="Access variable R|<local>/s|"];
+            87 [label="Enter safe call"];
+            88 [label="Postponed enter to lambda"];
             subgraph cluster_24 {
                 color=blue
                 100 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
@@ -243,12 +243,12 @@ digraph smartcastToNothing_kt {
                 }
                 105 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            95 [label="Postponed exit from lambda"];
-            96 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
-            97 [label="Exit safe call"];
-            98 [label="Exit block"];
+            89 [label="Postponed exit from lambda"];
+            90 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
+            91 [label="Exit safe call"];
+            92 [label="Exit block"];
         }
-        99 [label="Exit function test_0" style="filled" fillcolor=red];
+        93 [label="Exit function test_0" style="filled" fillcolor=red];
     }
     52 -> {53};
     53 -> {54};
@@ -262,52 +262,52 @@ digraph smartcastToNothing_kt {
     61 -> {62};
     62 -> {63};
     63 -> {64};
-    64 -> {65 90};
+    64 -> {65 84};
     65 -> {66};
     66 -> {67};
     67 -> {68};
-    68 -> {99} [label="onUncaughtException"];
+    68 -> {93} [label="onUncaughtException"];
     68 -> {69} [style=dotted];
     69 -> {70} [style=dotted];
     70 -> {71} [style=dotted];
-    71 -> {99} [style=dotted label="onUncaughtException"];
+    71 -> {93} [style=dotted label="onUncaughtException"];
     71 -> {72} [style=dotted];
     72 -> {73} [style=dotted];
     73 -> {74} [style=dotted];
     74 -> {75} [style=dotted];
     75 -> {76} [style=dotted];
-    76 -> {99} [style=dotted label="onUncaughtException"];
+    76 -> {93} [style=dotted label="onUncaughtException"];
     76 -> {77} [style=dotted];
     77 -> {78} [style=dotted];
     78 -> {79} [style=dotted];
     79 -> {80 81} [style=dotted];
-    80 -> {87} [style=dotted];
+    80 -> {97} [style=dotted];
     81 -> {82} [style=dotted];
     82 -> {83} [style=dotted];
-    83 -> {84 90} [style=dotted];
-    84 -> {85} [style=dotted];
-    85 -> {86} [style=dotted];
-    86 -> {87} [style=dotted];
-    87 -> {88} [style=dotted];
+    83 -> {84 94} [style=dotted];
+    84 -> {85};
+    85 -> {86};
+    86 -> {87 91};
+    87 -> {88};
+    88 -> {90 100};
     88 -> {89} [style=dotted];
-    89 -> {61} [color=green style=dotted];
+    88 -> {100} [style=dashed];
+    89 -> {90};
     90 -> {91};
     91 -> {92};
-    92 -> {93 97};
-    93 -> {94};
-    94 -> {96 100};
+    92 -> {93};
     94 -> {95} [style=dotted];
-    94 -> {100} [style=dashed];
-    95 -> {96};
-    96 -> {97};
-    97 -> {98};
-    98 -> {99};
+    95 -> {96} [style=dotted];
+    96 -> {97} [style=dotted];
+    97 -> {98} [style=dotted];
+    98 -> {99} [style=dotted];
+    99 -> {61} [color=green style=dotted];
     100 -> {101};
     101 -> {102};
     102 -> {103};
     103 -> {104};
     104 -> {105};
-    105 -> {95};
+    105 -> {89};
 
     subgraph cluster_26 {
         color=red
