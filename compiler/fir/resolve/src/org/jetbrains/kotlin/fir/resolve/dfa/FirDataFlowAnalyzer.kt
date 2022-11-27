@@ -1128,7 +1128,7 @@ abstract class FirDataFlowAnalyzer(
     // In that case `mergeIncomingFlow` will automatically ensure consistency once called on that node.
     private fun CFGNode<*>.buildIncomingFlow(): MutableFlow {
         val previousFlows = previousNodes.mapNotNull {
-            val incomingEdgeKind = incomingEdges.getValue(it).kind
+            val incomingEdgeKind = edgeFrom(it).kind
             if (if (isDead) !incomingEdgeKind.usedInDeadDfa else !incomingEdgeKind.usedInDfa) return@mapNotNull null
             // `MergePostponedLambdaExitsNode` nodes form a parallel data flow graph. We never compute
             // data flow for any of them until reaching a completed call.

@@ -114,7 +114,7 @@ class ControlFlowGraphBuilder {
         }
 
         val returnValues = exitNode.previousNodes.mapNotNullTo(mutableSetOf()) {
-            val edge = exitNode.incomingEdges.getValue(it)
+            val edge = exitNode.edgeFrom(it)
             // * NormalPath: last expression = return value
             // * UncaughtExceptionPath: last expression = whatever threw, *not* a return value
             // * ReturnPath(this lambda): these go from `finally` blocks, so that's not the return value;
@@ -1009,7 +1009,7 @@ class ControlFlowGraphBuilder {
         val exitNode = createFinallyBlockExitNode(enterNode.fir)
         popAndAddEdge(exitNode)
         val allNormalInputsAreDead = enterNode.previousNodes.all {
-            val edge = enterNode.incomingEdges.getValue(it)
+            val edge = enterNode.edgeFrom(it)
             edge.kind.isDead || edge.label != NormalPath
         }
         addEdge(exitNode, tryExitNode, isDead = allNormalInputsAreDead)
@@ -1087,7 +1087,7 @@ class ControlFlowGraphBuilder {
     private fun completeFunctionCall(node: FunctionCallNode) {
         if (!node.fir.resultType.isNothing) return
         val stub = withLevelOfNode(node) { createStubNode() }
-        val edges = node.followingNodes.map { it to node.outgoingEdges.getValue(it) }
+        val edges = node.followingNodes.map { it to node.edgeTo(it) }
         CFGNode.removeAllOutgoingEdges(node)
         CFGNode.addEdge(node, stub, EdgeKind.DeadForward, propagateDeadness = false)
         for ((to, edge) in edges) {
@@ -1448,7 +1448,7 @@ class ControlFlowGraphBuilder {
     private fun propagateDeadnessForward(node: CFGNode<*>) {
         if (!node.isDead) return
         for (next in node.followingNodes) {
-            val kind = node.outgoingEdges.getValue(next).kind
+            val kind = node.edgeTo(next).kind
             if (CFGNode.killEdge(node, next, propagateDeadness = false) && !kind.isBack && kind.usedInCfa) {
                 next.updateDeadStatus()
                 propagateDeadnessForward(next)

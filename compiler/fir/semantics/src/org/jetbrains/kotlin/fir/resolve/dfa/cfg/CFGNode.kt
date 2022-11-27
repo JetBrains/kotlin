@@ -36,9 +36,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             from._followingNodes += to
             to._previousNodes += from
             if (kind != EdgeKind.Forward || label != NormalPath) {
-                val edge = Edge.create(label, kind)
-                from.insertOutgoingEdge(to, edge)
-                to.insertIncomingEdge(from, edge)
+                to.insertIncomingEdge(from, Edge.create(label, kind))
             }
             if (propagateDeadness && kind == EdgeKind.DeadForward) {
                 to.isDead = true
@@ -47,11 +45,9 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 
         @CfgInternals
         fun killEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean): Boolean {
-            val oldEdge = to.incomingEdges.getValue(from)
+            val oldEdge = to.edgeFrom(from)
             if (oldEdge.kind.isDead) return false
-
             val newEdge = Edge.create(oldEdge.label, if (oldEdge.kind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward)
-            from.insertOutgoingEdge(to, newEdge)
             to.insertIncomingEdge(from, newEdge)
             if (propagateDeadness) {
                 to.isDead = true
@@ -63,7 +59,6 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         fun removeAllIncomingEdges(to: CFGNode<*>) {
             for (from in to._previousNodes) {
                 from._followingNodes.remove(to)
-                from._outgoingEdges?.remove(to)
             }
             to._incomingEdges = null
             to._previousNodes.clear()
@@ -75,12 +70,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
                 to._previousNodes.remove(from)
                 to._incomingEdges?.remove(from)
             }
-            from._outgoingEdges = null
             from._followingNodes.clear()
         }
-
-        private fun createEmptyEdgeMapWithDefault(): MutableMap<CFGNode<*>, Edge> =
-            mutableMapOf<CFGNode<*>, Edge>().withDefault { Edge.Normal_Forward }
     }
 
     init {
@@ -95,33 +86,18 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     val followingNodes: List<CFGNode<*>> get() = _followingNodes
 
     private var _incomingEdges: MutableMap<CFGNode<*>, Edge>? = null
-    private var _outgoingEdges: MutableMap<CFGNode<*>, Edge>? = null
 
-    private fun insertIncomingEdge(to: CFGNode<*>, edge: Edge) {
-        if (_incomingEdges == null) {
-            _incomingEdges = createEmptyEdgeMapWithDefault()
+    private fun insertIncomingEdge(from: CFGNode<*>, edge: Edge) {
+        val map = _incomingEdges
+        if (map != null) {
+            map[from] = edge
+        } else {
+            _incomingEdges = mutableMapOf(from to edge)
         }
-        _incomingEdges?.put(to, edge)
     }
 
-    private fun insertOutgoingEdge(to: CFGNode<*>, edge: Edge) {
-        if (_outgoingEdges == null) {
-            _outgoingEdges = createEmptyEdgeMapWithDefault()
-        }
-        _outgoingEdges?.put(to, edge)
-    }
-
-    // Note: may be it should be made MapWithImplicitDefault and override getOrImplicitDefault and not get
-    // However, it works even in the current form
-    private object EmptyEdgesMap : AbstractMap<CFGNode<*>, Edge>() {
-        override val entries: Set<Map.Entry<CFGNode<*>, Edge>>
-            get() = emptySet()
-
-        override fun get(key: CFGNode<*>): Edge = Edge.Normal_Forward
-    }
-
-    val incomingEdges: Map<CFGNode<*>, Edge> get() = _incomingEdges ?: EmptyEdgesMap
-    val outgoingEdges: Map<CFGNode<*>, Edge> get() = _outgoingEdges ?: EmptyEdgesMap
+    fun edgeFrom(other: CFGNode<*>) = _incomingEdges?.get(other) ?: Edge.Normal_Forward
+    fun edgeTo(other: CFGNode<*>) = other.edgeFrom(this)
 
     abstract val fir: E
     var isDead: Boolean = false
@@ -139,13 +115,9 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     @CfgInternals
     fun updateDeadStatus() {
         isDead = if (this is UnionNodeMarker)
-            incomingEdges.values.any {
-                it.kind == EdgeKind.DeadForward
-            }
+            _incomingEdges?.let { map -> map.values.any { it.kind.isDead } } == true
         else
-            incomingEdges.size == previousNodes.size && incomingEdges.values.all {
-                it.kind == EdgeKind.DeadForward || !it.kind.usedInCfa
-            }
+            _incomingEdges?.let { map -> map.size == previousNodes.size && map.values.all { it.kind.isDead || !it.kind.usedInCfa } } == true
     }
 
     abstract fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R

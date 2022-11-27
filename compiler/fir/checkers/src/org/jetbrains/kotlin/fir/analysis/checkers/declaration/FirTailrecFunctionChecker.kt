@@ -100,7 +100,7 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
 
     private fun CFGNode<*>.hasMoreFollowingInstructions(tailrecFunction: FirSimpleFunction): Boolean {
         for (next in followingNodes) {
-            val edge = outgoingEdges.getValue(next)
+            val edge = edgeTo(next)
             if (!edge.kind.usedInCfa || edge.kind.isDead) continue
             if (edge.kind.isBack) return true
             val hasMore = when (next) {
