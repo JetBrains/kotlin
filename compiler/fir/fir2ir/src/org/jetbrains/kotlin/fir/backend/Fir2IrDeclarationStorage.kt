@@ -348,45 +348,44 @@ class Fir2IrDeclarationStorage(
                 }
             }
         }
-        with(classifierStorage) {
-            val thisOrigin = IrDeclarationOrigin.DEFINED
-            if (function !is FirConstructor) {
-                val receiver: FirReceiverParameter? =
-                    if (function !is FirPropertyAccessor && function != null) function.receiverParameter
-                    else parentPropertyReceiver
-                if (receiver != null) {
-                    extensionReceiverParameter = receiver.convertWithOffsets { startOffset, endOffset ->
-                        val name = (function as? FirAnonymousFunction)?.label?.name?.let {
-                            val suffix = it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
-                            Name.identifier("\$this\$$suffix")
-                        } ?: SpecialNames.THIS
-                        declareThisReceiverParameter(
-                            thisType = receiver.typeRef.toIrType(typeContext),
-                            thisOrigin = thisOrigin,
-                            startOffset = startOffset,
-                            endOffset = endOffset,
-                            name = name,
-                            explicitReceiver = receiver,
-                        )
-                    }
-                }
-                // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
-                val isLocal = function is FirSimpleFunction && function.isLocal
-                if (function !is FirAnonymousFunction && containingClass != null && !isStatic && !isLocal) {
-                    dispatchReceiverParameter = declareThisReceiverParameter(
-                        thisType = containingClass.thisReceiver?.type ?: error("No this receiver"),
-                        thisOrigin = thisOrigin
+
+        val thisOrigin = IrDeclarationOrigin.DEFINED
+        if (function !is FirConstructor) {
+            val receiver: FirReceiverParameter? =
+                if (function !is FirPropertyAccessor && function != null) function.receiverParameter
+                else parentPropertyReceiver
+            if (receiver != null) {
+                extensionReceiverParameter = receiver.convertWithOffsets { startOffset, endOffset ->
+                    val name = (function as? FirAnonymousFunction)?.label?.name?.let {
+                        val suffix = it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
+                        Name.identifier("\$this\$$suffix")
+                    } ?: SpecialNames.THIS
+                    declareThisReceiverParameter(
+                        thisType = receiver.typeRef.toIrType(typeContext),
+                        thisOrigin = thisOrigin,
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        name = name,
+                        explicitReceiver = receiver,
                     )
                 }
-            } else {
-                // Set dispatch receiver parameter for inner class's constructor.
-                val outerClass = containingClass?.parentClassOrNull
-                if (containingClass?.isInner == true && outerClass != null) {
-                    dispatchReceiverParameter = declareThisReceiverParameter(
-                        thisType = outerClass.thisReceiver!!.type,
-                        thisOrigin = thisOrigin
-                    )
-                }
+            }
+            // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
+            val isLocal = function is FirSimpleFunction && function.isLocal
+            if (function !is FirAnonymousFunction && containingClass != null && !isStatic && !isLocal) {
+                dispatchReceiverParameter = declareThisReceiverParameter(
+                    thisType = containingClass.thisReceiver?.type ?: error("No this receiver"),
+                    thisOrigin = thisOrigin
+                )
+            }
+        } else {
+            // Set dispatch receiver parameter for inner class's constructor.
+            val outerClass = containingClass?.parentClassOrNull
+            if (containingClass?.isInner == true && outerClass != null) {
+                dispatchReceiverParameter = declareThisReceiverParameter(
+                    thisType = outerClass.thisReceiver!!.type,
+                    thisOrigin = thisOrigin
+                )
             }
         }
     }
@@ -1440,7 +1439,8 @@ class Fir2IrDeclarationStorage(
                             firPropertySymbol.dispatchReceiverClassLookupTagOrNull() !=
                             firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassLookupTagOrNull()
                 Fir2IrLazyProperty(
-                    components, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
+                    components, startOffset, endOffset, declarationOrigin,
+                    fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
                 ).apply {
                     this.parent = lazyParent
                 }
