@@ -312,7 +312,7 @@ class ControlFlowGraphBuilder {
         if (isDefinitelyVisited || splitNode.isDead) {
             // The edge that was added as a hack to enforce ordering of nodes needs to be marked as dead if this lambda is never
             // skipped. Or if the entry node is dead, because at the time we added the hack-edge we didn't know that.
-            CFGNode.addJustKindEdge(splitNode, postponedExitNode, EdgeKind.DeadForward, propagateDeadness = !isDefinitelyVisited)
+            CFGNode.killEdge(splitNode, postponedExitNode, propagateDeadness = !isDefinitelyVisited)
         }
         if (invocationKind?.canBeVisited() == true) {
             addEdge(exitNode, postponedExitNode, propagateDeadness = isDefinitelyVisited)
@@ -1449,15 +1449,9 @@ class ControlFlowGraphBuilder {
         if (!node.isDead) return
         for (next in node.followingNodes) {
             val kind = node.outgoingEdges.getValue(next).kind
-            if (kind.isDead) continue
-            if (kind.isBack) {
-                CFGNode.addJustKindEdge(node, next, EdgeKind.DeadBackward, propagateDeadness = false)
-            } else {
-                CFGNode.addJustKindEdge(node, next, EdgeKind.DeadForward, propagateDeadness = false)
-                if (kind.usedInCfa) {
-                    next.updateDeadStatus()
-                    propagateDeadnessForward(next)
-                }
+            if (CFGNode.killEdge(node, next, propagateDeadness = false) && !kind.isBack && kind.usedInCfa) {
+                next.updateDeadStatus()
+                propagateDeadnessForward(next)
             }
         }
     }

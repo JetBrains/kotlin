@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @RequiresOptIn
 annotation class CfgInternals
@@ -36,55 +35,28 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         ) {
             from._followingNodes += to
             to._previousNodes += from
-            addJustKindEdge(from, to, kind, propagateDeadness, edgeExists = false, label = label)
-        }
-
-        @CfgInternals
-        fun addJustKindEdge(
-            from: CFGNode<*>,
-            to: CFGNode<*>,
-            kind: EdgeKind,
-            propagateDeadness: Boolean,
-            label: EdgeLabel = NormalPath
-        ) {
-            addJustKindEdge(from, to, kind, propagateDeadness, edgeExists = true, label = label)
-        }
-
-        private fun addJustKindEdge(
-            from: CFGNode<*>,
-            to: CFGNode<*>,
-            kind: EdgeKind,
-            propagateDeadness: Boolean,
-            edgeExists: Boolean,
-            label: EdgeLabel = NormalPath
-        ) {
-            // It's hard to define label merging, hence overwritten with the latest one.
-            // One day, if we allow multiple edges between nodes with different labels, we won't even need kind merging.
             if (kind != EdgeKind.Forward || label != NormalPath) {
-                val fromToKind = from._outgoingEdges?.get(to)?.kind ?: runIf(edgeExists) { EdgeKind.Forward }
-                merge(kind, fromToKind)?.let {
-                    from.insertOutgoingEdge(to, Edge.create(label, it))
-                } ?: from._outgoingEdges?.remove(to)
-                val toFromKind = to._incomingEdges?.get(from)?.kind ?: runIf(edgeExists) { EdgeKind.Forward }
-                merge(kind, toFromKind)?.let {
-                    to.insertIncomingEdge(from, Edge.create(label, it))
-                } ?: to._incomingEdges?.remove(from)
+                val edge = Edge.create(label, kind)
+                from.insertOutgoingEdge(to, edge)
+                to.insertIncomingEdge(from, edge)
             }
             if (propagateDeadness && kind == EdgeKind.DeadForward) {
                 to.isDead = true
             }
         }
 
-        private fun merge(first: EdgeKind, second: EdgeKind?): EdgeKind? {
-            return when {
-                second == null -> first
-                first == second -> first
-                first == EdgeKind.DeadForward || second == EdgeKind.DeadForward -> EdgeKind.DeadForward
-                first == EdgeKind.DeadBackward || second == EdgeKind.DeadBackward -> EdgeKind.DeadBackward
-                first == EdgeKind.Forward || second == EdgeKind.Forward -> null
-                first.usedInDfa xor second.usedInDfa -> null
-                else -> throw IllegalStateException()
+        @CfgInternals
+        fun killEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean): Boolean {
+            val oldEdge = to.incomingEdges.getValue(from)
+            if (oldEdge.kind.isDead) return false
+
+            val newEdge = Edge.create(oldEdge.label, if (oldEdge.kind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward)
+            from.insertOutgoingEdge(to, newEdge)
+            to.insertIncomingEdge(from, newEdge)
+            if (propagateDeadness) {
+                to.isDead = true
             }
+            return true
         }
 
         @CfgInternals
@@ -92,8 +64,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             for (from in to._previousNodes) {
                 from._followingNodes.remove(to)
                 from._outgoingEdges?.remove(to)
-                to._incomingEdges?.remove(from)
             }
+            to._incomingEdges = null
             to._previousNodes.clear()
         }
 
@@ -101,9 +73,9 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         fun removeAllOutgoingEdges(from: CFGNode<*>) {
             for (to in from._followingNodes) {
                 to._previousNodes.remove(from)
-                from._outgoingEdges?.remove(to)
                 to._incomingEdges?.remove(from)
             }
+            from._outgoingEdges = null
             from._followingNodes.clear()
         }
 
