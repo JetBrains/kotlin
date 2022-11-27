@@ -66,26 +66,25 @@ digraph initBlock_kt {
             23 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
             24 [label="Exit block" style="filled" fillcolor=gray];
         }
-        25 [label="Exit init block" style="filled" fillcolor=red];
+        25 [label="Exit init block" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     15 -> {16};
     16 -> {17};
     17 -> {18};
     18 -> {19};
     19 -> {20};
-    20 -> {25} [label="onUncaughtException"];
     20 -> {21} [style=dotted];
     21 -> {22} [style=dotted];
     22 -> {23} [style=dotted];
     23 -> {24} [style=dotted];
     24 -> {25} [style=dotted];
-    25 -> {28} [color=green];
+    25 -> {28} [style=dotted];
 
     subgraph cluster_7 {
         color=red
         26 [label="Enter class Bar" style="filled" fillcolor=red];
         27 [label="Part of class initialization"];
-        28 [label="Exit class Bar" style="filled" fillcolor=red];
+        28 [label="Exit class Bar" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     26 -> {27} [color=green];
     27 -> {15} [color=green];

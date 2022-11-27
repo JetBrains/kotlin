@@ -27,7 +27,7 @@ object ThrowInTryWithCatchAndFinally {
 }
 
 object ThrowInFinally {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {

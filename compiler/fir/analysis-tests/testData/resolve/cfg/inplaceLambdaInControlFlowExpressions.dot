@@ -16,12 +16,11 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
             6 [label="Stub" style="filled" fillcolor=gray];
             7 [label="Exit block" style="filled" fillcolor=gray];
         }
-        8 [label="Exit function materialize" style="filled" fillcolor=red];
+        8 [label="Exit function materialize" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     0 -> {1};
     1 -> {2};
     2 -> {3};
-    3 -> {8} [label="onUncaughtException"];
     3 -> {4} [style=dotted];
     4 -> {5} [style=dotted];
     5 -> {6 8} [style=dotted];
@@ -182,7 +181,6 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     46 -> {47};
     47 -> {48 54};
     48 -> {49};
-    48 -> {57} [label="onUncaughtException"];
     49 -> {50};
     50 -> {51};
     51 -> {52};

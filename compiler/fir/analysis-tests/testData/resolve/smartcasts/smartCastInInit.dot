@@ -36,11 +36,10 @@ digraph smartCastInInit_kt {
             11 [label="Stub" style="filled" fillcolor=gray];
             12 [label="Exit block" style="filled" fillcolor=gray];
         }
-        13 [label="Exit function s" style="filled" fillcolor=red];
+        13 [label="Exit function s" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     6 -> {7};
     7 -> {8};
-    8 -> {13} [label="onUncaughtException"];
     8 -> {9} [style=dotted];
     9 -> {10} [style=dotted];
     10 -> {11 13} [style=dotted];

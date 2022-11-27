@@ -196,7 +196,6 @@ digraph returnValuesFromLambda_kt {
     55 -> {56 57} [style=dotted];
     55 -> {62} [style=dashed];
     56 -> {57} [style=dotted];
-    57 -> {61} [style=dotted label="onUncaughtException"];
     57 -> {58} [style=dotted];
     58 -> {59} [style=dotted];
     59 -> {60} [style=dotted];

@@ -148,7 +148,6 @@ digraph complex_kt {
     25 -> {26};
     26 -> {27 36};
     27 -> {28};
-    27 -> {52} [label="onUncaughtException"];
     28 -> {29};
     29 -> {30};
     30 -> {31};
