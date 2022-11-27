@@ -319,7 +319,7 @@ class ControlFlowGraphBuilder {
         if (invocationKind?.canBeVisited() == true) {
             addEdge(exitNode, postponedExitNode, propagateDeadness = isDefinitelyVisited)
             if (invocationKind.canBeRevisited()) {
-                addBackEdge(postponedExitNode, splitNode, label = LoopBackPath)
+                addBackEdge(postponedExitNode, splitNode)
             }
         }
         return Triple(exitNode, postponedExitNode, graph)
@@ -698,7 +698,7 @@ class ControlFlowGraphBuilder {
             postponedLambdaExits.pop()
         }
 
-        val labelForFinallyBLock = when (jump) {
+        val labelForFinallyBlock = when (jump) {
             is FirReturnExpression -> ReturnPath(jump.target.labeledElement.symbol)
             is FirLoopJump -> LoopPath(jump)
             else -> NormalPath
@@ -709,14 +709,19 @@ class ControlFlowGraphBuilder {
         // do ... while (continue) // <- jump back (to itself), believe it or not
         val isBack = nextNode is LoopConditionEnterNode &&
                 (nextNode.loop !is FirDoWhileLoop || nextNode.previousNodes.any { it is LoopBlockExitNode })
-        addNodeWithJump(
-            node,
-            nextNode,
-            isBack = isBack,
-            trackJump = jump is FirReturnExpression,
-            label = if (isBack) LoopBackPath else NormalPath,
-            labelForFinallyBLock = labelForFinallyBLock
-        )
+        popAndAddEdge(node)
+        if (nextNode != null) {
+            if (isBack) {
+                addBackEdge(node, nextNode) // TODO: shouldn't this go through finally too?
+            } else {
+                val hadFinally = addEdgeThroughFinally(node, nextNode, labelForFinallyBlock = labelForFinallyBlock)
+                if (hadFinally && jump is FirReturnExpression) {
+                    //actually we can store all returns like this, but not sure if it makes anything better
+                    nonDirectJumps.put(nextNode, node)
+                }
+            }
+        }
+        addWithStub(node)
         return node
     }
 
@@ -818,7 +823,7 @@ class ControlFlowGraphBuilder {
         val loopBlockExitNode = createLoopBlockExitNode(loop)
         popAndAddEdge(loopBlockExitNode)
         val conditionEnterNode = loopConditionEnterNodes.pop()
-        addBackEdge(loopBlockExitNode, conditionEnterNode, label = LoopBackPath)
+        addBackEdge(loopBlockExitNode, conditionEnterNode)
         val loopExitNode = loopExitNodes.pop()
         loopExitNode.updateDeadStatus()
         lastNodes.push(loopExitNode)
@@ -860,7 +865,7 @@ class ControlFlowGraphBuilder {
         popAndAddEdge(conditionExitNode)
         val blockEnterNode = lastNodes.pop()
         require(blockEnterNode is LoopBlockEnterNode)
-        addBackEdge(conditionExitNode, blockEnterNode, isDead = conditionBooleanValue == false, label = LoopBackPath)
+        addBackEdge(conditionExitNode, blockEnterNode, isDead = conditionBooleanValue == false)
         val loopExit = loopExitNodes.pop()
         addEdge(conditionExitNode, loopExit, propagateDeadness = false, isDead = conditionBooleanValue == true)
         loopExit.updateDeadStatus()
@@ -1068,15 +1073,11 @@ class ControlFlowGraphBuilder {
         val stub = withLevelOfNode(node) { createStubNode() }
         val edges = node.followingNodes.map { it to node.outgoingEdges.getValue(it) }
         CFGNode.removeAllOutgoingEdges(node)
-        addEdge(node, stub)
+        CFGNode.addEdge(node, stub, EdgeKind.DeadForward, propagateDeadness = false)
         for ((to, edge) in edges) {
-            addEdge(
-                from = stub,
-                to = to,
-                isBack = edge.kind.isBack,
-                preferredKind = edge.kind,
-                label = edge.label
-            )
+            val kind = if (edge.kind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
+            // TODO: `propagateDeadness` should be redundant if `propagateDeadnessForward` was correct, but it's not.
+            CFGNode.addEdge(stub, to, kind, propagateDeadness = true, label = edge.label)
         }
         stub.followingNodes.forEach { propagateDeadnessForward(it, deep = true) }
     }
@@ -1384,15 +1385,20 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Edge utils -----------------------------------
 
-    private fun addNewSimpleNode(
-        node: CFGNode<*>,
-        isDead: Boolean = false,
-        preferredKind: EdgeKind = EdgeKind.Forward
-    ): CFGNode<*> {
-        val lastNode = lastNodes.pop()
-        addEdge(lastNode, node, isDead = isDead, preferredKind = preferredKind)
+    private fun addNewSimpleNode(node: CFGNode<*>, isDead: Boolean = false) {
+        addEdge(lastNodes.pop(), node, preferredKind = if (isDead) EdgeKind.DeadForward else EdgeKind.Forward)
         lastNodes.push(node)
-        return lastNode
+    }
+
+    private fun addNewSimpleNodeIfPossible(newNode: CFGNode<*>) {
+        if (lastNodes.isEmpty) return
+        addNewSimpleNode(newNode)
+    }
+
+    private fun addWithStub(node: CFGNode<*>) {
+        val stub = createStubNode()
+        addEdge(node, stub)
+        lastNodes.push(stub)
     }
 
     private fun addNodeThatReturnsNothing(node: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
@@ -1406,6 +1412,24 @@ class ControlFlowGraphBuilder {
             finallyEnterNodes.topOrNull()?.level == levelCounter -> {
                 // (2)... with finally
                 // Either in try-main or catch. Route to `finally`
+                // TODO: that doesn't seem right?
+                //   fun bar(): Nothing = throw RuntimeException()
+                //   fun main() {
+                //     val x: Int
+                //     try {
+                //       try {
+                //         x = 1
+                //         println(x)
+                //         bar() // addNodeThatReturnsNothing
+                //       } finally {} // to this finally?
+                //     } finally { // but what about this one?
+                //       x = 2
+                //       println(x)
+                //     }
+                //   }
+                //   -> compiles and prints 1 then 2
+                //  Guessing that there should already be an UncaughtExceptionPath edge from finally 1 to finally 2
+                //  regardless of `bar()`, but there isn't.
                 finallyEnterNodes.top()
             }
             // (2)... without finally or within finally ...(3)
@@ -1426,77 +1450,38 @@ class ControlFlowGraphBuilder {
             // (3)... within finally.
             else -> exitTargetsForTry.top()
         }
+        popAndAddEdge(node, preferredKind)
         if (targetNode is TryMainBlockExitNode) {
             val catches = targetNode.fir.catches
             if (catches.isEmpty()) {
-                addNodeWithJump(node, exitTargetsForTry.top(), preferredKind, label = UncaughtExceptionPath)
+                addEdgeThroughFinally(node, exitTargetsForTry.top(), label = UncaughtExceptionPath)
             } else {
-                //edges to all the catches
-                addNodeWithJumpToCatches(node, catches.map { catchNodeStorage[it]!! }, preferredKind = preferredKind)
+                for (catch in catches) {
+                    addEdge(node, catchNodeStorage[catch]!!, propagateDeadness = false, label = UncaughtExceptionPath)
+                }
             }
         } else {
-            addNodeWithJump(node, targetNode, preferredKind, label = UncaughtExceptionPath)
+            addEdgeThroughFinally(node, targetNode, label = UncaughtExceptionPath)
         }
+        addWithStub(node)
     }
 
-    private fun addNodeWithJump(
+    private fun addEdgeThroughFinally(
         node: CFGNode<*>,
-        targetNode: CFGNode<*>?,
-        preferredKind: EdgeKind = EdgeKind.Forward,
-        isBack: Boolean = false,
+        targetNode: CFGNode<*>,
         label: EdgeLabel = NormalPath,
-        labelForFinallyBLock: EdgeLabel = label,
-        trackJump: Boolean = false
-    ) {
-        popAndAddEdge(node, preferredKind)
-        if (targetNode != null) {
-            if (isBack) {
-                addBackEdge(node, targetNode, label = label)
-            } else {
-                // go through all final nodes between node and target
-                val finallyNodes = finallyBefore(targetNode)
-                val finalFrom = finallyNodes.fold(node) { from, (finallyEnter, tryExit) ->
-                    addEdgeIfNotExist(from, finallyEnter, propagateDeadness = false, label = labelForFinallyBLock)
-                    tryExit
-                }
-                addEdgeIfNotExist(
-                    finalFrom,
-                    targetNode,
-                    propagateDeadness = false,
-                    label = if (finallyNodes.isEmpty()) label else labelForFinallyBLock
-                )
-                if (trackJump && finallyNodes.isNotEmpty()) {
-                    //actually we can store all returns like this, but not sure if it makes anything better
-                    nonDirectJumps.put(targetNode, node)
-                }
+        labelForFinallyBlock: EdgeLabel = label
+    ): Boolean {
+        var next = node
+        for (finallyEnter in finallyEnterNodes.all()) {
+            if (finallyEnter.level <= targetNode.level) {
+                break
             }
+            addEdgeIfNotExist(next, finallyEnter, propagateDeadness = false, label = labelForFinallyBlock)
+            next = finallyExitNodes[finallyEnter.fir]!!
         }
-        val stub = createStubNode()
-        addEdge(node, stub)
-        lastNodes.push(stub)
-    }
-
-    private fun addNodeWithJumpToCatches(
-        node: CFGNode<*>,
-        targets: List<CatchClauseEnterNode>,
-        label: EdgeLabel = UncaughtExceptionPath,
-        preferredKind: EdgeKind = EdgeKind.Forward
-    ) {
-        require(targets.isNotEmpty())
-        popAndAddEdge(node, preferredKind)
-        targets.forEach { target ->
-            addEdge(node, target, propagateDeadness = false, label = label)
-        }
-        val stub = createStubNode()
-        addEdge(node, stub)
-        lastNodes.push(stub)
-    }
-
-    private fun finallyBefore(target: CFGNode<*>): List<Pair<FinallyBlockEnterNode, FinallyBlockExitNode>> {
-        return finallyEnterNodes.all().takeWhile { it.level > target.level }.map { finallyEnter ->
-            val finallyExit = finallyExitNodes[finallyEnter.fir]!!
-            finallyEnter to finallyExit
-        }
+        addEdgeIfNotExist(next, targetNode, propagateDeadness = false, label = if (next == node) label else labelForFinallyBlock)
+        return next != node
     }
 
     private fun popAndAddEdge(to: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
@@ -1507,12 +1492,11 @@ class ControlFlowGraphBuilder {
         from: CFGNode<*>,
         to: CFGNode<*>,
         propagateDeadness: Boolean = true,
-        isDead: Boolean = false,
         preferredKind: EdgeKind = EdgeKind.Forward,
         label: EdgeLabel = NormalPath
     ) {
         if (!from.followingNodes.contains(to)) {
-            addEdge(from, to, propagateDeadness, isDead, preferredKind = preferredKind, label = label)
+            addEdge(from, to, propagateDeadness, preferredKind = preferredKind, label = label)
         }
     }
 
@@ -1521,23 +1505,18 @@ class ControlFlowGraphBuilder {
         to: CFGNode<*>,
         propagateDeadness: Boolean = true,
         isDead: Boolean = false,
-        isBack: Boolean = false,
         preferredKind: EdgeKind = EdgeKind.Forward,
         label: EdgeLabel = NormalPath
     ) {
         val kind = if (isDead || from.isDead || to.isDead) {
-            if (isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
+            if (preferredKind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
         } else preferredKind
         CFGNode.addEdge(from, to, kind, propagateDeadness, label)
     }
 
-    private fun addBackEdge(
-        from: CFGNode<*>,
-        to: CFGNode<*>,
-        isDead: Boolean = false,
-        label: EdgeLabel = NormalPath
-    ) {
-        addEdge(from, to, propagateDeadness = false, isDead = isDead, isBack = true, preferredKind = EdgeKind.CfgBackward, label = label)
+    private fun addBackEdge(from: CFGNode<*>, to: CFGNode<*>, isDead: Boolean = false) {
+        val kind = if (isDead || from.isDead || to.isDead) EdgeKind.DeadBackward else EdgeKind.CfgBackward
+        CFGNode.addEdge(from, to, kind, propagateDeadness = false, label = LoopBackPath)
     }
 
     private fun propagateDeadnessForward(node: CFGNode<*>, deep: Boolean = false) {
@@ -1569,11 +1548,6 @@ class ControlFlowGraphBuilder {
             is FirProperty -> listOfNotNull(this.getter, this.setter, this)
             else -> emptyList()
         }
-
-    private fun addNewSimpleNodeIfPossible(newNode: CFGNode<*>, isDead: Boolean = false): CFGNode<*>? {
-        if (lastNodes.isEmpty) return null
-        return addNewSimpleNode(newNode, isDead)
-    }
 
     private fun <R> withLevelOfNode(node: CFGNode<*>, f: () -> R): R {
         val last = levelCounter
