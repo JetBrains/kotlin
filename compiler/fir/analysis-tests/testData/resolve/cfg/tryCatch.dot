@@ -66,7 +66,6 @@ digraph tryCatch_kt {
     7 -> {8};
     8 -> {9 16 23};
     9 -> {10};
-    9 -> {25} [label="onUncaughtException"];
     10 -> {11};
     11 -> {12};
     12 -> {13};
@@ -74,7 +73,6 @@ digraph tryCatch_kt {
     14 -> {15};
     15 -> {23};
     16 -> {17};
-    16 -> {25} [label="onUncaughtException"];
     17 -> {18};
     18 -> {19};
     19 -> {20};
@@ -132,7 +130,6 @@ digraph tryCatch_kt {
     32 -> {33};
     33 -> {34 40};
     34 -> {35};
-    34 -> {43} [label="onUncaughtException"];
     35 -> {36};
     36 -> {37};
     37 -> {38};
@@ -307,7 +304,6 @@ digraph tryCatch_kt {
     82 -> {83};
     83 -> {84 91 103};
     84 -> {85};
-    84 -> {99} [label="onUncaughtException"];
     85 -> {86};
     86 -> {87};
     87 -> {47} [color=green style=dashed];
@@ -316,7 +312,6 @@ digraph tryCatch_kt {
     89 -> {90} [style=dotted];
     90 -> {103} [style=dotted];
     91 -> {92};
-    91 -> {99} [label="onUncaughtException"];
     92 -> {93};
     93 -> {94};
     94 -> {95};

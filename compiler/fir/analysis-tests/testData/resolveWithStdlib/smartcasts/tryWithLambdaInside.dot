@@ -116,7 +116,6 @@ finally {
     23 -> {24};
     24 -> {25};
     25 -> {26};
-    25 -> {30} [label="onUncaughtException"];
     26 -> {27};
     27 -> {30};
     27 -> {28} [style=dotted];
@@ -205,7 +204,6 @@ finally {
     48 -> {49};
     49 -> {50};
     50 -> {51};
-    50 -> {55} [label="onUncaughtException"];
     51 -> {52};
     52 -> {55};
     52 -> {53} [style=dotted];

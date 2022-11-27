@@ -30,12 +30,11 @@ digraph plusAssignWithLambdaInRhs_kt {
             9 [label="Function call: R|<local>/list|.R|kotlin/collections/plusAssign|<R|(kotlin/String) -> kotlin/String|>(...)" style="filled" fillcolor=gray];
             10 [label="Exit block" style="filled" fillcolor=gray];
         }
-        11 [label="Exit function test" style="filled" fillcolor=red];
+        11 [label="Exit function test" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     0 -> {1};
     1 -> {2};
     2 -> {3};
-    3 -> {11} [label="onUncaughtException"];
     3 -> {4} [style=dotted];
     4 -> {5} [style=dotted];
     5 -> {6} [style=dotted];

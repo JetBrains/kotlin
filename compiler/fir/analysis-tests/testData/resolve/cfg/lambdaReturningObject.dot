@@ -59,11 +59,10 @@ digraph lambdaReturningObject_kt {
             18 [label="Stub" style="filled" fillcolor=gray];
             19 [label="Exit block" style="filled" fillcolor=gray];
         }
-        20 [label="Exit function MyOut" style="filled" fillcolor=red];
+        20 [label="Exit function MyOut" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     13 -> {14};
     14 -> {15};
-    15 -> {20} [label="onUncaughtException"];
     15 -> {16} [style=dotted];
     16 -> {17} [style=dotted];
     17 -> {18 20} [style=dotted];

@@ -91,7 +91,7 @@ digraph propertiesAndInitBlocks_kt {
             43 [label="Stub" style="filled" fillcolor=gray];
             44 [label="Exit block" style="filled" fillcolor=gray];
         }
-        45 [label="Exit function foo" style="filled" fillcolor=red];
+        45 [label="Exit function foo" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     35 -> {36};
     36 -> {37};
@@ -100,7 +100,6 @@ digraph propertiesAndInitBlocks_kt {
     39 -> {40};
     40 -> {41};
     41 -> {42};
-    42 -> {45} [label="onUncaughtException"];
     42 -> {43} [style=dotted];
     43 -> {44} [style=dotted];
     44 -> {45} [style=dotted];
@@ -126,17 +125,16 @@ digraph propertiesAndInitBlocks_kt {
             54 [label="Const: Int(1)" style="filled" fillcolor=gray];
             55 [label="Exit block" style="filled" fillcolor=gray];
         }
-        56 [label="Exit init block" style="filled" fillcolor=red];
+        56 [label="Exit init block" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     49 -> {50};
     50 -> {51};
     51 -> {52};
-    52 -> {56} [label="onUncaughtException"];
     52 -> {53} [style=dotted];
     53 -> {54} [style=dotted];
     54 -> {55} [style=dotted];
     55 -> {56} [style=dotted];
-    56 -> {34} [color=green];
+    56 -> {34} [style=dotted];
 
     subgraph cluster_13 {
         color=red
@@ -153,7 +151,7 @@ digraph propertiesAndInitBlocks_kt {
         color=blue
         62 [label="Enter class GetterLocalClass" style="filled" fillcolor=red];
         63 [label="Part of class initialization"];
-        64 [label="Exit class GetterLocalClass" style="filled" fillcolor=red];
+        64 [label="Exit class GetterLocalClass" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     57 -> {58};
     58 -> {59};
@@ -187,16 +185,15 @@ digraph propertiesAndInitBlocks_kt {
             72 [label="Stub" style="filled" fillcolor=gray];
             73 [label="Exit block" style="filled" fillcolor=gray];
         }
-        74 [label="Exit init block" style="filled" fillcolor=red];
+        74 [label="Exit init block" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     68 -> {69};
     69 -> {70};
     70 -> {71};
-    71 -> {74} [label="onUncaughtException"];
     71 -> {72} [style=dotted];
     72 -> {73} [style=dotted];
     73 -> {74} [style=dotted];
-    74 -> {64} [color=green];
+    74 -> {64} [style=dotted];
 
     subgraph cluster_19 {
         color=red
@@ -220,7 +217,7 @@ digraph propertiesAndInitBlocks_kt {
             color=blue
             32 [label="Enter class InitializerLocalClass" style="filled" fillcolor=red];
             33 [label="Part of class initialization"];
-            34 [label="Exit class InitializerLocalClass" style="filled" fillcolor=red];
+            34 [label="Exit class InitializerLocalClass" style="filled" fillcolor=red style="filled" fillcolor=gray];
         }
         77 [label="Postponed exit from lambda"];
         78 [label="Function call: R|/run|(...)" style="filled" fillcolor=yellow];
@@ -239,7 +236,6 @@ digraph propertiesAndInitBlocks_kt {
     26 -> {32 46} [color=green];
     26 -> {32 46} [style=dashed];
     27 -> {28};
-    28 -> {79} [label="onUncaughtException"];
     28 -> {29} [style=dotted];
     29 -> {30} [style=dotted];
     30 -> {31} [style=dotted];
@@ -313,7 +309,6 @@ digraph propertiesAndInitBlocks_kt {
     95 -> {96};
     96 -> {97};
     97 -> {98};
-    97 -> {99} [label="onUncaughtException"];
     98 -> {99};
 
 }

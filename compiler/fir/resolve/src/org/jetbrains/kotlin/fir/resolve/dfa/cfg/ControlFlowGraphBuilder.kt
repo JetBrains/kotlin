@@ -938,6 +938,9 @@ class ControlFlowGraphBuilder {
             finallyEnterNodes.push(createFinallyBlockEnterNode(tryExpression))
         }
 
+        // These edges should really be from `enterTryMainBlockNode`, but there is no practical difference
+        // so w/e. In fact, `enterTryExpressionNode` is just 100% redundant.
+        // TODO: this is more or less `addExceptionEdgesFrom(enterTryExpressionNode)`. Hmm.
         for (catchEnterNode in catchNodes.top()) {
             addEdge(enterTryExpressionNode, catchEnterNode)
         }
@@ -959,11 +962,14 @@ class ControlFlowGraphBuilder {
         // try { a } catch (e) { b } [finally { c }]
         //         \-----------------^
         val nextNode = if (node.fir.finallyBlock != null) finallyEnterNodes.top() else exitTryExpressionNode
+        // Liveness of `exitTryExpressionNode` will be computed at the end since there are `catch`es.
+        // And the `finally` node is never dead unless the entire try-finally is dead.
         addEdge(node, nextNode, propagateDeadness = false)
         for (catchEnterNode in catchNodes.pop().asReversed()) {
             catchBlocksInProgress.push(catchEnterNode)
             // At least merge the data flow from enter + exit...but this doesn't really help,
-            // see the comment for `addExceptionEdgesFrom`.
+            // see the comment for `addExceptionEdgesFrom`. Better than nothing, though.
+            // Like `finally`, `catch` nodes are only dead if the entire try-catch is dead.
             addEdge(node, catchEnterNode, propagateDeadness = false)
         }
         return node
@@ -975,9 +981,6 @@ class ControlFlowGraphBuilder {
         if (tryExitNodes.top().fir.finallyBlock != null) {
             // TODO: not sure this does anything?
             addEdge(catchEnterNode, finallyEnterNodes.top(), propagateDeadness = false, label = UncaughtExceptionPath)
-        } else {
-            // TODO: this DEFINITELY does nothing, and is in fact incorrect if there are outer try-finally.
-            addEdge(catchEnterNode, exitTargetsForTry.top(), propagateDeadness = false, label = UncaughtExceptionPath)
         }
         lastNodes.push(catchEnterNode)
         levelCounter++
@@ -1013,27 +1016,40 @@ class ControlFlowGraphBuilder {
             edge.kind.isDead || edge.label != NormalPath
         }
         addEdge(exitNode, tryExitNode, isDead = allNormalInputsAreDead)
-        val nextExitLevel = addUncaughtExceptionEdgeFrom(exitNode)
+        // TODO: there should also be edges to outer catch blocks? Control flow can go like this:
+        //   try { try { throw E2() } catch (e: E1) { } finally { } } catch (e: E2) { }
+        //                        \-----------------------------^ \-----------------^
+        //  Wait, that's just `addExceptionEdgesFrom(exitNode)` again!
+        val nextExitLevel = exitTargetsForTry.top().level
+        val nextFinally = finallyEnterNodes.topOrNull()?.takeIf { it.level > nextExitLevel }
+        if (nextFinally != null) {
+            addEdge(exitNode, nextFinally, label = UncaughtExceptionPath, propagateDeadness = false)
+        }
+
+        val nextFinallyOrExitLevel = nextFinally?.level ?: nextExitLevel
         //                   /-----------v
         // f@ { try { return@f } finally { b }; c }
         //                                   \-----^
-        exitNode.addReturnEdges(exitTargetsForReturn, nextExitLevel)
+        exitNode.addReturnEdges(exitTargetsForReturn, nextFinallyOrExitLevel)
         //                               /-----------v
         // f@ while (x) { try { continue@f } finally { b }; c }
         //          ^------------------------------------/
-        exitNode.addReturnEdges(loopConditionEnterNodes, nextExitLevel)
+        exitNode.addReturnEdges(loopConditionEnterNodes, nextFinallyOrExitLevel)
         //                            /-----------v
         // f@ while (x) { try { break@f } finally { b }; c }
         //                                            \-----^
-        exitNode.addReturnEdges(loopExitNodes, nextExitLevel)
+        exitNode.addReturnEdges(loopExitNodes, nextFinallyOrExitLevel)
         return exitNode
     }
 
     private fun <T : CFGNode<*>> CFGNode<*>.addReturnEdges(nodes: Stack<T>, minLevel: Int) {
         for (node in nodes.all()) {
             when {
-                node.level <= minLevel -> break
+                node.level < minLevel -> break
+                // TODO: this check is imprecise and can add redundant edges:
+                //   x@{ try { return@x } finally {}; try {} finally { /* return@x target is in nonDirectJumps */ }
                 node !in nonDirectJumps -> continue
+                // TODO: if the input to finally with that label is dead, then so should be the exit probably
                 node.returnPathIsBackwards -> addBackEdge(this, node, label = node.returnPathLabel)
                 else -> addEdge(this, node, propagateDeadness = false, label = node.returnPathLabel)
             }
@@ -1050,25 +1066,17 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    private fun addUncaughtExceptionEdgeFrom(node: CFGNode<*>): Int {
-        val nextExit = exitTargetsForTry.top()
-        val nextFinally = finallyEnterNodes.topOrNull()
-        // TODO: this edge is probably redundant if chose `nextExit`
-        val nextNode = if (nextFinally != null && nextFinally.level > nextExit.level) nextFinally else nextExit
-        addEdge(node, nextNode, propagateDeadness = false, label = UncaughtExceptionPath)
-        return nextNode.level
-    }
-
-    // TODO: these edges are true for literally any node in the graph. Their existence for *some* nodes
-    //  might lead to a false sense of security, but things are broken. This should be some sort of implicit knowledge
-    //  instead of requiring a ton of edges?
+    // TODO: these edges are true for literally any node in the graph. Their existence for *some* nodes might lead
+    //  to a false sense of security, but things are broken. This should be some sort of implicit knowledge instead
+    //  of requiring a ton of edges? (Some nodes never throw, but calls are never safe, and most useful stuff is calls.)
+    //    var x: Any?
     //    x = ""
     //    try {
     //      x = null
-    //      f() // throws
+    //      listOf(1, 2, 3).single()
     //      x = ""
     //    } catch (e: Throwable) { x.length } // oops
-    //  Just look at `enterTryExpression` - the edges it adds are literally `addExceptionEdgesFrom(tryExpressionEnterNode)`.
+    //  R8 devs say they tried the "implicit knowledge" way but failed and decided to add all the edges - bad sign...
     private fun addExceptionEdgesFrom(node: CFGNode<*>) {
         val nextCatch = catchNodes.topOrNull()
         if (nextCatch != null) {
@@ -1076,7 +1084,10 @@ class ControlFlowGraphBuilder {
                 addEdge(node, catchEnterNode, propagateDeadness = false)
             }
         }
-        addUncaughtExceptionEdgeFrom(node)
+        val nextFinally = finallyEnterNodes.topOrNull()
+        if (nextFinally != null && nextFinally.level > exitTargetsForTry.top().level) {
+            addEdge(node, nextFinally, propagateDeadness = false, label = UncaughtExceptionPath)
+        }
     }
 
     //this is a workaround to make function call dead when call is completed _after_ building its node in the graph

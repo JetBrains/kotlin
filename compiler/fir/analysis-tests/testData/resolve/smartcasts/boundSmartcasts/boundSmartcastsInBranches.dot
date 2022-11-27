@@ -871,7 +871,6 @@ digraph boundSmartcastsInBranches_kt {
     309 -> {310};
     310 -> {311};
     311 -> {312};
-    312 -> {341} [label="onUncaughtException"];
     312 -> {313} [style=dotted];
     313 -> {314} [style=dotted];
     314 -> {315} [style=dotted];
@@ -1207,7 +1206,6 @@ digraph boundSmartcastsInBranches_kt {
     446 -> {447};
     447 -> {448};
     448 -> {449};
-    449 -> {479} [label="onUncaughtException"];
     449 -> {450} [style=dotted];
     450 -> {451} [style=dotted];
     451 -> {452} [style=dotted];

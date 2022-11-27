@@ -16,12 +16,11 @@ digraph smartcastToNothing_kt {
             6 [label="Stub" style="filled" fillcolor=gray];
             7 [label="Exit block" style="filled" fillcolor=gray];
         }
-        8 [label="Exit function getNothing" style="filled" fillcolor=red];
+        8 [label="Exit function getNothing" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     0 -> {1};
     1 -> {2};
     2 -> {3};
-    3 -> {8} [label="onUncaughtException"];
     3 -> {4} [style=dotted];
     4 -> {5} [style=dotted];
     5 -> {6 8} [style=dotted];
@@ -104,12 +103,11 @@ digraph smartcastToNothing_kt {
             36 [label="Stub" style="filled" fillcolor=gray];
             37 [label="Exit block" style="filled" fillcolor=gray];
         }
-        38 [label="Exit function myListOf" style="filled" fillcolor=red];
+        38 [label="Exit function myListOf" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
     30 -> {31};
     31 -> {32};
     32 -> {33};
-    33 -> {38} [label="onUncaughtException"];
     33 -> {34} [style=dotted];
     34 -> {35} [style=dotted];
     35 -> {36 38} [style=dotted];
@@ -266,17 +264,14 @@ digraph smartcastToNothing_kt {
     65 -> {66};
     66 -> {67};
     67 -> {68};
-    68 -> {93} [label="onUncaughtException"];
     68 -> {69} [style=dotted];
     69 -> {70} [style=dotted];
     70 -> {71} [style=dotted];
-    71 -> {93} [style=dotted label="onUncaughtException"];
     71 -> {72} [style=dotted];
     72 -> {73} [style=dotted];
     73 -> {74} [style=dotted];
     74 -> {75} [style=dotted];
     75 -> {76} [style=dotted];
-    76 -> {93} [style=dotted label="onUncaughtException"];
     76 -> {77} [style=dotted];
     77 -> {78} [style=dotted];
     78 -> {79} [style=dotted];
@@ -398,7 +393,6 @@ digraph smartcastToNothing_kt {
     131 -> {132};
     132 -> {133};
     133 -> {134};
-    134 -> {142} [label="onUncaughtException"];
     134 -> {135} [style=dotted];
     135 -> {136} [style=dotted];
     136 -> {137} [style=dotted];
