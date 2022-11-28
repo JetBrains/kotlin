@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.junit.Ignore
 import org.junit.Test
 
 class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
@@ -283,7 +284,8 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testLocalFunCaptures3(): Unit = verifyComposeIrTransform(
+    @Ignore("b/260233015")
+    fun localFunCaptures3(): Unit = verifyComposeIrTransform(
         """
             import androidx.compose.animation.AnimatedContent
             import androidx.compose.animation.ExperimentalAnimationApi
