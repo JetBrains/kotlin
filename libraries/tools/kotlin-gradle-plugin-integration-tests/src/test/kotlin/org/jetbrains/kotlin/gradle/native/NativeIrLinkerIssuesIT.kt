@@ -63,6 +63,8 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             ||    |    |    |    +--- stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
             ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.CoreFoundation: 1.4.32 -> $kotlinNativeCompilerVersion
             ||    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
+            ||    |    |    |    |    +--- org.jetbrains.kotlin.native.platform.CoreFoundationBase: $kotlinNativeCompilerVersion
+            ||    |    |    |    |    |    \--- stdlib: $kotlinNativeCompilerVersion
             ||    |    |    |    |    +--- org.jetbrains.kotlin.native.platform.darwin: $kotlinNativeCompilerVersion
             ||    |    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
             ||    |    |    |    |    |    \--- org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion
