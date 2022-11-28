@@ -90,8 +90,8 @@
 
 /compiler/testData/asJava/annotations/ "Kotlin Compiler Core"
 /compiler/testData/asJava/findClasses/ "Kotlin Compiler Core"
-/compiler/testData/asJava/lightClasses/ "Kotlin Compiler Core"
-/compiler/testData/asJava/lightClassStructure/ "Kotlin Compiler Core"
+/compiler/testData/asJava/lightClasses/ "Kotlin IDE"
+/compiler/testData/asJava/lightClassStructure/ "Kotlin IDE"
 /compiler/testData/asJava/script/ "Kotlin IDE"
 /compiler/testData/asJava/ultraLightClasses/ "Kotlin IDE"
 /compiler/testData/asJava/ultraLightFacades/ "Kotlin IDE"
