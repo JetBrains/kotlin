@@ -47,26 +47,30 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         manager = manager
     )
 
+    context(KtAnalysisSession)
     protected fun addMethodsFromCompanionIfNeeded(
         result: MutableList<KtLightMethod>,
-    ): Unit = withClassOrObjectSymbol { classOrObjectSymbol ->
-        classOrObjectSymbol.companionObject?.run {
-            val methods = getDeclaredMemberScope().getCallableSymbols()
-                .filterIsInstance<KtFunctionSymbol>()
-                .filter { it.hasJvmStaticAnnotation() }
+        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+    ) {
+        val companionObjectSymbol = classOrObjectSymbol.companionObject ?: return
+        val methods = companionObjectSymbol.getDeclaredMemberScope()
+            .getCallableSymbols()
+            .filterIsInstance<KtFunctionSymbol>()
+            .filter { it.hasJvmStaticAnnotation() }
 
-            createMethods(methods, result)
+        createMethods(methods, result)
 
-            val properties = getDeclaredMemberScope().getCallableSymbols().filterIsInstance<KtPropertySymbol>()
-            properties.forEach { property ->
+        companionObjectSymbol.getDeclaredMemberScope()
+            .getCallableSymbols()
+            .filterIsInstance<KtPropertySymbol>()
+            .forEach { property ->
                 createPropertyAccessors(
                     result,
                     property,
                     isTopLevel = false,
-                    onlyJvmStatic = true
+                    onlyJvmStatic = true,
                 )
             }
-        }
     }
 
     private val KtPropertySymbol.isConstOrJvmField: Boolean get() = isConst || hasJvmFieldAnnotation()

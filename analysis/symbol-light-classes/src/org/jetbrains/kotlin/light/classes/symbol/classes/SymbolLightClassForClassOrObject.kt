@@ -157,7 +157,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             createConstructors(declaredMemberScope.getConstructors(), result)
 
 
-            addMethodsFromCompanionIfNeeded(result)
+            addMethodsFromCompanionIfNeeded(result, classOrObjectSymbol)
 
             addMethodsFromDataClass(result, classOrObjectSymbol)
             addDelegatesToInterfaceMethods(result, classOrObjectSymbol)
@@ -346,5 +346,6 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     override fun isAnnotationType(): Boolean = false
 
-    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+    override fun copy(): SymbolLightClassForClassOrObject =
+        SymbolLightClassForClassOrObject(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 }

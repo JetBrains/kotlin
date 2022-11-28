@@ -59,7 +59,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
                 .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
 
             createMethods(visibleDeclarations, result)
-            addMethodsFromCompanionIfNeeded(result)
+            addMethodsFromCompanionIfNeeded(result, classOrObjectSymbol)
 
             result
         }
