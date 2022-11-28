@@ -116,7 +116,7 @@ interface IdeMultiplatformImport {
         PreDependencyTransformationPhase,
 
         /**
-         * Dependency transformation phase that is free entirely free in its transformation type.
+         * Dependency transformation phase that is entirely free in its transformation type.
          * Note: Adding dependencies to the resolution result might most likely better be modelled as [IdeDependencyResolver]
          */
         FreeDependencyTransformationPhase,
