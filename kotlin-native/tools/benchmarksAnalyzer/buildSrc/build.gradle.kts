@@ -27,6 +27,10 @@ plugins {
     //kotlin("multiplatform")
 }
 
+kotlin {
+    jvmToolchain(8)
+}
+
 repositories {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     mavenCentral()
