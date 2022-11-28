@@ -1,0 +1,17 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtVariableLikeSignature:
+          name = f
+          receiverType = null
+          returnType = F<kotlin.String>
+          symbol = f: F<kotlin.String>
+          callableIdIfNonLocal = null
+      simpleAccess = Read:
+
+      typeArgumentsMapping = {}
+  ]
+  diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): f: F<String>>

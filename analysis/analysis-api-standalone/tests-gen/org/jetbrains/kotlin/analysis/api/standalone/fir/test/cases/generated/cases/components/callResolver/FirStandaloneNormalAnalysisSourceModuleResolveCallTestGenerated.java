@@ -695,6 +695,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("propertyCallWithTypeArguments.kt")
+    public void testPropertyCallWithTypeArguments() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/propertyCallWithTypeArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyCallWithTypeArgumentsWithInvoke.kt")
+    public void testPropertyCallWithTypeArgumentsWithInvoke() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/propertyCallWithTypeArgumentsWithInvoke.kt");
+    }
+
+    @Test
     @TestMetadata("qualifiedCalleeExpressionOfImplicitInvoke.kt")
     public void testQualifiedCalleeExpressionOfImplicitInvoke() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/qualifiedCalleeExpressionOfImplicitInvoke.kt");

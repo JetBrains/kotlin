@@ -183,7 +183,7 @@ class FirCallResolver(
     ): ResolutionResult {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
-        val typeArguments = (qualifiedAccess as? FirFunctionCall)?.typeArguments.orEmpty()
+        val typeArguments = qualifiedAccess.typeArguments
 
         val info = CallInfo(
             qualifiedAccess,
