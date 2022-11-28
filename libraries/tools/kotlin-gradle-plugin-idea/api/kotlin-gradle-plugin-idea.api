@@ -297,13 +297,12 @@ public abstract class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDepen
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency : java/io/Serializable {
+public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency : java/io/Serializable, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
 	public static final field CLASSPATH_BINARY_TYPE Ljava/lang/String;
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency$Companion;
 	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
 	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates;
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency$Companion {
@@ -347,25 +346,12 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifac
 	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates;
 	public fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactCoordinates;
+	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public final fun getType ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public fun hashCode ()I
+	public final fun resolved (Ljava/lang/Iterable;)Ljava/util/Set;
 	public fun toString ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency$Resolver {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency$Resolver$Companion;
-	public abstract fun resolve (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency$Resolver$Companion {
-	public final fun byName (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency$Resolver;
-	public final fun composite (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency$Resolver;
-	public final fun composite ([Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency$Resolver;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency$Resolver;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependencyKt {
-	public static final fun resolved (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifactDependency$Resolver;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency;
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates : java/io/Serializable {
@@ -399,6 +385,7 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinResolvedBinary
 	public final fun getBinaryType ()Ljava/lang/String;
 	public fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
 	public synthetic fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates;
+	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -436,6 +423,7 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependen
 	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates;
 	public fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordinates;
+	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public final fun getType ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public fun hashCode ()I
@@ -464,6 +452,7 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinUnresolvedBina
 	public final fun getCause ()Ljava/lang/String;
 	public fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
 	public synthetic fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates;
+	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

@@ -89,6 +89,19 @@ public final class org/jetbrains/kotlin/tooling/core/ExtrasUtilsKt {
 	public static final fun withValue (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;
 }
 
+public abstract interface class org/jetbrains/kotlin/tooling/core/HasExtras {
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/HasExtrasKt {
+	public static final fun getValue (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lorg/jetbrains/kotlin/tooling/core/HasExtras;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+	public static final fun setValue (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lorg/jetbrains/kotlin/tooling/core/HasMutableExtras;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/tooling/core/HasMutableExtras : org/jetbrains/kotlin/tooling/core/HasExtras {
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+}
+
 public final class org/jetbrains/kotlin/tooling/core/KotlinToolingVersion : java/io/Serializable, java/lang/Comparable {
 	public fun <init> (IIILjava/lang/String;)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I
