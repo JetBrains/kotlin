@@ -34811,6 +34811,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("nonExhaustiveDependentContext.kt")
+            public void testNonExhaustiveDependentContext() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/nonExhaustiveDependentContext.kt");
+            }
+
+            @Test
             @TestMetadata("NonExhaustivePlatformEnum.kt")
             public void testNonExhaustivePlatformEnum() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/NonExhaustivePlatformEnum.kt");
