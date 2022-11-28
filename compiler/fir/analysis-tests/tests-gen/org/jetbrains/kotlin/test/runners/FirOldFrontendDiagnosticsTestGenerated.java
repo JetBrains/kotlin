@@ -23468,7 +23468,7 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             public class DerivedClasses {
                 @Test
                 public void testAllFilesPresentInDerivedClasses() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/derivedClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/derivedClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
                 @Test
