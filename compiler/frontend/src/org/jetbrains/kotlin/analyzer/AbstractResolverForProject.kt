@@ -124,6 +124,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
      */
     private fun resolverForModuleDescriptorImpl(descriptor: ModuleDescriptor): ResolverForModule? {
         return projectContext.storageManager.compute {
+            descriptor.assertValid()
             val module = moduleInfoByDescriptor[descriptor]
             if (module == null) {
                 if (delegateResolver is EmptyResolverForProject<*>) {
