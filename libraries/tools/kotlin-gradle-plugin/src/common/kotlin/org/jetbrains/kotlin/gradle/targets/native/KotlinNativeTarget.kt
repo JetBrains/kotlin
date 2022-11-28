@@ -93,7 +93,7 @@ abstract class KotlinNativeTarget @Inject constructor(
                 mutableUsageContexts.add(
                     DefaultKotlinUsageContext(
                         mainCompilation,
-                        project.usageByName(javaApiUsageForMavenScoping()),
+                        KotlinUsageContext.UsageScope.COMPILE,
                         metadataConfiguration.name,
                         includeIntoProjectStructureMetadata = false
                     )

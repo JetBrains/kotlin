@@ -55,9 +55,6 @@ abstract class KotlinSoftwareComponent(
         }
 
         mutableSetOf<UsageContext>().apply {
-            // This usage value is only needed for Maven scope mapping. Don't replace it with a custom Kotlin Usage value
-            val javaApiUsage = project.usageByName("java-api-jars")
-
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
                 allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
@@ -65,7 +62,7 @@ abstract class KotlinSoftwareComponent(
 
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                usage = javaApiUsage,
+                usageScope = KotlinUsageContext.UsageScope.COMPILE,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
@@ -77,7 +74,7 @@ abstract class KotlinSoftwareComponent(
                 this += run {
                     DefaultKotlinUsageContext(
                         metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                        javaApiUsage,
+                        KotlinUsageContext.UsageScope.COMPILE,
                         /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
                         COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
                     )
@@ -124,21 +121,39 @@ interface KotlinUsageContext : UsageContext {
     val compilation: KotlinCompilation<*>
     val dependencyConfigurationName: String
     val includeIntoProjectStructureMetadata: Boolean
+    val usageScope: UsageScope?
+    val includeDependenciesToMavenPublication: Boolean
+
+    enum class UsageScope {
+        COMPILE, RUNTIME;
+    }
 }
+
+val KotlinUsageContext.mavenDependenciesScope get() =
+    when (usageScope.takeIf { includeDependenciesToMavenPublication }) {
+        KotlinUsageContext.UsageScope.COMPILE -> "compile"
+        KotlinUsageContext.UsageScope.RUNTIME -> "runtime"
+        null -> null
+    }
 
 class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
-    private val usage: Usage,
+    override val usageScope: KotlinUsageContext.UsageScope? = null,
     override val dependencyConfigurationName: String,
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
-    override val includeIntoProjectStructureMetadata: Boolean = true
+    override val includeIntoProjectStructureMetadata: Boolean = true,
+    override val includeDependenciesToMavenPublication: Boolean = true,
 ) : KotlinUsageContext {
-
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
-    override fun getUsage(): Usage = usage
+    @Deprecated(
+        message = "Usage is no longer supported. Use `usageScope`",
+        replaceWith = ReplaceWith("usageScope"),
+        level = DeprecationLevel.ERROR
+    )
+    override fun getUsage(): Usage = error("Usage is no longer supported. Use `usageScope`")
 
     override fun getName(): String = dependencyConfigurationName
 

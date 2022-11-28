@@ -193,17 +193,14 @@ abstract class KotlinAndroidTarget @Inject constructor(
         val apiElementsConfigurationName = lowerCamelCaseName(variantName, "apiElements")
         val runtimeElementsConfigurationName = lowerCamelCaseName(variantName, "runtimeElements")
 
-        // Here, the Java Usage values are used intentionally as Gradle needs this for
-        // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
-        // These Java usages should not be replaced with the custom Kotlin usages.
         return listOf(
-            apiElementsConfigurationName to javaApiUsageForMavenScoping(),
-            runtimeElementsConfigurationName to JAVA_RUNTIME_JARS
-        ).mapTo(mutableSetOf()) { (dependencyConfigurationName, usageName) ->
+            apiElementsConfigurationName to KotlinUsageContext.UsageScope.COMPILE,
+            runtimeElementsConfigurationName to KotlinUsageContext.UsageScope.RUNTIME
+        ).mapTo(mutableSetOf()) { (dependencyConfigurationName, mavenScope) ->
             val configuration = project.configurations.getByName(dependencyConfigurationName)
             DefaultKotlinUsageContext(
                 compilation,
-                project.usageByName(usageName),
+                mavenScope,
                 dependencyConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { listOf(artifact) },
                 overrideConfigurationAttributes = HierarchyAttributeContainer(configuration.attributes) {
