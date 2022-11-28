@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.renderer.types.renders
+package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
@@ -43,7 +43,7 @@ public interface KtFlexibleTypeRenderer {
 
                 isMutabilityFlexibleType(lower, upper) -> {
                     " ".separated(
-                        { annotationsRender.renderAnnotations(type, printer) },
+                        { annotationsRenderer.renderAnnotations(type, printer) },
                         { append(lower.classId.asFqNameString().replace("Mutable", "(Mutable)")) },
                     )
                     printCollectionIfNotEmpty(lower.ownTypeArguments, prefix = "<", postfix = ">") { typeArgument ->

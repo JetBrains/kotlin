@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
-import org.jetbrains.kotlin.analysis.api.renderer.types.renders.*
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
@@ -30,7 +30,7 @@ public class KtTypeRenderer private constructor(
     public val typeNameRenderer: KtTypeNameRenderer,
     public val typeApproximator: KtRendererTypeApproximator,
     public val typeProjectionRenderer: KtTypeProjectionRenderer,
-    public val annotationsRender: KtAnnotationRenderer,
+    public val annotationsRenderer: KtAnnotationRenderer,
     public val keywordRenderer: KtKeywordRenderer,
 ) {
     context(KtAnalysisSession)
@@ -68,7 +68,7 @@ public class KtTypeRenderer private constructor(
             this.typeNameRenderer = renderer.typeNameRenderer
             this.typeApproximator = renderer.typeApproximator
             this.typeProjectionRenderer = renderer.typeProjectionRenderer
-            this.annotationsRender = renderer.annotationsRender
+            this.annotationsRenderer = renderer.annotationsRenderer
             this.keywordRenderer = renderer.keywordRenderer
             action()
         }
@@ -95,9 +95,8 @@ public class KtTypeRenderer private constructor(
         public lateinit var typeNameRenderer: KtTypeNameRenderer
         public lateinit var typeApproximator: KtRendererTypeApproximator
         public lateinit var typeProjectionRenderer: KtTypeProjectionRenderer
-        public lateinit var annotationsRender: KtAnnotationRenderer
+        public lateinit var annotationsRenderer: KtAnnotationRenderer
         public lateinit var keywordRenderer: KtKeywordRenderer
-
 
         public fun build(): KtTypeRenderer = KtTypeRenderer(
             capturedTypeRenderer,
@@ -115,7 +114,7 @@ public class KtTypeRenderer private constructor(
             typeNameRenderer,
             typeApproximator,
             typeProjectionRenderer,
-            annotationsRender,
+            annotationsRenderer,
             keywordRenderer,
         )
     }

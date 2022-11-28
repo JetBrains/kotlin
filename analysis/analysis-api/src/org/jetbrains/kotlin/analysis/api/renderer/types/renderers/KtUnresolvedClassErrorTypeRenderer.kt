@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.renderer.types.renders
+package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
@@ -17,7 +17,7 @@ public interface KtUnresolvedClassErrorTypeRenderer {
     public object UNRESOLVED_QUALIFIER : KtUnresolvedClassErrorTypeRenderer {
         context(KtAnalysisSession, KtTypeRenderer)
         override fun renderType(type: KtClassErrorType, printer: PrettyPrinter): Unit = printer {
-            annotationsRender.renderAnnotations(type, printer)
+            annotationsRenderer.renderAnnotations(type, printer)
             classIdRenderer.renderClassTypeQualifier(type, printer)
         }
     }

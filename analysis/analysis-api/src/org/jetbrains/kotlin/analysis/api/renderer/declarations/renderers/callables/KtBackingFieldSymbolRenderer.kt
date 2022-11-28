@@ -18,7 +18,7 @@ public interface KtBackingFieldSymbolRenderer {
     public object AS_FIELD_KEYWROD : KtBackingFieldSymbolRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderSymbol(symbol: KtBackingFieldSymbol, printer: PrettyPrinter): Unit = printer {
-            keywordRender.renderKeyword(KtTokens.FIELD_KEYWORD, symbol, printer)
+            keywordRenderer.renderKeyword(KtTokens.FIELD_KEYWORD, symbol, printer)
         }
     }
 }

@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
-public interface KtCallableSignatureRender {
+public interface KtCallableSignatureRenderer {
     context(KtAnalysisSession, KtDeclarationRenderer)
     public fun renderCallableSignature(symbol: KtCallableSymbol, keyword: KtKeywordToken?, printer: PrettyPrinter)
 
-    public object FOR_SOURCE : KtCallableSignatureRender {
+    public object FOR_SOURCE : KtCallableSignatureRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderCallableSignature(symbol: KtCallableSymbol, keyword: KtKeywordToken?, printer: PrettyPrinter): Unit = printer {
             " ".separated(

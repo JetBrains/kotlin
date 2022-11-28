@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.renderer.types.impl
 
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renders.KtCapturedTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renders.KtFlexibleTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renders.KtTypeErrorTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renders.KtUnresolvedClassErrorTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtCapturedTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtFlexibleTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtTypeErrorTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtUnresolvedClassErrorTypeRenderer
 
 public object KtTypeRendererForDebug {
     public val WITH_QUALIFIED_NAMES: KtTypeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES.with {

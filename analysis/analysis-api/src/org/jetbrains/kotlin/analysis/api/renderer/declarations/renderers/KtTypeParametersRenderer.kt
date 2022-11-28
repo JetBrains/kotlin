@@ -78,7 +78,7 @@ public interface KtTypeParametersRenderer {
                     }
                 }.ifEmpty { return }
             " ".separated(
-                { keywordRender.renderKeyword(KtTokens.WHERE_KEYWORD, symbol, printer) },
+                { keywordRenderer.renderKeyword(KtTokens.WHERE_KEYWORD, symbol, printer) },
                 {
                     printer.printCollection(allBounds) { (typeParameter, bound) ->
                         " : ".separated(

@@ -62,7 +62,7 @@ public object KtDeclarationRendererForSource {
         valueParameterRenderer = KtValueParameterSymbolRenderer.AS_SOURCE
         samConstructorRenderer = KtSamConstructorSymbolRenderer.NOT_RENDER
 
-        callableSignatureRenderer = KtCallableSignatureRender.FOR_SOURCE
+        callableSignatureRenderer = KtCallableSignatureRenderer.FOR_SOURCE
         accessorBodyRenderer = KtPropertyAccessorBodyRenderer.NO_BODY
         parameterDefaultValueRenderer = KtParameterDefaultValueRenderer.NO_DEFAULT_VALUE
         variableInitializerRenderer = KtVariableInitializerRenderer.NO_INITIALIZER

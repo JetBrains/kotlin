@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renders.*
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
 
 public object KtTypeRendererForSource {
     public val WITH_QUALIFIED_NAMES: KtTypeRenderer = KtTypeRenderer {
@@ -28,12 +28,12 @@ public object KtTypeRendererForSource {
         typeNameRenderer = KtTypeNameRenderer.QUOTED
         typeApproximator = KtRendererTypeApproximator.TO_DENNOTABLE
         typeProjectionRenderer = KtTypeProjectionRenderer.WITH_VARIANCE
-        annotationsRender = KtAnnotationRendererForSource.WITH_QUALIFIED_NAMES
+        annotationsRenderer = KtAnnotationRendererForSource.WITH_QUALIFIED_NAMES
         keywordRenderer = KtKeywordRenderer.AS_WORD
     }
 
     public val WITH_SHORT_NAMES: KtTypeRenderer = WITH_QUALIFIED_NAMES.with {
         classIdRenderer = KtClassTypeQualifierRenderer.WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS
-        annotationsRender = KtAnnotationRendererForSource.WITH_SHORT_NAMES
+        annotationsRenderer = KtAnnotationRendererForSource.WITH_SHORT_NAMES
     }
 }

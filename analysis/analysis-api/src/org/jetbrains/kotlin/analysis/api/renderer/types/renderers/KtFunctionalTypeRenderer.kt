@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.renderer.types.renders
+package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
@@ -20,9 +20,9 @@ public interface KtFunctionalTypeRenderer {
     public object AS_FUNCTIONAL_TYPE : KtFunctionalTypeRenderer {
         context(KtAnalysisSession, KtTypeRenderer)
         override fun renderType(type: KtFunctionalType, printer: PrettyPrinter): Unit = printer {
-            val annotationsRendererd = checkIfPrinted { annotationsRender.renderAnnotations(type, this) }
-            if (annotationsRendererd) printer.append(" ")
-            if (annotationsRendererd || type.nullability == KtTypeNullability.NULLABLE) append("(")
+            val annotationsRendered = checkIfPrinted { annotationsRenderer.renderAnnotations(type, this) }
+            if (annotationsRendered) printer.append(" ")
+            if (annotationsRendered || type.nullability == KtTypeNullability.NULLABLE) append("(")
             " ".separated(
                 {
                     if (type.isSuspend) {
@@ -38,7 +38,7 @@ public interface KtFunctionalTypeRenderer {
                     renderType(type.returnType, printer)
                 },
             )
-            if (annotationsRendererd || type.nullability == KtTypeNullability.NULLABLE) append(")")
+            if (annotationsRendered || type.nullability == KtTypeNullability.NULLABLE) append(")")
             if (type.nullability == KtTypeNullability.NULLABLE) append("?")
         }
     }
@@ -47,7 +47,7 @@ public interface KtFunctionalTypeRenderer {
         context(KtAnalysisSession, KtTypeRenderer)
         override fun renderType(type: KtFunctionalType, printer: PrettyPrinter): Unit = printer {
             " ".separated(
-                { annotationsRender.renderAnnotations(type, printer) },
+                { annotationsRenderer.renderAnnotations(type, printer) },
                 {
                     classIdRenderer.renderClassTypeQualifier(type, printer)
                     if (type.nullability == KtTypeNullability.NULLABLE) {

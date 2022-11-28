@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public class KtDeclarationRenderer private constructor(
     public val nameRenderer: KtDeclarationNameRenderer,
-    public val keywordRender: KtKeywordRenderer,
+    public val keywordRenderer: KtKeywordRenderer,
     public val codeStyle: KtRendererCodeStyle,
     public val typeRenderer: KtTypeRenderer,
     public val annotationRenderer: KtAnnotationRenderer,
@@ -55,7 +55,7 @@ public class KtDeclarationRenderer private constructor(
     public val typeParametersRenderer: KtTypeParametersRenderer,
     public val typeParametersFilter: KtTypeParameterRendererFilter,
 
-    public val callableSignatureRenderer: KtCallableSignatureRender,
+    public val callableSignatureRenderer: KtCallableSignatureRenderer,
 
     public val anonymousFunctionRenderer: KtAnonymousFunctionSymbolRenderer,
     public val backingFieldRenderer: KtBackingFieldSymbolRenderer,
@@ -109,7 +109,7 @@ public class KtDeclarationRenderer private constructor(
         val renderer = this
         return KtDeclarationRenderer {
             this.nameRenderer = renderer.nameRenderer
-            this.keywordRender = renderer.keywordRender
+            this.keywordRender = renderer.keywordRenderer
             this.codeStyle = renderer.codeStyle
             this.typeRenderer = renderer.typeRenderer
             this.annotationRenderer = renderer.annotationRenderer
@@ -201,7 +201,7 @@ public class KtDeclarationRenderer private constructor(
         public lateinit var valueParametersRenderer: KtCallableParameterRenderer
         public lateinit var typeParametersRenderer: KtTypeParametersRenderer
         public lateinit var typeParametersFilter: KtTypeParameterRendererFilter
-        public lateinit var callableSignatureRenderer: KtCallableSignatureRender
+        public lateinit var callableSignatureRenderer: KtCallableSignatureRenderer
 
         public lateinit var anonymousFunctionRenderer: KtAnonymousFunctionSymbolRenderer
         public lateinit var backingFieldRenderer: KtBackingFieldSymbolRenderer
