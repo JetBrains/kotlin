@@ -112,8 +112,10 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         executor.awaitTermination(1, TimeUnit.DAYS) // Wait long enough
 
         thrownFromThread.get()?.let { (e, irFile) ->
-            CodegenUtil.reportBackendException(e, "Experimental parallel IR backend", irFile.fileEntry.name) {
-                irFile.fileEntry.getLineNumber(it) to irFile.fileEntry.getColumnNumber(it)
+            CodegenUtil.reportBackendException(e, "Experimental parallel IR backend", irFile.fileEntry.name) { offset ->
+                irFile.fileEntry.takeIf { it.supportsDebugInfo }?.let {
+                    it.getLineNumber(offset) to it.getColumnNumber(offset)
+                }
             }
         }
 
