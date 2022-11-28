@@ -85,6 +85,10 @@ extra["ideaSandboxDir"] = project.file(ideaSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
 extra["isSonatypeRelease"] = false
 
+subprojects {
+    tasks.register("allDependencies", DependencyReportTask::class.java) {}
+}
+
 rootProject.apply {
     from(rootProject.file("gradle/versions.gradle.kts"))
     from(rootProject.file("gradle/report.gradle.kts"))
