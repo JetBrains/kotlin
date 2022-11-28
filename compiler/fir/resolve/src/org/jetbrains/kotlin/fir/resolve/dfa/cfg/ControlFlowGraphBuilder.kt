@@ -97,24 +97,29 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Public API -----------------------------------
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement>? {
-        val exitNode = function.controlFlowGraphReference?.controlFlowGraph?.exitNode
-            ?: return null
+        val exitNode = function.controlFlowGraphReference?.controlFlowGraph?.exitNode ?: return null
 
         fun FirElement.extractArgument(): FirElement = when {
             this is FirReturnExpression && target.labeledElement.symbol == function.symbol -> result.extractArgument()
             else -> this
         }
 
-        fun CFGNode<*>.extractArgument(): FirElement? = when (this) {
+        fun CFGNode<*>.extractArgument(): FirStatement? = when (this) {
             is FunctionEnterNode, is TryMainBlockEnterNode, is FinallyBlockExitNode, is CatchClauseEnterNode -> null
             is BlockExitNode -> if (function.isLambda || isDead) firstPreviousNode.extractArgument() else null
             is StubNode -> firstPreviousNode.extractArgument()
-            else -> fir.extractArgument()
+            else -> fir.extractArgument() as FirStatement?
         }
 
-        return (nonDirectJumps[exitNode] + exitNode.previousNodes).mapNotNullTo(mutableSetOf()) {
-            it.extractArgument() as FirStatement?
+        val returnValues = exitNode.previousNodes.mapNotNullTo(mutableSetOf()) {
+            val edge = exitNode.incomingEdges.getValue(it)
+            // * NormalPath: last expression = return value
+            // * UncaughtExceptionPath: last expression = whatever threw, *not* a return value
+            // * ReturnPath(this lambda): these go from `finally` blocks, so that's not the return value;
+            //   look in `nonDirectJumps` instead.
+            it.takeIf { edge.kind.usedInCfa && edge.label == NormalPath }?.extractArgument()
         }
+        return nonDirectJumps[exitNode].mapNotNullTo(returnValues) { it.extractArgument() }
     }
 
     @OptIn(CfgBuilderInternals::class)
