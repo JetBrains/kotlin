@@ -174,8 +174,10 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             }
 
             override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
-                val reference = propertyAccessExpression.calleeReference as FirNamedReference
-                consumer.reportContainingClassDiagnostic(propertyAccessExpression, reference)
+                val reference = propertyAccessExpression.calleeReference
+                if (reference is FirNamedReference) {
+                    consumer.reportContainingClassDiagnostic(propertyAccessExpression, reference)
+                }
 
                 super.visitPropertyAccessExpression(propertyAccessExpression)
             }
