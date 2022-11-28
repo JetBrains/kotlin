@@ -157,7 +157,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
                 val reference = functionCall.calleeReference
                 consumer.reportCallDiagnostic(functionCall, reference)
-                consumer.reportDerivedClassDiagnostic(functionCall, reference)
+                consumer.reportContainingClassDiagnostic(functionCall, reference)
 
                 super.visitFunctionCall(functionCall)
             }
@@ -167,15 +167,22 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 if (selector is FirQualifiedAccess) {
                     val reference = selector.calleeReference as FirNamedReference
                     consumer.reportCallDiagnostic(safeCallExpression, reference)
-                    consumer.reportDerivedClassDiagnostic(safeCallExpression, reference)
+                    consumer.reportContainingClassDiagnostic(safeCallExpression, reference)
                 }
 
                 super.visitSafeCallExpression(safeCallExpression)
             }
 
+            override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
+                val reference = propertyAccessExpression.calleeReference as FirNamedReference
+                consumer.reportContainingClassDiagnostic(propertyAccessExpression, reference)
+
+                super.visitPropertyAccessExpression(propertyAccessExpression)
+            }
+
             override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
                 val reference = delegatedConstructorCall.calleeReference as FirNamedReference
-                consumer.reportDerivedClassDiagnostic(delegatedConstructorCall, reference)
+                consumer.reportContainingClassDiagnostic(delegatedConstructorCall, reference)
 
                 super.visitDelegatedConstructorCall(delegatedConstructorCall)
             }
@@ -217,7 +224,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
     }
 
-    private fun DebugDiagnosticConsumer.reportDerivedClassDiagnostic(element: FirElement, reference: FirNamedReference) {
+    private fun DebugDiagnosticConsumer.reportContainingClassDiagnostic(element: FirElement, reference: FirNamedReference) {
         report(DebugInfoDiagnosticFactory1.CALLABLE_OWNER, element) {
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val callable = resolvedSymbol?.fir as? FirCallableDeclaration ?: return@report ""

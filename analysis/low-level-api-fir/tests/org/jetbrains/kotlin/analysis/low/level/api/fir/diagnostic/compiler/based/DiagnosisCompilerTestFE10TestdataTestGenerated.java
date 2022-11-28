@@ -23488,6 +23488,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 public void testInstance() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/override/derivedClasses/Instance.kt");
                 }
+
+                @Test
+                @TestMetadata("StaticFromJava.kt")
+                public void testStaticFromJava() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/derivedClasses/StaticFromJava.kt");
+                }
             }
 
             @Nested

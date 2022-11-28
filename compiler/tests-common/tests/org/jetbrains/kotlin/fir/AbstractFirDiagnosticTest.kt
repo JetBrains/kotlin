@@ -167,6 +167,12 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
 
                 super.visitDelegatedConstructorCall(delegatedConstructorCall)
             }
+
+            override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
+                val reference = propertyAccessExpression.calleeReference as FirNamedReference
+                result.addIfNotNull(
+                    createDerivedClassDiagnosticIfExpected(propertyAccessExpression, reference, diagnosedRangesToDiagnosticNames))
+            }
         }.let(firFile::accept)
 
         return result
