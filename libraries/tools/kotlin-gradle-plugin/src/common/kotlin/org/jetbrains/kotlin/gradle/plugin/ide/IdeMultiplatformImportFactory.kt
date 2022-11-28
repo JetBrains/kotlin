@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.kpm.idea.kotlinDebugKey
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
 fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {
@@ -85,7 +83,7 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
 
         registerDependencyResolver(
             resolver = IdeNativeStdlibDependencyResolver,
-            constraint = IdeMultiplatformImport.SourceSetConstraint.isNative,
+            constraint = SourceSetConstraint.isNative,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
         )
@@ -93,9 +91,7 @@ fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultipla
         /* Overwrite android dependencies by empty resolver */
         registerDependencyResolver(
             resolver = IdeDependencyResolver.Empty,
-            constraint = SourceSetConstraint { sourceSet ->
-                sourceSet.internal.compilations.map { it.platformType }.toSet() == setOf(androidJvm)
-            },
+            constraint = SourceSetConstraint.isAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
         )

@@ -151,6 +151,10 @@ interface IdeMultiplatformImport {
             val isJvmAndAndroid = SourceSetConstraint { sourceSet ->
                 sourceSet.internal.compilations.map { it.platformType }.toSet() == setOf(jvm, androidJvm)
             }
+
+            val isAndroid = SourceSetConstraint { sourceSet ->
+                sourceSet.internal.compilations.map { it.platformType }.toSet() == setOf(androidJvm)
+            }
         }
     }
 
