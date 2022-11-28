@@ -104,6 +104,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
         }
 
         @Test
+        @TestMetadata("booleanConstReferenceInImplies.kt")
+        public void testBooleanConstReferenceInImplies() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanConstReferenceInImplies.kt");
+        }
+
+        @Test
         @TestMetadata("booleanExprContract.kt")
         public void testBooleanExprContract() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanExprContract.kt");
@@ -131,6 +137,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
         @TestMetadata("callsInPlaceUnknownContract.kt")
         public void testCallsInPlaceUnknownContract() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/callsInPlaceUnknownContract.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidContract.kt")
+        public void testInvalidContract() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/invalidContract.kt");
         }
 
         @Test

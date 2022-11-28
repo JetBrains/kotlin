@@ -3,37 +3,9 @@ KtFunctionSymbol:
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /logicalNotContract
+  callableIdIfNonLocal: /invalidContract
   contextReceivers: []
-  contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
-      effect:
-        KtContractReturnsSuccessfullyEffectDeclaration:
-      condition:
-        KtContractLogicalNotExpression:
-          argument:
-            KtContractBooleanValueParameterExpression:
-              parameterSymbol:
-                KtValueParameterSymbol:
-                  annotationsList: []
-                  callableIdIfNonLocal: null
-                  contextReceivers: []
-                  generatedPrimaryConstructorProperty: null
-                  hasDefaultValue: false
-                  isCrossinline: false
-                  isExtension: false
-                  isImplicitLambdaParameter: false
-                  isNoinline: false
-                  isVararg: false
-                  name: value
-                  origin: SOURCE
-                  receiverParameter: null
-                  returnType: kotlin/Boolean
-                  symbolKind: LOCAL
-                  typeParameters: []
-                  getContainingModule: KtSourceModule "Sources of main"
-                  deprecationStatus: null
-  ]
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -45,7 +17,7 @@ KtFunctionSymbol:
   isStatic: false
   isSuspend: false
   modality: FINAL
-  name: logicalNotContract
+  name: invalidContract
   origin: SOURCE
   receiverParameter: null
   returnType: kotlin/Unit
@@ -63,7 +35,26 @@ KtFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
-      name: value
+      name: foo
+      origin: SOURCE
+      receiverParameter: null
+      returnType: kotlin/Any
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: bar
       origin: SOURCE
       receiverParameter: null
       returnType: kotlin/Boolean

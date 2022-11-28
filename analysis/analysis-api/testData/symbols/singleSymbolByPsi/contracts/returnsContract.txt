@@ -8,11 +8,9 @@ KtFunctionSymbol:
   contractEffects: [
     KtContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsContractEffectDeclaration:
-          value:
-            KtWildcard
+        KtContractReturnsSuccessfullyEffectDeclaration:
       condition:
-        KtContractBooleanValueParameterReference:
+        KtContractBooleanValueParameterExpression:
           parameterSymbol:
             KtValueParameterSymbol:
               annotationsList: []

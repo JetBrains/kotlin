@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.contracts.description
+package org.jetbrains.kotlin.analysis.api.contracts.description.booleans
 
+import com.google.common.base.Objects
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
 /**
  * See: [KtContractBooleanExpression].
- *
- * * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalOr] & [org.jetbrains.kotlin.contracts.description.expressions.LogicalAnd]
- * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBinaryLogicExpression]
  */
 public class KtContractBinaryLogicExpression(
     private val _left: KtContractBooleanExpression,
@@ -28,18 +26,22 @@ public class KtContractBinaryLogicExpression(
     public val right: KtContractBooleanExpression get() = withValidityAssertion { _right }
     public val kind: KtLogicOperationKind get() = withValidityAssertion { _kind }
 
-    public enum class KtLogicOperationKind(public val token: String) {
-        AND("&&"), OR("||")
+    override fun hashCode(): Int = Objects.hashCode(_left, _right, _kind)
+    override fun equals(other: Any?): Boolean =
+        other is KtContractBinaryLogicExpression && other._left == _left && other._right == _right && other._kind == _kind
+
+    public enum class KtLogicOperationKind {
+        AND, OR
     }
 }
 
 /**
  * See: [KtContractBooleanExpression].
- *
- * * K1: [org.jetbrains.kotlin.contracts.description.expressions.LogicalNot]
- * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeLogicalNot]
  */
-public class KtContractLogicalNot(private val _argument: KtContractBooleanExpression) : KtContractBooleanExpression {
+public class KtContractLogicalNotExpression(private val _argument: KtContractBooleanExpression) : KtContractBooleanExpression {
     override val token: KtLifetimeToken get() = _argument.token
     public val argument: KtContractBooleanExpression get() = withValidityAssertion { _argument }
+
+    override fun equals(other: Any?): Boolean = other is KtContractLogicalNotExpression && other._argument == _argument
+    override fun hashCode(): Int = _argument.hashCode()
 }

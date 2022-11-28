@@ -8,15 +8,16 @@ KtFunctionSymbol:
   contractEffects: [
     KtContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsContractEffectDeclaration:
+        KtContractReturnsSpecificValueEffectDeclaration:
           value:
-            KtTrue
+            KtContractConstantValue:
+              constantType: TRUE
       condition:
         KtContractBinaryLogicExpression:
           left:
-            KtContractIsNullPredicate:
+            KtContractIsNullPredicateExpression:
               argument:
-                KtContractValueParameterReference:
+                KtContractParameterValue:
                   parameterSymbol:
                     KtValueParameterSymbol:
                       annotationsList: []
@@ -39,9 +40,9 @@ KtFunctionSymbol:
                       deprecationStatus: null
               isNegated: false
           right:
-            KtContractIsNullPredicate:
+            KtContractIsNullPredicateExpression:
               argument:
-                KtContractValueParameterReference:
+                KtContractParameterValue:
                   parameterSymbol:
                     KtValueParameterSymbol:
                       annotationsList: []

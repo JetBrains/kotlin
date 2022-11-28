@@ -6,9 +6,9 @@ KtFunctionSymbol:
   callableIdIfNonLocal: /atMostOnceContract
   contextReceivers: []
   contractEffects: [
-    KtContractCallsContractEffectDeclaration:
+    KtContractCallsInPlaceContractEffectDeclaration:
       valueParameterReference:
-        KtContractValueParameterReference:
+        KtContractParameterValue:
           parameterSymbol:
             KtValueParameterSymbol:
               annotationsList: []

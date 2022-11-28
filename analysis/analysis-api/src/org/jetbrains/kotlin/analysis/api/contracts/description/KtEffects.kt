@@ -5,31 +5,38 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
+import com.google.common.base.Objects
+import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KtContractBooleanExpression
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 
 /**
- * Represents [kotlin.contracts.ContractBuilder.callsInPlace].
- *
- * * K1: [org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration]
- * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration]
+ * Represents [kotlin.contracts.Effect].
  */
-public class KtContractCallsContractEffectDeclaration(
-    private val _valueParameterReference: KtContractAbstractValueParameterReference,
+public sealed interface KtContractEffectDeclaration : KtLifetimeOwner
+
+/**
+ * Represents [kotlin.contracts.ContractBuilder.callsInPlace].
+ */
+public class KtContractCallsInPlaceContractEffectDeclaration(
+    private val _valueParameterReference: KtContractParameterValue,
     private val _kind: EventOccurrencesRange,
 ) : KtContractEffectDeclaration {
     override val token: KtLifetimeToken get() = _valueParameterReference.token
 
-    public val valueParameterReference: KtContractAbstractValueParameterReference get() = withValidityAssertion { _valueParameterReference }
+    public val valueParameterReference: KtContractParameterValue get() = withValidityAssertion { _valueParameterReference }
     public val kind: EventOccurrencesRange get() = withValidityAssertion { _kind }
+
+    override fun hashCode(): Int = Objects.hashCode(_valueParameterReference, _kind)
+    override fun equals(other: Any?): Boolean =
+        other is KtContractCallsInPlaceContractEffectDeclaration && other._valueParameterReference == _valueParameterReference &&
+                other._kind == _kind
 }
 
 /**
  * Represents [kotlin.contracts.SimpleEffect.implies].
- *
- * * K1: [org.jetbrains.kotlin.contracts.description.ConditionalEffectDeclaration]
- * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration]
  */
 public class KtContractConditionalContractEffectDeclaration(
     private val _effect: KtContractEffectDeclaration,
@@ -39,16 +46,46 @@ public class KtContractConditionalContractEffectDeclaration(
 
     public val effect: KtContractEffectDeclaration get() = withValidityAssertion { _effect }
     public val condition: KtContractBooleanExpression get() = withValidityAssertion { _condition }
+
+    override fun hashCode(): Int = Objects.hashCode(_effect, _condition)
+    override fun equals(other: Any?): Boolean =
+        other is KtContractConditionalContractEffectDeclaration && other._effect == _effect && other._condition == _condition
 }
 
 /**
  * Represents [kotlin.contracts.ContractBuilder.returnsNotNull] & [kotlin.contracts.ContractBuilder.returns].
- *
- * * K1: [org.jetbrains.kotlin.contracts.description.ReturnsEffectDeclaration]
- * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration]
  */
-public class KtContractReturnsContractEffectDeclaration(private val _value: KtContractDescriptionValue) : KtContractEffectDeclaration {
-    override val token: KtLifetimeToken get() = _value.token
+public sealed class KtContractReturnsContractEffectDeclaration : KtContractEffectDeclaration {
+    /**
+     * Represent [kotlin.contracts.ContractBuilder.returnsNotNull].
+     */
+    public class KtContractReturnsNotNullEffectDeclaration(
+        override val token: KtLifetimeToken
+    ) : KtContractReturnsContractEffectDeclaration() {
+        override fun equals(other: Any?): Boolean = other is KtContractReturnsNotNullEffectDeclaration
+        override fun hashCode(): Int = javaClass.hashCode()
+    }
 
-    public val value: KtContractDescriptionValue get() = withValidityAssertion { _value }
+    /**
+     * Represents [kotlin.contracts.ContractBuilder.returns] with a `value` argument.
+     */
+    public class KtContractReturnsSpecificValueEffectDeclaration(
+        private val _value: KtContractDescriptionValue
+    ) : KtContractReturnsContractEffectDeclaration() {
+        override val token: KtLifetimeToken get() = _value.token
+        public val value: KtContractDescriptionValue get() = withValidityAssertion { _value }
+
+        override fun equals(other: Any?): Boolean = other is KtContractReturnsSpecificValueEffectDeclaration && other._value == _value
+        override fun hashCode(): Int = _value.hashCode()
+    }
+
+    /**
+     * Represents [kotlin.contracts.ContractBuilder.returns] without arguments.
+     */
+    public class KtContractReturnsSuccessfullyEffectDeclaration(
+        override val token: KtLifetimeToken
+    ) : KtContractReturnsContractEffectDeclaration() {
+        override fun equals(other: Any?): Boolean = other is KtContractReturnsSuccessfullyEffectDeclaration
+        override fun hashCode(): Int = javaClass.hashCode()
+    }
 }

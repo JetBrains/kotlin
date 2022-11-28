@@ -8,13 +8,11 @@ KtFunctionSymbol:
   contractEffects: [
     KtContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsContractEffectDeclaration:
-          value:
-            KtNotNull
+        KtContractReturnsNotNullEffectDeclaration:
       condition:
-        KtContractIsNullPredicate:
+        KtContractIsNullPredicateExpression:
           argument:
-            KtContractValueParameterReference:
+            KtContractParameterValue:
               parameterSymbol:
                 KtValueParameterSymbol:
                   annotationsList: []

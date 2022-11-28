@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractValueParameterReference.KtContractBooleanValueParameterReference
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractAbstractValueParameterReference.KtContractValueParameterReference
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractConstantReference.KtContractBooleanConstantReference
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractConstantValue.KtContractConstantType
+import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractReturnsContractEffectDeclaration.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtParameterSymbol
@@ -19,94 +19,106 @@ internal fun ConeEffectDeclaration.coneEffectDeclarationToAnalysisApi(
     builder: KtSymbolByFirBuilder,
     firFunctionSymbol: KtFirFunctionSymbol
 ): KtContractEffectDeclaration =
-    accept(ConeContractDescriptionElementToAnalysisApi(builder, firFunctionSymbol), Unit).cast()
+    accept(ConeContractDescriptionElementToAnalysisApi(builder, firFunctionSymbol), Unit) as KtContractEffectDeclaration
 
 private class ConeContractDescriptionElementToAnalysisApi(
     private val builder: KtSymbolByFirBuilder,
     private val firFunctionSymbol: KtFirFunctionSymbol
-) : ConeContractDescriptionVisitor<KtContractDescriptionElement, Unit>() {
+) : ConeContractDescriptionVisitor<Any, Unit>() {
 
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: ConeConditionalEffectDeclaration,
         data: Unit
-    ): KtContractDescriptionElement = KtContractConditionalContractEffectDeclaration(
-        conditionalEffect.effect.accept(this, data).cast(),
-        conditionalEffect.condition.accept(this, data).cast()
+    ): KtContractConditionalContractEffectDeclaration = KtContractConditionalContractEffectDeclaration(
+        conditionalEffect.effect.accept(),
+        conditionalEffect.condition.accept()
     )
 
-    override fun visitReturnsEffectDeclaration(returnsEffect: ConeReturnsEffectDeclaration, data: Unit): KtContractDescriptionElement =
-        KtContractReturnsContractEffectDeclaration(returnsEffect.value.accept(this, data).cast())
+    override fun visitReturnsEffectDeclaration(
+        returnsEffect: ConeReturnsEffectDeclaration,
+        data: Unit
+    ): KtContractReturnsContractEffectDeclaration =
+        when (val value = returnsEffect.value) {
+            ConeConstantReference.NULL ->
+                KtContractReturnsSpecificValueEffectDeclaration(KtContractConstantValue(KtContractConstantType.NULL, builder.token))
+            ConeConstantReference.NOT_NULL -> KtContractReturnsNotNullEffectDeclaration(builder.token)
+            ConeConstantReference.WILDCARD -> KtContractReturnsSuccessfullyEffectDeclaration(builder.token)
+            is ConeBooleanConstantReference -> KtContractReturnsSpecificValueEffectDeclaration(
+                KtContractConstantValue(
+                    when (value) {
+                        ConeBooleanConstantReference.TRUE -> KtContractConstantType.TRUE
+                        ConeBooleanConstantReference.FALSE -> KtContractConstantType.FALSE
+                        else -> error("Can't convert $value to the Analysis API")
+                    },
+                    builder.token
+                )
+            )
+            else -> error("Can't convert $returnsEffect to the Analysis API")
+        }
 
-    override fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: Unit): KtContractDescriptionElement =
-        KtContractCallsContractEffectDeclaration(
-            callsEffect.valueParameterReference.accept(this, data).cast(),
+    override fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: Unit): KtContractCallsInPlaceContractEffectDeclaration =
+        KtContractCallsInPlaceContractEffectDeclaration(
+            callsEffect.valueParameterReference.accept(),
             callsEffect.kind
         )
 
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: ConeBinaryLogicExpression,
         data: Unit
-    ): KtContractDescriptionElement = KtContractBinaryLogicExpression(
-        binaryLogicExpression.left.accept(this, data).cast(),
-        binaryLogicExpression.right.accept(this, data).cast(),
+    ): KtContractBinaryLogicExpression = KtContractBinaryLogicExpression(
+        binaryLogicExpression.left.accept(),
+        binaryLogicExpression.right.accept(),
         when (binaryLogicExpression.kind) {
             LogicOperationKind.AND -> KtContractBinaryLogicExpression.KtLogicOperationKind.AND
             LogicOperationKind.OR -> KtContractBinaryLogicExpression.KtLogicOperationKind.OR
         }
     )
 
-    override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Unit): KtContractDescriptionElement =
-        KtContractLogicalNot(logicalNot.arg.accept(this, data).cast())
+    override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Unit): KtContractLogicalNotExpression =
+        KtContractLogicalNotExpression(logicalNot.arg.accept())
 
-    override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Unit): KtContractDescriptionElement =
-        KtContractIsInstancePredicate(
-            isInstancePredicate.arg.accept(this, data).cast(),
+    override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Unit): KtContractIsInstancePredicateExpression =
+        KtContractIsInstancePredicateExpression(
+            isInstancePredicate.arg.accept(),
             builder.typeBuilder.buildKtType(isInstancePredicate.type),
             isInstancePredicate.isNegated
         )
 
-    override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Unit): KtContractDescriptionElement =
-        KtContractIsNullPredicate(isNullPredicate.arg.accept(this, data).cast(), isNullPredicate.isNegated)
-
-    override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Unit): KtContractDescriptionElement =
-        when (constantReference) {
-            ConeConstantReference.NULL -> KtContractConstantReference.KtNull(builder.token)
-            ConeConstantReference.NOT_NULL -> KtContractConstantReference.KtNotNull(builder.token)
-            ConeConstantReference.WILDCARD -> KtContractConstantReference.KtWildcard(builder.token)
-            else -> error("Can't convert $constantReference to Analysis API")
-        }
+    override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Unit): KtContractIsNullPredicateExpression =
+        KtContractIsNullPredicateExpression(isNullPredicate.arg.accept(), isNullPredicate.isNegated)
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: ConeBooleanConstantReference,
         data: Unit
-    ): KtContractDescriptionElement =
+    ): KtContractBooleanConstantExpression =
         when (booleanConstantDescriptor) {
-            ConeBooleanConstantReference.TRUE -> KtContractBooleanConstantReference.KtTrue(builder.token)
-            ConeBooleanConstantReference.FALSE -> KtContractBooleanConstantReference.KtFalse(builder.token)
+            ConeBooleanConstantReference.TRUE -> KtContractBooleanConstantExpression(true, builder.token)
+            ConeBooleanConstantReference.FALSE -> KtContractBooleanConstantExpression(false, builder.token)
             else -> error("Can't convert $booleanConstantDescriptor to Analysis API")
         }
 
     override fun visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
         data: Unit
-    ): KtContractDescriptionElement = visitValueParameterReference(valueParameterReference, ::KtContractValueParameterReference)
+    ): Any = visitValueParameterReference(valueParameterReference, ::KtContractParameterValue)
 
     override fun visitBooleanValueParameterReference(
         booleanValueParameterReference: ConeBooleanValueParameterReference,
         data: Unit
-    ): KtContractDescriptionElement =
-        visitValueParameterReference(booleanValueParameterReference, ::KtContractBooleanValueParameterReference)
+    ): Any =
+        visitValueParameterReference(booleanValueParameterReference, ::KtContractBooleanValueParameterExpression)
 
-    private fun visitValueParameterReference(
+    private fun <T> visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
-        constructor: (KtParameterSymbol) -> KtContractAbstractValueParameterReference
-    ): KtContractAbstractValueParameterReference = constructor(
+        constructor: (KtParameterSymbol) -> T
+    ): T = constructor(
         if (valueParameterReference.parameterIndex == -1) firFunctionSymbol.receiverParameter
             ?: error("$firFunctionSymbol should contain a receiver")
         else firFunctionSymbol.valueParameters[valueParameterReference.parameterIndex]
     )
-}
 
-// Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.
-// This visitor isn't type-safe anyway
-private inline fun <reified T : KtContractDescriptionElement> Any.cast() = this as T
+    // Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.
+    // This visitor isn't type-safe anyway
+    private inline fun <reified T> ConeContractDescriptionElement.accept() =
+        accept(this@ConeContractDescriptionElementToAnalysisApi, Unit) as T
+}

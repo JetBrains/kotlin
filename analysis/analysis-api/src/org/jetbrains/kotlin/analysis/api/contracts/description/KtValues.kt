@@ -5,79 +5,40 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtParameterSymbol
 
 /**
- * Represents `value` argument of [kotlin.contracts.ContractBuilder.returns] and [kotlin.contracts.ContractBuilder.returnsNotNull].
- * The `value` can be either be a constant reference [KtContractConstantReference], or a parameter reference
- * [KtContractAbstractValueParameterReference].
- *
- * * K1: [org.jetbrains.kotlin.contracts.description.expressions.ContractDescriptionValue]
- * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionValue]
+ * Represents a value that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.returns].
  */
-public sealed class KtContractDescriptionValue(override val token: KtLifetimeToken) : KtContractDescriptionElement
+public sealed class KtContractDescriptionValue(override val token: KtLifetimeToken) : KtLifetimeOwner
 
 /**
- * Represents constant reference passed to `value` argument of [kotlin.contracts.ContractBuilder.returns] or
- * [kotlin.contracts.ContractBuilder.returnsNotNull]. Also see: [KtContractDescriptionValue].
- *
- * * K1: [org.jetbrains.kotlin.contracts.description.expressions.ConstantReference]
- * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference]
+ * Represents constant reference that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.returns].
  */
-public sealed class KtContractConstantReference(token: KtLifetimeToken) : KtContractDescriptionValue(token) {
-    /**
-     * Represents [kotlin.contracts.ContractBuilder.returns] with `null` argument.
-     */
-    public class KtNull(token: KtLifetimeToken) : KtContractConstantReference(token)
-
-    /**
-     * Represents [kotlin.contracts.ContractBuilder.returns] without arguments.
-     */
-    public class KtWildcard(token: KtLifetimeToken) : KtContractConstantReference(token)
-
-    /**
-     * Represents [kotlin.contracts.ContractBuilder.returnsNotNull].
-     */
-    public class KtNotNull(token: KtLifetimeToken) : KtContractConstantReference(token)
-
-    /**
-     * Represents boolean constant reference passed to `value` argument of [kotlin.contracts.ContractBuilder.returns] or
-     * [kotlin.contracts.ContractBuilder.returnsNotNull]. Also see: [KtContractDescriptionValue].
-     *
-     * * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference]
-     * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference]
-     */
-    public sealed class KtContractBooleanConstantReference(token: KtLifetimeToken) :
-        KtContractConstantReference(token), KtContractBooleanExpression {
-        public class KtTrue(token: KtLifetimeToken) : KtContractBooleanConstantReference(token)
-        public class KtFalse(token: KtLifetimeToken) : KtContractBooleanConstantReference(token)
+public class KtContractConstantValue(
+    private val _constantType: KtContractConstantType,
+    token: KtLifetimeToken,
+) : KtContractDescriptionValue(token) {
+    public enum class KtContractConstantType {
+        NULL, TRUE, FALSE;
     }
+
+    public val constantType: KtContractConstantType get() = withValidityAssertion { _constantType }
+
+    override fun equals(other: Any?): Boolean = other is KtContractConstantValue && other._constantType == _constantType
+    override fun hashCode(): Int = _constantType.hashCode()
 }
 
-public sealed class KtContractAbstractValueParameterReference(
-    private val _parameterSymbol: KtParameterSymbol,
-) : KtContractDescriptionValue(_parameterSymbol.token) {
+/**
+ * Represents parameter that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.returns].
+ */
+public class KtContractParameterValue(private val _parameterSymbol: KtParameterSymbol) :
+    KtContractDescriptionValue(_parameterSymbol.token) {
     public val parameterSymbol: KtParameterSymbol get() = withValidityAssertion { _parameterSymbol }
 
-    /**
-     * Represents parameter reference passed to `value` argument of [kotlin.contracts.ContractBuilder.returns] or
-     * [kotlin.contracts.ContractBuilder.returnsNotNull]. Also see: [KtContractDescriptionValue].
-     *
-     * * K1: [org.jetbrains.kotlin.contracts.description.expressions.VariableReference]
-     * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeValueParameterReference]
-     */
-    public class KtContractValueParameterReference(parameterSymbol: KtParameterSymbol) :
-        KtContractAbstractValueParameterReference(parameterSymbol)
-
-    /**
-     * Represents boolean parameter reference passed to `value` argument of [kotlin.contracts.ContractBuilder.returns] or
-     * [kotlin.contracts.ContractBuilder.returnsNotNull]. Also see: [KtContractDescriptionValue].
-     *
-     * * K1: [org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableReference]
-     * * K2: [org.jetbrains.kotlin.fir.contracts.description.ConeBooleanValueParameterReference]
-     */
-    public class KtContractBooleanValueParameterReference(parameterSymbol: KtParameterSymbol) :
-        KtContractAbstractValueParameterReference(parameterSymbol), KtContractBooleanExpression
+    override fun hashCode(): Int = _parameterSymbol.hashCode()
+    override fun equals(other: Any?): Boolean = other is KtContractParameterValue && other._parameterSymbol == _parameterSymbol
 }
