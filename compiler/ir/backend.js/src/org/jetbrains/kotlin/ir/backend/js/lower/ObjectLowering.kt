@@ -12,15 +12,19 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -28,9 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class ObjectDeclarationLowering(
-    val context: JsCommonBackendContext
-) : DeclarationTransformer {
+class ObjectDeclarationLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrClass.instanceField by context.mapping.objectToInstanceField
     private var IrClass.syntheticPrimaryConstructor by context.mapping.classToSyntheticPrimaryConstructor
@@ -39,7 +41,7 @@ class ObjectDeclarationLowering(
      * If the object being lowered is nested inside an enum class, we want to also initialize the enum entries when initializing the object.
      */
     private var IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
-override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
             return null
 
@@ -66,7 +68,7 @@ override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
                 if (initEntryInstancesFun != null)
                     +irCall(initEntryInstancesFun)
                 +irIfThen(
-                    irEqualsNull(irGetField(null, instanceField)),
+                    irNullabilityCheck(instanceField),
                     // Instance field initialized inside constructor
                     irCallConstructor(primaryConstructor.symbol, emptyList())
                 )
@@ -76,30 +78,29 @@ override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
 
         return listOf(declaration, instanceField, getInstanceFun)
     }
+
+    private fun IrBuilderWithScope.irNullabilityCheck(instanceField: IrField): IrExpression {
+        val context = this@ObjectDeclarationLowering.context
+        return if (context is JsIrBackendContext && context.es6mode) {
+            irEqeqeqWithoutBox(irGetField(null, instanceField), context.getVoid())
+        } else {
+            irEqualsNull(irGetField(null, instanceField))
+        }
+    }
 }
 
-class ObjectUsageLowering(
-    val context: JsCommonBackendContext
-) : BodyLoweringPass {
+class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
 
     private var IrClass.instanceField by context.mapping.objectToInstanceField
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val functionContainer = when {
-            context.es6mode && container is IrSimpleFunction && container.isSyntheticEs6Constructor -> container
-            !context.es6mode && container is IrConstructor && container.isPrimary -> container
-            else -> null
-        }
-
+        val functionContainer = container.takeIf { it is IrConstructor && it.isPrimary }
         val irClass = functionContainer?.parentAsClass
 
         irClass?.instanceField?.let {
-            val receiver = if (context.es6mode) functionContainer.dispatchReceiverParameter else irClass.thisReceiver
-            val receiverExpr = JsIrBuilder.buildGetValue(receiver!!.symbol)
-
+            if (context.es6mode && irClass.superClass == null) return@let
             // Initialize instance field in the beginning of the constructor because it can be used inside the constructor later
-            val initInstanceField = JsIrBuilder.buildSetField(it.symbol, null, receiverExpr, context.irBuiltIns.unitType)
-
+            val initInstanceField = generateInitInstanceField(it, irClass.getValueForInstanceFieldForTheFirstTime())
             (irBody as IrBlockBody).statements.add(0, initInstanceField)
         }
 
@@ -109,7 +110,34 @@ class ObjectUsageLowering(
                 if (obj.isEffectivelyExternal()) return expression
                 return JsIrBuilder.buildCall(context.getOrCreateGetInstanceFunction(obj).symbol)
             }
+
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                val instanceField = irClass?.instanceField
+                return if (!context.es6mode || instanceField == null) {
+                    super.visitDelegatingConstructorCall(expression)
+                } else {
+                    JsIrBuilder.buildComposite(
+                        context.irBuiltIns.unitType,
+                        listOf(
+                            super.visitDelegatingConstructorCall(expression),
+                            generateInitInstanceField(instanceField, JsIrBuilder.buildGetValue(irClass.thisReceiver!!.symbol))
+                        )
+                    )
+                }
+            }
         })
+    }
+
+    private fun IrClass.getValueForInstanceFieldForTheFirstTime(): IrExpression {
+        return if (context.es6mode && context is JsIrBackendContext) {
+            JsIrBuilder.buildNull(thisReceiver!!.type)
+        } else {
+            JsIrBuilder.buildGetValue(thisReceiver!!.symbol)
+        }
+    }
+
+    private fun generateInitInstanceField(instanceField: IrField, value: IrExpression): IrStatement {
+        return JsIrBuilder.buildSetField(instanceField.symbol, null, value, context.irBuiltIns.unitType)
     }
 }
 

@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+val IrDeclaration.isSyntheticPrimaryConstructor: Boolean
+    get() = origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR
+
 // Create primary constructor if it doesn't exist
 class PrimaryConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 

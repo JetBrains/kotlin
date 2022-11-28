@@ -8,14 +8,20 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -33,7 +39,13 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
     ): IrExpression {
         val constructor = irClass.constructors.single { it.owner.isPrimary }
         val argType = constructor.owner.valueParameters.first().type
-        return IrConstructorCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset, irClass.defaultType, constructor).apply {
+
+        return IrConstructorCallImpl.fromSymbolOwner(
+                expression.startOffset,
+                expression.endOffset,
+                irClass.defaultType,
+                constructor
+            ).apply {
             for (i in args.indices) {
                 putValueArgument(i, carrierFactory(startOffset, endOffset, argType, args[i]))
             }

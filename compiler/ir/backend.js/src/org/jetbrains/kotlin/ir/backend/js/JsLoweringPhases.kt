@@ -676,18 +676,11 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
     )
 )
 
-private val es6ConstructorLowering = makeDeclarationTransformerPhase(
-    ::ES6ConstructorLowering,
-    name = "ES6ConstructorLowering",
-    description = "Lower constructors declarations to support ES classes",
-    prerequisite = setOf(primaryConstructorLoweringPhase)
-)
-
 private val secondaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
     ::SecondaryConstructorLowering,
     name = "SecondaryConstructorLoweringPhase",
     description = "Generate static functions for each secondary constructor",
-    prerequisite = setOf(innerClassesLoweringPhase, es6ConstructorLowering)
+    prerequisite = setOf(innerClassesLoweringPhase)
 )
 
 private val secondaryFactoryInjectorLoweringPhase = makeBodyLoweringPhase(
@@ -778,10 +771,25 @@ private val invokeStaticInitializersPhase = makeBodyLoweringPhase(
     prerequisite = setOf(objectDeclarationLoweringPhase)
 )
 
+private val es6ConstructorLowering = makeDeclarationTransformerPhase(
+    ::ES6ConstructorLowering,
+    name = "ES6ConstructorLowering",
+    description = "Lower constructors declarations to support ES classes",
+    prerequisite = setOf(primaryConstructorLoweringPhase)
+)
+
+private val es6ConstructorUsageLowering = makeBodyLoweringPhase(
+    ::ES6ConstructorCallLowering,
+    name = "ES6ConstructorCallLowering",
+    description = "Lower constructor usages to support ES classes",
+    prerequisite = setOf(es6ConstructorLowering)
+)
+
 private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     ::ObjectUsageLowering,
     name = "ObjectUsageLowering",
-    description = "Transform IrGetObjectValue into instance generator call"
+    description = "Transform IrGetObjectValue into instance generator call",
+    prerequisite = setOf(primaryConstructorLoweringPhase)
 )
 
 private val escapedIdentifiersLowering = makeBodyLoweringPhase(
@@ -795,7 +803,6 @@ private val implicitlyExportedDeclarationsMarkingLowering = makeDeclarationTrans
     name = "ImplicitlyExportedDeclarationsMarkingLowering",
     description = "Add @JsImplicitExport annotation to declarations which are not exported but are used inside other exported declarations as a type"
 )
-
 
 private val cleanupLoweringPhase = makeBodyLoweringPhase(
     { CleanupLowering() },
@@ -912,10 +919,12 @@ val loweringList = listOf<Lowering>(
     inlineClassDeclarationLoweringPhase,
     inlineClassUsageLoweringPhase,
     autoboxingTransformerPhase,
-    blockDecomposerLoweringPhase,
     objectDeclarationLoweringPhase,
+    blockDecomposerLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
+    es6ConstructorLowering,
+    es6ConstructorUsageLowering,
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticEs6Constructor
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsAstUtils
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.defineProperty
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
@@ -161,7 +162,7 @@ class ExportModelToJsStatements(
 
                 // These are only used when exporting secondary constructors annotated with @JsName
                 val staticFunctions = declaration.members
-                    .filter { it is ExportedFunction && it.isStatic }
+                    .filter { it is ExportedFunction && it.isStatic && !it.ir.isSyntheticEs6Constructor }
                     .takeIf { !declaration.ir.isInner }.orEmpty()
 
                 val enumEntries = declaration.members.filter { it is ExportedProperty && it.isStatic }
@@ -186,7 +187,7 @@ class ExportModelToJsStatements(
         val bindConstructor = JsName("__bind_constructor_", false)
 
         val blockStatements = mutableListOf<JsStatement>(
-            JsVars(JsVars.JsVar(bindConstructor, innerClassRef.bindToThis()))
+            JsVars(JsVars.JsVar(bindConstructor, innerClassRef.bindToThis(innerClassRef)))
         )
 
         if (companionObject != null) {
@@ -200,10 +201,19 @@ class ExportModelToJsStatements(
         }
 
         secondaryConstructors.forEach {
-            val currentFunRef = namer.getNameForStaticDeclaration(it.ir).makeRef()
+            val currentFunRef = namer.getNameForStaticDeclaration(it.ir)
+                .run {
+                    if (it.ir.isSyntheticEs6Constructor) {
+                        JsNameRef(this, innerClassRef)
+                    } else {
+                        makeRef()
+                    }
+                }
+
+
             val assignment = jsAssignment(
                 JsNameRef(it.name, bindConstructor.makeRef()),
-                currentFunRef.bindToThis()
+                currentFunRef.bindToThis(innerClassRef)
             ).makeStmt()
 
             blockStatements.add(assignment)
@@ -224,11 +234,7 @@ class ExportModelToJsStatements(
         ).makeStmt()
     }
 
-    private fun JsNameRef.bindToThis(): JsInvocation {
-        return JsInvocation(
-            JsNameRef("bind", this),
-            JsNullLiteral(),
-            JsThisRef()
-        )
+    private fun JsNameRef.bindToThis(bindTo: JsExpression): JsInvocation {
+        return JsInvocation(JsNameRef("bind", this), bindTo, JsThisRef())
     }
 }

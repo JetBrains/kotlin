@@ -36,6 +36,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_FINALLY = "finally".toCharArray();
     private static final char[] CHARS_FOR = "for".toCharArray();
     private static final char[] CHARS_FUNCTION = "function".toCharArray();
+    private static final char[] CHARS_STATIC = "static".toCharArray();
     private static final char[] CHARS_IF = "if".toCharArray();
     private static final char[] CHARS_IN = "in".toCharArray();
     private static final char[] CHARS_NEW = "new".toCharArray();
@@ -666,8 +667,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printCommentsAfterNode(x);
     }
 
-    // name(<params>) { <body> }
+    // [static?] name(<params>) { <body> }
     private void printFunction(@NotNull JsFunction x) {
+        if (x.isStatic()) {
+            p.print(CHARS_STATIC);
+            space();
+        }
+
         if (x.getName() != null) {
             nameOf(x);
         }

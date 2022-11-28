@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -75,12 +76,16 @@ internal class JsUsefulDeclarationProcessor(
                 }
 
                 context.intrinsics.jsCreateThisSymbol -> {
-                    val jsClassOrNewTarget = expression.getValueArgument(0) as IrCall
-                    val jsClassCall = when (jsClassOrNewTarget.symbol) {
-                        context.intrinsics.jsNewTarget -> jsClassOrNewTarget.getValueArgument(0) as IrCall
-                        else -> jsClassOrNewTarget
+                    val jsClassOrThis = expression.getValueArgument(0)
+
+                    val classTypeToCreate = when (jsClassOrThis) {
+                        is IrCall -> jsClassOrThis.getTypeArgument(0)!!
+                        is IrGetValue -> jsClassOrThis.type
+                        else -> error("Unexpected first argument of createThis function call")
                     }
-                    val classToCreate = jsClassCall.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
+
+                    val classToCreate = classTypeToCreate.classifierOrFail.owner as IrClass
+
                     classToCreate.enqueue(data, "intrinsic: jsCreateThis")
                     constructedClasses += classToCreate
                 }
@@ -181,7 +186,8 @@ internal class JsUsefulDeclarationProcessor(
 
         val property = irFunction.correspondingPropertySymbol?.owner ?: return
 
-        if (property.isExported(context) || property.isOverriddenExternal()) {
+        if (property.isExported(context) || property.getJsName() != null || property.isOverriddenExternal()) {
+            context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irFunction, "property for export")
             context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irFunction, "property for export")
         }
     }

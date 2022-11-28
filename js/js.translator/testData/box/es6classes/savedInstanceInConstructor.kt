@@ -16,9 +16,11 @@ class KotlinFoo(value: String) : JsFoo(value) {
     fun existsInJs(): Boolean = JsFoo.instances.has(this)
 }
 
-fun box() {
+fun box(): String {
     val foo = KotlinFoo("TEST")
 
     assertEquals("TEST", foo.value)
     assertEquals(true, foo.existsInJs())
+
+    return "OK"
 }

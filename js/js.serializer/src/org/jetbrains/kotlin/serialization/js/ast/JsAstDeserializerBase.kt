@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
 
 abstract class JsAstDeserializerBase {
@@ -252,9 +253,23 @@ abstract class JsAstDeserializerBase {
             )
         }
 
+        // TODO: make more complex serialization to support class syntax inside `js` call
+        JsAstProtoBuf.Expression.ExpressionCase.CLASSEXPRESSION -> {
+            val classProto = proto.classExpression
+            JsClass(
+                runIf(classProto.hasNameId()) { deserializeName(classProto.nameId) },
+                runIf(classProto.hasSuperExpression()) { deserialize(classProto.superExpression) as JsNameRef }
+            )
+        }
+
         JsAstProtoBuf.Expression.ExpressionCase.FUNCTION -> {
             val functionProto = proto.function
-            JsFunction(scope, deserialize(functionProto.body) as JsBlock, "").apply {
+            JsFunction(
+                scope,
+                deserialize(functionProto.body) as JsBlock,
+                functionProto.static,
+                ""
+            ).apply {
                 parameters += functionProto.parameterList.map { deserializeParameter(it) }
                 if (functionProto.hasNameId()) {
                     name = deserializeName(functionProto.nameId)

@@ -28,7 +28,8 @@ object JsIrBuilder {
         target: IrSimpleFunctionSymbol,
         type: IrType? = null,
         typeArguments: List<IrType>? = null,
-        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
+        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+        superQualifierSymbol: IrClassSymbol? = null
     ): IrCall {
         val owner = target.owner
         return IrCallImpl(
@@ -36,6 +37,7 @@ object JsIrBuilder {
             UNDEFINED_OFFSET,
             type ?: owner.returnType,
             target,
+            superQualifierSymbol = superQualifierSymbol,
             typeArgumentsCount = owner.typeParameters.size,
             valueArgumentsCount = owner.valueParameters.size,
             origin = origin
@@ -96,12 +98,20 @@ object JsIrBuilder {
 
     fun buildThrow(type: IrType, value: IrExpression) = IrThrowImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, value)
 
-    fun buildValueParameter(parent: IrFunction, name: String, index: Int, type: IrType): IrValueParameter =
+    fun buildValueParameter(
+        parent: IrFunction,
+        name: String,
+        index: Int,
+        type: IrType,
+        isAssignable: Boolean = false,
+        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
+    ): IrValueParameter =
         buildValueParameter(parent) {
-            this.origin = SYNTHESIZED_DECLARATION
+            this.origin = origin
             this.name = Name.identifier(name)
             this.index = index
             this.type = type
+            this.isAssignable = isAssignable
         }
 
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
+import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticEs6Constructor
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -72,6 +73,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     properties.addIfNotNull(declaration.correspondingPropertySymbol?.owner)
 
                     if (es6mode) {
+                        if (declaration.isSyntheticEs6Constructor && irClass.isInterface) continue
                         val (memberRef, function) = generateMemberFunction(declaration)
                         function?.let { jsClass.members += it.escapedIfNeed() }
                         declaration.generateAssignmentIfMangled(memberRef)
@@ -342,8 +344,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun IrType.isFunctionType() = isFunctionOrKFunction() || isSuspendFunctionOrKFunction()
-
-    private fun isCoroutineClass(): Boolean = irClass.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }
 
     private fun generateSimpleName(): JsStringLiteral? {
         return irClass.name.takeIf { !it.isSpecial }?.let { JsStringLiteral(it.identifier) }

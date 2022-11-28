@@ -165,6 +165,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsBooleanInExternalLog = getInternalFunction("booleanInExternalLog")
     val jsBooleanInExternalException = getInternalFunction("booleanInExternalException")
 
+    val jsNewAnonymousClass = getInternalFunction("jsNewAnonymousClass")
+
     // Coroutines
 
     val jsCoroutineContext

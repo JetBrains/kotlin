@@ -155,17 +155,18 @@ internal fun createThis(ctor: Ctor, box: dynamic): dynamic {
     return self;
 }
 
-@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
-internal fun createExternalThis(
-    ctor: Ctor,
-    superExternalCtor: Ctor,
+@OptIn(JsIntrinsic::class)
+@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE", "REIFIED_TYPE_PARAMETER_NO_INLINE")
+internal fun <reified T : Any> createExternalThis(
+    ctor: JsClass<T>,
+    superExternalCtor: JsClass<T>,
     parameters: Array<Any?>,
     box: dynamic
-) {
+): T {
     val selfCtor = if (box === VOID) {
         ctor
     } else {
-        val newCtor = `Kotlin$createJsUtilityAnonymousClass`(ctor)
+        val newCtor: dynamic = jsNewAnonymousClass(ctor)
         js("Object.assign(newCtor.prototype, box)")
         newCtor.constructor = ctor
         newCtor
@@ -176,11 +177,3 @@ internal fun createExternalThis(
 @Suppress("UNUSED_PARAMETER")
 internal fun defineProp(obj: Any, name: String, getter: Any?, setter: Any?) =
     js("Object.defineProperty(obj, name, { configurable: true, get: getter, set: setter })")
-
-// TODO: Support ES6 syntax inside the `js` function instead of the hack
-@JsPolyfill("""
-   function Kotlin${'$'}createJsUtilityAnonymousClass(parent) {
-     return class extends parent {}
-   }
-""")
-internal external fun `Kotlin$createJsUtilityAnonymousClass`(parent: Ctor): dynamic

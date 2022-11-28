@@ -267,6 +267,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam, suspendInvokeTransform)
 
             add(intrinsics.jsArguments) { _, _ -> Namer.ARGUMENTS }
+
+            add(intrinsics.jsNewAnonymousClass) { call, context ->
+                val baseClass = translateCallArguments(call, context).single() as JsNameRef
+                JsClass(baseClass = baseClass)
+            }
         }
     }
 

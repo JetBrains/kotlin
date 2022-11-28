@@ -36,9 +36,7 @@ class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlock
         JsIrBuilder.buildCall(context.intrinsics.unreachable, context.irBuiltIns.nothingType)
 }
 
-abstract class AbstractBlockDecomposerLowering(
-    private val context: JsCommonBackendContext
-) : BodyLoweringPass {
+abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBackendContext) : BodyLoweringPass {
 
     private val nothingType = context.irBuiltIns.nothingType
 

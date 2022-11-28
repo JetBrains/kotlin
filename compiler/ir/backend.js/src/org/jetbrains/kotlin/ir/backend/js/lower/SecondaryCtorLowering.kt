@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -235,6 +234,7 @@ private fun JsIrBackendContext.buildConstructorFactory(constructor: IrConstructo
 class SecondaryFactoryInjectorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (context.es6mode) return
         // TODO Simplify? Is this needed at all?
         var parentFunction: IrFunction? = container as? IrFunction
         var declaration = container
@@ -258,7 +258,7 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
     private val IrConstructor.isSecondaryConstructorCall
         get() =
-            (!isPrimary || context.es6mode) && this != defaultThrowableConstructor && !isExternal && !context.inlineClassesUtils.isClassInlineLike(parentAsClass)
+            !isPrimary && this != defaultThrowableConstructor && !isExternal && !context.inlineClassesUtils.isClassInlineLike(parentAsClass)
 
     override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement = super.visitFunction(declaration, declaration)
 
@@ -267,14 +267,7 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
         val target = expression.symbol.owner
         return if (target.isSecondaryConstructorCall) {
-            val factory = with(context) {
-                if (es6mode) mapping.secondaryConstructorToFactory[target]
-                    ?: compilationException(
-                        "Not found IrFunction for secondary ctor",
-                        expression
-                    )
-                else buildConstructorFactory(target, target.parentAsClass)
-            }
+            val factory = context.buildConstructorFactory(target, target.parentAsClass)
             replaceSecondaryConstructorWithFactoryFunction(expression, factory.symbol)
         } else expression
     }
@@ -286,17 +279,8 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
         return if (target.isSecondaryConstructorCall) {
             val klass = target.parentAsClass
-            val delegate = with(context) {
-                if (es6mode) compilationException(
-                    "All delegating call should be lowered inside ES6ClassLowering",
-                    expression
-                )
-                else buildConstructorDelegate(target, klass)
-            }
+            val delegate = context.buildConstructorDelegate(target, klass)
             val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, delegate.symbol)
-            if (context.es6mode) {
-                return newCall
-            }
 
             val readThis = expression.run {
                 if (data is IrConstructor) {
@@ -327,11 +311,6 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
             for (i in 0 until call.valueArgumentsCount) {
                 putValueArgument(i, call.getValueArgument(i))
-            }
-
-            if (context.es6mode && superQualifierSymbol == null) {
-                dispatchReceiver = JsIrBuilder.buildCall(context.intrinsics.jsClass)
-                    .apply { putTypeArgument(0, irClass.defaultType) }
             }
         }
     }

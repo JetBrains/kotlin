@@ -19,18 +19,34 @@ public final class JsFunction extends JsLiteral implements HasName {
     @NotNull
     private final JsFunctionScope scope;
     private JsName name;
+    private boolean isStatic;
 
     public JsFunction(@NotNull JsScope parentScope, @NotNull String description) {
-        this(parentScope, description, null);
+        this(parentScope, description, false, null);
     }
 
     public JsFunction(@NotNull JsScope parentScope, @NotNull JsBlock body, @NotNull String description) {
-        this(parentScope, description, null);
+        this(parentScope, body, false, description);
+    }
+
+    public JsFunction(
+            @NotNull JsScope parentScope,
+            @NotNull JsBlock body,
+            boolean isStatic,
+            @NotNull String description
+    ) {
+        this(parentScope, description, isStatic, null);
         this.body = body;
     }
 
-    private JsFunction(@NotNull JsScope parentScope, @NotNull String description, @Nullable JsName name) {
+    private JsFunction(
+            @NotNull JsScope parentScope,
+            @NotNull String description,
+            boolean isStatic,
+            @Nullable JsName name
+    ) {
         this.name = name;
+        this.isStatic = isStatic;
         scope = new JsFunctionScope(parentScope, name == null ? description : name.getIdent());
     }
 
@@ -60,6 +76,10 @@ public final class JsFunction extends JsLiteral implements HasName {
     @NotNull
     public JsFunctionScope getScope() {
         return scope;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
     }
 
     public void setBody(@NotNull JsBlock body) {
@@ -94,7 +114,12 @@ public final class JsFunction extends JsLiteral implements HasName {
     @NotNull
     @Override
     public JsFunction deepCopy() {
-        JsFunction functionCopy = new JsFunction(scope.getParent(), scope.getDescription(), name);
+        JsFunction functionCopy = new JsFunction(
+                scope.getParent(),
+                scope.getDescription(),
+                isStatic,
+                name
+        );
         functionCopy.getScope().copyOwnNames(scope);
         functionCopy.setBody(body.deepCopy());
         functionCopy.params = AstUtil.deepCopy(params);

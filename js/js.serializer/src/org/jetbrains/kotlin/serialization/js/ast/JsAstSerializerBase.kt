@@ -257,10 +257,19 @@ abstract class JsAstSerializerBase {
                 x.parameters.forEach { functionBuilder.addParameter(serializeParameter(it)) }
                 x.name?.let { functionBuilder.nameId = serialize(it) }
                 functionBuilder.body = serialize(x.body)
+                functionBuilder.static = x.isStatic
                 if (x.isLocal) {
                     functionBuilder.local = true
                 }
                 builder.function = functionBuilder.build()
+            }
+
+            // TODO: make more complex serialization to support class syntax inside `js` call
+            override fun visitClass(x: JsClass) {
+                val classBuilder = JsAstProtoBuf.ClassExpression.newBuilder()
+                x.name?.let { classBuilder.nameId = serialize(it) }
+                x.baseClass?.let { classBuilder.superExpression = serialize(it) }
+                builder.classExpression = classBuilder.build()
             }
 
             override fun visitDocComment(comment: JsDocComment) {
