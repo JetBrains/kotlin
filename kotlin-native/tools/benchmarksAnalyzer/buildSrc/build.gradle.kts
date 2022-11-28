@@ -104,6 +104,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 afterEvaluate {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
