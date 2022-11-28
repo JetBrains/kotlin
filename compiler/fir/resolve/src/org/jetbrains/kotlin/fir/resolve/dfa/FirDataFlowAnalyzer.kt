@@ -143,10 +143,6 @@ abstract class FirDataFlowAnalyzer(
         returnExpressionsOfAnonymousFunctionOrNull(function)
             ?: error("anonymous function ${function.render()} not analyzed")
 
-    fun dropSubgraphFromCall(call: FirFunctionCall) {
-        graphBuilder.dropSubgraphFromCall(call)
-    }
-
     // ----------------------------------- Named function -----------------------------------
 
     fun enterFunction(function: FirFunction) {

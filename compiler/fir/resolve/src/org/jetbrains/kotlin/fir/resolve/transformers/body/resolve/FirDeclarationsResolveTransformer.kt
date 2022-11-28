@@ -336,6 +336,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
 
         // Resolve call for provideDelegate, without completion
+        // TODO: this generates some nodes in the control flow graph which we don't want if we
+        //  end up not selecting this option.
         provideDelegateCall.transformSingle(this, ResolutionMode.ContextIndependent)
 
         // If we got successful candidate for provideDelegate, let's select it
@@ -364,9 +366,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         if (provideDelegateReference is FirResolvedNamedReference && provideDelegateReference !is FirResolvedErrorReference) {
             return provideDelegateCall
         }
-
-        // Otherwise, rollback
-        (provideDelegateCall as? FirFunctionCall)?.let { dataFlowAnalyzer.dropSubgraphFromCall(it) }
 
         // Select delegate expression otherwise
         return delegateExpression

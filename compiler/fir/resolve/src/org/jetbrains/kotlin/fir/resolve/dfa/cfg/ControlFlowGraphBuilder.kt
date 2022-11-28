@@ -1381,34 +1381,6 @@ class ControlFlowGraphBuilder {
         lastNodes.reset()
     }
 
-    fun dropSubgraphFromCall(call: FirFunctionCall) {
-        val graphs = mutableListOf<ControlFlowGraph>()
-
-        call.acceptChildren(object : FirDefaultVisitor<Unit, Any?>() {
-            override fun visitElement(element: FirElement, data: Any?) {
-                element.acceptChildren(this, null)
-            }
-
-            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?) {
-                anonymousFunction.controlFlowGraphReference?.accept(this, null)
-            }
-
-            override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?) {
-                anonymousObject.controlFlowGraphReference?.accept(this, null)
-            }
-
-            override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: Any?) {
-                val graph = controlFlowGraphReference.controlFlowGraph ?: return
-                if (graph.owner == null) return
-                graphs += graph
-            }
-        }, null)
-
-        for (graph in graphs) {
-            currentGraph.removeSubGraph(graph)
-        }
-    }
-
     // ----------------------------------- Edge utils -----------------------------------
 
     private fun addNewSimpleNode(node: CFGNode<*>, isDead: Boolean = false) {

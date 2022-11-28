@@ -59,16 +59,6 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         _subGraphs += graph
     }
 
-    @CfgInternals
-    fun removeSubGraph(graph: ControlFlowGraph) {
-        assert(graph.owner == this)
-        _subGraphs.remove(graph)
-        graph.owner = null
-
-        CFGNode.removeAllIncomingEdges(graph.enterNode)
-        CFGNode.removeAllOutgoingEdges(graph.exitNode)
-    }
-
     private fun assertState(state: State) {
         assert(this.state == state) {
             "This action can not be performed at $this state"
