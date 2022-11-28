@@ -36,8 +36,9 @@ public abstract class PropertyReference0 extends PropertyReference implements KP
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public KProperty0.Getter getGetter() {
-        return ((KProperty0) getReflected()).getGetter();
+        return syntheticJavaProperty ? new SyntheticJavaPropertyReference0Getter(this) : ((KProperty0) getReflected()).getGetter();
     }
 
     @Override

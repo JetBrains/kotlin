@@ -38,12 +38,12 @@ public abstract class MutablePropertyReference1 extends MutablePropertyReference
 
     @Override
     public KProperty1.Getter getGetter() {
-        return ((KMutableProperty1) getReflected()).getGetter();
+        return syntheticJavaProperty ? new SyntheticJavaPropertyReference1Getter(this) : ((KMutableProperty1) getReflected()).getGetter();
     }
 
     @Override
     public KMutableProperty1.Setter getSetter() {
-        return ((KMutableProperty1) getReflected()).getSetter();
+        return syntheticJavaProperty ? new SyntheticJavaPropertyReference1Setter(this) : ((KMutableProperty1) getReflected()).getSetter();
     }
 
     @Override

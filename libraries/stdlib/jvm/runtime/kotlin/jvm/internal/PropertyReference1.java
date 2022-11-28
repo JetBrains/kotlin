@@ -37,7 +37,7 @@ public abstract class PropertyReference1 extends PropertyReference implements KP
 
     @Override
     public KProperty1.Getter getGetter() {
-        return ((KProperty1) getReflected()).getGetter();
+        return syntheticJavaProperty ? new SyntheticJavaPropertyReference1Getter(this) : ((KProperty1) getReflected()).getGetter();
     }
 
     @Override

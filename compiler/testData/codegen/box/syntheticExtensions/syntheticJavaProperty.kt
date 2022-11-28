@@ -62,8 +62,9 @@ fun box(): String {
     unboundBooleanProperty.set(j, true)
     assertTrue(unboundBooleanProperty.get(j))
     assertTrue(unboundBooleanProperty(j))
+    assertTrue(unboundBooleanProperty.call(j))
 
-    assertEquals(9, j.numGetCalls)
+    assertEquals(10, j.numGetCalls)
     assertEquals(3, j.numSetCalls)
 
     val boundBooleanProperty: KMutableProperty0<Boolean> = j::isBooleanProperty
@@ -71,9 +72,30 @@ fun box(): String {
     boundBooleanProperty.set(false)
     assertFalse(boundBooleanProperty.get())
     assertFalse(boundBooleanProperty())
+    assertFalse(boundBooleanProperty.call())
 
-    assertEquals(12, j.numGetCalls)
+    assertEquals(14, j.numGetCalls)
     assertEquals(4, j.numSetCalls)
+
+    unboundBooleanProperty.setter(j, true)
+    assertTrue(unboundBooleanProperty.getter(j))
+    assertEquals(15, j.numGetCalls)
+    assertEquals(5, j.numSetCalls)
+
+    unboundBooleanProperty.setter.call(j, false)
+    assertFalse(unboundBooleanProperty.getter.call(j))
+    assertEquals(16, j.numGetCalls)
+    assertEquals(6, j.numSetCalls)
+
+    boundBooleanProperty.setter(false)
+    assertEquals(7, j.numSetCalls)
+    assertFalse(boundBooleanProperty.getter())
+    assertEquals(17, j.numGetCalls)
+
+    boundBooleanProperty.setter.call(true)
+    assertEquals(8, j.numSetCalls)
+    assertTrue(boundBooleanProperty.getter.call())
+    assertEquals(18, j.numGetCalls)
 
     return "OK"
 }

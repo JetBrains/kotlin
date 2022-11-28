@@ -4005,9 +4005,11 @@ public abstract class kotlin/jvm/internal/PrimitiveSpreadBuilder {
 }
 
 public abstract class kotlin/jvm/internal/PropertyReference : kotlin/jvm/internal/CallableReference, kotlin/reflect/KProperty {
+	protected final field syntheticJavaProperty Z
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Object;)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun call ([Ljava/lang/Object;)Ljava/lang/Object;
 	public fun compute ()Lkotlin/reflect/KCallable;
 	public fun equals (Ljava/lang/Object;)Z
 	protected synthetic fun getReflected ()Lkotlin/reflect/KCallable;
@@ -4223,6 +4225,72 @@ public class kotlin/jvm/internal/SpreadBuilder {
 
 public final class kotlin/jvm/internal/StringCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/StringCompanionObject;
+}
+
+public final class kotlin/jvm/internal/SyntheticAccessorsKt {
+	public static final fun checkArguments (I[Ljava/lang/Object;)V
+	public static final fun reportNoReflectionForSyntheticJavaProperties ()Ljava/lang/Void;
+}
+
+public abstract class kotlin/jvm/internal/SyntheticJavaPropertyAccessor : kotlin/reflect/KFunction, kotlin/reflect/KProperty$Accessor {
+	public synthetic fun <init> (Lkotlin/reflect/KProperty;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun callBy (Ljava/util/Map;)Ljava/lang/Object;
+	public final fun equals (Ljava/lang/Object;)Z
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getParameters ()Ljava/util/List;
+	public fun getProperty ()Lkotlin/reflect/KProperty;
+	public final fun getReturnType ()Lkotlin/reflect/KType;
+	public final fun getTypeParameters ()Ljava/util/List;
+	public final fun getVisibility ()Lkotlin/reflect/KVisibility;
+	public final fun hashCode ()I
+	public final fun isAbstract ()Z
+	public final fun isExternal ()Z
+	public final fun isFinal ()Z
+	public final fun isInfix ()Z
+	public fun isInline ()Z
+	public final fun isOpen ()Z
+	public final fun isOperator ()Z
+	public final fun isSuspend ()Z
+}
+
+public abstract class kotlin/jvm/internal/SyntheticJavaPropertyGetter : kotlin/jvm/internal/SyntheticJavaPropertyAccessor {
+	public synthetic fun <init> (Lkotlin/reflect/KProperty;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/jvm/internal/SyntheticJavaPropertyReference0Getter : kotlin/jvm/internal/SyntheticJavaPropertyGetter, kotlin/reflect/KProperty0$Getter {
+	public fun <init> (Lkotlin/reflect/KProperty0;)V
+	public fun call ([Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke ()Ljava/lang/Object;
+}
+
+public final class kotlin/jvm/internal/SyntheticJavaPropertyReference0Setter : kotlin/jvm/internal/SyntheticJavaPropertySetter, kotlin/reflect/KMutableProperty0$Setter {
+	public fun <init> (Lkotlin/reflect/KMutableProperty0;)V
+	public synthetic fun call ([Ljava/lang/Object;)Ljava/lang/Object;
+	public fun call ([Ljava/lang/Object;)V
+	public synthetic fun invoke (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;)V
+}
+
+public final class kotlin/jvm/internal/SyntheticJavaPropertyReference1Getter : kotlin/jvm/internal/SyntheticJavaPropertyGetter, kotlin/reflect/KProperty1$Getter {
+	public fun <init> (Lkotlin/reflect/KProperty1;)V
+	public fun call ([Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class kotlin/jvm/internal/SyntheticJavaPropertyReference1Setter : kotlin/jvm/internal/SyntheticJavaPropertySetter, kotlin/reflect/KMutableProperty1$Setter {
+	public fun <init> (Lkotlin/reflect/KMutableProperty1;)V
+	public synthetic fun call ([Ljava/lang/Object;)Ljava/lang/Object;
+	public fun call ([Ljava/lang/Object;)V
+	public synthetic fun invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;)V
+}
+
+public abstract class kotlin/jvm/internal/SyntheticJavaPropertySetter : kotlin/jvm/internal/SyntheticJavaPropertyAccessor {
+	public synthetic fun <init> (Lkotlin/reflect/KProperty;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun toString ()Ljava/lang/String;
 }
 
 public class kotlin/jvm/internal/TypeIntrinsics {

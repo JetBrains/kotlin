@@ -6,9 +6,7 @@
 package kotlin.jvm.internal;
 
 import kotlin.SinceKotlin;
-import kotlin.reflect.KCallable;
-import kotlin.reflect.KMutableProperty0;
-import kotlin.reflect.KProperty0;
+import kotlin.reflect.*;
 
 @SuppressWarnings({"rawtypes", "unused", "NullableProblems"})
 public abstract class MutablePropertyReference0 extends MutablePropertyReference implements KMutableProperty0 {
@@ -36,13 +34,15 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public KProperty0.Getter getGetter() {
-        return ((KMutableProperty0) getReflected()).getGetter();
+        return syntheticJavaProperty ? new SyntheticJavaPropertyReference0Getter(this) : ((KMutableProperty0) getReflected()).getGetter();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public KMutableProperty0.Setter getSetter() {
-        return ((KMutableProperty0) getReflected()).getSetter();
+        return syntheticJavaProperty ? new SyntheticJavaPropertyReference0Setter(this) : ((KMutableProperty0) getReflected()).getSetter();
     }
 
     @Override
