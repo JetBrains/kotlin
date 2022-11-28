@@ -56,15 +56,6 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         }
 
         @CfgInternals
-        fun removeAllIncomingEdges(to: CFGNode<*>) {
-            for (from in to._previousNodes) {
-                from._followingNodes.remove(to)
-            }
-            to._incomingEdges = null
-            to._previousNodes.clear()
-        }
-
-        @CfgInternals
         fun removeAllOutgoingEdges(from: CFGNode<*>) {
             for (to in from._followingNodes) {
                 to._previousNodes.remove(from)
