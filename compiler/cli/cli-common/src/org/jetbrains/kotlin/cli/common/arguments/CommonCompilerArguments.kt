@@ -530,7 +530,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 }
             }
 
-            if (allowAnyScriptsInSourceRoots) {
+            if (useK2) {
+                // TODO: remove when K2 compilation will mean LV 2.0
+                put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.ENABLED)
+            } else if (allowAnyScriptsInSourceRoots) {
                 put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
             }
 
