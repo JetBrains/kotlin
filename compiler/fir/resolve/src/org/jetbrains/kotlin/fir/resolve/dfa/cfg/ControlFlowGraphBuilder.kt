@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.random.Random
 
@@ -342,9 +340,13 @@ class ControlFlowGraphBuilder {
             }
         } else {
             for ((exit, kind) in currentLevelExits) {
-                // Since `node` is a union node, it is dead iff any input is dead. For once, `propagateDeadness`
-                // semantics are correct without an `updateDeadStatus`.
-                addEdge(exit, node, preferredKind = kind, propagateDeadness = kind.usedInCfa)
+                // Do not add data flow edges from non-terminating lambdas; there is no "dead data flow only"
+                // `EdgeKind`. TODO?
+                if (kind.usedInCfa || !exit.isDead) {
+                    // Since `node` is a union node, it is dead iff any input is dead. For once, `propagateDeadness`
+                    // semantics are correct without an `updateDeadStatus`.
+                    addEdge(exit, node, preferredKind = kind)
+                }
             }
         }
     }
@@ -854,6 +856,8 @@ class ControlFlowGraphBuilder {
         // This may sound shocking, but `do...while` conditions can `continue` to themselves,
         // so we can't pop the node off the stack here.
         val conditionEnterNode = loopConditionEnterNodes.top().also { addNewSimpleNode(it) }
+        // Might have had live `continue`s with an unreachable block exit, so recompute deadness.
+        conditionEnterNode.updateDeadStatus()
         levelCounter++
         return blockExitNode to conditionEnterNode
     }
@@ -1103,7 +1107,8 @@ class ControlFlowGraphBuilder {
         CFGNode.addEdge(node, stub, EdgeKind.DeadForward, propagateDeadness = false)
         for ((to, edge) in edges) {
             val kind = if (edge.kind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
-            CFGNode.addEdge(stub, to, kind, propagateDeadness = true, label = edge.label)
+            CFGNode.addEdge(stub, to, kind, propagateDeadness = false, label = edge.label)
+            to.updateDeadStatus()
             propagateDeadnessForward(to)
         }
     }
