@@ -7,8 +7,8 @@ interface A {
 
 fun getA(): A? = null
 
-val x by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NEW_INFERENCE_ERROR!>lazy {
+val x by lazy {
     (getA() ?: error("error")).list.associateBy {
         it
     }
-}<!>
+}
