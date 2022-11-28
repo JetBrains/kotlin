@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolved
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
-import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -25,6 +24,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
@@ -92,7 +93,7 @@ fun <T> KotlinTypeFacade.interpret(
 
                     is FirFunctionCall -> {
                         val interpreter = expression.loadInterpreter()
-                            ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
+                            ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable.")
                         interpret(expression, interpreter, emptyMap(), reporter)
                     }
 
@@ -108,7 +109,7 @@ fun <T> KotlinTypeFacade.interpret(
                                     )
                                 )
                             } else {
-                                Interpreter.Success(extracted(expression))
+                                Interpreter.Success(columnWithPathApproximations(expression))
                             }
                         }
                     }
@@ -118,18 +119,17 @@ fun <T> KotlinTypeFacade.interpret(
                     }
 
                     is FirLambdaArgumentExpression -> {
-                        val col: List<ColumnWithPathApproximation> = when (val lambda = expression.expression) {
+                        val col: Any? = when (val lambda = expression.expression) {
                             is FirAnonymousFunctionExpression -> {
                                 val result = (lambda.anonymousFunction.body!!.statements.last() as FirReturnExpression).result
                                 when (result) {
                                     is FirPropertyAccessExpression -> {
-                                        extracted(result)
+                                        columnWithPathApproximations(result)
                                     }
 
                                     is FirFunctionCall -> {
                                         val interpreter = result.loadInterpreter() ?: TODO("")
-                                        @Suppress("UNCHECKED_CAST")
-                                        interpret(result, interpreter, reporter = reporter)?.value as List<ColumnWithPathApproximation>
+                                        interpret(result, interpreter, reporter = reporter)?.value
                                     }
 
                                     else -> TODO(result::class.toString())
@@ -138,7 +138,7 @@ fun <T> KotlinTypeFacade.interpret(
 
                             else -> TODO(lambda::class.toString())
                         }
-                        Interpreter.Success(col)
+                        col?.let { Interpreter.Success(it) }
                     }
 
                     else -> TODO(expression::class.toString())
@@ -220,7 +220,7 @@ fun <T> KotlinTypeFacade.interpret(
     }
 }
 
-private fun KotlinTypeFacade.extracted(result: FirPropertyAccessExpression): List<ColumnWithPathApproximation> {
+private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): List<ColumnWithPathApproximation> {
     return (result.typeRef as FirResolvedTypeRef).type.let {
         val column = when {
             it.classId == Names.DATA_COLUMN_CLASS_ID -> {
@@ -271,6 +271,11 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
 
 fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
     val colName = f(propertyAccessExpression)
+    val typeRef = propertyAccessExpression.dispatchReceiver.typeRef
+    val joinDsl = ClassId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("JoinDsl"))
+    if (typeRef is FirResolvedTypeRef && typeRef.type.classId?.equals(joinDsl) == true && colName == "right") {
+        return emptyList()
+    }
     return when (val explicitReceiver = propertyAccessExpression.explicitReceiver) {
         null -> listOf(colName)
         else -> path(explicitReceiver as FirPropertyAccessExpression) + colName
