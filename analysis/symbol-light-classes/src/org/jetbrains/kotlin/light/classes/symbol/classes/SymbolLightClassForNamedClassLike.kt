@@ -77,7 +77,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
 
     private val KtPropertySymbol.isConst: Boolean get() = (this as? KtKotlinPropertySymbol)?.isConst == true
 
-    context(ktAnalysisSession@KtAnalysisSession)
+    context(KtAnalysisSession)
     protected fun addFieldsFromCompanionIfNeeded(
         result: MutableList<KtLightField>,
         classOrObjectSymbol: KtNamedClassOrObjectSymbol,
@@ -91,7 +91,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
             }
             ?.mapTo(result) {
                 SymbolLightFieldForProperty(
-                    ktAnalysisSession = this@ktAnalysisSession,
+                    ktAnalysisSession = this@KtAnalysisSession,
                     propertySymbol = it,
                     fieldName = it.name.asString(),
                     containingClass = this,
@@ -103,7 +103,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
             }
     }
 
-    context(ktAnalysisSession@KtAnalysisSession)
+    context(KtAnalysisSession)
     protected fun addCompanionObjectFieldIfNeeded(result: MutableList<KtLightField>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         val companionObjectSymbols: List<KtNamedClassOrObjectSymbol>? = classOrObjectDeclaration?.companionObjects?.mapNotNull {
             it.getNamedClassOrObjectSymbol()
@@ -112,7 +112,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         companionObjectSymbols?.forEach {
             result.add(
                 SymbolLightFieldForObject(
-                    ktAnalysisSession = this@ktAnalysisSession,
+                    ktAnalysisSession = this@KtAnalysisSession,
                     objectSymbol = it,
                     containingClass = this,
                     name = it.name.asString(),

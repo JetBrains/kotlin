@@ -166,7 +166,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         }
     }
 
-    context(ktAnalysisSession@KtAnalysisSession)
+    context(KtAnalysisSession)
     private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         if (!classOrObjectSymbol.isData) return
 
@@ -175,7 +175,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             val lightMemberOrigin = classOrObjectDeclaration?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER) }
             result.add(
                 SymbolLightSimpleMethod(
-                    ktAnalysisSession = this@ktAnalysisSession,
+                    ktAnalysisSession = this@KtAnalysisSession,
                     ktFunctionSymbol,
                     lightMemberOrigin,
                     this,
@@ -224,14 +224,14 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     private val Name.isFromAny: Boolean
         get() = this == EQUALS || this == HASHCODE_NAME || this == TO_STRING
 
-    context(ktAnalysisSession@KtAnalysisSession)
+    context(KtAnalysisSession)
     private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         fun createDelegateMethod(ktFunctionSymbol: KtFunctionSymbol) {
             val kotlinOrigin = ktFunctionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }
             result.add(
                 SymbolLightSimpleMethod(
-                    ktAnalysisSession = this@ktAnalysisSession,
+                    ktAnalysisSession = this@KtAnalysisSession,
                     ktFunctionSymbol,
                     lightMemberOrigin,
                     this,
@@ -310,13 +310,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         propertyGroups[false]?.forEach(::addPropertyBackingField)
     }
 
-    context(ktAnalysisSession@KtAnalysisSession)
+    context(KtAnalysisSession)
     private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>, namedClassOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         if (!isNamedObject || isLocal) return
 
         result.add(
             SymbolLightFieldForObject(
-                ktAnalysisSession = this@ktAnalysisSession,
+                ktAnalysisSession = this@KtAnalysisSession,
                 objectSymbol = namedClassOrObjectSymbol,
                 containingClass = this,
                 name = JvmAbi.INSTANCE_FIELD,
@@ -325,7 +325,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         )
     }
 
-    context(ktAnalysisSession@KtAnalysisSession)
+    context(KtAnalysisSession)
     private fun addFieldsForEnumEntries(result: MutableList<KtLightField>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
         if (!isEnum) return
 

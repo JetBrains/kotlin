@@ -61,28 +61,28 @@ internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule:
     else -> SymbolLightClassForClassOrObject(ktClassOrObject, ktModule)
 }
 
-context(ktAnalysisSession@KtAnalysisSession)
+context(KtAnalysisSession)
 internal fun createLightClassNoCache(
     ktClassOrObjectSymbol: KtNamedClassOrObjectSymbol,
     ktModule: KtModule,
     manager: PsiManager,
 ): SymbolLightClassBase = when (ktClassOrObjectSymbol.classKind) {
     KtClassKind.INTERFACE -> SymbolLightClassForInterface(
-        ktAnalysisSession = this@ktAnalysisSession,
+        ktAnalysisSession = this@KtAnalysisSession,
         ktModule = ktModule,
         classOrObjectSymbol = ktClassOrObjectSymbol,
         manager = manager,
     )
 
     KtClassKind.ANNOTATION_CLASS -> SymbolLightClassForAnnotationClass(
-        ktAnalysisSession = this@ktAnalysisSession,
+        ktAnalysisSession = this@KtAnalysisSession,
         ktModule = ktModule,
         classOrObjectSymbol = ktClassOrObjectSymbol,
         manager = manager,
     )
 
     else -> SymbolLightClassForClassOrObject(
-        ktAnalysisSession = this@ktAnalysisSession,
+        ktAnalysisSession = this@KtAnalysisSession,
         ktModule = ktModule,
         classOrObjectSymbol = ktClassOrObjectSymbol,
         manager = manager,
@@ -100,7 +100,7 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     return (targetField as? SymbolLightFieldForEnumEntry)?.initializingClass as? KtLightClass
 }
 
-context(ktAnalysisSession@KtAnalysisSession)
+context(KtAnalysisSession)
 internal fun SymbolLightClassForClassLike<*>.createConstructors(
     declarations: Sequence<KtConstructorSymbol>,
     result: MutableList<KtLightMethod>,
@@ -116,7 +116,7 @@ internal fun SymbolLightClassForClassLike<*>.createConstructors(
 
         result.add(
             SymbolLightConstructor(
-                ktAnalysisSession = this@ktAnalysisSession,
+                ktAnalysisSession = this@KtAnalysisSession,
                 constructorSymbol = constructor,
                 lightMemberOrigin = null,
                 containingClass = this@createConstructors,
@@ -126,7 +126,7 @@ internal fun SymbolLightClassForClassLike<*>.createConstructors(
 
         createJvmOverloadsIfNeeded(constructor, result) { methodIndex, argumentSkipMask ->
             SymbolLightConstructor(
-                ktAnalysisSession = this@ktAnalysisSession,
+                ktAnalysisSession = this@KtAnalysisSession,
                 constructorSymbol = constructor,
                 lightMemberOrigin = null,
                 containingClass = this@createConstructors,
@@ -185,7 +185,7 @@ private fun SymbolLightClassForClassLike<*>.noArgConstructor(
     methodIndex,
 )
 
-context(ktAnalysisSession@KtAnalysisSession)
+context(KtAnalysisSession)
 internal fun SymbolLightClassBase.createMethods(
     declarations: Sequence<KtCallableSymbol>,
     result: MutableList<KtLightMethod>,
@@ -241,11 +241,11 @@ internal fun SymbolLightClassBase.createMethods(
 
     // Regular members
     regularMembers.forEach {
-        this@ktAnalysisSession.handleDeclaration(it)
+        this@KtAnalysisSession.handleDeclaration(it)
     }
     // Then, properties from the primary constructor parameters
     ctorProperties.forEach {
-        this@ktAnalysisSession.handleDeclaration(it)
+        this@KtAnalysisSession.handleDeclaration(it)
     }
 }
 
@@ -267,7 +267,7 @@ private inline fun <T : KtFunctionLikeSymbol> SymbolLightClassBase.createJvmOver
     }
 }
 
-context(ktAnalysisSession@KtAnalysisSession)
+context(KtAnalysisSession)
 internal fun SymbolLightClassBase.createPropertyAccessors(
     result: MutableList<KtLightMethod>,
     declaration: KtPropertySymbol,
@@ -311,7 +311,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
         }
 
         return SymbolLightAccessorMethod(
-            ktAnalysisSession = this@ktAnalysisSession,
+            ktAnalysisSession = this@KtAnalysisSession,
             propertyAccessorSymbol = accessor,
             containingPropertySymbol = declaration,
             lightMemberOrigin = lightMemberOrigin,
@@ -334,7 +334,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     }
 }
 
-context(ktAnalysisSession@KtAnalysisSession)
+context(KtAnalysisSession)
 internal fun SymbolLightClassBase.createField(
     declaration: KtPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
@@ -368,7 +368,7 @@ internal fun SymbolLightClassBase.createField(
 
     result.add(
         SymbolLightFieldForProperty(
-            ktAnalysisSession = this@ktAnalysisSession,
+            ktAnalysisSession = this@KtAnalysisSession,
             propertySymbol = declaration,
             fieldName = fieldName,
             containingClass = this,
