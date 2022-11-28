@@ -332,6 +332,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     private fun computeEffectiveVariance(parameter: TypeParameterMarker, argument: TypeArgumentMarker): TypeVariance? =
         AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
+
+    val isK2: Boolean
 }
 
 

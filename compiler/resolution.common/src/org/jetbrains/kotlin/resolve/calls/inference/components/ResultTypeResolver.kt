@@ -241,12 +241,8 @@ class ResultTypeResolver(
     }
 
     private fun Context.computeUpperType(upperConstraints: List<Constraint>): KotlinTypeMarker {
-        val isInferringIntoEmptyIntersectionEnabled =
-            languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
-
-        // TODO: Remove this after stopping support of disabling `ForbidInferringTypeVariablesIntoEmptyIntersection`
-        // If `ForbidInferringTypeVariablesIntoEmptyIntersection` is enabled, we do the corresponding checks during resolution and completion
-        return if (!isInferringIntoEmptyIntersectionEnabled) {
+        // TODO: Remove this after stopping support of K1
+        return if (!isK2) {
             val intersectionUpperType = intersectTypes(upperConstraints.map { it.type })
             val resultIsActuallyIntersection = intersectionUpperType.typeConstructor().isIntersection()
 

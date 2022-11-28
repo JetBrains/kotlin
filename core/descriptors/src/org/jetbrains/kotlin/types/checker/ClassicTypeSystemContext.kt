@@ -902,6 +902,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is UnwrappedType && constructor is NewTypeVariableConstructor
     }
 
+    override val isK2: Boolean
+        get() = false
+
     class WA // Workaround for KT-52313
 }
 
