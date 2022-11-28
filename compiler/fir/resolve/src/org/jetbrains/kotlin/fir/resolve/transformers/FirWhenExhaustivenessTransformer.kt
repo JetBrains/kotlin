@@ -91,6 +91,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         throw IllegalArgumentException("Should not be there")
     }
 
+    /**
+     * The synthetic call for the whole [whenExpression] might be not completed yet
+     */
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): FirStatement {
         processExhaustivenessCheck(whenExpression)
         bodyResolveComponents.session.enumWhenTracker?.reportEnumUsageInWhen(
