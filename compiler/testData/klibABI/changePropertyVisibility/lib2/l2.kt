@@ -4,6 +4,8 @@ class ContainerImpl : Container() {
     fun publicToProtectedProperty2Access() = publicToProtectedProperty2
     fun publicToInternalProperty1Access() = publicToInternalProperty1
     fun publicToInternalProperty2Access() = publicToInternalProperty2
+    fun publicToInternalPAProperty1Access() = publicToInternalPAProperty1
+    fun publicToInternalPAProperty2Access() = publicToInternalPAProperty2
     fun publicToPrivateProperty1Access() = publicToPrivateProperty1
     fun publicToPrivateProperty2Access() = publicToPrivateProperty2
 
@@ -12,6 +14,8 @@ class ContainerImpl : Container() {
     fun protectedToPublicProperty2Access() = protectedToPublicProperty2
     fun protectedToInternalProperty1Access() = protectedToInternalProperty1
     fun protectedToInternalProperty2Access() = protectedToInternalProperty2
+    fun protectedToInternalPAProperty1Access() = protectedToInternalPAProperty1
+    fun protectedToInternalPAProperty2Access() = protectedToInternalPAProperty2
     fun protectedToPrivateProperty1Access() = protectedToPrivateProperty1
     fun protectedToPrivateProperty2Access() = protectedToPrivateProperty2
 
@@ -24,6 +28,10 @@ class ContainerImpl : Container() {
     override val publicToInternalOverriddenProperty2 get() = "ContainerImpl.publicToInternalOverriddenProperty2"
     override val publicToInternalOverriddenProperty3 get() = "ContainerImpl.publicToInternalOverriddenProperty3"
     override val publicToInternalOverriddenProperty4 = "ContainerImpl.publicToInternalOverriddenProperty4"
+    override val publicToInternalPAOverriddenProperty1 = "ContainerImpl.publicToInternalPAOverriddenProperty1"
+    override val publicToInternalPAOverriddenProperty2 get() = "ContainerImpl.publicToInternalPAOverriddenProperty2"
+    override val publicToInternalPAOverriddenProperty3 get() = "ContainerImpl.publicToInternalPAOverriddenProperty3"
+    override val publicToInternalPAOverriddenProperty4 = "ContainerImpl.publicToInternalPAOverriddenProperty4"
     override val publicToPrivateOverriddenProperty1 = "ContainerImpl.publicToPrivateOverriddenProperty1"
     override val publicToPrivateOverriddenProperty2 get() = "ContainerImpl.publicToPrivateOverriddenProperty2"
     override val publicToPrivateOverriddenProperty3 get() = "ContainerImpl.publicToPrivateOverriddenProperty3"
@@ -37,6 +45,10 @@ class ContainerImpl : Container() {
     override val protectedToInternalOverriddenProperty2 get() = "ContainerImpl.protectedToInternalOverriddenProperty2"
     override val protectedToInternalOverriddenProperty3 get() = "ContainerImpl.protectedToInternalOverriddenProperty3"
     override val protectedToInternalOverriddenProperty4 = "ContainerImpl.protectedToInternalOverriddenProperty4"
+    override val protectedToInternalPAOverriddenProperty1 = "ContainerImpl.protectedToInternalPAOverriddenProperty1"
+    override val protectedToInternalPAOverriddenProperty2 get() = "ContainerImpl.protectedToInternalPAOverriddenProperty2"
+    override val protectedToInternalPAOverriddenProperty3 get() = "ContainerImpl.protectedToInternalPAOverriddenProperty3"
+    override val protectedToInternalPAOverriddenProperty4 = "ContainerImpl.protectedToInternalPAOverriddenProperty4"
     override val protectedToPrivateOverriddenProperty1 = "ContainerImpl.protectedToPrivateOverriddenProperty1"
     override val protectedToPrivateOverriddenProperty2 get() = "ContainerImpl.protectedToPrivateOverriddenProperty2"
     override val protectedToPrivateOverriddenProperty3 get() = "ContainerImpl.protectedToPrivateOverriddenProperty3"
@@ -51,6 +63,10 @@ class ContainerImpl : Container() {
     fun protectedToInternalOverriddenProperty2Access() = protectedToInternalOverriddenProperty2
     fun protectedToInternalOverriddenProperty3Access() = protectedToInternalOverriddenProperty3
     fun protectedToInternalOverriddenProperty4Access() = protectedToInternalOverriddenProperty4
+    fun protectedToInternalPAOverriddenProperty1Access() = protectedToInternalPAOverriddenProperty1
+    fun protectedToInternalPAOverriddenProperty2Access() = protectedToInternalPAOverriddenProperty2
+    fun protectedToInternalPAOverriddenProperty3Access() = protectedToInternalPAOverriddenProperty3
+    fun protectedToInternalPAOverriddenProperty4Access() = protectedToInternalPAOverriddenProperty4
     fun protectedToPrivateOverriddenProperty1Access() = protectedToPrivateOverriddenProperty1
     fun protectedToPrivateOverriddenProperty2Access() = protectedToPrivateOverriddenProperty2
     fun protectedToPrivateOverriddenProperty3Access() = protectedToPrivateOverriddenProperty3
@@ -81,6 +97,14 @@ class ContainerImpl : Container() {
     internal open val newOpenInternalProperty2 get() = "ContainerImpl.newOpenInternalProperty2"
     internal open val newOpenInternalProperty3 get() = "ContainerImpl.newOpenInternalProperty3"
     internal open val newOpenInternalProperty4 = "ContainerImpl.newOpenInternalProperty4"
+    internal val newInternalPAProperty1 = "ContainerImpl.newInternalPAProperty1"
+    internal val newInternalPAProperty2 get() = "ContainerImpl.newInternalPAProperty2"
+    internal val newInternalPAProperty3 get() = "ContainerImpl.newInternalPAProperty3"
+    internal val newInternalPAProperty4 = "ContainerImpl.newInternalPAProperty4"
+    internal open val newOpenInternalPAProperty1 = "ContainerImpl.newOpenInternalPAProperty1"
+    internal open val newOpenInternalPAProperty2 get() = "ContainerImpl.newOpenInternalPAProperty2"
+    internal open val newOpenInternalPAProperty3 get() = "ContainerImpl.newOpenInternalPAProperty3"
+    internal open val newOpenInternalPAProperty4 = "ContainerImpl.newOpenInternalPAProperty4"
     private val newPrivateProperty1 = "ContainerImpl.newPrivateProperty1"
     private val newPrivateProperty2 get() = "ContainerImpl.newPrivateProperty2"
     private val newPrivateProperty3 get() = "ContainerImpl.newPrivateProperty3"
@@ -104,6 +128,14 @@ class ContainerImpl : Container() {
     fun newOpenInternalProperty2Access() = newOpenInternalProperty2
     fun newOpenInternalProperty3Access() = newOpenInternalProperty3
     fun newOpenInternalProperty4Access() = newOpenInternalProperty4
+    fun newInternalPAProperty1Access() = newInternalPAProperty1
+    fun newInternalPAProperty2Access() = newInternalPAProperty2
+    fun newInternalPAProperty3Access() = newInternalPAProperty3
+    fun newInternalPAProperty4Access() = newInternalPAProperty4
+    fun newOpenInternalPAProperty1Access() = newOpenInternalPAProperty1
+    fun newOpenInternalPAProperty2Access() = newOpenInternalPAProperty2
+    fun newOpenInternalPAProperty3Access() = newOpenInternalPAProperty3
+    fun newOpenInternalPAProperty4Access() = newOpenInternalPAProperty4
     fun newPrivateProperty1Access() = newPrivateProperty1
     fun newPrivateProperty2Access() = newPrivateProperty2
     fun newPrivateProperty3Access() = newPrivateProperty3
