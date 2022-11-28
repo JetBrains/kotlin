@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierListOwner
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -18,7 +19,7 @@ internal class SymbolLightClassModifierList<T : KtLightElement<KtModifierListOwn
     private val lazyModifiers: Lazy<Set<String>>,
     lazyAnnotations: Lazy<List<PsiAnnotation>>,
 ) : SymbolLightModifierList<T>(containingDeclaration) {
-    private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazy {
+    private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
         lazyAnnotations.value.onEach { (it as? KtLightElementBase)?.parent = this }
     }
 

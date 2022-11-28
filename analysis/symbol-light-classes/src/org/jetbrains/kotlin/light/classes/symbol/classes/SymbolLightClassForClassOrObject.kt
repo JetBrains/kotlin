@@ -85,8 +85,8 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         manager = manager,
     )
 
-    private val _modifierList: PsiModifierList? by lazy {
-        val lazyModifiers = lazy {
+    private val _modifierList: PsiModifierList? by lazyPub {
+        val lazyModifiers = lazyPub {
             withClassOrObjectSymbol { classOrObjectSymbol ->
                 buildSet {
                     add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))

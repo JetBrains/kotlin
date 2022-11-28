@@ -62,49 +62,49 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     protected fun <T> withClassOrObjectSymbol(action: KtAnalysisSession.(SType) -> T): T =
         classOrObjectSymbolPointer.withSymbol(ktModule, action)
 
-    override val isTopLevel: Boolean by lazy {
+    override val isTopLevel: Boolean by lazyPub {
         classOrObjectDeclaration?.isTopLevel() ?: withClassOrObjectSymbol { it.symbolKind == KtSymbolKind.TOP_LEVEL }
     }
 
-    internal val isCompanionObject: Boolean by lazy {
+    internal val isCompanionObject: Boolean by lazyPub {
         classOrObjectDeclaration?.let { it is KtObjectDeclaration && it.isCompanion() } ?: withClassOrObjectSymbol {
             it.classKind == KtClassKind.COMPANION_OBJECT
         }
     }
 
-    internal val isLocal: Boolean by lazy {
+    internal val isLocal: Boolean by lazyPub {
         classOrObjectDeclaration?.isLocal ?: withClassOrObjectSymbol { it.symbolKind == KtSymbolKind.LOCAL }
     }
 
-    internal val isNamedObject: Boolean by lazy {
+    internal val isNamedObject: Boolean by lazyPub {
         classOrObjectDeclaration?.let { it is KtObjectDeclaration && !it.isCompanion() } ?: withClassOrObjectSymbol {
             it.classKind == KtClassKind.OBJECT
         }
     }
 
-    internal val isObject: Boolean by lazy {
+    internal val isObject: Boolean by lazyPub {
         classOrObjectDeclaration?.let { it is KtObjectDeclaration } ?: withClassOrObjectSymbol { it.classKind.isObject }
     }
 
-    internal val isInterface: Boolean by lazy {
+    internal val isInterface: Boolean by lazyPub {
         classOrObjectDeclaration?.let { it is KtClass && it.isInterface() } ?: withClassOrObjectSymbol {
             it.classKind == KtClassKind.INTERFACE
         }
     }
 
-    internal val isAnnotation: Boolean by lazy {
+    internal val isAnnotation: Boolean by lazyPub {
         classOrObjectDeclaration?.let { it is KtClass && it.isAnnotation() } ?: withClassOrObjectSymbol {
             it.classKind == KtClassKind.ANNOTATION_CLASS
         }
     }
 
-    internal val isEnum: Boolean by lazy {
+    internal val isEnum: Boolean by lazyPub {
         classOrObjectDeclaration?.let { it is KtClass && it.isEnum() } ?: withClassOrObjectSymbol {
             it.classKind == KtClassKind.ENUM_CLASS
         }
     }
 
-    private val _isDeprecated: Boolean by lazy {
+    private val _isDeprecated: Boolean by lazyPub {
         withClassOrObjectSymbol { it.hasDeprecatedAnnotation() }
     }
 
@@ -114,7 +114,7 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     abstract override fun getOwnFields(): List<KtLightField>
     abstract override fun getOwnMethods(): List<PsiMethod>
 
-    private val _identifier: PsiIdentifier by lazy {
+    private val _identifier: PsiIdentifier by lazyPub {
         KtLightIdentifier(this, classOrObjectDeclaration)
     }
 
@@ -123,7 +123,7 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     abstract override fun getExtendsList(): PsiReferenceList?
     abstract override fun getImplementsList(): PsiReferenceList?
 
-    private val _typeParameterList: PsiTypeParameterList? by lazy {
+    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,

@@ -63,7 +63,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
 
     protected fun <T> withFunctionSymbol(action: KtAnalysisSession.(FType) -> T): T = functionSymbolPointer.withSymbol(ktModule, action)
 
-    private val _isVarArgs: Boolean by lazy {
+    private val _isVarArgs: Boolean by lazyPub {
         functionDeclaration?.valueParameters?.any { it.isVarArg } ?: withFunctionSymbol { functionSymbol ->
             functionSymbol.valueParameters.any { it.isVararg }
         }
@@ -103,11 +103,11 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
         }
     }
 
-    private val _identifier: PsiIdentifier by lazy {
-        KtLightIdentifier(this@SymbolLightMethod, functionDeclaration)
+    private val _identifier: PsiIdentifier by lazyPub {
+        KtLightIdentifier(this, functionDeclaration)
     }
 
-    private val _isDeprecated: Boolean by lazy {
+    private val _isDeprecated: Boolean by lazyPub {
         withFunctionSymbol { functionSymbol ->
             functionSymbol.hasDeprecatedAnnotation()
         }

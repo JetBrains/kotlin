@@ -30,7 +30,7 @@ internal class SymbolLightFieldForEnumEntry(
         action(enumEntry.getEnumEntrySymbol())
     }
 
-    private val _modifierList by lazy {
+    private val _modifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightFieldForEnumEntry,
             lazyModifiers = lazyOf(setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)),
@@ -54,7 +54,7 @@ internal class SymbolLightFieldForEnumEntry(
 
     private val hasBody: Boolean get() = enumEntry.body != null
 
-    private val _initializingClass: PsiEnumConstantInitializer? by lazy {
+    private val _initializingClass: PsiEnumConstantInitializer? by lazyPub {
         hasBody.ifTrue {
             SymbolLightClassForEnumEntry(
                 enumConstant = this@SymbolLightFieldForEnumEntry,

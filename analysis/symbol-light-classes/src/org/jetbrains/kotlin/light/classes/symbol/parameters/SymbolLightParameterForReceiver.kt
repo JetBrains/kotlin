@@ -53,7 +53,7 @@ internal class SymbolLightParameterForReceiver private constructor(
         }
     }
 
-    private val _name: String by lazy {
+    private val _name: String by lazyPub {
         AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
     }
 
@@ -68,7 +68,7 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    private val _modifierList: PsiModifierList by lazy {
+    private val _modifierList: PsiModifierList by lazyPub {
         val lazyAnnotations: Lazy<List<SymbolLightAbstractAnnotation>> = lazyPub {
             withReceiverSymbol { receiver ->
                 buildList {
@@ -83,7 +83,7 @@ internal class SymbolLightParameterForReceiver private constructor(
         SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
-    private val _type: PsiType by lazy {
+    private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
             receiver.type.asPsiType(this@SymbolLightParameterForReceiver)
         } ?: nonExistentType()

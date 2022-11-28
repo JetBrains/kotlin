@@ -76,7 +76,7 @@ internal class SymbolLightFieldForProperty private constructor(
         }
     }
 
-    private val _isDeprecated: Boolean by lazy {
+    private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
             propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD)
         }
@@ -131,7 +131,7 @@ internal class SymbolLightFieldForProperty private constructor(
         )
     }
 
-    private val _modifierList: PsiModifierList by lazy {
+    private val _modifierList: PsiModifierList by lazyPub {
         val lazyModifiers = lazyPub { computeModifiers() }
         val lazyAnnotations = lazyPub { computeAnnotations() }
         SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)

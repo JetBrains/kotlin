@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifier
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
@@ -22,7 +23,7 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
     private val lazyModifiers: Lazy<Set<String>>,
     lazyAnnotations: Lazy<List<PsiAnnotation>>
 ) : SymbolLightModifierList<T>(containingDeclaration) {
-    private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazy {
+    private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
         lazyAnnotations.value.onEach { (it as? KtLightElementBase)?.parent = this }
     }
 

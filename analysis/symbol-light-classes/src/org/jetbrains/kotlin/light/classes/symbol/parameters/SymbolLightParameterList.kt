@@ -10,6 +10,7 @@ import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
@@ -29,7 +30,7 @@ internal class SymbolLightParameterList(
     override val kotlinOrigin: KtParameterList?
         get() = (parent.kotlinOrigin as? KtFunction)?.valueParameterList
 
-    private val clsDelegate: PsiParameterList by lazy {
+    private val clsDelegate: PsiParameterList by lazyPub {
         val builder = LightParameterListBuilder(manager, language)
 
         callableWithReceiverSymbolPointer?.let {

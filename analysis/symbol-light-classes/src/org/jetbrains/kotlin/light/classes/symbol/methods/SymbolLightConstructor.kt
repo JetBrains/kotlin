@@ -43,7 +43,7 @@ internal class SymbolLightConstructor(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
-    private val _modifierList: PsiModifierList by lazy {
+    private val _modifierList: PsiModifierList by lazyPub {
         val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
             withFunctionSymbol { constructorSymbol ->
                 constructorSymbol.computeAnnotations(
@@ -54,7 +54,7 @@ internal class SymbolLightConstructor(
             }
         }
 
-        val lazyModifiers: Lazy<Set<String>> = lazy {
+        val lazyModifiers: Lazy<Set<String>> = lazyPub {
             // FIR treats an enum entry as an anonymous object w/ its own ctor (not default one).
             // On the other hand, FE 1.0 doesn't add anything; then ULC adds default ctor w/ package local visibility.
             // Technically, an enum entry should not be instantiated anywhere else, and thus FIR's modeling makes sense.

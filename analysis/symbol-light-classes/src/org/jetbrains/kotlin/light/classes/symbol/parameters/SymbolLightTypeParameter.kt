@@ -158,7 +158,7 @@ internal class SymbolLightTypeParameter private constructor(
     override fun addAnnotation(qualifiedName: String): PsiAnnotation = cannotModify()
     //End of PsiClass simple implementation
 
-    private val _name: String by lazy {
+    private val _name: String by lazyPub {
         typeParameterDeclaration?.name ?: withTypeParameterSymbol { it.name.asString() }
     }
 

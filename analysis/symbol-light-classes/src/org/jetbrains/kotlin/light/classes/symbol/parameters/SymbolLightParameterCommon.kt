@@ -35,7 +35,7 @@ internal abstract class SymbolLightParameterCommon(
         kotlinOrigin = parameterSymbol.psiSafe(),
     )
 
-    private val _name: String by lazy {
+    private val _name: String by lazyPub {
         parameterSymbolPointer.withSymbol(ktModule) {
             it.name.asString()
         }
@@ -47,7 +47,7 @@ internal abstract class SymbolLightParameterCommon(
 
     abstract override fun getModifierList(): PsiModifierList
 
-    private val _identifier: PsiIdentifier by lazy {
+    private val _identifier: PsiIdentifier by lazyPub {
         KtLightIdentifier(this, parameterDeclaration)
     }
 
@@ -64,7 +64,7 @@ internal abstract class SymbolLightParameterCommon(
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
-    private val _type by lazy {
+    private val _type by lazyPub {
         parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
             val convertedType = run {
                 val ktType = parameterSymbol.returnType

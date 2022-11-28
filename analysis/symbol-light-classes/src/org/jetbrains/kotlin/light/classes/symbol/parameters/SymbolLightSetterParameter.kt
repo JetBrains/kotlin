@@ -33,7 +33,7 @@ internal class SymbolLightSetterParameter(
         return super.getName()
     }
 
-    private val isDefaultSetterParameter: Boolean by lazy {
+    private val isDefaultSetterParameter: Boolean by lazyPub {
         containingPropertySymbolPointer.withSymbol(ktModule) {
             it.setter?.isDefault != false
         }
@@ -41,7 +41,7 @@ internal class SymbolLightSetterParameter(
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    private val _modifierList: PsiModifierList by lazy {
+    private val _modifierList: PsiModifierList by lazyPub {
         val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
             analyzeForLightClasses(ktModule) {
                 val annotationsFromSetter = parameterSymbolPointer.restoreSymbolOrThrowIfDisposed().computeAnnotations(

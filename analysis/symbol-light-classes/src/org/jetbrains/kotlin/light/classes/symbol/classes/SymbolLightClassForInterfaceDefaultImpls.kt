@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 
@@ -32,7 +33,7 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
 
-    private val _modifierList: PsiModifierList? by lazy {
+    private val _modifierList: PsiModifierList? by lazyPub {
         val lazyModifiers = lazyOf(setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL))
         val lazyAnnotations = lazyOf(emptyList<PsiAnnotation>())
         SymbolLightClassModifierList(this, lazyModifiers, lazyAnnotations)

@@ -27,7 +27,7 @@ internal class SymbolLightParameter(
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    private val _modifierList: PsiModifierList by lazy {
+    private val _modifierList: PsiModifierList by lazyPub {
         val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
             val annotationSite = isConstructorParameterSymbol.ifTrue {
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
@@ -48,7 +48,7 @@ internal class SymbolLightParameter(
         SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
-    private val isVararg: Boolean by lazy {
+    private val isVararg: Boolean by lazyPub {
         parameterSymbolPointer.withSymbol(ktModule) { it.isVararg }
     }
 

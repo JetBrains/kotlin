@@ -119,7 +119,7 @@ internal class SymbolLightSimpleMethod(
         return modifiers
     }
 
-    private val _modifierList: PsiModifierList by lazy {
+    private val _modifierList: PsiModifierList by lazyPub {
         val lazyModifiers = lazyPub {
             withFunctionSymbol { functionSymbol ->
                 computeModifiers(functionSymbol)

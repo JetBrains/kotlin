@@ -45,7 +45,7 @@ private class SymbolNameValuePairForAnnotationArgument(
 
     override fun setValue(p0: PsiAnnotationMemberValue) = cannotModify()
 
-    private val _nameIdentifier: PsiIdentifier by lazy {
+    private val _nameIdentifier: PsiIdentifier by lazyPub {
         LightIdentifier(parent.manager, constantValue.name.asString())
     }
 

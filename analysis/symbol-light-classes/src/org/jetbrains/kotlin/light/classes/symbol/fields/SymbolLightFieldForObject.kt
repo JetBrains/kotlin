@@ -49,14 +49,14 @@ internal class SymbolLightFieldForObject private constructor(
 
     override fun getName(): String = name
 
-    private val _modifierList: PsiModifierList by lazy {
-        val lazyModifiers = lazy {
+    private val _modifierList: PsiModifierList by lazyPub {
+        val lazyModifiers = lazyPub {
             withObjectDeclarationSymbol { objectSymbol ->
                 setOf(objectSymbol.toPsiVisibilityForMember(), PsiModifier.STATIC, PsiModifier.FINAL)
             }
         }
 
-        val lazyAnnotations = lazy {
+        val lazyAnnotations = lazyPub {
             val notNullAnnotation = SymbolLightSimpleAnnotation(NotNull::class.java.name, this)
             listOf(notNullAnnotation)
         }
@@ -64,7 +64,7 @@ internal class SymbolLightFieldForObject private constructor(
         SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
-    private val _isDeprecated: Boolean by lazy {
+    private val _isDeprecated: Boolean by lazyPub {
         withObjectDeclarationSymbol { objectSymbol ->
             objectSymbol.hasDeprecatedAnnotation()
         }
