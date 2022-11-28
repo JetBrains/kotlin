@@ -83,27 +83,14 @@ open class DefaultInlineFunctionResolver(open val context: CommonBackendContext)
 
 class FunctionInlining(
     val context: CommonBackendContext,
-    val inlineFunctionResolver: InlineFunctionResolver,
-    val innerClassesSupport: InnerClassesSupport? = null,
-    val insertAdditionalImplicitCasts: Boolean = false,
-    val alwaysCreateTemporaryVariablesForArguments: Boolean = false,
-    val inlinePureArguments: Boolean = true,
-    val regenerateInlinedAnonymousObjects: Boolean = false,
-    val inlineArgumentsWithTheirOriginalTypeAndOffset: Boolean = false,
+    private val inlineFunctionResolver: InlineFunctionResolver = DefaultInlineFunctionResolver(context),
+    private val innerClassesSupport: InnerClassesSupport? = null,
+    private val insertAdditionalImplicitCasts: Boolean = false,
+    private val alwaysCreateTemporaryVariablesForArguments: Boolean = false,
+    private val inlinePureArguments: Boolean = true,
+    private val regenerateInlinedAnonymousObjects: Boolean = false,
+    private val inlineArgumentsWithTheirOriginalTypeAndOffset: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
-    constructor(context: CommonBackendContext) : this(context, DefaultInlineFunctionResolver(context), null)
-    constructor(context: CommonBackendContext, innerClassesSupport: InnerClassesSupport) : this(
-        context,
-        DefaultInlineFunctionResolver(context),
-        innerClassesSupport
-    )
-    constructor(context: CommonBackendContext, innerClassesSupport: InnerClassesSupport?, insertAdditionalImplicitCasts: Boolean) : this(
-        context,
-        DefaultInlineFunctionResolver(context),
-        innerClassesSupport,
-        insertAdditionalImplicitCasts
-    )
-
     private var containerScope: ScopeWithIr? = null
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
