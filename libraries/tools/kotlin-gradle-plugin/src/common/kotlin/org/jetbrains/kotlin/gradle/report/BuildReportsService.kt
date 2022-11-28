@@ -56,6 +56,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
         val startParameters: Property<GradleBuildStartParameters>
         val reportingSettings: Property<ReportingSettings>
         var buildMetricsService: Provider<BuildMetricsService>
+        val httpService: Property<HttpReportService>
 
         val projectDir: DirectoryProperty
         val label: Property<String?>
@@ -127,7 +128,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             gitBranch = branchName
         )
 
-        sendDataViaHttp(httpReportSettings, buildFinishData, log)
+        parameters.httpService.orNull?.sendData(buildFinishData, log)
     }
 
     private fun GradleBuildStartParameters.includeVerboseEnvironment(verboseEnvironment: Boolean): GradleBuildStartParameters {
@@ -145,7 +146,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     }
 
     private fun addHttpReport(event: FinishEvent?) {
-        if (parameters.reportingSettings.get().httpReportSettings != null) {
+        parameters.httpService.orNull?.also { httpService ->
             if (event is TaskFinishEvent) {
                 val data =
                     prepareData(
@@ -157,7 +158,11 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                         parameters.buildMetricsService.get().buildOperationRecords,
                         parameters.additionalTags.get()
                     )
-                data?.also {  parameters.reportingSettings.get().httpReportSettings?.also {  executorService.submit { sendDataViaHttp(it, data, log) } } }
+                data?.also {
+                    executorService.submit {
+                        httpService.sendData(data, log)
+                    }
+                }
             }
         }
 
@@ -316,6 +321,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                 it.parameters.kotlinVersion.set(kotlinVersion)
                 it.parameters.startParameters.set(getStartParameters(project))
                 it.parameters.reportingSettings.set(reportingSettings)
+                reportingSettings.httpReportSettings?.let { httpSettings -> it.parameters.httpService.set(HttpReportServiceImpl(httpSettings)) }
                 it.parameters.buildMetricsService = buildMetricsService
                 it.parameters.projectDir.set(project.rootProject.layout.projectDirectory)
 
