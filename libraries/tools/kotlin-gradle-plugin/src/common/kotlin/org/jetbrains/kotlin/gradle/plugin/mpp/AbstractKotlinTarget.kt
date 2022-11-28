@@ -9,9 +9,7 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.PublishArtifact
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
+import org.gradle.api.attributes.*
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
@@ -24,6 +22,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.UsageScope.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
@@ -106,16 +105,13 @@ abstract class AbstractKotlinTarget(
     internal open fun createUsageContexts(
         producingCompilation: KotlinCompilation<*>
     ): Set<DefaultKotlinUsageContext> {
-        // Here, the Java Usage values are used intentionally as Gradle needs this for
-        // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
-        // These Java usages should not be replaced with the custom Kotlin usages.
         return listOfNotNull(
-            javaApiUsageForMavenScoping() to apiElementsConfigurationName,
-            (JAVA_RUNTIME_JARS to runtimeElementsConfigurationName).takeIf { producingCompilation is KotlinCompilationToRunnableFiles }
-        ).mapTo(mutableSetOf()) { (usageName, dependenciesConfigurationName) ->
+            COMPILE to apiElementsConfigurationName,
+            (RUNTIME to runtimeElementsConfigurationName).takeIf { producingCompilation is KotlinCompilationToRunnableFiles }
+        ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
             DefaultKotlinUsageContext(
                 producingCompilation,
-                project.usageByName(usageName),
+                mavenScope,
                 dependenciesConfigurationName
             )
         }
@@ -202,12 +198,10 @@ internal fun Project.buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<
                     }
 
                 adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
-                    val mavenScope = when (kotlinUsageContext.usage.name) {
-                        "java-api-jars" -> "compile"
-                        "java-runtime-jars" -> "runtime"
-                        else -> error("unexpected usage value '${kotlinUsageContext.usage.name}'")
+                    val mavenScope = kotlinUsageContext.mavenDependenciesScope
+                    if (mavenScope != null) {
+                        configurationVariantDetails.mapToMavenScope(mavenScope)
                     }
-                    configurationVariantDetails.mapToMavenScope(mavenScope)
                 }
             }
         }

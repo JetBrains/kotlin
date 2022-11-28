@@ -19,6 +19,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.UsageScope
 import org.jetbrains.kotlin.gradle.utils.getValue
 
 internal data class ModuleCoordinates(
@@ -37,7 +38,7 @@ internal class PomDependenciesRewriter(
     // Get the dependencies mapping according to the component's UsageContexts:
     private val dependenciesMappingForEachUsageContext by project.provider {
         (component as SoftwareComponentInternal).usages.mapNotNull { usage ->
-            if (usage is KotlinUsageContext)
+            if (usage is KotlinUsageContext && usage.includeDependenciesToMavenPublication)
                 associateDependenciesWithActualModuleDependencies(usage)
                     // We are only interested in dependencies that are mapped to some other dependencies:
                     .filter { (from, to) -> Triple(from.group, from.name, from.version) != Triple(to.group, to.name, to.version) }
@@ -120,16 +121,16 @@ private fun associateDependenciesWithActualModuleDependencies(
             is KotlinJvmAndroidCompilation -> {
                 // TODO handle Android configuration names in a general way once we drop AGP < 3.0.0
                 val variantName = compilation.name
-                when (usageContext.usage.name) {
-                    Usage.JAVA_API, "java-api-jars" -> variantName + "CompileClasspath"
-                    Usage.JAVA_RUNTIME_JARS -> variantName + "RuntimeClasspath"
-                    else -> error("Unexpected Usage for usage context: ${usageContext.usage}")
+                when (usageContext.usageScope) {
+                    UsageScope.COMPILE -> variantName + "CompileClasspath"
+                    UsageScope.RUNTIME -> variantName + "RuntimeClasspath"
+                    null -> error("Usage for usage context is undefined")
                 }
             }
-            else -> when (usageContext.usage.name) {
-                Usage.JAVA_API, "java-api-jars" -> compilation.compileDependencyConfigurationName
-                Usage.JAVA_RUNTIME_JARS -> (compilation as KotlinCompilationToRunnableFiles).runtimeDependencyConfigurationName
-                else -> error("Unexpected Usage for usage context: ${usageContext.usage}")
+            else -> when (usageContext.usageScope) {
+                UsageScope.COMPILE -> compilation.compileDependencyConfigurationName
+                UsageScope.RUNTIME -> (compilation as KotlinCompilationToRunnableFiles).runtimeDependencyConfigurationName
+                null -> error("Usage for usage context is undefined")
             }
         }
     )
