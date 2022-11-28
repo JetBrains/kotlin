@@ -291,11 +291,14 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                 .toMutableMap()
 
             override fun visitSetField(expression: IrSetField): IrExpression {
+                val newExpression = super.visitSetField(expression)
                 val receiver = expression.receiver as? IrGetValue
-                if (receiver?.symbol == selfParameterSymbol) {
+
+                if (receiver?.symbol == boxParameterSymbol) {
                     meetCapturing = true
                 }
-                return super.visitSetField(expression)
+
+                return newExpression
             }
 
             override fun visitReturn(expression: IrReturn): IrExpression {
