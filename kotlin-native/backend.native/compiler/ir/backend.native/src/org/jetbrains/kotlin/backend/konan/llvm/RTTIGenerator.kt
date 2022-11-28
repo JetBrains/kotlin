@@ -99,9 +99,9 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
             classId: Int,
             writableTypeInfo: ConstPointer?,
             associatedObjects: ConstPointer?,
-            processObjectInMark: ConstPointer?) :
-
-            Struct(
+            processObjectInMark: ConstPointer?,
+            requiredAlignment: Int,
+    ) : Struct(
                     runtime.typeInfoType,
 
                     selfPtr,
@@ -138,7 +138,8 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
                     associatedObjects,
 
                     processObjectInMark,
-            )
+                    llvm.constInt32(requiredAlignment),
+    )
 
     private fun kotlinStringLiteral(string: String?): ConstPointer = if (string == null) {
         NullPointer(runtime.objHeaderType)
@@ -260,7 +261,8 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
                 processObjectInMark = when {
                     irClass.symbol == context.ir.symbols.array -> constPointer(llvm.Kotlin_processArrayInMark.llvmValue)
                     else -> genProcessObjectInMark(bodyType)
-                }
+                },
+                requiredAlignment = llvmDeclarations.alignment
         )
 
         val typeInfoGlobalValue = if (!irClass.typeInfoHasVtableAttached) {
@@ -434,9 +436,10 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
             class FieldRecord(val offset: Int, val type: Int, val name: String)
 
             val fields = context.getLayoutBuilder(irClass).getFields(llvm).map {
+                val index = llvmDeclarations.fieldIndices[it.irFieldSymbol]!!
                 FieldRecord(
-                        LLVMOffsetOfElement(llvmTargetData, bodyType, it.index).toInt(),
-                        mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, it.index)!!),
+                        LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(),
+                        mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, index)!!),
                         it.name)
             }
             val offsetsPtr = staticData.placeGlobalConstArray("kextoff:$className", llvm.int32Type,
@@ -563,6 +566,7 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
                 writableTypeInfo = writableTypeInfo,
                 associatedObjects = null,
                 processObjectInMark = genProcessObjectInMark(bodyType),
+                requiredAlignment = runtime.objectAlignment
               ), vtable)
 
         typeInfoWithVtableGlobal.setInitializer(typeInfoWithVtable)

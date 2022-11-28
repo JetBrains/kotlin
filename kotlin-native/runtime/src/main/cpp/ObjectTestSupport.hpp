@@ -30,6 +30,7 @@ private:
         std_support::vector<int32_t> objOffsets_;
         int32_t objOffsetsCount_ = 0;
         int32_t flags_ = 0;
+        int32_t instanceAlignment_ = 8;
         const TypeInfo* superType_ = nullptr;
         void (*processObjectInMark_)(void*, ObjHeader*) = nullptr;
     };
@@ -90,6 +91,7 @@ public:
         typeInfo_.processObjectInMark = builder.processObjectInMark_;
         typeInfo_.flags_ = builder.flags_;
         typeInfo_.superType_ = builder.superType_;
+        typeInfo_.instanceAlignment_ = builder.instanceAlignment_;
     }
 
     TypeInfo* typeInfo() noexcept { return &typeInfo_; }

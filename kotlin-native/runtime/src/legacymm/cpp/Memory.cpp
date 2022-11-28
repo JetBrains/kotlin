@@ -99,6 +99,7 @@ using container_size_t = size_t;
 // Granularity of arena container chunks.
 constexpr container_size_t kContainerAlignment = 1024;
 // Single object alignment.
+// Must match objectAlignment in Runtime.kt
 constexpr container_size_t kObjectAlignment = 8;
 
 // Required e.g. for object size computations to be correct.

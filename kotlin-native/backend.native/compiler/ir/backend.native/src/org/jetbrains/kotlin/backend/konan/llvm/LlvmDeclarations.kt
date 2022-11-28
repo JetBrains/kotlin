@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
+import org.jetbrains.kotlin.backend.konan.descriptors.requiredAlignment
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -61,32 +63,68 @@ internal class ClassLlvmDeclarations(
         val typeInfoGlobal: StaticData.Global,
         val writableTypeInfoGlobal: StaticData.Global?,
         val typeInfo: ConstPointer,
-        val objCDeclarations: KotlinObjCClassLlvmDeclarations?)
+        val objCDeclarations: KotlinObjCClassLlvmDeclarations?,
+        val alignment: Int,
+        val fieldIndices: Map<IrFieldSymbol, Int>
+)
 
 internal class KotlinObjCClassLlvmDeclarations(
         val classInfoGlobal: StaticData.Global,
         val bodyOffsetGlobal: StaticData.Global
 )
 
-internal class FieldLlvmDeclarations(val index: Int, val classBodyType: LLVMTypeRef)
+internal class FieldLlvmDeclarations(val index: Int, val classBodyType: LLVMTypeRef, val alignment: Int)
 
-internal class StaticFieldLlvmDeclarations(val storageAddressAccess: AddressAccess)
+internal class StaticFieldLlvmDeclarations(val storageAddressAccess: AddressAccess, val alignment: Int)
 
 internal class UniqueLlvmDeclarations(val pointer: ConstPointer)
 
-private fun ContextUtils.createClassBodyType(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): LLVMTypeRef {
-    val fieldTypes = listOf(runtime.objHeaderType) + fields.map { it.type.toLLVMType(llvm) }
-    // TODO: consider adding synthetic ObjHeader field to Any.
+internal data class ClassBodyAndAlignmentInfo(
+        val body: LLVMTypeRef,
+        val alignment: Int,
+        val fieldsIndices: Map<IrFieldSymbol, Int>
+)
 
+private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
+    val packed = fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
+    val alignment = maxOf(runtime.objectAlignment, fields.maxOfOrNull { it.alignment } ?: 0)
+    val indices = mutableMapOf<IrFieldSymbol, Int>()
 
-    // LLVMStructSetBody expects the struct to be properly aligned and will insert padding accordingly. In our case
-    // `allocInstance` returns 16x + 8 address, i.e. always misaligned for vector types. Workaround is to use packed struct.
-    val hasBigAlignment = fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) > 8 }
-    val packed = if (hasBigAlignment) 1 else 0
-    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, packed)
+    val fieldTypes = buildList {
+        var currentOffset = 0L
+        fun addAndCount(type: LLVMTypeRef) {
+            add(type)
+            currentOffset += LLVMStoreSizeOfType(runtime.targetData, type)
+        }
+        addAndCount(runtime.objHeaderType)
+        for (field in fields) {
+            if (packed) {
+                val offset = (currentOffset % field.alignment).toInt()
+                if (offset != 0) {
+                    val toInsert = field.alignment - offset
+                    addAndCount(LLVMArrayType(llvm.int8Type, toInsert)!!)
+                }
+                require(currentOffset % field.alignment == 0L)
+            }
+            indices[field.irFieldSymbol] = this.size
+            addAndCount(field.type.toLLVMType(llvm))
+        }
+    }
+    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, if (packed) 1 else 0)
 
-    return classType
+    context.logMultiple {
+        +"$name has following fields:"
+        for (i in fieldTypes.indices) {
+            +"  $i: ${llvmtype2string(fieldTypes[i])} at offset ${LLVMOffsetOfElement(runtime.targetData, classType, i)}"
+        }
+        +"  Overall llvm alignment is ${LLVMABIAlignmentOfType(runtime.targetData, classType)}"
+        +"  Overall required alignment is ${alignment}"
+        +"  Overall size is ${LLVMABISizeOfType(runtime.targetData, classType)}"
+        +"  Resulting type is ${llvmtype2string(classType)}"
+    }
+
+    return ClassBodyAndAlignmentInfo(classType, alignment, indices)
 }
 
 private class DeclarationsGeneratorVisitor(override val generationState: NativeGenerationState)
@@ -157,7 +195,12 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val internalName = qualifyInternalName(declaration)
 
         val fields = context.getLayoutBuilder(declaration).getFields(llvm)
-        val bodyType = createClassBodyType("kclassbody:$internalName", fields)
+        val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", fields)
+
+        require(alignment == runtime.objectAlignment) {
+            "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is $alignment"
+        }
+
 
         val typeInfoPtr: ConstPointer
         val typeInfoGlobal: StaticData.Global
@@ -233,7 +276,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             it.setZeroInitializer()
         }
 
-        return ClassLlvmDeclarations(bodyType, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr, objCDeclarations)
+        return ClassLlvmDeclarations(bodyType, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr, objCDeclarations, alignment, fieldIndices)
     }
 
     private fun createUniqueDeclarations(
@@ -273,6 +316,8 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         return KotlinObjCClassLlvmDeclarations(classInfoGlobal, bodyOffsetGlobal)
     }
 
+    private tailrec fun gcd(a: Long, b: Long) : Long = if (b == 0L) a else gcd(b, a % b)
+
     override fun visitField(declaration: IrField) {
         super.visitField(declaration)
 
@@ -281,29 +326,30 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? CodegenClassMetadata)?.llvm
                     ?: error(containingClass.descriptor.toString())
-            val allFields = context.getLayoutBuilder(containingClass).getFields(llvm)
-            val fieldInfo = allFields.firstOrNull { it.irField == declaration } ?: error("Field ${declaration.render()} is not found")
+            val index = classDeclarations.fieldIndices[declaration.symbol]!!
             declaration.metadata = CodegenInstanceFieldMetadata(
                     declaration.metadata?.name,
                     containingClass.konanLibrary,
                     FieldLlvmDeclarations(
-                            fieldInfo.index,
-                            classDeclarations.bodyType
+                            index,
+                            classDeclarations.bodyType,
+                            gcd(LLVMOffsetOfElement(llvm.runtime.targetData, classDeclarations.bodyType, index), llvm.runtime.objectAlignment.toLong()).toInt()
                     )
             )
         } else {
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
+            val alignmnet = declaration.requiredAlignment(context)
             val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
-                addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm))
+                addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet)
             } else {
-                addKotlinGlobal(name, declaration.type.toLLVMType(llvm), isExported = false)
+                addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
             }
 
             declaration.metadata = CodegenStaticFieldMetadata(
                     declaration.metadata?.name,
                     declaration.konanLibrary,
-                    StaticFieldLlvmDeclarations(storage)
+                    StaticFieldLlvmDeclarations(storage, alignmnet)
             )
         }
     }

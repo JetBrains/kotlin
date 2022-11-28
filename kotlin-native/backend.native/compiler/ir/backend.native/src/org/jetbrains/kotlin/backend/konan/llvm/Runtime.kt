@@ -70,4 +70,7 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
     val pointerAlignment: Int by lazy {
         LLVMABIAlignmentOfType(targetData, objHeaderPtrType)
     }
+
+    // Must match kObjectAlignment in runtime
+    val objectAlignment = 8
 }

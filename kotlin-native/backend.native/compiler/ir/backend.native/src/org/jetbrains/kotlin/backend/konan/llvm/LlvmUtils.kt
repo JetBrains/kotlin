@@ -241,23 +241,26 @@ internal class TLSAddressAccess(private val index: Int) : AddressAccess() {
     }
 }
 
-internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef): AddressAccess {
+internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, alignment: Int): AddressAccess {
     return if (isObjectType(type)) {
         val index = llvm.tlsCount++
+        require(llvm.runtime.pointerAlignment % alignment == 0)
         TLSAddressAccess(index)
     } else {
         // TODO: This will break if Workers get decoupled from host threads.
         GlobalAddressAccess(LLVMAddGlobal(llvm.module, type, name)!!.also {
             LLVMSetThreadLocalMode(it, llvm.tlsMode)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+            LLVMSetAlignment(it, alignment)
         })
     }
 }
 
-internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): AddressAccess {
+internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, alignment: Int, isExported: Boolean): AddressAccess {
     return GlobalAddressAccess(LLVMAddGlobal(llvm.module, type, name)!!.also {
         if (!isExported)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+        LLVMSetAlignment(it, alignment)
     })
 }
 

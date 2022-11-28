@@ -71,10 +71,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     fun createConstKotlinObject(type: IrClass, vararg fields: ConstValue): ConstPointer {
-        val typeInfo = type.typeInfoPtr
-        val objHeader = objHeader(typeInfo)
-
-        val global = this.placeGlobal("", llvm.struct(objHeader, *fields))
+        val global = this.placeGlobal("", createConstKotlinObjectBody(type, *fields))
         global.setUnnamedAddr(true)
         global.setConstant(true)
 
@@ -83,8 +80,10 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         return createRef(objHeaderPtr)
     }
 
-    fun createInitializer(type: IrClass, vararg fields: ConstValue): ConstValue =
-            llvm.struct(objHeader(type.typeInfoPtr), *fields)
+    fun createConstKotlinObjectBody(type: IrClass, vararg fields: ConstValue): ConstValue {
+        // TODO: handle padding here
+        return llvm.struct(objHeader(type.typeInfoPtr), *fields)
+    }
 
     fun createUniqueInstance(
             kind: UniqueKind, bodyType: LLVMTypeRef, typeInfo: ConstPointer): ConstPointer {

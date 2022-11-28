@@ -11,6 +11,7 @@
 
 namespace kotlin {
 
+// Must match objectAlignment in Runtime.kt
 constexpr size_t kObjectAlignment = 8;
 
 template <typename T>

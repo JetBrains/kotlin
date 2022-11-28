@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import llvm.LLVMABIAlignmentOfType
+import llvm.LLVMABISizeOfType
+import llvm.LLVMPreferredAlignmentOfType
 import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -259,13 +263,33 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
     }
 }
 
-internal fun IrField.toFieldInfo(): ClassLayoutBuilder.FieldInfo {
-    val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
-    require(!isConst || initializer?.expression is IrConst<*>) { "A const val field ${render()} must have constant initializer" }
-    return ClassLayoutBuilder.FieldInfo(name.asString(), type, isConst, this)
+internal fun IrField.requiredAlignment(context: Context) : Int {
+    val llvm = context.generationState.llvm
+    val llvmType = type.toLLVMType(llvm)
+    val abiAlignment = if (llvmType == llvm.vector128Type) {
+        8 // over-aligned objects are not supported now, and this worked somehow, so let's keep it as it for now
+    } else {
+        LLVMABIAlignmentOfType(llvm.runtime.targetData, llvmType)
+    }
+    return if (hasAnnotation(KonanFqNames.volatile)) {
+        val size = LLVMABISizeOfType(llvm.runtime.targetData, llvmType).toInt()
+        val alignment = maxOf(size, abiAlignment)
+        require(alignment % size == 0) { "Bad alignment of field ${render()}: abiAlignment = ${abiAlignment}, size = ${size}"}
+        require(alignment % abiAlignment == 0) { "Bad alignment of field ${render()}: abiAlignment = ${abiAlignment}, size = ${size}"}
+        alignment
+    } else {
+        abiAlignment
+    }
 }
 
+
 internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
+    private fun IrField.toFieldInfo(): FieldInfo {
+        val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
+        require(!isConst || initializer?.expression is IrConst<*>) { "A const val field ${render()} must have constant initializer" }
+        return FieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(context))
+    }
+
     val vtableEntries: List<OverriddenFunctionInfo> by lazy {
         require(!irClass.isInterface)
 
@@ -400,8 +424,12 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
     }
 
-    class FieldInfo(val name: String, val type: IrType, val isConst: Boolean, val irField: IrField?) {
-        var index = -1
+    class FieldInfo(val name: String, val type: IrType, val isConst: Boolean, val irFieldSymbol: IrFieldSymbol, val alignment: Int) {
+        val irField: IrField?
+            get() = if (irFieldSymbol.isBound) irFieldSymbol.owner else null
+        init {
+            require(alignment.countOneBits() == 1) { "Alignment should be power of 2" }
+        }
     }
 
     /**
@@ -413,7 +441,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         if (mappedField == fieldInfo.irField)
             fieldInfo
         else
-            mappedField!!.toFieldInfo().also { it.index = fieldInfo.index }
+            mappedField!!.toFieldInfo()
     }
 
     private var fields: List<FieldInfo>? = null
@@ -431,9 +459,6 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             declaredFields.sortedByDescending {
                 with(llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toLLVMType(this)) }
             }
-
-        val superFieldsCount = 1 /* First field is ObjHeader */ + superFields.size
-        sortedDeclaredFields.forEachIndexed { index, field -> field.index = superFieldsCount + index }
 
         return (superFields + sortedDeclaredFields).also { fields = it }
     }
@@ -492,7 +517,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             require(context.config.cachedLibraries.isLibraryCached(moduleDeserializer.klib)) {
                 "No IR and no cache for ${irClass.render()}"
             }
-            return moduleDeserializer.deserializeClassFields(irClass, outerThisField)
+            return moduleDeserializer.deserializeClassFields(irClass, outerThisField?.toFieldInfo())
         }
 
         val declarations = irClass.declarations.toMutableList()

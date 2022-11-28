@@ -90,6 +90,10 @@ struct InterfaceTableRecord {
 
 // This struct represents runtime type information and by itself is the compile time
 // constant.
+// When adding a field here do not forget to adjust:
+//   1. RTTIGenerator
+//   2. ObjectTestSupport TypeInfoHolder
+//   3. createTypeInfo in ObjcExport.mm
 struct TypeInfo {
     // Reference to self, to allow simple obtaining TypeInfo via meta-object.
     const TypeInfo* typeInfo_;
@@ -135,6 +139,10 @@ struct TypeInfo {
     // Invoked on an object during mark phase.
     // TODO: Consider providing a generic traverse method instead.
     void (*processObjectInMark)(void* state, ObjHeader* object);
+
+    // Required alignment of instance
+    uint32_t instanceAlignment_;
+
 
     // vtable starts just after declared contents of the TypeInfo:
     // void* const vtable_[];

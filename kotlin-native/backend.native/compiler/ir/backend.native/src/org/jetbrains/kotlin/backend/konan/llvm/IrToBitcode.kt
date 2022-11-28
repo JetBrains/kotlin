@@ -775,7 +775,8 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
     private fun getThreadLocalInitStateFor(container: IrDeclarationContainer): AddressAccess =
             llvm.initializersGenerationState.fileThreadLocalInitStates.getOrPut(container) {
-                codegen.addKotlinThreadLocal("state_thread_local$${container.initVariableSuffix}", llvm.int32Type).also {
+                codegen.addKotlinThreadLocal("state_thread_local$${container.initVariableSuffix}", llvm.int32Type,
+                        LLVMPreferredAlignmentOfType(llvm.runtime.targetData, llvm.int32Type)).also {
                     LLVMSetInitializer((it as GlobalAddressAccess).getAddress(null), llvm.int32(FILE_NOT_INITIALIZED))
                 }
             }
@@ -1663,19 +1664,18 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
     private fun evaluateGetField(value: IrGetField, resultSlot: LLVMValueRef?): LLVMValueRef {
         context.log { "evaluateGetField               : ${ir2string(value)}" }
-        val alignment = when {
-            value.type.classifierOrNull?.isClassWithFqName(vectorType) == true -> 8
-            else -> null
-        }
+        val alignment : Int
         val order = when {
             value.symbol.owner.hasAnnotation(KonanFqNames.volatile) ->
                 LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent
             else -> null
         }
+        val fieldAddress: LLVMValueRef
 
-        val fieldAddress = when {
+        when {
             !value.symbol.owner.isStatic -> {
-                fieldPtrOfClass(evaluateExpression(value.receiver!!), value.symbol.owner)
+                fieldAddress = fieldPtrOfClass(evaluateExpression(value.receiver!!), value.symbol.owner)
+                alignment = context.generationState.llvmDeclarations.forField(value.symbol.owner).alignment
             }
             value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true -> {
                 // TODO: probably can be removed, as they are inlined.
@@ -1685,10 +1685,12 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive(context)) {
                     functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
                 }
-                generationState.llvmDeclarations
+                val info = generationState.llvmDeclarations
                         .forStaticField(value.symbol.owner)
+                fieldAddress = info
                         .storageAddressAccess
                         .getAddress(functionGenerationContext)
+                alignment = info.alignment
             }
         }
         return functionGenerationContext.loadSlot(
@@ -1739,6 +1741,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
         val valueToAssign = evaluateExpression(value.value)
         val address: LLVMValueRef
+        val alignment: Int
         if (!value.symbol.owner.isStatic) {
             val thisPtr = evaluateExpression(value.receiver!!)
             assert(thisPtr.type == codegen.kObjHeaderPtr) {
@@ -1754,19 +1757,16 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 functionGenerationContext.call(llvm.checkLifetimesConstraint, listOf(thisPtr, valueToAssign))
             }
             address = fieldPtrOfClass(thisPtr, value.symbol.owner)
+            alignment = context.generationState.llvmDeclarations.forField(value.symbol.owner).alignment
         } else {
             assert(value.receiver == null)
             if (context.config.threadsAreAllowed && value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.shouldBeFrozen(context) && value.origin != ObjectClassLowering.IrStatementOriginFieldPreInit)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
-            address = generationState.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
-                    functionGenerationContext
-            )
-        }
-        val alignment = when {
-            value.value.type.classifierOrNull?.isClassWithFqName(vectorType) == true -> 8
-            else -> null
+            val info = generationState.llvmDeclarations.forStaticField(value.symbol.owner)
+            address = info.storageAddressAccess.getAddress(functionGenerationContext)
+            alignment = info.alignment
         }
         functionGenerationContext.storeAny(
                 valueToAssign, address, false,

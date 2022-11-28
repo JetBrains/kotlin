@@ -261,9 +261,11 @@ internal class StackLocalsManagerImpl(
             if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr) else null
 
     override fun alloc(irClass: IrClass, cleanFieldsExplicitly: Boolean): LLVMValueRef = with(functionGenerationContext) {
-        val type = llvmDeclarations.forClass(irClass).bodyType
+        val classInfo = llvmDeclarations.forClass(irClass)
+        val type = classInfo.bodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
+            LLVMSetAlignment(stackSlot, classInfo.alignment)
 
             memset(bitcast(llvm.int8PtrType, stackSlot), 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
 
@@ -348,9 +350,9 @@ internal class StackLocalsManagerImpl(
             if (stackLocal.irClass.symbol == context.ir.symbols.array)
                 call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
         } else {
-            val type = llvmDeclarations.forClass(stackLocal.irClass).bodyType
-            for (field in context.getLayoutBuilder(stackLocal.irClass).getFields(llvm)) {
-                val fieldIndex = field.index
+            val info = llvmDeclarations.forClass(stackLocal.irClass)
+            val type = info.bodyType
+            for (fieldIndex in info.fieldIndices.values.sorted()) {
                 val fieldType = LLVMStructGetTypeAtIndex(type, fieldIndex)!!
 
                 if (isObjectType(fieldType)) {
@@ -623,7 +625,7 @@ internal abstract class FunctionGenerationContext(
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
                           isVolatile: Boolean = false, alignment: Int? = null) {
-        require(alignment == null || alignment == runtime.pointerAlignment)
+        require(alignment == null || alignment % runtime.pointerAlignment == 0)
         if (onStack) {
             require(!isVolatile) { "Stack ref update can't be volatile"}
             if (context.memoryModel == MemoryModel.STRICT)
@@ -773,17 +775,17 @@ internal abstract class FunctionGenerationContext(
         }
     }
 
-    fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef =
+    fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime, resultSlot: LLVMValueRef?) : LLVMValueRef =
             call(llvm.allocInstanceFunction, listOf(typeInfo), lifetime, resultSlot = resultSlot)
 
     fun allocInstance(irClass: IrClass, lifetime: Lifetime, stackLocalsManager: StackLocalsManager, resultSlot: LLVMValueRef?) =
-            if (lifetime == Lifetime.STACK)
-                stackLocalsManager.alloc(irClass,
-                        // In case the allocation is not from the root scope, fields must be cleaned up explicitly,
-                        // as the object might be being reused.
-                        cleanFieldsExplicitly = stackLocalsManager != this.stackLocalsManager)
-            else
-                allocInstance(codegen.typeInfoForAllocation(irClass), lifetime, resultSlot)
+        if (lifetime == Lifetime.STACK)
+            stackLocalsManager.alloc(irClass,
+                    // In case the allocation is not from the root scope, fields must be cleaned up explicitly,
+                    // as the object might be being reused.
+                    cleanFieldsExplicitly = stackLocalsManager != this.stackLocalsManager)
+        else
+            allocInstance(codegen.typeInfoForAllocation(irClass), lifetime, resultSlot)
 
     fun allocArray(
         irClass: IrClass,
