@@ -1,6 +1,4 @@
-warning: ATTENTION!
- This build uses experimental K2 compiler:
-  -Xuse-k2
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/jvm/conflictingProjection.kt:10:19: error: projection is conflicting with variance of the corresponding type parameter of Out<in kotlin/Int>. Remove the projection or replace it with '*'
 fun a8(value: Out<in Int>) {}
                   ^

@@ -138,7 +138,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
     private fun String.removeFirWarning(): String {
         return this.replace(
-            "warning: ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2\n", ""
+            "warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features\n", ""
         )
     }
 

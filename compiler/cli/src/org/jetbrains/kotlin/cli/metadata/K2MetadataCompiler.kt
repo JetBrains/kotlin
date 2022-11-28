@@ -59,7 +59,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     ): ExitCode {
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            collector.report(ERROR, "K2 does not support compilation to metadata right now")
+            collector.report(ERROR, "Compilation to metadata is not supported in language version 2.0 right now")
             return ExitCode.COMPILATION_ERROR
         }
         val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)

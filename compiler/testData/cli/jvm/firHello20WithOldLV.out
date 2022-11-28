@@ -1,0 +1,3 @@
+warning: with -Xuse-k2 compiler flag -language-version 1.5 has no effect, please remove -Xuse-k2 flag or use -language-version 2.0 instead
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
+OK

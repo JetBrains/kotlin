@@ -1,6 +1,7 @@
 $TESTDATA_DIR$/firVsClassicAnnotation.kt
 -classpath
 $TESTDATA_DIR$/firVsClassicAnnotation
--Xuse-k2
+-language-version
+2.0
 -d
 $TEMP_DIR$

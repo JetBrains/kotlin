@@ -1,2 +1,3 @@
-error: k2 does not support compilation to metadata right now
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
+error: compilation to metadata is not supported in language version 2.0 right now
 COMPILATION_ERROR

@@ -71,7 +71,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
         if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
             configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.report(
                 CompilerMessageSeverity.ERROR,
-                "kapt currently doesn't support experimental K2 compiler\nDisable K2 compiler by removing -Xuse-k2 flag"
+                "kapt currently doesn't support language version 2.0\nPlease use language version 1.* (e.g. 1.9) instead"
             )
         }
 

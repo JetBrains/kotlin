@@ -282,6 +282,11 @@ enum class LanguageFeature(
     ValueClassesSecondaryConstructorWithBody(sinceVersion = KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-55333
     NativeJsProhibitLateinitIsInitalizedIntrinsicWithoutPrivateAccess(KOTLIN_1_9, kind = BUG_FIX), // KT-27002
 
+    // End of 1.* language features --------------------------------------------------
+
+    // 2.0
+
+    // End of 2.* language features --------------------------------------------------
 
     // This feature effectively might be removed because we decided to disable it until K2 and there it will be unconditionally enabled.
     // But we leave it here just to minimize the changes in K1 and also to allow use the feature once somebody needs it.
@@ -414,10 +419,15 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_1_7(1, 7),
     KOTLIN_1_8(1, 8),
     KOTLIN_1_9(1, 9),
+
+    KOTLIN_2_0(2, 0),
     ;
 
     override val isStable: Boolean
         get() = this <= LATEST_STABLE
+
+    val usesK2: Boolean
+        get() = this >= KOTLIN_2_0
 
     override val isDeprecated: Boolean
         get() = FIRST_SUPPORTED <= this && this < FIRST_NON_DEPRECATED
@@ -498,6 +508,8 @@ interface LanguageVersionSettings {
     // Please do not use this to enable/disable specific features/checks. Instead add a new LanguageFeature entry and call supportsFeature
     val languageVersion: LanguageVersion
 
+    fun copy(languageVersion: LanguageVersion): LanguageVersionSettings = this
+
     companion object {
         const val RESOURCE_NAME_TO_ALLOW_READING_FROM_ENVIRONMENT = "META-INF/allow-configuring-from-environment"
     }
@@ -545,6 +557,9 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
             specificFeatures.any { (feature, state) ->
                 state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()
             }
+
+    override fun copy(languageVersion: LanguageVersion): LanguageVersionSettings =
+        LanguageVersionSettingsImpl(languageVersion, apiVersion, analysisFlags, specificFeatures)
 
     companion object {
         @JvmField

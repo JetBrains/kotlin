@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/firHello20.kt
+-Xuse-k2
+-language-version
+1.5
+-d
+$TEMP_DIR$

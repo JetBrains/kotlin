@@ -1,4 +1,4 @@
-$TESTDATA_DIR$/fir.kt
+$TESTDATA_DIR$/firHello20.kt
 -language-version
 2.0
 -d

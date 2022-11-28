@@ -99,11 +99,6 @@ fun compileModulesUsingFrontendIrAndLightTree(
 
     performanceManager?.notifyCompilerInitialized(0, 0, targetDescription)
 
-    messageCollector.report(
-        CompilerMessageSeverity.STRONG_WARNING,
-        "ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2"
-    )
-
     val outputs = mutableListOf<GenerationState>()
     var mainClassFqName: FqName? = null
 

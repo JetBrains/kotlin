@@ -1,4 +1,5 @@
 $TESTDATA_DIR$/firError.kt
--Xuse-k2
+-language-version
+2.0
 -d
 $TEMP_DIR$

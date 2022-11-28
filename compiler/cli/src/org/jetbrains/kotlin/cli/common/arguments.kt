@@ -22,8 +22,6 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
-    put(CommonConfigurationKeys.USE_FIR, arguments.useK2)
-    put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
     put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
     put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, arguments.expectActualLinker)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
@@ -45,6 +43,10 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     }
 
     setupLanguageVersionSettings(arguments)
+
+    val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
+    put(CommonConfigurationKeys.USE_FIR, usesK2)
+    put(CommonConfigurationKeys.USE_LIGHT_TREE, usesK2)
 }
 
 fun <A : CommonCompilerArguments> CompilerConfiguration.setupLanguageVersionSettings(arguments: A) {

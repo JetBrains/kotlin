@@ -1,6 +1,4 @@
-warning: ATTENTION!
- This build uses experimental K2 compiler:
-  -Xuse-k2
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:26: error: unresolved reference: getSomeInt
     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
                          ^

@@ -1,5 +1,3 @@
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 warning: argument -Xcompiler-plugin is experimental
-warning: ATTENTION!
- This build uses experimental K2 compiler:
-  -Xuse-k2
 OK

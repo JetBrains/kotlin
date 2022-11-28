@@ -2,4 +2,5 @@ $TESTDATA_DIR$/optInOverrideMessageFir.kt
 -d
 $TEMP_DIR$
 -opt-in=kotlin.RequiresOptIn
--Xuse-k2
+-language-version
+2.0

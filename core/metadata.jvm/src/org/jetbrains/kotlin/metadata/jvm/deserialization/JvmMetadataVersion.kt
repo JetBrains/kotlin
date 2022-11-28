@@ -21,7 +21,11 @@ class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean)
                     isCompatibleTo(INSTANCE)
                 } else {
                     // Kotlin 1.N is able to read metadata of versions up to Kotlin 1.{N+1} (unless the version has strict semantics).
-                    major == INSTANCE.major && minor <= INSTANCE.minor + 1
+                    // Kotlin 1.9 is able to read Kotlin 2.0
+                    // Kotlin K.* is able to read Kotlin M.* if K > M
+                    major == INSTANCE.major && minor <= INSTANCE.minor + 1 ||
+                            major == 2 && INSTANCE.major == 1 && minor == 9 ||
+                            major < INSTANCE.major
                 }
 
     companion object {

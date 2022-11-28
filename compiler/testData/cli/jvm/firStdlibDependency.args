@@ -1,5 +1,6 @@
 $TESTDATA_DIR$/firStdlibDependency.kt
--Xuse-k2
+-language-version
+2.0
 -cp
 .
 -d

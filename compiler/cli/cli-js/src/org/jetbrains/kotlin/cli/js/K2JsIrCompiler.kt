@@ -287,11 +287,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val outputKlibPath =
                 if (arguments.irProduceKlibFile) outputDir.resolve("$outputName.klib").normalize().absolutePath
                 else outputDirPath
-            if (arguments.useK2) {
-                messageCollector.report(
-                    STRONG_WARNING,
-                    "ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2"
-                )
+            if (configuration.get(CommonConfigurationKeys.USE_FIR) == true) {
                 sourceModule = processSourceModuleWithK2(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
             } else {
                 sourceModule = processSourceModule(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)

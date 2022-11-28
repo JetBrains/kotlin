@@ -1,6 +1,7 @@
 -d
 $TEMP_DIR$
--Xuse-k2
+-language-version
+2.0
 -Xcompiler-plugin=dist/kotlinc/lib/allopen-compiler-plugin.jar=annotation=foo.AllOpen
 -Xcompiler-plugin=dist/kotlinc/lib/noarg-compiler-plugin.jar=annotation=foo.NoArg
 $TESTDATA_DIR$/multiplePlugins.kt

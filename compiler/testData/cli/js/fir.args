@@ -1,5 +1,6 @@
 $TESTDATA_DIR$/fir.kt
--Xuse-k2
+-language-version
+2.0
 -ir-output-dir
 $TEMP_DIR$
 -ir-output-name

@@ -1,8 +1,8 @@
 -d
 $TEMP_DIR$
 -Xcompiler-plugin=dist/kotlinc/lib/noarg-compiler-plugin.jar=annotation=foo.NoArg
--Xuse-k2
-
+-language-version
+2.0
 -Xplugin=dist/kotlinc/lib/allopen-compiler-plugin.jar
 -P
 plugin\:org.jetbrains.kotlin.allopen\:annotation=foo.AllOpen
