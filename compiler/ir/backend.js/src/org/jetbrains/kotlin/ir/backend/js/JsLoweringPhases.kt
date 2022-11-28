@@ -255,7 +255,7 @@ private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeBodyLo
 )
 
 private val functionInliningPhase = makeBodyLoweringPhase(
-    { FunctionInlining(it, it.innerClassesSupport) },
+    { FunctionInlining(it, innerClassesSupport = it.innerClassesSupport) },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
     prerequisite = setOf(
