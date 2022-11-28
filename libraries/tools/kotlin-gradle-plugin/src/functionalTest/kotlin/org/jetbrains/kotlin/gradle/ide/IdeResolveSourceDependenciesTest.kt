@@ -95,9 +95,6 @@ class IdeResolveSourceDependenciesTest {
         )
 
         consumer.resolveDependencies("linuxX64Main").assertMatches(
-            regularSourceDependency(":producer/commonMain"),
-            regularSourceDependency(":producer/nativeMain"),
-            regularSourceDependency(":producer/linuxMain"),
             dependsOnDependency(":consumer/commonMain"),
             dependsOnDependency(":consumer/nativeMain"),
             dependsOnDependency(":consumer/linuxMain"),
@@ -105,9 +102,6 @@ class IdeResolveSourceDependenciesTest {
         )
 
         consumer.resolveDependencies("linuxX64Test").assertMatches(
-            regularSourceDependency(":producer/commonMain"),
-            regularSourceDependency(":producer/nativeMain"),
-            regularSourceDependency(":producer/linuxMain"),
             friendSourceDependency(":consumer/commonMain"),
             friendSourceDependency(":consumer/nativeMain"),
             friendSourceDependency(":consumer/linuxMain"),
@@ -119,9 +113,6 @@ class IdeResolveSourceDependenciesTest {
         )
 
         consumer.resolveDependencies("linuxArm64Main").assertMatches(
-            regularSourceDependency(":producer/commonMain"),
-            regularSourceDependency(":producer/nativeMain"),
-            regularSourceDependency(":producer/linuxMain"),
             dependsOnDependency(":consumer/commonMain"),
             dependsOnDependency(":consumer/nativeMain"),
             dependsOnDependency(":consumer/linuxMain"),
@@ -129,9 +120,6 @@ class IdeResolveSourceDependenciesTest {
         )
 
         consumer.resolveDependencies("linuxArm64Test").assertMatches(
-            regularSourceDependency(":producer/commonMain"),
-            regularSourceDependency(":producer/nativeMain"),
-            regularSourceDependency(":producer/linuxMain"),
             friendSourceDependency(":consumer/commonMain"),
             friendSourceDependency(":consumer/nativeMain"),
             friendSourceDependency(":consumer/linuxMain"),

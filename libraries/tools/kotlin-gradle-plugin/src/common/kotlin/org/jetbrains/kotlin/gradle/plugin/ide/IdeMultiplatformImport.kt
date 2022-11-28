@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
@@ -19,8 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Default
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.tooling.core.Extras
@@ -139,9 +140,14 @@ interface IdeMultiplatformImport {
 
         companion object {
             val unconstrained = SourceSetConstraint { true }
+
             val isNative = SourceSetConstraint { sourceSet -> isNativeSourceSet(sourceSet) }
-            val isMetadata = SourceSetConstraint { sourceSet -> sourceSet.internal.compilations.any { it is KotlinMetadataCompilation } }
-            val isPlatform = !isMetadata and SourceSetConstraint { sourceSet -> sourceSet.internal.compilations.any() }
+
+            val isLeaf = SourceSetConstraint { sourceSet ->
+                (sourceSet.project.multiplatformExtensionOrNull ?: return@SourceSetConstraint true).sourceSets
+                    .none { otherSourceSet -> sourceSet in otherSourceSet.dependsOn }
+            }
+
             val isJvmAndAndroid = SourceSetConstraint { sourceSet ->
                 sourceSet.internal.compilations.map { it.platformType }.toSet() == setOf(jvm, androidJvm)
             }
