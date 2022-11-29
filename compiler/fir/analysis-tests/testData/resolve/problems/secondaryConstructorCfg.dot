@@ -90,14 +90,14 @@ digraph secondaryConstructorCfg_kt {
         31 [label="Exit class B" style="filled" fillcolor=red];
     }
     27 -> {28} [color=green];
-    28 -> {29} [style=dotted];
     28 -> {3} [color=green];
+    28 -> {29} [style=dotted];
     28 -> {3} [style=dashed];
-    29 -> {30} [style=dotted];
     29 -> {6} [color=green];
+    29 -> {30} [style=dotted];
     29 -> {6} [style=dashed];
-    30 -> {31} [style=dotted];
     30 -> {18} [color=green];
+    30 -> {31} [style=dotted];
     30 -> {18} [style=dashed];
 
 }

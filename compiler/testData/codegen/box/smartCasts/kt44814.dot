@@ -83,14 +83,14 @@ digraph kt44814_kt {
         26 [label="Exit class FirPsiSourceElement [1]" style="filled" fillcolor=red];
     }
     22 -> {23} [color=green];
-    23 -> {24} [style=dotted];
     23 -> {13} [color=green];
+    23 -> {24} [style=dotted];
     23 -> {13} [style=dashed];
-    24 -> {25} [style=dotted];
     24 -> {16} [color=green];
+    24 -> {25} [style=dotted];
     24 -> {16} [style=dashed];
-    25 -> {26} [style=dotted];
     25 -> {19} [color=green];
+    25 -> {26} [style=dotted];
     25 -> {19} [style=dashed];
 
     subgraph cluster_9 {
@@ -130,11 +130,11 @@ digraph kt44814_kt {
         39 [label="Exit class FirLightSourceElement [1]" style="filled" fillcolor=red];
     }
     36 -> {37} [color=green];
-    37 -> {38} [style=dotted];
     37 -> {30} [color=green];
+    37 -> {38} [style=dotted];
     37 -> {30} [style=dashed];
-    38 -> {39} [style=dotted];
     38 -> {33} [color=green];
+    38 -> {39} [style=dotted];
     38 -> {33} [style=dashed];
 
     subgraph cluster_13 {
@@ -181,7 +181,7 @@ digraph kt44814_kt {
         51 [label="Delegated constructor call: super<R|kotlin/Any|>() [2]" style="filled" fillcolor=yellow];
         52 [label="Exit function <init> [2]" style="filled" fillcolor=red];
     }
-    50 -> {53 51};
+    50 -> {51 53};
     51 -> {52};
     53 -> {54};
     53 -> {53} [style=dashed];
@@ -238,11 +238,11 @@ digraph kt44814_kt {
         73 [label="Exit class LighterASTNode [1]" style="filled" fillcolor=red];
     }
     70 -> {71} [color=green];
-    71 -> {72} [style=dotted];
     71 -> {56} [color=green];
+    71 -> {72} [style=dotted];
     71 -> {56} [style=dashed];
-    72 -> {73} [style=dotted];
     72 -> {66} [color=green];
+    72 -> {73} [style=dotted];
     72 -> {66} [style=dashed];
 
     subgraph cluster_24 {
@@ -280,8 +280,8 @@ digraph kt44814_kt {
         85 [label="Exit class Companion [2]" style="filled" fillcolor=red];
     }
     83 -> {84} [color=green];
-    84 -> {85} [style=dotted];
     84 -> {80} [color=green];
+    84 -> {85} [style=dotted];
     84 -> {80} [style=dashed];
 
     subgraph cluster_28 {
@@ -349,8 +349,8 @@ digraph kt44814_kt {
         106 [label="Exit class KtModifierListOwner [1]" style="filled" fillcolor=red];
     }
     104 -> {105} [color=green];
-    105 -> {106} [style=dotted];
     105 -> {101} [color=green];
+    105 -> {106} [style=dotted];
     105 -> {101} [style=dashed];
 
     subgraph cluster_36 {
@@ -432,8 +432,8 @@ digraph kt44814_kt {
         133 [label="Exit class FirLightModifier [2]" style="filled" fillcolor=red];
     }
     131 -> {132} [color=green];
-    132 -> {133} [style=dotted];
     132 -> {128} [color=green];
+    132 -> {133} [style=dotted];
     132 -> {128} [style=dashed];
 
     subgraph cluster_44 {
@@ -444,11 +444,11 @@ digraph kt44814_kt {
         137 [label="Exit class FirModifier [1]" style="filled" fillcolor=red];
     }
     134 -> {135} [color=green];
-    135 -> {136} [style=dotted];
     135 -> {110} [color=green];
+    135 -> {136} [style=dotted];
     135 -> {110} [style=dashed];
-    136 -> {137} [style=dotted];
     136 -> {113} [color=green];
+    136 -> {137} [style=dotted];
     136 -> {113} [style=dashed];
 
     subgraph cluster_45 {
@@ -496,8 +496,8 @@ digraph kt44814_kt {
         152 [label="Exit class FirPsiModifierList [2]" style="filled" fillcolor=red];
     }
     150 -> {151} [color=green];
-    151 -> {152} [style=dotted];
     151 -> {147} [color=green];
+    151 -> {152} [style=dotted];
     151 -> {147} [style=dashed];
 
     subgraph cluster_50 {
@@ -537,11 +537,11 @@ digraph kt44814_kt {
         165 [label="Exit class FirLightModifierList [2]" style="filled" fillcolor=red];
     }
     162 -> {163} [color=green];
-    163 -> {164} [style=dotted];
     163 -> {156} [color=green];
+    163 -> {164} [style=dotted];
     163 -> {156} [style=dashed];
-    164 -> {165} [style=dotted];
     164 -> {159} [color=green];
+    164 -> {165} [style=dotted];
     164 -> {159} [style=dashed];
 
     subgraph cluster_54 {
@@ -698,11 +698,11 @@ digraph kt44814_kt {
     174 -> {175};
     175 -> {176};
     176 -> {177};
-    177 -> {222 178};
+    177 -> {178 222};
     178 -> {179};
     179 -> {180};
     180 -> {181};
-    181 -> {207 182};
+    181 -> {182 207};
     182 -> {183};
     183 -> {184};
     184 -> {185};
@@ -712,12 +712,12 @@ digraph kt44814_kt {
     188 -> {189};
     189 -> {190};
     190 -> {191};
-    191 -> {192 238 193};
+    191 -> {192 193 238};
     191 -> {238} [style=dashed];
     192 -> {193};
     192 -> {191} [color=green style=dashed];
     193 -> {194};
-    194 -> {199 195};
+    194 -> {195 199};
     195 -> {196};
     196 -> {197};
     197 -> {231};
@@ -736,16 +736,16 @@ digraph kt44814_kt {
     209 -> {210};
     210 -> {211 217};
     211 -> {212};
-    212 -> {217 213};
+    212 -> {213 217};
     213 -> {214};
-    214 -> {232 216};
+    214 -> {216 232};
     214 -> {215} [style=dotted];
     214 -> {232} [style=dashed];
-    215 -> {221} [color=red];
     215 -> {216} [color=green];
+    215 -> {221} [color=red];
     216 -> {218};
     217 -> {218};
-    218 -> {221 219};
+    218 -> {219 221};
     219 -> {220};
     220 -> {227};
     221 -> {227} [color=red];
@@ -854,7 +854,7 @@ digraph kt44814_kt {
     261 -> {262};
     262 -> {263};
     263 -> {264};
-    264 -> {272 265};
+    264 -> {265 272};
     265 -> {266};
     266 -> {267};
     267 -> {268};
@@ -887,8 +887,8 @@ digraph kt44814_kt {
         286 [label="Exit class FirModifierList [1]" style="filled" fillcolor=red];
     }
     284 -> {285} [color=green];
-    285 -> {286} [style=dotted];
     285 -> {141} [color=green];
+    285 -> {286} [style=dotted];
     285 -> {141} [style=dashed];
 
     subgraph cluster_77 {

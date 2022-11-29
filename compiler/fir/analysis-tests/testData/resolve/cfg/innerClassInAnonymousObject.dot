@@ -57,8 +57,8 @@ digraph innerClassInAnonymousObject_kt {
     }
     14 -> {15};
     14 -> {0 3 6} [color=red];
-    15 -> {16} [color=red];
     15 -> {12} [color=green];
+    15 -> {16} [color=red];
     15 -> {12} [style=dashed];
     16 -> {17};
     16 -> {0} [color=green];

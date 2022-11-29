@@ -100,7 +100,7 @@ digraph propertiesAndInitBlocks_kt {
     39 -> {40};
     40 -> {41};
     41 -> {42};
-    42 -> {45}    [label=onUncaughtException];
+    42 -> {45} [label="onUncaughtException"];
     42 -> {43} [style=dotted];
     43 -> {44} [style=dotted];
     44 -> {45} [style=dotted];
@@ -131,7 +131,7 @@ digraph propertiesAndInitBlocks_kt {
     49 -> {50};
     50 -> {51};
     51 -> {52};
-    52 -> {56}    [label=onUncaughtException];
+    52 -> {56} [label="onUncaughtException"];
     52 -> {53} [style=dotted];
     53 -> {54} [style=dotted];
     54 -> {55} [style=dotted];
@@ -159,12 +159,12 @@ digraph propertiesAndInitBlocks_kt {
     58 -> {59};
     58 -> {65 68} [color=red];
     59 -> {60};
-    59 -> {65 62} [color=green];
-    59 -> {65 62} [style=dashed];
+    59 -> {62 65} [color=green];
+    59 -> {62 65} [style=dashed];
     60 -> {61};
     62 -> {63} [color=green];
-    63 -> {64} [style=dotted];
     63 -> {68} [color=green];
+    63 -> {64} [style=dotted];
     63 -> {68} [style=dashed];
 
     subgraph cluster_16 {
@@ -192,7 +192,7 @@ digraph propertiesAndInitBlocks_kt {
     68 -> {69};
     69 -> {70};
     70 -> {71};
-    71 -> {74}    [label=onUncaughtException];
+    71 -> {74} [label="onUncaughtException"];
     71 -> {72} [style=dotted];
     72 -> {73} [style=dotted];
     73 -> {74} [style=dotted];
@@ -227,7 +227,7 @@ digraph propertiesAndInitBlocks_kt {
         79 [label="Exit property" style="filled" fillcolor=red];
     }
     75 -> {76};
-    76 -> {77 24 78};
+    76 -> {24 77 78};
     76 -> {24} [style=dashed];
     77 -> {78};
     77 -> {76} [color=green style=dashed];
@@ -236,17 +236,17 @@ digraph propertiesAndInitBlocks_kt {
     25 -> {26};
     25 -> {35 46 49} [color=red];
     26 -> {27};
-    26 -> {46 32} [color=green];
-    26 -> {46 32} [style=dashed];
+    26 -> {32 46} [color=green];
+    26 -> {32 46} [style=dashed];
     27 -> {28};
-    28 -> {79}    [label=onUncaughtException];
+    28 -> {79} [label="onUncaughtException"];
     28 -> {29} [style=dotted];
     29 -> {30} [style=dotted];
     30 -> {31} [style=dotted];
     31 -> {77} [style=dotted];
     32 -> {33} [color=green];
-    33 -> {34} [style=dotted];
     33 -> {49} [color=green];
+    33 -> {34} [style=dotted];
     33 -> {49} [style=dashed];
 
     subgraph cluster_23 {
@@ -295,14 +295,14 @@ digraph propertiesAndInitBlocks_kt {
     }
     80 -> {81};
     81 -> {82 87};
-    81 -> {93}    [label=onUncaughtException];
+    81 -> {93} [label="onUncaughtException"];
     82 -> {83};
     83 -> {84};
     84 -> {85};
     85 -> {86};
-    86 -> {93 87};
+    86 -> {87 93};
     87 -> {88};
-    87 -> {93}    [label=onUncaughtException];
+    87 -> {93} [label="onUncaughtException"];
     88 -> {89};
     89 -> {90};
     90 -> {91};
@@ -313,7 +313,7 @@ digraph propertiesAndInitBlocks_kt {
     95 -> {96};
     96 -> {97};
     97 -> {98};
-    97 -> {99}    [label=onUncaughtException];
+    97 -> {99} [label="onUncaughtException"];
     98 -> {99};
 
 }

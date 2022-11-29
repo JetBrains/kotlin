@@ -91,7 +91,7 @@ digraph returnValuesFromLambda_kt {
     }
     12 -> {13};
     13 -> {14};
-    14 -> {20 16};
+    14 -> {16 20};
     14 -> {15} [style=dotted];
     14 -> {20} [style=dashed];
     15 -> {16};
@@ -103,7 +103,7 @@ digraph returnValuesFromLambda_kt {
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {27 26};
+    25 -> {26 27};
     26 -> {34};
     27 -> {28};
     28 -> {29};
@@ -147,7 +147,7 @@ digraph returnValuesFromLambda_kt {
     }
     38 -> {39};
     39 -> {40};
-    40 -> {46 42};
+    40 -> {42 46};
     40 -> {41} [style=dotted];
     40 -> {46} [style=dashed];
     41 -> {42};
@@ -196,8 +196,8 @@ digraph returnValuesFromLambda_kt {
     55 -> {56 57} [style=dotted];
     55 -> {62} [style=dashed];
     56 -> {57} [style=dotted];
+    57 -> {61} [style=dotted label="onUncaughtException"];
     57 -> {58} [style=dotted];
-    57 -> {61} [style=dotted]    [label=onUncaughtException];
     58 -> {59} [style=dotted];
     59 -> {60} [style=dotted];
     60 -> {61} [style=dotted];

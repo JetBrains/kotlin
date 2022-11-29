@@ -61,7 +61,7 @@ digraph defaultArguments_kt {
         }
         11 [label="Exit function test" style="filled" fillcolor=red];
     }
-    7 -> {12 16 8};
+    7 -> {8 12 16};
     8 -> {9};
     9 -> {10};
     10 -> {11};
@@ -71,7 +71,7 @@ digraph defaultArguments_kt {
     14 -> {15};
     16 -> {17};
     16 -> {16} [style=dashed];
-    17 -> {21 19};
+    17 -> {19 21};
     17 -> {18} [style=dotted];
     17 -> {21} [style=dashed];
     18 -> {19};

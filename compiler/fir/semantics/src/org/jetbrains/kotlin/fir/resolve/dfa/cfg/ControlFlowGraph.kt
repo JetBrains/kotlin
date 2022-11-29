@@ -148,13 +148,13 @@ object UncaughtExceptionPath : EdgeLabel(label = "onUncaughtException")
 
 class LoopPath(
     firLoopJump: FirLoopJump
-) : EdgeLabel("\"" + (if (firLoopJump is FirBreakExpression) "break" else "continue") +
-                      (firLoopJump.target.labeledElement.label?.let { "@${it.name}" } ?: "") + "\"")
+) : EdgeLabel((if (firLoopJump is FirBreakExpression) "break" else "continue") +
+                      (firLoopJump.target.labeledElement.label?.let { "@${it.name}" } ?: ""))
 
 // TODO: Label `return`ing edge with this.
 class ReturnPath(
     returnTargetSymbol: FirFunctionSymbol<*>
-) : EdgeLabel(label = "\"return@${returnTargetSymbol.callableId}\"")
+) : EdgeLabel(label = "return@${returnTargetSymbol.callableId}")
 
 enum class EdgeKind(
     val usedInDfa: Boolean, // propagate flow to alive nodes
