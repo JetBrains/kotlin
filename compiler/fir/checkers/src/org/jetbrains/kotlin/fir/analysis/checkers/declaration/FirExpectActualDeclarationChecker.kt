@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 @Suppress("DuplicatedCode")
@@ -94,7 +93,14 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             }
 
             Compatible !in compatibilityToMembersMap -> {
-                reporter.reportOn(source, FirErrors.ACTUAL_WITHOUT_EXPECT, symbol, compatibilityToMembersMap.cast(), context)
+                @Suppress("UNCHECKED_CAST")
+                reporter.reportOn(
+                    source,
+                    FirErrors.ACTUAL_WITHOUT_EXPECT,
+                    symbol,
+                    compatibilityToMembersMap as Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
+                    context
+                )
             }
 
             else -> {

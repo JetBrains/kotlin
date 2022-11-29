@@ -62,8 +62,14 @@ fun newSimpleTypeParameter(firSession: FirSession, containingDeclarationSymbol: 
     addDefaultBoundIfNecessary()
 }
 
-fun newSimpleValueParameter(firSession: FirSession, typeRef: FirResolvedTypeRef, name: Name) = buildValueParameter {
+fun newSimpleValueParameter(
+    firSession: FirSession,
+    typeRef: FirResolvedTypeRef,
+    functionSymbol: FirFunctionSymbol<*>,
+    name: Name
+) = buildValueParameter {
     moduleData = firSession.moduleData
+    this.containingFunctionSymbol = functionSymbol
     origin = SerializationPluginKey.origin
     this.name = name
     this.symbol = FirValueParameterSymbol(this.name)

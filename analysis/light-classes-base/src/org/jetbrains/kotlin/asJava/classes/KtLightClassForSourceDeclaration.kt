@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import javax.swing.Icon
 
 abstract class KtLightClassForSourceDeclaration(
@@ -211,9 +211,16 @@ fun KtClassOrObject.defaultJavaAncestorQualifiedName(): String? {
 }
 
 fun KtClassOrObject.shouldNotBeVisibleAsLightClass(): Boolean {
-
+    val containingFile = containingFile
     if (containingFile is KtCodeFragment) {
         // Avoid building light classes for code fragments
+        return true
+    }
+
+    // Avoid building light classes for decompiled built-ins
+    if ((containingFile as? KtFile)?.isCompiled == true &&
+        containingFile.virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
+    ) {
         return true
     }
 

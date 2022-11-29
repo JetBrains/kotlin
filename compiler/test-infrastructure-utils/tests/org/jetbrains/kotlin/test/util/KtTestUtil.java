@@ -35,8 +35,9 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class KtTestUtil {
-    private static String homeDir = computeHomeDirectory();
+    private static final String homeDir = computeHomeDirectory();
 
     @NotNull
     public static File tmpDirForTest(@NotNull String testClassName, @NotNull String testName) throws IOException {
@@ -61,7 +62,7 @@ public class KtTestUtil {
     private static File normalizeFile(File file) throws IOException {
         // Get canonical file to be sure that it's the same as inside the compiler,
         // for example, on Windows, if a canonical path contains any space from FileUtil.createTempDirectory we will get
-        // a File with short names (8.3) in its path and it will break some normalization passes in tests.
+        // a File with short names (8.3) in its path, and it will break some normalization passes in tests.
         return file.getCanonicalFile();
     }
 
@@ -88,7 +89,7 @@ public class KtTestUtil {
         }
         catch (FileNotFoundException fileNotFoundException) {
             /*
-             * Unfortunately, the FileNotFoundException will only show the relative path in it's exception message.
+             * Unfortunately, the FileNotFoundException will only show the relative path in its exception message.
              * This clarifies the exception by showing the full path.
              */
             String messageWithFullPath = file.getAbsolutePath() + " (No such file or directory)";
@@ -105,44 +106,56 @@ public class KtTestUtil {
     }
 
     @NotNull
-    private static File getJdkHome(@NotNull String prop) {
-        return getJdkHome(prop, null, prop);
+    private static File getJdkHome(@NotNull String mainProperty) {
+        return getJdkHome(mainProperty, null);
     }
 
     @NotNull
-    private static File getJdkHome(@NotNull String prop, @Nullable String otherProp) {
-        return getJdkHome(prop, otherProp, prop);
+    private static File getJdkHome(@NotNull String mainProperty, @Nullable String propertyVariant) {
+        return getJdkHome(mainProperty, propertyVariant, null);
     }
 
     @NotNull
-    private static File getJdkHome(@NotNull String prop, @Nullable String otherProp, @NotNull String propToReport) {
-        String jdk = System.getProperty(prop);
-        if (jdk == null) {
-            jdk = System.getenv(prop);
+    private static File getJdkHome(
+            @NotNull String mainProperty,
+            @Nullable String propertyVariant1,
+            @Nullable String propertyVariant2
+    ) {
+        String jdkPath = getStringProperty(mainProperty);
+        if (jdkPath == null && propertyVariant1 != null) {
+            jdkPath = getStringProperty(propertyVariant1);
         }
-        if (jdk == null) {
-            if (otherProp != null) {
-                return getJdkHome(otherProp, null, prop);
-            } else {
-                throw new AssertionError("Environment variable " + propToReport + " is not set!");
-            }
+        if (jdkPath == null && propertyVariant2 != null) {
+            jdkPath = getStringProperty(propertyVariant2);
         }
-        return new File(jdk);
+        if (jdkPath == null) {
+            throw new AssertionError("Environment variable " + mainProperty + " is not set!");
+        }
+
+        return new File(jdkPath);
+    }
+
+    private static String getStringProperty(@NotNull String propertyName) {
+        String value = System.getProperty(propertyName);
+        if (value != null) {
+            return value;
+        }
+        return System.getenv(propertyName);
     }
 
     @NotNull
     public static File getJdk6Home() {
-        return getJdkHome("JDK_6", "JDK_16");
+        return getJdkHome("JDK_1_6", "JDK_6", "JDK_16");
     }
 
     @NotNull
     public static File getJdk8Home() {
-        return getJdkHome("JDK_8", "JDK_18");
+        return getJdkHome("JDK_1_8", "JDK_8", "JDK_18");
     }
 
     @NotNull
     public static File getJdk11Home() {
-        return getJdkHome("JDK_11");
+        return getJdkHome("JDK_11_0", "JDK_11");
     }
 
     @NotNull
@@ -397,7 +410,7 @@ public class KtTestUtil {
     private static void assertTestClassPresentByMetadata(@NotNull Class<?> outerClass, @NotNull File testDataDir) {
         for (Class<?> nestedClass : outerClass.getDeclaredClasses()) {
             TestMetadata testMetadata = nestedClass.getAnnotation(TestMetadata.class);
-            if (testMetadata != null && testMetadata.value().equals(KtTestUtil.getFilePath(testDataDir))) {
+            if (testMetadata != null && testMetadata.value().equals(getFilePath(testDataDir))) {
                 return;
             }
         }

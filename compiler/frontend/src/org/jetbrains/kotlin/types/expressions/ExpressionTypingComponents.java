@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
@@ -68,6 +69,8 @@ public class ExpressionTypingComponents {
     public TypeResolutionInterceptor typeResolutionInterceptor;
     public MissingSupertypesResolver missingSupertypesResolver;
     public AnnotationChecker annotationChecker;
+
+    public KotlinCallComponents callComponents;
 
 
     @Inject
@@ -263,5 +266,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setAnnotationChecker(@NotNull AnnotationChecker annotationChecker) {
         this.annotationChecker = annotationChecker;
+    }
+
+    @Inject
+    public void setCallComponents(@NotNull KotlinCallComponents callComponents) {
+        this.callComponents = callComponents;
     }
 }

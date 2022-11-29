@@ -1,0 +1,43 @@
+FILE: nestedAnnotationConstExprArguments.kt
+    public final annotation class InnerAnnotation : R|kotlin/Annotation| {
+        public constructor(text: R|kotlin/String|): R|InnerAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val text: R|kotlin/String| = R|<local>/text|
+            public get(): R|kotlin/String|
+
+    }
+    public final annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public constructor(inner: R|InnerAnnotation|): R|OuterAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val inner: R|InnerAnnotation| = R|<local>/inner|
+            public get(): R|InnerAnnotation|
+
+    }
+    @R|OuterAnnotation|(inner = R|/InnerAnnotation.InnerAnnotation|(text = String(x).R|kotlin/String.plus|(String(x)))) public final class Payload : R|kotlin/Any| {
+        public constructor(): R|Payload| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|InnerAnnotation|(text = String(x).R|kotlin/String.plus|(String(x))) public final class Payload2 : R|kotlin/Any| {
+        public constructor(): R|Payload2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|OuterAnnotation|(inner = R|/InnerAnnotation.InnerAnnotation|(text = String(x))) public final class Payload3 : R|kotlin/Any| {
+        public constructor(): R|Payload3| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|OuterAnnotation|(inner = R|/InnerAnnotation.InnerAnnotation|(String(x).R|kotlin/String.plus|(String(x)))) public final class Payload4 : R|kotlin/Any| {
+        public constructor(): R|Payload4| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

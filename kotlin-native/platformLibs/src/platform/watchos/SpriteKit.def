@@ -1,4 +1,4 @@
-depends = CoreFoundation CoreGraphics CoreText Foundation Security UIKit darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText Foundation Security UIKit darwin posix
 language = Objective-C
 package = platform.SpriteKit
 modules = SpriteKit

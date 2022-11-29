@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -16,44 +15,42 @@ import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-context(KtAnalysisSession)
 internal class SymbolLightParameter(
-    private val parameterSymbol: KtValueParameterSymbol,
+    ktAnalysisSession: KtAnalysisSession,
+    parameterSymbol: KtValueParameterSymbol,
     containingMethod: SymbolLightMethodBase
-) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
-
+) : SymbolLightParameterCommon(ktAnalysisSession, parameterSymbol, containingMethod) {
     private val isConstructorParameterSymbol = containingMethod.isConstructor
 
-    private val _annotations: List<PsiAnnotation> by lazyPub {
+    override fun getModifierList(): PsiModifierList = _modifierList
 
-        val annotationSite = isConstructorParameterSymbol.ifTrue {
-            AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+    private val _modifierList: PsiModifierList by lazyPub {
+        val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
+            val annotationSite = isConstructorParameterSymbol.ifTrue {
+                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+            }
+
+            parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
+                val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
+
+                parameterSymbol.computeAnnotations(
+                    parent = this@SymbolLightParameter,
+                    nullability = nullability,
+                    annotationUseSiteTarget = annotationSite,
+                    includeAnnotationsWithoutSite = true,
+                )
+            }
         }
 
-        val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
-
-        parameterSymbol.computeAnnotations(
-            parent = this,
-            nullability = nullability,
-            annotationUseSiteTarget = annotationSite,
-            includeAnnotationsWithoutSite = true
-        )
+        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-    private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(this, emptySet(), _annotations)
+    private val isVararg: Boolean by lazyPub {
+        parameterSymbolPointer.withSymbol(ktModule) { it.isVararg }
     }
 
-    override fun isVarArgs() = parameterSymbol.isVararg
-
-    override fun equals(other: Any?): Boolean =
-        this === other ||
-                (other is SymbolLightParameter && parameterSymbol == other.parameterSymbol)
-
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
-
-    override fun isValid(): Boolean = super.isValid() && parameterSymbol.isValid()
+    override fun isVarArgs() = isVararg
 }

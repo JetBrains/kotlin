@@ -1,6 +1,5 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // !IGNORE_ERRORS
 // WITH_STDLIB
 
@@ -10,6 +9,8 @@ inline fun bar(block1: () -> Unit, noinline block2: () -> Unit) {
     block1()
     block2()
 }
+
+inline fun baz(crossinline block: () -> Unit) { block() }
 
 inline fun <T> Iterable<T>.myForEach(action: (T) -> Unit): Unit {
     for (element in this) action(element)
@@ -107,5 +108,11 @@ fun test7() {
         if (i == 2) {
             break
         }
+    }
+}
+
+fun test8() {
+    while (true) {
+        baz({break})
     }
 }

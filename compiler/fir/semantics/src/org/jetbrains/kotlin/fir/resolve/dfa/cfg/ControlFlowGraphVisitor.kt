@@ -80,6 +80,16 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    // ----------------------------------- Scripts ------------------------------------------
+
+    open fun visitScriptEnterNode(node: ScriptEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitScriptExitNode(node: ScriptExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     // ----------------------------------- Initialization -----------------------------------
 
     open fun visitPartOfClassInitializationNode(node: PartOfClassInitializationNode, data: D): R {
@@ -336,14 +346,6 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitEnterContractNode(node: EnterContractNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitExitContractNode(node: ExitContractNode, data: D): R {
         return visitNode(node, data)
     }
 

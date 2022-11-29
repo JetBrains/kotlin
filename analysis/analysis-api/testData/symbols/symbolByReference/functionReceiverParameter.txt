@@ -1,0 +1,13 @@
+KtReceiverParameterSymbol:
+  annotationsList: [
+    ReceiverAnnotation()
+      psi: KtAnnotationEntry
+  ]
+  origin: SOURCE
+  owningCallableSymbol: KtFunctionSymbol(/foo)
+  type: [
+    ReceiverTypeAnnotation()
+      psi: KtAnnotationEntry
+  ] @R|ReceiverTypeAnnotation|()  kotlin/Int
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

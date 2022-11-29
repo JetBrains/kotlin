@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
 object FirExpectActualResolver {
-    @OptIn(ExperimentalStdlibApi::class)
     fun findExpectForActual(
         actualSymbol: FirBasedSymbol<*>,
         useSiteSession: FirSession,
@@ -149,8 +148,8 @@ object FirExpectActualResolver {
 
         // Subtract kotlin.Any from supertypes because it's implicitly added if no explicit supertype is specified,
         // and not added if an explicit supertype _is_ specified
-        val expectSupertypes = expectClassSymbol.superConeTypes.filterNot { it.classId == actualSession.builtinTypes.anyType.id }
-        val actualSupertypes = actualClass.superConeTypes.filterNot { it.classId == actualSession.builtinTypes.anyType.id }
+        val expectSupertypes = expectClassSymbol.resolvedSuperTypes.filterNot { it.classId == actualSession.builtinTypes.anyType.id }
+        val actualSupertypes = actualClass.resolvedSuperTypes.filterNot { it.classId == actualSession.builtinTypes.anyType.id }
         if (
             expectSupertypes.map(substitutor::substituteOrSelf).any { expectSupertype ->
                 actualSupertypes.none { actualSupertype ->
@@ -668,7 +667,6 @@ object FirExpectActualResolver {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun FirTypeScope.getMembersTo(
         destination: MutableList<in FirCallableSymbol<*>>,
         name: Name,

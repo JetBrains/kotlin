@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibABITest
+import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibBinaryCompatibilityTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -47,6 +48,15 @@ fun main() {
                 suiteTestClassName = "KlibABITestGenerated"
             ) {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
+        // KLIB binary compatibility tests.
+        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeKlibBinaryCompatibilityTest>(
+                suiteTestClassName = "KlibBinaryCompatibilityTestGenerated"
+            ) {
+                model("binaryCompatibility/klibEvolution", recursive = false)
             }
         }
     }

@@ -1,0 +1,317 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class A {
+    // source: 'complex.kt'
+    private final @org.jetbrains.annotations.NotNull field x: java.util.List
+    private synthetic method <init>(p0: java.util.List): void
+    public synthetic final static method box-impl(p0: java.util.List): A
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.util.List): java.util.List
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.util.List, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.util.List, p1: java.util.List): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): java.util.List
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.util.List): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.util.List): java.lang.String
+    public synthetic final method unbox-impl(): java.util.List
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class B {
+    // source: 'complex.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): B
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX-pVg5ArA(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class Base1$DefaultImpls {
+    // source: 'complex.kt'
+    public static @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(@org.jetbrains.annotations.NotNull p0: Base1): R
+    public synthetic static method getFakeOverrideMFVC-0(p0: Base1): int
+    public synthetic static method getFakeOverrideMFVC-1(p0: Base1): int
+    public synthetic static method getFakeOverrideMFVC-2(p0: Base1): E
+    public synthetic static method getFakeOverrideMFVC-2-0(p0: Base1): D
+    public synthetic static method getFakeOverrideMFVC-2-0-0(p0: Base1): C
+    public synthetic static method getFakeOverrideMFVC-2-0-0-0(p0: Base1): int
+    public synthetic static method getFakeOverrideMFVC-2-0-0-1(p0: Base1): int
+    public synthetic static method getFakeOverrideMFVC-2-0-0-2(p0: Base1): java.lang.String
+    public synthetic static method getFakeOverrideMFVC-3(p0: Base1): java.util.List
+    public static method getFakeOverrideRegular(@org.jetbrains.annotations.NotNull p0: Base1): int
+    public final inner class Base1$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Base1 {
+    // source: 'complex.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(): R
+    public synthetic abstract method getFakeOverrideMFVC-0(): int
+    public synthetic abstract method getFakeOverrideMFVC-1(): int
+    public synthetic abstract method getFakeOverrideMFVC-2(): E
+    public synthetic abstract method getFakeOverrideMFVC-2-0(): D
+    public synthetic abstract method getFakeOverrideMFVC-2-0-0(): C
+    public synthetic abstract method getFakeOverrideMFVC-2-0-0-0(): int
+    public synthetic abstract method getFakeOverrideMFVC-2-0-0-1(): int
+    public synthetic abstract method getFakeOverrideMFVC-2-0-0-2(): java.lang.String
+    public synthetic abstract method getFakeOverrideMFVC-3(): java.util.List
+    public abstract method getFakeOverrideRegular(): int
+    public final inner class Base1$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Base2 {
+    // source: 'complex.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getL(): R
+    public synthetic abstract method getL-0(): int
+    public synthetic abstract method getL-1(): int
+    public synthetic abstract method getL-2(): E
+    public synthetic abstract method getL-2-0(): D
+    public synthetic abstract method getL-2-0-0(): C
+    public synthetic abstract method getL-2-0-0-0(): int
+    public synthetic abstract method getL-2-0-0-1(): int
+    public synthetic abstract method getL-2-0-0-2(): java.lang.String
+    public synthetic abstract method getL-3(): java.util.List
+    public abstract method setL-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+}
+
+@kotlin.Metadata
+public interface Base3 {
+    // source: 'complex.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getZ(): E
+    public synthetic abstract method getZ-0(): D
+    public synthetic abstract method getZ-0-0(): C
+    public synthetic abstract method getZ-0-0-0(): int
+    public synthetic abstract method getZ-0-0-1(): int
+    public synthetic abstract method getZ-0-0-2(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface Base4 {
+    // source: 'complex.kt'
+    public abstract method getL(): java.lang.Object
+    public abstract method setL(p0: java.lang.Object): void
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class C {
+    // source: 'complex.kt'
+    private final field field-0: int
+    private final field field-1: int
+    private final @org.jetbrains.annotations.NotNull field field-2: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String): C
+    public final static method constructor-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl-0(): int
+    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-2(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ComplexKt {
+    // source: 'complex.kt'
+    private final static @org.jetbrains.annotations.NotNull field lines: java.util.List
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method equalsChecks-GPBa7dw(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List, p6: int, p7: int, p8: int, p9: int, @org.jetbrains.annotations.NotNull p10: java.lang.String, @org.jetbrains.annotations.NotNull p11: java.util.List): void
+    public final static method equalsChecks1-iUtXLc0(@org.jetbrains.annotations.NotNull p0: java.util.List): void
+    public final static method f-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final static method g-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final static @org.jetbrains.annotations.NotNull method getLines(): java.util.List
+    public final static method h-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final static method h1(): void
+    public final static @org.jetbrains.annotations.NotNull method inlined-OsBMiQA(p0: int, p1: int, p2: int): D
+    public final static @org.jetbrains.annotations.NotNull method notInlined-OsBMiQA(p0: int, p1: int, p2: int): D
+    public final static method reuseBoxed(@org.jetbrains.annotations.NotNull p0: java.util.List): void
+    public final static method supply(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static method testVars(@org.jetbrains.annotations.NotNull p0: NotInlined): void
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class D {
+    // source: 'complex.kt'
+    private final field field-0-0: int
+    private final field field-0-1: int
+    private final @org.jetbrains.annotations.NotNull field field-0-2: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String): D
+    public final static method constructor-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final static @org.jetbrains.annotations.NotNull method constructor-impl(p0: int, p1: int, p2: int): D
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl-0(): C
+    public synthetic final method unbox-impl-0-0(): int
+    public synthetic final method unbox-impl-0-1(): int
+    public synthetic final method unbox-impl-0-2(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class E {
+    // source: 'complex.kt'
+    private final field field-0-0-0: int
+    private final field field-0-0-1: int
+    private final @org.jetbrains.annotations.NotNull field field-0-0-2: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String): E
+    public final static method constructor-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
+    public final static @org.jetbrains.annotations.NotNull method getWithNonTrivialSetters-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): D
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
+    public final static method setWithNonTrivialSetters-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl-0(): D
+    public synthetic final method unbox-impl-0-0(): C
+    public synthetic final method unbox-impl-0-0-0(): int
+    public synthetic final method unbox-impl-0-0-1(): int
+    public synthetic final method unbox-impl-0-0-2(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class NotInlined {
+    // source: 'complex.kt'
+    private field l-0: int
+    private field l-1: int
+    private field l-2-0-0-0: int
+    private field l-2-0-0-1: int
+    private @org.jetbrains.annotations.NotNull field l-2-0-0-2: java.lang.String
+    private @org.jetbrains.annotations.NotNull field l-3: java.util.List
+    private final field withNonTrivialGettersWithBF-0: int
+    private final field withNonTrivialGettersWithBF-1: int
+    private final field withNonTrivialGettersWithBF-2-0-0-0: int
+    private final field withNonTrivialGettersWithBF-2-0-0-1: int
+    private final @org.jetbrains.annotations.NotNull field withNonTrivialGettersWithBF-2-0-0-2: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field withNonTrivialGettersWithBF-3: java.util.List
+    private field withNonTrivialSettersWithBF-0: int
+    private field withNonTrivialSettersWithBF-1: int
+    private field withNonTrivialSettersWithBF-2-0-0-0: int
+    private field withNonTrivialSettersWithBF-2-0-0-1: int
+    private @org.jetbrains.annotations.NotNull field withNonTrivialSettersWithBF-2-0-0-2: java.lang.String
+    private @org.jetbrains.annotations.NotNull field withNonTrivialSettersWithBF-3: java.util.List
+    private field y: int
+    private method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int, p7: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(): R
+    public method getFakeOverrideRegular(): int
+    public @org.jetbrains.annotations.NotNull method getL(): R
+    public synthetic bridge method getL(): java.lang.Object
+    public synthetic method getL-0(): int
+    public synthetic method getL-1(): int
+    public synthetic method getL-2(): E
+    public synthetic method getL-2-0(): D
+    public synthetic method getL-2-0-0(): C
+    public synthetic method getL-2-0-0-0(): int
+    public synthetic method getL-2-0-0-1(): int
+    public synthetic method getL-2-0-0-2(): java.lang.String
+    public synthetic method getL-3(): java.util.List
+    public final @org.jetbrains.annotations.NotNull method getWithNonTrivialGettersWithBF(): R
+    public synthetic final method getWithNonTrivialGettersWithBF-0(): int
+    public synthetic final method getWithNonTrivialGettersWithBF-1(): int
+    public synthetic final method getWithNonTrivialGettersWithBF-2(): E
+    public synthetic final method getWithNonTrivialGettersWithBF-2-0(): D
+    public synthetic final method getWithNonTrivialGettersWithBF-2-0-0(): C
+    public synthetic final method getWithNonTrivialGettersWithBF-2-0-0-0(): int
+    public synthetic final method getWithNonTrivialGettersWithBF-2-0-0-1(): int
+    public synthetic final method getWithNonTrivialGettersWithBF-2-0-0-2(): java.lang.String
+    public synthetic final method getWithNonTrivialGettersWithBF-3(): java.util.List
+    public final @org.jetbrains.annotations.NotNull method getWithNonTrivialSetters(): R
+    public synthetic final method getWithNonTrivialSetters-0(): int
+    public synthetic final method getWithNonTrivialSetters-1(): int
+    public synthetic final method getWithNonTrivialSetters-2(): E
+    public synthetic final method getWithNonTrivialSetters-2-0(): D
+    public synthetic final method getWithNonTrivialSetters-2-0-0(): C
+    public synthetic final method getWithNonTrivialSetters-2-0-0-0(): int
+    public synthetic final method getWithNonTrivialSetters-2-0-0-1(): int
+    public synthetic final method getWithNonTrivialSetters-2-0-0-2(): java.lang.String
+    public synthetic final method getWithNonTrivialSetters-3(): java.util.List
+    public final @org.jetbrains.annotations.NotNull method getWithNonTrivialSettersWithBF(): R
+    public synthetic final method getWithNonTrivialSettersWithBF-0(): int
+    public synthetic final method getWithNonTrivialSettersWithBF-1(): int
+    public synthetic final method getWithNonTrivialSettersWithBF-2(): E
+    public synthetic final method getWithNonTrivialSettersWithBF-2-0(): D
+    public synthetic final method getWithNonTrivialSettersWithBF-2-0-0(): C
+    public synthetic final method getWithNonTrivialSettersWithBF-2-0-0-0(): int
+    public synthetic final method getWithNonTrivialSettersWithBF-2-0-0-1(): int
+    public synthetic final method getWithNonTrivialSettersWithBF-2-0-0-2(): java.lang.String
+    public synthetic final method getWithNonTrivialSettersWithBF-3(): java.util.List
+    public final method getY(): int
+    public synthetic bridge method setL(p0: java.lang.Object): void
+    public method setL-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final method setWithNonTrivialSetters-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final method setWithNonTrivialSettersWithBF-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final method setY(p0: int): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method trySetter(): void
+    public final inner class Base1$DefaultImpls
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class R {
+    // source: 'complex.kt'
+    private final field field-0: int
+    private final field field-1: int
+    private final field field-2-0-0-0: int
+    private final field field-2-0-0-1: int
+    private final @org.jetbrains.annotations.NotNull field field-2-0-0-2: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field field-3: java.util.List
+    private synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): R
+    public final static method constructor-impl(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int, p7: int, p8: int, p9: int, p10: java.lang.String, p11: java.util.List): boolean
+    public @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(): R
+    public static @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC-impl(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): R
+    public method getFakeOverrideRegular(): int
+    public static method getFakeOverrideRegular-impl(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): int
+    public @org.jetbrains.annotations.NotNull method getZ(): E
+    public synthetic bridge method getZ-0(): D
+    public synthetic bridge method getZ-0-0(): C
+    public synthetic bridge method getZ-0-0-0(): int
+    public synthetic bridge method getZ-0-0-1(): int
+    public synthetic bridge method getZ-0-0-2(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): java.lang.String
+    public synthetic final method unbox-impl-0(): int
+    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-2(): E
+    public synthetic final method unbox-impl-2-0(): D
+    public synthetic final method unbox-impl-2-0-0(): C
+    public synthetic final method unbox-impl-2-0-0-0(): int
+    public synthetic final method unbox-impl-2-0-0-1(): int
+    public synthetic final method unbox-impl-2-0-0-2(): java.lang.String
+    public synthetic final method unbox-impl-3(): java.util.List
+    public final inner class Base1$DefaultImpls
+}

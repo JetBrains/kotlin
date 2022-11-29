@@ -146,6 +146,25 @@ public class KtGenericTypeQualifier(
 }
 
 /**
+ * A special call for type qualifiers with generic parameters which represent [KtCallExpression] in incomplete code.
+ *
+ * Example:
+ *
+ * ```
+ * fun test() {
+ *   List<String>
+ * }
+ * ```
+ */
+public class KtQualifierCall(
+    override val token: KtLifetimeToken,
+    private val _qualifier: KtCallExpression,
+) : KtCall() {
+
+    public val qualifier: KtCallExpression get() = withValidityAssertion { _qualifier }
+}
+
+/**
  * A callable symbol partially applied with receivers and type arguments. Essentially, this is a call that misses some information. For
  * properties, the missing information is the type of access (read, write, or compound access) to this property. For functions, the missing
  * information is the value arguments for the call.

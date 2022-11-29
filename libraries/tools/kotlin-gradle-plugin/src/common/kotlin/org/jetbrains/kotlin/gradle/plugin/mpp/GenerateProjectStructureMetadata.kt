@@ -11,7 +11,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCache
 import java.io.File
 import javax.inject.Inject
 

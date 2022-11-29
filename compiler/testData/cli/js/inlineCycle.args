@@ -1,3 +1,5 @@
 $TESTDATA_DIR$/inlineCycle.kt
+-Xlegacy-deprecated-no-warn
+-Xuse-deprecated-legacy-compiler
 -output
 $TEMP_DIR$

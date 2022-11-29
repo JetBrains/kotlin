@@ -15,25 +15,23 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
-import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCache
+import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
+import java.io.Serializable
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
@@ -47,7 +45,11 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
         args = listOf(
             sourceSet,
             /* outputDirectory = */
-            project.buildDir.resolve("kotlinSourceSetMetadata").resolve(sourceSet.name + "-cinterop")
+            project.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSet.name),
+            /* outputLibraryFilesDiscovery = */
+            CInteropMetadataDependencyTransformationTask.OutputLibraryFilesDiscovery.ScanOutputDirectory,
+            /* cleaning = */
+            CInteropMetadataDependencyTransformationTask.Cleaning.DeleteOutputDirectory
         ),
         configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
     )
@@ -71,7 +73,11 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
         args = listOf(
             sourceSet,
             /* outputDirectory = */
-            SourceSetMetadataStorageForIde.sourceSetStorage(project, sourceSet.name).resolve("cinterop")
+            project.kotlinTransformedCInteropMetadataLibraryDirectoryForIde,
+            /* outputLibraryFilesDiscovery = */
+            CInteropMetadataDependencyTransformationTask.OutputLibraryFilesDiscovery.Precise,
+            /* cleaning = */
+            CInteropMetadataDependencyTransformationTask.Cleaning.None
         ),
         configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
     )
@@ -99,12 +105,64 @@ private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsShared
 }
 
 internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
-    @get:Internal val sourceSet: DefaultKotlinSourceSet,
-    @get:OutputDirectory val outputDirectory: File
+    @Transient @get:Internal val sourceSet: DefaultKotlinSourceSet,
+    @get:OutputDirectory val outputDirectory: File,
+    @get:Internal val outputLibraryFilesDiscovery: OutputLibraryFilesDiscovery,
+    @get:Internal val cleaning: Cleaning
 ) : DefaultTask() {
 
     init {
-        notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info")
+        notCompatibleWithConfigurationCacheCompat(
+            "Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info"
+        )
+    }
+
+    sealed class OutputLibraryFilesDiscovery : Serializable {
+        abstract fun resolveOutputLibraryFiles(outputDirectory: File, resolutions: Iterable<ChooseVisibleSourceSets>): Set<File>
+
+        /**
+         * Can be used when the used output directory is only used by this task.
+         * In this case, all libraries in the given outputDirectory will be library files produced by this task, so just
+         * scanning its content will be enough.
+         */
+        object ScanOutputDirectory : OutputLibraryFilesDiscovery() {
+            override fun resolveOutputLibraryFiles(outputDirectory: File, resolutions: Iterable<ChooseVisibleSourceSets>): Set<File> {
+                return outputDirectory.walkTopDown().maxDepth(2).filter { it.isFile && it.extension == KLIB_FILE_EXTENSION }.toSet()
+            }
+        }
+
+        /**
+         * Will actually read the [CompositeMetadataArtifact] and infer the exact file locations.
+         * This can be used if the output directory might be shared with other tasks.
+         */
+        object Precise : OutputLibraryFilesDiscovery() {
+            override fun resolveOutputLibraryFiles(outputDirectory: File, resolutions: Iterable<ChooseVisibleSourceSets>): Set<File> {
+                return resolutions.flatMap { chooseVisibleSourceSets ->
+                    /* This task only cares about extracting artifacts. Project to Project dependencies can return emptyList */
+                    if (chooseVisibleSourceSets.metadataProvider !is ArtifactMetadataProvider) return@flatMap emptyList()
+                    chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
+                        chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
+                            .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
+                            .flatMap { sourceSetContent -> sourceSetContent.cinteropMetadataBinaries }
+                            .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
+                    }
+                }.toSet()
+            }
+        }
+    }
+
+    sealed class Cleaning : Serializable {
+        abstract fun cleanOutputDirectory(outputDirectory: File)
+
+        object DeleteOutputDirectory : Cleaning() {
+            override fun cleanOutputDirectory(outputDirectory: File) {
+                if (outputDirectory.isDirectory) outputDirectory.deleteRecursively()
+            }
+        }
+
+        object None : Cleaning() {
+            override fun cleanOutputDirectory(outputDirectory: File) = Unit
+        }
     }
 
     @Suppress("unused")
@@ -121,7 +179,6 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     }
 
     @Suppress("unused")
-    @get:InputFiles
     @get:Classpath
     protected val inputArtifactFiles: FileCollection = project.filesProvider {
         sourceSet.dependencyTransformations.values.map { it.configurationToResolve.withoutProjectDependencies() }
@@ -139,33 +196,30 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         get() = chooseVisibleSourceSets.map(::ChooseVisibleSourceSetProjection).toSet()
 
     @get:Internal
-    val outputLibraryFiles = outputFilesProvider {
-        outputDirectory.walkTopDown().maxDepth(2).filter { it.isFile && it.extension == KLIB_FILE_EXTENSION }.toList()
-    }
+    val outputLibraryFiles = outputFilesProvider(lazy {
+        outputLibraryFilesDiscovery.resolveOutputLibraryFiles(outputDirectory, chooseVisibleSourceSets)
+    })
 
     @TaskAction
     protected fun transformDependencies() {
-        if (outputDirectory.isDirectory) {
-            outputDirectory.deleteRecursively()
-        }
-
+        cleaning.cleanOutputDirectory(outputDirectory)
         if (project.getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return
-        chooseVisibleSourceSets.flatMap(::materializeMetadata)
+        chooseVisibleSourceSets.forEach(::materializeMetadata)
     }
 
     private fun materializeMetadata(
         chooseVisibleSourceSets: ChooseVisibleSourceSets
-    ): Set<File> = when (chooseVisibleSourceSets.metadataProvider) {
+    ): Unit = when (chooseVisibleSourceSets.metadataProvider) {
         /* Nothing to transform: We will use original commonizer output in such cases */
-        is ProjectMetadataProvider -> emptySet()
+        is ProjectMetadataProvider -> Unit
 
         /* Extract/Materialize all cinterop files from composite jar file */
-        is JarMetadataProvider ->
-            chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops.flatMap { visibleSourceSetName ->
-                chooseVisibleSourceSets.metadataProvider.getSourceSetCInteropMetadata(
-                    visibleSourceSetName, outputDirectory, materializeFiles = true
-                )
-            }.toSet()
+        is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
+            chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
+                .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
+                .flatMap { sourceSetContent -> sourceSetContent.cinteropMetadataBinaries }
+                .forEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
+        }
     }
 
     private fun Configuration.withoutProjectDependencies(): FileCollection {

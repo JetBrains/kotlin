@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.file.*
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import java.io.File
@@ -14,35 +16,31 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
-import java.util.zip.*
+import java.util.zip.Deflater
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 internal class TaskOutputsBackup(
-    val fileSystemOperations: FileSystemOperations,
+    private val fileSystemOperations: FileSystemOperations,
     val buildDirectory: DirectoryProperty,
     val snapshotsDir: Provider<Directory>,
 
-    allOutputs: List<File>,
-
     /**
-     * Task outputs that we don't want to back up for performance reasons (e.g., if (1) they are too big, and (2) they are usually updated
-     * only at the end of the task execution--in a failed task run, they are usually unchanged and therefore don't need to be restored).
+     * Task outputs to back up and restore.
      *
-     * NOTE: In `IncrementalCompilerRunner`, if incremental compilation fails, it will try again by cleaning all the outputs and perform
-     * non-incremental compilation. It is important that `IncrementalCompilerRunner` do not clean [outputsToExclude] immediately but only
-     * right before [outputsToExclude] are updated (which is usually at the end of the task execution). This is so that if the fallback
-     * compilation fails, [outputsToExclude] will remain unchanged and the other outputs will be restored, and the next task run can be
-     * incremental.
+     * Note that this could be a subset of all the outputs of a task because there could be task outputs that we don't want to back up and
+     * restore (e.g., if (1) they are too big and (2) they are updated only at the end of the task execution so in a failed task run, they
+     * are usually unchanged and therefore don't need to be restored).
      */
-    outputsToExclude: List<File> = emptyList(),
+    val outputsToRestore: List<File>,
+
     val logger: Logger
 ) {
-    /** The outputs to back up and restore. Note that this may be a subset of all the outputs of a task (see `outputsToExclude`). */
-    val outputs: List<File> = allOutputs - outputsToExclude.toSet()
 
     fun createSnapshot() {
         // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
-        outputs.toSortedSet().forEachIndexed { index, outputPath ->
+        outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             if (outputPath.isDirectory && !outputPath.isEmptyDirectory) {
                 compressDirectoryToZip(
                     File(snapshotsDir.get().asFile, index.asSnapshotArchiveName),
@@ -59,10 +57,10 @@ internal class TaskOutputsBackup(
 
     fun restoreOutputs() {
         fileSystemOperations.delete {
-            it.delete(outputs)
+            it.delete(outputsToRestore)
         }
 
-        outputs.toSortedSet().forEachIndexed { index, outputPath ->
+        outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             val snapshotDir = snapshotsDir.get().file(index.asSnapshotDirectoryName).asFile
             if (snapshotDir.isDirectory) {
                 fileSystemOperations.copy { spec ->

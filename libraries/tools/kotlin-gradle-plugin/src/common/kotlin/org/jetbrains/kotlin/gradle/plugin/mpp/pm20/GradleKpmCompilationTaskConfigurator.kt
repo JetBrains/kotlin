@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.addCommonSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
@@ -28,9 +29,9 @@ open class GradleKpmCompilationTaskConfigurator(
 
     fun createKotlinJvmCompilationTask(
         variant: GradleKpmVariant,
-        compilationData: KotlinCompilationData<*>
+        compilationData: GradleKpmCompilationData<*>
     ): TaskProvider<out KotlinCompile> {
-        Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilationData).run()
+        Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationInfo.KPM(compilationData)).run()
         val allSources = getSourcesForFragmentCompilation(variant)
         val commonSources = getCommonSourcesForFragmentCompilation(variant)
 
@@ -47,10 +48,12 @@ open class GradleKpmCompilationTaskConfigurator(
 
     protected fun createKotlinNativeCompilationTask(
         fragment: GradleKpmFragment,
-        compilationData: KotlinNativeCompilationData<*>,
+        compilationData: GradleKpmNativeCompilationData<*>,
         configure: KotlinNativeCompile.() -> Unit
     ): TaskProvider<KotlinNativeCompile> {
-        val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
+        val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(
+            KotlinCompilationInfo.KPM(compilationData), compilationData.konanTarget
+        )
 
         val allSources = getSourcesForFragmentCompilation(fragment)
         val commonSources = getCommonSourcesForFragmentCompilation(fragment)
@@ -65,9 +68,9 @@ open class GradleKpmCompilationTaskConfigurator(
     }
 
     fun createKotlinNativeCompilationTask(
-        variant: GradleKpmVariant,
-        compilationData: KotlinNativeCompilationData<*>
+        variant: GradleKpmNativeVariantInternal,
+        compilationData: GradleKpmNativeCompilationData<*>
     ): TaskProvider<KotlinNativeCompile> = createKotlinNativeCompilationTask(variant, compilationData) {
         kotlinPluginData = project.compilerPluginProviderForPlatformCompilation(variant, compilationData)
     }
- }
+}

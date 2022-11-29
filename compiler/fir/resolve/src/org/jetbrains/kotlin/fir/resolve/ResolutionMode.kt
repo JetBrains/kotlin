@@ -6,31 +6,58 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode.Companion.prettyString
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 sealed class ResolutionMode {
-    object ContextDependent : ResolutionMode()
-    object ContextDependentDelegate : ResolutionMode()
-    object ContextIndependent : ResolutionMode()
-    object ReceiverResolution : ResolutionMode()
+    object ContextDependent : ResolutionMode() {
+        override fun toString(): String = "ContextDependent"
+    }
+
+    object ContextDependentDelegate : ResolutionMode() {
+        override fun toString(): String = "ContextDependentDelegate"
+    }
+
+    object ContextIndependent : ResolutionMode() {
+        override fun toString(): String = "ContextIndependent"
+    }
+
+    object ReceiverResolution : ResolutionMode() {
+        override fun toString(): String = "ReceiverResolution"
+    }
 
     // TODO: it's better not to use WithExpectedType(FirImplicitTypeRef)
     class WithExpectedType(
         val expectedTypeRef: FirTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
-    ) : ResolutionMode()
+    ) : ResolutionMode() {
+        override fun toString(): String {
+            return "WithExpectedType: ${expectedTypeRef.prettyString()}"
+        }
+    }
 
-    class WithStatus(val status: FirDeclarationStatus) : ResolutionMode()
+    class WithStatus(val status: FirDeclarationStatus) : ResolutionMode() {
+        override fun toString(): String {
+            return "WithStatus: ${status.render()}"
+        }
+    }
 
-    class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode()
+    class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode() {
+        override fun toString(): String {
+            return "LambdaResolution: ${expectedReturnTypeRef.prettyString()}"
+        }
+    }
 
     class WithExpectedTypeFromCast(
         val expectedTypeRef: FirTypeRef,
-    ) : ResolutionMode()
+    ) : ResolutionMode() {
+        override fun toString(): String {
+            return "WithExpectedTypeFromCast: ${expectedTypeRef.prettyString()}"
+        }
+    }
 
     /**
      * This resolution mode is similar to
@@ -53,7 +80,19 @@ sealed class ResolutionMode {
      */
     class WithSuggestedType(
         val suggestedTypeRef: FirTypeRef,
-    ) : ResolutionMode()
+    ) : ResolutionMode() {
+        override fun toString(): String {
+            return "WithSuggestedType: ${suggestedTypeRef.prettyString()}"
+        }
+    }
+
+    private companion object {
+        private fun FirTypeRef?.prettyString(): String {
+            if (this == null) return "null"
+            val coneType = this.coneTypeSafe<ConeKotlinType>() ?: return this.render()
+            return coneType.renderForDebugging()
+        }
+    }
 }
 
 fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast: Boolean = false): FirTypeRef? = when (this) {

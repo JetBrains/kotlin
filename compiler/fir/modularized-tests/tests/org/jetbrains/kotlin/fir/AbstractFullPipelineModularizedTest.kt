@@ -270,6 +270,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         val services = Services.Builder().register(CommonCompilerPerformanceManager::class.java, manager).build()
         val collector = TestMessageCollector()
         val result = try {
+            CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
             compiler.exec(collector, services, args)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -312,8 +313,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             val initMeasurement = measurements.filterIsInstance<CompilerInitializationMeasurement>().firstOrNull()
             val irMeasurements = measurements.filterIsInstance<IRMeasurement>()
 
-            @OptIn(ExperimentalStdlibApi::class)
-            val components = buildMap<String, Long> {
+            val components = buildMap {
                 put("Init", initMeasurement?.milliseconds ?: 0)
                 put("Analysis", analysisMeasurement?.milliseconds ?: 0)
 

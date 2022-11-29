@@ -9,9 +9,8 @@ package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryPlugin
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginStringProvider
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginVersion
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginVersionParser
+import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginVersionProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginVersionRange
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.Messages
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.PROPERTY_KEY_EXECUTED_PROJECT_PATHS
@@ -42,8 +41,11 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
         }
     }
 
-    class FixedAndroidGradlePluginVersionProvider(private val version: String?) : AndroidGradlePluginStringProvider {
-        override fun getAndroidGradlePluginString(): String? = version
+    internal class FixedAndroidGradlePluginVersionProvider(private val version: String?) : AndroidGradlePluginVersionProvider {
+        override fun getAndroidGradlePluginVersion(): AndroidGradlePluginVersion? {
+            if (version == null) return null
+            return AndroidGradlePluginVersion(version)
+        }
     }
 
     @Test
@@ -80,8 +82,8 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - version too high - major`() {
         val androidGradlePluginVersion = AndroidGradlePluginVersion(
-            major = compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMajor + 1,
-            minor = compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMinor ?: 0
+            major = compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.major + 1,
+            minor = compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.minor
         )
 
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(
@@ -98,8 +100,8 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
         val androidGradlePluginVersion = AndroidGradlePluginVersion(2, 1)
 
         val compatibleAndroidGradlePluginVersionRange = AndroidGradlePluginVersionRange(
-            minSupportedVersion = AndroidGradlePluginVersion(1, 0),
-            maxSupportedVersion = AndroidGradlePluginVersion(2, 0)
+            minSupportedVersion = AndroidGradlePluginVersionRange.Version(1, 0),
+            maxSupportedVersion = AndroidGradlePluginVersionRange.Version(2, 0)
         )
 
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(
@@ -120,25 +122,8 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
         )
 
         assertEquals(
-            Messages.FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING, assertSingleWarningMessage()
+            Messages.failedGettingAndroidGradlePluginVersion(), assertSingleWarningMessage()
         )
-    }
-
-    @Test
-    fun `test - failed parsing Android Gradle Plugin version`() {
-        val androidGradlePluginVersion = compatibleAndroidGradlePluginVersionRange.minSupportedVersion.toString()
-
-        val failingParser = object : AndroidGradlePluginVersionParser {
-            override fun parseVersionString(version: String): AndroidGradlePluginVersion? {
-                return null
-            }
-        }
-
-        project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(
-            testLogger, FixedAndroidGradlePluginVersionProvider(androidGradlePluginVersion), failingParser
-        )
-
-        assertEquals(Messages.failedParsingAndroidGradlePluginVersion(androidGradlePluginVersion), assertSingleWarningMessage())
     }
 
     @Test
@@ -158,14 +143,14 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
         /* Test with too high AGP version */
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(
             testLogger,
-            FixedAndroidGradlePluginVersionProvider("${compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMajor + 1}.0")
+            FixedAndroidGradlePluginVersionProvider("${compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.major + 1}.0")
         )
         assertNoWarningMessage()
 
         /* Re-enable the check and test with missing AGP version */
         project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN, "false")
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(testLogger, FixedAndroidGradlePluginVersionProvider(null))
-        assertEquals(Messages.FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING, assertSingleWarningMessage())
+        assertEquals(Messages.failedGettingAndroidGradlePluginVersion(), assertSingleWarningMessage())
     }
 
     @Test
@@ -177,40 +162,40 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
             assertNoWarningMessage()
         }
 
-        val minSupportedVersion = compatibleAndroidGradlePluginVersionRange.minSupportedVersion
+        val minSupportedVersion = compatibleAndroidGradlePluginVersionRange.minSupportedVersion.run {
+            AndroidGradlePluginVersion(major, minor)
+        }
 
         val midSupportedVersion = minSupportedVersion.copy(minor = minSupportedVersion.minor + 1)
 
         val maxSupportedVersion = AndroidGradlePluginVersion(
-            compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMajor,
-            compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMinor ?: 0
+            compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.major,
+            compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.minor
         )
 
         assertNoWarnings("$minSupportedVersion")
-        assertNoWarnings("$minSupportedVersion.0")
-        assertNoWarnings("$minSupportedVersion.0-alpha01")
-        assertNoWarnings("$minSupportedVersion.0-m-281")
+        assertNoWarnings("${minSupportedVersion.copy(classifier = "alpha01")}")
+        assertNoWarnings("${minSupportedVersion.copy(classifier = "m281")}")
 
         assertNoWarnings("$midSupportedVersion")
-        assertNoWarnings("$midSupportedVersion.0")
-        assertNoWarnings("$midSupportedVersion.0-alpha01")
-        assertNoWarnings("$midSupportedVersion.0-m-281")
+        assertNoWarnings("${midSupportedVersion.copy(classifier = "alpha01")})")
+        assertNoWarnings("${midSupportedVersion.copy(classifier = "m281")}")
 
-        assertNoWarnings("$minSupportedVersion.1")
-        assertNoWarnings("$minSupportedVersion.1-alpha01")
+        assertNoWarnings("${minSupportedVersion.copy(patch = 1)}")
+        assertNoWarnings("${minSupportedVersion.copy(patch = 1, classifier = "alpha01")}")
 
         assertNoWarnings("$maxSupportedVersion")
-        assertNoWarnings("$maxSupportedVersion.0")
-        assertNoWarnings("$maxSupportedVersion.0-alpha01")
-        assertNoWarnings("$maxSupportedVersion.0-m-281")
+        assertNoWarnings("${maxSupportedVersion.copy(classifier = "alpha01")}")
+        assertNoWarnings("${maxSupportedVersion.copy(classifier = "m281")}")
 
-        assertNoWarnings("$maxSupportedVersion.1")
-        assertNoWarnings("$maxSupportedVersion.1-alpha01")
+        assertNoWarnings("${maxSupportedVersion.copy(patch = 1)}")
+        assertNoWarnings("${maxSupportedVersion.copy(patch = 1, classifier = "alpha01")}")
     }
 
     @Test
     fun `test WhenAndroidIsApplied - android is applied after the health check call`() {
         val project = ProjectBuilder.builder().build()
+        project.gradle.registerConfigurationTimePropertiesAccessorForTests()
 
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied(
             testLogger, FixedAndroidGradlePluginVersionProvider(null)
@@ -221,12 +206,13 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
 
         addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
-        assertEquals(Messages.FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING, assertSingleWarningMessage())
+        assertEquals(Messages.failedGettingAndroidGradlePluginVersion(), assertSingleWarningMessage())
     }
 
     @Test
     fun `test - WhenAndroidIsApplied - android is applied before the health check call`() {
         val project = ProjectBuilder.builder().build()
+        project.gradle.registerConfigurationTimePropertiesAccessorForTests()
         addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
@@ -234,12 +220,13 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
             testLogger, FixedAndroidGradlePluginVersionProvider(null)
         )
 
-        assertEquals(Messages.FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING, assertSingleWarningMessage())
+        assertEquals(Messages.failedGettingAndroidGradlePluginVersion(), assertSingleWarningMessage())
     }
 
     @Test
     fun `test - WhenAndroidIsApplied - called multiple times - still emits only a single message`() {
         val project = ProjectBuilder.builder().build()
+        project.gradle.registerConfigurationTimePropertiesAccessorForTests()
         addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
@@ -249,7 +236,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
             )
         }
 
-        assertEquals(Messages.FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING, assertSingleWarningMessage())
+        assertEquals(Messages.failedGettingAndroidGradlePluginVersion(), assertSingleWarningMessage())
     }
 
     @Test
@@ -334,7 +321,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
             assertFalse(isTooHigh(AndroidGradlePluginVersion(3, 0)))
 
             assertFalse(isTooLow(AndroidGradlePluginVersion(4, 3)))
-            assertFalse(isTooHigh(AndroidGradlePluginVersion(4, 3)))
+            assertTrue(isTooHigh(AndroidGradlePluginVersion(4, 3)))
 
             assertFalse(isTooLow(AndroidGradlePluginVersion(5, 0)))
         }

@@ -1,4 +1,4 @@
-depends = CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreVideo darwin posix
+depends = CFCGTypes CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreVideo darwin posix
 language = Objective-C
 package = platform.CoreMedia
 modules = CoreMedia

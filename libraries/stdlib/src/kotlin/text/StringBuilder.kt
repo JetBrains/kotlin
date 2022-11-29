@@ -437,6 +437,12 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
     return this
 }
 
+// KT-52336
+@Deprecated("Use appendRange instead.", ReplaceWith("this.appendRange(str, offset, offset + len)"), level = DeprecationLevel.ERROR)
+@kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER")
+public inline fun StringBuilder.append(str: CharArray, offset: Int, len: Int): StringBuilder = throw NotImplementedError()
+
 /** Appends a line feed character (`\n`) to this StringBuilder. */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly

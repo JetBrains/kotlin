@@ -27,9 +27,9 @@ fun Builder.collectImports(): List<String> {
             ImportKind.Builder,
         ) + implementation.fullQualifiedName!! + usedTypes.mapNotNull { it.fullQualifiedName } + builderDsl + "kotlin.contracts.*"
         is IntermediateBuilder -> {
-            val fqns = parents + allFields.mapNotNull { it.fullQualifiedName } + allFields.flatMap {
+            val fqns = parents + usedTypes.mapNotNull { it.fullQualifiedName } + allFields.mapNotNull { it.fullQualifiedName } + allFields.flatMap {
                 it.arguments.mapNotNull { it.fullQualifiedName }
-            } + (materializedElement?.fullQualifiedName ?: throw IllegalStateException(type)) + builderDsl
+            } + (materializedElement?.fullQualifiedName  ?: throw IllegalStateException(type)) + builderDsl
             fqns.filterRedundantImports(packageName, ImportKind.Builder)
         }
     }.sorted()

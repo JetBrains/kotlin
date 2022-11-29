@@ -22,7 +22,7 @@ fun foo(x: MutableMap<String, Int>, y: java.util.HashMap<String, Int>, z: java.u
 
     y.remove("", 1)
     y.remove("", <!TYPE_MISMATCH!>""<!>)
-    y.remove("", null)
+    y.remove("", <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     z.remove("", 1)
     z.remove("", <!TYPE_MISMATCH!>""<!>)

@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <cinttypes>
 #include <cstddef> // for offsetof
 #include <mutex>
 
@@ -32,6 +33,7 @@
 #endif
 
 #include "KAssert.h"
+#include "Alignment.hpp"
 #include "Atomic.h"
 #include "Cleaner.h"
 #include "CompilerConstants.hpp"
@@ -92,7 +94,7 @@ ALWAYS_INLINE bool IsStrictMemoryModel() noexcept {
 
 inline constexpr ObjectPoolAllocator<char> objectAllocator;
 
-typedef uint32_t container_size_t;
+using container_size_t = size_t;
 
 // Granularity of arena container chunks.
 constexpr container_size_t kContainerAlignment = 1024;
@@ -913,7 +915,7 @@ class ArenaContainer {
   // Places an array of certain type in this container. Note that array_type_info
   // is type info for an array, not for an individual element. Also note that exactly
   // same operation could be used to place strings.
-  ArrayHeader* PlaceArray(const TypeInfo* array_type_info, container_size_t count);
+  ArrayHeader* PlaceArray(const TypeInfo* array_type_info, uint32_t count);
 
   ObjHeader** getSlot();
 
@@ -962,23 +964,23 @@ inline ContainerHeader* clearRemoved(ContainerHeader* container) {
     reinterpret_cast<uintptr_t>(container) & ~static_cast<uintptr_t>(1));
 }
 
-inline container_size_t alignUp(container_size_t size, int alignment) {
-  return (size + alignment - 1) & ~(alignment - 1);
-}
-
 inline ContainerHeader* realShareableContainer(ContainerHeader* container) {
   RuntimeAssert(container->shareable(), "Only makes sense on shareable objects");
   return containerFor(reinterpret_cast<ObjHeader*>(container + 1));
 }
 
-inline uint32_t arrayObjectSize(const TypeInfo* typeInfo, uint32_t count) {
-  // Note: array body is aligned, but for size computation it is enough to align the sum.
+inline uint64_t arrayObjectSize(const TypeInfo* typeInfo, uint32_t count) {
   static_assert(kObjectAlignment % alignof(KLong) == 0, "");
   static_assert(kObjectAlignment % alignof(KDouble) == 0, "");
-  return alignUp(sizeof(ArrayHeader) - typeInfo->instanceSize_ * count, kObjectAlignment);
+  // -(int32_t min) * uint32_t max cannot overflow uint64_t. And are capped
+  // at about half of uint64_t max.
+  uint64_t membersSize = static_cast<uint64_t>(-typeInfo->instanceSize_) * count;
+  // Note: array body is aligned, but for size computation it is enough to align the sum.
+  return AlignUp<uint64_t>(sizeof(ArrayHeader) + membersSize, kObjectAlignment);
 }
 
-inline uint32_t arrayObjectSize(const ArrayHeader* obj) {
+inline container_size_t arrayObjectSize(const ArrayHeader* obj) {
+  // Only used for already allocated arrays. Cannov overflow size_t.
   return arrayObjectSize(obj->type_info(), obj->count_);
 }
 
@@ -990,7 +992,7 @@ inline container_size_t objectSize(const ObjHeader* obj) {
       arrayObjectSize(obj->array())
       :
       type_info->instanceSize_);
-  return alignUp(size, kObjectAlignment);
+  return kotlin::AlignUp(size, kObjectAlignment);
 }
 
 template <typename func>
@@ -1079,7 +1081,7 @@ ContainerHeader* allocContainer(MemoryState* state, size_t size) {
     if (state != nullptr)
         state->allocSinceLastGc += size;
 #endif
-    result = new (allocateInObjectPool(alignUp(size, kObjectAlignment))) ContainerHeader();
+    result = new (allocateInObjectPool(kotlin::AlignUp(size, kObjectAlignment))) ContainerHeader();
     atomicAdd(&allocCount, 1);
   }
   if (state != nullptr) {
@@ -1780,11 +1782,11 @@ inline ArenaContainer* initedArena(ObjHeader** auxSlot) {
   return arena;
 }
 
-inline size_t containerSize(const ContainerHeader* container) {
-  size_t result = 0;
+inline container_size_t containerSize(const ContainerHeader* container) {
+  container_size_t result = 0;
   const ObjHeader* obj = reinterpret_cast<const ObjHeader*>(container + 1);
   for (uint32_t object = 0; object < container->objectCount(); object++) {
-    size_t size = objectSize(obj);
+    container_size_t size = objectSize(obj);
     result += size;
     obj = reinterpret_cast<ObjHeader*>(reinterpret_cast<uintptr_t>(obj) + size);
   }
@@ -2369,104 +2371,6 @@ OBJ_GETTER(allocArrayInstance, const TypeInfo* type_info, int32_t elements) {
   }
 #endif  // USE_GC
   RETURN_OBJ(container.GetPlace()->obj());
-}
-
-template <bool Strict>
-OBJ_GETTER(initThreadLocalSingleton,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  ObjHeader* value = *location;
-  if (value != nullptr) {
-    // OK'ish, inited by someone else.
-    RETURN_OBJ(value);
-  }
-  ObjHeader* object = allocInstance<Strict>(typeInfo, OBJ_RESULT);
-  updateHeapRef<Strict>(location, object);
-#if KONAN_NO_EXCEPTIONS
-  ctor(object);
-  return object;
-#else
-  try {
-    ctor(object);
-    return object;
-  } catch (...) {
-    UpdateReturnRef(OBJ_RESULT, nullptr);
-    ZeroHeapRef(location);
-    throw;
-  }
-#endif
-}
-
-template <bool Strict>
-OBJ_GETTER(initSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-#if KONAN_NO_THREADS
-  ObjHeader* value = *location;
-  if (value != nullptr) {
-    // OK'ish, inited by someone else.
-    RETURN_OBJ(value);
-  }
-  ObjHeader* object = AllocInstance(typeInfo, OBJ_RESULT);
-  UpdateHeapRef(location, object);
-#if KONAN_NO_EXCEPTIONS
-  ctor(object);
-  FreezeSubgraph(object);
-  return object;
-#else
-  try {
-    ctor(object);
-    if (Strict)
-      FreezeSubgraph(object);
-    return object;
-  } catch (...) {
-    UpdateReturnRef(OBJ_RESULT, nullptr);
-    ZeroHeapRef(location);
-    throw;
-  }
-#endif  // KONAN_NO_EXCEPTIONS
-#else  // KONAN_NO_THREADS
-  // Search from the top of the stack.
-  for (auto it = memoryState->initializingSingletons.rbegin(); it != memoryState->initializingSingletons.rend(); ++it) {
-    if (it->first == location) {
-      RETURN_OBJ(it->second);
-    }
-  }
-
-  ObjHeader* initializing = kInitializingSingleton;
-
-  // Spin lock.
-  ObjHeader* value = nullptr;
-  while ((value = __sync_val_compare_and_swap(location, nullptr, initializing)) == initializing);
-  if (value != nullptr) {
-    // OK'ish, inited by someone else.
-    RETURN_OBJ(value);
-  }
-  ObjHeader* object = AllocInstance(typeInfo, OBJ_RESULT);
-  memoryState->initializingSingletons.push_back(std::make_pair(location, object));
-#if KONAN_NO_EXCEPTIONS
-  ctor(object);
-  if (Strict)
-    FreezeSubgraph(object);
-  UpdateHeapRef(location, object);
-  synchronize();
-  memoryState->initializingSingletons.pop_back();
-  return object;
-#else  // KONAN_NO_EXCEPTIONS
-  try {
-    ctor(object);
-    if (Strict)
-      FreezeSubgraph(object);
-    UpdateHeapRef(location, object);
-    synchronize();
-    memoryState->initializingSingletons.pop_back();
-    return object;
-  } catch (...) {
-    UpdateReturnRef(OBJ_RESULT, nullptr);
-    zeroHeapRef(location);
-    memoryState->initializingSingletons.pop_back();
-    synchronize();
-    throw;
-  }
-#endif  // KONAN_NO_EXCEPTIONS
-#endif  // KONAN_NO_THREADS
 }
 
 /**
@@ -3188,7 +3092,7 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
 
 void ObjectContainer::Init(MemoryState* state, const TypeInfo* typeInfo) {
   RuntimeAssert(typeInfo->instanceSize_ >= 0, "Must be an object");
-  uint32_t allocSize = sizeof(ContainerHeader) + typeInfo->instanceSize_;
+  container_size_t allocSize = sizeof(ContainerHeader) + typeInfo->instanceSize_;
   header_ = allocContainer(state, allocSize);
   RuntimeCheck(header_ != nullptr, "Cannot alloc memory");
   // One object in this container, no need to set.
@@ -3201,8 +3105,12 @@ void ObjectContainer::Init(MemoryState* state, const TypeInfo* typeInfo) {
 
 void ArrayContainer::Init(MemoryState* state, const TypeInfo* typeInfo, uint32_t elements) {
   RuntimeAssert(typeInfo->instanceSize_ < 0, "Must be an array");
-  uint32_t allocSize =
-      sizeof(ContainerHeader) + arrayObjectSize(typeInfo, elements);
+  uint64_t dataSize = arrayObjectSize(typeInfo, elements);
+  uint64_t allocSize = sizeof(ContainerHeader) + dataSize;
+  if (allocSize > std::numeric_limits<size_t>::max()) {
+    konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 " bytes. Aborting.\n", allocSize);
+    konan::abort();
+  }
   header_ = allocContainer(state, allocSize);
   RuntimeCheck(header_ != nullptr, "Cannot alloc memory");
   // One object in this container, no need to set.
@@ -3211,7 +3119,7 @@ void ArrayContainer::Init(MemoryState* state, const TypeInfo* typeInfo, uint32_t
   // header->refCount_ is zero initialized by allocContainer().
   GetPlace()->count_ = elements;
   SetHeader(GetPlace()->obj(), typeInfo);
-  OBJECT_ALLOC_EVENT(memoryState, arrayObjectSize(typeInfo, elements), GetPlace()->obj())
+  OBJECT_ALLOC_EVENT(memoryState, dataSize, GetPlace()->obj())
 }
 
 // TODO: store arena containers in some reuseable data structure, similar to
@@ -3239,7 +3147,7 @@ void ArenaContainer::Deinit() {
 
 bool ArenaContainer::allocContainer(container_size_t minSize) {
   auto size = minSize + sizeof(ContainerHeader) + sizeof(ContainerChunk);
-  size = alignUp(size, kContainerAlignment);
+  size = kotlin::AlignUp(size, kContainerAlignment);
   // TODO: keep simple cache of container chunks.
   ContainerChunk* result = new (allocateInObjectPool(size)) ContainerChunk();
   RuntimeCheck(result != nullptr, "Cannot alloc memory");
@@ -3254,7 +3162,7 @@ bool ArenaContainer::allocContainer(container_size_t minSize) {
 }
 
 void* ArenaContainer::place(container_size_t size) {
-  size = alignUp(size, kObjectAlignment);
+  size = kotlin::AlignUp(size, kObjectAlignment);
   // Fast path.
   if (current_ + size < end_) {
     void* result = current_;
@@ -3282,7 +3190,7 @@ ObjHeader** ArenaContainer::getSlot() {
 
 ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
-  uint32_t size = type_info->instanceSize_;
+  container_size_t size = type_info->instanceSize_;
   ObjHeader* result = reinterpret_cast<ObjHeader*>(place(size));
   if (!result) {
     return nullptr;
@@ -3295,12 +3203,16 @@ ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
 
 ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t count) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
-  container_size_t size = arrayObjectSize(type_info, count);
+  uint64_t size = arrayObjectSize(type_info, count);
+  if (size > std::numeric_limits<size_t>::max()) {
+    konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 " bytes. Aborting.\n", size);
+    konan::abort();
+  }
   ArrayHeader* result = reinterpret_cast<ArrayHeader*>(place(size));
   if (!result) {
     return nullptr;
   }
-  OBJECT_ALLOC_EVENT(memoryState, arrayObjectSize(type_info, count), result->obj())
+  OBJECT_ALLOC_EVENT(memoryState, size, result->obj())
   currentChunk_->asHeader()->incObjectCount();
   setHeader(result->obj(), type_info);
   result->count_ = count;
@@ -3386,20 +3298,6 @@ OBJ_GETTER(AllocArrayInstanceStrict, const TypeInfo* typeInfo, int32_t elements)
 }
 OBJ_GETTER(AllocArrayInstanceRelaxed, const TypeInfo* typeInfo, int32_t elements) {
   RETURN_RESULT_OF(allocArrayInstance<false>, typeInfo, elements);
-}
-
-OBJ_GETTER(InitThreadLocalSingletonStrict, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(initThreadLocalSingleton<true>, location, typeInfo, ctor);
-}
-OBJ_GETTER(InitThreadLocalSingletonRelaxed, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(initThreadLocalSingleton<false>, location, typeInfo, ctor);
-}
-
-OBJ_GETTER(InitSingletonStrict, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(initSingleton<true>, location, typeInfo, ctor);
-}
-OBJ_GETTER(InitSingletonRelaxed, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(initSingleton<false>, location, typeInfo, ctor);
 }
 
 void RUNTIME_NOTHROW InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {
@@ -3514,6 +3412,15 @@ void Kotlin_native_internal_GC_collect(KRef) {
 #if USE_GC
   garbageCollect();
 #endif
+}
+
+void Kotlin_native_internal_GC_schedule(KRef) {
+#if USE_GC
+    garbageCollect();
+#endif
+}
+
+extern "C" void Kotlin_Internal_GC_GCInfoBuilder_Fill(KRef builder, int id) {
 }
 
 void Kotlin_native_internal_GC_collectCyclic(KRef) {
@@ -3796,6 +3703,22 @@ CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
     // no-op, used by the new MM only.
 }
 
+RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processObjectInMark(void* state, ObjHeader* object) {
+    // no-op, used by the new MM only.
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processArrayInMark(void* state, ObjHeader* object) {
+    // no-op, used by the new MM only.
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processFieldInMark(void* state, ObjHeader* field) {
+    // no-op, used by the new MM only.
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
+    // no-op, used by the new MM only.
+}
+
 } // extern "C"
 
 #if !KONAN_NO_EXCEPTIONS
@@ -3846,3 +3769,5 @@ void kotlin::StartFinalizerThreadIfNeeded() noexcept {}
 bool kotlin::FinalizersThreadIsRunning() noexcept {
     return false;
 }
+
+

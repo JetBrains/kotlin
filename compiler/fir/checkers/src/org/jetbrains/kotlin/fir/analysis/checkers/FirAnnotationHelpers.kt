@@ -90,16 +90,22 @@ fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotation? {
     return getAnnotationByClassId(StandardClassIds.Annotations.Target)
 }
 
-fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {
+fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {
     return unfoldArrayOrVararg().mapNotNull {
-        it.extractClassFromArgument()
+        it.extractClassFromArgument(session)
     }
 }
 
-fun FirExpression.extractClassFromArgument(): FirRegularClassSymbol? {
+fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClassSymbol? {
     if (this !is FirGetClassCall) return null
-    val qualifier = argument as? FirResolvedQualifier ?: return null
-    return qualifier.symbol as? FirRegularClassSymbol
+    return when (val argument = argument) {
+        is FirResolvedQualifier ->
+            argument.symbol as? FirRegularClassSymbol
+        is FirClassReferenceExpression ->
+            argument.classTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.toRegularClassSymbol(session)
+        else ->
+            null
+    }
 }
 
 fun checkRepeatedAnnotation(
@@ -185,7 +191,8 @@ fun checkRepeatedAnnotation(
 
     for (annotation in annotations) {
         val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation, context)
-        val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
+        val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
+        val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
 
         checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
         existingTargetsForAnnotation.add(useSiteTarget)

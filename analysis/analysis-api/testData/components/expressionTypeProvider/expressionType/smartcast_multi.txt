@@ -1,2 +1,2 @@
 expression: a
-type: (A&B)
+type: A & B

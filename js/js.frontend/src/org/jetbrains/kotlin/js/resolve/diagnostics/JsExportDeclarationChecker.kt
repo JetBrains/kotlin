@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
+import org.jetbrains.kotlin.js.common.SPECIAL_KEYWORDS
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -212,7 +213,7 @@ object JsExportDeclarationChecker : DeclarationChecker {
 
         val name = declarationDescriptor.getKotlinOrJsName()
 
-        if (name !in RESERVED_KEYWORDS && NameSuggestion.sanitizeName(name) == name) return
+        if (name in SPECIAL_KEYWORDS || (name !in RESERVED_KEYWORDS && NameSuggestion.sanitizeName(name) == name)) return
 
         val reportTarget = declarationDescriptor.getJsNameArgument() ?: declaration.getIdentifier()
 

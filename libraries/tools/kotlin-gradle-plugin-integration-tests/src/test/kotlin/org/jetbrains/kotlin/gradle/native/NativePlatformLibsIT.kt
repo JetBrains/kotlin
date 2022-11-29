@@ -148,13 +148,16 @@ class NativePlatformLibsIT : BaseGradleIT() {
                 appendText("\nkotlin.native.linkArgs=-Xfoo=bar -Xbaz=qux")
             }
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-            gradleBuildScript().appendText("""
-                kotlin.linuxX64() {
-                    binaries.sharedLib {
-                        freeCompilerArgs += "-Xmen=pool"
-                    }
-                }
-            """.trimIndent())
+            gradleBuildScript().appendText(
+                """
+                |
+                |kotlin.linuxX64() {
+                |    binaries.sharedLib {
+                |        freeCompilerArgs += "-Xmen=pool"
+                |    }
+                |}
+                """.trimMargin()
+            )
             build("linkDebugSharedLinuxX64") {
                 assertSuccessful()
                 assertTasksExecuted(
@@ -174,14 +177,10 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testNoGenerationForUnsupportedHost() {
+        hostHaveUnsupportedTarget()
         deleteInstalledCompilers()
 
-        val unsupportedTarget = when {
-            HostManager.hostIsMac -> KonanTarget.LINUX_MIPSEL32
-            else -> KonanTarget.IOS_X64
-        }
-
-        platformLibrariesProject(unsupportedTarget.presetName).buildWithLightDist("assemble") {
+        platformLibrariesProject(KonanTarget.IOS_X64.presetName).buildWithLightDist("assemble") {
             assertSuccessful()
             assertNotContains("Generate platform libraries for ")
         }

@@ -48,7 +48,7 @@ fun case_4(x: Any?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
 }
 
 // TESTCASE NUMBER: 5

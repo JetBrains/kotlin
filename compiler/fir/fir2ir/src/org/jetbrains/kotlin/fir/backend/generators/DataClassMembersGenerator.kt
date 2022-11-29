@@ -199,7 +199,6 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 withForcedTypeCalculator = true
             )
             val contributedFunctionsInSupertypes =
-                @OptIn(ExperimentalStdlibApi::class)
                 buildMap<Name, FirSimpleFunction> {
                     for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
                         // We won't synthesize a function if there is a user-contributed one.
@@ -265,10 +264,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             returnType: IrType,
             otherParameterNeeded: Boolean = false
         ): IrFunction {
+            val functionSymbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
             val firFunction = buildSimpleFunction {
                 origin = FirDeclarationOrigin.Synthetic
                 this.name = name
-                this.symbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
+                this.symbol = functionSymbol
                 this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                 moduleData = components.session.moduleData
                 this.returnTypeRef = when (returnType) {
@@ -285,6 +285,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                             moduleData = components.session.moduleData
                             this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
                             this.symbol = FirValueParameterSymbol(this.name)
+                            containingFunctionSymbol = functionSymbol
                             isCrossinline = false
                             isNoinline = false
                             isVararg = false

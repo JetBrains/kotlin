@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.Action
-import org.gradle.api.InvalidUserCodeException
-import org.gradle.api.NamedDomainObjectCollection
-import org.gradle.api.Project
+import org.gradle.api.*
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyDslImpl
 import javax.inject.Inject
 
 abstract class KotlinMultiplatformExtension(project: Project) :
@@ -26,7 +25,7 @@ abstract class KotlinMultiplatformExtension(project: Project) :
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
 
-    override val defaultJsCompilerType: KotlinJsCompilerType = project.kotlinPropertiesProvider.jsCompiler
+    override val compilerTypeFromProperties: KotlinJsCompilerType? = project.kotlinPropertiesProvider.jsCompiler
 
     private val presetExtension = project.objects.newInstance(
         DefaultTargetsFromPresetExtension::class.java,
@@ -53,15 +52,18 @@ abstract class KotlinMultiplatformExtension(project: Project) :
         configure(presetExtension)
     }
 
+    @ExperimentalKotlinGradlePluginApi
+    val targetHierarchy: KotlinTargetHierarchyDsl get() = KotlinTargetHierarchyDslImpl(targets, sourceSets)
+
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
         get() = targets.withType(KotlinTargetWithTests::class.java)
 
-    fun metadata(configure: KotlinOnlyTarget<AbstractKotlinCompilation<*>>.() -> Unit = { }): KotlinOnlyTarget<AbstractKotlinCompilation<*>> =
+    fun metadata(configure: KotlinOnlyTarget<KotlinMetadataCompilation<*>>.() -> Unit = { }): KotlinOnlyTarget<KotlinMetadataCompilation<*>> =
         @Suppress("UNCHECKED_CAST")
-        (targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as KotlinOnlyTarget<AbstractKotlinCompilation<*>>).also(configure)
+        (targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as KotlinOnlyTarget<KotlinMetadataCompilation<*>>).also(configure)
 
-    fun metadata(configure: Action<KotlinOnlyTarget<AbstractKotlinCompilation<*>>>) = metadata { configure.execute(this) }
+    fun metadata(configure: Action<KotlinOnlyTarget<KotlinMetadataCompilation<*>>>) = metadata { configure.execute(this) }
 
     fun <T : KotlinTarget> targetFromPreset(
         preset: KotlinTargetPreset<T>,
@@ -180,12 +182,14 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
             configure(existingTarget as T)
             return existingTarget
         }
+
         existingTarget == null -> {
             val newTarget = targetPreset.createTarget(targetName)
             targets.add(newTarget)
             configure(newTarget)
             return newTarget
         }
+
         else -> {
             throw InvalidUserCodeException(
                 "The target '$targetName' already exists, but it was not created with the '${targetPreset.name}' preset. " +

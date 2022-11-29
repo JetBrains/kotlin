@@ -44,12 +44,12 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -775,7 +775,7 @@ class FirCallResolver(
                         resolvedSymbol = coneSymbol
                     }
                 }
-                if (coneSymbol.safeAs<FirPropertySymbol>()?.hasExplicitBackingField == true) {
+                if ((coneSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true) {
                     return FirPropertyWithExplicitBackingFieldResolvedNamedReference(
                         source, name, candidate.symbol, candidate.hasVisibleBackingField
                     )

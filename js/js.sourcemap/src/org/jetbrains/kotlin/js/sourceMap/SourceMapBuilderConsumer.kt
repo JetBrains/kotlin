@@ -59,11 +59,12 @@ class SourceMapBuilderConsumer(
                     } else {
                         { null }
                     }
-                    mappingConsumer.addMapping(sourceFilePath, null, contentSupplier, startLine, startChar)
+                    mappingConsumer.addMapping(sourceFilePath, null, contentSupplier, startLine, startChar, null)
                 } catch (e: IOException) {
                     throw RuntimeException("IO error occurred generating source maps", e)
                 }
             }
+
             is JsLocationWithSource -> {
                 val contentSupplier = if (provideExternalModuleContent) sourceInfo.sourceProvider else {
                     { null }
@@ -81,13 +82,18 @@ class SourceMapBuilderConsumer(
                 }
                 mappingConsumer.addMapping(
                     path,
-                    sourceInfo.identityObject,
+                    sourceInfo.fileIdentity,
                     contentSupplier,
                     sourceInfo.startLine,
-                    sourceInfo.startChar
+                    sourceInfo.startChar,
+                    sourceInfo.name
                 )
             }
-            is JsNode, is KtPureElement -> { /* Can occur on legacy BE */ }
+
+            is JsNode, is KtPureElement -> {
+                /* Can occur on legacy BE */
+            }
+
             else -> {}
         }
     }

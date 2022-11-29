@@ -30,3 +30,7 @@ void* kotlin::allocateInObjectPool(size_t size) noexcept {
 void kotlin::freeInObjectPool(void* ptr) noexcept {
     freeImpl(ptr);
 }
+
+void kotlin::compactObjectPoolInCurrentThread() noexcept {}
+
+void kotlin::compactObjectPoolInMainThread() noexcept {}

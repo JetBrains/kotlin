@@ -39,9 +39,9 @@ fun test() {
     <!API_NOT_AVAILABLE!>v3<!>
     v3 = ""
     v4
-    <!UNRESOLVED_REFERENCE!>v4<!> = ""
+    <!API_NOT_AVAILABLE!>v4<!> = ""
     <!API_NOT_AVAILABLE!>v5<!>
-    <!UNRESOLVED_REFERENCE!>v5<!> = ""
+    <!API_NOT_AVAILABLE!>v5<!> = ""
     <!UNRESOLVED_REFERENCE!>v6<!>
     <!UNRESOLVED_REFERENCE!>v6<!> = ""
     <!API_NOT_AVAILABLE!>v7<!>

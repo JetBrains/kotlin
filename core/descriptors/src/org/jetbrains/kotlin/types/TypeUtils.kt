@@ -22,16 +22,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
-import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -339,7 +336,7 @@ fun SimpleType.unCapture(): UnwrappedType {
 }
 
 fun unCaptureProjection(projection: TypeProjection): TypeProjection {
-    val unCapturedProjection = projection.type.constructor.safeAs<NewCapturedTypeConstructor>()?.projection ?: projection
+    val unCapturedProjection = (projection.type.constructor as? NewCapturedTypeConstructor)?.projection ?: projection
     if (unCapturedProjection.isStarProjection || unCapturedProjection.type is ErrorType) return unCapturedProjection
 
     val newArguments = unCapturedProjection.type.arguments.map(::unCaptureProjection)
@@ -397,8 +394,3 @@ fun isUnresolvedType(type: KotlinType): Boolean {
     }
     return type is ErrorType && type.kind.isUnresolved
 }
-
-fun isEmptyIntersectionTypeCompatible(vararg types: KotlinTypeMarker): Boolean =
-    EmptyIntersectionTypeChecker.computeEmptyIntersectionEmptiness(
-        SimpleClassicTypeSystemContext, types.toList(), compatibilityModeEnabled = true
-    )?.kind == EmptyIntersectionTypeKind.COMPATIBLE

@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
+import org.gradle.api.GradleException
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -52,6 +53,12 @@ internal val Project.kotlinExtensionOrNull: KotlinProjectExtension?
 val Project.kotlinExtension: KotlinProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
+internal val Project.kotlinJvmExtensionOrNull: KotlinJvmProjectExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
+
+internal val Project.kotlinJvmExtension: KotlinJvmProjectExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
+
 internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
     get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
 
@@ -60,6 +67,9 @@ internal val Project.multiplatformExtension: KotlinMultiplatformExtension
 
 internal val Project.pm20Extension: KotlinPm20ProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
+
+internal val Project.pm20ExtensionOrNull: KotlinPm20ProjectExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
 
 abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTopLevelExtensionConfig {
 
@@ -146,12 +156,6 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
         internal set(value) {
             DslObject(this).extensions.add("sourceSets", value)
         }
-
-    internal val kpmModelContainer by lazy {
-        if (project.kotlinPropertiesProvider.experimentalKpmModelMapping) {
-            GradleKpmDefaultProjectModelContainer.create(project)
-        } else error("Model mapping is not enabled.")
-    }
 }
 
 abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Project) : KotlinProjectExtension(project) {
@@ -160,30 +164,30 @@ abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Proje
     fun target(body: Action<TARGET>) = body.execute(target)
 }
 
-abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*>>(project)
+abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*, *>>(project)
 
 abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    override lateinit var target: KotlinWithJavaTarget<KotlinJvmOptions>
+    override lateinit var target: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
         internal set
 
-    open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions>.() -> Unit) = target.run(body)
+    open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit) = target.run(body)
 }
 
 abstract class Kotlin2JsProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    private lateinit var _target: KotlinWithJavaTarget<KotlinJsOptions>
+    private lateinit var _target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
 
-    override val target: KotlinWithJavaTarget<KotlinJsOptions>
+    override val target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
         get() {
             if (!::_target.isInitialized) throw IllegalStateException("Extension target is not initialized!")
 
             return _target
         }
 
-    internal fun setTarget(target: KotlinWithJavaTarget<KotlinJsOptions>) {
+    internal fun setTarget(target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>) {
         _target = target
     }
 
-    open fun target(body: KotlinWithJavaTarget<KotlinJsOptions>.() -> Unit) = target.run(body)
+    open fun target(body: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>.() -> Unit) = target.run(body)
 }
 
 abstract class KotlinJsProjectExtension(project: Project) :
@@ -205,7 +209,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
             targetSetObservers.forEach { it(value) }
         }
 
-    internal fun registerTargetObserver(observer: (KotlinJsTargetDsl?) -> Unit) {
+    fun registerTargetObserver(observer: (KotlinJsTargetDsl?) -> Unit) {
         targetSetObservers.add(observer)
     }
 
@@ -217,6 +221,53 @@ abstract class KotlinJsProjectExtension(project: Project) :
                 KotlinJsCompilerType.BOTH -> KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "both")
             }
         }
+
+        internal fun warnAboutDeprecatedCompiler(project: Project, compilerType: KotlinJsCompilerType?) {
+            if (PropertiesProvider(project).jsCompilerNoWarn) return
+            val logger = project.logger
+            when (compilerType) {
+                KotlinJsCompilerType.LEGACY -> logger.warn(LEGACY_DEPRECATED)
+                KotlinJsCompilerType.IR -> {}
+                KotlinJsCompilerType.BOTH -> logger.warn(BOTH_DEPRECATED)
+                null -> throw GradleException(DEFAULT_COMPILER_ERROR)
+            }
+        }
+
+        private val LEGACY_DEPRECATED =
+            """
+                |
+                |==========
+                |This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
+                |
+                |Please migrate the project to the new IR-based compiler (https://kotl.in/jsir).
+                |==========
+                |
+            """.trimMargin()
+
+        private val BOTH_DEPRECATED =
+            """
+                |
+                |==========
+                |This project currently uses Both mode, which requires the Kotlin/JS Legacy compiler backend.
+                |This backend has been deprecated and will be removed in a future release.
+                |
+                |Please migrate the project to the new IR-based compiler (https://kotl.in/jsir).
+                |==========
+                |
+            """.trimMargin()
+
+        private val DEFAULT_COMPILER_ERROR =
+            """
+                |
+                |==========
+                |This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
+                |Please migrate the project to the new IR-based compiler (https://kotl.in/jsir) by adding:
+                |- kotlin.js.compiler=ir to your gradle.properties file.
+                |- js(IR) { ... } to your build file.
+                |You can continue to use the deprecated legacy compiler in the current version of the toolchain by specifying it explicitly.
+                |==========
+                |
+            """.trimMargin()
     }
 
     @Deprecated("Use js() instead", ReplaceWith("js()"))
@@ -229,7 +280,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
             return _target!!
         }
 
-    override lateinit var defaultJsCompilerType: KotlinJsCompilerType
+    override var compilerTypeFromProperties: KotlinJsCompilerType? = null
 
     @Suppress("DEPRECATION")
     private fun jsInternal(
@@ -244,8 +295,10 @@ abstract class KotlinJsProjectExtension(project: Project) :
         }
 
         if (_target == null) {
-            val compilerOrDefault = compiler ?: defaultJsCompilerType
+            val compilerOrFromProperties = compiler ?: compilerTypeFromProperties
+            val compilerOrDefault = compilerOrFromProperties ?: defaultJsCompilerType
             reportJsCompilerMode(compilerOrDefault)
+            warnAboutDeprecatedCompiler(project, compilerOrFromProperties)
             val target: KotlinJsTargetDsl = when (compilerOrDefault) {
                 KotlinJsCompilerType.LEGACY -> legacyPreset
                     .also {
@@ -331,10 +384,12 @@ abstract class KotlinJsProjectExtension(project: Project) :
 }
 
 abstract class KotlinCommonProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    override lateinit var target: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>
+    override lateinit var target: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>
         internal set
 
-    open fun target(body: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>.() -> Unit) = target.run(body)
+    open fun target(
+        body: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>.() -> Unit
+    ) = target.run(body)
 }
 
 abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTargetExtension<KotlinAndroidTarget>(project) {

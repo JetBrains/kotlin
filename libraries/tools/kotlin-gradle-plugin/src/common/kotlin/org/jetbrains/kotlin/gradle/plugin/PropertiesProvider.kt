@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompi
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_KARMA_BROWSERS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
@@ -24,10 +26,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
@@ -59,7 +59,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.property("kotlin.internal.single.build.metrics.file")?.let { File(it) }
 
     val buildReportSingleFile: File?
-        get() = this.property("kotlin.build.report.single_file")?.let { File(it) }
+        get() = this.property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE)?.let { File(it) }
 
     @Deprecated(message = "Please use kotlin.build.report.output instead ")
     val buildReportEnabled: Boolean
@@ -86,10 +86,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportFileOutputDir: File?
         get() = this.property("kotlin.build.report.file.output_dir")?.let { File(it) }
 
-    val buildReportHttpUrlProperty = "kotlin.build.report.http.url"
-
     val buildReportHttpUrl: String?
-        get() = this.property(buildReportHttpUrlProperty)
+        get() = this.property(PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL)
 
     val buildReportHttpUser: String?
         get() = this.property("kotlin.build.report.http.user")
@@ -99,6 +97,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val buildReportHttpVerboseEnvironment: Boolean
         get() = property("kotlin.build.report.http.verbose_environment")?.toBoolean() ?: false
+
+    val buildReportHttpIncludeGitBranchName: Boolean
+        get() = property("kotlin.build.report.http.include_git_branch.name")?.toBoolean() ?: false
 
     val buildReportBuildScanCustomValuesLimit: Int
         get() = property("kotlin.build.report.build_scan.custom_values_limit")?.toInt() ?: 1000
@@ -123,7 +124,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.incremental.js.klib")
 
     val incrementalJsIr: Boolean
-        get() = booleanProperty("kotlin.incremental.js.ir") ?: false
+        get() = booleanProperty("kotlin.incremental.js.ir") ?: true
 
     val jsIrOutputGranularity: KotlinJsIrOutputGranularity
         get() = this.property("kotlin.js.ir.output.granularity")?.let { KotlinJsIrOutputGranularity.byArgument(it) }
@@ -194,15 +195,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val enableCompatibilityMetadataVariant: Boolean
         get() {
-            return (booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: !mppHierarchicalStructureByDefault) &&
-                    !experimentalKpmModelMapping
+            return (booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: !mppHierarchicalStructureByDefault)
         }
 
     val enableKotlinToolingMetadataArtifact: Boolean
         get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
-
-    val mppStabilityNoWarn: Boolean?
-        get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
 
     val mppEnableOptimisticNumberCommonization: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: true
@@ -213,8 +210,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val wasmStabilityNoWarn: Boolean
         get() = booleanProperty("kotlin.wasm.stability.nowarn") ?: false
 
-    val experimentalKpmModelMapping: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING) ?: false
+    val jsCompilerNoWarn: Boolean
+        get() = booleanProperty("$jsCompilerProperty.nowarn") ?: false
 
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
@@ -231,6 +228,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreMppAndroidSourceSetLayoutVersion: Boolean
         get() = booleanProperty(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN) ?: false
 
+    val ignoreMppAndroidSourceSetLayoutV2AndroidStyleDirs: Boolean
+        get() = booleanProperty(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN) ?: false
+
     val ignoreDisabledCInteropCommonization: Boolean
         get() = booleanProperty("$KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION.nowarn") ?: false
 
@@ -243,8 +243,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * By default individual test tasks will not fail build if this task will be executed,
      * also individual html and xml reports will replaced by one consolidated html report.
      */
-    val individualTaskReports: Boolean?
-        get() = booleanProperty("kotlin.tests.individualTaskReports")
+    val individualTaskReports: Boolean
+        get() = booleanProperty("kotlin.tests.individualTaskReports") ?: false
 
     /**
      * Allow a user to choose distribution type. The following distribution types are available:
@@ -377,23 +377,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreTcsmOverflow: Boolean
         get() = booleanProperty(IGNORE_TCSM_OVERFLOW) ?: false
 
-    /**
-     * Generate kotlin/js external declarations from all .d.ts files found in npm modules
-     */
-    val jsGenerateExternals: Boolean
-        get() = booleanProperty("kotlin.js.generate.externals") ?: DEFAULT_GENERATE_EXTERNALS
-
-    /**
-     * Automaticaly discover external .d.ts declarations
-     */
-    val jsDiscoverTypes: Boolean?
-        get() = booleanProperty("kotlin.js.experimental.discoverTypes")
+    val errorJsGenerateExternals: Boolean?
+        get() = booleanProperty("kotlin.js.generate.externals")
 
     /**
      * Use Kotlin/JS backend compiler type
      */
-    val jsCompiler: KotlinJsCompilerType
-        get() = this.property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) } ?: KotlinJsCompilerType.LEGACY
+    val jsCompiler: KotlinJsCompilerType?
+        get() = this.property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) }
 
     /**
      * Use Webpack 4 for compatibility
@@ -408,13 +399,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             }
             ?: WebpackMajorVersion.DEFAULT
 
-
-    /**
-     * Default mode of generating of Dukat
-     */
-    val externalsOutputFormat: ExternalsOutputFormat?
-        get() = this.property(externalsOutputFormatProperty)?.let { ExternalsOutputFormat.byArgumentOrNull(it) }
-
     /**
      * Use Kotlin/JS backend compiler type
      */
@@ -427,15 +411,24 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty(KOTLIN_STDLIB_DEFAULT_DEPENDENCY) ?: true
 
+    val stdlibJdkVariantsVersionAlignment: Boolean
+        get() = booleanProperty(KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT) ?: true
+
     val kotlinTestInferJvmVariant: Boolean
         get() = booleanProperty("kotlin.test.infer.jvm.variant") ?: true
+
+    val kotlinOptionsSuppressFreeArgsModificationWarning: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING) ?: false
 
     enum class JvmTargetValidationMode {
         IGNORE, WARNING, ERROR
     }
 
     val jvmTargetValidationMode: JvmTargetValidationMode
-        get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.WARNING)
+        get() = enumProperty(
+            "kotlin.jvm.target.validation.mode",
+            if (GradleVersion.current().baseVersion >= GradleVersion.version("8.0")) JvmTargetValidationMode.ERROR else JvmTargetValidationMode.WARNING
+        )
 
     val kotlinDaemonJvmArgs: String?
         get() = this.property("kotlin.daemon.jvmargs")
@@ -499,6 +492,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     object PropertyNames {
         const val KOTLIN_STDLIB_DEFAULT_DEPENDENCY = "kotlin.stdlib.default.dependency"
+        const val KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT = "kotlin.stdlib.jdk.variants.version.alignment"
         const val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = "kotlin.mpp.enableGranularSourceSetsMetadata"
         const val KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION = "kotlin.mpp.enableCInteropCommonization"
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = "kotlin.internal.mpp.hierarchicalStructureByDefault"
@@ -506,12 +500,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN = "kotlin.mpp.androidGradlePluginCompatibility.nowarn"
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION = "kotlin.mpp.androidSourceSetLayoutVersion"
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN = "${KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}1.nowarn"
+        const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN = "kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
         const val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.enableOptimisticNumberCommonization"
-        const val KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING = "kotlin.kpm.experimentalModelMapping"
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"
         const val KOTLIN_ABI_SNAPSHOT = "kotlin.incremental.classpath.snapshot.enabled"
         const val KOTLIN_JS_KARMA_BROWSERS = "kotlin.js.browser.karma.browsers"
+        const val KOTLIN_BUILD_REPORT_SINGLE_FILE = "kotlin.build.report.single_file"
+        const val KOTLIN_BUILD_REPORT_HTTP_URL = "kotlin.build.report.http.url"
+        const val KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING = "kotlin.options.suppressFreeCompilerArgsModificationWarning"
     }
 
     companion object {

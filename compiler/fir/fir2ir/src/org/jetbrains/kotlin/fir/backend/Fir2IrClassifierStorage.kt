@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -25,13 +27,11 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -203,22 +203,34 @@ class Fir2IrClassifierStorage(
     // This function is called when we refer local class earlier than we reach its declaration
     // This can happen e.g. when implicit return type has a local class constructor
     private fun createLocalIrClassOnTheFly(klass: FirClass): IrClass {
-        val result = when (klass) {
-            is FirAnonymousObject -> createIrAnonymousObject(klass, irParent = temporaryParent).apply {
-                converter.processAnonymousObjectOnTheFly(klass, this)
+        // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
+        val classOrLocalParent = generateSequence(klass) { c ->
+            (c as? FirRegularClass)?.containingClassForLocalAttr?.let {
+                (firProvider.symbolProvider.getSymbolByLookupTag(it)?.fir as? FirClass)?.takeIf {
+                    it.declarations.contains(c)
+                }
             }
-            is FirRegularClass -> converter.processLocalClassAndNestedClassesOnTheFly(klass, temporaryParent)
+        }.last()
+        val result = when (classOrLocalParent) {
+            is FirAnonymousObject -> createIrAnonymousObject(classOrLocalParent, irParent = temporaryParent).apply {
+                converter.processAnonymousObjectOnTheFly(classOrLocalParent, this)
+            }
+            is FirRegularClass -> {
+                converter.processLocalClassAndNestedClassesOnTheFly(classOrLocalParent, temporaryParent)
+            }
         }
         // Note: usually member creation and f/o binding is delayed till non-local classes are processed in Fir2IrConverter
         // If non-local classes are already created (this means we are in body translation) we do everything immediately
         // The last variant is possible for local variables like 'val a = object : Any() { ... }'
         if (processMembersOfClassesOnTheFlyImmediately) {
-            processMembersOfClassCreatedOnTheFly(klass, result)
+            processMembersOfClassCreatedOnTheFly(classOrLocalParent, result)
             converter.bindFakeOverridesInClass(result)
         } else {
-            localClassesCreatedOnTheFly[klass] = result
+            localClassesCreatedOnTheFly[classOrLocalParent] = result
         }
-        return result
+        return if (classOrLocalParent === klass) result
+        else (getCachedIrClass(klass)
+            ?: error("Assuming that all nested classes of ${classOrLocalParent.classId.asString()} should already be cached"))
     }
 
     // Note: this function is called exactly once, right after Fir2IrConverter finished f/o binding for regular classes
@@ -471,7 +483,7 @@ class Fir2IrClassifierStorage(
     ): IrEnumEntry {
         getCachedIrEnumEntry(enumEntry)?.let { return it }
         val containingFile = firProvider.getFirCallableContainerFile(enumEntry.symbol)
-        val irParentClass = irParent ?: enumEntry.containingClass()?.let { findIrClass(it) }
+        val irParentClass = irParent ?: enumEntry.containingClassLookupTag()?.let { findIrClass(it) }
 
         @Suppress("NAME_SHADOWING")
         val predefinedOrigin = predefinedOrigin ?: if (containingFile != null) {
@@ -514,7 +526,6 @@ class Fir2IrClassifierStorage(
                     startOffset, endOffset, origin, symbol, enumEntry.name
                 ).apply {
                     declarationStorage.enterScope(this)
-                    val irType = enumEntry.returnTypeRef.toIrType()
                     if (irParent != null) {
                         this.parent = irParent
                     }
@@ -527,15 +538,6 @@ class Fir2IrClassifierStorage(
                         }
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
                         // which will be translated via visitor later.
-                    } else if (irParent != null && origin == IrDeclarationOrigin.DEFINED) {
-                        val constructor = irParent.constructors.first()
-                        this.initializerExpression = factory.createExpressionBody(
-                            IrEnumConstructorCallImpl(
-                                startOffset, endOffset, irType, constructor.symbol,
-                                valueArgumentsCount = constructor.valueParameters.size,
-                                typeArgumentsCount = constructor.typeParameters.size
-                            )
-                        )
                     }
                     declarationStorage.leaveScope(this)
                 }

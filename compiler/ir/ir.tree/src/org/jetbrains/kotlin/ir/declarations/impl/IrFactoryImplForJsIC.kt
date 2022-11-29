@@ -13,14 +13,15 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
+import java.util.*
 
 class IrFactoryImplForJsIC(override val stageController: StageController) : AbstractIrFactoryImpl(), IdSignatureRetriever {
-    private val declarationToSignature = mutableMapOf<IrDeclaration, IdSignature>()
+    private val declarationToSignature = WeakHashMap<IrDeclaration, IdSignature>()
 
     private fun <T : IrDeclaration> T.register(): T {
         val parentSig = stageController.currentDeclaration?.let { declarationSignature(it) } ?: return this
 
-        stageController.createSignature(parentSig)?.let { declarationToSignature[this] = it}
+        stageController.createSignature(parentSig)?.let { declarationToSignature[this] = it }
 
         return this
     }
@@ -199,7 +200,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         ).register()
     }
 
-    override fun createFakeOverrideFunction(
+    override fun createFunctionWithLateBinding(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
@@ -215,7 +216,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         isInfix: Boolean,
         isExpect: Boolean
     ): IrSimpleFunction {
-        return super.createFakeOverrideFunction(
+        return super.createFunctionWithLateBinding(
             startOffset,
             endOffset,
             origin,
@@ -289,7 +290,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         ).register()
     }
 
-    override fun createFakeOverrideProperty(
+    override fun createPropertyWithLateBinding(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
@@ -303,7 +304,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         isExternal: Boolean,
         isExpect: Boolean
     ): IrProperty {
-        return super.createFakeOverrideProperty(
+        return super.createPropertyWithLateBinding(
             startOffset,
             endOffset,
             origin,

@@ -202,6 +202,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
                 LookupSymbol(name = "inlineFunctionChangedSignature", scope = "com.example.SomeClass"),
                 LookupSymbol(name = "inlineFunctionChangedImplementation", scope = "com.example.SomeClass"),
+                LookupSymbol(name = "inlineFunctionChangedLineNumber", scope = "com.example.SomeClass"),
 
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass.CompanionObject"),
@@ -209,6 +210,48 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
             fqNames = setOf(
                 "com.example.SomeClass",
                 "com.example.SomeClass.CompanionObject",
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testPropertyAccessors() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testPropertyAccessors/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "property_ChangedType", scope = "com.example.SomeClass"),
+
+                LookupSymbol(name = "inlineProperty_ChangedType", scope = "com.example"),
+                LookupSymbol(name = "inlineProperty_ChangedType_BackingField", scope = "com.example"),
+
+                LookupSymbol(name = "inlineProperty_ChangedGetterImpl", scope = "com.example"),
+                LookupSymbol(name = "inlineProperty_ChangedSetterImpl", scope = "com.example"),
+
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass")
+            ),
+            fqNames = setOf(
+                "com.example",
+                "com.example.SomeClass"
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testFunctionsAndPropertyAccessorsWithJvmNames() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testFunctionsAndPropertyAccessorsWithJvmNames/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedFunction", scope = "com.example.SomeClass"),
+                LookupSymbol(name = "changedPropertyAccessor", scope = "com.example.SomeClass"),
+
+                LookupSymbol(name = "changedInlineFunction", scope = "com.example"),
+                LookupSymbol(name = "changedInlinePropertyAccessor", scope = "com.example"),
+
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass"),
+            ),
+            fqNames = setOf(
+                "com.example",
+                "com.example.SomeClass"
             )
         ).assertEquals(changes)
     }

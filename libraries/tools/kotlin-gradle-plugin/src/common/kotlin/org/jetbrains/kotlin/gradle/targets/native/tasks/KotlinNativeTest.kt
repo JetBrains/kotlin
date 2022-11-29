@@ -15,6 +15,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -39,6 +41,7 @@ abstract class KotlinNativeTest: KotlinTest() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputFiles // use FileCollection & @InputFiles rather than @InputFile to allow for task dependencies built-into this FileCollection
     @get:SkipWhenEmpty
     @Suppress("UNUSED") // Gradle input
@@ -222,9 +225,17 @@ abstract class KotlinNativeHostTest : KotlinNativeTest() {
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
 abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
-    @Input
-    @Option(option = "device", description = "Sets a simulated device used to execute tests.")
-    lateinit var deviceId: String
+    @Deprecated("Use the property 'device' instead")
+    @get:Internal
+    var deviceId: String
+        get() = device.get()
+        set(value) {
+            device.set(value)
+        }
+
+    @get:Input
+    @get:Option(option = "device", description = "Sets a simulated device used to execute tests.")
+    abstract val device: Property<String>
 
     @Internal
     var debugMode = false
@@ -246,7 +257,7 @@ abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
                 "spawn",
                 "--wait-for-debugger".takeIf { debugMode },
                 "--standalone",
-                deviceId,
+                device.get(),
                 this@KotlinNativeSimulatorTest.executable.absolutePath,
                 "--"
             ) +

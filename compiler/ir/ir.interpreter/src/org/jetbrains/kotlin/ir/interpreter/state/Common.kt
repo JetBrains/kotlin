@@ -52,7 +52,7 @@ internal class Common private constructor(override val irClass: IrClass, overrid
         return irClass.declarations
             .filterIsInstance<IrSimpleFunction>()
             .single {
-                it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null
+                it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null
                         && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
             }
             .let { it.resolveFakeOverride() as IrSimpleFunction }
@@ -60,13 +60,13 @@ internal class Common private constructor(override val irClass: IrClass, overrid
 
     fun getHashCodeFunction(): IrSimpleFunction {
         return irClass.declarations.filterIsInstance<IrSimpleFunction>()
-            .single { it.name.asString() == "hashCode" && it.valueParameters.isEmpty() }
+            .single { it.name.asString() == "hashCode" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
             .let { it.resolveFakeOverride() as IrSimpleFunction }
     }
 
     fun getToStringFunction(): IrSimpleFunction {
         return irClass.declarations.filterIsInstance<IrSimpleFunction>()
-            .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() }
+            .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
             .let { it.resolveFakeOverride() as IrSimpleFunction }
     }
 

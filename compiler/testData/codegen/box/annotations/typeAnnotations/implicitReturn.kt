@@ -11,14 +11,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE_USE)
+@interface TypeAnn {}
 
 public class ImplicitReturn {
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE_USE)
-    public @ interface TypeAnn {}
-
-    @ImplicitReturn.TypeAnn
+    @TypeAnn
     public String bar() {
         return "OK";
     }
@@ -45,14 +43,14 @@ fun box(): String {
     checkTypeAnnotation(
         Kotlin::foo.javaMethod!!.annotatedReturnType,
         "class java.lang.String",
-        "@ImplicitReturn\$TypeAnn()",
+        "@TypeAnn()",
         "foo"
     )
 
     checkTypeAnnotation(
         Kotlin::field.javaField!!.annotatedType,
         "class java.lang.String",
-        "@ImplicitReturn\$TypeAnn()",
+        "@TypeAnn()",
         "foo"
     )
 

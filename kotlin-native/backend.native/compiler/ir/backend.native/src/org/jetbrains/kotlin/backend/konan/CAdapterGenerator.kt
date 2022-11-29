@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -161,13 +162,9 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
         return "$kind: $name ${elements.joinToString(", ")} ${scopes.joinToString("\n")}"
     }
 
-    fun generateCAdapters() {
-        elements.forEach {
-            it.generateCAdapter()
-        }
-        scopes.forEach {
-            it.generateCAdapters()
-        }
+    fun generateCAdapters(builder: (ExportedElement) -> Unit) {
+        elements.forEach { builder(it) }
+        scopes.forEach { it.generateCAdapters(builder) }
     }
 
     // collects names of inner scopes to make sure function<->scope name clashes would be detected, and functions would be mangled with "_" suffix
@@ -196,7 +193,7 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
 private class ExportedElement(val kind: ElementKind,
                               val scope: ExportedElementScope,
                               val declaration: DeclarationDescriptor,
-                              val owner: CAdapterGenerator) : ContextUtils {
+                              val owner: CAdapterGenerator) {
     init {
         scope.elements.add(this)
     }
@@ -208,70 +205,6 @@ private class ExportedElement(val kind: ElementKind,
 
     override fun toString(): String {
         return "$kind: $name (aliased to ${if (::cname.isInitialized) cname.toString() else "<unknown>"})"
-    }
-
-    override val context = owner.context
-
-    fun generateCAdapter() {
-        when {
-            isFunction -> {
-                val function = declaration as FunctionDescriptor
-                val irFunction = irSymbol.owner as IrFunction
-                cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val llvmCallable = owner.codegen.llvmFunction(irFunction)
-                // If function is virtual, we need to resolve receiver properly.
-                val bridge = generateFunction(owner.codegen, llvmCallable.functionType, cname) {
-                    val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
-                            irFunction.isOverridable) {
-                        val receiver = param(0)
-                        lookupVirtualImpl(receiver, irFunction)
-                    } else {
-                        // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
-                        // Hence, insert not an alias but a wrapper, hoping it will be optimized out later.
-                        llvmCallable
-                    }
-
-                    val numParams = LLVMCountParams(llvmCallable.llvmValue)
-                    val args = (0..numParams - 1).map { index -> param(index) }
-                    callee.attributeProvider.addFunctionAttributes(this.function)
-                    val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
-                    ret(result)
-                }
-                LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
-            }
-            isClass -> {
-                val irClass = irSymbol.owner as IrClass
-                cname = "_konan_function_${owner.nextFunctionIndex()}"
-                // Produce type getter.
-                val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
-                        context,
-                        context.llvmModule!!,
-                        "${cname}_type",
-                        owner.kGetTypeFuncType
-                )
-                val builder = LLVMCreateBuilderInContext(llvmContext)!!
-                val bb = LLVMAppendBasicBlockInContext(llvmContext, getTypeFunction, "")!!
-                LLVMPositionBuilderAtEnd(builder, bb)
-                LLVMBuildRet(builder, irClass.typeInfoPtr.llvm)
-                LLVMDisposeBuilder(builder)
-                // Produce instance getter if needed.
-                if (isSingletonObject) {
-                    generateFunction(owner.codegen, owner.kGetObjectFuncType, "${cname}_instance") {
-                        val value = getObjectValue(irClass, ExceptionHandler.Caller, null)
-                        ret(value)
-                    }
-                }
-            }
-            isEnumEntry -> {
-                // Produce entry getter.
-                cname = "_konan_function_${owner.nextFunctionIndex()}"
-                generateFunction(owner.codegen, owner.kGetObjectFuncType, cname) {
-                    val irEnumEntry = irSymbol.owner as IrEnumEntry
-                    val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller)
-                    ret(value)
-                }
-            }
-        }
     }
 
     fun uniqueName(descriptor: DeclarationDescriptor, shortName: Boolean) =
@@ -291,7 +224,7 @@ private class ExportedElement(val kind: ElementKind,
     val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
     val isSingletonObject = declaration is ClassDescriptor && DescriptorUtils.isObject(declaration)
 
-    private val irSymbol = when {
+    val irSymbol = when {
         isFunction -> owner.symbolTable.referenceFunction(declaration as FunctionDescriptor)
         isClass -> owner.symbolTable.referenceClass(declaration as ClassDescriptor)
         isEnumEntry -> owner.symbolTable.referenceEnumEntry(declaration as ClassDescriptor)
@@ -527,29 +460,14 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
         }
 
 internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVisitor<Boolean, Void?> {
+    private val builtIns = context.builtIns
 
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
-    private lateinit var outputStreamWriter: PrintWriter
     private val paramNamesRecorded = mutableMapOf<String, Int>()
-
-    private var codegenOrNull: CodeGenerator? = null
-    internal val codegen get() = codegenOrNull!!
 
     private var symbolTableOrNull: SymbolTable? = null
     internal val symbolTable get() = symbolTableOrNull!!
-
-    // Primitive built-ins and unsigned types
-    private val predefinedTypes = listOf(
-            context.builtIns.byteType, context.builtIns.shortType,
-            context.builtIns.intType, context.builtIns.longType,
-            context.builtIns.floatType, context.builtIns.doubleType,
-            context.builtIns.charType, context.builtIns.booleanType,
-            context.builtIns.unitType
-    ) + UnsignedType.values().map {
-        // Unfortunately, `context.ir` and `context.irBuiltins` are not initialized, so `context.ir.symbols.ubyte`, etc, are unreachable.
-        context.builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
-    }
 
     internal fun paramsToUniqueNames(params: List<ParameterDescriptor>): Map<ParameterDescriptor, String> {
         paramNamesRecorded.clear()
@@ -688,15 +606,6 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         }
     }
 
-    fun generateBindings(codegen: CodeGenerator) {
-        this.codegenOrNull = codegen
-        try {
-            generateBindings()
-        } finally {
-            this.codegenOrNull = null
-        }
-    }
-
     private fun buildExports() {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
         moduleDescriptors += context.moduleDescriptor
@@ -710,221 +619,411 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         context.moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
     }
 
-    private fun generateBindings() {
-        val top = scopes.pop()
-        assert(scopes.isEmpty() && top.kind == ScopeKind.TOP)
+    private val simpleNameMapping = mapOf(
+            "<this>" to "thiz",
+            "<set-?>" to "set"
+    )
 
-        // Now, let's generate C world adapters for all functions.
-        top.generateCAdapters()
-
-        // Then generate data structure, describing generated adapters.
-        makeGlobalStruct(top)
+    private val primitiveTypeMapping = KonanPrimitiveType.values().associate {
+        it to when (it) {
+            KonanPrimitiveType.BOOLEAN -> "${prefix}_KBoolean"
+            KonanPrimitiveType.CHAR -> "${prefix}_KChar"
+            KonanPrimitiveType.BYTE -> "${prefix}_KByte"
+            KonanPrimitiveType.SHORT -> "${prefix}_KShort"
+            KonanPrimitiveType.INT -> "${prefix}_KInt"
+            KonanPrimitiveType.LONG -> "${prefix}_KLong"
+            KonanPrimitiveType.FLOAT -> "${prefix}_KFloat"
+            KonanPrimitiveType.DOUBLE -> "${prefix}_KDouble"
+            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> "void*"
+            KonanPrimitiveType.VECTOR128 -> "${prefix}_KVector128"
+        }
     }
 
-    private fun output(string: String, indent: Int = 0) {
-        if (indent != 0) outputStreamWriter.print("  " * indent)
-        outputStreamWriter.println(string)
+    private val unsignedTypeMapping = UnsignedType.values().associate {
+        it.classId to when (it) {
+            UnsignedType.UBYTE -> "${prefix}_KUByte"
+            UnsignedType.USHORT -> "${prefix}_KUShort"
+            UnsignedType.UINT -> "${prefix}_KUInt"
+            UnsignedType.ULONG -> "${prefix}_KULong"
+        }
     }
 
-    private fun makeElementDefinition(element: ExportedElement, kind: DefinitionKind, indent: Int) {
-        when (kind) {
-            DefinitionKind.C_HEADER_DECLARATION -> {
-                when {
-                    element.isTopLevelFunction -> {
-                        val (name, declaration) = element.makeTopLevelFunctionString()
-                        exportedSymbols += name
-                        output(declaration, 0)
-                    }
-                }
+    internal fun isMappedToString(type: KotlinType): Boolean =
+            isMappedToString(type.computeBinaryType())
+
+    private fun isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
+            when (binaryType) {
+                is BinaryType.Primitive -> false
+                is BinaryType.Reference -> binaryType.types.first() == builtIns.string
             }
 
-            DefinitionKind.C_HEADER_STRUCT -> {
-                when {
-                    element.isFunction ->
-                        output(element.makeFunctionPointerString(), indent)
-                    element.isClass -> {
-                        output("${prefix}_KType* (*_type)(void);", indent)
-                        if (element.isSingletonObject) {
-                            output("${translateType((element.declaration as ClassDescriptor).defaultType)} (*_instance)();", indent)
+    internal fun isMappedToReference(type: KotlinType) =
+            !isMappedToVoid(type) && !isMappedToString(type) &&
+                    type.binaryTypeIsReference()
+
+    internal fun isMappedToVoid(type: KotlinType): Boolean {
+        return type.isUnit() || type.isNothing()
+    }
+
+    fun translateName(name: Name): String {
+        val nameString = name.asString()
+        return when {
+            simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
+            cKeywords.contains(nameString) -> "${nameString}_"
+            name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
+            else -> nameString
+        }
+    }
+
+    private fun translateTypeFull(type: KotlinType): Pair<String, String> =
+            if (isMappedToVoid(type)) {
+                "void" to "void"
+            } else {
+                translateNonVoidTypeFull(type)
+            }
+
+    private fun translateNonVoidTypeFull(type: KotlinType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
+            eachInlinedClass = { inlinedClass, _ ->
+                unsignedTypeMapping[inlinedClass.classId]?.let {
+                    return it to it
+                }
+            },
+            ifPrimitive = { primitiveType, _ ->
+                primitiveTypeMapping[primitiveType]!!.let { it to it }
+            },
+            ifReference = {
+                val clazz = (it.computeBinaryType() as BinaryType.Reference).types.first()
+                if (clazz == builtIns.string) {
+                    "const char*" to "KObjHeader*"
+                } else {
+                    "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
+                }
+            }
+    )
+
+    fun translateType(element: SignatureElement): String =
+            translateTypeFull(element.type).first
+
+    fun translateType(type: KotlinType): String
+            = translateTypeFull(type).first
+
+    fun translateTypeBridge(type: KotlinType): String = translateTypeFull(type).second
+
+    fun translateTypeFqName(name: String): String {
+        return name.replace('.', '_')
+    }
+
+    private var functionIndex = 0
+    fun nextFunctionIndex() = functionIndex++
+
+    fun generateBindings(codegen: CodeGenerator) = BindingsBuilder(codegen).build()
+
+    inner class BindingsBuilder(val codegen: CodeGenerator) : ContextUtils {
+        override val generationState = codegen.generationState
+
+        internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
+        private lateinit var outputStreamWriter: PrintWriter
+
+        // Primitive built-ins and unsigned types
+        private val predefinedTypes = listOf(
+                builtIns.byteType, builtIns.shortType,
+                builtIns.intType, builtIns.longType,
+                builtIns.floatType, builtIns.doubleType,
+                builtIns.charType, builtIns.booleanType,
+                builtIns.unitType
+        ) + UnsignedType.values().map {
+            // Unfortunately, `context.ir` and `context.irBuiltins` are not initialized, so `context.ir.symbols.ubyte`, etc, are unreachable.
+            builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
+        }
+
+        fun build() {
+            val top = scopes.pop()
+            assert(scopes.isEmpty() && top.kind == ScopeKind.TOP)
+
+            // Now, let's generate C world adapters for all functions.
+            top.generateCAdapters(::buildCAdapter)
+
+            // Then generate data structure, describing generated adapters.
+            makeGlobalStruct(top)
+        }
+
+        private fun buildCAdapter(exportedElement: ExportedElement): Unit = with(exportedElement) {
+            when {
+                isFunction -> {
+                    val function = declaration as FunctionDescriptor
+                    val irFunction = irSymbol.owner as IrFunction
+                    cname = "_konan_function_${owner.nextFunctionIndex()}"
+                    val llvmCallable = codegen.llvmFunction(irFunction)
+                    // If function is virtual, we need to resolve receiver properly.
+                    val bridge = generateFunction(codegen, llvmCallable.functionType, cname) {
+                        val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
+                                irFunction.isOverridable) {
+                            val receiver = param(0)
+                            lookupVirtualImpl(receiver, irFunction)
+                        } else {
+                            // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
+                            // Hence, insert not an alias but a wrapper, hoping it will be optimized out later.
+                            llvmCallable
+                        }
+
+                        val numParams = LLVMCountParams(llvmCallable.llvmValue)
+                        val args = (0 until numParams).map { index -> param(index) }
+                        callee.attributeProvider.addFunctionAttributes(this.function)
+                        val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+                        ret(result)
+                    }
+                    LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
+                }
+                isClass -> {
+                    val irClass = irSymbol.owner as IrClass
+                    cname = "_konan_function_${owner.nextFunctionIndex()}"
+                    // Produce type getter.
+                    val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
+                            context,
+                            llvm.module,
+                            "${cname}_type",
+                            kGetTypeFuncType
+                    )
+                    val builder = LLVMCreateBuilderInContext(llvm.llvmContext)!!
+                    val bb = LLVMAppendBasicBlockInContext(llvm.llvmContext, getTypeFunction, "")!!
+                    LLVMPositionBuilderAtEnd(builder, bb)
+                    LLVMBuildRet(builder, irClass.typeInfoPtr.llvm)
+                    LLVMDisposeBuilder(builder)
+                    // Produce instance getter if needed.
+                    if (isSingletonObject) {
+                        generateFunction(codegen, kGetObjectFuncType, "${cname}_instance") {
+                            val value = call(
+                                    codegen.llvmFunction(context.getObjectClassInstanceFunction(irClass)),
+                                    emptyList(),
+                                    Lifetime.GLOBAL,
+                                    ExceptionHandler.Caller,
+                                    false,
+                                    returnSlot)
+                            ret(value)
                         }
                     }
-                    element.isEnumEntry -> {
-                        val enumClass = element.declaration.containingDeclaration as ClassDescriptor
-                        output("${translateType(enumClass.defaultType)} (*get)(); /* enum entry for ${element.name}. */", indent)
+                }
+                isEnumEntry -> {
+                    // Produce entry getter.
+                    cname = "_konan_function_${owner.nextFunctionIndex()}"
+                    generateFunction(codegen, kGetObjectFuncType, cname) {
+                        val irEnumEntry = irSymbol.owner as IrEnumEntry
+                        val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller)
+                        ret(value)
                     }
-                // TODO: handle properties.
                 }
             }
+        }
 
-            DefinitionKind.C_SOURCE_DECLARATION -> {
-                when {
-                    element.isFunction ->
-                        output(element.makeFunctionDeclaration(), 0)
-                    element.isClass ->
-                        output(element.makeClassDeclaration(), 0)
-                    element.isEnumEntry ->
-                        output(element.makeEnumEntryDeclaration(), 0)
-                // TODO: handle properties.
-                }
-            }
+        private val kGetTypeFuncType = LLVMFunctionType(codegen.kTypeInfoPtr, null, 0, 0)!!
 
-            DefinitionKind.C_SOURCE_STRUCT -> {
-                when {
-                    element.isFunction ->
-                        output("/* ${element.name} = */ ${element.cnameImpl}, ", indent)
-                    element.isClass -> {
-                        output("/* Type for ${element.name} = */  ${element.cname}_type, ", indent)
-                        if (element.isSingletonObject)
-                            output("/* Instance for ${element.name} = */ ${element.cname}_instance_impl, ", indent)
+        // Abstraction leak for slot :(.
+        private val kGetObjectFuncType = LLVMFunctionType(codegen.kObjHeaderPtr, cValuesOf(codegen.kObjHeaderPtrPtr), 1, 0)!!
+
+        private fun output(string: String, indent: Int = 0) {
+            if (indent != 0) outputStreamWriter.print("  " * indent)
+            outputStreamWriter.println(string)
+        }
+
+        private fun makeElementDefinition(element: ExportedElement, kind: DefinitionKind, indent: Int) {
+            when (kind) {
+                DefinitionKind.C_HEADER_DECLARATION -> {
+                    when {
+                        element.isTopLevelFunction -> {
+                            val (name, declaration) = element.makeTopLevelFunctionString()
+                            exportedSymbols += name
+                            output(declaration, 0)
+                        }
                     }
-                    element.isEnumEntry ->
-                        output("/* enum entry getter ${element.name} = */  ${element.cname}_impl,", indent)
-                // TODO: handle properties.
+                }
+
+                DefinitionKind.C_HEADER_STRUCT -> {
+                    when {
+                        element.isFunction ->
+                            output(element.makeFunctionPointerString(), indent)
+                        element.isClass -> {
+                            output("${prefix}_KType* (*_type)(void);", indent)
+                            if (element.isSingletonObject) {
+                                output("${translateType((element.declaration as ClassDescriptor).defaultType)} (*_instance)();", indent)
+                            }
+                        }
+                        element.isEnumEntry -> {
+                            val enumClass = element.declaration.containingDeclaration as ClassDescriptor
+                            output("${translateType(enumClass.defaultType)} (*get)(); /* enum entry for ${element.name}. */", indent)
+                        }
+                        // TODO: handle properties.
+                    }
+                }
+
+                DefinitionKind.C_SOURCE_DECLARATION -> {
+                    when {
+                        element.isFunction ->
+                            output(element.makeFunctionDeclaration(), 0)
+                        element.isClass ->
+                            output(element.makeClassDeclaration(), 0)
+                        element.isEnumEntry ->
+                            output(element.makeEnumEntryDeclaration(), 0)
+                        // TODO: handle properties.
+                    }
+                }
+
+                DefinitionKind.C_SOURCE_STRUCT -> {
+                    when {
+                        element.isFunction ->
+                            output("/* ${element.name} = */ ${element.cnameImpl}, ", indent)
+                        element.isClass -> {
+                            output("/* Type for ${element.name} = */  ${element.cname}_type, ", indent)
+                            if (element.isSingletonObject)
+                                output("/* Instance for ${element.name} = */ ${element.cname}_instance_impl, ", indent)
+                        }
+                        element.isEnumEntry ->
+                            output("/* enum entry getter ${element.name} = */  ${element.cname}_impl,", indent)
+                        // TODO: handle properties.
+                    }
                 }
             }
         }
-    }
 
-    private fun ExportedElementScope.hasNonEmptySubScopes(): Boolean = elements.isNotEmpty() || scopes.any { it.hasNonEmptySubScopes() }
+        private fun ExportedElementScope.hasNonEmptySubScopes(): Boolean = elements.isNotEmpty() || scopes.any { it.hasNonEmptySubScopes() }
 
-    private fun makeScopeDefinitions(scope: ExportedElementScope, kind: DefinitionKind, indent: Int) {
-        if (!scope.hasNonEmptySubScopes())
-            return
-        if (kind == DefinitionKind.C_HEADER_STRUCT) output("struct {", indent)
-        if (kind == DefinitionKind.C_SOURCE_STRUCT) output(".${scope.name} = {", indent)
-        scope.scopes.forEach {
-            scope.collectInnerScopeName(it)
-            makeScopeDefinitions(it, kind, indent + 1)
+        private fun makeScopeDefinitions(scope: ExportedElementScope, kind: DefinitionKind, indent: Int) {
+            if (!scope.hasNonEmptySubScopes())
+                return
+            if (kind == DefinitionKind.C_HEADER_STRUCT) output("struct {", indent)
+            if (kind == DefinitionKind.C_SOURCE_STRUCT) output(".${scope.name} = {", indent)
+            scope.scopes.forEach {
+                scope.collectInnerScopeName(it)
+                makeScopeDefinitions(it, kind, indent + 1)
+            }
+            scope.elements.forEach { makeElementDefinition(it, kind, indent + 1) }
+            if (kind == DefinitionKind.C_HEADER_STRUCT) output("} ${scope.name};", indent)
+            if (kind == DefinitionKind.C_SOURCE_STRUCT) output("},", indent)
         }
-        scope.elements.forEach { makeElementDefinition(it, kind, indent + 1) }
-        if (kind == DefinitionKind.C_HEADER_STRUCT) output("} ${scope.name};", indent)
-        if (kind == DefinitionKind.C_SOURCE_STRUCT) output("},", indent)
-    }
 
-    private fun defineUsedTypesImpl(scope: ExportedElementScope, set: MutableSet<KotlinType>) {
-        scope.elements.forEach {
-            it.addUsedTypes(set)
+        private fun defineUsedTypesImpl(scope: ExportedElementScope, set: MutableSet<KotlinType>) {
+            scope.elements.forEach {
+                it.addUsedTypes(set)
+            }
+            scope.scopes.forEach {
+                defineUsedTypesImpl(it, set)
+            }
         }
-        scope.scopes.forEach {
-            defineUsedTypesImpl(it, set)
+
+        private fun defineUsedTypes(scope: ExportedElementScope, indent: Int) {
+            val usedTypes = mutableSetOf<KotlinType>()
+            defineUsedTypesImpl(scope, usedTypes)
+            val usedReferenceTypes = usedTypes.filter { isMappedToReference(it) }
+            // Add nullable primitives, which are used in prototypes of "(*createNullable<PRIMITIVE_TYPE_NAME>)"
+            val predefinedNullableTypes: List<KotlinType> = predefinedTypes.map { it.makeNullable() }
+
+            (predefinedNullableTypes + usedReferenceTypes)
+                    .map { translateType(it) }
+                    .toSet()
+                    .forEach {
+                        output("typedef struct {", indent)
+                        output("${prefix}_KNativePtr pinned;", indent + 1)
+                        output("} $it;", indent)
+                    }
         }
-    }
 
-    private fun defineUsedTypes(scope: ExportedElementScope, indent: Int) {
-        val usedTypes = mutableSetOf<KotlinType>()
-        defineUsedTypesImpl(scope, usedTypes)
-        val usedReferenceTypes = usedTypes.filter { isMappedToReference(it) }
-        // Add nullable primitives, which are used in prototypes of "(*createNullable<PRIMITIVE_TYPE_NAME>)"
-        val predefinedNullableTypes: List<KotlinType> = predefinedTypes.map { it.makeNullable() }
+        val exportedSymbols = mutableListOf<String>()
 
-        (predefinedNullableTypes + usedReferenceTypes)
-                .map { translateType(it) }
-                .toSet()
-                .forEach {
-                    output("typedef struct {", indent)
-                    output("${prefix}_KNativePtr pinned;", indent + 1)
-                    output("} $it;", indent)
-                }
-    }
+        private fun makeGlobalStruct(top: ExportedElementScope) {
+            val headerFile = generationState.outputFiles.cAdapterHeader
+            outputStreamWriter = headerFile.printWriter()
 
-    val exportedSymbols = mutableListOf<String>()
+            val exportedSymbol = "${prefix}_symbols"
+            exportedSymbols += exportedSymbol
 
-    private fun makeGlobalStruct(top: ExportedElementScope) {
-        val headerFile = context.config.outputFiles.cAdapterHeader
-        outputStreamWriter = headerFile.printWriter()
-
-        val exportedSymbol = "${prefix}_symbols"
-        exportedSymbols += exportedSymbol
-
-        output("#ifndef KONAN_${prefix.uppercase()}_H")
-        output("#define KONAN_${prefix.uppercase()}_H")
-        // TODO: use namespace for C++ case?
-        output("""
+            output("#ifndef KONAN_${prefix.uppercase()}_H")
+            output("#define KONAN_${prefix.uppercase()}_H")
+            // TODO: use namespace for C++ case?
+            output("""
         #ifdef __cplusplus
         extern "C" {
         #endif""".trimIndent())
-        output("""
+            output("""
         #ifdef __cplusplus
         typedef bool            ${prefix}_KBoolean;
         #else
         typedef _Bool           ${prefix}_KBoolean;
         #endif
         """.trimIndent())
-        output("typedef unsigned short     ${prefix}_KChar;")
-        output("typedef signed char        ${prefix}_KByte;")
-        output("typedef short              ${prefix}_KShort;")
-        output("typedef int                ${prefix}_KInt;")
-        output("typedef long long          ${prefix}_KLong;")
-        output("typedef unsigned char      ${prefix}_KUByte;")
-        output("typedef unsigned short     ${prefix}_KUShort;")
-        output("typedef unsigned int       ${prefix}_KUInt;")
-        output("typedef unsigned long long ${prefix}_KULong;")
-        output("typedef float              ${prefix}_KFloat;")
-        output("typedef double             ${prefix}_KDouble;")
+            output("typedef unsigned short     ${prefix}_KChar;")
+            output("typedef signed char        ${prefix}_KByte;")
+            output("typedef short              ${prefix}_KShort;")
+            output("typedef int                ${prefix}_KInt;")
+            output("typedef long long          ${prefix}_KLong;")
+            output("typedef unsigned char      ${prefix}_KUByte;")
+            output("typedef unsigned short     ${prefix}_KUShort;")
+            output("typedef unsigned int       ${prefix}_KUInt;")
+            output("typedef unsigned long long ${prefix}_KULong;")
+            output("typedef float              ${prefix}_KFloat;")
+            output("typedef double             ${prefix}_KDouble;")
 
-        val typedef_KVector128 = "typedef float __attribute__ ((__vector_size__ (16))) ${prefix}_KVector128;"
-        if (context.config.target.family == Family.MINGW) {
-            // Separate `output` for each line to ensure Windows EOL (LFCR), otherwise generated file will have inconsistent line ending.
-            output("#ifndef _MSC_VER")
-            output(typedef_KVector128)
-            output("#else")
-            output("#include <xmmintrin.h>")
-            output("typedef __m128 ${prefix}_KVector128;")
-            output("#endif")
-        } else {
-            output(typedef_KVector128)
-        }
+            val typedef_KVector128 = "typedef float __attribute__ ((__vector_size__ (16))) ${prefix}_KVector128;"
+            if (context.config.target.family == Family.MINGW) {
+                // Separate `output` for each line to ensure Windows EOL (LFCR), otherwise generated file will have inconsistent line ending.
+                output("#ifndef _MSC_VER")
+                output(typedef_KVector128)
+                output("#else")
+                output("#include <xmmintrin.h>")
+                output("typedef __m128 ${prefix}_KVector128;")
+                output("#endif")
+            } else {
+                output(typedef_KVector128)
+            }
 
-        output("typedef void*              ${prefix}_KNativePtr;")
-        output("struct ${prefix}_KType;")
-        output("typedef struct ${prefix}_KType ${prefix}_KType;")
+            output("typedef void*              ${prefix}_KNativePtr;")
+            output("struct ${prefix}_KType;")
+            output("typedef struct ${prefix}_KType ${prefix}_KType;")
 
-        output("")
-        defineUsedTypes(top, 0)
+            output("")
+            defineUsedTypes(top, 0)
 
-        output("")
-        makeScopeDefinitions(top, DefinitionKind.C_HEADER_DECLARATION, 0)
+            output("")
+            makeScopeDefinitions(top, DefinitionKind.C_HEADER_DECLARATION, 0)
 
-        output("")
-        output("typedef struct {")
-        output("/* Service functions. */", 1)
-        output("void (*DisposeStablePointer)(${prefix}_KNativePtr ptr);", 1)
-        output("void (*DisposeString)(const char* string);", 1)
-        output("${prefix}_KBoolean (*IsInstance)(${prefix}_KNativePtr ref, const ${prefix}_KType* type);", 1)
-        predefinedTypes.forEach {
-            val nullableIt = it.makeNullable()
-            val argument = if (!it.isUnit()) translateType(it) else "void"
-            output("${translateType(nullableIt)} (*${it.createNullableNameForPredefinedType})($argument);", 1)
-            if(!it.isUnit())
-                output("$argument (*${it.createGetNonNullValueOfPredefinedType})(${translateType(nullableIt)});", 1)
-        }
+            output("")
+            output("typedef struct {")
+            output("/* Service functions. */", 1)
+            output("void (*DisposeStablePointer)(${prefix}_KNativePtr ptr);", 1)
+            output("void (*DisposeString)(const char* string);", 1)
+            output("${prefix}_KBoolean (*IsInstance)(${prefix}_KNativePtr ref, const ${prefix}_KType* type);", 1)
+            predefinedTypes.forEach {
+                val nullableIt = it.makeNullable()
+                val argument = if (!it.isUnit()) translateType(it) else "void"
+                output("${translateType(nullableIt)} (*${it.createNullableNameForPredefinedType})($argument);", 1)
+                if(!it.isUnit())
+                    output("$argument (*${it.createGetNonNullValueOfPredefinedType})(${translateType(nullableIt)});", 1)
+            }
 
-        output("")
-        output("/* User functions. */", 1)
-        makeScopeDefinitions(top, DefinitionKind.C_HEADER_STRUCT, 1)
-        output("} ${prefix}_ExportedSymbols;")
+            output("")
+            output("/* User functions. */", 1)
+            makeScopeDefinitions(top, DefinitionKind.C_HEADER_STRUCT, 1)
+            output("} ${prefix}_ExportedSymbols;")
 
-        output("extern ${prefix}_ExportedSymbols* $exportedSymbol(void);")
-        output("""
+            output("extern ${prefix}_ExportedSymbols* $exportedSymbol(void);")
+            output("""
         #ifdef __cplusplus
         }  /* extern "C" */
         #endif""".trimIndent())
 
-        output("#endif  /* KONAN_${prefix.uppercase()}_H */")
+            output("#endif  /* KONAN_${prefix.uppercase()}_H */")
 
-        outputStreamWriter.close()
-        println("Produced library API in ${prefix}_api.h")
+            outputStreamWriter.close()
+            println("Produced library API in ${prefix}_api.h")
 
-        outputStreamWriter = context.config.tempFiles
-                .cAdapterCpp
-                .printWriter()
+            outputStreamWriter = generationState.tempFiles
+                    .cAdapterCpp
+                    .printWriter()
 
-        // Include header into C++ source.
-        headerFile.forEachLine { it -> output(it) }
+            // Include header into C++ source.
+            headerFile.forEachLine { it -> output(it) }
 
-        output("#include <exception>")
+            output("#include <exception>")
 
-        output("""
+            output("""
         |struct KObjHeader;
         |typedef struct KObjHeader KObjHeader;
         |struct KTypeInfo;
@@ -1011,159 +1110,57 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);
         |}
         """.trimMargin())
-        predefinedTypes.forEach {
-            assert(!it.isNothing())
-            val nullableIt = it.makeNullable()
-            val needArgument = !it.isUnit()
-            val (parameter, maybeComma) = if (needArgument)
-                ("${translateType(it)} value" to ",") else ("" to "")
-            val argument = if (needArgument) "value, " else ""
-            output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma KObjHeader**);")
-            output("static ${translateType(nullableIt)} ${it.createNullableNameForPredefinedType}Impl($parameter) {")
-            output("Kotlin_initRuntimeIfNeeded();", 1)
-            output("ScopedRunnableState stateGuard;", 1)
-            output("KObjHolder result_holder;", 1)
-            output("KObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
-            output("return ${translateType(nullableIt)} { .pinned = CreateStablePointer(result) };", 1)
-            output("}")
-
-            if (!it.isUnit()) {
-                output("extern \"C\" ${translateType(it)} Kotlin_unbox${it.shortNameForPredefinedType}(KObjHeader*);")
-                output("static ${translateType(it)} ${it.createGetNonNullValueOfPredefinedType}Impl(${translateType(nullableIt)} value) {")
+            predefinedTypes.forEach {
+                assert(!it.isNothing())
+                val nullableIt = it.makeNullable()
+                val needArgument = !it.isUnit()
+                val (parameter, maybeComma) = if (needArgument)
+                    ("${translateType(it)} value" to ",") else ("" to "")
+                val argument = if (needArgument) "value, " else ""
+                output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma KObjHeader**);")
+                output("static ${translateType(nullableIt)} ${it.createNullableNameForPredefinedType}Impl($parameter) {")
                 output("Kotlin_initRuntimeIfNeeded();", 1)
                 output("ScopedRunnableState stateGuard;", 1)
-                output("KObjHolder value_holder;", 1)
-                output("return Kotlin_unbox${it.shortNameForPredefinedType}(DerefStablePointer(value.pinned, value_holder.slot()));", 1)
+                output("KObjHolder result_holder;", 1)
+                output("KObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
+                output("return ${translateType(nullableIt)} { .pinned = CreateStablePointer(result) };", 1)
                 output("}")
-            }
-        }
-        makeScopeDefinitions(top, DefinitionKind.C_SOURCE_DECLARATION, 0)
-        output("static ${prefix}_ExportedSymbols __konan_symbols = {")
-        output(".DisposeStablePointer = DisposeStablePointerImpl,", 1)
-        output(".DisposeString = DisposeStringImpl,", 1)
-        output(".IsInstance = IsInstanceImpl,", 1)
-        predefinedTypes.forEach {
-            output(".${it.createNullableNameForPredefinedType} = ${it.createNullableNameForPredefinedType}Impl,", 1)
-            if (!it.isUnit()) {
-                output(".${it.createGetNonNullValueOfPredefinedType} = ${it.createGetNonNullValueOfPredefinedType}Impl,", 1)
-            }
-        }
 
-        makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
-        output("};")
-        output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
-        outputStreamWriter.close()
+                if (!it.isUnit()) {
+                    output("extern \"C\" ${translateType(it)} Kotlin_unbox${it.shortNameForPredefinedType}(KObjHeader*);")
+                    output("static ${translateType(it)} ${it.createGetNonNullValueOfPredefinedType}Impl(${translateType(nullableIt)} value) {")
+                    output("Kotlin_initRuntimeIfNeeded();", 1)
+                    output("ScopedRunnableState stateGuard;", 1)
+                    output("KObjHolder value_holder;", 1)
+                    output("return Kotlin_unbox${it.shortNameForPredefinedType}(DerefStablePointer(value.pinned, value_holder.slot()));", 1)
+                    output("}")
+                }
+            }
+            makeScopeDefinitions(top, DefinitionKind.C_SOURCE_DECLARATION, 0)
+            output("static ${prefix}_ExportedSymbols __konan_symbols = {")
+            output(".DisposeStablePointer = DisposeStablePointerImpl,", 1)
+            output(".DisposeString = DisposeStringImpl,", 1)
+            output(".IsInstance = IsInstanceImpl,", 1)
+            predefinedTypes.forEach {
+                output(".${it.createNullableNameForPredefinedType} = ${it.createNullableNameForPredefinedType}Impl,", 1)
+                if (!it.isUnit()) {
+                    output(".${it.createGetNonNullValueOfPredefinedType} = ${it.createGetNonNullValueOfPredefinedType}Impl,", 1)
+                }
+            }
 
-        if (context.config.target.family == Family.MINGW) {
-            outputStreamWriter = context.config.outputFiles
-                    .cAdapterDef
-                    .printWriter()
-            output("EXPORTS")
-            exportedSymbols.forEach { output(it) }
+            makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
+            output("};")
+            output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
             outputStreamWriter.close()
-        }
-    }
 
-    private val simpleNameMapping = mapOf(
-            "<this>" to "thiz",
-            "<set-?>" to "set"
-    )
-
-    private val primitiveTypeMapping = KonanPrimitiveType.values().associate {
-        it to when (it) {
-            KonanPrimitiveType.BOOLEAN -> "${prefix}_KBoolean"
-            KonanPrimitiveType.CHAR -> "${prefix}_KChar"
-            KonanPrimitiveType.BYTE -> "${prefix}_KByte"
-            KonanPrimitiveType.SHORT -> "${prefix}_KShort"
-            KonanPrimitiveType.INT -> "${prefix}_KInt"
-            KonanPrimitiveType.LONG -> "${prefix}_KLong"
-            KonanPrimitiveType.FLOAT -> "${prefix}_KFloat"
-            KonanPrimitiveType.DOUBLE -> "${prefix}_KDouble"
-            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> "void*"
-            KonanPrimitiveType.VECTOR128 -> "${prefix}_KVector128"
-        }
-    }
-
-    private val unsignedTypeMapping = UnsignedType.values().associate {
-        it.classId to when (it) {
-            UnsignedType.UBYTE -> "${prefix}_KUByte"
-            UnsignedType.USHORT -> "${prefix}_KUShort"
-            UnsignedType.UINT -> "${prefix}_KUInt"
-            UnsignedType.ULONG -> "${prefix}_KULong"
-        }
-    }
-
-    internal fun isMappedToString(type: KotlinType): Boolean =
-            isMappedToString(type.computeBinaryType())
-
-    private fun isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
-            when (binaryType) {
-                is BinaryType.Primitive -> false
-                is BinaryType.Reference -> binaryType.types.first() == context.builtIns.string
+            if (context.config.target.family == Family.MINGW) {
+                outputStreamWriter = generationState.outputFiles
+                        .cAdapterDef
+                        .printWriter()
+                output("EXPORTS")
+                exportedSymbols.forEach { output(it) }
+                outputStreamWriter.close()
             }
-
-    internal fun isMappedToReference(type: KotlinType) =
-            !isMappedToVoid(type) && !isMappedToString(type) &&
-                    type.binaryTypeIsReference()
-
-    internal fun isMappedToVoid(type: KotlinType): Boolean {
-        return type.isUnit() || type.isNothing()
-    }
-
-    fun translateName(name: Name): String {
-        val nameString = name.asString()
-        return when {
-            simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
-            cKeywords.contains(nameString) -> "${nameString}_"
-            name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
-            else -> nameString
         }
     }
-
-    private fun translateTypeFull(type: KotlinType): Pair<String, String> =
-            if (isMappedToVoid(type)) {
-                "void" to "void"
-            } else {
-                translateNonVoidTypeFull(type)
-            }
-
-    private fun translateNonVoidTypeFull(type: KotlinType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
-            eachInlinedClass = { inlinedClass, _ ->
-                unsignedTypeMapping[inlinedClass.classId]?.let {
-                    return it to it
-                }
-            },
-            ifPrimitive = { primitiveType, _ ->
-                primitiveTypeMapping[primitiveType]!!.let { it to it }
-            },
-            ifReference = {
-                val clazz = (it.computeBinaryType() as BinaryType.Reference).types.first()
-                if (clazz == context.builtIns.string) {
-                    "const char*" to "KObjHeader*"
-                } else {
-                    "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
-                }
-            }
-    )
-
-    fun translateType(element: SignatureElement): String =
-            translateTypeFull(element.type).first
-
-    fun translateType(type: KotlinType): String
-            = translateTypeFull(type).first
-
-    fun translateTypeBridge(type: KotlinType): String = translateTypeFull(type).second
-
-    fun translateTypeFqName(name: String): String {
-        return name.replace('.', '_')
-    }
-
-    private var functionIndex = 0
-    fun nextFunctionIndex() = functionIndex++
-
-    internal val kGetTypeFuncType get() =
-            LLVMFunctionType(codegen.kTypeInfoPtr, null, 0, 0)!!
-    // Abstraction leak for slot :(.
-    internal val kGetObjectFuncType get() =
-            LLVMFunctionType(codegen.kObjHeaderPtr, cValuesOf(codegen.kObjHeaderPtrPtr), 1, 0)!!
 }

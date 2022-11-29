@@ -1,10 +1,12 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin JVM metadata manipulation library"
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 /*
@@ -20,6 +22,10 @@ plugins {
 group = "org.jetbrains.kotlinx"
 val deployVersion = findProperty("kotlinxMetadataDeployVersion") as String?
 version = deployVersion ?: "0.1-SNAPSHOT"
+
+//kotlin {
+//    explicitApiWarning()
+//}
 
 sourceSets {
     "main" { projectDefault() }
@@ -48,7 +54,7 @@ if (deployVersion != null) {
     publish()
 }
 
-runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
+val shadowJarTask = runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     callGroovy("manifestAttributes", manifest, project)
     manifest.attributes["Implementation-Version"] = archiveVersion
 
@@ -60,6 +66,18 @@ runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
 
 val test by tasks
 test.dependsOn("shadowJar")
+
+tasks.apiBuild {
+    inputJar.value(shadowJarTask.flatMap { it.archiveFile })
+}
+
+apiValidation {
+    ignoredPackages.add("kotlinx.metadata.internal")
+    nonPublicMarkers.addAll(listOf(
+        "kotlinx.metadata.internal.IgnoreInApiDump",
+        "kotlinx.metadata.jvm.internal.IgnoreInApiDump"
+    ))
+}
 
 sourcesJar {
     for (dependency in shadows.dependencies) {

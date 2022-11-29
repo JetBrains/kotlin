@@ -43,7 +43,7 @@ where advanced options include:
   -Xjava-source-roots=<path> Paths to directories with Java source files
   -Xjavac-arguments=<option[,]> Java compiler arguments
   -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's `-release`. Requires JDK 9 or newer.
-                             Supported versions depend on the used JDK; for JDK 17+ supported versions are 1.8, 9, 10, ..., 18.
+                             Supported versions depend on the used JDK; for JDK 17+ supported versions are 1.8, 9, 10, ..., 19.
                              Also sets `-jvm-target` value equal to the selected JDK version
   -Xjspecify-annotations=ignore|strict|warn
                              Specify behavior for jspecify annotations.
@@ -101,6 +101,7 @@ where advanced options include:
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
   -Xno-reset-jar-timestamps  Do not reset jar entry timestamps to a fixed date
+  -Xno-source-debug-extension Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP
   -Xno-unified-null-checks   Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details
   -Xnullability-annotations=@<fq.name>:{ignore/strict/warn}
                              Specify behavior for specific Java nullability annotations (provided with fully qualified package name)
@@ -177,6 +178,8 @@ where advanced options include:
   -Xeffect-system            Enable experimental language feature: effect system
   -Xenable-builder-inference Use the builder inference by default, for all calls with lambdas which can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
+  -Xklib-enable-signature-clash-checks
+                             Enable the checks on uniqueness of signatures
   -Xexpect-actual-linker     Enable experimental expect/actual linker
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.

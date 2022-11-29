@@ -115,7 +115,7 @@ sealed class DiagnosticBuilder(
     @PrivateForInline
     val parameters = mutableListOf<DiagnosticParameter>()
 
-    @OptIn(PrivateForInline::class, ExperimentalStdlibApi::class)
+    @OptIn(PrivateForInline::class)
     inline fun <reified T> parameter(name: String) {
         if (parameters.size >= MAX_DIAGNOSTIC_PARAMETER_COUNT) {
             error("Diagnostic cannot have more than $MAX_DIAGNOSTIC_PARAMETER_COUNT parameters")

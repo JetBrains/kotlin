@@ -2,7 +2,6 @@
 <project
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jetbrains.kotlin</groupId>
@@ -51,7 +50,7 @@
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
-        <kotlin.compiler.jdkHome>${env.JDK_18}</kotlin.compiler.jdkHome>
+        <kotlin.compiler.jdkHome>${jdk_1_8}</kotlin.compiler.jdkHome>
 
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -153,7 +152,7 @@
                 <version>${surefire-version}</version>
                 <configuration>
                     <forkMode>once</forkMode>
-                    <jvm>${env.JDK_16}/bin/java</jvm>
+                    <jvm>${jdk_1_6}/bin/java</jvm>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                     <failIfNoTests>false</failIfNoTests>
@@ -252,6 +251,103 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>jdk_1_8_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_1_8</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_8>${env.JDK_1_8}</jdk_1_8>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_8_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_1_8</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_8>${env.JDK_18}</jdk_1_8>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_6_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_1_6</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_6>${env.JDK_1_6}</jdk_1_6>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_6_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_1_6</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_6>${env.JDK_16}</jdk_1_6>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_7_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_1_7</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_7>${env.JDK_1_7}</jdk_1_7>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_7_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_1_7</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_7>${env.JDK_17}</jdk_1_7>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_9_0_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_9_0</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_9_0>${env.JDK_9_0}</jdk_9_0>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_9_0_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_9_0</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_9_0>${env.JDK_9}</jdk_9_0>
+            </properties>
+        </profile>
+
         <profile>
             <id>sign-artifacts</id>
             <build>

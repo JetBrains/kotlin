@@ -75,7 +75,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
             "Could not find ${valueDeclaration.render()} in contextVariablesToIndex"
         }
         val index = variables.size
-        val type = functionGenerationContext.getLLVMType(valueDeclaration.type)
+        val type = valueDeclaration.type.toLLVMType(functionGenerationContext.llvm)
         val slot = functionGenerationContext.alloca(type, valueDeclaration.name.asString(), variableLocation)
         if (value != null)
             functionGenerationContext.storeAny(value, slot, true)
@@ -88,7 +88,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     internal fun createParameterOnStack(valueDeclaration: IrValueDeclaration, variableLocation: VariableDebugLocation?): Int {
         assert(!contextVariablesToIndex.contains(valueDeclaration))
         val index = variables.size
-        val type = functionGenerationContext.getLLVMType(valueDeclaration.type)
+        val type = valueDeclaration.type.toLLVMType(functionGenerationContext.llvm)
         val slot = functionGenerationContext.alloca(
                 type, "p-${valueDeclaration.name.asString()}", variableLocation)
         val isObject = functionGenerationContext.isObjectType(type)

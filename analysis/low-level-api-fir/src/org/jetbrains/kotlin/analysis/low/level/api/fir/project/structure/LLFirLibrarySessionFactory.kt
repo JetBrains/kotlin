@@ -30,19 +30,23 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
-internal class LLFirLibrarySessionFactory(
+class LLFirLibrarySessionFactory(
     private val project: Project,
 ) {
 
-    fun getLibrarySession(ktBinaryModule: KtBinaryModule, sessionsCache: MutableMap<KtModule, LLFirSession>): LLFirLibrarySession {
-        return sessionsCache.getOrPut(ktBinaryModule) { createModuleLibrariesSession(ktBinaryModule) } as LLFirLibrarySession
+    internal fun getLibrarySession(ktBinaryModule: KtBinaryModule, sessionsCache: MutableMap<KtModule, LLFirSession>): LLFirLibrarySession {
+        return sessionsCache.getOrPut(ktBinaryModule) {
+            createModuleLibrariesSession(ktBinaryModule, sessionsCache)
+        } as LLFirLibrarySession
     }
 
     private fun createModuleLibrariesSession(
         ktLibraryModule: KtBinaryModule,
+        sessionsCache: MutableMap<KtModule, LLFirSession>,
     ): LLFirLibrarySession {
         val platform = ktLibraryModule.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
+        sessionsCache.putIfAbsent(builtinsSession.ktModule, builtinsSession)
         return LLFirLibrarySession(ktLibraryModule, project, builtinsSession.builtinTypes).apply session@{
             val moduleData = LLFirModuleData(ktLibraryModule).apply { bindSession(this@session) }
             registerModuleData(moduleData)
@@ -55,19 +59,15 @@ internal class LLFirLibrarySessionFactory(
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-            val providers = LLFirLibraryProviderFactory.createLibraryProvidersForSingleBinaryModule(
+            val symbolProvider = LLFirLibraryProviderFactory.createLibraryProvidersForScope(
                 this,
                 moduleData,
-                ktLibraryModule,
                 kotlinScopeProvider,
                 project,
-                builtinTypes
+                builtinTypes,
+                ktLibraryModule.contentScope,
+                builtinsSession.symbolProvider
             )
-
-            val symbolProvider = createCompositeSymbolProvider(this) {
-                addAll(providers)
-                add(builtinsSession.symbolProvider)
-            }
 
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
             register(FirProvider::class, LLFirLibrarySessionProvider(symbolProvider))

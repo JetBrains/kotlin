@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android
 
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.KotlinAndroidSourceSetLayoutChecker
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 
 internal object KotlinAndroidSourceSets {
@@ -46,7 +46,7 @@ internal object KotlinAndroidSourceSets {
         }
 
         /* Hook into Android's variant creation: This is invoked in 'afterEvaluate' */
-        forEachVariant(target.project) { variant ->
+        target.project.forAllAndroidVariants { variant ->
             variant.sourceSets.forEach { sourceProvider ->
                 val androidSourceSet = android.sourceSets.findByName(sourceProvider.name) ?: return@forEach
 

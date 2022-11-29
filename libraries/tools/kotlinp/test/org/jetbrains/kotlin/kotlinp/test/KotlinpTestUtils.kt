@@ -97,6 +97,7 @@ private fun StringBuilder.appendFileName(file: File) {
 // Reads the class file and writes it back with *Writer visitors.
 // The resulting class file should be the same from the point of view of any metadata reader, including kotlinp
 // (the exact bytes may differ though, because there are multiple ways to encode the same metadata)
+@Suppress("DEPRECATION")
 private fun transformClassFileWithReadWriteVisitors(classFile: KotlinClassMetadata): KotlinClassMetadata =
     when (classFile) {
         is KotlinClassMetadata.Class -> KotlinClassMetadata.Class.Writer().apply(classFile::accept).write()
@@ -118,18 +119,19 @@ private fun transformClassFileWithReadWriteVisitors(classFile: KotlinClassMetada
 private fun transformClassFileWithNodes(classFile: KotlinClassMetadata): KotlinClassMetadata =
     when (classFile) {
         is KotlinClassMetadata.Class ->
-            KotlinClassMetadata.Class.Writer().apply(classFile.toKmClass()::accept).write()
+            KotlinClassMetadata.writeClass(classFile.toKmClass())
         is KotlinClassMetadata.FileFacade ->
-            KotlinClassMetadata.FileFacade.Writer().apply(classFile.toKmPackage()::accept).write()
+            KotlinClassMetadata.writeFileFacade(classFile.toKmPackage())
         is KotlinClassMetadata.SyntheticClass ->
-            KotlinClassMetadata.SyntheticClass.Writer().apply { classFile.toKmLambda()?.accept(this) }.write()
+            classFile.toKmLambda()?.let { KotlinClassMetadata.writeLambda(it) } ?: KotlinClassMetadata.writeSyntheticClass()
         is KotlinClassMetadata.MultiFileClassPart ->
-            KotlinClassMetadata.MultiFileClassPart.Writer().apply(classFile.toKmPackage()::accept).write(classFile.facadeClassName)
+            KotlinClassMetadata.writeMultiFileClassPart(classFile.toKmPackage(), classFile.facadeClassName)
         else -> classFile
     }
 
+@Suppress("DEPRECATION") // We're testing that reading/writing with KmNodes is identical to direct
 private fun transformModuleFileWithReadWriteVisitors(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
     KotlinModuleMetadata.Writer().apply(moduleFile::accept).write()
 
 private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
-    KotlinModuleMetadata.Writer().apply(moduleFile.toKmModule()::accept).write()
+    KotlinModuleMetadata.write(moduleFile.toKmModule())

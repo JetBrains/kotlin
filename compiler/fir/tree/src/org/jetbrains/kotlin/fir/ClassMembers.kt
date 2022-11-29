@@ -13,22 +13,26 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-fun FirCallableSymbol<*>.dispatchReceiverTypeOrNull(): ConeKotlinType? =
-    fir.dispatchReceiverType
+fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
+    fir.dispatchReceiverClassTypeOrNull()
 
-fun FirCallableSymbol<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? =
-    fir.dispatchReceiverClassOrNull()
+fun FirCallableDeclaration.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
+    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride)
+        baseForIntersectionOverride!!.dispatchReceiverClassTypeOrNull()
+    else
+        dispatchReceiverType as? ConeClassLikeType
 
-fun FirCallableDeclaration.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? {
-    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride) return symbol.baseForIntersectionOverride!!.fir.dispatchReceiverClassOrNull()
+fun FirCallableSymbol<*>.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? =
+    fir.dispatchReceiverClassLookupTagOrNull()
 
-    return (dispatchReceiverType as? ConeClassLikeType)?.lookupTag
-}
+fun FirCallableDeclaration.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? =
+    dispatchReceiverClassTypeOrNull()?.lookupTag
 
-fun FirCallableSymbol<*>.containingClass(): ConeClassLikeLookupTag? = fir.containingClass()
-fun FirCallableDeclaration.containingClass(): ConeClassLikeLookupTag? {
-    return (containingClassForStaticMemberAttr ?: dispatchReceiverClassOrNull())
-}
+fun FirCallableSymbol<*>.containingClassLookupTag(): ConeClassLikeLookupTag? =
+    fir.containingClassLookupTag()
+
+fun FirCallableDeclaration.containingClassLookupTag(): ConeClassLikeLookupTag? =
+    containingClassForStaticMemberAttr ?: dispatchReceiverClassLookupTagOrNull()
 
 fun FirRegularClass.containingClassForLocal(): ConeClassLikeLookupTag? =
     if (isLocal) containingClassForLocalAttr else null
@@ -131,3 +135,14 @@ val FirCallableDeclaration.propertyIfAccessor: FirCallableDeclaration
 
 val FirCallableDeclaration.propertyIfBackingField: FirCallableDeclaration
     get() = (this as? FirBackingField)?.propertySymbol?.fir ?: this
+
+private object IsJavaRecordKey : FirDeclarationDataKey()
+var FirRegularClass.isJavaRecord: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordKey)
+
+private object IsJavaRecordComponentKey : FirDeclarationDataKey()
+var FirFunction.isJavaRecordComponent: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordComponentKey)
+
+private object IsCatchParameterProperty : FirDeclarationDataKey()
+
+var FirProperty.isCatchParameter: Boolean? by FirDeclarationDataRegistry.data(IsCatchParameterProperty)
+

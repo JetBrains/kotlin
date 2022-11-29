@@ -31,13 +31,15 @@ class ModuleArtifact(
     moduleName: String,
     val fileArtifacts: List<SrcFileArtifact>,
     val artifactsDir: File? = null,
-    val forceRebuildJs: Boolean = false
+    val forceRebuildJs: Boolean = false,
+    externalModuleName: String? = null
 ) {
     val moduleSafeName = moduleName.safeModuleName
+    val moduleExternalName = externalModuleName ?: moduleSafeName
 
     fun loadJsIrModule(): JsIrModule {
         val deserializer = JsIrAstDeserializer()
         val fragments = fileArtifacts.sortedBy { it.srcFilePath }.mapNotNull { it.loadJsIrFragment(deserializer) }
-        return JsIrModule(moduleSafeName, moduleSafeName, fragments)
+        return JsIrModule(moduleSafeName, moduleExternalName, fragments)
     }
 }

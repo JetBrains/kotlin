@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -51,7 +52,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
-open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
+open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) : FirPartialBodyResolveTransformer(transformer) {
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
@@ -68,7 +69,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
+    protected fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         transformer.firTowerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
         return transformer.transformDeclarationContent(declaration, data)
     }
@@ -82,7 +83,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun prepareSignatureForBodyResolve(callableMember: FirCallableDeclaration) {
         callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-        callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+        callableMember.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
         if (callableMember is FirFunction) {
             callableMember.valueParameters.forEach {
                 it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
@@ -97,7 +98,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return FirMemberTypeParameterScope(declaration)
     }
 
-    private fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
+    protected fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
         for (typeParameter in declaration.typeParameters) {
             typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
         }
@@ -119,6 +120,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             property.getter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.setter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.backingField?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
+            context.withProperty(property) {
+                doTransformTypeParameters(property)
+            }
             return transformLocalVariable(property)
         }
 
@@ -132,7 +136,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return property
         }
 
-        property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+        property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterProperty(property)
         doTransformTypeParameters(property)
         val shouldResolveEverything = !implicitTypeOnly
@@ -227,11 +231,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         // var someProperty: SomeType
         //     get() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>)
         //     set() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>, value)
-        val propertyReferenceAccess = argumentMapping?.keys?.toList()?.getOrNull(1) as? FirCallableReferenceAccess ?: return
+        val propertyReferenceAccess = resolvedArgumentMapping?.keys?.toList()?.getOrNull(1) as? FirCallableReferenceAccess ?: return
         val typeRef = propertyReferenceAccess.typeRef
         if (typeRef is FirResolvedTypeRef && property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (typeRef.type as ConeClassLikeType).typeArguments
-            val extensionType = property.receiverTypeRef?.coneType
+            val extensionType = property.receiverParameter?.typeRef?.coneType
             val dispatchType = context.containingClass?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
@@ -265,7 +269,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     private fun transformPropertyAccessorsWithDelegate(property: FirProperty) {
-
         context.forPropertyDelegateAccessors(property, resolutionContext, callCompleter) {
             // Resolve delegate expression, after that, delegate will contain either expr.provideDelegate or expr
             if (property.isLocal) {
@@ -282,9 +285,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
             val finalSubstitutor = createFinalSubstitutor()
 
-            // Replace stub types with corresponding type variable types
             val stubTypeCompletionResultsWriter = FirStubTypeTransformer(finalSubstitutor)
             property.transformSingle(stubTypeCompletionResultsWriter, null)
+            property.replaceReturnTypeRef(property.returnTypeRef.approximateDeclarationType(session, property.visibilityForApproximation(), property.isLocal))
 
             val callCompletionResultsWriter = callCompleter.createCompletionResultsWriter(
                 finalSubstitutor,
@@ -294,9 +297,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 it.transformSingle(callCompletionResultsWriter, null)
             }
 
-            val declarationCompletionResultsWriter =
-                FirDeclarationCompletionResultsWriter(finalSubstitutor, session.typeApproximator, session.typeContext)
-            property.transformSingle(declarationCompletionResultsWriter, FirDeclarationCompletionResultsWriter.ApproximationData.Default)
+            property
+        }
+    }
+
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirStatement {
+        return propertyAccessor.also {
+            transformProperty(it.propertySymbol.fir, data)
         }
     }
 
@@ -459,7 +466,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 } else {
                     returnTypeRef
                 }
-                val resolutionMode = if (expectedReturnTypeRef.coneTypeSafe<ConeKotlinType>() == session.builtinTypes.unitType.type) {
+                val resolutionMode = if (owner.delegate == null || expectedReturnTypeRef.coneTypeSafe<ConeKotlinType>()?.isUnit == true) {
                     ResolutionMode.ContextIndependent
                 } else {
                     withExpectedType(expectedReturnTypeRef)
@@ -498,6 +505,18 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             doTransformTypeParameters(regularClass)
             return doTransformRegularClass(regularClass, data)
         }
+    }
+
+    override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
+        if (implicitTypeOnly) return script
+        dataFlowAnalyzer.enterScript(script)
+        val result = context.withScopesForScript(script, components) {
+            transformDeclarationContent(script, data) as FirScript
+        }
+
+        dataFlowAnalyzer.exitScript(script)
+
+        return result
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
@@ -607,10 +626,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return simpleFunction
         }
 
-        doTransformTypeParameters(simpleFunction)
-
         val containingDeclaration = context.containerIfAny
         return context.withSimpleFunction(simpleFunction, session) {
+            doTransformTypeParameters(simpleFunction)
+
             // TODO: I think it worth creating something like runAllPhasesForLocalFunction
             if (containingDeclaration != null && containingDeclaration !is FirClass) {
                 // For class members everything should be already prepared
@@ -640,10 +659,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 result.transformReturnTypeRef(
                     transformer,
                     withExpectedType(
-                        returnExpression.resultType.approximatedIfNeededOrSelf(
-                            session.typeApproximator,
-                            simpleFunction?.visibilityForApproximation(),
+                        returnExpression.resultType.approximateDeclarationType(
                             session,
+                            simpleFunction?.visibilityForApproximation(),
+                            isLocal = simpleFunction?.isLocal == true,
                             isInlineFunction = simpleFunction?.isInline == true
                         )
                     )
@@ -698,7 +717,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         context.withConstructor(constructor) {
             constructor.transformTypeParameters(transformer, data)
                 .transformAnnotations(transformer, data)
-                .transformReceiverTypeRef(transformer, data)
+                .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
 
             context.forConstructorParameters(constructor, owningClass, components) {
@@ -753,7 +772,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         // Either ContextDependent, ContextIndependent or WithExpectedType could be here
         if (data !is ResolutionMode.LambdaResolution) {
             anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-            anonymousFunction.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+            anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
         }
         return when (data) {
@@ -806,13 +825,16 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val initialReturnTypeRef = lambda.returnTypeRef
         val valueParameters = when {
             resolvedLambdaAtom != null -> obtainValueParametersFromResolvedLambdaAtom(resolvedLambdaAtom, lambda)
-            else -> lambda.valueParameters
+            else -> obtainValueParametersFromExpectedType(expectedTypeRef.coneTypeSafe(), lambda)
         }
-        val returnTypeRefFromResolvedAtom =
-            resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
+        val returnTypeRefFromResolvedAtom = resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
         lambda = buildAnonymousFunctionCopy(lambda) {
-            receiverTypeRef = lambda.receiverTypeRef?.takeIf { it !is FirImplicitTypeRef }
-                ?: resolvedLambdaAtom?.receiver?.let { lambda.receiverTypeRef?.resolvedTypeFromPrototype(it) }
+            receiverParameter = lambda.receiverParameter?.takeIf { it.typeRef !is FirImplicitTypeRef }
+                ?: resolvedLambdaAtom?.receiver?.let { coneKotlinType ->
+                    lambda.receiverParameter?.apply {
+                        replaceTypeRef(typeRef.resolvedTypeFromPrototype(coneKotlinType))
+                    }
+                }
 
             contextReceivers.clear()
             contextReceivers.addAll(
@@ -865,9 +887,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             initialReturnTypeRef is FirResolvedTypeRef -> {
                 initialReturnTypeRef.coneType
             }
-            implicitReturns.isNotEmpty() || lambda.returnType?.isUnit == true -> {
+            implicitReturns.isNotEmpty() || (lambda.returnType?.isUnit == true && lambda.isLambda) -> {
                 // i.e., early return, e.g., l@{ ... return@l ... }
                 // Note that the last statement will be coerced to Unit if needed.
+                // also we don't coerce to Unit anonymous functions, only lambdas
                 session.builtinTypes.unitType.type
             }
             else -> {
@@ -877,11 +900,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 ) ?: session.builtinTypes.unitType.type
             }
         }
-        lambda.replaceReturnTypeRef(
-            lambda.returnTypeRef.resolvedTypeFromPrototype(returnType).also {
-                session.lookupTracker?.recordTypeResolveAsLookup(it, lambda.source, components.file.source)
-            }
-        )
+        if (lambda.returnTypeRef !is FirImplicitUnitTypeRef) {
+            lambda.replaceReturnTypeRef(
+                initialReturnTypeRef.resolvedTypeFromPrototype(returnType).also {
+                    session.lookupTracker?.recordTypeResolveAsLookup(it, lambda.source, components.file.source)
+                }
+            )
+        }
         lambda.replaceTypeRef(
             lambda.constructFunctionalTypeRef(
                 isSuspend = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true
@@ -902,6 +927,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 val name = Name.identifier("it")
                 val itParam = buildValueParameter {
                     source = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+                    containingFunctionSymbol = resolvedLambdaAtom.atom.symbol
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = singleParameterType.toFirResolvedTypeRef()
@@ -914,17 +940,37 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 listOf(itParam)
             }
 
-            else -> {
-                lambda.valueParameters.mapIndexed { index, param ->
-                    if (param.returnTypeRef is FirResolvedTypeRef) {
-                        param
-                    } else {
-                        val resolvedType =
-                            param.returnTypeRef.resolvedTypeFromPrototype(resolvedLambdaAtom.parameters[index])
-                        param.replaceReturnTypeRef(resolvedType)
-                        param
-                    }
-                }
+            else -> obtainValueParametersFromExpectedParameterTypes(resolvedLambdaAtom.parameters, lambda)
+        }
+    }
+
+    private fun obtainValueParametersFromExpectedType(
+        expectedType: ConeKotlinType?,
+        lambda: FirAnonymousFunction
+    ): List<FirValueParameter> {
+        if (expectedType == null) return lambda.valueParameters
+        if (!expectedType.isFunctionalOrSuspendFunctionalType(session)) return lambda.valueParameters
+        val parameterTypes = expectedType.typeArguments
+            .mapTo(mutableListOf()) { it.type ?: session.builtinTypes.nullableAnyType.type }
+            .also { it.removeLastOrNull() }
+        if (expectedType.isExtensionFunctionType) {
+            parameterTypes.removeFirstOrNull()
+        }
+        return obtainValueParametersFromExpectedParameterTypes(parameterTypes, lambda)
+    }
+
+    private fun obtainValueParametersFromExpectedParameterTypes(
+        expectedTypeParameterTypes: List<ConeKotlinType>,
+        lambda: FirAnonymousFunction
+    ): List<FirValueParameter> {
+        return lambda.valueParameters.mapIndexed { index, param ->
+            if (param.returnTypeRef is FirResolvedTypeRef) {
+                param
+            } else {
+                val resolvedType =
+                    param.returnTypeRef.resolvedTypeFromPrototype(expectedTypeParameterTypes[index])
+                param.replaceReturnTypeRef(resolvedType)
+                param
             }
         }
     }
@@ -1010,11 +1056,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return backingField.transformReturnTypeRef(
             transformer,
             withExpectedType(
-                expectedType.approximatedIfNeededOrSelf(
-                    session.typeApproximator,
-                    backingField.visibilityForApproximation(),
-                    session
-                )
+                expectedType.approximateDeclarationType(session, backingField.visibilityForApproximation(), isLocal = false)
             )
         )
     }
@@ -1036,11 +1078,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 withExpectedType(
                     resultType?.let {
                         val expectedType = it.toExpectedTypeRef()
-                        expectedType.approximatedIfNeededOrSelf(
-                            session.typeApproximator,
-                            variable.visibilityForApproximation(),
-                            session
-                        )
+                        expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocal)
                     } ?: buildErrorTypeRef {
                         diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
                         source = variable.source
@@ -1052,6 +1090,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
         }
     }
+
+    private val FirVariable.isLocal: Boolean
+        get() = when (this) {
+            is FirProperty -> this.isLocal
+            is FirValueParameter -> true
+            else -> false
+        }
 
     private fun FirTypeRef.toExpectedTypeRef(): FirResolvedTypeRef {
         return when (this) {
@@ -1068,9 +1113,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 buildResolvedTypeRef {
                     type = this@toExpectedTypeRef.coneType
                     annotations.addAll(this@toExpectedTypeRef.annotations)
-                    this@toExpectedTypeRef.source?.fakeElement(KtFakeSourceElementKind.PropertyFromParameter)?.let {
-                        source = it
-                    }
                 }
             }
         }
@@ -1102,7 +1144,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private val FirVariable.initializerResolved: Boolean
         get() = initializer?.typeRef is FirResolvedTypeRef
 
-    private val FirFunction.bodyResolved: Boolean
+    protected val FirFunction.bodyResolved: Boolean
         get() = body !is FirLazyBlock && body?.typeRef is FirResolvedTypeRef
 
 }

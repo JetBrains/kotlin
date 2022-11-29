@@ -8,17 +8,14 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultOrNullableType
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -45,9 +42,9 @@ private fun KonanSymbols.getTypeConversionImpl(
 
 internal object DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION : IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
 
-internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.lazyMapMember { inlinedClass ->
+internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = mapping.boxFunctions.getOrPut(inlinedClass) {
     require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf<IrClass>(inlinedClass)
+    val classes = mutableListOf(inlinedClass)
     var parent = inlinedClass.parent
     while (parent is IrClass) {
         classes.add(parent)
@@ -55,58 +52,31 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
     }
     require(parent is IrFile || parent is IrExternalPackageFragment) { "Local inline classes are not supported" }
 
-    val symbols = ir.symbols
-
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = symbols.any.owner.defaultOrNullableType(isNullable)
+    val boxedType = ir.symbols.any.owner.defaultOrNullableType(isNullable)
 
-    val parameterType = unboxedType
-    val returnType = boxedType
-
-    val startOffset = inlinedClass.startOffset
-    val endOffset = inlinedClass.endOffset
-
-    IrFunctionImpl(
-            startOffset, endOffset,
-            DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
-            IrSimpleFunctionSymbolImpl(),
-            Name.special("<${classes.reversed().joinToString(".") { it.name.asString() }}-box>"),
-            DescriptorVisibilities.PUBLIC,
-            Modality.FINAL,
-            returnType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = false,
-            isExpect = false,
-            isFakeOverride = false,
-            isOperator = false,
-            isInfix = false
-    ).also { function ->
-        function.valueParameters = listOf(
-            IrValueParameterImpl(
-                    startOffset, endOffset,
-                    IrDeclarationOrigin.DEFINED,
-                    IrValueParameterSymbolImpl(),
-                    Name.identifier("value"),
-                    index = 0,
-                    varargElementType = null,
-                    isCrossinline = false,
-                    type = parameterType,
-                    isNoinline = false,
-                    isHidden = false,
-                    isAssignable = false
-            ).also {
-                it.parent = function
-            })
+    irFactory.buildFun {
+        startOffset = inlinedClass.startOffset
+        endOffset = inlinedClass.endOffset
+        origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() }}-box>")
+        returnType = boxedType
+    }.also { function ->
         function.parent = parent
+
+        function.addValueParameter {
+            startOffset = inlinedClass.startOffset
+            endOffset = inlinedClass.endOffset
+            name = Name.identifier("value")
+            type = unboxedType
+        }
     }
 }
 
-internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.lazyMapMember { inlinedClass ->
+internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = mapping.unboxFunctions.getOrPut(inlinedClass) {
     require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf<IrClass>(inlinedClass)
+    val classes = mutableListOf(inlinedClass)
     var parent = inlinedClass.parent
     while (parent is IrClass) {
         classes.add(parent)
@@ -120,46 +90,21 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = symbols.any.owner.defaultOrNullableType(isNullable)
 
-    val parameterType = boxedType
-    val returnType = unboxedType
-
-    val startOffset = inlinedClass.startOffset
-    val endOffset = inlinedClass.endOffset
-
-    IrFunctionImpl(
-            startOffset, endOffset,
-            DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
-            IrSimpleFunctionSymbolImpl(),
-            Name.special("<${classes.reversed().joinToString(".") { it.name.asString() } }-unbox>"),
-            DescriptorVisibilities.PUBLIC,
-            Modality.FINAL,
-            returnType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = false,
-            isExpect = false,
-            isFakeOverride = false,
-            isOperator = false,
-            isInfix = false
-    ).also { function ->
-        function.valueParameters = listOf(
-            IrValueParameterImpl(
-                    startOffset, endOffset,
-                    IrDeclarationOrigin.DEFINED,
-                    IrValueParameterSymbolImpl(),
-                    Name.identifier("value"),
-                    index = 0,
-                    varargElementType = null,
-                    isCrossinline = false,
-                    type = parameterType,
-                    isNoinline = false,
-                    isHidden = false,
-                    isAssignable = false
-            ).also {
-                it.parent = function
-            })
+    irFactory.buildFun {
+        startOffset = inlinedClass.startOffset
+        endOffset = inlinedClass.endOffset
+        origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() } }-unbox>")
+        returnType = unboxedType
+    }.also { function ->
         function.parent = parent
+
+        function.addValueParameter {
+            startOffset = inlinedClass.startOffset
+            endOffset = inlinedClass.endOffset
+            name = Name.identifier("value")
+            type = boxedType
+        }
     }
 }
 
@@ -167,27 +112,29 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
  * Initialize static boxing.
  * If output target is native binary then the cache is created.
  */
-internal fun initializeCachedBoxes(context: Context) {
+internal fun initializeCachedBoxes(generationState: NativeGenerationState) {
     BoxCache.values().forEach { cache ->
         val cacheName = "${cache.name}_CACHE"
         val rangeStart = "${cache.name}_RANGE_FROM"
         val rangeEnd = "${cache.name}_RANGE_TO"
-        initCache(cache, context, cacheName, rangeStart, rangeEnd,
-                declareOnly = !context.shouldDefineCachedBoxes
-        ).also { context.llvm.boxCacheGlobals[cache] = it }
+        initCache(cache, generationState, cacheName, rangeStart, rangeEnd,
+                declareOnly = !generationState.shouldDefineCachedBoxes
+        ).also { generationState.llvm.boxCacheGlobals[cache] = it }
     }
 }
 
 /**
  * Adds global that refers to the cache.
  */
-private fun initCache(cache: BoxCache, context: Context, cacheName: String,
+private fun initCache(cache: BoxCache, generationState: NativeGenerationState, cacheName: String,
                       rangeStartName: String, rangeEndName: String, declareOnly: Boolean) : StaticData.Global {
 
+    val context = generationState.context
     val kotlinType = context.irBuiltIns.getKotlinClass(cache)
-    val staticData = context.llvm.staticData
-    val llvmType = staticData.getLLVMType(kotlinType.defaultType)
-    val llvmBoxType = structType(context.llvm.runtime.objHeaderType, llvmType)
+    val staticData = generationState.llvm.staticData
+    val llvm = generationState.llvm
+    val llvmType = kotlinType.defaultType.toLLVMType(llvm)
+    val llvmBoxType = llvm.structType(llvm.runtime.objHeaderType, llvmType)
     val (start, end) = context.config.target.getBoxCacheRange(cache)
 
     return if (declareOnly) {
@@ -206,14 +153,15 @@ private fun initCache(cache: BoxCache, context: Context, cacheName: String,
     }
 }
 
-internal fun IrConstantPrimitive.toBoxCacheValue(context: Context): ConstValue? {
+internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerationState): ConstValue? {
+    val irBuiltIns = generationState.context.irBuiltIns
     val cacheType = when (value.type) {
-        context.irBuiltIns.booleanType -> BoxCache.BOOLEAN
-        context.irBuiltIns.byteType -> BoxCache.BYTE
-        context.irBuiltIns.shortType -> BoxCache.SHORT
-        context.irBuiltIns.charType -> BoxCache.CHAR
-        context.irBuiltIns.intType -> BoxCache.INT
-        context.irBuiltIns.longType -> BoxCache.LONG
+        irBuiltIns.booleanType -> BoxCache.BOOLEAN
+        irBuiltIns.byteType -> BoxCache.BYTE
+        irBuiltIns.shortType -> BoxCache.SHORT
+        irBuiltIns.charType -> BoxCache.CHAR
+        irBuiltIns.intType -> BoxCache.INT
+        irBuiltIns.longType -> BoxCache.LONG
         else -> return null
     }
     val value = when (value.kind) {
@@ -225,9 +173,11 @@ internal fun IrConstantPrimitive.toBoxCacheValue(context: Context): ConstValue? 
         IrConstKind.Long -> value.value as Long
         else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
     }
-    val (start, end) = context.config.target.getBoxCacheRange(cacheType)
+    val (start, end) = generationState.context.config.target.getBoxCacheRange(cacheType)
     return if (value in start..end) {
-        context.llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(value.toInt() - start)?.getElementPtr(0)
+        generationState.llvm.let { llvm ->
+            llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(llvm, value.toInt() - start)?.getElementPtr(llvm, 0)
+        }
     } else {
         null
     }

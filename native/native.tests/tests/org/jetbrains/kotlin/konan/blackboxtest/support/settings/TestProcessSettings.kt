@@ -61,6 +61,19 @@ internal enum class TestMode(private val description: String) {
 }
 
 /**
+ * The set of custom (external) klibs that should be passed to the Kotlin/Native compiler.
+ */
+@JvmInline
+internal value class CustomKlibs(val klibs: Set<File>) {
+    init {
+        val invalidKlibs = klibs.filterNot { it.isDirectory || (it.isFile && it.extension == "klib") }
+        assertTrue(invalidKlibs.isEmpty()) {
+            "There are invalid KLIBs that should be passed for the Kotlin/Native compiler: ${klibs.joinToString { "[$it]" }}"
+        }
+    }
+}
+
+/**
  * Whether to force [TestKind.STANDALONE] for all tests where [TestKind] is assumed to be [TestKind.REGULAR] otherwise:
  * - either explicitly specified in the test data file: // KIND: REGULAR
  * - or // KIND: is not specified in the test data file and thus automatically considered as [TestKind.REGULAR]

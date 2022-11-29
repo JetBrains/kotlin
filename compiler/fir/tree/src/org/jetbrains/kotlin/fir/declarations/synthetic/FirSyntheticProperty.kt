@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -60,7 +60,7 @@ class FirSyntheticProperty(
     override val isLocal: Boolean
         get() = false
 
-    override val receiverTypeRef: FirTypeRef?
+    override val receiverParameter: FirReceiverParameter?
         get() = null
 
     override val isVal: Boolean
@@ -91,55 +91,55 @@ class FirSyntheticProperty(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
+        notSupported()
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirProperty {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        notSupported()
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
@@ -150,7 +150,7 @@ class FirSyntheticProperty(
         notSupported()
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
         notSupported()
     }
 

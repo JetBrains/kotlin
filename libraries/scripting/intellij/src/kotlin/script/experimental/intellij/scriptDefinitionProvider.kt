@@ -23,6 +23,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
  * may also remove or add new definitions at this point.
  * Processed definitions are provided to the scripting support infrastructure.
  */
+@JvmDefaultWithCompatibility
 interface ScriptDefinitionsProvider {
     /**
      * A display name used to identify particular providers
@@ -48,8 +49,6 @@ interface ScriptDefinitionsProvider {
     /**
      * The callback to update/add/remove script definitions after loading, if needed
      */
-    @Suppress("DEPRECATION") // To be replaced with -Xjvm-default=all-compatibility.
-    @JvmDefault
     fun provideDefinitions(
         baseHostConfiguration: ScriptingHostConfiguration,
         loadedScriptDefinitions: List<ScriptDefinition>

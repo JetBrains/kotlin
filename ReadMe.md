@@ -46,7 +46,7 @@ This repository is using [Gradle toolchains](https://docs.gradle.org/current/use
 to select and auto-provision required JDKs from [AdoptOpenJdk](https://adoptopenjdk.net) project. 
 
 Unfortunately [AdoptOpenJdk](https://adoptopenjdk.net) project does not provide required JDK 1.6 and 1.7 images,
-so you could either download them manually and provide path to installation via `JDK_16` and `JDK_17` environment variables or
+so you could either download them manually and provide path to installation via `JDK_1_6` and `JDK_1_7` environment variables or
 use following SDK managers:
 - [Asdf-vm](https://asdf-vm.com/)
 - [Jabba](https://github.com/shyiko/jabba)

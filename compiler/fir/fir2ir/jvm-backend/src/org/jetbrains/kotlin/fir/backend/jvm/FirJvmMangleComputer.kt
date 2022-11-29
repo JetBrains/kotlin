@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -85,7 +85,7 @@ open class FirJvmMangleComputer(
 
     private fun FirDeclaration.visitParent() {
         val (parentPackageFqName, parentClassId) = when (this) {
-            is FirCallableDeclaration -> this.containingClass()?.classId?.let { it.packageFqName to it } ?: return
+            is FirCallableDeclaration -> this.containingClassLookupTag()?.classId?.let { it.packageFqName to it } ?: return
             is FirClassLikeDeclaration -> this.symbol.classId.let { it.packageFqName to it.outerClassId }
             else -> return
         }
@@ -154,7 +154,7 @@ open class FirJvmMangleComputer(
             mangleType(builder, it.typeRef.coneType)
         }
 
-        val receiverType = receiverTypeRef ?: (this as? FirPropertyAccessor)?.propertySymbol?.fir?.receiverTypeRef
+        val receiverType = receiverParameter?.typeRef ?: (this as? FirPropertyAccessor)?.propertySymbol?.fir?.receiverParameter?.typeRef
         receiverType?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)
@@ -223,6 +223,7 @@ open class FirJvmMangleComputer(
                         mangleType(tBuilder, type.fullyExpandedType(session))
                         return
                     }
+
                     is FirClassSymbol -> symbol.fir.accept(copy(MangleMode.FQNAME), false)
                     is FirTypeParameterSymbol -> tBuilder.mangleTypeParameterReference(symbol.fir)
                     // This is performed for a case with invisible class-like symbol in fake override
@@ -255,9 +256,11 @@ open class FirJvmMangleComputer(
                     tBuilder.appendSignature(MangleConstant.ENHANCED_NULLABILITY_MARK)
                 }
             }
+
             is ConeRawType -> {
                 mangleType(tBuilder, type.lowerBound)
             }
+
             is ConeFlexibleType -> {
                 with(session.typeContext) {
                     // Need to reproduce type approximation done for flexible types in TypeTranslator.
@@ -273,17 +276,21 @@ open class FirJvmMangleComputer(
                     } else mangleType(tBuilder, upper)
                 }
             }
+
             is ConeDefinitelyNotNullType -> {
                 // E.g. not-null type parameter in Java
                 mangleType(tBuilder, type.original)
             }
+
             is ConeCapturedType -> {
                 mangleType(tBuilder, type.lowerType ?: type.constructor.supertypes!!.first())
             }
+
             is ConeIntersectionType -> {
                 // TODO: add intersectionTypeApproximation
                 mangleType(tBuilder, type.intersectedTypes.first())
             }
+
             else -> error("Unexpected type $type")
         }
     }
@@ -310,7 +317,7 @@ open class FirJvmMangleComputer(
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
         }
 
-        variable.receiverTypeRef?.let {
+        variable.receiverParameter?.typeRef?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)
         }
@@ -355,7 +362,7 @@ open class FirJvmMangleComputer(
             // No need to distinguish between the accessor and its delegate.
             visitSimpleFunction(propertyAccessor.delegate, data)
         } else {
-            propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol!!.fir)
+            propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol.fir)
         }
     }
 

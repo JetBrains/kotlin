@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+
 // FILE: test.kt
 
 inline fun inlineFun(s: () -> Unit) {
@@ -51,3 +51,4 @@ fun box() {
 // test.kt:24 box
 
 // EXPECTATIONS JS_IR
+// test.kt:24 box

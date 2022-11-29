@@ -269,7 +269,11 @@ private val PsiMethod.canBeSetter: Boolean
     get() = JvmAbi.isSetterName(name) && parameters.size == 1 && returnTypeElement?.textMatches("void") != false
 
 private val PsiMethod.probablyCanHaveSyntheticAccessors: Boolean
-    get() = canHaveOverride && !hasTypeParameters() && !isFinalProperty
+    get() = probablyCanHaveSyntheticAccessors()
+
+private fun PsiMethod.probablyCanHaveSyntheticAccessors(withoutOverrideCheck: Boolean = false): Boolean {
+    return (withoutOverrideCheck || canHaveOverride) && !hasTypeParameters() && !isFinalProperty
+}
 
 private val PsiMethod.getterName: Name? get() = propertyNameByGetMethodName(Name.identifier(name))
 private val PsiMethod.setterNames: Collection<Name>? get() = propertyNamesBySetMethodName(Name.identifier(name)).takeIf { it.isNotEmpty() }
@@ -284,16 +288,17 @@ private val PsiMethod.isFinalProperty: Boolean
 
 private val PsiMethod.isTopLevelDeclaration: Boolean get() = unwrapped?.isTopLevelKtOrJavaMember() == true
 
-val PsiMethod.syntheticAccessors: Collection<Name>
-    get() {
-        if (!probablyCanHaveSyntheticAccessors) return emptyList()
+val PsiMethod.syntheticAccessors: Collection<Name> get() = syntheticAccessors()
 
-        return when {
-            canBeGetter -> listOfNotNull(getterName)
-            canBeSetter -> setterNames.orEmpty()
-            else -> emptyList()
-        }
+fun PsiMethod.syntheticAccessors(withoutOverrideCheck: Boolean = false): Collection<Name> {
+    if (!probablyCanHaveSyntheticAccessors(withoutOverrideCheck)) return emptyList()
+
+    return when {
+        canBeGetter -> listOfNotNull(getterName)
+        canBeSetter -> setterNames.orEmpty()
+        else -> emptyList()
     }
+}
 
 val PsiMethod.canHaveSyntheticAccessors: Boolean get() = probablyCanHaveSyntheticAccessors && (canBeGetter || canBeSetter)
 

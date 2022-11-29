@@ -51,14 +51,14 @@ fun Project.codegenTest(
 codegenTest(target = 8, jdk = JdkMajorVersion.JDK_1_8)
 
 //JDK 11
-codegenTest(target = 8, jdk = JdkMajorVersion.JDK_11)
+codegenTest(target = 8, jdk = JdkMajorVersion.JDK_11_0)
 
-codegenTest(target = 11, jdk = JdkMajorVersion.JDK_11)
+codegenTest(target = 11, jdk = JdkMajorVersion.JDK_11_0)
 
 //JDK 17
-codegenTest(target = 8, jdk = JdkMajorVersion.JDK_17)
+codegenTest(target = 8, jdk = JdkMajorVersion.JDK_17_0)
 
-codegenTest(target = 17, jdk = JdkMajorVersion.JDK_17) {
+codegenTest(target = 17, jdk = JdkMajorVersion.JDK_17_0) {
     systemProperty("kotlin.test.box.d8.disable", true)
 }
 

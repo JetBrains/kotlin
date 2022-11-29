@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -32,18 +30,16 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.tryGetEffectiveVisibility
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-context(KtAnalysisSession)
 internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
-    containingClass: KtLightClass,
-    private val methodIndex: Int
+    containingClass: SymbolLightClassBase,
+    protected val methodIndex: Int,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
-
     override fun getBody(): PsiCodeBlock? = null
 
     override fun getReturnTypeElement(): PsiTypeElement? = null
 
-    override fun setName(p0: String): PsiElement = cannotModify()
+    override fun setName(name: String): PsiElement = cannotModify()
 
     override fun isVarArgs() = PsiImplUtil.isVarArgs(this)
 
@@ -88,12 +84,13 @@ internal abstract class SymbolLightMethodBase(
     override fun getThrowsList(): PsiReferenceList =
         KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST) //TODO()
 
-    override fun getDefaultValue(): PsiAnnotationMemberValue? = null //TODO()
+    override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
+    context(KtAnalysisSession)
     protected fun <T> T.computeJvmMethodName(
         defaultName: String,
         containingClass: SymbolLightClassBase,
-        annotationUseSiteTarget: AnnotationUseSiteTarget? = null
+        annotationUseSiteTarget: AnnotationUseSiteTarget?,
     ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility, T : KtCallableSymbol {
         getJvmNameFromAnnotation(annotationUseSiteTarget)?.let { return it }
 
@@ -105,7 +102,9 @@ internal abstract class SymbolLightMethodBase(
         if (containingClass is KtLightClassForFacade) return defaultName
         if (hasPublishedApiAnnotation(annotationUseSiteTarget)) return defaultName
 
-        val moduleName = (getKtModule(project) as? KtSourceModule)?.moduleName ?: return defaultName
+        val moduleName = (ktModule as? KtSourceModule)?.moduleName ?: return defaultName
         return mangleInternalName(defaultName, moduleName)
     }
+
+    abstract fun isOverride(): Boolean
 }

@@ -1,0 +1,7 @@
+expression: IF
+text: if (true) {
+    a = 6
+} else {
+    a = 8
+}
+isUsedAsExpression: true

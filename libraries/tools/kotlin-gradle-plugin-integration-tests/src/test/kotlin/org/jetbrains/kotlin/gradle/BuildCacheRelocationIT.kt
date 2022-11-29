@@ -22,6 +22,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import kotlin.io.path.createDirectory
 
 @DisplayName("Build cache relocation")
@@ -83,7 +84,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             firstProject,
             secondProject,
             listOf("assemble"),
-            listOf(":libraryProject:compileKotlinJs", ":mainProject:compileKotlinJs", ":mainProject:processDceKotlinJs")
+            listOf(":libraryProject:compileKotlinJs", ":mainProject:compileKotlinJs", ":mainProject:compileProductionExecutableKotlinJs")
         )
     }
 
@@ -113,15 +114,20 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
-    @JvmGradlePluginTests
+    @AndroidGradlePluginTests
     @DisplayName("works with Android project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
-    @GradleTest
-    fun testRelocationAndroidProject(gradleVersion: GradleVersion) {
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
+    fun testRelocationAndroidProject(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkProvider: JdkVersions.ProvidedJdk
+    ) {
         val (firstProject, secondProject) = prepareTestProjects(
             "AndroidProject",
             gradleVersion,
-            defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42.version)
+            defaultBuildOptions.copy(androidVersion = agpVersion),
+            jdkProvider.location
         )
 
         checkBuildCacheRelocation(
@@ -138,15 +144,20 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
-    @JvmGradlePluginTests
+    @AndroidGradlePluginTests
     @DisplayName("Test relocation for Android with dagger project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
-    @GradleTest
-    fun testRelocationAndroidDagger(gradleVersion: GradleVersion) {
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
+    fun testRelocationAndroidDagger(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkProvider: JdkVersions.ProvidedJdk
+    ) {
         val (firstProject, secondProject) = prepareTestProjects(
             "kapt2/android-dagger",
             gradleVersion,
-            defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42.version)
+            defaultBuildOptions.copy(androidVersion = agpVersion),
+            jdkProvider.location
         ) {
             it.subProject("app").buildGradle.append("\nkapt.useBuildCache = true")
         }
@@ -163,15 +174,21 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
-    @JvmGradlePluginTests
+    @AndroidGradlePluginTests
     @DisplayName("KT-48617: Kapt ignores empty directories from Android variant")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
-    @GradleTest
-    fun kaptIgnoreEmptyAndroidVariant(gradleVersion: GradleVersion) {
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
+    fun kaptIgnoreEmptyAndroidVariant(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkProvider: JdkVersions.ProvidedJdk
+    ) {
         val (firstProject, secondProject) = prepareTestProjects(
             "kapt2/android-dagger",
             gradleVersion,
-            defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42.version)
+            defaultBuildOptions.copy(androidVersion = agpVersion),
+            jdkProvider.location
         ) {
             it.subProject("app").buildGradle.append("\nkapt.useBuildCache = true")
         }
@@ -191,41 +208,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
-    @JvmGradlePluginTests
-    @DisplayName("KT-48849: Kotlin compile should ignore empty layout resource directories added by kotlin android extensions")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
-    @GradleTest
-    fun compileIgnoreEmptyAndroidResLayoutDirs(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects(
-            "AndroidExtensionsProject",
-            gradleVersion,
-            defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42.version)
-        ) {
-            it.subProject("app").buildGradle.append(
-                """
-                |
-                |androidExtensions {
-                |    experimental = true
-                |}
-                """.trimMargin()
-            )
-        }
-
-        firstProject
-            .subProject("app")
-            .projectPath
-            .resolve("src/main/res/layout-ar")
-            .createDirectory()
-
-        checkBuildCacheRelocation(
-            firstProject,
-            secondProject,
-            listOf("assembleDebug"),
-            listOf(":app:compileDebugKotlin")
-        )
-    }
-
-    @OtherGradlePluginTests // TODO: change to native tag
+    @NativeGradlePluginTests
     @DisplayName("with native project")
     @GradleTest
     fun testRelocationNative(gradleVersion: GradleVersion) {
@@ -291,14 +274,15 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         projectName: String,
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions = defaultBuildOptions,
+        buildJdk: File? = null,
         additionalConfiguration: (TestProject) -> Unit = {}
     ): Pair<TestProject, TestProject> {
-        val firstProject = project(projectName, gradleVersion, buildOptions) {
+        val firstProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk) {
             enableLocalBuildCache(localBuildCacheDir)
             additionalConfiguration(this)
         }
 
-        val secondProject = project(projectName, gradleVersion, buildOptions) {
+        val secondProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk) {
             enableLocalBuildCache(localBuildCacheDir)
             additionalConfiguration(this)
         }

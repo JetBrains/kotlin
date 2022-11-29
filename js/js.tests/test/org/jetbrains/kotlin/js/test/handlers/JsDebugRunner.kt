@@ -4,32 +4,36 @@
  */
 package org.jetbrains.kotlin.js.test.handlers
 
+import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
+import com.google.gwt.dev.js.rhino.CodePosition
+import com.google.gwt.dev.js.rhino.offsetOf
 import kotlinx.coroutines.withTimeout
-import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.test.debugger.*
 import org.jetbrains.kotlin.js.test.utils.getAllFilesForRunner
-import org.jetbrains.kotlin.js.test.utils.getBoxFunction
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
-import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
-import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
+import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URI
 import java.net.URISyntaxException
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * This class is an analogue of the [DebugRunner][org.jetbrains.kotlin.test.backend.handlers.DebugRunner] from JVM stepping tests.
  *
- * It runs a generated JavaScript file under a debugger, sets a breakpoint in the beginning of the `box` function
+ * It runs a generated JavaScript file under a debugger, stops right before entering the `box` function,
  * and performs the "step into" action until there is nothing more to step into. On each pause it records the source file name,
  * the source line and the function name of the current call frame, and compares this data with the expectations written in the test file.
  *
@@ -43,7 +47,10 @@ import java.net.URISyntaxException
  * supported.
  *
  */
-class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(testServices) {
+class JsDebugRunner(testServices: TestServices, private val localVariables: Boolean) : AbstractJsArtifactsCollector(testServices) {
+
+    private val logger = Logger.getLogger(this::class.java.name)
+
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (someAssertionWasFailed) return
 
@@ -64,7 +71,20 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
             is SourceMapError -> error(parseResult.message)
         }
 
-        runGeneratedCode(jsFilePath, sourceMap, mainModule)
+        val numberOfAttempts = 5
+        retry(
+            numberOfAttempts,
+            action = { runGeneratedCode(jsFilePath, sourceMap, mainModule) },
+            predicate = { attempt, e ->
+                when (e) {
+                    is NodeExitedException -> {
+                        logger.log(Level.WARNING, "Node.js abruptly exited. Attempt $attempt out of $numberOfAttempts failed.", e)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        )
     }
 
     private fun runGeneratedCode(
@@ -72,130 +92,82 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
         sourceMap: SourceMap,
         mainModule: TestModule,
     ) {
-        val (testFileWithBoxFunction, boxFunctionStartLine) = getBoxFunctionStartLocation(mainModule)
-        val originalFileWithBoxFunction = testFileWithBoxFunction.originalFile
+        val originalFile = mainModule.files.first { !it.isAdditional }.originalFile
+        val debuggerFacade = NodeJsDebuggerFacade(jsFilePath, localVariables)
 
-        val boxFunctionLineInGeneratedFile =
-            sourceMap.breakpointLineInGeneratedFile(originalFileWithBoxFunction, boxFunctionStartLine)
+        val jsFile = File(jsFilePath)
 
-        if (boxFunctionLineInGeneratedFile < 0)
-            error("Could not find the location of the 'box' function in the generated file")
-
-        val debuggerFacade = NodeJsDebuggerFacade(jsFilePath)
-
-        val jsFileURI = File(jsFilePath).absoluteFile.toURI().withAuthority("")
+        val jsFileURI = jsFile.makeURI()
 
         val loggedItems = mutableListOf<SteppingTestLoggedData>()
+
         debuggerFacade.run {
-            with(debuggerFacade) {
-                val boxFunctionBreakpoint = debugger.setBreakpointByUrl(boxFunctionLineInGeneratedFile, jsFileURI.toString())
-                debugger.resume()
-                waitForResumeEvent()
-                waitForPauseEvent {
-                    it.reason == Debugger.PauseReason.OTHER && it.hitBreakpoints.contains(boxFunctionBreakpoint.breakpointId)
-                }
+            debugger.resume()
+            waitForResumeEvent()
+            waitForPauseEvent {
+                it.reason == Debugger.PauseReason.OTHER // hit the 'debugger' statement
+            }
+
+            suspend fun repeatedlyStepInto(action: suspend (Debugger.CallFrame) -> Boolean) {
                 while (true) {
                     val topMostCallFrame = waitForPauseEvent().callFrames[0]
-                    try {
-                        if (URI(scriptUrlByScriptId(topMostCallFrame.location.scriptId)) != jsFileURI) break
-                    } catch (_: URISyntaxException) {
-                        // Probably something like 'evalmachine.<anonymous>' brought us here. Ignore.
-                    }
-                    addCallFrameInfoToLoggedItems(sourceMap, topMostCallFrame, loggedItems)
+                    if (!action(topMostCallFrame)) break
                     debugger.stepInto()
                     waitForResumeEvent()
                 }
-                debugger.resume()
-                waitForResumeEvent()
             }
+
+            fun Debugger.CallFrame.isInFileUnderTest() = try {
+                URI(scriptUrlByScriptId(location.scriptId)) == jsFileURI
+            } catch (_: URISyntaxException) {
+                false
+            }
+
+            repeatedlyStepInto {
+                !it.isInFileUnderTest()
+            }
+            repeatedlyStepInto { callFrame ->
+                callFrame.isInFileUnderTest().also {
+                    if (it)
+                        addCallFrameInfoToLoggedItems(jsFile, sourceMap, callFrame, loggedItems)
+                }
+            }
+
+            debugger.resume()
+            waitForResumeEvent()
         }
         checkSteppingTestResult(
             mainModule.frontendKind,
             mainModule.targetBackend ?: TargetBackend.JS_IR,
-            originalFileWithBoxFunction,
+            originalFile,
             loggedItems
         )
     }
 
-    private fun addCallFrameInfoToLoggedItems(
+    private suspend fun NodeJsDebuggerFacade.Context.addCallFrameInfoToLoggedItems(
+        jsFile: File,
         sourceMap: SourceMap,
         topMostCallFrame: Debugger.CallFrame,
         loggedItems: MutableList<SteppingTestLoggedData>
     ) {
-        sourceMap.getSourceLineForGeneratedLocation(topMostCallFrame.location)?.let { (sourceFile, sourceLine) ->
+        val originalFunctionName = topMostCallFrame.functionLocation?.let {
+            sourceMap.segmentForGeneratedLocation(it.lineNumber, it.columnNumber)?.name
+        }
+        sourceMap.segmentForGeneratedLocation(
+            topMostCallFrame.location.lineNumber,
+            topMostCallFrame.location.columnNumber
+        )?.let { (_, sourceFile, sourceLine, _, _) ->
+            if (sourceFile == null || sourceLine < 0) return@let
             val testFileName = testFileNameFromMappedLocation(sourceFile, sourceLine) ?: return
-            val expectation =
-                formatAsSteppingTestExpectation(testFileName, sourceLine + 1, topMostCallFrame.functionName, false)
+            val expectation = formatAsSteppingTestExpectation(
+                testFileName,
+                sourceLine + 1,
+                originalFunctionName ?: topMostCallFrame.functionName,
+                false,
+                getLocalVariables(jsFile, sourceMap, topMostCallFrame),
+            )
             loggedItems.add(SteppingTestLoggedData(sourceLine + 1, false, expectation))
         }
-    }
-
-    /**
-     * Returns the test file and the line number in that file where the body of the `box` function begins.
-     */
-    private fun getBoxFunctionStartLocation(mainModule: TestModule): Pair<TestFile, Int> {
-        val boxFunction = getBoxFunction(testServices) ?: error("Missing 'box' function")
-        val file = boxFunction.containingKtFile
-        val mapping = KtPsiSourceFileLinesMapping(file)
-        val firstStatementOffset = boxFunction.bodyBlockExpression?.firstStatement?.startOffset
-            ?: boxFunction.bodyExpression?.startOffset
-            ?: boxFunction.startOffset
-        return mainModule.files.single { it.name == file.name } to mapping.getLineByOffset(firstStatementOffset)
-    }
-
-    /**
-     * Maps the location in the source file to the location in the generated file.
-     *
-     * The Node.js debugger is not sourcemap-aware, so we need to set a breakpoint in the `box` function in the generated JS file.
-     *
-     * We don't know where the generated `box` function is located, so we use the source map to figure it out.
-     *
-     * This is basically what Intellij IDEA's built-in JavaScript debugger does when you set a breakpoint in a source file: it tries
-     * to map the location of the breakpoint in the source file to a location in the generated file. Here we use a simplified
-     * algorithm for that.
-     */
-    private fun SourceMap.breakpointLineInGeneratedFile(sourceFile: File, sourceLine: Int): Int {
-        val sourceFileAbsolutePath = sourceFile.absoluteFile.normalize()
-        var candidateSegment: Pair<Int, SourceMapSegment>? = null
-        for ((generatedLineNumber, group) in groups.withIndex()) {
-            for (segment in group.segments) {
-                if (segment.sourceFileName?.let { File(it).absoluteFile.normalize() } != sourceFileAbsolutePath ||
-                    segment.sourceLineNumber != sourceLine)
-                    continue
-                if (candidateSegment == null)
-                    candidateSegment = generatedLineNumber to segment
-                // Find the segment that points to the earliest column in the source file
-                if (segment.sourceColumnNumber < candidateSegment.second.sourceColumnNumber)
-                    candidateSegment = generatedLineNumber to segment
-            }
-        }
-        return candidateSegment?.first ?: -1
-    }
-
-    /**
-     * Maps [location] in the generated JavaScript file to the corresponding location in a source file.
-     * @return The source file path (as specified in the source map) and the line number in that source file.
-     */
-    private fun SourceMap.getSourceLineForGeneratedLocation(location: Debugger.Location): Pair<String, Int>? {
-
-        fun SourceMapSegment.sourceFileAndLine() = sourceFileName!! to sourceLineNumber
-
-        val group = groups.getOrNull(location.lineNumber)?.takeIf { it.segments.isNotEmpty() } ?: return null
-        val columnNumber = location.columnNumber ?: return group.segments[0].sourceFileAndLine()
-        val segment = if (columnNumber <= group.segments[0].generatedColumnNumber) {
-            group.segments[0]
-        } else {
-            val candidateIndex = group.segments.indexOfFirst {
-                columnNumber <= it.generatedColumnNumber
-            }
-            if (candidateIndex < 0)
-                null
-            else if (candidateIndex == 0 || group.segments[candidateIndex].generatedColumnNumber == columnNumber)
-                group.segments[candidateIndex]
-            else
-                group.segments[candidateIndex - 1]
-        }
-        return segment?.sourceFileAndLine()
     }
 
     /**
@@ -205,9 +177,10 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
      */
     private fun testFileNameFromMappedLocation(originalFilePath: String, originalFileLineNumber: Int): String? {
         val originalFile = File(originalFilePath)
-        return testServices.moduleStructure.modules.flatMap { it.files }.findLast {
-            it.originalFile.absolutePath == originalFile.absolutePath && it.startLineNumberInOriginalFile <= originalFileLineNumber
-        }?.name
+        return testServices.moduleStructure.modules.asSequence().flatMap { module -> module.files.asSequence().filter { !it.isAdditional } }
+            .findLast {
+                it.originalFile.absolutePath == originalFile.absolutePath && it.startLineNumberInOriginalFile <= originalFileLineNumber
+            }?.name
     }
 }
 
@@ -217,7 +190,7 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
  *
  * @param jsFilePath the test file to execute and debug.
  */
-private class NodeJsDebuggerFacade(jsFilePath: String) {
+private class NodeJsDebuggerFacade(jsFilePath: String, private val localVariables: Boolean) {
 
     private val inspector =
         NodeJsInspectorClient("js/js.tests/test/org/jetbrains/kotlin/js/test/debugger/stepping_test_executor.js", listOf(jsFilePath))
@@ -225,6 +198,8 @@ private class NodeJsDebuggerFacade(jsFilePath: String) {
     private val scriptUrls = mutableMapOf<Runtime.ScriptId, String>()
 
     private var pausedEvent: Debugger.Event.Paused? = null
+
+    private val sourceCache = mutableMapOf<URI, String>()
 
     init {
         inspector.onEvent { event ->
@@ -249,26 +224,179 @@ private class NodeJsDebuggerFacade(jsFilePath: String) {
     /**
      * By the time [body] is called, the execution is paused, no code is executed yet.
      */
-    fun <T> run(body: suspend NodeJsInspectorClientContext.() -> T) = inspector.run {
+    fun <T> run(body: suspend Context.() -> T) = inspector.run {
         debugger.enable()
         debugger.setSkipAllPauses(false)
         runtime.runIfWaitingForDebugger()
-        waitForPauseEvent { it.reason == Debugger.PauseReason.BREAK_ON_START }
 
-        withTimeout(30000) {
-            body()
+        with(Context(this)) {
+            waitForPauseEvent { it.reason == Debugger.PauseReason.BREAK_ON_START }
+
+            withTimeout(30000) {
+                body()
+            }
         }
     }
 
-    fun scriptUrlByScriptId(scriptId: Runtime.ScriptId) = scriptUrls[scriptId] ?: error("unknown scriptId")
+    inner class Context(private val underlying: NodeJsInspectorClientContext) : NodeJsInspectorClientContext by underlying {
 
-    suspend fun NodeJsInspectorClientContext.waitForPauseEvent(suchThat: (Debugger.Event.Paused) -> Boolean = { true }) =
-        waitForValueToBecomeNonNull {
-            pausedEvent?.takeIf(suchThat)
+        fun scriptUrlByScriptId(scriptId: Runtime.ScriptId) = scriptUrls[scriptId] ?: error("unknown scriptId $scriptId")
+
+        suspend fun waitForPauseEvent(suchThat: (Debugger.Event.Paused) -> Boolean = { true }) =
+            waitForValueToBecomeNonNull {
+                pausedEvent?.takeIf(suchThat)
+            }
+
+        suspend fun waitForResumeEvent() = waitForConditionToBecomeTrue { pausedEvent == null }
+
+        suspend fun getLocalVariables(
+            jsFile: File,
+            sourceMap: SourceMap,
+            callFrame: Debugger.CallFrame
+        ): List<LocalVariableRecord>? {
+            if (!localVariables) return null
+            val functionScope = callFrame.scopeChain.find { it.type in setOf(Debugger.ScopeType.LOCAL, Debugger.ScopeType.CLOSURE) }
+                ?: return null
+            val scopeStart = functionScope.startLocation?.toCodePosition() ?: error("Missing scope location")
+            val scopeEnd = functionScope.endLocation?.toCodePosition() ?: error("Missing scope location")
+            val jsFileURI = jsFile.makeURI()
+            require(URI(scriptUrlByScriptId(functionScope.startLocation.scriptId)) == jsFileURI) {
+                "Invalid scope location: $scopeStart. Expected scope location to be in $jsFile"
+            }
+
+            val sourceText = sourceCache.getOrPut(jsFileURI, jsFile::readText)
+
+            val scopeText = sourceText.let {
+                it.substring(it.offsetOf(scopeStart), it.offsetOf(scopeEnd))
+            }
+
+            val prefix = "function"
+
+            // Function scope starts with an open paren, so we need to add the keyword to make it valid JavaScript.
+            // TODO: This will not work with arrows. As of 2022 we don't generate them, but we might in the future.
+            val parseableScopeText = prefix + scopeText
+            val scope = JsProgram().scope
+            val jsFunction = parseFunction(
+                parseableScopeText,
+                jsFile.name,
+                CodePosition(scopeStart.line, scopeStart.offset - prefix.length),
+                0,
+                ThrowExceptionOnErrorReporter,
+                scope
+            ) ?: error("Could not parse scope: \n$parseableScopeText")
+
+            val variables = mutableListOf<SourceInfoAwareJsNode /* JsVars.JsVar | JsParameter */>()
+
+            object : JsVisitor() {
+                override fun visitElement(node: JsNode) {
+                    node.acceptChildren(this)
+                }
+
+                override fun visit(x: JsVars.JsVar) {
+                    super.visit(x)
+                    variables.add(x)
+                }
+
+                override fun visitParameter(x: JsParameter) {
+                    super.visitParameter(x)
+                    variables.add(x)
+                }
+            }.accept(jsFunction)
+
+            val nameMapping = variables.mapNotNull { variable ->
+                if (variable !is HasName) error("Unexpected JsNode: $variable")
+
+                // Filter out variables declared in nested functions
+                if (!jsFunction.scope.hasOwnName(variable.name.toString())) return@mapNotNull null
+
+                val location = variable.source
+                if (location !is JsLocation?) error("JsLocation expected. Found instead: $location")
+                if (location == null)
+                    null
+                else sourceMap.segmentForGeneratedLocation(location.startLine, location.startChar)?.name?.let {
+                    it to variable.name.toString()
+                }
+            }
+
+            if (nameMapping.isEmpty()) return emptyList()
+
+            val expression = nameMapping.joinToString(separator = ",", prefix = "[", postfix = "]") { (_, generatedName) ->
+                "__makeValueDescriptionForSteppingTests($generatedName)"
+            }
+            val evaluationResult = debugger.evaluateOnCallFrame(callFrame.callFrameId, expression, returnByValue = true)
+            if (evaluationResult.exceptionDetails != null) {
+                evaluationResult.exceptionDetails.rethrow()
+            }
+
+            val valueDescriptions =
+                Json.Default.decodeFromJsonElement<List<ValueDescription?>>(evaluationResult.result.value ?: error("missing value"))
+
+            return nameMapping.mapIndexedNotNull { i, (originalName, _) ->
+                valueDescriptions[i]?.toLocalVariableRecord(originalName)
+            }
         }
 
-    suspend fun NodeJsInspectorClientContext.waitForResumeEvent() = waitForConditionToBecomeTrue { pausedEvent == null }
+        private fun Runtime.ExceptionDetails.rethrow(): Nothing {
+            if (exception?.description != null) error(exception.description)
+            if (scriptId == null) error(text)
+            val scriptURL = scriptUrls[scriptId] ?: url ?: error(text)
+            error("$text ($scriptURL:$lineNumber:$columnNumber)")
+        }
+    }
 }
+
+private fun File.makeURI(): URI = absoluteFile.toURI().withAuthority("")
 
 private fun URI.withAuthority(newAuthority: String?) =
     URI(scheme, newAuthority, path, query, fragment)
+
+private fun Debugger.Location.toCodePosition() = CodePosition(lineNumber, columnNumber ?: -1)
+
+private fun SourceMap.segmentForGeneratedLocation(lineNumber: Int, columnNumber: Int?): SourceMapSegment? {
+
+    val group = groups.getOrNull(lineNumber)?.takeIf { it.segments.isNotEmpty() } ?: return null
+    return if (columnNumber == null || columnNumber <= group.segments[0].generatedColumnNumber) {
+        group.segments[0]
+    } else {
+        val candidateIndex = group.segments.indexOfFirst {
+            columnNumber <= it.generatedColumnNumber
+        }
+        if (candidateIndex < 0)
+            null
+        else if (candidateIndex == 0 || group.segments[candidateIndex].generatedColumnNumber == columnNumber)
+            group.segments[candidateIndex]
+        else
+            group.segments[candidateIndex - 1]
+    }
+}
+
+@Serializable
+private class ValueDescription(val isNull: Boolean, val isReferenceType: Boolean, val valueDescription: String, val typeName: String) {
+    fun toLocalVariableRecord(variableName: String) = LocalVariableRecord(
+        variable = variableName,
+        variableType = null, // In JavaScript variables are untyped
+        value = when {
+            isNull -> LocalNullValue
+            isReferenceType -> LocalReference("", typeName)
+            else -> LocalPrimitive(valueDescription, typeName)
+        }
+    )
+}
+
+/**
+ * Retries [action] the specified number of [times]. If [action] throws an exception, calls [predicate] to determine if
+ * another run should be attempted. If [predicate] returns `false`, rethrows the exception.
+ *
+ * If after the last attempt results in an exception, rethrows that exception without calling [predicate].
+ */
+internal inline fun <T> retry(times: Int, action: (Int) -> T, predicate: (Int, Throwable) -> Boolean): T {
+    if (times < 1) throw IllegalArgumentException("'times' argument must be at least 1")
+    for (i in 1..times) {
+        try {
+            return action(i)
+        } catch (e: Throwable) {
+            if (i == times || !predicate(i, e)) throw e
+        }
+    }
+    throw IllegalStateException("unreachable")
+}

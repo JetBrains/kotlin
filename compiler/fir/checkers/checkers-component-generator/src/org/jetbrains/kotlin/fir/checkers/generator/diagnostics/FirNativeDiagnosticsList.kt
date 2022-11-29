@@ -47,5 +47,21 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
             parameter<Collection<FirRegularClassSymbol>>("containingClasses")
         }
         val INVALID_OBJC_REFINEMENT_TARGETS by error<KtElement>()
+        val INAPPLICABLE_OBJC_NAME by error<KtElement>()
+        val INVALID_OBJC_NAME by error<KtElement>()
+        val INVALID_OBJC_NAME_CHARS by error<KtElement> {
+            parameter<String>("characters")
+        }
+        val INVALID_OBJC_NAME_FIRST_CHAR by error<KtElement> {
+            parameter<String>("characters")
+        }
+        val EMPTY_OBJC_NAME by error<KtElement>()
+        val INCOMPATIBLE_OBJC_NAME_OVERRIDE by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("declaration")
+            parameter<Collection<FirRegularClassSymbol>>("containingClasses")
+        }
+        val INAPPLICABLE_EXACT_OBJC_NAME by error<KtElement>()
+        val MISSING_EXACT_OBJC_NAME by error<KtElement>()
+        val NON_LITERAL_OBJC_NAME_ARG by error<KtElement>()
     }
 }

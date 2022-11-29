@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.resolvedSymbol
@@ -23,12 +24,6 @@ val FirClassLikeDeclaration.classId
     }
 
 val FirClass.classId: ClassId get() = symbol.classId
-
-val FirClassSymbol<*>.superConeTypes: List<ConeClassLikeType>
-    get() = when (this) {
-        is FirRegularClassSymbol -> fir.superConeTypes
-        is FirAnonymousObjectSymbol -> fir.superConeTypes
-    }
 
 val FirClass.superConeTypes: List<ConeClassLikeType> get() = superTypeRefs.mapNotNull { it.coneTypeSafe() }
 
@@ -54,9 +49,3 @@ inline val FirDeclaration.isPrecompiled: Boolean
     get() = origin == FirDeclarationOrigin.Precompiled
 inline val FirDeclaration.isSynthetic: Boolean
     get() = origin == FirDeclarationOrigin.Synthetic
-
-inline val FirDeclaration.isJavaOrEnhancement: Boolean
-    get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
-inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
-    get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
-

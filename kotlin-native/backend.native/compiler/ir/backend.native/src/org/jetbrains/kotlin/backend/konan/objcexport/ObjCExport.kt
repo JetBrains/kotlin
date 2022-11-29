@@ -6,27 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
-import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isSubpackageOf
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal class ObjCExportedInterface(
         val generatedClasses: Set<ClassDescriptor>,
@@ -37,49 +27,49 @@ internal class ObjCExportedInterface(
         val mapper: ObjCExportMapper
 )
 
-internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
+// TODO: Replace Context with a more lightweight class.
+internal fun produceObjCExportInterface(context: Context): ObjCExportedInterface {
+    require(context.config.target.family.isAppleFamily)
+    require(context.config.produce == CompilerOutputKind.FRAMEWORK)
+
+    val topLevelNamePrefix = context.objCExportTopLevelNamePrefix
+
+    // TODO: emit RTTI to the same modules as classes belong to.
+    //   Not possible yet, since ObjCExport translates the entire "world" API at once
+    //   and can't do this per-module, e.g. due to global name conflict resolution.
+
+    val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
+    val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+    val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
+    val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+    val namer = ObjCExportNamerImpl(
+            moduleDescriptors.toSet(),
+            context.moduleDescriptor.builtIns,
+            mapper,
+            topLevelNamePrefix,
+            local = false,
+            objcGenerics = objcGenerics
+    )
+    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
+    headerGenerator.translateModule()
+    return headerGenerator.buildInterface()
+}
+
+internal class ObjCExport(
+        val generationState: NativeGenerationState,
+        private val exportedInterface: ObjCExportedInterface?,
+        private val codeSpec: ObjCExportCodeSpec?
+) {
+    private val context = generationState.context
     private val target get() = context.config.target
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
-
-    private val exportedInterface = produceInterface()
-    private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
-
-    private fun produceInterface(): ObjCExportedInterface? {
-        if (!target.family.isAppleFamily) return null
-
-        // TODO: emit RTTI to the same modules as classes belong to.
-        //   Not possible yet, since ObjCExport translates the entire "world" API at once
-        //   and can't do this per-module, e.g. due to global name conflict resolution.
-
-        val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
-
-        return if (produceFramework) {
-            val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
-            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-            val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
-            val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-            val namer = ObjCExportNamerImpl(
-                    moduleDescriptors.toSet(),
-                    context.moduleDescriptor.builtIns,
-                    mapper,
-                    topLevelNamePrefix,
-                    local = false,
-                    objcGenerics = objcGenerics
-            )
-            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
-            headerGenerator.translateModule()
-            headerGenerator.buildInterface()
-        } else {
-            null
-        }
-    }
 
     lateinit var namer: ObjCExportNamer
 
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
 
-        if (context.shouldDefineFunctionClasses) {
+        if (generationState.shouldDefineFunctionClasses) {
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 
@@ -112,150 +102,22 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     }
 
     private fun produceFrameworkSpecific(headerLines: List<String>) {
-        val framework = File(context.config.outputFile)
-        val frameworkContents = when(target.family) {
-            Family.IOS,
-            Family.WATCHOS,
-            Family.TVOS -> framework
-            Family.OSX -> framework.child("Versions/A")
-            else -> error(target)
-        }
-
-        val headers = frameworkContents.child("Headers")
-
-        val frameworkName = framework.name.removeSuffix(".framework")
-        val headerName = frameworkName + ".h"
-        val header = headers.child(headerName)
-        headers.mkdirs()
-        header.writeLines(headerLines)
-
-        val modules = frameworkContents.child("Modules")
-        modules.mkdirs()
-
-        val moduleMap = """
-            |framework module $frameworkName {
-            |    umbrella header "$headerName"
-            |
-            |    export *
-            |    module * { export * }
-            |
-            |    use Foundation
-            |}
-        """.trimMargin()
-
-        modules.child("module.modulemap").writeBytes(moduleMap.toByteArray())
-
-        emitInfoPlist(frameworkContents, frameworkName)
-        if (target.family == Family.OSX) {
-            framework.child("Versions/Current").createAsSymlink("A")
-            for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
-                framework.child(child).createAsSymlink("Versions/Current/$child")
-            }
-        }
-    }
-
-    private fun emitInfoPlist(frameworkContents: File, name: String) {
-        val properties = context.config.platform.configurables as AppleConfigurables
-
-        val directory = when (target.family) {
-            Family.IOS,
-            Family.WATCHOS,
-            Family.TVOS -> frameworkContents
-            Family.OSX -> frameworkContents.child("Resources").also { it.mkdirs() }
-            else -> error(target)
-        }
-
-        val file = directory.child("Info.plist")
-        val bundleId = guessBundleID(name)
-        val bundleShortVersionString = context.configuration[BinaryOptions.bundleShortVersionString] ?: "1.0"
-        val bundleVersion = context.configuration[BinaryOptions.bundleVersion] ?: "1"
-        val platform = properties.platformName()
-        val minimumOsVersion = properties.osVersionMin
-
-        val contents = StringBuilder()
-        contents.append("""
-            <?xml version="1.0" encoding="UTF-8"?>
-            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-            <plist version="1.0">
-            <dict>
-                <key>CFBundleExecutable</key>
-                <string>$name</string>
-                <key>CFBundleIdentifier</key>
-                <string>$bundleId</string>
-                <key>CFBundleInfoDictionaryVersion</key>
-                <string>6.0</string>
-                <key>CFBundleName</key>
-                <string>$name</string>
-                <key>CFBundlePackageType</key>
-                <string>FMWK</string>
-                <key>CFBundleShortVersionString</key>
-                <string>$bundleShortVersionString</string>
-                <key>CFBundleSupportedPlatforms</key>
-                <array>
-                    <string>$platform</string>
-                </array>
-                <key>CFBundleVersion</key>
-                <string>$bundleVersion</string>
-
-        """.trimIndent())
-
-        fun addUiDeviceFamilies(vararg values: Int) {
-            val xmlValues = values.joinToString(separator = "\n") {
-                "        <integer>$it</integer>"
-            }
-            contents.append("""
-                |    <key>MinimumOSVersion</key>
-                |    <string>$minimumOsVersion</string>
-                |    <key>UIDeviceFamily</key>
-                |    <array>
-                |$xmlValues       
-                |    </array>
-
-                """.trimMargin())
-        }
-
-        // UIDeviceFamily mapping:
-        // 1 - iPhone
-        // 2 - iPad
-        // 3 - AppleTV
-        // 4 - Apple Watch
-        when (target.family) {
-            Family.IOS -> addUiDeviceFamilies(1, 2)
-            Family.TVOS -> addUiDeviceFamilies(3)
-            Family.WATCHOS -> addUiDeviceFamilies(4)
-            else -> {}
-        }
-
-        if (target == KonanTarget.IOS_ARM64) {
-            contents.append("""
-                |    <key>UIRequiredDeviceCapabilities</key>
-                |    <array>
-                |        <string>arm64</string>
-                |    </array>
-
-                """.trimMargin()
-            )
-        }
-
-        if (target == KonanTarget.IOS_ARM32) {
-            contents.append("""
-                |    <key>UIRequiredDeviceCapabilities</key>
-                |    <array>
-                |        <string>armv7</string>
-                |    </array>
-
-                """.trimMargin()
-            )
-        }
-
-        contents.append("""
-            </dict>
-            </plist>
-        """.trimIndent())
-
-        // TODO: Xcode also add some number of DT* keys.
-
-        file.writeBytes(contents.toString().toByteArray())
+        val frameworkDirectory = File(generationState.outputFile)
+        val frameworkName = frameworkDirectory.name.removeSuffix(".framework")
+        val frameworkBuilder = FrameworkBuilder(
+                context.config,
+                infoPListBuilder = InfoPListBuilder(context.config),
+                moduleMapBuilder = ModuleMapBuilder(),
+                objCHeaderWriter = ObjCHeaderWriter(),
+                mainPackageGuesser = MainPackageGuesser(),
+        )
+        frameworkBuilder.build(
+                context.moduleDescriptor,
+                frameworkDirectory,
+                frameworkName,
+                headerLines,
+                moduleDependencies = emptySet()
+        )
     }
 
     // See https://bugs.swift.org/browse/SR-10177
@@ -293,61 +155,10 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         val result = Command(clangCommand).getResult(withErrors = true)
 
         if (result.exitCode == 0) {
-            context.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
+            generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
         } else {
             // Note: ignoring compile errors intentionally.
             // In this case resulting framework will likely be unusable due to compile errors when importing it.
         }
-    }
-
-    private fun guessMainPackage(modules: List<ModuleDescriptor>): FqName? {
-        if (modules.isEmpty()) {
-            return null
-        }
-
-        val allPackages = modules.flatMap {
-            it.getPackageFragments() // Includes also all parent packages, e.g. the root one.
-        }
-
-        val nonEmptyPackages = allPackages
-            .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
-            .map { it.fqName }.distinct()
-
-        return allPackages.map { it.fqName }.distinct()
-            .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
-            // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
-            .maxByOrNull { it.asString().length }
-    }
-
-    private fun guessBundleID(bundleName: String): String {
-        val configuration = context.configuration
-        val deprecatedBundleIdOption = configuration[BUNDLE_ID]
-        val bundleIdOption = configuration[BinaryOptions.bundleId]
-        if (deprecatedBundleIdOption != null && bundleIdOption != null && deprecatedBundleIdOption != bundleIdOption) {
-            configuration.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Both the deprecated -Xbundle-id=<id> and the new -Xbinary=bundleId=<id> options supplied with different values: " +
-                            "'$deprecatedBundleIdOption' and '$bundleIdOption'. " +
-                            "Please use only one of the options or make sure they have the same value."
-            )
-        }
-        deprecatedBundleIdOption?.let { return it } ?: bundleIdOption?.let { return it }
-
-        // Consider exported libraries only if we cannot infer the package from sources or included libs.
-        val mainPackage = guessMainPackage(context.getIncludedLibraryDescriptors() + context.moduleDescriptor)
-                ?: guessMainPackage(context.getExportedDependencies())
-                ?: FqName.ROOT
-
-        val bundleID = mainPackage.child(Name.identifier(bundleName)).asString()
-
-        if (mainPackage.isRoot) {
-            configuration.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Cannot infer a bundle ID from packages of source files and exported dependencies, " +
-                            "use the bundle name instead: $bundleName. " +
-                            "Please specify the bundle ID explicitly using the -Xbinary=bundleId=<id> compiler flag."
-            )
-        }
-        return bundleID
     }
 }

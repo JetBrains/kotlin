@@ -9,11 +9,11 @@ package org.jetbrains.kotlin.gradle.plugin.cocoapods
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.daemon.common.trimQuotes
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
@@ -25,15 +25,20 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.KotlinArtifactsPodspecExtension
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.kotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
+import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 internal val Project.cocoapodsBuildDirs: CocoapodsBuildDirs
@@ -87,7 +92,7 @@ private val KotlinNativeTarget.toValidSDK: String
     get() = when (konanTarget) {
         IOS_X64, IOS_SIMULATOR_ARM64 -> "iphonesimulator"
         IOS_ARM32, IOS_ARM64 -> "iphoneos"
-        WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64 -> "watchsimulator"
+        WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, WATCHOS_DEVICE_ARM64 -> "watchsimulator"
         WATCHOS_ARM32, WATCHOS_ARM64 -> "watchos"
         TVOS_X64, TVOS_SIMULATOR_ARM64 -> "appletvsimulator"
         TVOS_ARM64 -> "appletvos"
@@ -149,7 +154,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun KotlinMultiplatformExtension.targetsForPlatform(requestedPlatform: KonanTarget) =
         supportedTargets().matching { it.konanTarget == requestedPlatform }
 
-    private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension, cocoapodsExtension: CocoapodsExtension) {
+    private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension) {
         kotlinExtension.supportedTargets().all { target ->
             target.binaries.framework(POD_FRAMEWORK_PREFIX) {
                 baseName = project.name.asValidFrameworkName()
@@ -216,7 +221,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         check(targets.size == 1) { "The project has more than one target for the requested platform: `${requestedPlatform.visibleName}`" }
 
         val frameworkLinkTask = targets.single().binaries.getFramework(POD_FRAMEWORK_PREFIX, requestedBuildType).linkTaskProvider
-        project.createCopyFrameworkTask(frameworkLinkTask.flatMap { it.destinationDirectory.map { it.asFile } }, frameworkLinkTask)
+        project.createCopyFrameworkTask(frameworkLinkTask.flatMap { it.destinationDirectory.map { dir -> dir.asFile } }, frameworkLinkTask)
     }
 
     private fun createSyncTask(
@@ -383,6 +388,58 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
             if (generateWrapper) {
                 it.dependsOn(":wrapper")
+            }
+        }
+    }
+
+    private fun registerPodspecTask(
+        project: Project,
+        artifact: KotlinNativeArtifact,
+        podspecExtension: KotlinArtifactsPodspecExtension,
+        cocoapodsExtension: CocoapodsExtension,
+    ) {
+        val artifactName = artifact.artifactName
+        val assembleTask = project.tasks.named(artifact.taskName)
+        val podspecTaskName = lowerCamelCaseName("generate", artifactName, "podspec")
+
+        val artifactType = when (artifact) {
+            is KotlinNativeLibrary -> GenerateArtifactPodspecTask.ArtifactType.Library
+            is KotlinNativeFramework -> GenerateArtifactPodspecTask.ArtifactType.Framework
+            is KotlinNativeFatFramework -> GenerateArtifactPodspecTask.ArtifactType.FatFramework
+            is KotlinNativeXCFramework -> GenerateArtifactPodspecTask.ArtifactType.XCFramework
+            else -> error("Podspec can only be generated for Library, Framework, FatFramework or XCFramework")
+        }
+
+        val podspecTask = project.tasks.register(podspecTaskName, GenerateArtifactPodspecTask::class.java) { task ->
+            task.group = TASK_GROUP
+            task.description = "Generates a podspec file for '$artifactName' artifact"
+            task.specName.set(artifactName)
+            task.specVersion.set(project.version.takeIf { it != Project.DEFAULT_VERSION }.toString())
+            task.destinationDir.set(project.buildDir.resolve(artifact.outDir))
+            task.attributes.set(podspecExtension.attributes)
+            task.rawStatements.set(podspecExtension.rawStatements)
+            task.dependencies.set(cocoapodsExtension.pods)
+            task.artifactType.set(artifactType)
+        }
+
+        assembleTask.dependsOn(podspecTask)
+    }
+
+    private fun injectPodspecExtensionToArtifacts(
+        project: Project,
+        artifactsExtension: KotlinArtifactsExtension,
+        cocoapodsExtension: CocoapodsExtension,
+    ) {
+        artifactsExtension.artifactConfigs.withType(KotlinNativeArtifactConfig::class.java) { artifactConfig ->
+            val podspecExtension = project.objects.newInstance<KotlinArtifactsPodspecExtension>(project)
+            artifactConfig.addExtension(ARTIFACTS_PODSPEC_EXTENSION_NAME, podspecExtension)
+        }
+
+        artifactsExtension.artifacts.withType(KotlinNativeArtifact::class.java) { artifact ->
+            val podspecExtension = artifact.kotlinArtifactsPodspecExtension
+
+            if (podspecExtension != null) {
+                registerPodspecTask(project, artifact, podspecExtension, cocoapodsExtension)
             }
         }
     }
@@ -688,11 +745,15 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         pluginManager.withPlugin("kotlin-multiplatform") {
             val kotlinExtension = project.multiplatformExtension
+            val kotlinArtifactsExtension = project.kotlinArtifactsExtension
             val cocoapodsExtension = project.objects.newInstance(CocoapodsExtension::class.java, this)
+
             kotlinExtension.addExtension(COCOAPODS_EXTENSION_NAME, cocoapodsExtension)
-            createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
+
+            createDefaultFrameworks(kotlinExtension)
             registerDummyFrameworkTask(project, cocoapodsExtension)
             createSyncTask(project, kotlinExtension, cocoapodsExtension)
+            injectPodspecExtensionToArtifacts(project, kotlinArtifactsExtension, cocoapodsExtension)
             registerPodspecTask(project, cocoapodsExtension)
 
             registerPodGenTask(project, kotlinExtension, cocoapodsExtension)
@@ -726,6 +787,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         const val POD_SETUP_BUILD_TASK_NAME = "podSetupBuild"
         const val POD_BUILD_TASK_NAME = "podBuild"
         const val POD_IMPORT_TASK_NAME = "podImport"
+        const val ARTIFACTS_PODSPEC_EXTENSION_NAME = "withPodspec"
 
         // We don't move these properties in PropertiesProvider because
         // they are not intended to be overridden in local.properties.
@@ -740,4 +802,17 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         const val GENERATE_WRAPPER_PROPERTY = "kotlin.native.cocoapods.generate.wrapper"
     }
+}
+
+/**
+ * Extends a KotlinArtifact with a corresponding Podspec
+ *
+ * Only needed in *.kts build files. In Groovy you can use the same syntax but without explicit extension import
+ */
+fun KotlinNativeArtifactConfig.withPodspec(configure: KotlinArtifactsPodspecExtension.() -> Unit) {
+    val extension = cast<ExtensionAware>().kotlinArtifactsPodspecExtension
+
+    checkNotNull(extension) { "CocoaPods plugin should be applied before using `${KotlinCocoapodsPlugin.ARTIFACTS_PODSPEC_EXTENSION_NAME}` extension" }
+
+    extension.configure()
 }

@@ -86,10 +86,11 @@ private fun tryGetInlineThreshold(context: Context): Int? {
  * Still, runtime is not intended to be debugged by user, and we can optimize it pretty aggressively
  * even in debug compilation.
  */
-internal fun createLTOPipelineConfigForRuntime(context: Context): LlvmPipelineConfig {
+internal fun createLTOPipelineConfigForRuntime(generationState: NativeGenerationState): LlvmPipelineConfig {
+    val context = generationState.context
     val configurables: Configurables = context.config.platform.configurables
     return LlvmPipelineConfig(
-            context.llvm.targetTriple,
+            generationState.llvm.targetTriple,
             getCpuModel(context),
             getCpuFeatures(context),
             LlvmOptimizationLevel.AGGRESSIVE,
@@ -114,7 +115,8 @@ internal fun createLTOPipelineConfigForRuntime(context: Context): LlvmPipelineCo
  * In case of debug we do almost nothing (that's why we need [createLTOPipelineConfigForRuntime]),
  * but for release binaries we rely on "closed" world and enable a lot of optimizations.
  */
-internal fun createLTOFinalPipelineConfig(context: Context): LlvmPipelineConfig {
+internal fun createLTOFinalPipelineConfig(generationState: NativeGenerationState): LlvmPipelineConfig {
+    val context = generationState.context
     val target = context.config.target
     val configurables: Configurables = context.config.platform.configurables
     val cpuModel = getCpuModel(context)
@@ -142,7 +144,7 @@ internal fun createLTOFinalPipelineConfig(context: Context): LlvmPipelineConfig 
     val globalDce = true
     // Since we are in a "closed world" internalization can be safely used
     // to reduce size of a bitcode with global dce.
-    val internalize = context.llvmModuleSpecification.isFinal
+    val internalize = generationState.llvmModuleSpecification.isFinal
     // Hidden visibility makes symbols internal when linking the binary.
     // When producing dynamic library, this enables stripping unused symbols from binary with -dead_strip flag,
     // similar to DCE enabled by internalize but later:
@@ -160,7 +162,7 @@ internal fun createLTOFinalPipelineConfig(context: Context): LlvmPipelineConfig 
     }
 
     return LlvmPipelineConfig(
-            context.llvm.targetTriple,
+            generationState.llvm.targetTriple,
             cpuModel,
             cpuFeatures,
             optimizationLevel,

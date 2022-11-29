@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -19,17 +19,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val constructorSymbol = expression.calleeReference.safeAs<FirResolvedNamedReference>()
+        val constructorSymbol = (expression.calleeReference as? FirResolvedNamedReference)
             ?.resolvedSymbol as? FirConstructorSymbol
             ?: return
 
-        val typeSymbol = constructorSymbol.resolvedReturnTypeRef.coneType
-            .fullyExpandedType(context.session)
-            .safeAs<ConeClassLikeType>()
+        val typeSymbol = (constructorSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(context.session) as? ConeClassLikeType)
             ?.lookupTag?.toSymbol(context.session) as? FirRegularClassSymbol
             ?: return
 

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
@@ -38,7 +37,6 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
             val laziedFirFile = RawFirBuilder(
                 session,
                 provider,
-                psiMode = PsiHandlingMode.IDE,
                 bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
             ).buildFirFile(ktFile)
 
@@ -48,7 +46,6 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
             val fullFirFile = RawFirBuilder(
                 session,
                 provider,
-                psiMode = PsiHandlingMode.IDE,
                 bodyBuildingMode = BodyBuildingMode.NORMAL
             ).buildFirFile(ktFile)
 

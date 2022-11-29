@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreServices DiskArbitration Foundation IOKit IOSurface Metal Security darwin libkern osx posix
+language = Objective-C
+package = platform.MetalFX
+
+modules = MetalFX
+compilerOpts = -framework MetalFX
+linkerOpts = -framework MetalFX
+
+# Not available in Xcode 14 RC.

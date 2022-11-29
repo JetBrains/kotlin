@@ -75,7 +75,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
         }
     }
 
-    private fun buildDecompiledText(file: KotlinMetadataStubBuilder.FileWithMetadata): DecompiledText {
+    fun buildDecompiledText(file: KotlinMetadataStubBuilder.FileWithMetadata): DecompiledText {
         return when (file) {
             is KotlinMetadataStubBuilder.FileWithMetadata.Incompatible -> {
                 createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), file.version)

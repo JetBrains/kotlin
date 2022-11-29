@@ -3,10 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DeprecatedCallableAddReplaceWith")
+
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.Action
-import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
@@ -16,8 +17,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
-import org.jetbrains.kotlin.tooling.core.withClosure
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -25,9 +27,11 @@ import javax.inject.Inject
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
 abstract class DefaultKotlinSourceSet @Inject constructor(
-    private val project: Project,
+    final override val project: Project,
     val displayName: String
-) : KotlinSourceSet {
+) : AbstractKotlinSourceSet() {
+
+    override val extras: MutableExtras = mutableExtrasOf()
 
     override val apiConfigurationName: String
         get() = disambiguateName(API)
@@ -87,21 +91,11 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         dependencies { configure.execute(this) }
 
-    override fun dependsOn(other: KotlinSourceSet) {
-        dependsOnSourceSetsImpl.add(other)
-
-        // Fail-fast approach: check on each new added edge and report a circular dependency at once when the edge is added.
-        checkForCircularDependencies()
-
+    override fun afterDependsOnAdded(other: KotlinSourceSet) {
         project.runProjectConfigurationHealthCheckWhenEvaluated {
             defaultSourceSetLanguageSettingsChecker.runAllChecks(this@DefaultKotlinSourceSet, other)
         }
     }
-
-    private val dependsOnSourceSetsImpl = mutableSetOf<KotlinSourceSet>()
-
-    override val dependsOn: Set<KotlinSourceSet>
-        get() = dependsOnSourceSetsImpl
 
     override fun toString(): String = "source set $name"
 
@@ -156,23 +150,13 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         return getDependenciesTransformation(scope)
     }
 
-    fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> =
-        getVisibleSourceSetsFromAssociateCompilations(project, this)
+    fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(this)
 
     internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
             dependencyTransformations[scope]?.metadataDependencyResolutions
                 ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
                 ?: emptyMap()
-
-        val baseDir = SourceSetMetadataStorageForIde.sourceSetStorageWithScope(project, this@DefaultKotlinSourceSet.name, scope)
-
-        if (metadataDependencyResolutionByModule.values.any { it is MetadataDependencyResolution.ChooseVisibleSourceSets }) {
-            if (baseDir.isDirectory) {
-                baseDir.deleteRecursively()
-            }
-            baseDir.mkdirs()
-        }
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName
@@ -187,20 +171,11 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
                     MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
 
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
-                    val filesBySourceSet = resolution.visibleSourceSetNamesExcludingDependsOn.associateWith { visibleSourceSetName ->
-                        resolution.metadataProvider.getSourceSetCompiledMetadata(
-                            project,
-                            sourceSetName = visibleSourceSetName,
-                            outputDirectoryWhenMaterialised = baseDir,
-                            materializeFilesIfNecessary = true
-                        )
-                    }.filter { (_, files) -> files.any(File::exists) }
-
                     MetadataDependencyTransformation(
                         group, name, projectPath,
                         resolution.projectStructureMetadata,
                         resolution.allVisibleSourceSetNames,
-                        filesBySourceSet
+                        project.transformMetadataLibrariesForIde(resolution)
                     )
                 }
             }
@@ -221,32 +196,6 @@ internal val defaultSourceSetLanguageSettingsChecker =
         ).allChecks
     )
 
-private fun KotlinSourceSet.checkForCircularDependencies() {
-    // If adding an edge creates a cycle, than the source node of the edge belongs to the cycle, so run DFS from that node
-    // to check whether it became reachable from itself
-    val visited = hashSetOf<KotlinSourceSet>()
-    val stack = LinkedHashSet<KotlinSourceSet>() // Store the stack explicitly to pretty-print the cycle
-
-    fun checkReachableRecursively(from: KotlinSourceSet) {
-        stack += from
-        visited += from
-
-        for (to in from.dependsOn) {
-            if (to == this@checkForCircularDependencies)
-                throw InvalidUserCodeException(
-                    "Circular dependsOn hierarchy found in the Kotlin source sets: " +
-                            (stack.toList() + to).joinToString(" -> ") { it.name }
-                )
-
-            if (to !in visited) {
-                checkReachableRecursively(to)
-            }
-        }
-        stack -= from
-    }
-
-    checkReachableRecursively(this@checkForCircularDependencies)
-}
 
 internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
     val nameParts = listOfNotNull(this.name.takeIf { it != "main" }, simpleName)
@@ -256,15 +205,20 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
 internal fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
     project.objects.sourceDirectorySet(name!!, name)
 
+@Suppress("Unused") // Still part of public API
+@Deprecated("Use InternalKotlinSourceSet.dependsOnClosure instead. Will be removed in Kotlin 1.9")
+val KotlinSourceSet.dependsOnClosure: Set<KotlinSourceSet> get() = this.internal.dependsOnClosure
 
-val KotlinSourceSet.dependsOnClosure get() = closure<KotlinSourceSet> { it.dependsOn }
+@Suppress("Unused") // Still part of public API
+@Deprecated("Use InternalKotlinSourceSet.withDependsOnClosure instead. Will be removed in Kotlin 1.9")
+val KotlinSourceSet.withDependsOnClosure: Set<KotlinSourceSet> get() = this.internal.withDependsOnClosure
 
-val KotlinSourceSet.withDependsOnClosure get() = withClosure { it.dependsOn }
+val Iterable<KotlinSourceSet>.dependsOnClosure: Set<KotlinSourceSet>
+    get() = flatMap { it.internal.dependsOnClosure }.toSet() - this.toSet()
 
-val Iterable<KotlinSourceSet>.dependsOnClosure get() = closure<KotlinSourceSet> { it.dependsOn }
+val Iterable<KotlinSourceSet>.withDependsOnClosure: Set<KotlinSourceSet>
+    get() = flatMap { it.internal.withDependsOnClosure }.toSet()
 
-val Iterable<KotlinSourceSet>.withDependsOnClosure get() = withClosure<KotlinSourceSet> { it.dependsOn }
-
-internal fun KotlinMultiplatformExtension.findSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
+fun KotlinMultiplatformExtension.findSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
     return sourceSet.closure { seedSourceSet -> sourceSets.filter { otherSourceSet -> seedSourceSet in otherSourceSet.dependsOn } }
 }

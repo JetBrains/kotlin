@@ -5,27 +5,35 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider
 
-import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val selected = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
+        val selected = testServices.expressionMarkerProvider.getSelectedElement(ktFile).let {
+            if (it is KtBlockExpression && it.statements.size == 1 && it.textRange == it.statements.single().textRange) {
+                it.statements.single()
+            } else {
+                it
+            }
+        }
         val expression = when (selected) {
             is KtExpression -> selected
             is KtValueArgument -> selected.getArgumentExpression()
             else -> null
         } ?: error("expect an expression but got ${selected.text}")
         val type = executeOnPooledThreadInReadAction {
-            analyseForTest(expression) { expression.getKtType()?.render(TYPE_RENDERING_OPTIONS) }
+            analyseForTest(expression) { expression.getKtType()?.render(renderer, position = Variance.INVARIANT) }
         }
         val actual = buildString {
             appendLine("expression: ${expression.text}")
@@ -35,6 +43,6 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiSingleFileTest(
     }
 
     companion object {
-        private val TYPE_RENDERING_OPTIONS = KtTypeRendererOptions.DEFAULT.copy(renderUnresolvedTypeAsResolved = false)
+        private val renderer = KtTypeRendererForDebug.WITH_QUALIFIED_NAMES
     }
 }

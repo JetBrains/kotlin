@@ -1,0 +1,93 @@
+FILE: serializableWith.kt
+    public final object IntHolderAsStringSerializer : R|kotlinx/serialization/KSerializer<IntHolder>| {
+        private constructor(): R|IntHolderAsStringSerializer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(IntHolder), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
+            public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+        public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|IntHolder|): R|kotlin/Unit| {
+            R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.encodeString|(R|<local>/value|.R|/IntHolder.value|.R|kotlin/Int.toString|())
+        }
+
+        public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|IntHolder| {
+            lval string: R|kotlin/String| = R|<local>/decoder|.R|kotlinx/serialization/encoding/Decoder.decodeString|()
+            ^deserialize R|/IntHolder.IntHolder|(R|<local>/string|.R|kotlin/text/toInt|())
+        }
+
+    }
+    public final object ObjectSerializer : R|kotlinx/serialization/KSerializer<SerializableObject>| {
+        private constructor(): R|ObjectSerializer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(SerializableObject), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
+            public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+        public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|SerializableObject|): R|kotlin/Unit| {
+            R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.encodeString|(String(obj))
+        }
+
+        public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|SerializableObject| {
+            R|<local>/decoder|.R|kotlinx/serialization/encoding/Decoder.decodeString|()
+            ^deserialize Q|SerializableObject|
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|IntHolderAsStringSerializer|)) public final class IntHolder : R|kotlin/Any| {
+        public constructor(value: R|kotlin/Int|): R|IntHolder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/Int| = R|<local>/value|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<IntHolder>|
+
+            private constructor(): R|IntHolder.Companion|
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|ObjectSerializer|)) public final object SerializableObject : R|kotlin/Any| {
+        private constructor(): R|SerializableObject| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun serializer(): R|kotlinx/serialization/KSerializer<SerializableObject>|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval holder: R|IntHolder| = R|/IntHolder.IntHolder|(Int(42))
+        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|IntHolder|>(Q|IntHolder|.R|/IntHolder.Companion.serializer|(), R|<local>/holder|)
+        when () {
+            !=(R|<local>/encoded|, String("42")) ->  {
+                ^box R|<local>/encoded|
+            }
+        }
+
+        lval decoded: R|IntHolder| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|IntHolder|>(Q|IntHolder|.R|/IntHolder.Companion.serializer|(), R|<local>/encoded|)
+        when () {
+            !=(R|<local>/decoded|.R|/IntHolder.value|, R|<local>/holder|.R|/IntHolder.value|) ->  {
+                ^box String(Incorrect value)
+            }
+        }
+
+        lval encodedObject: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|SerializableObject|>(Q|SerializableObject|.R|/SerializableObject.serializer|(), Q|SerializableObject|)
+        when () {
+            !=(R|<local>/encodedObject|, String("obj")) ->  {
+                ^box R|<local>/encodedObject|
+            }
+        }
+
+        lval decodedObject: R|SerializableObject| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|SerializableObject|>(Q|SerializableObject|.R|/SerializableObject.serializer|(), R|<local>/encodedObject|)
+        when () {
+            !=(R|<local>/decodedObject|, Q|SerializableObject|) ->  {
+                ^box String(Incorrect object instance)
+            }
+        }
+
+        ^box String(OK)
+    }

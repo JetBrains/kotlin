@@ -14,7 +14,16 @@ const code = fs.readFileSync(testFilePath, 'utf-8');
 
 try {
     vm.runInContext(code, sandbox, testFilePath);
-    vm.runInContext('main.box()', sandbox);
+    // language=JavaScript
+    vm.runInContext(`
+            const __continuation = main.testUtils.makeEmptyContinuation();
+            // noinspection JSUnusedLocalSymbols (called in debugger, see JsDebugRunner)
+            const __makeValueDescriptionForSteppingTests = main.testUtils.makeValueDescriptionForSteppingTests;
+            debugger;
+            main.box(__continuation);
+        `,
+        sandbox
+    );
 } catch (e) {
     // Ignore any exceptions
 }

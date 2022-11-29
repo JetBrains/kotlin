@@ -1,4 +1,4 @@
-depends = CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation Security darwin posix
+depends = CFCGTypes CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation Security darwin posix
 language = Objective-C
 package = platform.AVFAudio
 

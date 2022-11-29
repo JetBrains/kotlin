@@ -89,7 +89,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             )
 
             val loggedCompilerCall =
-                LoggedData.CompilerCall(loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
+                LoggedData.RealCompilerCall(loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
 
             val result = if (exitCode != ExitCode.OK || compilerOutputHasErrors)
                 TestCompilationResult.CompilerFailure(loggedCompilerCall)
@@ -183,6 +183,10 @@ internal class LibraryCompilation(
         )
         super.applySpecificArgs(argsBuilder)
     }
+}
+
+internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
+    override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))
 }
 
 internal class ExecutableCompilation(

@@ -65,7 +65,7 @@ class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, pr
             }
 
         }, ClassReader.SKIP_FRAMES)
-        classBuilder.done()
+        classBuilder.done(inliningContext.state.generateSmapCopyToAnnotation)
 
         return transformationResult
     }

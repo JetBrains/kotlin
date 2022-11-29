@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactConfig
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifactConfig
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -48,6 +46,12 @@ abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArti
     override var isStatic: Boolean = false
     override var linkerOptions: List<String> = emptyList()
 
+    internal var toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit = {}
+    override fun toolOptions(configure: Action<KotlinCommonCompilerToolOptions>) {
+        toolOptionsConfigure = configure::execute
+    }
+
+    @Suppress("DEPRECATION")
     internal var kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit = {}
     override fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
         kotlinOptionsFn = fn::execute

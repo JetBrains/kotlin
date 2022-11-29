@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -251,7 +254,7 @@ fun Candidate.resolvePlainArgumentType(
     isDispatch: Boolean,
     useNullableArgumentType: Boolean = false
 ) {
-    val position = SimpleConstraintSystemConstraintPosition //TODO
+    val position = if (isReceiver) ConeReceiverConstraintPosition(argument) else ConeArgumentConstraintPosition(argument)
 
     val session = context.session
     val capturedType = prepareCapturedType(argumentType, context)
@@ -317,30 +320,23 @@ fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, context: Resolut
 }
 
 private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType? {
-    if (argumentType is ConeFlexibleType) {
-        return captureTypeFromExpressionOrNull(argumentType.lowerBound, context)
-    }
-
-    if (argumentType is ConeIntersectionType) {
-        val intersectedTypes = argumentType.intersectedTypes.map { captureTypeFromExpressionOrNull(it, context) ?: it }
-        if (intersectedTypes == argumentType.intersectedTypes) return null
+    val type = argumentType.fullyExpandedType(context.session)
+    if (type is ConeIntersectionType) {
+        val intersectedTypes = type.intersectedTypes.map { captureTypeFromExpressionOrNull(it, context) ?: it }
+        if (intersectedTypes == type.intersectedTypes) return null
         return ConeIntersectionType(
             intersectedTypes,
-            argumentType.alternativeType?.let { captureTypeFromExpressionOrNull(it, context) ?: it }
+            type.alternativeType?.let { captureTypeFromExpressionOrNull(it, context) ?: it }
         )
     }
 
-    if (argumentType !is ConeClassLikeType) return null
+    if (type !is ConeClassLikeType && type !is ConeFlexibleType) return null
 
-    argumentType.fullyExpandedType(context.session).let {
-        if (it !== argumentType) return captureTypeFromExpressionOrNull(it, context)
-    }
+    if (type.typeArguments.isEmpty()) return null
 
-    if (argumentType.typeArguments.isEmpty()) return null
-
-    return context.session.typeContext.captureFromArguments(
-        argumentType, CaptureStatus.FROM_EXPRESSION
-    ) as? ConeKotlinType
+    return context.session.typeContext.captureFromArgumentsInternal(
+        type, CaptureStatus.FROM_EXPRESSION
+    )
 }
 
 private fun checkApplicabilityForArgumentType(
@@ -348,7 +344,7 @@ private fun checkApplicabilityForArgumentType(
     argument: FirExpression,
     argumentTypeBeforeCapturing: ConeKotlinType,
     expectedType: ConeKotlinType?,
-    position: SimpleConstraintSystemConstraintPosition,
+    position: ConstraintPosition,
     isReceiver: Boolean,
     isDispatch: Boolean,
     sink: CheckerSink,
@@ -359,18 +355,19 @@ private fun checkApplicabilityForArgumentType(
     // todo run this approximation only once for call
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, context.session)
 
-    fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
+    fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic? {
         if (argument.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
             return NullForNotNullType(argument)
         }
 
-        fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType {
+        fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType? {
+            if (type is ConeErrorType) return null
             if (type is ConeTypeVariableType) {
                 val lookupTag = type.lookupTag
 
-                val constraints = (csBuilder as VariableFixationFinder.Context).notFixedTypeVariables[lookupTag]?.constraints
+                val constraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]?.constraints
                 val constraintTypes = constraints?.mapNotNull { it.type as? ConeKotlinType }
-                if (constraintTypes != null && constraintTypes.isNotEmpty()) {
+                if (!constraintTypes.isNullOrEmpty()) {
                     return ConeTypeIntersector.intersectTypes(context.session.typeContext, constraintTypes)
                 }
 
@@ -386,9 +383,11 @@ private fun checkApplicabilityForArgumentType(
             return type
         }
 
+        val preparedExpectedType = tryGetConeTypeThatCompatibleWithKtType(actualExpectedType) ?: return null
+        val preparedActualType = tryGetConeTypeThatCompatibleWithKtType(argumentType) ?: return null
         return ArgumentTypeMismatch(
-            tryGetConeTypeThatCompatibleWithKtType(actualExpectedType),
-            tryGetConeTypeThatCompatibleWithKtType(argumentType),
+            preparedExpectedType,
+            preparedActualType,
             argument,
             // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
             // relation with nullable expected type.

@@ -25,7 +25,7 @@ class KtEmptyScope(override val token: KtLifetimeToken) : KtScope {
         return emptySet()
     }
 
-    override fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
+    override fun getAllSymbols(): Sequence<KtDeclarationSymbol> = withValidityAssertion {
         return emptySequence()
     }
 

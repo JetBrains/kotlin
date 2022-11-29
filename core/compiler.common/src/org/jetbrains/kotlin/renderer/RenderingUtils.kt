@@ -48,3 +48,27 @@ fun renderFqName(pathSegments: List<Name>): String {
     }
 }
 
+fun replacePrefixesInTypeRepresentations(
+    lowerRendered: String,
+    lowerPrefix: String,
+    upperRendered: String,
+    upperPrefix: String,
+    foldedPrefix: String
+): String? {
+    if (lowerRendered.startsWith(lowerPrefix) && upperRendered.startsWith(upperPrefix)) {
+        val lowerWithoutPrefix = lowerRendered.substring(lowerPrefix.length)
+        val upperWithoutPrefix = upperRendered.substring(upperPrefix.length)
+        val flexibleCollectionName = foldedPrefix + lowerWithoutPrefix
+
+        if (lowerWithoutPrefix == upperWithoutPrefix) return flexibleCollectionName
+
+        if (typeStringsDifferOnlyInNullability(lowerWithoutPrefix, upperWithoutPrefix)) {
+            return "$flexibleCollectionName!"
+        }
+    }
+    return null
+}
+
+fun typeStringsDifferOnlyInNullability(lower: String, upper: String) =
+    lower == upper.replace("?", "") || upper.endsWith("?") && ("$lower?") == upper || "($lower)?" == upper
+

@@ -1,12 +1,11 @@
 package org.jetbrains.kotlin.serialization.konan
 
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataModuleDescriptorFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.storage.StorageManager
 
 interface KlibResolvedModuleDescriptorsFactory {
@@ -31,6 +30,7 @@ interface KlibResolvedModuleDescriptorsFactory {
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
         friendModuleFiles: Set<File>,
+        refinesModuleFiles: Set<File>,
         includedLibraryFiles: Set<File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
@@ -51,5 +51,6 @@ class KotlinResolvedModuleDescriptors(
      */
     val forwardDeclarationsModule: ModuleDescriptorImpl,
 
-    val friendModules: Set<ModuleDescriptorImpl>
+    val friendModules: Set<ModuleDescriptorImpl>,
+    val refinesModules: Set<ModuleDescriptorImpl>
 )

@@ -1,4 +1,6 @@
 $TESTDATA_DIR$/simple2js.kt
+-Xlegacy-deprecated-no-warn
+-Xuse-deprecated-legacy-compiler
 -no-stdlib
 -libraries
 $TESTDATA_DIR$/wrongAbiVersionLib/wrongAbiLib.meta.js

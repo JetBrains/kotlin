@@ -72,12 +72,13 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     customSourceTransformers = settings.get<ExternalSourceTransformersProvider>().getSourceTransformers(testDataFile),
                     testRoots = settings.get(),
                     generatedSources = settings.get(),
+                    customKlibs = settings.get(),
                     timeouts = settings.get()
                 )
 
                 if (extTestDataFile.isRelevant)
                     testCases += extTestDataFile.createTestCase(
-                        definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value,
+                        settings = settings,
                         sharedModules = sharedModules
                     )
                 else
@@ -95,6 +96,7 @@ private class ExtTestDataFile(
     customSourceTransformers: ExternalSourceTransformers?,
     testRoots: TestRoots,
     private val generatedSources: GeneratedSources,
+    private val customKlibs: CustomKlibs,
     private val timeouts: Timeouts
 ) {
     private val structure by lazy {
@@ -149,11 +151,15 @@ private class ExtTestDataFile(
         return TestCompilerArgs(args)
     }
 
-    fun createTestCase(definitelyStandaloneTest: Boolean, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
+    fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
+        if (settings.get<MemoryModel>() == MemoryModel.LEGACY) {
+            makeObjectsMutable()
+        }
+
+        val definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
-        makeObjectsMutable()
         patchPackageNames(isStandaloneTest)
         patchFileLevelAnnotations()
         val entryPointFunctionFQN = findEntryPoint()
@@ -280,6 +286,7 @@ private class ExtTestDataFile(
                     val importedFqName = importDirective.importedFqName
                     if (importedFqName == null
                         || importedFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+                        || importedFqName.startsWith(KOTLINX_PACKAGE_NAME)
                         || importedFqName.startsWith(HELPERS_PACKAGE_NAME)
                     ) {
                         return
@@ -506,7 +513,10 @@ private class ExtTestDataFile(
             checks = TestRunChecks.Default(timeouts.executionTimeout),
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
         )
-        testCase.initialize(sharedModules::get)
+        testCase.initialize(
+            givenModules = customKlibs.klibs.mapToSet(TestModule::Given),
+            findSharedModule = sharedModules::get
+        )
 
         return testCase
     }
@@ -550,7 +560,7 @@ private class ExtTestDataFile(
         private val BOX_FUNCTION_NAME = Name.identifier("box")
         private val OPT_IN_ANNOTATION_NAME = Name.identifier("OptIn")
         private val HELPERS_PACKAGE_NAME = Name.identifier("helpers")
-        private val TYPE_OF_NAME = Name.identifier("typeOf")
+        private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
 
         private val MANDATORY_SOURCE_TRANSFORMERS: ExternalSourceTransformers = listOf(DiagnosticsRemovingSourceTransformer)
     }

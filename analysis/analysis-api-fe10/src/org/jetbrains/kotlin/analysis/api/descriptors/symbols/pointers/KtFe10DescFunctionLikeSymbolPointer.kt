@@ -41,7 +41,7 @@ class KtFe10DescFunctionLikeSymbolPointer<T : KtFunctionLikeSymbol>(
         return memberScope
             .getContributedDescriptors(DescriptorKindFilter.CALLABLES) { it == callableId.callableName }
             .filterIsInstance<CallableMemberDescriptor>()
-            .firstOrNull { it.getSymbolPointerSignature(analysisContext) == signature }
+            .firstOrNull { it.getSymbolPointerSignature() == signature }
             ?.toKtCallableSymbol(analysisContext) as? T
     }
 }

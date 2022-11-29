@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.foldMap
@@ -184,10 +185,32 @@ data class ConeDefinitelyNotNullType(val original: ConeSimpleKotlinType) : ConeS
     companion object
 }
 
-class ConeRawType(
+class ConeRawType private constructor(
     lowerBound: ConeSimpleKotlinType,
     upperBound: ConeSimpleKotlinType
-) : ConeFlexibleType(lowerBound, upperBound), RawTypeMarker
+) : ConeFlexibleType(lowerBound, upperBound), RawTypeMarker {
+    companion object {
+        fun create(
+            lowerBound: ConeSimpleKotlinType,
+            upperBound: ConeSimpleKotlinType,
+        ): ConeRawType {
+            require(lowerBound is ConeClassLikeType && upperBound is ConeClassLikeType) {
+                "Raw bounds are expected to be class-like types, but $lowerBound and $upperBound were found"
+            }
+
+            val lowerBoundToUse = if (!lowerBound.attributes.contains(CompilerConeAttributes.RawType)) {
+                ConeClassLikeTypeImpl(
+                    lowerBound.lookupTag, lowerBound.typeArguments, lowerBound.isNullable,
+                    lowerBound.attributes + CompilerConeAttributes.RawType
+                )
+            } else {
+                lowerBound
+            }
+
+            return ConeRawType(lowerBoundToUse, upperBound)
+        }
+    }
+}
 
 /*
  * Contract of the intersection type: it is flat. It means that

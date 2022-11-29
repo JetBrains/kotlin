@@ -41,7 +41,7 @@ fun test4(x: String?) {
         foo(
             id(if (true) run { p = null; n() } else run { n() }),
             1,
-            run { p<!UNSAFE_CALL!>.<!>length; 123 } // Bad (p = null possible)
+            run { <!SMARTCAST_IMPOSSIBLE!>p<!>.length; 123 } // Bad (p = null possible)
         )
         p<!UNSAFE_CALL!>.<!>length // Bad (p = null possible)
     }

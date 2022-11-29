@@ -197,14 +197,11 @@ class JvmMappedScope(
             add("java/lang/Enum.<init>(Ljava/lang/String;I)V")
         }
 
-        // TODO: remove after the end of getDeclaringClass/declaringClass deprecation period
-        private val additionalVisibleSignatures = inJavaLang("Enum", "getDeclaringClass()Ljava/lang/Class;")
-
         fun prepareSignatures(klass: FirRegularClass, isMutable: Boolean): Signatures {
 
             val signaturePrefix = klass.symbol.classId.toString()
             val visibleMethodsByName = mutableMapOf<Name, MutableSet<String>>()
-            (JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES + additionalVisibleSignatures).filter { signature ->
+            (JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES).filter { signature ->
                 signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutable &&
                         signature.startsWith(signaturePrefix)
             }.map { signature ->

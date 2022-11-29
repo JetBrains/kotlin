@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.calls.*
+import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
@@ -71,6 +72,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -86,29 +88,38 @@ internal class KtFirCallResolver(
         result
     }
 
-    override fun resolveCall(psi: KtElement): KtCallInfo? = wrapError(psi) {
-        val ktCallInfos = getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-            listOfNotNull(
-                toKtCallInfo(
-                    psiToResolve,
-                    resolveCalleeExpressionOfFunctionCall,
-                    resolveFragmentOfCall
-                )
+    override fun resolveCall(psi: KtElement): KtCallInfo? {
+        return wrapError(psi) {
+            val ktCallInfos = getCallInfo(
+                psi,
+                getErrorCallInfo = { psiToResolve ->
+                    listOf(KtErrorCallInfo(emptyList(), createKtDiagnostic(psiToResolve), token))
+                },
+                getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+                    listOfNotNull(
+                        toKtCallInfo(
+                            psiToResolve,
+                            resolveCalleeExpressionOfFunctionCall,
+                            resolveFragmentOfCall
+                        )
+                    )
+                }
             )
+            check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
+            ktCallInfos.singleOrNull()
         }
-        check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
-        ktCallInfos.singleOrNull()
     }
 
     private inline fun <T> getCallInfo(
         psi: KtElement,
+        getErrorCallInfo: FirDiagnosticHolder.(psiToResolve: KtElement) -> List<T>,
         getCallInfo: FirElement.(
             psiToResolve: KtElement,
             resolveCalleeExpressionOfFunctionCall: Boolean,
             resolveFragmentOfCall: Boolean
         ) -> List<T>
     ): List<T> {
-        if (psi.isNotResolvable()) return emptyList()
+        if (!canBeResolvedAsCall(psi)) return emptyList()
 
         val containingCallExpressionForCalleeExpression = psi.getContainingCallExpressionForCalleeExpression()
         val containingBinaryExpressionForLhs = psi.getContainingBinaryExpressionForIncompleteLhs()
@@ -119,6 +130,9 @@ internal class KtFirCallResolver(
             ?: containingUnaryExpressionForIncOrDec
             ?: psi
         val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
+        if (fir is FirDiagnosticHolder) {
+            return fir.getErrorCallInfo(psiToResolve)
+        }
         return fir.getCallInfo(
             psiToResolve,
             psiToResolve == containingCallExpressionForCalleeExpression,
@@ -135,6 +149,15 @@ internal class KtFirCallResolver(
             return KtSuccessCallInfo(KtCheckNotNullCall(token, argumentList.arguments.first().psi as KtExpression))
 
         createGenericTypeQualifierCallIfApplicable(this, psi)?.let { return it }
+
+        if (this is FirResolvedQualifier && psi is KtCallExpression) {
+            val constructors = findQualifierConstructors()
+            val calls = toKtCalls(constructors)
+            return when (calls.size) {
+                0 -> KtErrorCallInfo(listOf(KtQualifierCall(token, psi)), inapplicableCandidateDiagnostic(), token)
+                else -> KtErrorCallInfo(calls, inapplicableCandidateDiagnostic(), token)
+            }
+        }
 
         if (resolveCalleeExpressionOfFunctionCall && this is FirImplicitInvokeCall) {
             // For implicit invoke, we resolve the calleeExpression of the CallExpression to the call that creates the receiver of this
@@ -154,15 +177,24 @@ internal class KtFirCallResolver(
         return when (this) {
             is FirResolvable -> {
                 when (val calleeReference = calleeReference) {
-                    is FirResolvedNamedReference -> {
-                        val call = createKtCall(psi, this, null, resolveFragmentOfCall)
-                            ?: errorWithFirSpecificEntries("expect `createKtCall` to succeed for resolvable case", fir = this, psi = psi)
-                        KtSuccessCallInfo(call)
+                    is FirResolvedNamedReference -> when (calleeReference.resolvedSymbol) {
+                        // `calleeReference.resolvedSymbol` isn't guaranteed to be callable. For example, function type parameters used in
+                        // expression positions (e.g. `T` in `println(T)`) are parsed as `KtSimpleNameExpression` and built into
+                        // `FirPropertyAccessExpression` (which is `FirResolvable`).
+                        is FirCallableSymbol<*> -> {
+                            val call = createKtCall(psi, this, null, resolveFragmentOfCall)
+                                ?: errorWithFirSpecificEntries(
+                                    "expect `createKtCall` to succeed for resolvable case with callable symbol",
+                                    fir = this,
+                                    psi = psi
+                                )
+                            KtSuccessCallInfo(call)
+                        }
+                        else -> null
                     }
                     is FirErrorNamedReference -> {
                         val diagnostic = calleeReference.diagnostic
-                        val ktDiagnostic = (source?.let { diagnostic.asKtDiagnostic(it, psi.toKtPsiSourceElement()) }
-                            ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token))
+                        val ktDiagnostic = calleeReference.createKtDiagnostic(psi)
 
                         if (diagnostic is ConeHiddenCandidateError)
                             return KtErrorCallInfo(emptyList(), ktDiagnostic, token)
@@ -208,8 +240,10 @@ internal class KtFirCallResolver(
         }
     }
 
+    private fun inapplicableCandidateDiagnostic() = KtNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
+
     /**
-     * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo` and `test.Foo<Bar>::foo`.
+     * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo`, `test.Foo<Bar>::foo` and class literals like `Foo<Bar>`::class.java.
      *
      * We have a separate [KtGenericTypeQualifier] type of [KtCall].
      */
@@ -220,7 +254,7 @@ internal class KtFirCallResolver(
         val call = psiElement.getPossiblyQualifiedCallExpression() ?: return null
         if (call.typeArgumentList == null || call.valueArgumentList != null) return null
 
-        val parentReferenceExpression = psiElement.parent as? KtCallableReferenceExpression ?: return null
+        val parentReferenceExpression = psiElement.parent as? KtDoubleColonExpression ?: return null
         if (parentReferenceExpression.lhs != psiElement) return null
 
         return KtSuccessCallInfo(KtGenericTypeQualifier(token, psiElement))
@@ -450,7 +484,7 @@ internal class KtFirCallResolver(
                 val argumentMapping = if (candidate is Candidate) {
                     candidate.argumentMapping
                 } else {
-                    fir.argumentMapping
+                    fir.resolvedArgumentMapping
                 }
                 val argumentMappingWithoutExtensionReceiver =
                     if (firstArgIsExtensionReceiver) {
@@ -791,13 +825,17 @@ internal class KtFirCallResolver(
     }
 
     override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> = wrapError(psi) {
-        getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-            collectCallCandidates(
-                psiToResolve,
-                resolveCalleeExpressionOfFunctionCall,
-                resolveFragmentOfCall
-            )
-        }
+        getCallInfo(
+            psi,
+            getErrorCallInfo = { emptyList() },
+            getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+                collectCallCandidates(
+                    psiToResolve,
+                    resolveCalleeExpressionOfFunctionCall,
+                    resolveFragmentOfCall
+                )
+            }
+        )
     }
 
     // TODO: Refactor common code with FirElement.toKtCallInfo() when other FirResolvables are handled
@@ -850,22 +888,31 @@ internal class KtFirCallResolver(
     }
 
     private fun FirResolvedQualifier.toKtCallCandidateInfos(): List<KtCallCandidateInfo> {
+        return toKtCalls(findQualifierConstructors()).map {
+            KtInapplicableCallCandidateInfo(
+                it,
+                isInBestCandidates = false,
+                _diagnostic = inapplicableCandidateDiagnostic()
+            )
+        }
+    }
+
+    private fun FirResolvedQualifier.findQualifierConstructors(): List<KtConstructorSymbol> {
         val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.useSiteSession) ?: return emptyList()
-        val constructors = classSymbol.unsubstitutedScope(
+        return classSymbol.unsubstitutedScope(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
             withForcedTypeCalculator = true
         )
             .getConstructors(analysisSession.firSymbolBuilder)
             .toList()
+    }
+
+    private fun FirResolvedQualifier.toKtCalls(constructors: List<KtConstructorSymbol>): List<KtCall> {
         analysisSession.apply {
             return constructors.map { constructor ->
                 val partiallyAppliedSymbol = KtPartiallyAppliedFunctionSymbol(constructor.asSignature(), null, null)
-                KtInapplicableCallCandidateInfo(
-                    KtSimpleFunctionCall(partiallyAppliedSymbol, LinkedHashMap(), toTypeArgumentsMapping(partiallyAppliedSymbol), false),
-                    isInBestCandidates = false,
-                    _diagnostic = KtNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
-                )
+                KtSimpleFunctionCall(partiallyAppliedSymbol, LinkedHashMap(), toTypeArgumentsMapping(partiallyAppliedSymbol), false)
             }
         }
     }
@@ -1102,7 +1149,7 @@ internal class KtFirCallResolver(
     }
 
     private fun FirCall.createArgumentMapping(signatureOfCallee: KtFunctionLikeSignature<*>): LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>> {
-        return argumentMapping?.entries.createArgumentMapping(signatureOfCallee)
+        return resolvedArgumentMapping?.entries.createArgumentMapping(signatureOfCallee)
     }
 
     private fun Iterable<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
@@ -1182,5 +1229,10 @@ internal class KtFirCallResolver(
             }
         }
 
+    }
+
+    private fun FirDiagnosticHolder.createKtDiagnostic(psi: KtElement?): KtDiagnostic {
+        return (source?.let { diagnostic.asKtDiagnostic(it, psi?.toKtPsiSourceElement()) }
+            ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token))
     }
 }

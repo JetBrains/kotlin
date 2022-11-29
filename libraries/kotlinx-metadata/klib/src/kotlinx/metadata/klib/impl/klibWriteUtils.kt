@@ -5,8 +5,8 @@
 
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.impl.WriteContext
-import kotlinx.metadata.impl.writeAnnotation
+import kotlinx.metadata.internal.WriteContext
+import kotlinx.metadata.internal.writeAnnotation
 import kotlinx.metadata.klib.KlibHeader
 import kotlinx.metadata.klib.KlibSourceFile
 import kotlinx.metadata.klib.UniqId

@@ -22,17 +22,16 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
-import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
-import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
@@ -40,7 +39,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : KotlinCompile(
-    KotlinJvmOptionsImpl(),
+    objectFactory.newInstance(KotlinJvmCompilerOptionsDefault::class.java),
     workerExecutor,
     objectFactory
 ), KaptGenerateStubs {
@@ -63,6 +62,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
      */
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Incremental
     abstract val additionalSources: ConfigurableFileCollection
@@ -71,6 +71,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
     // Task need to run even if there is no Kotlin sources, but only Java
     @get:Incremental
+    @get:NormalizeLineEndings
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -109,14 +110,9 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
         // Also use KotlinOptions configuration that was directly set to this task
         // as 'compileKotlinArgumentsContributor' has KotlinOptions from linked KotlinCompile task
-        listOfNotNull(kotlinOptions, parentKotlinOptions.orNull)
-            .map { it as KotlinJvmOptionsImpl }
-            .forEach {
-                it.updateArguments(args)
-            }
+        (compilerOptions as KotlinJvmCompilerOptionsDefault).fillCompilerArguments(args)
 
         // Copied from KotlinCompile
-        defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
         if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
             args.reportPerf = true
         }

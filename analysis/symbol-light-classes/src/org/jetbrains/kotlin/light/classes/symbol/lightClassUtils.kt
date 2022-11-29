@@ -9,10 +9,24 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
-
-@OptIn(KtAllowAnalysisOnEdt::class)
-internal inline fun <E> allowLightClassesOnEdt(action: () -> E): E = allowAnalysisOnEdt(action)
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.psi.KtElement
 
 internal fun PsiElement.nonExistentType(): PsiType =
     JavaPsiFacade.getElementFactory(project).createTypeFromText("error.NonExistentClass", this)
+
+@OptIn(KtAllowAnalysisOnEdt::class)
+private inline fun <E> allowLightClassesOnEdt(crossinline action: () -> E): E = allowAnalysisOnEdt(action)
+
+internal inline fun <R> analyzeForLightClasses(context: KtElement, crossinline action: KtAnalysisSession.() -> R): R =
+    allowLightClassesOnEdt {
+        analyze(context, action = action)
+    }
+
+internal inline fun <R> analyzeForLightClasses(useSiteKtModule: KtModule, crossinline action: KtAnalysisSession.() -> R): R =
+    allowLightClassesOnEdt {
+        analyze(useSiteKtModule, action = action)
+    }

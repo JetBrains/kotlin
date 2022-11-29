@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
-import org.jetbrains.kotlin.wasm.ir.WasmInstr
 import org.jetbrains.kotlin.wasm.ir.WasmLocal
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR }
 
 interface WasmFunctionCodegenContext : WasmBaseCodegenContext {
     val irFunction: IrFunction
@@ -22,6 +22,9 @@ interface WasmFunctionCodegenContext : WasmBaseCodegenContext {
     fun referenceLocal(irValueDeclaration: IrValueSymbol): WasmLocal
     fun referenceLocal(index: Int): WasmLocal
     fun referenceLocal(type: SyntheticLocalType): WasmLocal
+
+    fun defineNonLocalReturnLevel(block: IrReturnableBlockSymbol, level: Int)
+    fun referenceNonLocalReturnLevel(block: IrReturnableBlockSymbol): Int
 
     fun defineLoopLevel(irLoop: IrLoop, labelType: LoopLabelType, level: Int)
     fun referenceLoopLevel(irLoop: IrLoop, labelType: LoopLabelType): Int

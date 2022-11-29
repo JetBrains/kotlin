@@ -15,7 +15,6 @@ dependencies {
 sourceSets {
     main {
         kotlin {
-            srcDir 'src'
         }
     }
     test {
@@ -54,6 +53,9 @@ jar {
     from sourceSets.java9.output
 }
 
+sourcesJar {
+    from sourceSets.java9.allSource
+}
 
 artifacts {
     archives sourcesJar
@@ -101,15 +103,20 @@ task testJdk6Tests(type: Test) { thisTask ->
     }
 }
 
-[JdkMajorVersion.JDK_9, JdkMajorVersion.JDK_10, JdkMajorVersion.JDK_11].forEach { jvmVersion ->
+[JdkMajorVersion.JDK_9_0, JdkMajorVersion.JDK_10_0, JdkMajorVersion.JDK_11_0].forEach { jvmVersion ->
     check.dependsOn(tasks.register("jdk${jvmVersion.majorVersion}Test", Test) { thisTask ->
         group = "verification"
         thisTask.javaLauncher.set(JvmToolchain.getToolchainLauncherFor(project, jvmVersion))
     })
 }
 
+tasks.named("compileModuleTestJava", JavaCompile) {
+    sourceCompatibility = JavaVersion.VERSION_1_9
+    targetCompatibility = JavaVersion.VERSION_1_9
+}
+
 compileModuleTestKotlin {
-    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9))
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9_0))
 }
 
 check.dependsOn(tasks.register("moduleInfoTest", Test) {test ->
@@ -117,7 +124,7 @@ check.dependsOn(tasks.register("moduleInfoTest", Test) {test ->
     test.group = "verification"
     test.testClassesDirs = sourceSets.moduleTest.output.classesDirs
     test.classpath = files(sourceSets.moduleTest.runtimeClasspath, tasks.jar)
-    test.javaLauncher.set(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9))
+    test.javaLauncher.set(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9_0))
     doFirst {
         test.systemProperty("stdlibJars", test.classpath.filter { it.name.contains('kotlin-stdlib') }.join(File.pathSeparator))
     }

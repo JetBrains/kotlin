@@ -15,11 +15,10 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.full.primaryConstructor
 import kotlin.test.*
 
+@Suppress("DEPRECATION")
 class MetadataSmokeTest {
-    private fun Class<*>.readMetadata(): KotlinClassHeader {
-        return getAnnotation(Metadata::class.java).run {
-            KotlinClassHeader(kind, metadataVersion, data1, data2, extraString, packageName, extraInt)
-        }
+    private fun Class<*>.readMetadata(): Metadata {
+        return getAnnotation(Metadata::class.java)
     }
 
     @Test
@@ -64,7 +63,7 @@ class MetadataSmokeTest {
             }
         }
 
-        val header = KotlinClassMetadata.Class.Writer().apply(klass::accept).write().header
+        val annotationData = KotlinClassMetadata.writeClass(klass).annotationData
 
         // Then, produce the bytecode of a .class file with ASM
 
@@ -73,14 +72,14 @@ class MetadataSmokeTest {
 
             // Use the created KotlinMetadata instance to write @kotlin.Metadata annotation on the class file
             visitAnnotation("Lkotlin/Metadata;", true).run {
-                visit("mv", header.metadataVersion)
-                visit("k", header.kind)
+                visit("mv", annotationData.metadataVersion)
+                visit("k", annotationData.kind)
                 visitArray("d1").run {
-                    header.data1.forEach { visit(null, it) }
+                    annotationData.data1.forEach { visit(null, it) }
                     visitEnd()
                 }
                 visitArray("d2").run {
-                    header.data2.forEach { visit(null, it) }
+                    annotationData.data2.forEach { visit(null, it) }
                     visitEnd()
                 }
                 visitEnd()
@@ -154,17 +153,7 @@ class MetadataSmokeTest {
     fun lambdaVersionRequirement() {
         val x: suspend Int.(String, String) -> Unit = { _, _ -> }
         val annotation = x::class.java.getAnnotation(Metadata::class.java)!!
-        val metadata = KotlinClassMetadata.read(
-            KotlinClassHeader(
-                kind = annotation.kind,
-                metadataVersion = annotation.metadataVersion,
-                data1 = annotation.data1,
-                data2 = annotation.data2,
-                extraInt = annotation.extraInt,
-                extraString = annotation.extraString,
-                packageName = annotation.packageName
-            )
-        ) as KotlinClassMetadata.SyntheticClass
+        val metadata = KotlinClassMetadata.read(annotation) as KotlinClassMetadata.SyntheticClass
         metadata.accept(KmLambda())
     }
 
@@ -181,7 +170,7 @@ class MetadataSmokeTest {
         classWithStableParameterNames.constructors.forEach { assertFalse(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
         classWithStableParameterNames.functions.forEach { assertFalse(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
 
-        val newMetadata = KotlinClassMetadata.Class.Writer().let { writer ->
+        val newMetadata = KotlinClassMetadata.writeClass(
             KmClass().apply {
                 classWithStableParameterNames.accept(
                     object : KmClassVisitor(this) {
@@ -192,9 +181,8 @@ class MetadataSmokeTest {
                             super.visitFunction(flags + flagsOf(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES), name)
                     }
                 )
-            }.accept(writer)
-            writer.write()
-        }
+            }
+        )
 
         val classWithUnstableParameterNames = newMetadata.toKmClass()
 
@@ -204,14 +192,15 @@ class MetadataSmokeTest {
 
     @Test
     fun metadataVersionEarlierThan1_4() {
+        val dummy = (KotlinClassMetadata.read(MetadataSmokeTest::class.java.readMetadata()) as KotlinClassMetadata.Class).toKmClass()
         val mv = intArrayOf(1, 3)
-        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.Class.Writer().write(mv) }
-        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.FileFacade.Writer().write(mv) }
-        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassFacade.Writer().write(listOf("A"), mv) }
-        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassPart.Writer().write("A", mv) }
-        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.SyntheticClass.Writer().write(mv) }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeClass(dummy, mv) } // We can't write empty KmClass()
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeFileFacade(KmPackage(), mv) }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeMultiFileClassFacade(listOf("A"), mv) }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeMultiFileClassPart(KmPackage(), "A", mv) }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeSyntheticClass(mv) }
 
-        KotlinModuleMetadata.Writer().write(mv)
+        KotlinModuleMetadata.write(KmModule(), mv)
     }
 
     @Test
@@ -229,9 +218,8 @@ class MetadataSmokeTest {
         val kmClass = (KotlinClassMetadata.read(metadata) as KotlinClassMetadata.Class).toKmClass()
         kmClass.jvmFlags = jvmClassFlags
 
-        val kmClassCopy = KotlinClassMetadata.Class.Writer()
-            .also { kmClass.accept(it) }
-            .write(metadata.metadataVersion, metadata.extraInt)
+        val kmClassCopy = KotlinClassMetadata
+            .writeClass(kmClass, metadata.metadataVersion, metadata.extraInt)
             .toKmClass()
         assertEquals(kmClassCopy.jvmFlags, jvmClassFlags)
     }

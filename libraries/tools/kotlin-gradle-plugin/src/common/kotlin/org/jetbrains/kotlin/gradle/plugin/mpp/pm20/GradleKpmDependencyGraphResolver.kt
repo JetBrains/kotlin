@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.pm20ExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.project.model.*
@@ -20,7 +21,7 @@ internal fun resolvableMetadataConfiguration(
 
 internal fun configurationToResolveMetadataDependencies(project: Project, requestingModule: KpmModule): Configuration =
     when {
-        project.hasKpmModel -> resolvableMetadataConfiguration(requestingModule as GradleKpmModule)
+        project.pm20ExtensionOrNull != null -> resolvableMetadataConfiguration(requestingModule as GradleKpmModule)
         else -> resolvableMetadataConfiguration(
             project,
             project.kotlinExtension.sourceSets, // take dependencies from all source sets; TODO introduce consistency scopes?

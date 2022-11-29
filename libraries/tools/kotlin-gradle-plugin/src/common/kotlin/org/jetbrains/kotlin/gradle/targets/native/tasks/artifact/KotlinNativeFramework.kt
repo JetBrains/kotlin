@@ -11,16 +11,14 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifact
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeFramework
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeFrameworkConfig
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -47,6 +45,7 @@ abstract class KotlinNativeFrameworkConfigImpl @Inject constructor(artifactName:
             isStatic = isStatic,
             linkerOptions = linkerOptions,
             kotlinOptionsFn = kotlinOptionsFn,
+            toolOptionsConfigure = toolOptionsConfigure,
             binaryOptions = binaryOptions,
             target = target,
             embedBitcode = embedBitcode,
@@ -61,7 +60,10 @@ class KotlinNativeFrameworkImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerOptionsConfigure", replaceWith = ReplaceWith("compilerOptionsConfigure"))
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val target: KonanTarget,
     override val embedBitcode: BitcodeEmbeddingMode?,
@@ -70,6 +72,7 @@ class KotlinNativeFrameworkImpl(
     private val kind = NativeOutputKind.FRAMEWORK
     override fun getName() = lowerCamelCaseName(artifactName, kind.taskNameClassifier, target.presetName)
     override val taskName = lowerCamelCaseName("assemble", name)
+    override val outDir = "out/${kind.visibleName}"
 
     override fun registerAssembleTask(project: Project) {
         val resultTask = project.registerTask<Task>(taskName) { task ->
@@ -103,27 +106,31 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
     librariesConfigurationName: String,
     exportConfigurationName: String,
     embedBitcode: BitcodeEmbeddingMode?,
-    outDirName: String = "out",
+    outDirName: String = outDir,
     taskNameSuffix: String = ""
 ): TaskProvider<KotlinNativeLinkArtifactTask> {
     val kind = NativeOutputKind.FRAMEWORK
-    val destinationDir = project.buildDir.resolve("$outDirName/${kind.visibleName}/${target.visibleName}/${buildType.visibleName}")
+    val destinationDir = project.buildDir.resolve("$outDirName/${target.visibleName}/${buildType.visibleName}")
     val resultTask = project.registerTask<KotlinNativeLinkArtifactTask>(
         lowerCamelCaseName("assemble", name, buildType.visibleName, kind.taskNameClassifier, target.presetName, taskNameSuffix),
         listOf(target, kind.compilerOutputKind)
     ) { task ->
         task.description = "Assemble ${kind.description} '$name' for a target '${target.name}'."
         task.enabled = target.enabledOnCurrentHost
-        task.baseName = name
-        task.destinationDir = destinationDir
-        task.optimized = buildType.optimized
-        task.debuggable = buildType.debuggable
-        task.linkerOptions = linkerOptions
-        task.binaryOptions = binaryOptions
-        task.isStaticFramework = isStatic
-        task.embedBitcode = embedBitcode ?: buildType.embedBitcode(target)
-        task.librariesConfiguration = librariesConfigurationName
-        task.exportLibrariesConfiguration = exportConfigurationName
+        task.baseName.set(name)
+        task.destinationDir.set(destinationDir)
+        task.optimized.set(buildType.optimized)
+        task.debuggable.set(buildType.debuggable)
+        task.linkerOptions.set(linkerOptions)
+        task.binaryOptions.set(binaryOptions)
+        task.staticFramework.set(isStatic)
+        if (embedBitcode != null) {
+            task.embedBitcode.set(embedBitcode)
+        } else if (Xcode != null) {
+            task.embedBitcode.set(project.provider { Xcode.defaultBitcodeEmbeddingMode(target, buildType) })
+        }
+        task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
+        task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
         task.kotlinOptions(kotlinOptionsFn)
     }
     project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)

@@ -1469,23 +1469,6 @@ public open class Exception : kotlin.Throwable {
     public constructor Exception(cause: kotlin.Throwable?)
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS})
-@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
-@kotlin.SinceKotlin(version = "1.2")
-@kotlin.DeprecatedSinceKotlin(errorSince = "1.6", warningSince = "1.4")
-@kotlin.Deprecated(message = "Please use RequiresOptIn instead.")
-public final annotation class Experimental : kotlin.Annotation {
-    public constructor Experimental(level: kotlin.Experimental.Level = ...)
-
-    public final val level: kotlin.Experimental.Level { get; }
-
-    public final enum class Level : kotlin.Enum<kotlin.Experimental.Level> {
-        enum entry WARNING
-
-        enum entry ERROR
-    }
-}
-
 @kotlin.RequiresOptIn
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
@@ -3362,15 +3345,4 @@ public open class UnsupportedOperationException : kotlin.RuntimeException {
     public constructor UnsupportedOperationException(message: kotlin.String?, cause: kotlin.Throwable?)
 
     public constructor UnsupportedOperationException(cause: kotlin.Throwable?)
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS})
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
-@kotlin.SinceKotlin(version = "1.2")
-@kotlin.DeprecatedSinceKotlin(errorSince = "1.6", warningSince = "1.4")
-@kotlin.Deprecated(message = "Please use OptIn instead.", replaceWith = kotlin.ReplaceWith(expression = "OptIn(*markerClass)", imports = {"kotlin.OptIn"}))
-public final annotation class UseExperimental : kotlin.Annotation {
-    public constructor UseExperimental(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>)
-
-    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> { get; }
 }

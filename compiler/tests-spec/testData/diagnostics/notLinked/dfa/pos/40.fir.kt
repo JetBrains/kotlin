@@ -120,8 +120,8 @@ fun case_12(x: Any?) {
  */
 fun case_13(x: Any?) {
     if (x as Boolean? ?: x!!) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>select(x)<!><!UNSAFE_CALL!>.<!>not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean")!>x<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>select(x)<!>.not()
     }
 }
 

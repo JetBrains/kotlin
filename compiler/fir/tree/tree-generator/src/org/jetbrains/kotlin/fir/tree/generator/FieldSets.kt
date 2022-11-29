@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,8 +52,6 @@ object FieldSets {
     val returnTypeRef =field("returnTypeRef", typeRef)
 
     val typeRefField = field(typeRef, withReplace = true)
-
-    fun receiverTypeRef(nullable: Boolean = false) = field("receiverTypeRef", typeRef, nullable)
 
     val valueParameters by lazy { fieldList(valueParameter) }
 

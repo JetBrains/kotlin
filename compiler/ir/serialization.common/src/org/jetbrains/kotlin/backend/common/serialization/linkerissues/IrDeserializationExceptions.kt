@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization.linkerissues
 
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 sealed class IrDeserializationException(message: String) : Exception(message) {
     override val message: String get() = super.message!!
@@ -22,20 +20,3 @@ class IrSymbolTypeMismatchException(
 class IrDisallowedErrorNode(
     clazz: Class<out IrAnnotationContainer>
 ) : IrDeserializationException("${clazz::class.java.simpleName} found but error nodes are not allowed.")
-
-@OptIn(ExperimentalContracts::class)
-internal inline fun <reified T : IrSymbol> checkSymbolType(symbol: IrSymbol): T {
-    contract {
-        returns() implies (symbol is T)
-    }
-
-    if (symbol !is T) throw IrSymbolTypeMismatchException(T::class.java, symbol) else return symbol
-}
-
-@OptIn(ExperimentalContracts::class)
-internal inline fun <reified T : IrAnnotationContainer> checkErrorNodesAllowed(errorNodesAllowed: Boolean) {
-    contract {
-        returns() implies errorNodesAllowed
-    }
-    if (!errorNodesAllowed) throw IrDisallowedErrorNode(T::class.java)
-}

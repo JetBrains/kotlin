@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
 abstract class BaseJvmAbiTest : TestCase() {
     private lateinit var workingDir: File
 
-    @OptIn(ExperimentalPathApi::class)
     override fun setUp() {
         super.setUp()
         workingDir = createTempDirectory(javaClass.simpleName).toFile().apply { deleteOnExit() }
@@ -54,7 +52,7 @@ abstract class BaseJvmAbiTest : TestCase() {
             get() = if (name == null) workingDir.resolve("javaOut") else workingDir.resolve("$name/javaOut")
 
         val directives: File
-            get() = workingDir.resolve("directives.txt")
+            get() = projectDir.resolve("directives.txt")
 
         override fun toString(): String =
             "compilation '$name'"
@@ -69,6 +67,8 @@ abstract class BaseJvmAbiTest : TestCase() {
             dep.abiDir
         }
 
+        val directives = if (compilation.directives.exists()) compilation.directives.readText() else ""
+
         val messageCollector = LocationReportingTestMessageCollector()
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
@@ -80,10 +80,8 @@ abstract class BaseJvmAbiTest : TestCase() {
                 if (useLegacyAbiGen) abiOption("useLegacyAbiGen", "true") else null
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
-            useOldBackend = !useIrBackend
-            languageVersion = if (!compilation.directives.exists()) null else {
-                InTextDirectivesUtils.findStringWithPrefixes(compilation.directives.readText(), "// LANGUAGE_VERSION:")
-            }
+            noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
+            useK2 = InTextDirectivesUtils.findStringWithPrefixes(directives, "// USE_K2") != null
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {
@@ -108,9 +106,6 @@ abstract class BaseJvmAbiTest : TestCase() {
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.abiDir)
         }
     }
-
-    protected open val useIrBackend: Boolean
-        get() = false
 
     protected open val useLegacyAbiGen: Boolean
         get() = false

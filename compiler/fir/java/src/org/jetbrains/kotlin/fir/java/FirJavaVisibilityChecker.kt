@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.name.FqName
 
 @NoMutableState
 object FirJavaVisibilityChecker : FirVisibilityChecker() {
@@ -50,17 +51,21 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                 }
             }
 
-            JavaVisibilities.PackageVisibility -> {
-                if (symbol.packageFqName() == useSiteFile.packageFqName) {
-                    true
-                } else if (symbol.fir is FirSyntheticPropertyAccessor) {
-                    symbol.getOwnerLookupTag()?.classId?.packageFqName == useSiteFile.packageFqName
-                } else {
-                    false
-                }
-            }
-
+            JavaVisibilities.PackageVisibility -> symbol.isInPackage(useSiteFile.packageFqName)
             else -> true
         }
     }
+
+    override fun platformOverrideVisibilityCheck(
+        candidateInDerivedClass: FirBasedSymbol<*>,
+        symbolInBaseClass: FirBasedSymbol<*>,
+        visibilityInBaseClass: Visibility,
+    ): Boolean = when (visibilityInBaseClass) {
+        JavaVisibilities.ProtectedAndPackage, JavaVisibilities.ProtectedStaticVisibility -> true
+        JavaVisibilities.PackageVisibility -> symbolInBaseClass.isInPackage(candidateInDerivedClass.packageFqName())
+        else -> true
+    }
+
+    private fun FirBasedSymbol<*>.isInPackage(expected: FqName): Boolean =
+        packageFqName() == expected || (fir is FirSyntheticPropertyAccessor && getOwnerLookupTag()?.classId?.packageFqName == expected)
 }

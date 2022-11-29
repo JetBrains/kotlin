@@ -12,18 +12,23 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 import java.io.File
 import javax.inject.Inject
 
-abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions> @Inject constructor(
+abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String,
-    kotlinOptionsFactory: () -> KotlinOptionsType
+    compilerOptionsFactory: () -> HasCompilerOptions<CO>,
+    kotlinOptionsFactory: (CO) -> KotlinOptionsType
 ) : AbstractKotlinTarget(project) {
     override var disambiguationClassifier: String? = null
         internal set
@@ -40,11 +45,11 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions> @In
     override val artifactsTaskName: String
         get() = JavaPlugin.JAR_TASK_NAME
 
-    override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation<KotlinOptionsType>> =
+    override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation<KotlinOptionsType, CO>> =
         @Suppress("UNCHECKED_CAST")
         project.container(
-            KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>,
-            KotlinWithJavaCompilationFactory(project, this, kotlinOptionsFactory)
+            KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType, CO>>,
+            KotlinWithJavaCompilationFactory(this, compilerOptionsFactory, kotlinOptionsFactory)
         )
 
     private val layout = project.layout
@@ -59,3 +64,9 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions> @In
 }
 
 private fun sanitizeFileName(candidate: String): String = candidate.filter { it.isLetterOrDigit() }
+
+internal val Project.javaSourceSets: SourceSetContainer
+    get() = gradle
+        .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+        .getInstance(project)
+        .sourceSets

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.NEW_INFERENCE_CATCH_EXCEPTION
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
+import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandida
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
+import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.checkers.PassingProgressionAsCollectionCallChecker
@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isUnderscoreNamed
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.resolve.scopes.utils.canBeResolvedWithoutDeprecation
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
@@ -90,14 +89,23 @@ class PSICallResolver(
 
     private val arePartiallySpecifiedTypeArgumentsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.PartiallySpecifiedTypeArguments)
 
+    val defaultResolutionKinds = setOf(
+        NewResolutionOldInference.ResolutionKind.Function,
+        NewResolutionOldInference.ResolutionKind.Variable,
+        NewResolutionOldInference.ResolutionKind.Invoke,
+        NewResolutionOldInference.ResolutionKind.CallableReference
+    )
+
     fun <D : CallableDescriptor> runResolutionAndInference(
         context: BasicCallResolutionContext,
         name: Name,
-        kotlinCallKind: KotlinCallKind,
+        resolutionKind: NewResolutionOldInference.ResolutionKind,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
         val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
+
+        val kotlinCallKind = resolutionKind.toKotlinCallKind()
         val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, refinedName, tracingStrategy, isSpecialFunction = false)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
@@ -136,33 +144,34 @@ class PSICallResolver(
         }
     }
 
-    fun <D : CallableDescriptor> runResolutionAndInferenceForGivenDescriptors(
+    // actually, `D` is at least FunctionDescriptor, but right now because of CallResolver it isn't possible change upper bound for `D`
+    fun <D : CallableDescriptor> runResolutionAndInferenceForGivenCandidates(
         context: BasicCallResolutionContext,
-        descriptors: Collection<CallableDescriptor>,
-        tracingStrategy: TracingStrategy,
-        kind: KotlinCallKind,
-        substitutor: TypeSubstitutor? = null,
-        dispatchReceiver: ReceiverValueWithSmartCastInfo? = null
+        resolutionCandidates: Collection<OldResolutionCandidate<D>>,
+        tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
-        val isSpecialFunction = descriptors.any { it.name in SPECIAL_FUNCTION_NAMES }
+        val dispatchReceiver = resolutionCandidates.firstNotNullOfOrNull { it.dispatchReceiver }
+
+        val isSpecialFunction = resolutionCandidates.any { it.descriptor.name in SPECIAL_FUNCTION_NAMES }
         val kotlinCall = toKotlinCall(
-            context, kind, context.call, givenCandidatesName, tracingStrategy, isSpecialFunction, dispatchReceiver?.receiverValue
+            context, KotlinCallKind.FUNCTION, context.call, givenCandidatesName, tracingStrategy, isSpecialFunction, dispatchReceiver
         )
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
-        val givenCandidates = descriptors.map {
+
+        val givenCandidates = resolutionCandidates.map {
             GivenCandidate(
-                it,
-                dispatchReceiver = dispatchReceiver,
-                knownTypeParametersResultingSubstitutor = substitutor
+                it.descriptor as FunctionDescriptor,
+                it.dispatchReceiver?.let { context.transformToReceiverWithSmartCastInfo(it) },
+                it.knownTypeParametersResultingSubstitutor
             )
         }
 
         val result = kotlinCallResolver.resolveAndCompleteGivenCandidates(
             scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates, context.collectAllCandidates
         )
-
-        return convertToOverloadResolutionResults<D>(context, result, tracingStrategy).also {
+        val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
+        return overloadResolutionResults.also {
             clearCacheForApproximationResults()
         }
     }
@@ -254,10 +263,6 @@ class PSICallResolver(
         return SingleOverloadResolutionResult(resolvedCall)
     }
 
-    private fun needToReportUnresolvedReferenceForNoneCandidates(call: Call): Boolean =
-        // Don't report unresolved reference on constructor calls since they are processed separately, and aother error is reported
-        call.callElement !is KtConstructorDelegationCall
-
     private fun <D : CallableDescriptor> handleErrorResolutionResult(
         context: BasicCallResolutionContext,
         trace: BindingTrace,
@@ -269,9 +274,7 @@ class PSICallResolver(
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
             kotlinToResolvedCallTransformer.transformAndReport<D>(result, context, tracingStrategy)
 
-            if (needToReportUnresolvedReferenceForNoneCandidates(context.call)) {
-                tracingStrategy.unresolvedReference(trace)
-            }
+            tracingStrategy.unresolvedReference(trace)
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
@@ -582,6 +585,15 @@ class PSICallResolver(
         }
     }
 
+    private fun NewResolutionOldInference.ResolutionKind.toKotlinCallKind(): KotlinCallKind =
+        when (this) {
+            is NewResolutionOldInference.ResolutionKind.Function -> KotlinCallKind.FUNCTION
+            is NewResolutionOldInference.ResolutionKind.Variable -> KotlinCallKind.VARIABLE
+            is NewResolutionOldInference.ResolutionKind.Invoke -> KotlinCallKind.INVOKE
+            is NewResolutionOldInference.ResolutionKind.CallableReference -> KotlinCallKind.CALLABLE_REFERENCE
+            is NewResolutionOldInference.ResolutionKind.GivenCandidates -> KotlinCallKind.UNSUPPORTED
+        }
+
     private fun toKotlinCall(
         context: BasicCallResolutionContext,
         kotlinCallKind: KotlinCallKind,
@@ -614,8 +626,8 @@ class PSICallResolver(
             }
             if (allValueArguments.isEmpty()) {
                 throw KotlinExceptionWithAttachments("Can not find an external argument for 'set' method")
-                    .withAttachment("callElement.kt", oldCall.callElement.text)
-                    .withAttachment("file.kt", oldCall.callElement.takeIf { it.isValid }?.containingFile?.text ?: "<no file>")
+                    .withPsiAttachment("callElement.kt", oldCall.callElement)
+                    .withPsiAttachment("file.kt", oldCall.callElement.takeIf { it.isValid }?.containingFile)
             }
             allValueArguments.last()
         } else {

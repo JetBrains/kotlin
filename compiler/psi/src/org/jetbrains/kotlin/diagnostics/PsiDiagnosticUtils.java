@@ -62,12 +62,12 @@ public class PsiDiagnosticUtils {
         int offset = textRange.getStartOffset();
         VirtualFile virtualFile = file.getVirtualFile();
         String pathSuffix = " in " + (virtualFile == null ? file.getName() : virtualFile.getPath());
-        return offsetToLineAndColumn(document, offset).toString() + pathSuffix;
+        return offsetToLineAndColumn(document, offset) + pathSuffix;
     }
 
     @NotNull
     public static LineAndColumn offsetToLineAndColumn(@Nullable Document document, int offset) {
-        if (document == null) {
+        if (document == null || document.getTextLength() == 0) {
             return new LineAndColumn(-1, offset, null);
         }
 
@@ -145,7 +145,7 @@ public class PsiDiagnosticUtils {
                 return "(" + start.line + "," + start.column + "-" + end.column + ")";
             }
 
-            return start.toString() + " - " + end.toString();
+            return start + " - " + end;
         }
     }
 }

@@ -29,7 +29,7 @@ class WasmModule(
     val startFunction: WasmFunction? = null,
 
     val data: List<WasmData> = emptyList(),
-    val dataCount: Boolean = false,
+    val dataCount: Boolean = true,
 )
 
 sealed class WasmNamedModuleField {

@@ -31,13 +31,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstraintSystemCompleter(components: BodyResolveComponents, private val context: BodyResolveContext) {
     private val inferenceComponents = components.session.inferenceComponents
@@ -65,8 +62,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
-        // NB: it's called in ConstraintSystemForks resolution stage by FE 1.0
-        processForkConstraints()
+        if (completionMode == ConstraintSystemCompletionMode.FULL || completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA) {
+            resolveForkPointsConstraints()
+        }
 
         completion@ while (true) {
             // TODO: This is very slow
@@ -183,7 +181,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         allTypeVariables: List<TypeConstructorMarker>,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
-        if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return false
+        if (completionMode != ConstraintSystemCompletionMode.FULL) return false
 
         // If we use the builder inference anyway (if the annotation is presented), then we are already analysed builder inference lambdas
         if (!languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)) return false
@@ -221,8 +219,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         resolutionContext: ResolutionContext,
         argument: PostponedAtomWithRevisableExpectedType,
     ): Boolean = with(c) {
-        val revisedExpectedType: ConeKotlinType =
-            argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }?.cast() ?: return false
+        val revisedExpectedType = argument.revisedExpectedType
+            ?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() } as ConeKotlinType?
+            ?: return false
 
         when (argument) {
             is ResolvedCallableReferenceAtom ->
@@ -263,7 +262,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             return false
         }
 
-        fixVariable(this, topLevelType, variableWithConstraints, postponedArguments)
+        fixVariable(this, variableWithConstraints)
 
         return true
     }
@@ -389,12 +388,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
     private fun fixVariable(
         c: ConstraintSystemCompletionContext,
-        topLevelType: KotlinTypeMarker,
-        variableWithConstraints: VariableWithConstraints,
-        postponedResolveKtPrimitives: List<PostponedResolvedAtom>
+        variableWithConstraints: VariableWithConstraints
     ) {
-        val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
-        val resultType = inferenceComponents.resultTypeResolver.findResultType(c, variableWithConstraints, direction)
+        val resultType = inferenceComponents.resultTypeResolver.findResultType(
+            c,
+            variableWithConstraints,
+            TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+        )
         val variable = variableWithConstraints.typeVariable
         c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable)) // TODO: obtain atom for diagnostics
     }
@@ -409,7 +409,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                     processBlocks = true
                 ) { candidate ->
                     candidate.postponedAtoms.forEach { atom ->
-                        notAnalyzedArguments.addIfNotNull(atom.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
+                        notAnalyzedArguments.addIfNotNull((atom as? PostponedResolvedAtom)?.takeUnless { it.analyzed })
                     }
                 }
             }

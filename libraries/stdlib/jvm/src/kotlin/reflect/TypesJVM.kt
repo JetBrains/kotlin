@@ -99,7 +99,7 @@ private interface TypeImpl : Type {
     // This is a copy of [Type.getTypeName] which is present on JDK 8+.
     @Suppress(
         "VIRTUAL_MEMBER_HIDDEN", "NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT"
-    ) // This is needed for cases when environment variable JDK_16 points to JDK 8+.
+    ) // This is needed for cases when environment variable JDK_1_6 points to JDK 8+.
     fun getTypeName(): String
 }
 
@@ -126,7 +126,7 @@ private class TypeVariableImpl(private val typeParameter: KTypeParameter) : Type
     override fun toString(): String = getTypeName()
 
     // [TypeVariable] extends [AnnotatedElement] starting from JDK 8. The following are copies of methods from there.
-    // Suppression of VIRTUAL_MEMBER_HIDDEN is needed for cases when environment variable JDK_16 points to JDK 8+.
+    // Suppression of VIRTUAL_MEMBER_HIDDEN is needed for cases when environment variable JDK_1_6 points to JDK 8+.
     @Suppress("VIRTUAL_MEMBER_HIDDEN", "UNUSED_PARAMETER")
     fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T? = null
 
@@ -136,8 +136,9 @@ private class TypeVariableImpl(private val typeParameter: KTypeParameter) : Type
     @Suppress("VIRTUAL_MEMBER_HIDDEN")
     fun getDeclaredAnnotations(): Array<Annotation> = emptyArray()
 
-    @Suppress("VIRTUAL_MEMBER_HIDDEN")
-    fun getAnnotatedBounds(): Array<Annotation> = emptyArray()
+    // There is also [getAnnotatedBounds] which returns an array of [AnnotatedType]; because [AnnotatedType] is JDK 8+,
+    // we can't declare that method here for compatibility with Android SDK 25 and lower, so we leave it unimplemented
+    // to throw an exception at runtime if called.
 }
 
 @ExperimentalStdlibApi

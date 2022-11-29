@@ -38,6 +38,7 @@ class AppleFrameworkNonMacIT : BaseGradleIT() {
                 assertTasksSkipped(":shared:linkDebugFrameworkIosX64")
                 assertTasksSkipped(":shared:linkDebugFrameworkWatchosArm32")
                 assertTasksSkipped(":shared:linkDebugFrameworkWatchosArm64")
+                assertTasksSkipped(":shared:linkDebugFrameworkWatchosDeviceArm64")
                 assertTasksSkipped(":shared:linkDebugFrameworkWatchosX64")
                 assertTasksSkipped(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
                 assertTasksSkipped(":shared:assembleSharedDebugXCFramework")

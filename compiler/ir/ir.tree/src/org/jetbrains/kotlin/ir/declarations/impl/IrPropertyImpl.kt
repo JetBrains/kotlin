@@ -77,7 +77,7 @@ class IrPropertyImpl(
         get() = symbol.descriptor
 }
 
-class IrFakeOverridePropertyImpl(
+class IrPropertyWithLateBindingImpl(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -90,14 +90,12 @@ class IrFakeOverridePropertyImpl(
     isDelegated: Boolean,
     isExternal: Boolean,
     isExpect: Boolean,
+    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
     containerSource = null,
-), IrFakeOverrideProperty {
-    override val isFakeOverride: Boolean
-        get() = true
-
+), IrPropertyWithLateBinding {
     private var _symbol: IrPropertySymbol? = null
 
     override val symbol: IrPropertySymbol

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal interface ObjCExportNameTranslator {
     fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName
@@ -965,9 +964,9 @@ private fun DeclarationDescriptor.getObjCName(): ObjCName {
     var swiftName: String? = null
     var isExact = false
     annotations.findAnnotation(KonanFqNames.objCName)?.let { annotation ->
-        objCName = annotation.argumentValue("name")?.value?.cast()
-        swiftName = annotation.argumentValue("swiftName")?.value?.cast()
-        isExact = annotation.argumentValue("exact")?.value?.cast() ?: false
+        objCName = annotation.argumentValue("name")?.value as String?
+        swiftName = annotation.argumentValue("swiftName")?.value as String?
+        isExact = annotation.argumentValue("exact")?.value as Boolean? ?: false
     }
     return ObjCName(name.asString(), objCName, swiftName, isExact)
 }

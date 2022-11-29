@@ -1,15 +1,36 @@
 KtSamConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/Runnable
+  contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   name: Runnable
   origin: SAM_CONSTRUCTOR
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
+  typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(function)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: function
+      origin: SOURCE
+      receiverParameter: null
+      returnType: kotlin/Function0<kotlin/Unit>
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
+
+      deprecationStatus: null
   ]
   getContainingModule: Could not render due to java.util.NoSuchElementException: Collection contains no element matching the predicate.
 

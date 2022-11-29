@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -19,34 +20,41 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.irMessageLogger
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
+internal fun JsIrLinker.loadUnboundSymbols(checkNoUnbound: Boolean) {
+    ExternalDependenciesGenerator(symbolTable, listOf(this)).generateUnboundSymbolsAsDependencies()
+    postProcess()
+    if (checkNoUnbound) {
+        checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
+    }
+}
 
 internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
-    private val library: KotlinLibrary,
     private val dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
     private val irFactory: IrFactory
 ) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun createLinker(loadedModules: Map<ModuleDescriptor, KotlinLibrary>): JsIrLinker {
-        val logger = compilerConfiguration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
         val signaturer = IdSignatureDescriptor(JsManglerDesc)
         val symbolTable = SymbolTable(signaturer, irFactory)
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        return JsIrLinker(null, logger, irBuiltIns, symbolTable, null)
+        val partialLinkageEnabled = compilerConfiguration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, partialLinkageEnabled, null)
     }
 
     private fun loadModules(): Map<ModuleDescriptor, KotlinLibrary> {
-        val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
+        val descriptors = hashMapOf<KotlinLibrary, ModuleDescriptorImpl>()
         var runtimeModule: ModuleDescriptorImpl? = null
 
         // TODO: deduplicate this code using part from klib.kt
@@ -78,11 +86,12 @@ internal class JsIrLinkerLoader(
         val loadedModules = loadModules()
         val jsIrLinker = createLinker(loadedModules)
 
+        val mainLibrary = dependencyGraph.keys.lastOrNull() ?: notFoundIcError("main library")
         val irModules = loadedModules.entries.associate { (descriptor, module) ->
             val libraryFile = KotlinLibraryFile(module)
             val modifiedStrategy = when {
                 loadAllIr -> DeserializationStrategy.ALL
-                module == library -> DeserializationStrategy.ALL
+                module == mainLibrary -> DeserializationStrategy.ALL
                 else -> DeserializationStrategy.EXPLICITLY_EXPORTED
             }
             val modified = modifiedFiles[libraryFile] ?: emptyMap()
@@ -110,8 +119,7 @@ internal class JsIrLinkerLoader(
             }
         }
 
-        ExternalDependenciesGenerator(jsIrLinker.symbolTable, listOf(jsIrLinker)).generateUnboundSymbolsAsDependencies()
-        jsIrLinker.postProcess()
+        jsIrLinker.loadUnboundSymbols(false)
         return LoadedJsIr(jsIrLinker, irModules)
     }
 }

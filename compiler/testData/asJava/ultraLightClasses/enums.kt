@@ -1,9 +1,13 @@
+// IGNORE_FIR
+// Ignored due to KT-53573
 // CHECK_BY_JAVA_FILE
 
 import java.util.function.*
 
+annotation class Some
+
 enum class Direction {
-    NORTH, SOUTH, WEST, EAST
+    @Some NORTH, SOUTH, WEST, EAST
 }
 
 enum class Color(val rgb: Int = 5) {

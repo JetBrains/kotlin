@@ -41,7 +41,8 @@ fun Project.probeRemoteFileLength(url: String, probingTimeoutMs: Int = 0): Long?
             throw e
         else {
             logger.kotlinDebug(::probeRemoteFileLength.name + "($url, $probingTimeoutMs): Failed to obtain content-length during the probing timeout.")
-            null
+            @Suppress("UNCHECKED_CAST")
+            null as Long?
         }
     } finally {
         connection.disconnect()

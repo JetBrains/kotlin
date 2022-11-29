@@ -143,6 +143,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(INAPPLICABLE_JVM_FIELD_WARNING, "{0}. This warning will become an error in further releases", STRING);
 
         MAP.put(JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties");
+        MAP.put(SYNTHETIC_SETTER_PROJECTED_OUT, "Use of setter for ''{0}'' is unsafe due to the type projection in receiver." +
+                                                " Workaround: use explicit cast on receiver. See https://youtrack.jetbrains.com/issue/KT-54309", NAME);
 
         MAP.put(STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is unsupported yet");
 
@@ -231,7 +233,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, "Non-reified type parameters with recursive bounds are not supported yet: {0}", STRING);
 
         MAP.put(JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE, "Java SAM interface constructor references are prohibited");
-        MAP.put(ENUM_DECLARING_CLASS_DEPRECATED, "Enum.declaringClass is deprecated, use declaringJavaClass instead");
+        MAP.put(ENUM_DECLARING_CLASS_DEPRECATED, "Enum.declaringClass is deprecated, use declaringJavaClass instead or cast receiver to java.lang.Enum explicitly");
+
+        MAP.put(REDUNDANT_REPEATABLE_ANNOTATION,
+                "Please, remove the ''{0}'' annotation, as ''{1}'' is already enough", TO_STRING, TO_STRING);
     }
 
     @NotNull

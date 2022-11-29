@@ -20,32 +20,14 @@ buildscript {
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
-
-    repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/jcenter'
-        }
-        jcenter()
-        maven {
-            url project.bootstrapKotlinRepo
-        }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
 }
 
-apply plugin: 'kotlin-multiplatform'
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+}
 
 repositories {
-    maven {
-        url 'https://cache-redirector.jetbrains.com/jcenter'
-    }
-    maven {
-        url project.bootstrapKotlinRepo
-    }
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {

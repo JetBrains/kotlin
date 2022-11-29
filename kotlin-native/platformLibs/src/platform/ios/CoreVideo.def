@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation CoreGraphics Foundation IOSurface Metal OpenGLESCommon Security darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Foundation IOSurface Metal OpenGLESCommon Security darwin posix
 language = Objective-C
 package = platform.CoreVideo
 modules = CoreVideo

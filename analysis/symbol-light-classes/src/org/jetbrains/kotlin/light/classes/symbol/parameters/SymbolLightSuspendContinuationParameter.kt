@@ -11,38 +11,38 @@ import com.intellij.psi.PsiType
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
-import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 
-context(KtAnalysisSession)
 internal class SymbolLightSuspendContinuationParameter(
-    private val functionSymbol: KtFunctionSymbol,
+    private val functionSymbolPointer: KtSymbolPointer<KtFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(containingMethod) {
+    private inline fun <T> withFunctionSymbol(crossinline action: context(KtAnalysisSession) (KtFunctionSymbol) -> T): T {
+        return functionSymbolPointer.withSymbol(ktModule, action)
+    }
+
     override fun getName(): String = SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
-
-    private val _identifier: PsiIdentifier by lazyPub {
-        SymbolLightIdentifier(this, functionSymbol)
-    }
+    override fun getNameIdentifier(): PsiIdentifier? = null
 
     override fun getType(): PsiType = _type
 
     private val _type by lazyPub {
-        buildClassType(StandardClassIds.Continuation) { argument(functionSymbol.returnType) }
-            .asPsiType(this)
-            ?: nonExistentType()
+        withFunctionSymbol { functionSymbol ->
+            buildClassType(StandardClassIds.Continuation) { argument(functionSymbol.returnType) }.asPsiType(this) ?: nonExistentType()
+        }
     }
 
     override fun isVarArgs(): Boolean = false
@@ -50,23 +50,25 @@ internal class SymbolLightSuspendContinuationParameter(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val annotations =
-            if (functionSymbol.visibility.isPrivateOrPrivateToThis()) emptyList() else
-                listOf(
-                    SymbolLightSimpleAnnotation(NotNull::class.java.name, this@SymbolLightSuspendContinuationParameter)
-                )
-        SymbolLightClassModifierList(this, emptySet(), annotations)
+        val lazyAnnotations = lazyPub {
+            if (withFunctionSymbol { it.visibility.isPrivateOrPrivateToThis() })
+                emptyList()
+            else
+                listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, this))
+        }
+
+        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
     override fun hasModifierProperty(p0: String): Boolean = false
 
     override val kotlinOrigin: KtParameter? = null
 
-    override fun equals(other: Any?): Boolean =
-        this === other ||
-                (other is SymbolLightSuspendContinuationParameter && functionSymbol == other.functionSymbol)
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is SymbolLightSuspendContinuationParameter &&
+            containingMethod == other.containingMethod
 
-    override fun hashCode(): Int = functionSymbol.hashCode() * 31 + containingMethod.hashCode()
+    override fun hashCode(): Int = name.hashCode() * 31 + containingMethod.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && functionSymbol.isValid()
+    override fun isValid(): Boolean = super.isValid() && functionSymbolPointer.isValid(ktModule)
 }

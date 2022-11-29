@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.KtModuleStateTracker
 import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
+import java.lang.ref.SoftReference
 
 class LLFirSessionProviderStorage(val project: Project) {
     private val sourceAsUseSiteSessionCache = LLFirSessionsCache()
@@ -120,7 +121,7 @@ private class LLFirSessionsCache {
 
         val reversedDependencies = sessions.reversedDependencies { session ->
             if (session.validityTracker.isValid) {
-                session.firSession.ktModule.directRegularDependencies.mapNotNull { mappings[it] }
+                session.ktModule.directRegularDependencies.mapNotNull { mappings[it] }
             } else emptyList()
         }
 
@@ -141,8 +142,11 @@ private class LLFirSessionsCache {
             }
         }
         return wasSessionInvalidated.entries
-            .mapNotNull { (session, wasInvalidated) -> session.takeUnless { wasInvalidated } }
-            .associate { session -> session.firSession.llFirModuleData.ktModule to session.firSession }
+            .mapNotNull { (sessionWithTracker, wasInvalidated) ->
+                if (wasInvalidated) return@mapNotNull null
+                val firSession = sessionWithTracker.firSessionSoftReference.get() ?: return@mapNotNull null
+                sessionWithTracker.ktModule to firSession
+            }.toMap()
     }
 
     private fun <T> Collection<T>.reversedDependencies(getDependencies: (T) -> List<T>): Map<T, List<T>> {
@@ -158,15 +162,16 @@ private class LLFirSessionsCache {
 
 private class FirSessionWithModificationTracker(
     project: Project,
-    val firSession: LLFirSession,
+    firSession: LLFirSession,
 ) {
+    val firSessionSoftReference: SoftReference<LLFirSession> = SoftReference(firSession)
+    val ktModule = firSession.llFirModuleData.ktModule
 
     val validityTracker: KtModuleStateTracker
     private val modificationTracker: ModificationTracker
 
     init {
         val trackerFactory = KotlinModificationTrackerFactory.getService(project)
-        val ktModule = firSession.llFirModuleData.ktModule
 
         validityTracker = trackerFactory.createModuleStateTracker(ktModule)
 

@@ -67,7 +67,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             messageCollector.report(ERROR, "K2 does not support Native target right now")
             return ExitCode.COMPILATION_ERROR
         }
-        configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhase, arguments, messageCollector))
+        configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhaseErased, arguments, messageCollector))
 
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
         if (!enoughArguments) {
@@ -209,9 +209,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(EXPORT_KDOC, arguments.exportKDoc)
 
                 put(PRINT_IR, arguments.printIr)
-                put(PRINT_IR_WITH_DESCRIPTORS, arguments.printIrWithDescriptors)
-                put(PRINT_DESCRIPTORS, arguments.printDescriptors)
-                put(PRINT_LOCATIONS, arguments.printLocations)
                 put(PRINT_BITCODE, arguments.printBitCode)
                 put(CHECK_EXTERNAL_CALLS, arguments.checkExternalCalls)
                 put(PRINT_FILES, arguments.printFiles)
@@ -222,12 +219,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     put(VERIFY_COMPILER, arguments.verifyCompiler == "true")
                 put(VERIFY_IR, arguments.verifyIr)
                 put(VERIFY_BITCODE, arguments.verifyBitCode)
-
-                put(ENABLED_PHASES,
-                        arguments.enablePhases.toNonNullList())
-                put(DISABLED_PHASES,
-                        arguments.disablePhases.toNonNullList())
-                put(LIST_PHASES, arguments.listPhases)
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
@@ -265,6 +256,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 if (arguments.friendModules != null)
                     put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
 
+                if(arguments.refinesPaths != null)
+                    put(REFINES_MODULES, arguments.refinesPaths!!.filterNot(String::isEmpty))
+
                 put(EXPORTED_LIBRARIES, selectExportedLibraries(configuration, arguments, outputKind))
                 put(INCLUDED_LIBRARIES, selectIncludes(configuration, arguments, outputKind))
                 put(FRAMEWORK_IMPORT_HEADERS, arguments.frameworkImportHeaders.toNonNullList())
@@ -285,10 +279,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 libraryToAddToCache?.let { put(LIBRARY_TO_ADD_TO_CACHE, it) }
                 put(CACHE_DIRECTORIES, cacheDirectories)
                 put(CACHED_LIBRARIES, parseCachedLibraries(arguments, configuration))
-                val fileToCache = arguments.fileToCache
-                if (outputKind == CompilerOutputKind.PRELIMINARY_CACHE && fileToCache == null)
-                    configuration.report(ERROR, "preliminary_cache only supported for per-file caches")
-                fileToCache?.let { put(FILE_TO_CACHE, it) }
+                val filesToCache = arguments.filesToCache
+                filesToCache?.let { put(FILES_TO_CACHE, it.toList()) }
                 put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
 
                 parseShortModuleName(arguments, configuration, outputKind)?.let {
@@ -372,6 +364,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
                 put(PARTIAL_LINKAGE, arguments.partialLinkage)
                 put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
+                putIfNotNull(FORCE_COMPILER_DRIVER, arguments.forceCompilerDriver)
             }
         }
     }

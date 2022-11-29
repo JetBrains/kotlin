@@ -321,7 +321,6 @@ object ConeTypeCompatibilityChecker {
     }
 
     /** Converts type arguments in a [ConeClassLikeType] to a [TypeArgumentMapping]. */
-    @OptIn(ExperimentalStdlibApi::class)
     private fun ConeClassLikeType.toTypeArgumentMapping(
         ctx: ConeInferenceContext,
         envMapping: Map<FirTypeParameterSymbol, BoundTypeArgument> = emptyMap(),
@@ -440,10 +439,9 @@ object ConeTypeCompatibilityChecker {
         val isInterface: Boolean get() = firClass.isInterface
 
         val superClasses: Set<FirClassWithSuperClasses> by lazy {
-            firClass.superConeTypes.mapNotNull { it.lookupTag.toFirClassWithSuperClasses(ctx) }.toSet()
+            firClass.resolvedSuperTypes.mapNotNull { (it as? ConeClassLikeType)?.lookupTag?.toFirClassWithSuperClasses(ctx) }.toSet()
         }
 
-        @OptIn(ExperimentalStdlibApi::class)
         val thisAndAllSuperClasses: Set<FirClassWithSuperClasses> by lazy {
             val queue = ArrayDeque<FirClassWithSuperClasses>()
             queue.addLast(this)

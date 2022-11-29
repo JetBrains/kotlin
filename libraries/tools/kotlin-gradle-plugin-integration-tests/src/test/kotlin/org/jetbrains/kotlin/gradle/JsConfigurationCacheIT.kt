@@ -122,7 +122,7 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
     fun testTestDependencies(gradleVersion: GradleVersion) {
         project("kotlin-js-project-with-test-dependencies", gradleVersion) {
             assertSimpleConfigurationCacheScenarioWorks(
-                "assemble",
+                "assemble", "kotlinStoreYarnLock",
                 buildOptions = defaultBuildOptions,
                 executedTaskNames = listOf(":kotlinNpmInstall")
             )

@@ -31,7 +31,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @get:Transient
     var autoAdvanceLanguageVersion: Boolean by FreezableVar(true)
 
-    @GradleOption(DefaultValues.LanguageVersions::class)
+    @GradleOption(
+        value = DefaultValue.LANGUAGE_VERSIONS,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-language-version",
         valueDescription = "<version>",
@@ -42,7 +45,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @get:Transient
     var autoAdvanceApiVersion: Boolean by FreezableVar(true)
 
-    @GradleOption(DefaultValues.ApiVersions::class)
+    @GradleOption(
+        value = DefaultValue.API_VERSIONS,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-api-version",
         valueDescription = "<version>",
@@ -296,7 +302,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var checkStickyPhaseConditions: Boolean by FreezableVar(false)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-Xuse-k2",
         deprecatedName = "-Xuse-fir",
@@ -413,6 +422,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var normalizeAbsolutePath: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xklib-enable-signature-clash-checks",
+        description = "Enable the checks on uniqueness of signatures"
+    )
+    var enableSignatureClashChecks: Boolean by FreezableVar(true)
+
     @Argument(value = "-Xenable-incremental-compilation", description = "Enable incremental compilation")
     var incrementalCompilation: Boolean? by FreezableVar(null)
 
@@ -515,7 +530,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 }
             }
 
-            if (allowAnyScriptsInSourceRoots) {
+            if (useK2) {
+                // TODO: remove when K2 compilation will mean LV 2.0
+                put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.ENABLED)
+            } else if (allowAnyScriptsInSourceRoots) {
                 put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
             }
 

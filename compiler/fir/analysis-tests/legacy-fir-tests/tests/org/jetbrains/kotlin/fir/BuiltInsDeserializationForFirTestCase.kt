@@ -22,7 +22,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirLoadBinariesTest() {
     @OptIn(ObsoleteTestInfrastructure::class)
     fun testBuiltInPackagesContent() {
         val moduleDescriptor = BuiltinsTestUtils.compileBuiltinsModule(environment)
-        val session = createSessionForTests(
+        val session = FirTestSessionFactoryHelper.createSessionForTests(
             environment.toAbstractProjectEnvironment(),
             GlobalSearchScope.allScope(project).toAbstractProjectFileSearchScope()
         )

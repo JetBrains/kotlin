@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
@@ -29,7 +29,6 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @Input
     var binaryenArgs: MutableList<String> = mutableListOf(
         "--enable-nontrapping-float-to-int",
-        "--enable-typed-function-references",
         "--enable-gc",
         "--enable-reference-types",
         "--enable-exception-handling",
@@ -41,6 +40,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     )
 
     @InputFile
+    @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @OutputFile
@@ -73,7 +73,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
                 it.binaryen = binaryen
                 it.executable = binaryen.requireConfigured().executablePath.absolutePath
                 it.dependsOn(binaryen.setupTaskProvider)
-                it.dependsOn(compilation.compileKotlinTaskProvider)
+                it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()
             }
         }

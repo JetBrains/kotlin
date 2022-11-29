@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.tools.tests
 
-import kotlinx.validation.api.*
+import kotlinx.validation.api.filterOutAnnotated
+import kotlinx.validation.api.filterOutNonPublic
+import kotlinx.validation.api.loadApiFromJvmClasses
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -31,24 +33,6 @@ class RuntimePublicAPITest {
 
     @Test fun kotlinReflect() {
         snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
-    }
-
-    @Test fun kotlinGradlePluginIdea() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinGradlePluginIdeaProto() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea-proto/build/libs", "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinToolingCore() {
-        snapshotAPIAndCompare("../kotlin-tooling-core/build/libs", "kotlin-tooling-core(?!-[-a-z]+)")
     }
 
     private fun snapshotAPIAndCompare(

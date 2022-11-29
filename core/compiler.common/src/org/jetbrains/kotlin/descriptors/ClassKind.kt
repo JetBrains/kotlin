@@ -27,11 +27,17 @@ enum class ClassKind(val codeRepresentation: String?) {
         get() = this == OBJECT || this == ENUM_ENTRY
 }
 
+inline val ClassKind.isClass: Boolean
+    get() = this == ClassKind.CLASS
+
 inline val ClassKind.isInterface: Boolean
     get() = this == ClassKind.INTERFACE
 
 inline val ClassKind.isEnumClass: Boolean
     get() = this == ClassKind.ENUM_CLASS
 
-inline val ClassKind.isClass: Boolean
-    get() = this == ClassKind.CLASS
+inline val ClassKind.isAnnotationClass: Boolean
+    get() = this == ClassKind.ANNOTATION_CLASS
+
+inline val ClassKind.isObject: Boolean
+    get() = this == ClassKind.OBJECT

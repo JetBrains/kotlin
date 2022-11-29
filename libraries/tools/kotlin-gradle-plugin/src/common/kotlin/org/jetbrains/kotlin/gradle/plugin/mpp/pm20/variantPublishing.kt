@@ -121,10 +121,7 @@ open class GradleKpmVariantPublishingConfigurator @Inject constructor(
         // Collecting sources for multiple variants is not yet supported;
         // TODO make callers provide the source variants?
         // The MPP plugin doesn't publish the source artifacts as variants; keep that behavior for legacy-mapped variants for now
-        if (
-            publishFromVariants.size == 1 &&
-            publishFromVariants.none { it is GradleKpmLegacyMappedVariant }
-        ) {
+        if (publishFromVariants.size == 1) {
             val singlePublishedVariant = publishFromVariants.single()
             configureSourceElementsPublishing(componentName, singlePublishedVariant)
         }

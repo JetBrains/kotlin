@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import javax.inject.Inject
 
 abstract class GradleKpmJvmVariant @Inject constructor(
@@ -41,8 +38,19 @@ abstract class GradleKpmJvmVariant @Inject constructor(
 class GradleKpmJvmVariantCompilationData(val variant: GradleKpmJvmVariant) : GradleKpmVariantCompilationDataInternal<KotlinJvmOptions> {
     override val owner: GradleKpmJvmVariant get() = variant
 
+    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
+        object : HasCompilerOptions<KotlinJvmCompilerOptions> {
+            override val options: KotlinJvmCompilerOptions =
+                variant.project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+        }
+
     // TODO pull out to the variant
-    override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))
+    override val kotlinOptions: KotlinJvmOptions = object : KotlinJvmOptions {
+        override val options: KotlinJvmCompilerOptions
+            get() = compilerOptions.options
+    }
 }
 
 internal fun GradleKpmVariant.ownModuleName(): String {
@@ -51,18 +59,4 @@ internal fun GradleKpmVariant.ownModuleName(): String {
         ?: project.name
     val suffix = if (containingModule.moduleClassifier == null) "" else "_${containingModule.moduleClassifier}"
     return filterModuleName("$baseName$suffix")
-}
-
-internal class KotlinMappedJvmCompilationFactory(
-    target: KotlinJvmTarget
-) : KotlinJvmCompilationFactory(target) {
-    override fun create(name: String): KotlinJvmCompilation {
-        val module = target.project.kpmModules.maybeCreate(name)
-        val variant = module.fragments.create(target.name, GradleKpmJvmVariant::class.java)
-
-        return target.project.objects.newInstance(
-            KotlinJvmCompilation::class.java,
-            VariantMappedCompilationDetailsWithRuntime<KotlinJvmOptions>(variant, target)
-        )
-    }
 }

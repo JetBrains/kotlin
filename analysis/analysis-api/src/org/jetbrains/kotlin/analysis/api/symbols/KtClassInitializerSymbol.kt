@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 
-public abstract class KtClassInitializerSymbol : KtSymbol, KtSymbolWithKind
+public abstract class KtClassInitializerSymbol : KtDeclarationSymbol, KtSymbolWithKind

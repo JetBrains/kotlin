@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.d8
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
@@ -35,6 +36,7 @@ constructor(
     @Optional
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
+    @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     override fun exec() {

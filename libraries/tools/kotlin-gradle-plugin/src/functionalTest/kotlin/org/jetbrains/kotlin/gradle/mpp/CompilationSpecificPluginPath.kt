@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.gradle.buildProject
 import org.jetbrains.kotlin.gradle.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.kotlin
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import kotlin.test.*
 
 internal class CompilationSpecificPluginPath {
@@ -292,7 +294,7 @@ internal class CompilationSpecificPluginPath {
         .getByName(taskName)
         .let {
             when (it) {
-                is AbstractKotlinNativeCompile<*, *, *> -> it.compilerPluginClasspath
+                is AbstractKotlinNativeCompile<*, *> -> it.compilerPluginClasspath
                 is AbstractKotlinCompile<*> -> it.pluginClasspath.from.single()
                 else -> error("Unexpected task type with name $taskName. Is it kotlin compile task?")
             }

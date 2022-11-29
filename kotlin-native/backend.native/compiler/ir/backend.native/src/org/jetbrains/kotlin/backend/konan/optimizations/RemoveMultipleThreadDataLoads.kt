@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.llvm.getBasicBlocks
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.getInstructions
@@ -31,10 +32,10 @@ private fun process(function: LLVMValueRef, currentThreadTLV: LLVMValueRef) {
             }
 }
 
-internal fun removeMultipleThreadDataLoads(context: Context) {
-    val currentThreadTLV = context.llvm.runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
+internal fun removeMultipleThreadDataLoads(generationState: NativeGenerationState) {
+    val currentThreadTLV = generationState.llvm.runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
 
-    getFunctions(context.llvmModule!!)
+    getFunctions(generationState.llvm.module)
             .filter { it.name?.startsWith("kfun:") == true }
             .filterNot { LLVMIsDeclaration(it) == 1 }
             .forEach { process(it, currentThreadTLV) }

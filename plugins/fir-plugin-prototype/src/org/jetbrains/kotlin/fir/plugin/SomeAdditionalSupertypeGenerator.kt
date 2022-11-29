@@ -30,6 +30,8 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
 
     }
 
+    context(TypeResolveServiceContainer)
+    @Suppress("IncorrectFormatting") // KTIJ-22227
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>

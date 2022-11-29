@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -93,8 +91,13 @@ class FirStatusResolver(
 
         return buildList {
             scope.processPropertiesByName(property.name) {}
-            scope.processDirectOverriddenPropertiesWithBaseScope(property.symbol) { symbol, _ ->
-                this += symbol.fir
+            scope.processDirectOverriddenPropertiesWithBaseScope(property.symbol) { overriddenSymbol, _ ->
+                if (session.visibilityChecker.isVisibleForOverriding(
+                        candidateInDerivedClass = property, candidateInBaseClass = overriddenSymbol.fir
+                    )
+                ) {
+                    this += overriddenSymbol.fir
+                }
                 ProcessorAction.NEXT
             }
         }
@@ -129,7 +132,12 @@ class FirStatusResolver(
             val symbol = function.symbol
             scope.processFunctionsByName(function.name) {}
             scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->
-                this += overriddenSymbol.fir
+                if (session.visibilityChecker.isVisibleForOverriding(
+                        candidateInDerivedClass = function, candidateInBaseClass = overriddenSymbol.fir
+                    )
+                ) {
+                    this += overriddenSymbol.fir
+                }
                 ProcessorAction.NEXT
             }
         }.mapNotNull {
@@ -215,15 +223,18 @@ class FirStatusResolver(
                 isLocal -> Visibilities.Local
                 else -> resolveVisibility(declaration, containingClass, containingProperty, overriddenStatuses)
             }
+
             Visibilities.Private -> when {
                 declaration is FirPropertyAccessor -> if (containingProperty?.visibility == Visibilities.PrivateToThis) {
                     Visibilities.PrivateToThis
                 } else {
                     Visibilities.Private
                 }
+
                 isPrivateToThis(declaration, containingClass) -> Visibilities.PrivateToThis
                 else -> Visibilities.Private
             }
+
             else -> status.visibility
         }
 
@@ -293,7 +304,7 @@ class FirStatusResolver(
         if (declaration is FirConstructor) return false
         if (containingClass.typeParameters.all { it.symbol.variance == Variance.INVARIANT }) return false
 
-        if (declaration.receiverTypeRef?.contradictsWith(Variance.IN_VARIANCE) == true) {
+        if (declaration.receiverParameter?.typeRef?.contradictsWith(Variance.IN_VARIANCE) == true) {
             return true
         }
         if (declaration.returnTypeRef.contradictsWith(
@@ -375,14 +386,12 @@ class FirStatusResolver(
                     containingClass == null -> Modality.FINAL
                     containingClass.classKind == ClassKind.INTERFACE -> {
                         when {
-                            declaration.visibility == Visibilities.Private ->
-                                Modality.FINAL
-                            !declaration.hasOwnBodyOrAccessorBody() ->
-                                Modality.ABSTRACT
-                            else ->
-                                Modality.OPEN
+                            declaration.visibility == Visibilities.Private -> Modality.FINAL
+                            !declaration.hasOwnBodyOrAccessorBody() -> Modality.ABSTRACT
+                            else -> Modality.OPEN
                         }
                     }
+
                     else -> {
                         if (declaration.isOverride &&
                             (containingClass.modality != Modality.FINAL || containingClass.classKind == ClassKind.ENUM_CLASS)
@@ -394,6 +403,7 @@ class FirStatusResolver(
                     }
                 }
             }
+
             else -> Modality.FINAL
         }
 

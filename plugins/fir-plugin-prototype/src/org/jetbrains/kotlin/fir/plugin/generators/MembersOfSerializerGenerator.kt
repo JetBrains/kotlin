@@ -69,8 +69,10 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
             returnTypeRef = session.builtinTypes.unitType
             dispatchReceiverType = dispatchReceiverClassId.toSimpleConeType()
+            symbol = FirNamedFunctionSymbol(callableId)
             valueParameters += buildValueParameter {
                 moduleData = session.moduleData
+                containingFunctionSymbol = this@buildSimpleFunction.symbol
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = Key.origin
                 returnTypeRef = buildResolvedTypeRef {
@@ -85,7 +87,6 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
             body = buildBlock {}
                 .apply { replaceTypeRef(session.builtinTypes.unitType) }
             name = callableId.callableName
-            symbol = FirNamedFunctionSymbol(callableId)
         }
         return listOf(function.symbol)
     }

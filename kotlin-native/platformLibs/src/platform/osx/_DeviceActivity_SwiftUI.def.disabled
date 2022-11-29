@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._DeviceActivity_SwiftUI
+
+modules = _DeviceActivity_SwiftUI
+compilerOpts = -framework _DeviceActivity_SwiftUI
+linkerOpts = -framework _DeviceActivity_SwiftUI
+#Disabled: Unavailable

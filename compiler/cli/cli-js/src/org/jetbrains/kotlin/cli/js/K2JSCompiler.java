@@ -100,7 +100,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         doMain(new K2JSCompiler(), args);
     }
 
-    final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
+    private final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
 
     @NotNull
     @Override
@@ -172,10 +172,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @Nullable KotlinPaths paths
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            messageCollector.report(ERROR, "K2 does not support JS target right now", null);
-            return ExitCode.COMPILATION_ERROR;
-        }
 
         ExitCode exitCode = OK;
 
@@ -184,6 +180,31 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         if (K2JSCompilerArgumentsKt.isPreIrBackendDisabled(arguments)) {
             return exitCode;
+        }
+
+        LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
+
+        if (languageVersionSettings.getLanguageVersion().compareTo(LanguageVersion.KOTLIN_1_9) >= 0) {
+            messageCollector.report(ERROR, "Old Kotlin/JS compiler is no longer supported. Please migrate to the new JS IR backend", null);
+            return COMPILATION_ERROR;
+        }
+
+        String deprecatedMessage = "==========\n" +
+                                   "This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.\n" +
+                                   "\n" +
+                                   "Please migrate your project to the new IR-based compiler (https://kotl.in/jsir).\n" +
+                                   "Because your build tool will not support the new Kotlin/JS compiler, you will also need to migrate to Gradle.\n" +
+                                   "\n" +
+                                   "You can continue to use the deprecated legacy compiler in the current version of the toolchain by providing the compiler option -Xuse-deprecated-legacy-compiler.\n" +
+                                   "==========";
+
+        if (!arguments.getUseDeprecatedLegacyCompiler()) {
+            messageCollector.report(ERROR, deprecatedMessage, null);
+            return COMPILATION_ERROR;
+        }
+
+        if (!arguments.getLegacyDeprecatedNoWarn()) {
+            messageCollector.report(STRONG_WARNING, deprecatedMessage, null);
         }
 
         if (arguments.getFreeArgs().isEmpty() && (!incrementalCompilationIsEnabledForJs(arguments))) {
@@ -320,7 +341,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         TranslationResult translationResult;
 
         try {
-            //noinspection unchecked
             translationResult = translate(reporter, sourcesFiles, jsAnalysisResult, mainCallParameters, config);
         }
         catch (Exception e) {

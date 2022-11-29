@@ -60,14 +60,14 @@ object InlineClassAbi {
     fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
-            assert(irFunction.constructedClass.isSingleFieldValueClass) {
+            assert(irFunction.constructedClass.isValue) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
             return Name.identifier("constructor-impl")
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
-        if (suffix == null && ((irFunction.parent as? IrClass)?.isSingleFieldValueClass != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
+        if (suffix == null && ((irFunction.parent as? IrClass)?.isValue != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
             return irFunction.name
         }
 
@@ -101,7 +101,7 @@ object InlineClassAbi {
     ): String? =
         collectFunctionSignatureForManglingSuffix(
             useOldMangleRules,
-            valueParameters.any { it.requiresMangling },
+            valueParameters.any { it.getRequiresMangling() },
             // The JVM backend computes mangled names after creating suspend function views, but before default argument
             // stub insertion. It would be nice if this part of the continuation lowering happened earlier in the pipeline.
             // TODO: Move suspend function view creation before JvmInlineClassLowering.
@@ -124,19 +124,28 @@ object InlineClassAbi {
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
 }
 
-val IrType.requiresMangling: Boolean
-    get() {
-        val irClass = erasedUpperBound
-        return irClass.isSingleFieldValueClass && irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
+fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean {
+    val irClass = erasedUpperBound
+    return irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME && when {
+        irClass.isSingleFieldValueClass -> includeInline
+        irClass.isMultiFieldValueClass -> includeMFVC
+        else -> false
     }
+}
 
 val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
 
-val IrFunction.hasMangledParameters: Boolean
-    get() = dispatchReceiverParameter != null && parentAsClass.isSingleFieldValueClass ||
-            fullValueParameterList.any { it.type.requiresMangling } ||
-            (this is IrConstructor && constructedClass.isSingleFieldValueClass)
+fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean =
+    (dispatchReceiverParameter != null && when {
+        parentAsClass.isSingleFieldValueClass -> includeInline
+        parentAsClass.isMultiFieldValueClass -> includeMFVC
+        else -> false
+    }) || fullValueParameterList.any { it.type.getRequiresMangling(includeInline, includeMFVC) } || (this is IrConstructor && when {
+        constructedClass.isSingleFieldValueClass -> includeInline
+        constructedClass.isMultiFieldValueClass -> includeMFVC
+        else -> false
+    })
 
 val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
@@ -146,10 +155,12 @@ val IrClass.inlineClassFieldName: Name
 
 val IrFunction.isInlineClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isSingleFieldValueClass == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
+            contextReceiverParametersCount == 0 && !isStatic &&
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
 
 val IrFunction.isMultiFieldValueClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isMultiFieldValueClass == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
+            contextReceiverParametersCount == 0 && !isStatic &&
             correspondingPropertySymbol?.let {
                 val multiFieldValueClassRepresentation = parentAsClass.multiFieldValueClassRepresentation
                     ?: error("Multi-field value class must have multiFieldValueClassRepresentation: ${parentAsClass.render()}")

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._AppIntents_SwiftUI
+
+modules = _AppIntents_SwiftUI
+compilerOpts = -framework _AppIntents_SwiftUI
+linkerOpts = -framework _AppIntents_SwiftUI
+#Disabled: Unavailable

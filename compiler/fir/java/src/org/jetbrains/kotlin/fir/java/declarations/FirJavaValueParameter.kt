@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -40,6 +41,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val symbol: FirValueParameterSymbol,
     annotationBuilder: () -> List<FirAnnotation>,
     override var defaultValue: FirExpression?,
+    override val containingFunctionSymbol: FirFunctionSymbol<*>,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
     init {
@@ -60,7 +62,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
-    override val receiverTypeRef: FirTypeRef?
+    override val receiverParameter: FirReceiverParameter?
         get() = null
 
     override val deprecationsProvider: DeprecationsProvider
@@ -116,7 +118,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
 
@@ -165,8 +167,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
-    }
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
 
@@ -198,6 +199,7 @@ class FirJavaValueParameterBuilder {
     lateinit var name: Name
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var defaultValue: FirExpression? = null
+    lateinit var containingFunctionSymbol: FirFunctionSymbol<*>
     var isVararg: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
 
@@ -214,6 +216,7 @@ class FirJavaValueParameterBuilder {
             symbol = FirValueParameterSymbol(name),
             annotationBuilder,
             defaultValue,
+            containingFunctionSymbol,
             isVararg,
         )
     }
@@ -238,6 +241,7 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     val annotations = original.annotations
     copyBuilder.annotationBuilder = { annotations }
     copyBuilder.defaultValue = original.defaultValue
+    copyBuilder.containingFunctionSymbol = original.containingFunctionSymbol
     copyBuilder.isVararg = original.isVararg
     return copyBuilder.apply(init).build()
 }

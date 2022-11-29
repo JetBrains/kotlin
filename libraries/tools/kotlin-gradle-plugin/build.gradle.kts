@@ -25,8 +25,9 @@ pill {
 kotlin.sourceSets.all {
     languageSettings.optIn("kotlin.RequiresOptIn")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AdvancedKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.ExperimentalKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
     languageSettings.optIn("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }
 
@@ -38,6 +39,7 @@ dependencies {
     commonCompileOnly(project(":compiler"))
     commonCompileOnly(project(":compiler:incremental-compilation-impl"))
     commonCompileOnly(project(":daemon-common"))
+    commonCompileOnly(project(":kotlin-gradle-compiler-types"))
     commonCompileOnly(project(":native:kotlin-native-utils"))
     commonCompileOnly(project(":kotlin-android-extensions"))
     commonCompileOnly(project(":kotlin-build-common"))
@@ -54,7 +56,7 @@ dependencies {
     commonCompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     commonCompileOnly(intellijCore())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.9")
+    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.11.2")
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
     commonCompileOnly(commonDependency("com.google.guava:guava"))
     commonCompileOnly("de.undercouch:gradle-download-task:4.1.1")
@@ -90,15 +92,19 @@ dependencies {
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         val functionalTestImplementation by configurations.getting
+        val functionalTestCompileOnly by configurations.getting
         functionalTestImplementation("com.android.tools.build:gradle:7.2.1")
         functionalTestImplementation("com.android.tools.build:gradle-api:7.2.1")
+        functionalTestCompileOnly("com.android.tools:common:30.2.1")
         functionalTestImplementation(gradleKotlinDsl())
         functionalTestImplementation(project(":kotlin-gradle-plugin-kpm-android"))
+        functionalTestImplementation(project(":kotlin-gradle-plugin-tcs-android"))
         functionalTestImplementation(project(":kotlin-tooling-metadata"))
         functionalTestImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
         functionalTestImplementation("com.github.gundy:semver4j:0.16.4:nodeps") {
             exclude(group = "*")
         }
+        functionalTestImplementation("org.reflections:reflections:0.10.2")
     }
 
     testCompileOnly(project(":compiler"))

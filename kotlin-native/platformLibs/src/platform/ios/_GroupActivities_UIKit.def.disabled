@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._GroupActivities_UIKit
+
+modules = _GroupActivities_UIKit
+compilerOpts = -framework _GroupActivities_UIKit
+linkerOpts = -framework _GroupActivities_UIKit
+#Disabled: Unavailable

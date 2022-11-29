@@ -50,6 +50,8 @@ class StdlibTests : TestProvider {
             TestCase(name: "TestMutableMap", method: withAutorelease(testMutableMap)),
             TestCase(name: "TestKotlinMutableSetInit", method: withAutorelease(testKotlinMutableSetInit)),
             TestCase(name: "TestKotlinMutableDictionaryInit", method: withAutorelease(testKotlinMutableDictionaryInit)),
+            TestCase(name: "TestSwiftSetInKotlin", method: withAutorelease(testSwiftSetInKotlin)),
+            TestCase(name: "TestSwiftDictionaryInKotlin", method: withAutorelease(testSwiftDictionaryInKotlin)),
         ]
         providers.append(self)
     }
@@ -457,6 +459,14 @@ class StdlibTests : TestProvider {
         }
 
         StdlibKt.gc() // To reproduce https://github.com/JetBrains/kotlin-native/issues/3259
+    }
+
+    func testSwiftSetInKotlin() throws {
+        try StdlibKt.testSet(set: ["a", "b", "c", "d", "e", "f", "g"])
+    }
+
+    func testSwiftDictionaryInKotlin() throws {
+        try StdlibKt.testMap(map: ["a" : 1, "b" : 2, "c" : 3, "d" : 4, "e" : 5, "f" : 6, "g" : 7])
     }
 
 }

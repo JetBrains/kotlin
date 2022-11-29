@@ -116,24 +116,6 @@ fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
     declaration.accept(SetDeclarationsParentVisitor, this)
 }
 
-fun <T: IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
-    accept(SetDeclarationsParentVisitor, parent)
-    return this
-}
-
-object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
-    override fun visitElement(element: IrElement, data: IrDeclarationParent) {
-        if (element !is IrDeclarationParent) {
-            element.acceptChildren(this, data)
-        }
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) {
-        declaration.parent = data
-        super.visitDeclaration(declaration, data)
-    }
-}
-
 tailrec fun IrDeclaration.getContainingFile(): IrFile? {
     val parent = this.parent
 

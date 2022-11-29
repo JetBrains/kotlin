@@ -46,6 +46,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             ErrorsNative.INVALID_OBJC_NAME_FIRST_CHAR, "@ObjCName contains illegal first characters: {0}",
             CommonRenderers.STRING
         )
+        put(ErrorsNative.EMPTY_OBJC_NAME, "Empty @ObjCName names aren't supported")
         put(
             ErrorsNative.INCOMPATIBLE_OBJC_NAME_OVERRIDE, "Member \"{0}\" inherits inconsistent @ObjCName from {1}",
             Renderers.NAME,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,12 +52,7 @@ import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-enum class IcCompatibleIr2Js(val isCompatible: Boolean, val incrementalCacheEnabled: Boolean) {
-    DISABLED(false, false),
-    COMPATIBLE(true, false),
-    IC_MODE(true, true)
-}
+import java.util.WeakHashMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrBackendContext(
@@ -66,27 +61,30 @@ class JsIrBackendContext(
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarationNames: Set<FqName>,
+    keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
-    override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    val baseClassIntoMetadata: Boolean = false,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     override val mapping: JsMapping = JsMapping(),
     val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
-    val icCompatibleIr2Js: IcCompatibleIr2Js = IcCompatibleIr2Js.DISABLED,
+    val incrementalCacheEnabled: Boolean = false
 ) : JsCommonBackendContext {
-    val polyfills = JsPolyfills()
-    val fieldToInitializer: MutableMap<IrField, IrExpression> = mutableMapOf()
+    override val scriptMode: Boolean get() = false
 
-    val localClassNames: MutableMap<IrClass, String> = mutableMapOf()
-    val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
+    val polyfills = JsPolyfills()
+    val fieldToInitializer = WeakHashMap<IrField, IrExpression>()
+
+    val localClassNames = WeakHashMap<IrClass, String>()
 
     val minimizedNameGenerator: MinimizedNameGenerator =
         MinimizedNameGenerator()
 
-    val fieldDataCache = mutableMapOf<IrClass, Map<IrField, String>>()
+    val keeper: Keeper =
+        Keeper(keep)
+
+    val fieldDataCache = WeakHashMap<IrClass, Map<IrField, String>>()
 
     override val builtIns = module.builtIns
 
@@ -105,7 +103,6 @@ class JsIrBackendContext(
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
-    val externalDeclarations = hashSetOf<IrDeclaration>()
 
     val additionalExportedDeclarations = mutableSetOf<IrDeclaration>()
 
@@ -155,10 +152,11 @@ class JsIrBackendContext(
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
+
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
     override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
-        enabled = configuration.getBoolean(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION),
+        enabled = configuration.get(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true),
         eagerInitialization = symbolTable.referenceClass(getJsInternalClass("EagerInitialization"))
     )
 
@@ -196,7 +194,9 @@ class JsIrBackendContext(
         .let { symbolTable.referenceSimpleFunction(it!!) }
 
     override val ir = object : Ir<JsIrBackendContext>(this, irModuleFragment) {
-        override val symbols = object : Symbols<JsIrBackendContext>(this@JsIrBackendContext, irBuiltIns, symbolTable) {
+        override val symbols = object : Symbols(irBuiltIns, symbolTable) {
+            private val context = this@JsIrBackendContext
+
             override val throwNullPointerException =
                 symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
 
@@ -237,6 +237,8 @@ class JsIrBackendContext(
                 get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
 
             override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
+
+            override val continuationClass = context.coroutineSymbols.continuationClass
 
             override val coroutineContextGetter =
                 symbolTable.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
@@ -386,7 +388,7 @@ class JsIrBackendContext(
         print(message)
     }
 
-    private val outlinedJsCodeFunctions = mutableMapOf<IrFunctionSymbol, JsFunction>()
+    private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
 
     fun addOutlinedJsCode(symbol: IrSimpleFunctionSymbol, outlinedJsCode: JsFunction) {
         outlinedJsCodeFunctions[symbol] = outlinedJsCode
@@ -407,11 +409,5 @@ class JsIrBackendContext(
             ?: compilationException("Provided JS code is not a js function", jsFunAnnotation)
         outlinedJsCodeFunctions[symbol] = parsedJsFunction
         return parsedJsFunction
-    }
-
-    private var irFunctionSignatureCache = hashMapOf<IrFunction, String>()
-
-    fun getFunctionSignatureFromCache(f: IrFunction): String {
-        return irFunctionSignatureCache.getOrPut(f) { calculateJsFunctionSignature(f, this) }
     }
 }

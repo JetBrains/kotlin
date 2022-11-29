@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker.AndroidStyleSourceDirUsageDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChecker.V1StyleSourceDirUsageDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findAndroidSourceSet
@@ -98,6 +99,25 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
         assertEquals(
             project.file("src/androidUnitTest/kotlin"), androidUnitTestWarning.kotlinStyleSourceDirToUse
         )
+    }
+
+    @Test
+    fun `test - nowarn flag - android style source dir usage checker`() {
+        val project = buildMinimalAndroidMultiplatformProject()
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN, "true")
+        val androidStyleMain = project.file("src/main/kotlin")
+        val androidStyleUnitTest = project.file("src/test/kotlin")
+        val androidStyleInstrumentedTest = project.file("src/androidTest/kotlin")
+
+        androidStyleMain.mkdirs()
+        androidStyleUnitTest.mkdirs()
+        androidStyleInstrumentedTest.mkdirs()
+        project.evaluate()
+
+        project.checkCreatedSourceSets()
+
+        val warnings = diagnosticsReporter.warnings
+        if (warnings.isNotEmpty()) fail("Expected no warnings emitted. Found $warnings")
     }
 
     @Test

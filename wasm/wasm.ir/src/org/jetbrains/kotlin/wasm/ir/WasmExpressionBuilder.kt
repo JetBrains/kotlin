@@ -59,6 +59,12 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.ELSE)
     }
 
+    fun buildBlock(resultType: WasmType? = null): Int {
+        numberOfNestedBlocks++
+        buildInstr(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
+        return numberOfNestedBlocks
+    }
+
     fun buildEnd() {
         numberOfNestedBlocks--
         buildInstr(WasmOp.END)
@@ -150,12 +156,12 @@ abstract class WasmExpressionBuilder {
         )
     }
 
-    fun buildRefCastStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
-        buildInstr(WasmOp.REF_CAST_STATIC, WasmImmediate.TypeIdx(toType))
+    fun buildRefCastNullStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
+        buildInstr(WasmOp.REF_CAST_DEPRECATED, WasmImmediate.TypeIdx(toType))
     }
 
     fun buildRefTestStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
-        buildInstr(WasmOp.REF_TEST_STATIC, WasmImmediate.TypeIdx(toType))
+        buildInstr(WasmOp.REF_TEST_DEPRECATED, WasmImmediate.TypeIdx(toType))
     }
 
     fun buildRefNull(type: WasmHeapType) {
@@ -166,4 +172,3 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.DROP)
     }
 }
-

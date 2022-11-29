@@ -596,8 +596,8 @@ object AbstractTypeChecker {
     ): TypeParameterMarker? {
         for (i in 0 until baseType.argumentsCount()) {
             val typeArgument = baseType.getArgument(i).takeIf { !it.isStarProjection() }?.getType() ?: continue
-            val areBothTypesCaptured =
-                typeArgument.lowerBoundIfFlexible().isCapturedType() && targetType.lowerBoundIfFlexible().isCapturedType()
+            val areBothTypesCaptured = typeArgument.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().isCapturedType() &&
+                    targetType.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().isCapturedType()
 
             if (typeArgument == targetType || (areBothTypesCaptured && typeArgument.typeConstructor() == targetType.typeConstructor())) {
                 return baseType.typeConstructor().getParameter(i)

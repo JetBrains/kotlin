@@ -1,0 +1,4 @@
+FILE: test.kt
+    public final fun main(): R|kotlin/Unit| {
+        Q|Sample|.<Inapplicable(INAPPLICABLE): /Sample.foo>#(String(123))
+    }

@@ -26,7 +26,7 @@ sealed class FirDeclarationOrigin(
     object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()
     object Enhancement : FirDeclarationOrigin()
-    object ImportedFromObject : FirDeclarationOrigin()
+    object ImportedFromObjectOrStatic : FirDeclarationOrigin()
     object SubstitutionOverride : FirDeclarationOrigin(fromSupertypes = true)
     object IntersectionOverride : FirDeclarationOrigin(fromSupertypes = true)
     object Delegated : FirDeclarationOrigin()

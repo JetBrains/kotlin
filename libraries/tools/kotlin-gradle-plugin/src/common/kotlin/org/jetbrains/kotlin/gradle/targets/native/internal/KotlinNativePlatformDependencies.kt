@@ -69,7 +69,7 @@ internal val KotlinMultiplatformExtension.nativeRootSourceSets: Collection<Kotli
     get() {
         val nativeSourceSets = sourceSets.filter { sourceSet -> project.getCommonizerTarget(sourceSet) != null }
         return nativeSourceSets.filter { sourceSet ->
-            val allVisibleSourceSets = sourceSet.dependsOn + getVisibleSourceSetsFromAssociateCompilations(project, sourceSet)
+            val allVisibleSourceSets = sourceSet.dependsOn + getVisibleSourceSetsFromAssociateCompilations(sourceSet)
             allVisibleSourceSets.none { dependency ->
                 dependency in nativeSourceSets
             }

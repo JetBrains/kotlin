@@ -1,0 +1,13 @@
+package
+
+public fun main(/*0*/ arg: kotlin.Any): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> myBuilder(/*0*/ block: Foo<T>.() -> kotlin.Unit): Foo<T>
+
+public final class Foo</*0*/ T : kotlin.Any> {
+    public constructor Foo</*0*/ T : kotlin.Any>()
+    public final var a: T?
+    public final fun doSmthng(/*0*/ arg: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

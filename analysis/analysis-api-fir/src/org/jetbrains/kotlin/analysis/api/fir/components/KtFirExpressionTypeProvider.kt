@@ -11,18 +11,15 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.getReferencedElementType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirPackageDirective
+import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -31,6 +28,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal class KtFirExpressionTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -48,7 +47,7 @@ internal class KtFirExpressionTypeProvider(
                 val containingClass =
                     (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
                 if (fir.calleeReference is FirSuperReference && fir.typeRef is FirErrorTypeRef && containingClass != null) {
-                    val superTypes = containingClass.superConeTypes
+                    val superTypes = containingClass.resolvedSuperTypes
                     when (superTypes.size) {
                         0 -> analysisSession.builtinTypes.ANY
                         1 -> superTypes.single().asKtType()
@@ -91,18 +90,40 @@ internal class KtFirExpressionTypeProvider(
         val assignment = expression.parent as? KtBinaryExpression ?: return null
         if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
         if (assignment.left != expression) return null
-        val setTargetArgumentParameter = fir.argumentMapping?.entries?.last()?.value ?: return null
+        val setTargetArgumentParameter = fir.resolvedArgumentMapping?.entries?.last()?.value ?: return null
         return setTargetArgumentParameter.returnTypeRef.coneType.asKtType()
     }
 
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
-        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveSession)
-        return firDeclaration.returnTypeRef.coneType.asKtType()
+        val firDeclaration = if (isAnonymousFunction(declaration))
+            declaration.toFirAnonymousFunction()
+        else
+            declaration.getOrBuildFir(firResolveSession)
+        return when (firDeclaration) {
+            is FirCallableDeclaration -> firDeclaration.returnTypeRef.coneType.asKtType()
+            is FirFunctionTypeParameter -> firDeclaration.returnTypeRef.coneType.asKtType()
+            else -> unexpectedElementError<FirElement>(firDeclaration)
+        }
     }
 
     override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType {
-        val firFunction = declaration.getOrBuildFirOfType<FirFunction>(firResolveSession)
+        val firFunction = if (isAnonymousFunction(declaration))
+            declaration.toFirAnonymousFunction()
+        else
+            declaration.getOrBuildFirOfType<FirFunction>(firResolveSession)
         return firFunction.constructFunctionalType(firFunction.isSuspend).asKtType()
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun isAnonymousFunction(ktDeclaration: KtDeclaration): Boolean {
+        contract {
+            returns(true) implies (ktDeclaration is KtNamedFunction)
+        }
+        return ktDeclaration is KtNamedFunction && ktDeclaration.isAnonymous
+    }
+
+    private fun KtFunction.toFirAnonymousFunction(): FirAnonymousFunction {
+        return getOrBuildFirOfType<FirAnonymousFunctionExpression>(firResolveSession).anonymousFunction
     }
 
     override fun getExpectedType(expression: PsiElement): KtType? {
@@ -135,7 +156,7 @@ internal class KtFirExpressionTypeProvider(
             return (callee.fir as FirSimpleFunction).returnTypeRef.coneType.asKtType()
         }
 
-        val arguments = firCall.argumentMapping ?: return null
+        val arguments = firCall.resolvedArgumentMapping ?: return null
         val firParameterForExpression =
             arguments.entries.firstOrNull { (arg, _) ->
                 when (arg) {
@@ -150,7 +171,11 @@ internal class KtFirExpressionTypeProvider(
     }
 
     private fun PsiElement.getFunctionCallAsWithThisAsParameter(): KtCallWithArgument? {
-        val valueArgument = unwrapQualified<KtValueArgument> { valueArg, expr -> valueArg.getArgumentExpression() == expr } ?: return null
+        val valueArgument = unwrapQualified<KtValueArgument> { valueArg, expr ->
+            // If `valueArg` is [KtLambdaArgument], its [getArgumentExpression] could be labeled expression (e.g., l@{ ... }).
+            // That is not exactly `expr`, which would be [KtLambdaExpression]. So, we need [unwrap] here.
+            valueArg.getArgumentExpression()?.unwrap() == expr
+        } ?: return null
         val callExpression =
             (valueArgument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
                 ?: valueArgument.parent as? KtCallExpression // KtLambdaArgument
@@ -165,7 +190,7 @@ internal class KtFirExpressionTypeProvider(
         val firCall = infixCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveSession) ?: return null
 
         // There is only one parameter for infix functions; get its type
-        val arguments = firCall.argumentMapping ?: return null
+        val arguments = firCall.resolvedArgumentMapping ?: return null
         val firParameterForExpression = arguments.values.singleOrNull() ?: return null
         return firParameterForExpression.returnTypeRef.coneType.asKtType()
     }
@@ -266,7 +291,8 @@ private inline fun <reified R : Any> PsiElement.unwrapQualified(check: (R, PsiEl
 
 private val PsiElement.nonContainerParent: PsiElement?
     get() = when (val parent = parent) {
-        is KtContainerNode -> parent.parent
+        is KtContainerNode -> parent.nonContainerParent
+        is KtLabeledExpression -> parent.nonContainerParent
         else -> parent
     }
 

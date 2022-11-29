@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 
 // TODO replace with structural type comparison?
 internal object PsiDeclarationAndKtSymbolEqualityChecker {
@@ -25,8 +27,15 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
 
     private fun KtAnalysisSession.returnTypesMatch(psi: PsiMethod, symbol: KtCallableSymbol): Boolean {
         if (symbol is KtConstructorSymbol) return true
-        return psi.returnType?.let { isTheSameTypes(psi, it, symbol.returnType, isVararg = false) }
-            ?: false
+        return psi.returnType?.let {
+            isTheSameTypes(
+                psi,
+                it,
+                symbol.returnType,
+                KtTypeMappingMode.RETURN_TYPE,
+                isVararg = false
+            )
+        } ?: false
     }
 
     private fun typeParametersMatch(psi: PsiMethod, symbol: KtCallableSymbol): Boolean {
@@ -50,7 +59,14 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
             val psiParameter = psi.parameterList.parameters[index + offset]
             if (valueParameterSymbol.name.asString() != psiParameter.name) return false
             if (valueParameterSymbol.isVararg != psiParameter.isVarArgs) return false
-            if (!isTheSameTypes(psi, psiParameter.type, valueParameterSymbol.returnType, valueParameterSymbol.isVararg)) return false
+            if (!isTheSameTypes(
+                    psi,
+                    psiParameter.type,
+                    valueParameterSymbol.returnType,
+                    KtTypeMappingMode.VALUE_PARAMETER,
+                    valueParameterSymbol.isVararg
+                )
+            ) return false
         }
         return true
     }
@@ -59,11 +75,12 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
         context: PsiMethod,
         psi: PsiType,
         ktType: KtType,
+        mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
         isVararg: Boolean = false
     ): Boolean {
         // Shortcut: primitive void == Unit as a function return type
         if (psi == PsiType.VOID && ktType.isUnit) return true
-        val ktTypeRendered = ktType.asPsiType(context) ?: return false
+        val ktTypeRendered = ktType.asPsiType(context, mode) ?: return false
         val rendered = if (isVararg) ktTypeRendered.createArrayType() else ktTypeRendered
         return rendered == psi
     }

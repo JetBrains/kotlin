@@ -1,0 +1,1 @@
+const val LENGTH = <expr>"Hello, world".length</expr>

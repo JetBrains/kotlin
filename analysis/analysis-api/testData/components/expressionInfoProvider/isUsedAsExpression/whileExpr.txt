@@ -1,0 +1,5 @@
+expression: WHILE
+text: while (b) {
+        4
+    }
+isUsedAsExpression: false

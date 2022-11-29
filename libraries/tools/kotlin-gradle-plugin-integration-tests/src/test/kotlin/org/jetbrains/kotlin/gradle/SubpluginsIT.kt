@@ -123,6 +123,14 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("assignment works")
+    @GradleTest
+    fun testAssignmentSimple(gradleVersion: GradleVersion) {
+        project("assignmentSimple", gradleVersion) {
+            build("assemble")
+        }
+    }
+
     @DisplayName("Allopen plugin works when classpath dependency is not declared in current or root project ")
     @GradleTest
     fun testAllOpenFromNestedBuildscript(gradleVersion: GradleVersion) {
@@ -146,10 +154,21 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @AndroidGradlePluginTests
     @DisplayName("KT-39809: kapt subplugin legacy loading does not fail the build")
-    @GradleTest
-    fun testKotlinVersionDowngradeInSupbrojectKt39809(gradleVersion: GradleVersion) {
-        project("kapt2/android-dagger", gradleVersion) {
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
+    fun testKotlinVersionDowngradeInSupbrojectKt39809(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "kapt2/android-dagger",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = providedJdk.location
+        ) {
             subProject("app").buildGradle.modify {
                 """
                 buildscript {
@@ -165,12 +184,7 @@ class SubpuginsIT : KGPBaseTest() {
                 """.trimIndent()
             }
 
-            build(
-                ":app:compileDebugKotlin",
-                buildOptions = defaultBuildOptions.copy(
-                    androidVersion = TestVersions.AGP.AGP_42.version
-                )
-            )
+            build(":app:compileDebugKotlin")
         }
     }
 

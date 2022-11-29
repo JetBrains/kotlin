@@ -14,12 +14,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
+import kotlin.io.path.appendText
 
 @JvmGradlePluginTests
 @DisplayName("Kotlin Java Toolchain support")
 class KotlinJavaToolchainTest : KGPBaseTest() {
 
-    @GradleTestVersions
     @GradleTest
     @DisplayName("Should use by default same jvm as Gradle daemon for jdkHome")
     internal fun byDefaultShouldUseGradleJDK(gradleVersion: GradleVersion) {
@@ -101,7 +101,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Kotlin compile task should reuse build cache when toolchain is set and build is happening on different JDKs")
-    @GradleTestVersions
     @GradleTest
     internal fun differentBuildJDKBuildCacheHit(gradleVersion: GradleVersion) {
         val buildCache = workingDir.resolve("custom-jdk-build-cache")
@@ -304,7 +303,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should allow to set JDK version for tasks via Java toolchain")
-    @GradleTestVersions
     @GradleTest
     internal fun setJdkUsingJavaToolchain(gradleVersion: GradleVersion) {
         project(
@@ -319,7 +317,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should allow to set Java toolchain via extension")
-    @GradleTestVersions
     @GradleTest
     internal fun setJdkUsingJavaToolchainViaExtension(gradleVersion: GradleVersion) {
         project(
@@ -334,7 +331,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm targets")
-    @GradleTestVersions
     @GradleTest
     internal fun toolchainCorrectlySupportedInMPPlugin(gradleVersion: GradleVersion) {
         project(
@@ -360,6 +356,14 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             useJdkToCompile(
                 getJdk11Path(),
                 JavaVersion.VERSION_11
+            )
+
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
             )
 
             build("build") {
@@ -392,7 +396,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should set 'jvmTarget' option if user does not specify it explicitly via toolchain setter")
-    @GradleTestVersions
     @GradleTest
     internal fun shouldSetJvmTargetNonSpecifiedByUserViaToolchain(gradleVersion: GradleVersion) {
         project(
@@ -410,7 +413,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Should not override user specified 'jvmTarget' option via toolchain setter")
-    @GradleTestVersions
     @GradleTest
     internal fun shouldNotOverrideUserSpecifiedJvmTargetViaToolchain(gradleVersion: GradleVersion) {
         project(
@@ -421,6 +423,14 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             setJvmTarget("1.8")
             useToolchainToCompile(11)
 
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             build("build") {
                 assertOutputContains("-jvm-target 1.8")
                 assertOutputDoesNotContain("-jvm-target 11")
@@ -429,7 +439,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Setting toolchain via java extension should also affect Kotlin compilations")
-    @GradleTestVersions
     @GradleTest
     internal fun settingToolchainViaJavaShouldAlsoWork(gradleVersion: GradleVersion) {
         project(
@@ -448,20 +457,46 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 
                 """.trimIndent()
             )
-            //language=properties
-            gradleProperties.append(
+
+            build("build") {
+                assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: ${getJdk11Path().replace("\\\\", "\\")}")
+            }
+        }
+    }
+
+    @DisplayName("Setting toolchain via java extension should update jvm-target argument on eager task creation")
+    @GradleTest
+    internal fun settingToolchainViaJavaUpdateJvmTarget(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            //language=groovy
+            buildGradle.append(
                 """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
+                tasks.named("compileKotlin").get() // Trigger task eager creation
+                
+                java {
+                    toolchain {
+                        languageVersion.set(JavaLanguageVersion.of(11))
+                    }
+                }
+                
                 """.trimIndent()
             )
 
-            build("build")
+            build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                val compilerArgs = output.lineSequence()
+                    .filter { it.contains(":compileKotlin Kotlin compiler args:") }
+                    .first()
+                assert(compilerArgs.contains("-jvm-target 11")) {
+                    "Kotlin compilation jvm-target argument is ${output.substringAfter("-jvm-target ").substringBefore(" ")}"
+                }
+            }
         }
     }
 
     @DisplayName("Build should not produce warnings when '-no-jdk' option is present")
-    @GradleTestVersions
     @GradleTest
     internal fun noWarningOnNoJdkOptionPresent(gradleVersion: GradleVersion) {
         project(
@@ -492,32 +527,28 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @AndroidGradlePluginTests
     @DisplayName("Toolchain should take into account kotlin options that are set via android extension")
-    @GradleTestVersions
-    @GradleTest
-    internal fun kotlinOptionsAndroidAndToolchain(gradleVersion: GradleVersion) {
-        project("android".fullProjectName, gradleVersion) {
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
+    internal fun kotlinOptionsAndroidAndToolchain(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "android".fullProjectName,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = providedJdk.location
+        ) {
             useToolchainExtension(11)
 
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
-
-            build(
-                "assembleDebug",
-                buildOptions = defaultBuildOptions.copy(
-                    androidVersion = TestVersions.AGP.AGP_42.version
-                )
-            )
+            build("assembleDebug")
         }
     }
 
     @DisplayName("Toolchain should not make an exception when build is running on JDK 11, but toolchain is set to JDK 1.8")
-    @GradleTestVersions
     @GradleTest
     internal fun shouldNotRaiseErrorOnJDK11withJDK1_8Toolchain(gradleVersion: GradleVersion) {
         project(
@@ -532,7 +563,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("JVM target shouldn't be changed when toolchain is not configured")
-    @GradleTestVersions
     @GradleTest
     internal fun shouldNotChangeJvmTargetWithNoToolchain(gradleVersion: GradleVersion) {
         project(
@@ -540,13 +570,21 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = getJdk11().javaHome
         ) {
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             //language=Groovy
             buildGradle.append(
                 """
                 tasks.named("compileKotlin") {
                     doLast {
-                        def actualJvmTarget = filteredArgumentsMap['jvmTarget']
-                        if (actualJvmTarget != "null") {
+                        def actualJvmTarget = compilerOptions.jvmTarget.orNull
+                        if (actualJvmTarget != null) {
                             //noinspection GroovyAssignabilityCheck
                             throw new GradleException("Expected `jvmTarget` value is 'null' but the actual value was ${'$'}actualJvmTarget")
                         }
@@ -559,7 +597,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @DisplayName("Kotlin toolchain should support configuration cache")
-    @GradleTestVersions
     @GradleTest
     internal fun testConfigurationCache(gradleVersion: GradleVersion) {
         project(
@@ -567,15 +604,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
-            useToolchainExtension(15)
-
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
+            useToolchainExtension(17)
 
             build("assemble")
             build("assemble") {
@@ -592,14 +621,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
-            //language=properties
-            gradleProperties.append(
-                """
-                # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
-                """.trimIndent()
-            )
-
             build("assemble")
             build("assemble")
         }
@@ -635,6 +656,48 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build("assemble") {
                 assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
+    @DisplayName("KT-55004: Should use non-default toolchain for parent project")
+    @GradleTest
+    internal fun toolchainFromParentProject(gradleVersion: GradleVersion) {
+        project(
+            projectName = "multiproject".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            //language=Groovy
+            subProject("lib").buildGradle.appendText(
+                """
+                |
+                |tasks.named("compileJava", JavaCompile) {
+                |    targetCompatibility = JavaVersion.VERSION_11
+                |    sourceCompatibility = JavaVersion.VERSION_11
+                |}
+                """.trimMargin()
+            )
+
+            //language=Groovy
+            buildGradle.appendText(
+                """
+                |
+                |allprojects {
+                |    tasks.withType(org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain.class)
+                |         .configureEach {
+                |              kotlinJavaToolchain.jdk.use(
+                |                  "${getJdk11Path()}",
+                |                  JavaVersion.VERSION_11
+                |              )
+                |         }
+                |}
+                """.trimMargin()
+            )
+
+            build(":lib:compileKotlin") {
+                assertOutputDoesNotContain("-jvm-target 1.8")
+                assertOutputContains("-jvm-target 11")
             }
         }
     }

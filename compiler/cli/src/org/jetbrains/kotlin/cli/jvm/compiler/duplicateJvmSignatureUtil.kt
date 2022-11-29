@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
@@ -25,7 +24,7 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
     }
 
     fun doGetDiagnostics(): Diagnostics? {
-        if (element.containingFile.safeAs<KtFile>()?.safeIsScript() == true) return null
+        if ((element.containingFile as? KtFile)?.safeIsScript() == true) return null
 
         var parent = element.parent
         if (element is KtPropertyAccessor) {

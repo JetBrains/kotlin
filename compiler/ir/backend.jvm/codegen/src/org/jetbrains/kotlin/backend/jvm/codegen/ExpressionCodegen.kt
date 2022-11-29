@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
-import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -57,7 +56,6 @@ import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -295,6 +293,7 @@ class ExpressionCodegen(
             (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
             // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
             irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
             // Although these are accessible from Java, the functions they bridge to already have the assertions.
             irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
             irFunction.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE ||
@@ -323,10 +322,12 @@ class ExpressionCodegen(
 
     // * Operator functions require non-null assertions on parameters even if they are private.
     // * Local function for lambda survives at this stage if it was used in 'invokedynamic'-based code.
-    //   Such functions require non-null assertions on parameters.
-    private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction) =
-        irFunction is IrSimpleFunction && irFunction.isOperator ||
-                irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+    // * Hidden constructors with mangled parameters require non-null assertions (see KT-53492)
+    private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction): Boolean {
+        if (irFunction is IrSimpleFunction && irFunction.isOperator || irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return true
+        if (context.hiddenConstructorsWithMangledParams.containsKey(irFunction)) return true
+        return false
+    }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
         if (param.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
@@ -1453,30 +1454,12 @@ class ExpressionCodegen(
             if (element.typeArgumentsCount == 0) {
                 //avoid ambiguity with type constructor type parameters
                 emptyMap()
-            } else typeArgumentContainer.typeParameters.keysToMap {
-                element.getTypeArgumentOrDefault(it)
+            } else typeArgumentContainer.typeParameters.associate {
+                it.symbol to element.getTypeArgumentOrDefault(it)
             }
 
-        val mappings = TypeParameterMappings<IrType>()
-        for ((key, type) in typeArguments.entries) {
-            val reificationArgument = typeMapper.typeSystem.extractReificationArgument(type)
-            if (reificationArgument == null) {
-                // type is not generic
-                val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
-                val asmType = typeMapper.mapTypeParameter(type, signatureWriter)
-
-                mappings.addParameterMappingToType(
-                    key.name.identifier, type, asmType, signatureWriter.toString(), key.isReified
-                )
-            } else {
-                mappings.addParameterMappingForFurtherReification(
-                    key.name.identifier, type, reificationArgument.second, key.isReified
-                )
-            }
-        }
-
+        val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)
         val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data)
-
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),

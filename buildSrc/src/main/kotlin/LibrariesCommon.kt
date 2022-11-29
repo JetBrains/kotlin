@@ -21,8 +21,9 @@ fun Project.configureJava9Compilation(
     configurations["java9CompileClasspath"].extendsFrom(configurations["compileClasspath"])
 
     tasks.named("compileJava9Kotlin", KotlinCompile::class.java) {
-        configureTaskToolchain(JdkMajorVersion.JDK_9)
-        kotlinOptions.jvmTarget = JdkMajorVersion.JDK_9.targetName
+        configureTaskToolchain(JdkMajorVersion.JDK_9_0)
+        @Suppress("DEPRECATION")
+        kotlinOptions.jvmTarget = JdkMajorVersion.JDK_9_0.targetName
     }
 
     tasks.named("compileJava9Java", JavaCompile::class.java) {
@@ -30,7 +31,7 @@ fun Project.configureJava9Compilation(
 
         targetCompatibility = JavaVersion.VERSION_1_9.toString()
         sourceCompatibility = JavaVersion.VERSION_1_9.toString()
-        configureTaskToolchain(JdkMajorVersion.JDK_9)
+        configureTaskToolchain(JdkMajorVersion.JDK_9_0)
 
         // module-info.java should be in java9 source set by convention
         val java9SourceSet = sourceSets["java9"].java

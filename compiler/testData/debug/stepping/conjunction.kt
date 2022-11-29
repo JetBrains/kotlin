@@ -34,3 +34,11 @@ fun getD() = true
 
 // EXPECTATIONS JS_IR
 // test.kt:3 box
+// test.kt:13 getA
+// test.kt:4 box
+// test.kt:15 getB
+// test.kt:5 box
+// test.kt:17 getC
+// test.kt:9 box
+// test.kt:3 box
+// test.kt:11 box

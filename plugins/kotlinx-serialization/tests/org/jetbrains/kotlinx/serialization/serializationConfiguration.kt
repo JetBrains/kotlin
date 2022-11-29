@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIntrinsicsState
 import org.jetbrains.kotlinx.serialization.compiler.fir.FirSerializationExtensionRegistrar
 import java.io.File
 
@@ -34,8 +35,7 @@ class SerializationEnvironmentConfigurator(
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
-        SerializationComponentRegistrar.registerExtensions(this)
-        FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
+        SerializationComponentRegistrar.registerExtensions(this, SerializationIntrinsicsState.FORCE_ENABLED)
     }
 }
 

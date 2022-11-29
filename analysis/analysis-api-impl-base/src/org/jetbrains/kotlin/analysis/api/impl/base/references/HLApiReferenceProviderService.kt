@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.references
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.ContributedReferenceHost
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -21,13 +22,13 @@ import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.utils.SmartList
 
-class HLApiReferenceProviderService : KotlinReferenceProvidersService() {
+class HLApiReferenceProviderService(val project: Project) : KotlinReferenceProvidersService() {
     private val originalProvidersBinding: MultiMap<Class<out PsiElement>, KotlinPsiReferenceProvider>
     private val providersBindingCache: Map<Class<out PsiElement>, List<KotlinPsiReferenceProvider>>
 
     init {
         val registrar = KotlinPsiReferenceRegistrar()
-        KotlinReferenceProviderContributor.getInstance().registerReferenceProviders(registrar)
+        KotlinReferenceProviderContributor.getInstance(project).registerReferenceProviders(registrar)
         originalProvidersBinding = registrar.providers
 
         providersBindingCache = ConcurrentFactoryMap.createMap<Class<out PsiElement>, List<KotlinPsiReferenceProvider>> { klass ->

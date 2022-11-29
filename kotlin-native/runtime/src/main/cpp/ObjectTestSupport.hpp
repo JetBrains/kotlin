@@ -28,8 +28,10 @@ private:
 
         int32_t instanceSize_ = 0;
         std_support::vector<int32_t> objOffsets_;
+        int32_t objOffsetsCount_ = 0;
         int32_t flags_ = 0;
         const TypeInfo* superType_ = nullptr;
+        void (*processObjectInMark_)(void*, ObjHeader*) = nullptr;
     };
 
 public:
@@ -57,7 +59,16 @@ public:
     template <typename Payload>
     class ArrayBuilder : public Builder {
     public:
-        ArrayBuilder() noexcept { instanceSize_ = -static_cast<int32_t>(sizeof(Payload)); }
+        ArrayBuilder() noexcept {
+            instanceSize_ = -static_cast<int32_t>(sizeof(Payload));
+            if constexpr (std::is_same_v<Payload, ObjHeader*>) {
+                // Following RTTIGenerator.kt
+                objOffsetsCount_ = 1;
+                processObjectInMark_ = Kotlin_processArrayInMark;
+            } else {
+                processObjectInMark_ = Kotlin_processEmptyObjectInMark;
+            }
+        }
 
         ArrayBuilder&& addFlag(Konan_TypeFlags flag) noexcept {
             flags_ |= flag;
@@ -75,12 +86,8 @@ public:
         typeInfo_.instanceSize_ = builder.instanceSize_;
         objOffsets_ = std::move(builder.objOffsets_);
         typeInfo_.objOffsets_ = objOffsets_.data();
-        if (&typeInfo_ == theArrayTypeInfo) {
-            // Following RTTIGenerator.kt
-            typeInfo_.objOffsetsCount_ = 1;
-        } else {
-            typeInfo_.objOffsetsCount_ = objOffsets_.size();
-        }
+        typeInfo_.objOffsetsCount_ = builder.objOffsetsCount_;
+        typeInfo_.processObjectInMark = builder.processObjectInMark_;
         typeInfo_.flags_ = builder.flags_;
         typeInfo_.superType_ = builder.superType_;
     }
@@ -174,6 +181,8 @@ TypeInfoHolder::ObjectBuilder<Payload>::ObjectBuilder() noexcept {
         auto& actualField = payload.*field;
         objOffsets_.push_back(reinterpret_cast<uintptr_t>(&actualField) - reinterpret_cast<uintptr_t>(object.header()));
     }
+    objOffsetsCount_ = objOffsets_.size();
+    processObjectInMark_ = Kotlin_processObjectInMark;
 }
 
 namespace internal {

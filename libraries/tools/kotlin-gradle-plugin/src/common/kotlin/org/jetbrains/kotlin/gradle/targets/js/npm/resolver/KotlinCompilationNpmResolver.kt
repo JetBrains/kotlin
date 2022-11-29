@@ -17,6 +17,7 @@ import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
-import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -80,10 +80,6 @@ internal class KotlinCompilationNpmResolver(
             npmProject.publicPackageJsonTaskName,
             listOf(compilation)
         ) {
-            it.dependsOn(
-                nodeJs_.npmInstallTaskProvider,
-                nodeJs_.storeYarnLockTaskProvider,
-            )
             it.dependsOn(packageJsonTaskHolder)
         }.also { packageJsonTask ->
             if (compilation.isMain()) {
@@ -93,16 +89,6 @@ internal class KotlinCompilationNpmResolver(
                     .configure {
                         it.dependsOn(packageJsonTask)
                     }
-            }
-        }
-
-    @Transient
-    val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins
-        .flatMap {
-            if (compilation.isMain()) {
-                it.createCompilationResolverPlugins(this)
-            } else {
-                emptyList()
             }
         }
 
@@ -190,13 +176,6 @@ internal class KotlinCompilationNpmResolver(
         // We don't have `kotlin-js-test-runner` in NPM yet
         all.dependencies.add(nodeJs_.versions.kotlinJsTestRunner.createDependency(project))
 
-        project.dependencies.add(
-            all.name,
-            project.fileTree(npmProject.externalsDir).include {
-                it.file.isCompatibleArchive
-            }
-        )
-
         return all
     }
 
@@ -277,16 +256,6 @@ internal class KotlinCompilationNpmResolver(
                     .configure { task ->
                         task.from(publicPackageJsonTaskHolder)
                     }
-            }
-
-            plugins.forEach {
-                it.hookDependencies(
-                    internalDependencies,
-                    internalCompositeDependencies,
-                    externalGradleDependencies,
-                    externalNpmDependencies,
-                    fileCollectionDependencies
-                )
             }
         }
 
@@ -390,11 +359,13 @@ internal class KotlinCompilationNpmResolver(
 
         @get:PathSensitive(PathSensitivity.ABSOLUTE)
         @get:IgnoreEmptyDirectories
+        @get:NormalizeLineEndings
         @get:InputFiles
         val internalCompositeDependencies: Collection<File>,
 
         @get:PathSensitive(PathSensitivity.ABSOLUTE)
         @get:IgnoreEmptyDirectories
+        @get:NormalizeLineEndings
         @get:InputFiles
         val externalGradleDependencies: Collection<File>,
 
@@ -416,7 +387,6 @@ internal class KotlinCompilationNpmResolver(
     ) : Serializable {
         private val projectPackagesDir by lazy { compilationResolver.nodeJs_.projectPackagesDir }
         private val rootDir by lazy { compilationResolver.nodeJs_.rootProject.rootDir }
-        private val dukatPackageVersion by lazy { compilationResolver.nodeJs_.versions.dukat }
 
         @Transient
         internal lateinit var compilationResolver: KotlinCompilationNpmResolver
@@ -467,18 +437,7 @@ internal class KotlinCompilationNpmResolver(
             val toolsNpmDependencies = compilationResolver.rootResolver.taskRequirements
                 .getCompilationNpmRequirements(projectPath, compilationResolver.compilationDisambiguatedName)
 
-            val dukatIfNecessary = if (externalNpmDependencies.isNotEmpty()) {
-                setOf(
-                    NpmDependencyDeclaration(
-                        scope = NpmDependency.Scope.DEV,
-                        name = dukatPackageVersion.name,
-                        version = dukatPackageVersion.version,
-                        generateExternals = false
-                    )
-                )
-            } else emptySet()
-
-            val otherNpmDependencies = toolsNpmDependencies + dukatIfNecessary + transitiveNpmDependencies
+            val otherNpmDependencies = toolsNpmDependencies + transitiveNpmDependencies
             val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies)
             val packageJsonHandlers = if (compilationResolver.compilation != null) {
                 compilationResolver.compilation.packageJsonHandlers

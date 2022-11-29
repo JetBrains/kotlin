@@ -17,12 +17,14 @@ object GradleKpmDefaultKotlinSourceArchiveTaskConfigurator : GradleKpmSourceArch
     override fun registerSourceArchiveTask(variant: GradleKpmVariant): TaskProvider<*> {
         return sourcesJarTaskNamed(
             taskName = variant.sourceArchiveTaskName,
+            componentName = variant.name,
             project = variant.project,
             sourceSets = lazy {
                 GradleKpmFragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(variant)
                     .entries.associate { it.key.unambiguousNameInProject to it.value.get() }
             },
-            artifactNameAppendix = variant.name
+            artifactNameAppendix = variant.name,
+            componentTypeName = "variant",
         )
     }
 }

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.ProximityReader
+
+modules = ProximityReader
+compilerOpts = -framework ProximityReader
+linkerOpts = -framework ProximityReader
+#Disabled: Swift-only framework

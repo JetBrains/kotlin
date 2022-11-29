@@ -25,6 +25,9 @@ public abstract @interface Anno6 /* Anno6*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
+  @kotlin.jvm.JvmField()
+  public static final int x = 42 /* initializer type: int */;
+
   @org.jetbrains.annotations.NotNull()
   public static final AnnoWithCompanion.Companion Companion;
 
@@ -42,14 +45,14 @@ public static final class Companion /* AnnoWithCompanion.Companion*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  public abstract Anno[] x();//  x()
+  public abstract Anno[] x() default {Anno(p = "a"), Anno(p = "b")};//  x()
 
-  public abstract java.lang.String p();//  p()
+  public abstract java.lang.String p() default "";//  p()
 
 }
 
 @Deprecated(message = "This anno is deprecated, use === instead", replaceWith = @ReplaceWith(expression = "this === other"))
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
 @kotlin.annotation.MustBeDocumented()
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
@@ -71,7 +74,7 @@ public abstract @interface AnnotatedAttribute /* AnnotatedAttribute*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Deprecated /* Deprecated*/ {
-  public abstract ReplaceWith replaceWith();//  replaceWith()
+  public abstract ReplaceWith replaceWith() default @ReplaceWith(expression = "");//  replaceWith()
 
   public abstract java.lang.String message();//  message()
 
@@ -89,7 +92,7 @@ public abstract @interface Ann /* Ann*/ {
 public final class F /* F*/ implements java.lang.Runnable {
   @Anno(p = "p")
   @org.jetbrains.annotations.NotNull()
-  private java.lang.String prop;
+  private java.lang.String prop = "x" /* initializer type: java.lang.String */;
 
   @Anno(p = "f")
   public final void f(@Anno() @org.jetbrains.annotations.NotNull() java.lang.String);//  f(java.lang.String)
@@ -105,13 +108,13 @@ public final class F /* F*/ implements java.lang.Runnable {
 
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.Nullable()
-  private java.lang.String x;
+  private java.lang.String x = null /* initializer type: null */;
 
   @Anno()
   public  Foo(error.NonExistentClass);//  .ctor(error.NonExistentClass)
 
   @Anno()
-  public final void f4(java.lang.String);//  f4(java.lang.String)
+  public final void f4(@org.jetbrains.annotations.NotNull() java.lang.String);//  f4(java.lang.String)
 
   @Anno()
   public final void setX(@org.jetbrains.annotations.Nullable() java.lang.String);//  setX(java.lang.String)

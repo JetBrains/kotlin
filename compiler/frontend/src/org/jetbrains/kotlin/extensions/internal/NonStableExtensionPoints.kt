@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
@@ -33,7 +36,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
  */
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
-internal annotation class InternalNonStableExtensionPoints
+annotation class InternalNonStableExtensionPoints
 
 @InternalNonStableExtensionPoints
 interface TypeResolutionInterceptorExtension {
@@ -52,8 +55,6 @@ interface TypeResolutionInterceptorExtension {
 
 @InternalNonStableExtensionPoints
 interface CallResolutionInterceptorExtension {
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptResolvedCallAtomCandidate(
         candidateDescriptor: CallableDescriptor,
         completedCallAtom: ResolvedCallAtom,
@@ -62,8 +63,16 @@ interface CallResolutionInterceptorExtension {
         diagnostics: Collection<KotlinCallDiagnostic>
     ): CallableDescriptor = candidateDescriptor
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
+    fun interceptCandidates(
+        candidates: Collection<NewResolutionOldInference.MyCandidate>,
+        context: BasicCallResolutionContext,
+        candidateResolver: CandidateResolver,
+        callResolver: CallResolver,
+        name: Name,
+        kind: NewResolutionOldInference.ResolutionKind,
+        tracing: TracingStrategy
+    ): Collection<NewResolutionOldInference.MyCandidate> = candidates
+
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -74,8 +83,6 @@ interface CallResolutionInterceptorExtension {
         location: LookupLocation
     ): Collection<FunctionDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -88,8 +95,6 @@ interface CallResolutionInterceptorExtension {
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<FunctionDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -100,8 +105,6 @@ interface CallResolutionInterceptorExtension {
         location: LookupLocation
     ): Collection<VariableDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
         scopeTower: ImplicitScopeTower,

@@ -8,6 +8,8 @@ plugins {
 
 val robolectricClasspath by configurations.creating
 val androidExtensionsRuntimeForTests by configurations.creating
+val layoutLib by configurations.creating
+val layoutLibApi by configurations.creating
 
 dependencies {
     testApi(intellijCore())
@@ -20,6 +22,7 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
@@ -41,6 +44,9 @@ dependencies {
     embedded(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
     androidExtensionsRuntimeForTests(project(":kotlin-android-extensions-runtime"))  { isTransitive = false }
+
+    layoutLib("org.jetbrains.intellij.deps.android.tools:layoutlib:26.5.0") { isTransitive = false }
+    layoutLibApi("com.android.tools.layoutlib:layoutlib-api:26.5.0") { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()
@@ -73,8 +79,13 @@ projectTest {
         robolectricClasspath.asPath
     }
 
+    val layoutLibConf: FileCollection = layoutLib
+    val layoutLibApiConf: FileCollection = layoutLibApi
+
     doFirst {
         systemProperty("androidExtensionsRuntime.classpath", androidExtensionsRuntimeProvider.get())
         systemProperty("robolectric.classpath", robolectricClasspathProvider.get())
+        systemProperty("layoutLib.path", layoutLibConf.singleFile.canonicalPath)
+        systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)
     }
 }

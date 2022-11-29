@@ -79,7 +79,6 @@ class JavaClassStaticUseSiteScope internal constructor(
         return result
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getCallableNames(): Set<Name> {
         return buildSet {
             addAll(declaredMemberScope.getCallableNames())
@@ -89,7 +88,6 @@ class JavaClassStaticUseSiteScope internal constructor(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getClassifierNames(): Set<Name> {
         return buildSet {
             addAll(declaredMemberScope.getClassifierNames())

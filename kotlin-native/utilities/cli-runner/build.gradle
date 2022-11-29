@@ -10,7 +10,7 @@ apply plugin: 'kotlin'
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xskip-metadata-version-check']
+        freeCompilerArgs += ['-Xskip-metadata-version-check']
     }
 }
 
@@ -23,4 +23,5 @@ dependencies {
     implementation project(':kotlin-native:Interop:StubGenerator')
     implementation project(':kotlin-native:klib')
     implementation project(":kotlin-native:utilities:basic-utils")
+    implementation project(path: ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
 }

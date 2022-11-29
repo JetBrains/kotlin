@@ -8,9 +8,6 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.TaskState
-import org.gradle.api.logging.LogLevel
-import org.gradle.api.tasks.TaskCollection
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.properties.saveProperties
@@ -22,37 +19,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Path
 import org.jetbrains.kotlin.konan.file.File as KFile
-import org.gradle.nativeplatform.toolchain.internal.*
-import org.gradle.nativeplatform.toolchain.plugins.ClangCompilerPlugin
-import org.gradle.api.Incubating
-import org.gradle.api.NamedDomainObjectFactory
-import org.gradle.api.NonNullApi
-import org.gradle.api.Plugin
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.plugins.PotentialPlugin
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.internal.operations.BuildOperationExecutor
-import org.gradle.internal.os.OperatingSystem
-import org.gradle.internal.reflect.Instantiator
-import org.gradle.internal.service.ServiceRegistry
-import org.gradle.internal.work.WorkerLeaseService
-import org.gradle.model.Defaults
-import org.gradle.model.RuleSource
-import org.gradle.nativeplatform.internal.CompilerOutputFileNamingSchemeFactory
-import org.gradle.nativeplatform.platform.internal.NativePlatformInternal
-import org.gradle.nativeplatform.plugins.NativeComponentPlugin
-import org.gradle.nativeplatform.toolchain.Clang
-import org.gradle.nativeplatform.toolchain.internal.clang.ClangToolChain
-import org.gradle.nativeplatform.toolchain.internal.gcc.AbstractGccCompatibleToolChain
-import org.gradle.nativeplatform.toolchain.internal.gcc.DefaultGccPlatformToolChain
-import org.gradle.nativeplatform.toolchain.internal.gcc.metadata.SystemLibraryDiscovery
-import org.gradle.nativeplatform.toolchain.internal.metadata.CompilerMetaDataProviderFactory
-import org.gradle.nativeplatform.toolchain.internal.tools.CommandLineToolSearchResult
-import org.gradle.nativeplatform.toolchain.internal.tools.GccCommandLineToolConfigurationInternal
-import org.gradle.nativeplatform.toolchain.internal.tools.ToolSearchPath
-import org.gradle.process.internal.ExecActionFactory
-import java.io.ByteArrayOutputStream
-import java.net.URI
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -85,17 +52,8 @@ val Project.testOutputFramework
 val Project.testOutputExternal
     get() = (findProperty("testOutputExternal") as File).toString()
 
-val Project.cacheRedirectorEnabled
-    get() = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
-
 val Project.compileOnlyTests: Boolean
     get() = hasProperty("test_compile_only")
-
-fun Project.redirectIfEnabled(url: String): String = if (cacheRedirectorEnabled) {
-    val base = URL(url)
-    "https://cache-redirector.jetbrains.com/${base.host}/${base.path}"
-} else
-    url
 
 val validPropertiesNames = listOf(
     "konan.home",
@@ -114,6 +72,9 @@ val kotlinNativeHome
 
 val Project.useCustomDist
     get() = validPropertiesNames.any { hasProperty(it) }
+
+val Project.nativeBundlesLocation
+    get() = file(findProperty("nativeBundlesLocation") ?: project.projectDir)
 
 private val libraryRegexp = Regex("""^import\s+platform\.(\S+)\..*$""")
 fun File.dependencies() =

@@ -3,26 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-
-interface KotlinTargetComponent : SoftwareComponent {
-    val target: KotlinTarget
-    val publishable: Boolean
-    val publishableOnCurrentHost: Boolean
-    val defaultArtifactId: String
-    val sourcesArtifacts: Set<PublishArtifact>
-}
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 
 interface KotlinTarget : Named, HasAttributes {
     val targetName: String
@@ -32,7 +25,7 @@ interface KotlinTarget : Named, HasAttributes {
 
     val platformType: KotlinPlatformType
 
-    val compilations: NamedDomainObjectContainer<out KotlinCompilation<KotlinCommonOptions>>
+    val compilations: NamedDomainObjectContainer<out KotlinCompilation<KotlinCommonOptionsDeprecated>>
 
     val project: Project
 

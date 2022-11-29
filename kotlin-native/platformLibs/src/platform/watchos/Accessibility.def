@@ -1,4 +1,4 @@
-depends = CoreFoundation CoreGraphics Foundation Security darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics Foundation Security darwin posix
 language = Objective-C
 package = platform.Accessibility
 modules = Accessibility

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
@@ -31,6 +32,8 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.InsnList
 
 class IrInlineIntrinsicsSupport(
     private val classCodegen: ClassCodegen,
@@ -39,6 +42,9 @@ class IrInlineIntrinsicsSupport(
 ) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
     override val state: GenerationState
         get() = classCodegen.context.state
+
+    private val pluginExtensions = IrGenerationExtension.getInstances(classCodegen.context.state.project)
+        .mapNotNull { it.getPlatformIntrinsicExtension(classCodegen.context) as? JvmIrIntrinsicExtension }
 
     override fun putClassInstance(v: InstructionAdapter, type: IrType) {
         ExpressionCodegen.generateClassInstance(v, type, classCodegen.typeMapper, wrapPrimitives = false)
@@ -119,5 +125,9 @@ class IrInlineIntrinsicsSupport(
     override fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name) {
         classCodegen.context.ktDiagnosticReporter.at(reportErrorsOn, containingFile)
             .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
+    }
+
+    override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, reifiedInsn: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {
+        return pluginExtensions.any { it.rewritePluginDefinedOperationMarker(v, reifiedInsn, instructions, type) }
     }
 }

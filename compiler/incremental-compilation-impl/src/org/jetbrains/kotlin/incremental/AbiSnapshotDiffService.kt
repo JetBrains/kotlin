@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateMemberNames
+import org.jetbrains.kotlin.incremental.DifferenceCalculatorForClass.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.metadata.ProtoBuf.Visibility.PRIVATE
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.name.FqName
@@ -98,7 +98,7 @@ class AbiSnapshotDiffService() {
             when (protoData) {
                 is ClassProtoData -> {
                     fqNames.add(fqName)
-                    symbols.addAll(protoData.getNonPrivateMemberNames().map { LookupSymbol(it, fqName.asString()) })
+                    symbols.addAll(protoData.getNonPrivateMembers().map { LookupSymbol(it, fqName.asString()) })
                 }
                 is PackagePartProtoData -> {
                     symbols.addAll(

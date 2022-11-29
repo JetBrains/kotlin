@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier.Scope
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
@@ -83,7 +83,7 @@ internal fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedN
 internal fun CInteropCommonizerDependent.Factory.from(project: Project, sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
         target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
-        compilations = (compilationsBySourceSets(project)[sourceSet] ?: return null)
+        compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>().toSet()
     )
 }
@@ -93,7 +93,7 @@ internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(
 ): CInteropCommonizerDependent? {
     return from(
         target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
-        compilations = (compilationsBySourceSets(project)[sourceSet] ?: return null)
+        compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>()
             .flatMap { compilation -> compilation.associateWithClosure }
             .filterIsInstance<KotlinNativeCompilation>()

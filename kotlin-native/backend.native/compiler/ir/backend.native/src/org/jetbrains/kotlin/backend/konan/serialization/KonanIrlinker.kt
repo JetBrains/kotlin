@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAnd
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
@@ -42,8 +41,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
@@ -307,6 +304,8 @@ object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
     }
 }
 
+internal data class DeserializedInlineFunction(val firstAccess: Boolean, val function: InlineFunctionOriginInfo)
+
 internal class KonanIrLinker(
         private val currentModule: ModuleDescriptor,
         override val translationPluginContext: TranslationPluginContext?,
@@ -318,12 +317,12 @@ internal class KonanIrLinker(
         private val stubGenerator: DeclarationStubGenerator,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         exportedDependencies: List<ModuleDescriptor>,
+        partialLinkageEnabled: Boolean,
         private val cachedLibraries: CachedLibraries,
         private val lazyIrForCaches: Boolean,
         private val libraryBeingCached: PartialCacheInfo?,
-        override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
-) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies, partialLinkageEnabled) {
 
     companion object {
         private val C_NAMES_NAME = Name.identifier("cnames")
@@ -337,8 +336,16 @@ internal class KonanIrLinker(
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
-    override val fakeOverrideBuilder: FakeOverrideBuilder =
-        FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), friendModules, KonanFakeOverrideClassFilter)
+
+    override val fakeOverrideBuilder = FakeOverrideBuilder(
+            linker = this,
+            symbolTable = symbolTable,
+            mangler = KonanManglerIr,
+            typeSystem = IrTypeSystemContextImpl(builtIns),
+            friendModules = friendModules,
+            partialLinkageEnabled = partialLinkageSupport.partialLinkageEnabled,
+            platformSpecificClassFilter = KonanFakeOverrideClassFilter
+    )
 
     val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()
     val klibToModuleDeserializerMap = mutableMapOf<KotlinLibrary, KonanPartialModuleDeserializer>()
@@ -387,14 +394,18 @@ internal class KonanIrLinker(
         else -> null
     }
 
-    fun getExternalDeclarationFileName(declaration: IrDeclaration) = with(declaration) {
-        val externalPackageFragment = getPackageFragment() as? IrExternalPackageFragment
-                ?: error("Expected an external package fragment for ${render()}")
-        val moduleDescriptor = externalPackageFragment.packageFragmentDescriptor.containingDeclaration
-        val moduleDeserializer = moduleDeserializers[moduleDescriptor]
-                ?: error("No module deserializer for $moduleDescriptor")
-        val idSig = moduleDeserializer.descriptorSignatures[descriptor] ?: error("No signature for $descriptor")
-        idSig.topLevelSignature().fileSignature()?.fileName ?: error("No file for $idSig")
+    fun getExternalDeclarationFileName(declaration: IrDeclaration) = when (val packageFragment = declaration.getPackageFragment()) {
+        is IrFile -> packageFragment.path
+
+        is IrExternalPackageFragment -> {
+            val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
+            val moduleDeserializer = moduleDeserializers[moduleDescriptor] ?: error("No module deserializer for $moduleDescriptor")
+            val descriptor = declaration.descriptor
+            val idSig = moduleDeserializer.descriptorSignatures[descriptor] ?: error("No signature for $descriptor")
+            idSig.topLevelSignature().fileSignature()?.fileName ?: error("No file for $idSig")
+        }
+
+        else -> error("Unknown package fragment kind ${packageFragment::class.java}")
     }
 
     private val IrClass.firstNonClassParent: IrDeclarationParent
@@ -631,13 +642,22 @@ internal class KonanIrLinker(
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
         private val inlineFunctionReferences by lazy {
-            (cachedLibraries.getLibraryCache(klib)
-                    ?: error("No cache for ${klib.libraryName}")).serializedInlineFunctionBodies.associateBy {
+            val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
+            cache.serializedInlineFunctionBodies.associateBy {
                 fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
             }
         }
 
-        fun deserializeInlineFunction(function: IrFunction): InlineFunctionOriginInfo {
+        private val deserializedInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
+
+        fun deserializeInlineFunction(function: IrFunction): DeserializedInlineFunction {
+            deserializedInlineFunctions[function]?.let { return DeserializedInlineFunction(firstAccess = false, it) }
+            val result = deserializeInlineFunctionInternal(function)
+            deserializedInlineFunctions[function] = result
+            return DeserializedInlineFunction(firstAccess = true, result)
+        }
+
+        private fun deserializeInlineFunctionInternal(function: IrFunction): InlineFunctionOriginInfo {
             val packageFragment = function.getPackageFragment() as? IrExternalPackageFragment
                     ?: error("Expected an external package fragment for ${function.render()}")
             if (function.parents.any { (it as? IrFunction)?.isInline == true }) {
@@ -709,19 +729,19 @@ internal class KonanIrLinker(
                 }
             }
 
-            unlinkedDeclarationsSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
-            unlinkedDeclarationsSupport.markUsedClassifiersInInlineLazyIrFunction(function)
+            partialLinkageSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
+            partialLinkageSupport.markUsedClassifiersInInlineLazyIrFunction(function)
 
             fakeOverrideBuilder.provideFakeOverrides()
 
-            unlinkedDeclarationsSupport.processUnlinkedDeclarations(linker.messageLogger) { listOf(function) }
+            partialLinkageSupport.processUnlinkedDeclarations(linker.messageLogger) { listOf(function) }
 
             return InlineFunctionOriginInfo(function, fileDeserializationState.file, inlineFunctionReference.startOffset, inlineFunctionReference.endOffset)
         }
 
         private val classesFields by lazy {
-            (cachedLibraries.getLibraryCache(klib)
-                    ?: error("No cache for ${klib.libraryName}")).serializedClassFields.associateBy {
+            val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
+            cache.serializedClassFields.associateBy {
                 fileDeserializationStates[it.file].declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.classSignature)
             }
         }

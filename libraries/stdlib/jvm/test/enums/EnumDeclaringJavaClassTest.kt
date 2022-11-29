@@ -43,4 +43,12 @@ class EnumDeclaringJavaClassTest {
         set.addAll(TestEnum.E.declaringJavaClass.enumConstants.toList())
         assertEquals(EnumSet.of(TestEnum.E), set)
     }
+
+    @Test
+    fun worksOnGenericEnum() {
+        fun <T : Enum<T>> check(e: Enum<T>) {
+            assertEquals<Class<*>>(e.declaringJavaClass, TestEnum::class.java)
+        }
+        check(TestEnum.E)
+    }
 }

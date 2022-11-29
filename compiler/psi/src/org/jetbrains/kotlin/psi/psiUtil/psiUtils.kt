@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
-import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -95,7 +94,6 @@ fun PsiElement.nextLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
     return leaf
 }
 
-@SafeVarargs
 fun <T : PsiElement> PsiElement.getParentOfTypes(strict: Boolean = false, vararg parentClasses: Class<out T>): T? {
     return getParentOfTypesAndPredicate(strict, *parentClasses) { true }
 }
@@ -382,29 +380,7 @@ fun PsiElement.startsWithComment(): Boolean = firstChild is PsiComment
 
 // ---------------------------------- Debug/logging ----------------------------------------------------------------------------------------
 
-fun PsiElement.getElementTextWithContext(): String {
-    if (!isValid) return "<invalid element $this>"
-
-    if (this is PsiFile) {
-        return containingFile.text
-    }
-
-    // Find parent for element among file children
-    val topLevelElement = PsiTreeUtil.findFirstParent(this, { it.parent is PsiFile })
-        ?: throw AssertionError("For non-file element we should always be able to find parent in file children")
-
-    val startContextOffset = topLevelElement.startOffset
-    val elementContextOffset = textRange.startOffset
-
-    val inFileParentOffset = elementContextOffset - startContextOffset
-
-
-    val isInjected = containingFile is VirtualFileWindow
-    return StringBuilder(topLevelElement.text)
-        .insert(inFileParentOffset, "<caret>")
-        .insert(0, "File name: ${containingFile.name} Physical: ${containingFile.isPhysical} Injected: $isInjected\n")
-        .toString()
-}
+fun PsiElement.getElementTextWithContext(): String = org.jetbrains.kotlin.utils.getElementTextWithContext(this)
 
 fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${PsiDiagnosticUtils.atLocation(this)}"
 

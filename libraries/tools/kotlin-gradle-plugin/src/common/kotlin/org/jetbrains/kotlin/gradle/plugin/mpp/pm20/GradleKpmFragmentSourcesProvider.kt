@@ -50,7 +50,7 @@ open class GradleKpmFragmentSourcesProvider {
 }
 
 open class LifecycleTasksManager(private val project: Project) {
-    open fun registerClassesTask(compilationData: KotlinCompilationData<*>) = with(project) {
+    open fun registerClassesTask(compilationData: GradleKpmCompilationData<*>) = with(project) {
         val classesTaskName = compilationData.compileAllTaskName
         val classesTask = project.tasks.register(classesTaskName) { classesTask ->
             classesTask.inputs.files(compilationData.output.allOutputs)

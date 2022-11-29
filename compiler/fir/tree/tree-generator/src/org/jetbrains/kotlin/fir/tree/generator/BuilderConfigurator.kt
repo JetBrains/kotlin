@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -60,7 +60,13 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         val functionBuilder by builder {
             parents += declarationBuilder
             parents += annotationContainerBuilder
-            fields from function without listOf("symbol", "resolvePhase", "controlFlowGraphReference", "receiverTypeRef", "typeParameters")
+            fields from function without listOf(
+                "symbol",
+                "resolvePhase",
+                "controlFlowGraphReference",
+                "receiverParameter",
+                "typeParameters",
+            )
         }
 
         val loopJumpBuilder by builder {
@@ -112,11 +118,24 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
+        builder(receiverParameter) {
+            withCopy()
+        }
+
         builder(annotationCall) {
             parents += callBuilder
             default("argumentList") {
                 value = "FirEmptyArgumentList"
             }
+            default("argumentMapping", "FirEmptyAnnotationArgumentMapping")
+            default("annotationTypeRef", "FirImplicitTypeRefImpl(null)")
+            useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, implicitTypeRefType)
+            withCopy()
+        }
+
+        builder(errorAnnotationCall) {
+            parents += callBuilder
+            default("argumentList", "FirEmptyArgumentList")
             default("argumentMapping", "FirEmptyAnnotationArgumentMapping")
             default("annotationTypeRef", "FirImplicitTypeRefImpl(null)")
             useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, implicitTypeRefType)
@@ -295,7 +314,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(valueParameter, type = "FirDefaultSetterValueParameter") {
-            defaultNull("defaultValue", "initializer", "delegate", "receiverTypeRef", "getter", "setter")
+            defaultNull("defaultValue", "initializer", "delegate", "receiverParameter", "getter", "setter")
             defaultFalse("isCrossinline", "isNoinline", "isVararg", "isVar")
             defaultTrue("isVal")
         }

@@ -51,6 +51,9 @@
 
                         <configuration>
                             <multiPlatform>true</multiPlatform>
+                            <args>
+                                <arg>-Xuse-deprecated-legacy-compiler</arg>
+                            </args>
                         </configuration>
                     </execution>
                     <execution>
@@ -62,6 +65,9 @@
 
                         <configuration>
                             <multiPlatform>true</multiPlatform>
+                            <args>
+                                <arg>-Xuse-deprecated-legacy-compiler</arg>
+                            </args>
                         </configuration>
                     </execution>
                 </executions>

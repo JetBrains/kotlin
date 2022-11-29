@@ -12,8 +12,9 @@ typealias BitcodeFile = String
 typealias ObjectFile = String
 typealias ExecutableFile = String
 
-internal class BitcodeCompiler(val context: Context) {
+internal class BitcodeCompiler(val generationState: NativeGenerationState) {
 
+    private val context = generationState.context
     private val platform = context.config.platform
     private val optimize = context.shouldOptimize()
     private val debug = context.config.debug
@@ -31,7 +32,7 @@ internal class BitcodeCompiler(val context: Context) {
                     .execute()
 
     private fun temporary(name: String, suffix: String): String =
-            context.config.tempFiles.create(name, suffix).absolutePath
+            generationState.tempFiles.create(name, suffix).absolutePath
 
     private fun targetTool(tool: String, vararg arg: String) {
         val absoluteToolName = if (platform.configurables is AppleConfigurables) {

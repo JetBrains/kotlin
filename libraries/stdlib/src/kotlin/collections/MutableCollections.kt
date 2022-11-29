@@ -8,8 +8,6 @@
 
 package kotlin.collections
 
-import kotlin.random.Random
-
 /**
  * Removes a single instance of the specified element from this
  * collection, if it is present.
@@ -142,32 +140,39 @@ public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>): Boolean {
 }
 
 /**
+ * Converts this [Iterable] to a list if it is not a [Collection].
+ * Otherwise, returns this.
+ */
+internal fun <T> Iterable<T>.convertToListIfNotCollection(): Collection<T> =
+    if (this is Collection) this else toList()
+
+/**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] collection.
  */
 public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>): Boolean {
-    return removeAll(elements.convertToSetForSetOperationWith(this))
+    return removeAll(elements.convertToListIfNotCollection())
 }
 
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] sequence.
  */
 public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>): Boolean {
-    val set = elements.convertToSetForSetOperation()
-    return set.isNotEmpty() && removeAll(set)
+    val list = elements.toList()
+    return list.isNotEmpty() && removeAll(list)
 }
 
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] array.
  */
 public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>): Boolean {
-    return elements.isNotEmpty() && removeAll(elements.convertToSetForSetOperation())
+    return elements.isNotEmpty() && removeAll(elements.asList())
 }
 
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] collection.
  */
 public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>): Boolean {
-    return retainAll(elements.convertToSetForSetOperationWith(this))
+    return retainAll(elements.convertToListIfNotCollection())
 }
 
 /**
@@ -175,7 +180,7 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>): Boolean
  */
 public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolean {
     if (elements.isNotEmpty())
-        return retainAll(elements.convertToSetForSetOperation())
+        return retainAll(elements.asList())
     else
         return retainNothing()
 }
@@ -184,9 +189,9 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolea
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] sequence.
  */
 public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>): Boolean {
-    val set = elements.convertToSetForSetOperation()
-    if (set.isNotEmpty())
-        return retainAll(set)
+    val list = elements.toList()
+    if (list.isNotEmpty())
+        return retainAll(list)
     else
         return retainNothing()
 }

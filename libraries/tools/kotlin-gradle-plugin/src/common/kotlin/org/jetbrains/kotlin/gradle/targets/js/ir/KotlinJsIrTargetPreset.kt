@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublicationRegistrationMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
@@ -66,21 +63,13 @@ open class KotlinJsIrTargetPreset(
     override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator()
 
-    override fun createTarget(name: String): KotlinJsIrTarget {
-        val result = super.createTarget(name)
-        if (project.hasKpmModel) {
-            mapTargetCompilationsToKpmVariants(result, PublicationRegistrationMode.IMMEDIATE)
-        }
-        return result
-    }
-
     override fun getName(): String = JS_PRESET_NAME
 
     //TODO[Ilya Goncharov] remove public morozov
     public override fun createCompilationFactory(
         forTarget: KotlinJsIrTarget
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
-        KotlinJsIrCompilationFactory(project, forTarget)
+        KotlinJsIrCompilationFactory(forTarget)
 
     companion object {
         val JS_PRESET_NAME = lowerCamelCaseName(

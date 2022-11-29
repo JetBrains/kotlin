@@ -30,7 +30,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     open val forceOnlyHeadTypeConstructor: Boolean
         get() = false
 
-    abstract val TAnnotation.forceWarning: Boolean
+    abstract fun TAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean
 
     abstract val KotlinTypeMarker.annotations: Iterable<TAnnotation>
     abstract val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
@@ -91,7 +91,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         }
 
         val annotationsMutability = annotationTypeQualifierResolver.extractMutability(composedAnnotation)
-        val annotationsNullability = annotationTypeQualifierResolver.extractNullability(composedAnnotation) { forceWarning }
+        val annotationsNullability = annotationTypeQualifierResolver.extractNullability(composedAnnotation) { forceWarning(type) }
         if (annotationsNullability != null) {
             return JavaTypeQualifiers(
                 annotationsNullability.qualifier, annotationsMutability,

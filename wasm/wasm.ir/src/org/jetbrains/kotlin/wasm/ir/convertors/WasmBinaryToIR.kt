@@ -32,7 +32,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     var startFunction: WasmFunction? = null
     val elements: MutableList<WasmElement> = mutableListOf()
     val data: MutableList<WasmData> = mutableListOf()
-    var dataCount: Boolean = false
+    var dataCount: Boolean = true
     val tags: MutableList<WasmTag> = mutableListOf()
 
     private fun <T> byIdx(l1: List<T>, l2: List<T>, index: Int): T {
@@ -468,6 +468,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
         WasmI16,
         WasmFuncRef,
         WasmAnyRef,
+        WasmExternRef,
         WasmEqRef
     ).associateBy { it.code }
 
@@ -490,7 +491,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
         return when (code.toInt()) {
             0x70 -> WasmFuncRef
-            0x6F -> WasmAnyRef
+            0x6F -> WasmExternRef
             else -> error("Unsupported heap type ${code.toString(16)}")
         }
     }

@@ -24,7 +24,7 @@ public class Manager {
 
     class Task(val callback: Manager.() -> Unit) : Runnable {
         override public fun run() {
-            callback(<!NO_VALUE_FOR_PARAMETER!>)<!> // Manager is not accessible here, but no error is shown
+            callback<!NO_VALUE_FOR_PARAMETER!>()<!> // Manager is not accessible here, but no error is shown
         }
     }
 }

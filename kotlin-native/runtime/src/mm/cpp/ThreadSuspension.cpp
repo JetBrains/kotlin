@@ -45,7 +45,6 @@ void yield() noexcept {
 THREAD_LOCAL_VARIABLE bool gSuspensionRequestedByCurrentThread = false;
 [[clang::no_destroy]] std::mutex gSuspensionMutex;
 [[clang::no_destroy]] std::condition_variable gSuspensionCondVar;
-[[clang::no_destroy]] std::function<void(kotlin::mm::ThreadData&)> gPreSuspend = nullptr;
 
 } // namespace
 
@@ -53,8 +52,7 @@ std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
     if (IsThreadSuspensionRequested()) {
-        if (gPreSuspend)
-            gPreSuspend(threadData_);
+        threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionMutex);
         auto threadId = konan::currentThreadId();
         auto suspendStartMs = konan::getTimeMicros();
@@ -83,7 +81,7 @@ NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::RequestThreadsSuspension() noexcept {
 }
 
 void kotlin::mm::WaitForThreadsSuspension() noexcept {
-    // Spin wating for threads to suspend. Ignore Native threads.
+    // Spin waiting for threads to suspend. Ignore Native threads.
     while(!allThreads(isSuspendedOrNative)) {
         yield();
     }
@@ -97,10 +95,6 @@ ALWAYS_INLINE void kotlin::mm::SuspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
         SuspendIfRequestedSlowPath();
     }
-}
-
-void kotlin::mm::SetOnSuspendCallback(std::function<void(mm::ThreadData&)> preSuspend) noexcept {
-    gPreSuspend = preSuspend;
 }
 
 void kotlin::mm::ResumeThreads() noexcept {

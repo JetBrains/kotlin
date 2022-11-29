@@ -75,8 +75,8 @@ open class DefaultSimulatorTestRun(testRunName: String, target: KotlinNativeTarg
     KotlinNativeSimulatorTestRun {
 
     override var deviceId: String
-        get() = executionTask.get().deviceId
+        get() = executionTask.flatMap { it.device }.get()
         set(value) {
-            executionTask.get().deviceId = value
+            executionTask.configure { it.device.set(value) }
         }
 }

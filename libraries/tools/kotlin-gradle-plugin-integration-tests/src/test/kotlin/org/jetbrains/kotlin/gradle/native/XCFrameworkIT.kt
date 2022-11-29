@@ -27,7 +27,7 @@ class XCFrameworkIT : BaseGradleIT() {
     override val defaultGradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(
         androidHome = KtTestUtil.findAndroidSdk(),
-        androidGradlePluginVersion = AGPVersion.v3_6_0
+        androidGradlePluginVersion = AGPVersion.v4_1_0
     )
 
     @Test
@@ -43,6 +43,7 @@ class XCFrameworkIT : BaseGradleIT() {
                 assertTasksExecuted(":shared:assembleDebugIosSimulatorFatFrameworkForSharedXCFramework")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm32")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm64")
+                assertTasksExecuted(":shared:linkDebugFrameworkWatchosDeviceArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosSimulatorArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosX86")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosX64")
@@ -61,6 +62,7 @@ class XCFrameworkIT : BaseGradleIT() {
                 assertTasksUpToDate(":shared:linkDebugFrameworkIosX64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosArm32")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosArm64")
+                assertTasksUpToDate(":shared:linkDebugFrameworkWatchosDeviceArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosX64")
                 assertTasksUpToDate(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
                 assertTasksUpToDate(":shared:assembleSharedDebugXCFramework")

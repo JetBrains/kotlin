@@ -98,7 +98,7 @@ abstract class KotlinJsSubTarget(
             testRun.subtargetTestTaskName(),
             listOf(compilation)
         ) { testJs ->
-            val compileTask = compilation.compileKotlinTaskProvider
+            val compileTask = compilation.compileTaskProvider
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription

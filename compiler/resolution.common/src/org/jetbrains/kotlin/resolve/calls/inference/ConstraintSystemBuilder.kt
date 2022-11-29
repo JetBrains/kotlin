@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.*
 
 interface ConstraintSystemOperation {
@@ -52,13 +49,32 @@ interface ConstraintSystemOperation {
     val errors: List<ConstraintSystemError>
 }
 
+abstract class ConstraintSystemTransaction {
+    abstract fun closeTransaction()
+
+    abstract fun rollbackTransaction()
+}
+
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
-    // if runOperations return true, then this operation will be applied, and function return true
-    fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
+    fun prepareTransaction(): ConstraintSystemTransaction
 
     fun buildCurrentSubstitutor(): TypeSubstitutorMarker
 
     fun currentStorage(): ConstraintStorage
+}
+
+// if runOperations return true, then this operation will be applied, and function return true
+inline fun ConstraintSystemBuilder.runTransaction(crossinline runOperations: ConstraintSystemOperation.() -> Boolean): Boolean {
+    val transactionState = prepareTransaction()
+
+    // typeVariablesTransaction is clear
+    if (runOperations()) {
+        transactionState.closeTransaction()
+        return true
+    }
+
+    transactionState.rollbackTransaction()
+    return false
 }
 
 fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(

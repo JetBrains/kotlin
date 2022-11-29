@@ -33,6 +33,11 @@ fun foo(f: () -> Unit) {
 // test.kt:4 box
 // test.kt:14 foo
 // test.kt:5 box$lambda
+// test.kt:6 box$lambda
+// test.kt:15 foo
 // test.kt:8 box
 // test.kt:14 foo
-// test.kt:9 box$lambda_0
+// test.kt:9 box$lambda
+// test.kt:10 box$lambda
+// test.kt:15 foo
+// test.kt:11 box

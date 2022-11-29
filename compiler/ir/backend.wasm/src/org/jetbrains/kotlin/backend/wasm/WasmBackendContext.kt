@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -56,6 +58,11 @@ class WasmBackendContext(
 
     override val mapping = JsMapping()
 
+    val closureCallExports = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+    val kotlinClosureToJsConverters = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+    val jsClosureCallers = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+    val jsToKotlinClosures = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module,this)
 
@@ -63,7 +70,9 @@ class WasmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.wasm.internal"))
+    val kotlinWasmInternalPackageFqn = internalPackageFqn.child(Name.identifier("internal"))
+
+    private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, kotlinWasmInternalPackageFqn)
     // TODO: Merge with JS IR Backend context lazy file
     val internalPackageFragment by lazy {
         IrFileImpl(object : IrFileEntry {
@@ -112,7 +121,7 @@ class WasmBackendContext(
         PropertyLazyInitialization(enabled = propertyLazyInitialization, eagerInitialization = wasmSymbols.eagerInitialization)
 
     override val ir = object : Ir<WasmBackendContext>(this, irModuleFragment) {
-        override val symbols: Symbols<WasmBackendContext> = wasmSymbols
+        override val symbols: Symbols = wasmSymbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 

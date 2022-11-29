@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 object UnusedSourceSetsChecker {
@@ -39,11 +40,10 @@ object UnusedSourceSetsChecker {
 
     fun checkSourceSets(project: Project) {
         project.whenEvaluated {
-            val compilationsBySourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project)
             val unusedSourceSets = project.kotlinExtension.sourceSets
                 // Ignoring Android source sets
                 .filter { it.androidSourceSetInfoOrNull == null }
-                .filter { compilationsBySourceSet[it]?.isEmpty() ?: true }
+                .filter { it.internal.compilations.isEmpty() }
             if (unusedSourceSets.isNotEmpty()) {
                 reportUnusedSourceSets(project, unusedSourceSets.toSet())
             }

@@ -133,6 +133,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
     private fun Project.configureJVMTarget() {
         kotlin.jvm {
             compilations.all {
+                @Suppress("DEPRECATION")
                 compileKotlinTask.kotlinOptions {
                     jvmTarget = "1.8"
                     suppressWarnings = true

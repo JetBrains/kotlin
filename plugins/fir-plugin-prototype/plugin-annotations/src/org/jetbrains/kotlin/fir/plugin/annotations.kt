@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.plugin
 
+import kotlin.reflect.KClass
+
 annotation class AllOpen
 
 annotation class DummyFunction
@@ -27,3 +29,5 @@ annotation class Negative
 enum class Visibility {
     Public, Internal, Private, Protected
 }
+
+annotation class SupertypeWithTypeArgument(val kClass: KClass<*>)

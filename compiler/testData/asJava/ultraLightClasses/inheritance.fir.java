@@ -9,9 +9,9 @@ public abstract interface IntfWithProp /* IntfWithProp*/ extends Intf {
 }
 
 public abstract class Base /* Base*/ {
-  private int y;
+  private int y = 1 /* initializer type: int */;
 
-  private int z;
+  private int z = 1 /* initializer type: int */;
 
   @org.jetbrains.annotations.Nullable()
   protected java.lang.Integer v();//  v()
@@ -35,13 +35,15 @@ public abstract class Base /* Base*/ {
 }
 
 public final class Derived /* Derived*/ extends Base implements IntfWithProp {
-  private final int x;
+  private final int x = 3 /* initializer type: int */;
 
+  @java.lang.Override()
   protected error.NonExistentClass v();//  v()
 
-  public  Derived(int);//  .ctor(int)
-
+  @java.lang.Override()
   public int abs();//  abs()
+
+  public  Derived(int);//  .ctor(int)
 
   public int getX$light_idea_test_case();//  getX$light_idea_test_case()
 
@@ -54,6 +56,7 @@ public abstract class AnotherDerived /* AnotherDerived*/ extends Base {
 
   private final int z;
 
+  @java.lang.Override()
   protected final void v();//  v()
 
   protected int getZ();//  getZ()

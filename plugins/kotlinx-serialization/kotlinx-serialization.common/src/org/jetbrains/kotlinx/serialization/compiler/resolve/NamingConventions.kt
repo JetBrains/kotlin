@@ -41,6 +41,22 @@ object SerializationAnnotations {
     val contextualOnPropertyFqName = FqName("kotlinx.serialization.Contextual")
     val polymorphicFqName = FqName("kotlinx.serialization.Polymorphic")
     val additionalSerializersFqName = FqName("kotlinx.serialization.UseSerializers")
+
+    val serializableAnnotationClassId = ClassId.topLevel(serializableAnnotationFqName)
+    val serializerAnnotationClassId = ClassId.topLevel(serializerAnnotationFqName)
+    val serialNameAnnotationClassId = ClassId.topLevel(serialNameAnnotationFqName)
+    val requiredAnnotationClassId = ClassId.topLevel(requiredAnnotationFqName)
+    val serialTransientClassId = ClassId.topLevel(serialTransientFqName)
+    val serialInfoClassId = ClassId.topLevel(serialInfoFqName)
+    val inheritableSerialInfoClassId = ClassId.topLevel(inheritableSerialInfoFqName)
+    val metaSerializableAnnotationClassId = ClassId.topLevel(metaSerializableAnnotationFqName)
+    val encodeDefaultClassId = ClassId.topLevel(encodeDefaultFqName)
+
+    val contextualClassId = ClassId.topLevel(contextualFqName)
+    val contextualOnFileClassId = ClassId.topLevel(contextualOnFileFqName)
+    val contextualOnPropertyClassId = ClassId.topLevel(contextualOnPropertyFqName)
+    val polymorphicClassId = ClassId.topLevel(polymorphicFqName)
+    val additionalSerializersClassId = ClassId.topLevel(additionalSerializersFqName)
 }
 
 object SerialEntityNames {
@@ -52,17 +68,23 @@ object SerialEntityNames {
 
     const val CACHED_DESCRIPTOR_FIELD = "\$cachedDescriptor"
     const val CACHED_SERIALIZER_PROPERTY = "\$cachedSerializer"
+    const val CACHED_CHILD_SERIALIZERS_PROPERTY = "\$childSerializers"
 
     // classes
     val KCLASS_NAME_FQ = FqName("kotlin.reflect.KClass")
+    val KCLASS_NAME_CLASS_ID = ClassId.topLevel(KCLASS_NAME_FQ)
     val KSERIALIZER_NAME = Name.identifier(KSERIALIZER_CLASS)
     val SERIAL_CTOR_MARKER_NAME = Name.identifier("SerializationConstructorMarker")
     val KSERIALIZER_NAME_FQ = SerializationPackages.packageFqName.child(KSERIALIZER_NAME)
+    val KSERIALIZER_CLASS_ID = ClassId.topLevel(KSERIALIZER_NAME_FQ)
+
     val SERIALIZER_CLASS_NAME = Name.identifier(SERIALIZER_CLASS)
     val IMPL_NAME = Name.identifier("Impl")
 
     val GENERATED_SERIALIZER_CLASS = Name.identifier("GeneratedSerializer")
     val GENERATED_SERIALIZER_FQ = SerializationPackages.internalPackageFqName.child(GENERATED_SERIALIZER_CLASS)
+
+    val SERIALIZER_FACTORY_INTERFACE_NAME = Name.identifier("SerializerFactory")
 
     const val ENCODER_CLASS = "Encoder"
     const val STRUCTURE_ENCODER_CLASS = "CompositeEncoder"
@@ -102,6 +124,7 @@ object SerialEntityNames {
     val SINGLE_MASK_FIELD_MISSING_FUNC_FQ = SerializationPackages.internalPackageFqName.child(SINGLE_MASK_FIELD_MISSING_FUNC_NAME)
     val ARRAY_MASK_FIELD_MISSING_FUNC_FQ = SerializationPackages.internalPackageFqName.child(ARRAY_MASK_FIELD_MISSING_FUNC_NAME)
     val CACHED_SERIALIZER_PROPERTY_NAME = Name.identifier(CACHED_SERIALIZER_PROPERTY)
+    val CACHED_CHILD_SERIALIZERS_PROPERTY_NAME = Name.identifier(CACHED_CHILD_SERIALIZERS_PROPERTY)
     val CACHED_DESCRIPTOR_FIELD_NAME = Name.identifier(CACHED_DESCRIPTOR_FIELD)
 
     val ENUM_SERIALIZER_FACTORY_FUNC_FQ = SerializationPackages.internalPackageFqName.child(ENUM_SERIALIZER_FACTORY_FUNC_NAME)
@@ -123,7 +146,29 @@ object SpecialBuiltins {
     const val sealedSerializer = "SealedClassSerializer"
     const val contextSerializer = "ContextualSerializer"
     const val nullableSerializer = "NullableSerializer"
+
+    object Names {
+        val referenceArraySerializer = Name.identifier(SpecialBuiltins.referenceArraySerializer)
+        val objectSerializer = Name.identifier(SpecialBuiltins.objectSerializer)
+        val enumSerializer = Name.identifier(SpecialBuiltins.enumSerializer)
+        val polymorphicSerializer = Name.identifier(SpecialBuiltins.polymorphicSerializer)
+        val sealedSerializer = Name.identifier(SpecialBuiltins.sealedSerializer)
+        val contextSerializer = Name.identifier(SpecialBuiltins.contextSerializer)
+        val nullableSerializer = Name.identifier(SpecialBuiltins.nullableSerializer)
+    }
 }
+
+object PrimitiveBuiltins {
+    const val booleanSerializer = "BooleanSerializer"
+    const val byteSerializer = "ByteSerializer"
+    const val shortSerializer = "ShortSerializer"
+    const val intSerializer = "IntSerializer"
+    const val longSerializer = "LongSerializer"
+    const val floatSerializer = "FloatSerializer"
+    const val doubleSerializer = "DoubleSerializer"
+    const val charSerializer = "CharSerializer"
+}
+
 
 object CallingConventions {
     const val begin = "beginStructure"
@@ -152,4 +197,74 @@ object SerializationDependencies {
     val LAZY_MODE_FQ = FqName("kotlin.LazyThreadSafetyMode")
     val FUNCTION0_FQ = FqName("kotlin.Function0")
     val LAZY_PUBLICATION_MODE_NAME = Name.identifier("PUBLICATION")
+}
+
+object SerializersClassIds {
+    val kSerializerId = ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME)
+    val enumSerializerId = ClassId(SerializationPackages.internalPackageFqName, Name.identifier(SpecialBuiltins.enumSerializer))
+    val polymorphicSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.polymorphicSerializer))
+    val referenceArraySerializerId = ClassId(SerializationPackages.internalPackageFqName, Name.identifier(SpecialBuiltins.referenceArraySerializer))
+    val objectSerializerId = ClassId(SerializationPackages.internalPackageFqName, Name.identifier(SpecialBuiltins.objectSerializer))
+    val sealedSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.sealedSerializer))
+    val contextSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.contextSerializer))
+    val generatedSerializerId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
+}
+
+fun findStandardKotlinTypeSerializerName(typeName: String?): String? {
+    return when (typeName) {
+        null -> null
+        "kotlin.Unit" -> "UnitSerializer"
+        "kotlin.Nothing" -> "NothingSerializer"
+        "kotlin.Boolean" -> "BooleanSerializer"
+        "kotlin.Byte" -> "ByteSerializer"
+        "kotlin.Short" -> "ShortSerializer"
+        "kotlin.Int" -> "IntSerializer"
+        "kotlin.Long" -> "LongSerializer"
+        "kotlin.Float" -> "FloatSerializer"
+        "kotlin.Double" -> "DoubleSerializer"
+        "kotlin.Char" -> "CharSerializer"
+        "kotlin.UInt" -> "UIntSerializer"
+        "kotlin.ULong" -> "ULongSerializer"
+        "kotlin.UByte" -> "UByteSerializer"
+        "kotlin.UShort" -> "UShortSerializer"
+        "kotlin.String" -> "StringSerializer"
+        "kotlin.Pair" -> "PairSerializer"
+        "kotlin.Triple" -> "TripleSerializer"
+        "kotlin.collections.Collection", "kotlin.collections.List",
+        "kotlin.collections.ArrayList", "kotlin.collections.MutableList" -> "ArrayListSerializer"
+        "kotlin.collections.Set", "kotlin.collections.LinkedHashSet", "kotlin.collections.MutableSet" -> "LinkedHashSetSerializer"
+        "kotlin.collections.HashSet" -> "HashSetSerializer"
+        "kotlin.collections.Map", "kotlin.collections.LinkedHashMap", "kotlin.collections.MutableMap" -> "LinkedHashMapSerializer"
+        "kotlin.collections.HashMap" -> "HashMapSerializer"
+        "kotlin.collections.Map.Entry" -> "MapEntrySerializer"
+        "kotlin.ByteArray" -> "ByteArraySerializer"
+        "kotlin.ShortArray" -> "ShortArraySerializer"
+        "kotlin.IntArray" -> "IntArraySerializer"
+        "kotlin.LongArray" -> "LongArraySerializer"
+        "kotlin.UByteArray" -> "UByteArraySerializer"
+        "kotlin.UShortArray" -> "UShortArraySerializer"
+        "kotlin.UIntArray" -> "UIntArraySerializer"
+        "kotlin.ULongArray" -> "ULongArraySerializer"
+        "kotlin.CharArray" -> "CharArraySerializer"
+        "kotlin.FloatArray" -> "FloatArraySerializer"
+        "kotlin.DoubleArray" -> "DoubleArraySerializer"
+        "kotlin.BooleanArray" -> "BooleanArraySerializer"
+        "kotlin.time.Duration" -> "DurationSerializer"
+        "java.lang.Boolean" -> "BooleanSerializer"
+        "java.lang.Byte" -> "ByteSerializer"
+        "java.lang.Short" -> "ShortSerializer"
+        "java.lang.Integer" -> "IntSerializer"
+        "java.lang.Long" -> "LongSerializer"
+        "java.lang.Float" -> "FloatSerializer"
+        "java.lang.Double" -> "DoubleSerializer"
+        "java.lang.Character" -> "CharSerializer"
+        "java.lang.String" -> "StringSerializer"
+        "java.util.Collection", "java.util.List", "java.util.ArrayList" -> "ArrayListSerializer"
+        "java.util.Set", "java.util.LinkedHashSet" -> "LinkedHashSetSerializer"
+        "java.util.HashSet" -> "HashSetSerializer"
+        "java.util.Map", "java.util.LinkedHashMap" -> "LinkedHashMapSerializer"
+        "java.util.HashMap" -> "HashMapSerializer"
+        "java.util.Map.Entry" -> "MapEntrySerializer"
+        else -> return null
+    }
 }

@@ -6,22 +6,18 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
@@ -29,22 +25,24 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOr
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import org.jetbrains.kotlin.gradle.utils.withType
 
 internal fun Project.configureStdlibDefaultDependency(
     topLevelExtension: KotlinTopLevelExtension,
     coreLibrariesVersion: Provider<String>
 ) {
+    when (topLevelExtension) {
+        is KotlinPm20ProjectExtension -> addStdlibToKpmProject(project, coreLibrariesVersion)
 
-    when {
-        project.hasKpmModel -> addStdlibToKpmProject(project, coreLibrariesVersion)
-        topLevelExtension is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
+        is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
             target?.addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
         }
-        topLevelExtension is KotlinSingleTargetExtension<*> -> topLevelExtension
+
+        is KotlinSingleTargetExtension<*> -> topLevelExtension
             .target
             .addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
 
-        topLevelExtension is KotlinMultiplatformExtension -> topLevelExtension
+        is KotlinMultiplatformExtension -> topLevelExtension
             .targets
             .configureEach { target ->
                 target.addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
@@ -52,11 +50,55 @@ internal fun Project.configureStdlibDefaultDependency(
     }
 }
 
+/**
+ * Aligning kotlin-stdlib-jdk8 and kotlin-stdlib-jdk7 dependencies versions with kotlin-stdlib (or kotlin-stdlib-jdk7)
+ * when project stdlib version is >= 1.8.0
+ */
+internal fun ConfigurationContainer.configureStdlibVersionAlignment() = all { configuration ->
+    configuration.withDependencies { dependencySet ->
+        dependencySet
+            .withType<ExternalDependency>()
+            .configureEach { dependency ->
+                if (dependency.group == KOTLIN_MODULE_GROUP &&
+                    (dependency.name == "kotlin-stdlib" || dependency.name == "kotlin-stdlib-jdk7") &&
+                    dependency.version != null &&
+                    SemVer.from(dependency.version!!) >= kotlin180Version
+                ) {
+                    if (configuration.isCanBeResolved) configuration.alignStdlibJvmVariantVersions(dependency)
+
+                    // dependency substitution only works for resolvable configuration,
+                    // so we need to find all configuration that extends current one
+                    filter {
+                        it.isCanBeResolved && it.hierarchy.contains(configuration)
+                    }.forEach {
+                        it.alignStdlibJvmVariantVersions(dependency)
+                    }
+                }
+            }
+    }
+}
+
+private fun Configuration.alignStdlibJvmVariantVersions(
+    kotlinStdlibDependency: ExternalDependency
+) {
+    resolutionStrategy.dependencySubstitution {
+        if (kotlinStdlibDependency.name != "kotlin-stdlib-jdk7") {
+            it.substitute(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
+                .using(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinStdlibDependency.version}"))
+                .because("kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
+        }
+
+        it.substitute(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
+            .using(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinStdlibDependency.version}"))
+            .because("kotlin-stdlib-jdk8 is now part of kotlin-stdlib")
+    }
+}
+
 private fun addStdlibToKpmProject(
     project: Project,
     coreLibrariesVersion: Provider<String>
 ) {
-    project.kpmModules.named(GradleKpmModule.MAIN_MODULE_NAME) { main ->
+    project.pm20Extension.modules.named(GradleKpmModule.MAIN_MODULE_NAME) { main ->
         main.fragments.named(GradleKpmFragment.COMMON_FRAGMENT_NAME) { common ->
             common.dependencies {
                 api(project.dependencies.kotlinDependency("kotlin-stdlib-common", coreLibrariesVersion.get()))
@@ -66,7 +108,7 @@ private fun addStdlibToKpmProject(
             val dependencyHandler = project.dependencies
             val stdlibModule = when (variant.platformType) {
                 KotlinPlatformType.common -> error("variants are not expected to be common")
-                KotlinPlatformType.jvm -> chooseStdlibJvmDependency(coreLibrariesVersion)
+                KotlinPlatformType.jvm -> "kotlin-stdlib-jdk8"
                 KotlinPlatformType.js -> "kotlin-stdlib-js"
                 KotlinPlatformType.wasm -> "kotlin-stdlib-wasm"
                 KotlinPlatformType.androidJvm -> null // TODO: expect support on the AGP side?
@@ -106,10 +148,11 @@ private fun KotlinTarget.addStdlibDependency(
 
                 val stdlibModule = compilation
                     .platformType
-                    .stdlibPlatformType(coreLibrariesVersion, this, kotlinSourceSet)
+                    .stdlibPlatformType(this, kotlinSourceSet)
                     ?: return@withDependencies
 
                 // Check if stdlib module is added to SourceSets hierarchy
+                @Suppress("DEPRECATION")
                 if (
                     isStdlibAddedByUser(
                         configurations,
@@ -147,16 +190,15 @@ private fun isStdlibAddedByUser(
 }
 
 private fun KotlinPlatformType.stdlibPlatformType(
-    coreLibrariesVersion: Provider<String>,
     kotlinTarget: KotlinTarget,
     kotlinSourceSet: KotlinSourceSet
 ): String? = when (this) {
-    KotlinPlatformType.jvm -> chooseStdlibJvmDependency(coreLibrariesVersion)
+    KotlinPlatformType.jvm -> "kotlin-stdlib-jdk8"
     KotlinPlatformType.androidJvm -> {
         if (kotlinTarget is KotlinAndroidTarget &&
             kotlinSourceSet.androidSourceSetInfoOrNull?.androidSourceSetName == AndroidBaseSourceSetName.Main.name
         ) {
-            chooseStdlibJvmDependency(coreLibrariesVersion)
+            "kotlin-stdlib-jdk8"
         } else {
             null
         }
@@ -169,20 +211,9 @@ private fun KotlinPlatformType.stdlibPlatformType(
         "kotlin-stdlib-common"
 }
 
-private val kotlin180Version = SemVer(1.toBigInteger(), 8.toBigInteger(), 0.toBigInteger())
-
-private fun chooseStdlibJvmDependency(
-    coreLibrariesVersion: Provider<String>
-): String {
-    // Current 'SemVer.satisfies' release always returns `false` for any "-SNAPSHOT" version.
-    return if (SemVer.from(coreLibrariesVersion.get()) < kotlin180Version) {
-        "kotlin-stdlib-jdk8"
-    } else {
-        "kotlin-stdlib"
-    }
-}
-
 private val androidTestVariants = setOf(AndroidVariantType.UnitTest, AndroidVariantType.InstrumentedTest)
+
+private val kotlin180Version = SemVer(1.toBigInteger(), 8.toBigInteger(), 0.toBigInteger())
 
 private fun KotlinSourceSet.isRelatedToAndroidTestSourceSet(): Boolean {
     val androidVariant = androidSourceSetInfoOrNull?.androidVariantType ?: return false

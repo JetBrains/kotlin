@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
@@ -23,17 +21,11 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.synthetic.syntheticVisibility
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_FQ
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_MODE_FQ
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_PUBLICATION_MODE_NAME
 
 
 interface IrBuilderWithPluginContext {
@@ -61,8 +53,10 @@ interface IrBuilderWithPluginContext {
             visibility = DescriptorVisibilities.LOCAL
             origin = SERIALIZATION_PLUGIN_ORIGIN
         }
-        function.body =
-            DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset, bodyGen)
+        function.body = DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset) {
+            val expr = addAndGetLastExpression(bodyGen)
+            +irReturn(expr)
+        }
         function.parent = this
 
         val f0Type = compilerContext.irBuiltIns.functionN(0)
@@ -78,78 +72,105 @@ interface IrBuilderWithPluginContext {
         )
     }
 
-    fun createLazyProperty(
+    fun addLazyValProperty(
         containingClass: IrClass,
         targetIrType: IrType,
-        name: Name,
+        propertyName: Name,
+        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
         initializerBuilder: IrBlockBodyBuilder.() -> Unit
     ): IrProperty {
-        val lazySafeModeClassDescriptor = compilerContext.referenceClass(ClassId.topLevel(LAZY_MODE_FQ))!!.owner
-        val lazyFunctionSymbol = compilerContext.referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("lazy"))).single {
-            it.owner.valueParameters.size == 2 && it.owner.valueParameters[0].type == lazySafeModeClassDescriptor.defaultType
+        val lazyIrType =
+            compilerContext.lazyClass.defaultType.substitute(mapOf(compilerContext.lazyClass.typeParameters[0].symbol to targetIrType))
+
+        val field = containingClass.factory.buildField {
+            startOffset = containingClass.startOffset
+            endOffset = containingClass.endOffset
+            name = Name.identifier(propertyName.asString() + "\$delegate")
+            type = lazyIrType
+            origin = SERIALIZATION_PLUGIN_ORIGIN
+            isFinal = true
+            this.visibility = DescriptorVisibilities.PRIVATE
+        }.also { it.parent = containingClass }
+
+        containingClass.addAnonymousInit {
+            val enumElement = IrGetEnumValueImpl(
+                startOffset,
+                endOffset,
+                compilerContext.lazyModeClass.defaultType,
+                compilerContext.lazyModePublicationEnumEntry.symbol
+            )
+            val lambdaExpression = containingClass.createLambdaExpression(targetIrType, initializerBuilder)
+            val invokeLazyExpr =
+                irInvoke(null, compilerContext.lazyFunctionSymbol, listOf(targetIrType), listOf(enumElement, lambdaExpression), lazyIrType)
+            +irSetField(irGet(containingClass.thisReceiver!!), field, invokeLazyExpr)
         }
-        val publicationEntryDescriptor = lazySafeModeClassDescriptor.enumEntries().single { it.name == LAZY_PUBLICATION_MODE_NAME }
 
-        val lazyIrClass = compilerContext.referenceClass(ClassId.topLevel(LAZY_FQ))!!.owner
-        val lazyIrType = lazyIrClass.defaultType.substitute(mapOf(lazyIrClass.typeParameters[0].symbol to targetIrType))
 
-        return generateSimplePropertyWithBackingField(Name.identifier(name.asString() + "\$delegate"), lazyIrType, containingClass).apply {
-            val builder = DeclarationIrBuilder(compilerContext, containingClass.symbol, startOffset, endOffset)
-            val initializerBody = builder.run {
-                val enumElement = IrGetEnumValueImpl(
-                    startOffset,
-                    endOffset,
-                    lazySafeModeClassDescriptor.defaultType,
-                    publicationEntryDescriptor.symbol
-                )
+        val prop = containingClass.addProperty {
+            startOffset = containingClass.startOffset
+            endOffset = containingClass.endOffset
+            name = propertyName
+            this.visibility = visibility
+            this.isVar = false
+            origin = SERIALIZATION_PLUGIN_ORIGIN
+        }.apply {
+            field.correspondingPropertySymbol = this.symbol
+            backingField = field
+        }
 
-                val lambdaExpression = containingClass.createLambdaExpression(targetIrType, initializerBuilder)
+        val getter = prop.addGetter {
+            startOffset = containingClass.startOffset
+            endOffset = containingClass.endOffset
+            returnType = targetIrType
+            origin = SERIALIZATION_PLUGIN_ORIGIN
+            this.visibility = visibility
+            modality = Modality.FINAL
+        }
 
-                irExprBody(
-                    irInvoke(null, lazyFunctionSymbol, listOf(targetIrType), listOf(enumElement, lambdaExpression), lazyIrType)
+        getter.apply {
+            dispatchReceiverParameter = containingClass.thisReceiver!!.copyTo(this, type = containingClass.defaultType)
+            body = compilerContext.irBuiltIns.createIrBuilder(symbol, containingClass.startOffset, containingClass.endOffset).irBlockBody {
+                +irReturn(
+                    irInvoke(
+                        irGetField(irGet(dispatchReceiverParameter!!), field),
+                        compilerContext.lazyValueGetter,
+                        typeHint = targetIrType
+                    )
                 )
             }
-            backingField!!.initializer = initializerBody
         }
+        return prop
     }
 
-    fun createCompanionValProperty(
-        companionClass: IrClass,
+    fun IrClass.addValPropertyWithJvmField(
         type: IrType,
         name: Name,
+        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
         initializerBuilder: IrBlockBodyBuilder.() -> Unit
     ): IrProperty {
-        return generateSimplePropertyWithBackingField(name, type, companionClass).apply {
-            companionClass.contributeAnonymousInitializer {
-                val irBlockBody = irBlockBody(startOffset, endOffset, initializerBuilder)
-                irBlockBody.statements.dropLast(1).forEach { +it }
-                val expression = irBlockBody.statements.last() as? IrExpression
-                    ?: throw AssertionError("Last statement in property initializer builder is not an a expression")
-                +irSetField(irGetObject(companionClass), backingField!!, expression)
+        return generateSimplePropertyWithBackingField(name, type, this, visibility).apply {
+            val field = backingField!!
+            addAnonymousInit {
+                val resultExpression = addAndGetLastExpression(initializerBuilder)
+                +irSetField(irGet(thisReceiver!!), field, resultExpression)
             }
+
+            val annotationCtor = compilerContext.jvmFieldClassSymbol.constructors.single { it.owner.isPrimary }
+            val annotationType = compilerContext.jvmFieldClassSymbol.defaultType
+
+            field.annotations += IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
         }
     }
 
-    fun IrClass.contributeAnonymousInitializer(bodyGen: IrBlockBodyBuilder.() -> Unit) {
-        val symbol = IrAnonymousInitializerSymbolImpl(symbol)
-        factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZATION_PLUGIN_ORIGIN, symbol).also {
-            it.parent = this
-            declarations.add(it)
-            it.body = DeclarationIrBuilder(compilerContext, symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset, bodyGen)
-        }
-    }
-
-    fun IrBlockBodyBuilder.getLazyValueExpression(thisParam: IrValueParameter, property: IrProperty, type: IrType): IrExpression {
-        val lazyIrClass = compilerContext.referenceClass(ClassId.topLevel(LAZY_FQ))!!.owner
-        val valueGetter = lazyIrClass.getPropertyGetter("value")!!
-
-        val propertyGetter = property.getter!!
-
-        return irInvoke(
-            irGet(propertyGetter.returnType, irGet(thisParam), propertyGetter.symbol),
-            valueGetter,
-            typeHint = type
-        )
+    /**
+     * Add all statements to the builder, except the last one.
+     * The last statement should be an expression, it will return as a result
+     */
+    private fun IrStatementsBuilder<*>.addAndGetLastExpression(blockBuilder: IrBlockBodyBuilder.() -> Unit): IrExpression {
+        val irBlockBody = irBlockBody(startOffset, endOffset, blockBuilder)
+        irBlockBody.statements.dropLast(1).forEach { +it }
+        return irBlockBody.statements.last() as? IrExpression
+            ?: throw AssertionError("Last statement in property initializer builder is not an a expression")
     }
 
     fun IrBuilderWithScope.irInvoke(
@@ -204,6 +225,26 @@ interface IrBuilderWithPluginContext {
 
         return irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)
+        }
+    }
+
+    fun IrClass.addAnonymousInit(body: IrBlockBodyBuilder.() -> Unit) {
+        val anonymousInit = this.run {
+            val symbol = IrAnonymousInitializerSymbolImpl(symbol)
+            this.factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZATION_PLUGIN_ORIGIN, symbol).also {
+                it.parent = this
+                declarations.add(it)
+            }
+        }
+
+        anonymousInit.buildWithScope { initIrBody ->
+            initIrBody.body =
+                DeclarationIrBuilder(
+                    compilerContext,
+                    initIrBody.symbol,
+                    initIrBody.startOffset,
+                    initIrBody.endOffset
+                ).irBlockBody(body = body)
         }
     }
 
@@ -366,21 +407,7 @@ interface IrBuilderWithPluginContext {
         annotations.mapNotNull { annotationCall ->
             val annotationClass = annotationCall.symbol.owner.parentAsClass
             if (!annotationClass.isSerialInfoAnnotation) return@mapNotNull null
-
-            if (compilerContext.platform.isJvm()) {
-                val implClass = compilerContext.serialInfoImplJvmIrGenerator.getImplClass(annotationClass)
-                val ctor = implClass.constructors.singleOrNull { it.valueParameters.size == annotationCall.valueArgumentsCount }
-                    ?: error("No constructor args found for SerialInfo annotation Impl class: ${implClass.render()}")
-                irCall(ctor).apply {
-                    for (i in 0 until annotationCall.valueArgumentsCount) {
-                        val argument = annotationCall.getValueArgument(i)
-                            ?: annotationClass.primaryConstructor!!.valueParameters[i].defaultValue?.expression
-                        putValueArgument(i, argument!!.deepCopyWithVariables())
-                    }
-                }
-            } else {
-                annotationCall.deepCopyWithVariables()
-            }
+            annotationCall.deepCopyWithVariables()
         }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)

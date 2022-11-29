@@ -1,13 +1,9 @@
-fun box(): String {
-    try {
-        bar()
-        return "FAIL1"
-    } catch (e: Throwable) {
-        if (!e.isLinkageError()) return "FAIL2"
-    }
+import abitestutils.abiTest
 
-    return "OK"
+fun box() = abiTest {
+    expectFailure(prefixed("var foo can not be read")) { bar() }
+    expectFailure(prefixed("var foo can not be read")) { baz() }
+    expectFailure(prefixed("var foo can not be read")) { quux() }
+    expectFailure(prefixed("var foo can not be read")) { grault() }
+    expectFailure(prefixed("var foo can not be read")) { waldo() }
 }
-
-private fun Throwable.isLinkageError(): Boolean =
-    this::class.simpleName == "IrLinkageError" && message == "Unlinked type of IR expression"

@@ -21,12 +21,12 @@ class JsImportedModule @JvmOverloads constructor(
     val externalName: String,
     var internalName: JsName,
     val plainReference: JsExpression?,
-    val relativeRequirePath: Boolean = false
+    val relativeRequirePath: String? = null
 ) {
     val key = JsImportedModuleKey(externalName, plainReference?.toString())
 }
 
 val JsImportedModule.requireName: String
-    get() = if (relativeRequirePath) "./$externalName.js" else externalName
+    get() = relativeRequirePath?.let { "$it.js" } ?: externalName
 
 data class JsImportedModuleKey(val baseName: String, val plainName: String?)

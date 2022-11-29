@@ -52,6 +52,9 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             //platformSpecificClass(descriptor)
         }
 
+        override fun visitScript(script: FirScript, data: Any?) {
+        }
+
         override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
             setExpected(typeAlias.isExpect)
         }
@@ -84,23 +87,26 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
     override fun composeSignature(
         declaration: FirDeclaration,
         containingClass: ConeClassLikeLookupTag?,
-        forceTopLevelPrivate: Boolean
+        forceTopLevelPrivate: Boolean,
     ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableDeclaration) {
             if (declaration.visibility == Visibilities.Local) return null
-            if (declaration.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
+            if (declaration.dispatchReceiverClassLookupTagOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
+
         val declarationWithParentId = FirDeclarationWithParentId(declaration, containingClass?.classId)
         val publicSignature = signatureCache.getOrPut(declarationWithParentId) {
             calculatePublicSignature(declarationWithParentId)
         }
+
         val resultSignature: IdSignature = if (isTopLevelPrivate(declaration) || forceTopLevelPrivate) {
             val fileSig = fileSignature ?: declaration.fakeFileSignature(publicSignature)
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
             publicSignature
+
         return resultSignature
     }
 
@@ -127,13 +133,20 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
                 )
             }
             is FirCallableDeclaration -> {
-                val classId = containingClassId ?: declaration.containingClass()?.classId
+                val classId = containingClassId ?: declaration.containingClassLookupTag()?.classId
                 val packageName = classId?.packageFqName ?: declaration.symbol.callableId.packageName
                 val callableName = declaration.irName
 
                 IdSignature.CommonSignature(
                     packageName.asString(),
                     classId?.relativeClassName?.child(callableName)?.asString() ?: callableName.asString(),
+                    builder.hashId, builder.mask
+                )
+            }
+            is FirScript -> {
+                IdSignature.CommonSignature(
+                    declaration.name.asString(), // TODO: find package id
+                    declaration.name.asString(),
                     builder.hashId, builder.mask
                 )
             }

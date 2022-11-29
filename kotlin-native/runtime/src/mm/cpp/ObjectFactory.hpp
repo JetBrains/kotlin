@@ -7,6 +7,7 @@
 #define RUNTIME_MM_OBJECT_FACTORY_H
 
 #include <algorithm>
+#include <cinttypes>
 #include <memory>
 #include <mutex>
 #include <type_traits>
@@ -53,9 +54,9 @@ public:
     public:
         ~Node() = default;
 
-        constexpr static size_t GetSizeForDataSize(size_t dataSize) noexcept {
-            size_t dataSizeAligned = AlignUp(dataSize, DataAlignment);
-            size_t totalSize = AlignUp(sizeof(Node) + dataSizeAligned, DataAlignment);
+        constexpr static uint64_t GetSizeForDataSize(uint64_t dataSize) noexcept {
+            uint64_t dataSizeAligned = AlignUp<uint64_t>(dataSize, DataAlignment);
+            uint64_t totalSize = AlignUp<uint64_t>(sizeof(Node) + dataSizeAligned, DataAlignment);
             return totalSize;
         }
 
@@ -85,14 +86,19 @@ public:
 
         Node() noexcept = default;
 
-        static unique_ptr<Node> Create(Allocator& allocator, size_t dataSize) noexcept {
+        static unique_ptr<Node> Create(Allocator& allocator, uint64_t dataSize) noexcept {
             auto totalSize = GetSizeForDataSize(dataSize);
-            RuntimeAssert(
-                    DataOffset() + dataSize <= totalSize, "totalSize %zu is not enough to fit data %zu at offset %zu", totalSize, dataSize,
-                    DataOffset());
-            void* ptr = allocator.Alloc(totalSize);
+            void* ptr = nullptr;
+            if (totalSize <= std::numeric_limits<size_t>::max()) {
+                RuntimeAssert(
+                        DataOffset() + dataSize <= totalSize, "totalSize %" PRIu64 " is not enough to fit data %" PRIu64 " at offset %zu", totalSize, dataSize,
+                        DataOffset());
+                ptr = allocator.Alloc(totalSize);
+            }
             if (!ptr) {
-                konan::consoleErrorf("Out of memory trying to allocate %zu bytes. Aborting.\n", totalSize);
+                // TODO: This should throw OutOfMemoryError in the future if we add hard memory limits instead
+                //       of limiting at virtual address space boundary.
+                konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 " bytes. Aborting.\n", totalSize);
                 konan::abort();
             }
             RuntimeAssert(IsAligned(ptr, DataAlignment), "Allocator returned unaligned to %zu pointer %p", DataAlignment, ptr);
@@ -133,7 +139,7 @@ public:
 
         size_t size() const noexcept { return size_; }
 
-        Node& Insert(size_t dataSize) noexcept {
+        Node& Insert(uint64_t dataSize) noexcept {
             AssertCorrect();
             auto node = Node::Create(allocator_, dataSize);
             auto* nodePtr = node.get();
@@ -145,6 +151,7 @@ public:
 
             last_ = nodePtr;
             ++size_;
+            totalObjectsSizeBytes_ += Node::GetSizeForDataSize(dataSize);
             RuntimeAssert(root_ != nullptr, "Must not be empty");
             AssertCorrect();
             return *nodePtr;
@@ -181,7 +188,9 @@ public:
             owner_.last_ = last_;
             last_ = nullptr;
             owner_.size_ += size_;
+            owner_.totalObjectsSizeBytes_ += totalObjectsSizeBytes_;
             size_ = 0;
+            totalObjectsSizeBytes_ = 0;
 
             RuntimeAssert(root_ == nullptr, "Must be empty");
             AssertCorrect();
@@ -216,6 +225,7 @@ public:
         unique_ptr<Node> root_;
         Node* last_ = nullptr;
         size_t size_ = 0;
+        size_t totalObjectsSizeBytes_ = 0;
     };
 
     class Iterator {
@@ -348,13 +358,13 @@ public:
         Iterator begin() noexcept { return Iterator(nullptr, owner_.root_.get()); }
         Iterator end() noexcept { return Iterator(owner_.last_, nullptr); }
 
-        void EraseAndAdvance(Iterator& iterator) noexcept {
-            auto result = owner_.ExtractUnsafe(iterator.previousNode_);
+        void EraseAndAdvance(Iterator& iterator, size_t objectedSize) noexcept {
+            auto result = owner_.ExtractUnsafe(iterator.previousNode_, objectedSize);
             iterator.node_ = result.second;
         }
 
-        void MoveAndAdvance(Consumer& consumer, Iterator& iterator) noexcept {
-            auto result = owner_.ExtractUnsafe(iterator.previousNode_);
+        void MoveAndAdvance(Consumer& consumer, Iterator& iterator, size_t objectSize) noexcept {
+            auto result = owner_.ExtractUnsafe(iterator.previousNode_, objectSize);
             iterator.node_ = result.second;
             consumer.Insert(std::move(result.first));
         }
@@ -373,40 +383,32 @@ public:
     Iterable LockForIter() noexcept { return Iterable(*this); }
 
     size_t GetSizeUnsafe() const noexcept { return size_; }
+    size_t GetTotalObjectsSizeUnsafe() const noexcept { return totalObjectsSizeBytes_; }
 
     void ClearForTests() {
         root_.reset();
         last_ = nullptr;
         size_ = 0;
+        totalObjectsSizeBytes_ = 0;
     }
 
 private:
     // Expects `mutex_` to be held by the current thread.
-    std::pair<unique_ptr<Node>, Node*> ExtractUnsafe(Node* previousNode) noexcept {
+    std::pair<unique_ptr<Node>, Node*> ExtractUnsafe(Node* previousNode, size_t objectSize) noexcept {
         RuntimeAssert(root_ != nullptr, "Must not be empty");
         AssertCorrectUnsafe();
 
-        if (previousNode == nullptr) {
-            // Extracting the root.
-            auto node = std::move(root_);
-            root_ = std::move(node->next_);
-            if (!root_) {
-                last_ = nullptr;
-            }
-            --size_;
-            AssertCorrectUnsafe();
-            return {std::move(node), root_.get()};
-        }
-
-        auto node = std::move(previousNode->next_);
-        previousNode->next_ = std::move(node->next_);
-        if (!previousNode->next_) {
+        unique_ptr<Node> &pointerToNext = (previousNode == nullptr) ? root_ : previousNode->next_;
+        auto node = std::move(pointerToNext);
+        pointerToNext = std::move(node->next_);
+        if (!pointerToNext) {
             last_ = previousNode;
         }
         --size_;
+        totalObjectsSizeBytes_ -= objectSize;
 
         AssertCorrectUnsafe();
-        return {std::move(node), previousNode->next_.get()};
+        return {std::move(node), pointerToNext.get()};
     }
 
     // Expects `mutex_` to be held by the current thread.
@@ -422,6 +424,7 @@ private:
     unique_ptr<Node> root_;
     Node* last_ = nullptr;
     size_t size_ = 0;
+    size_t totalObjectsSizeBytes_ = 0;
     SpinLock<MutexThreadStateHandling::kIgnore> mutex_;
 };
 
@@ -515,7 +518,8 @@ public:
 
         static size_t ObjectAllocatedSize(const TypeInfo* typeInfo) noexcept {
             RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-            size_t allocSize = ObjectAllocatedDataSize(typeInfo);
+            // Only used for already allocated objects. Cannot overflow size_t
+            auto allocSize = ObjectAllocatedDataSize(typeInfo);
             return Storage::Node::GetSizeForDataSize(allocSize);
         }
 
@@ -532,13 +536,14 @@ public:
 
         static size_t ArrayAllocatedSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
             RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-            size_t allocSize = ArrayAllocatedDataSize(typeInfo, count);
+            // Only used for already allocated arrays. Cannot overflow size_t
+            auto allocSize = ArrayAllocatedDataSize(typeInfo, count);
             return Storage::Node::GetSizeForDataSize(allocSize);
         }
 
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
             RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-            size_t allocSize = ArrayAllocatedDataSize(typeInfo, count);
+            auto allocSize = ArrayAllocatedDataSize(typeInfo, count);
             auto& node = producer_.Insert(allocSize);
             auto* heapArray = new (node.Data()) HeapArrayHeader();
             auto* array = &heapArray->array;
@@ -561,10 +566,12 @@ public:
             return AlignUp(sizeof(HeapObjHeader) + membersSize, kObjectAlignment);
         }
 
-        static size_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
-            uint32_t membersSize = static_cast<uint32_t>(-typeInfo->instanceSize_) * count;
+        static uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
+            // -(int32_t min) * uint32_t max cannot overflow uint64_t. And are capped
+            // at about half of uint64_t max.
+            uint64_t membersSize = static_cast<uint64_t>(-typeInfo->instanceSize_) * count;
             // Note: array body is aligned, but for size computation it is enough to align the sum.
-            return AlignUp(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
+            return AlignUp<uint64_t>(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
         }
 
         typename Storage::Producer producer_;
@@ -656,10 +663,12 @@ public:
         Iterator begin() noexcept { return Iterator(iter_.begin()); }
         Iterator end() noexcept { return Iterator(iter_.end()); }
 
-        void EraseAndAdvance(Iterator& iterator) noexcept { iter_.EraseAndAdvance(iterator.iterator_); }
+        void EraseAndAdvance(Iterator& iterator) noexcept {
+            iter_.EraseAndAdvance(iterator.iterator_, GetAllocatedHeapSize(iterator->GetObjHeader()));
+        }
 
         void MoveAndAdvance(FinalizerQueue& queue, Iterator& iterator) noexcept {
-            iter_.MoveAndAdvance(queue.consumer_, iterator.iterator_);
+            iter_.MoveAndAdvance(queue.consumer_, iterator.iterator_, GetAllocatedHeapSize(iterator->GetObjHeader()));
         }
 
     private:
@@ -672,7 +681,8 @@ public:
     // Lock ObjectFactory for safe iteration.
     Iterable LockForIter() noexcept { return Iterable(*this); }
 
-    size_t GetSizeUnsafe() const noexcept { return storage_.GetSizeUnsafe(); }
+    size_t GetObjectsCountUnsafe() const noexcept { return storage_.GetSizeUnsafe(); }
+    size_t GetTotalObjectsSizeUnsafe() const noexcept { return storage_.GetTotalObjectsSizeUnsafe(); }
 
     void ClearForTests() { storage_.ClearForTests(); }
 

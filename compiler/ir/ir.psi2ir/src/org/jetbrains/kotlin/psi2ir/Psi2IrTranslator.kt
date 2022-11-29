@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -44,7 +43,14 @@ fun interface Psi2IrPostprocessingStep {
 class Psi2IrTranslator(
     val languageVersionSettings: LanguageVersionSettings,
     val configuration: Psi2IrConfiguration,
+    private val checkNoUnboundSymbols: (SymbolTable, String) -> Unit
 ) {
+    @Deprecated("Only for backward compatibility with older versions of IDE", level = DeprecationLevel.ERROR)
+    constructor(
+        languageVersionSettings: LanguageVersionSettings,
+        configuration: Psi2IrConfiguration
+    ) : this(languageVersionSettings, configuration, checkNoUnboundSymbols = { _, _ -> })
+
     private val postprocessingSteps = SmartList<Psi2IrPostprocessingStep>()
 
     fun addPostprocessingStep(step: Psi2IrPostprocessingStep) {
@@ -80,6 +86,7 @@ class Psi2IrTranslator(
         expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
         fragmentInfo: EvaluatorFragmentInfo? = null
     ): IrModuleFragment {
+
         val moduleGenerator = fragmentInfo?.let {
             FragmentModuleGenerator(context, it)
         } ?: ModuleGenerator(context, expectDescriptorToSymbol)
@@ -92,9 +99,7 @@ class Psi2IrTranslator(
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
         deserializers.forEach { it.postProcess() }
-        if (!context.configuration.allowUnboundSymbols) {
-            context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
-        }
+        context.checkNoUnboundSymbols { "after generation of IR module ${irModule.name.asString()}" }
 
         postprocessingSteps.forEach { it.invoke(irModule) }
 //        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
@@ -102,7 +107,13 @@ class Psi2IrTranslator(
         // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
         deserializers.forEach { it.postProcess() }
+        context.checkNoUnboundSymbols { "after applying all post-processing steps for the generated IR module ${irModule.name.asString()}" }
 
         return irModule
+    }
+
+    private fun GeneratorContext.checkNoUnboundSymbols(whenDetected: () -> String) {
+        if (!configuration.partialLinkageEnabled)
+            checkNoUnboundSymbols(symbolTable, whenDetected())
     }
 }

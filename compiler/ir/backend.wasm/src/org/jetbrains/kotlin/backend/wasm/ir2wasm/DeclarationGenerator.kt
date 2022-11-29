@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -126,7 +127,15 @@ class DeclarationGenerator(
         }
 
         val exprGen = functionCodegenContext.bodyGen
-        val bodyBuilder = BodyGenerator(functionCodegenContext, hierarchyDisjointUnions)
+        val bodyBuilder = BodyGenerator(
+            context = functionCodegenContext,
+            hierarchyDisjointUnions = hierarchyDisjointUnions,
+            isGetUnitFunction = declaration == unitGetInstanceFunction
+        )
+
+        if (declaration is IrConstructor) {
+            bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
+        }
 
         require(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
         declaration.body?.acceptVoid(bodyBuilder)
@@ -367,13 +376,19 @@ class DeclarationGenerator(
         //TODO("FqName for inner classes could be invalid due to topping it out from outer class")
         val packageName = if (fqnShouldBeEmitted) classMetadata.klass.kotlinFqName.parentOrNull()?.asString() ?: "" else ""
         val simpleName = classMetadata.klass.kotlinFqName.shortName().asString()
+
+        val (packageNameAddress, packageNamePoolId) = context.referenceStringLiteralAddressAndId(packageName)
+        val (simpleNameAddress, simpleNamePoolId) = context.referenceStringLiteralAddressAndId(simpleName)
+
         val typeInfo = ConstantDataStruct(
             name = "TypeInfo",
             elements = listOf(
                 ConstantDataIntField("TypePackageNameLength", packageName.length),
-                ConstantDataIntField("TypePackageNamePtr", context.referenceStringLiteral(packageName)),
+                ConstantDataIntField("TypePackageNameId", packageNamePoolId),
+                ConstantDataIntField("TypePackageNamePtr", packageNameAddress),
                 ConstantDataIntField("TypeNameLength", simpleName.length),
-                ConstantDataIntField("TypeNamePtr", context.referenceStringLiteral(simpleName))
+                ConstantDataIntField("TypeNameId", simpleNamePoolId),
+                ConstantDataIntField("TypeNamePtr", simpleNameAddress)
             )
         )
 
@@ -419,8 +434,8 @@ class DeclarationGenerator(
 
         val initValue: IrExpression? = declaration.initializer?.expression
         if (initValue != null) {
-            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String && initValue.kind !is IrConstKind.Null) {
-                "Static field initializer should be non-string const or null"
+            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String) {
+                "Static field initializer should be string or const"
             }
             generateConstExpression(initValue, wasmExpressionGenerator, context)
         } else {
@@ -438,14 +453,16 @@ class DeclarationGenerator(
     }
 }
 
-
 fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) = when (type) {
     WasmI32 -> g.buildConstI32(0)
     WasmI64 -> g.buildConstI64(0)
     WasmF32 -> g.buildConstF32(0f)
     WasmF64 -> g.buildConstF64(0.0)
     is WasmRefNullType -> g.buildRefNull(type.heapType)
+    is WasmRefNullNoneType -> g.buildRefNull(WasmHeapType.Simple.NullNone)
+    is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NullNoExtern)
     is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any)
+    is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
     WasmUnreachableType -> error("Unreachable type can't be initialized")
     else -> error("Unknown value type ${type.name}")
 }
@@ -461,7 +478,10 @@ fun IrFunction.isExported(): Boolean =
 
 fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmBaseCodegenContext) {
     when (val kind = expression.kind) {
-        is IrConstKind.Null -> generateDefaultInitializerForType(context.transformType(expression.type), body)
+        is IrConstKind.Null -> {
+            val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
+            body.buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(bottomType))
+        }
         is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
         is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt())
         is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt())
@@ -471,8 +491,11 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
         is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
         is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
         is IrConstKind.String -> {
-            body.buildConstI32Symbol(context.referenceStringLiteral(kind.valueOf(expression)))
-            body.buildConstI32(kind.valueOf(expression).length)
+            val stringValue = kind.valueOf(expression)
+            val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+            body.buildConstI32Symbol(literalPoolId)
+            body.buildConstI32Symbol(literalAddress)
+            body.buildConstI32(stringValue.length)
             body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral))
         }
         else -> error("Unknown constant kind")

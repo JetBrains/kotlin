@@ -9,12 +9,6 @@ public final class Foo /* Foo*/ {
   private final java.lang.Object arrayConst;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
-  private final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
   private final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
 
   @org.jetbrains.annotations.NotNull()
@@ -31,6 +25,12 @@ public final class Foo /* Foo*/ {
 
   @org.jetbrains.annotations.NotNull()
   private kotlin.Lazy<java.lang.String> lazyProp$delegate;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   public static final Foo.Companion Companion;
@@ -74,17 +74,17 @@ public final class Foo /* Foo*/ {
 
   private static final error.NonExistentClass contextBean;
 
+  private static final int f1;
+
+  private static final int prop3;
+
+  private static int prop7;
+
   protected java.lang.String protectedLateinitVar;
 
   public error.NonExistentClass subject;
 
   public java.lang.String internalVarPrivateSet;
-
-  public static final int f1;
-
-  public static final int prop3;
-
-  public static int prop7;
 
   @org.jetbrains.annotations.NotNull()
   protected final java.lang.String getProtectedLateinitVar();//  getProtectedLateinitVar()
@@ -161,7 +161,7 @@ public final class Foo /* Foo*/ {
 
   public final int getF1();//  getF1()
 
-  public final int getIntProp(int);//  getIntProp(int)
+  public final int getIntProp(@org.jetbrains.annotations.NotNull() int);//  getIntProp(int)
 
   public final int getInternalWithPrivateSet$light_idea_test_case();//  getInternalWithPrivateSet$light_idea_test_case()
 

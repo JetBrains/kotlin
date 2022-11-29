@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -72,7 +73,7 @@ class IncrementalFirJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter,
     buildHistoryFile: File,
-    outputFiles: Collection<File>,
+    outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
     kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     classpathChanges: ClasspathChanges
@@ -81,7 +82,7 @@ class IncrementalFirJvmCompilerRunner(
     reporter,
     false,
     buildHistoryFile,
-    outputFiles,
+    outputDirs,
     modulesApiHistory,
     kotlinSourceFilesExtensions,
     classpathChanges
@@ -281,7 +282,8 @@ class IncrementalFirJvmCompilerRunner(
                 cycleResult.session.languageVersionSettings, extensions,
                 FirJvmKotlinMangler(cycleResult.session), JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
                 Fir2IrJvmSpecialAnnotationSymbolProvider(),
-                irGenerationExtensions
+                irGenerationExtensions,
+                kotlinBuiltIns = DefaultBuiltIns.Instance // TODO: consider passing externally
             )
 
             performanceManager?.notifyIRTranslationFinished()

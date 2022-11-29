@@ -350,7 +350,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             extractTypeMappingModeFromAnnotation(
                 declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
             )
-                ?: if (declaration.isMethodWithDeclarationSiteWildcards && type.argumentsCount() != 0) {
+                ?: if (declaration.isMethodWithDeclarationSiteWildcards && !declaration.isStaticInlineClassReplacement && type.argumentsCount() != 0) {
                     TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
                 } else {
                     typeSystem.getOptimalModeForValueParameter(type)
@@ -422,7 +422,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     // TODO: get rid of this (probably via some special lowering)
     private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         // Do not remap calls to static replacements of inline class methods, since they have completely different signatures.
-        if (callee.isStaticInlineClassReplacement) return null
+        if (callee.isStaticValueClassReplacement) return null
         val overriddenSpecialBuiltinFunction =
             (callee.toIrBasedDescriptor().getOverriddenBuiltinReflectingJvmDescriptor() as IrBasedSimpleFunctionDescriptor?)?.owner
         if (overriddenSpecialBuiltinFunction != null && !superCall) {

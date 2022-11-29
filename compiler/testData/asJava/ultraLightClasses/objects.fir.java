@@ -1,16 +1,19 @@
 public final class C /* C*/ {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  public static java.lang.String x;
+  private static java.lang.String x = "" /* initializer type: java.lang.String */;
+
+  @org.jetbrains.annotations.NotNull()
+  private static java.lang.String c1;
+
+  @org.jetbrains.annotations.NotNull()
+  private static java.lang.String c;
 
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
 
   @org.jetbrains.annotations.NotNull()
-  public static java.lang.String c1;
-
-  @org.jetbrains.annotations.NotNull()
-  public static java.lang.String c;
+  public static final C.Factory Factory;
 
   @kotlin.jvm.JvmStatic()
   public static final void foo();//  foo()
@@ -33,13 +36,13 @@ public final class C /* C*/ {
 public static final class Companion /* C.Companion*/ {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getC(I);//  getC(I)
+  public final java.lang.String getC(@org.jetbrains.annotations.NotNull() I);//  getC(I)
 
   @kotlin.jvm.JvmStatic()
   public final void foo();//  foo()
 
   @kotlin.jvm.JvmStatic()
-  public final void setC(I, @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(I, java.lang.String)
+  public final void setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(I, java.lang.String)
 
   @kotlin.jvm.JvmStatic()
   public final void setC1(@org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(java.lang.String)
@@ -96,10 +99,13 @@ public static final class Companion /* I.Companion*/ {
 public final class Obj /* Obj*/ implements java.lang.Runnable {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String x;
+  private static java.lang.String x = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   public static final Obj INSTANCE;
+
+  @java.lang.Override()
+  public void run();//  run()
 
   @kotlin.jvm.JvmStatic()
   public static final int zoo();//  zoo()
@@ -111,28 +117,26 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
 
   public static final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
 
-  public void run();//  run()
-
 }
 
 public final class ConstContainer /* ConstContainer*/ {
   @org.jetbrains.annotations.NotNull()
-  private static final java.lang.String str = "one" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
   public static final ConstContainer INSTANCE;
 
-  private static final double complexFloat = 5.118281745910645 /* initializer type: double */;
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.String str = "one" /* initializer type: java.lang.String */ /* constant value one */;
 
-  private static final double e = 2.7182818284 /* initializer type: double */;
+  public static final double complexFloat = 5.118281745910645 /* initializer type: double */ /* constant value 5.118281745910645 */;
 
-  private static final float eFloat = 2.7182817f /* initializer type: float */;
+  public static final double e = 2.7182818284 /* initializer type: double */ /* constant value 2.7182818284 */;
 
-  private static final int one = 1 /* initializer type: int */;
+  public static final float eFloat = 2.7182817f /* initializer type: float */ /* constant value 2.7182817 */;
 
-  private static final long complexLong = 2L /* initializer type: long */;
+  public static final int one = 1 /* initializer type: int */ /* constant value 1 */;
 
-  private static final long oneLong = 1L /* initializer type: long */;
+  public static final long complexLong = 2L /* initializer type: long */ /* constant value 2 */;
+
+  public static final long oneLong = 1L /* initializer type: long */ /* constant value 1 */;
 
   private  ConstContainer();//  .ctor()
 
@@ -143,19 +147,19 @@ public final class ClassWithConstContainer /* ClassWithConstContainer*/ {
   public static final ClassWithConstContainer.Companion Companion;
 
   @org.jetbrains.annotations.NotNull()
-  public static final java.lang.String str = "one" /* initializer type: java.lang.String */;
+  public static final java.lang.String str = "one" /* initializer type: java.lang.String */ /* constant value one */;
 
-  public static final double complexFloat = 5.118281745910645 /* initializer type: double */;
+  public static final double complexFloat = 5.118281745910645 /* initializer type: double */ /* constant value 5.118281745910645 */;
 
-  public static final double e = 2.7182818284 /* initializer type: double */;
+  public static final double e = 2.7182818284 /* initializer type: double */ /* constant value 2.7182818284 */;
 
-  public static final float eFloat = 2.7182817f /* initializer type: float */;
+  public static final float eFloat = 2.7182817f /* initializer type: float */ /* constant value 2.7182817 */;
 
-  public static final int one = 1 /* initializer type: int */;
+  public static final int one = 1 /* initializer type: int */ /* constant value 1 */;
 
-  public static final long complexLong = 2L /* initializer type: long */;
+  public static final long complexLong = 2L /* initializer type: long */ /* constant value 2 */;
 
-  public static final long oneLong = 1L /* initializer type: long */;
+  public static final long oneLong = 1L /* initializer type: long */ /* constant value 1 */;
 
   public  ClassWithConstContainer();//  .ctor()
 

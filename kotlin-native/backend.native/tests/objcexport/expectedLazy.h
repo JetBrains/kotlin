@@ -1080,6 +1080,25 @@ __attribute__((swift_name("Bar")))
 @end
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT54119KotlinKey")))
+@interface KtKT54119KotlinKey : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt54119Kt")))
+@interface KtKt54119Kt : KtBase
++ (BOOL)callContainsSet:(NSSet<id> *)set __attribute__((swift_name("callContains(set:)")));
++ (id _Nullable)callGetElementSet:(NSSet<id> *)set __attribute__((swift_name("callGetElement(set:)")));
++ (BOOL)callContainsKeyMap:(NSDictionary<id, id> *)map __attribute__((swift_name("callContainsKey(map:)")));
++ (BOOL)callContainsValueMap:(NSDictionary<id, id> *)map __attribute__((swift_name("callContainsValue(map:)")));
++ (id _Nullable)callGetMap:(NSDictionary<id, id> *)map __attribute__((swift_name("callGet(map:)")));
++ (int32_t)callGetOrThrowConcurrentModificationMap:(NSDictionary<id, id> *)map __attribute__((swift_name("callGetOrThrowConcurrentModification(map:)")));
++ (BOOL)callContainsEntryMap:(NSDictionary<id, id> *)map __attribute__((swift_name("callContainsEntry(map:)")));
+@end
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
 + (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));

@@ -7,7 +7,7 @@ public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Cr
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-          NEW
+          NEW (test/Bar)
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
@@ -16,7 +16,7 @@ public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Cr
           GETSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)
           SWAP
           INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (test/Foo)
           GOTO (L3)
         LABEL (L2)
           ACONST_NULL
@@ -46,7 +46,7 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
     private final test.Foo foo
 
     static void <clinit>() {
-          NEW
+          NEW (test/Bar$Creator)
           DUP
           INVOKESPECIAL (test/Bar$Creator, <init>, ()V)
           PUTSTATIC (test/Bar, CREATOR, Landroid/os/Parcelable$Creator;)
@@ -94,13 +94,13 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (test/Foo)
           DUP
           ALOAD (1)
           GETSTATIC (test/Bar, CREATOR, Landroid/os/Parcelable$Creator;)
           SWAP
           INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (test/Bar)
           INVOKESPECIAL (test/Foo, <init>, (Ltest/Bar;)V)
           ARETURN
         LABEL (L1)
@@ -126,7 +126,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
     private final test.Bar bar
 
     static void <clinit>() {
-          NEW
+          NEW (test/Foo$Creator)
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
           PUTSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)

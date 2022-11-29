@@ -56,7 +56,9 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
                 EffectiveVisibility.Public
             )
             returnTypeRef = session.builtinTypes.stringType
+            symbol = FirNamedFunctionSymbol(callableId)
             valueParameters += buildValueParameter {
+                containingFunctionSymbol = this@buildSimpleFunction.symbol
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = Key.origin
@@ -69,7 +71,6 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
                 isNoinline = false
                 isVararg = false
             }
-            symbol = FirNamedFunctionSymbol(callableId)
             name = callableId.callableName
         }
         return listOf(function.symbol)

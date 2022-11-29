@@ -119,7 +119,7 @@ data class BuildInfo(val buildNumber: String, val startTime: String, val endTime
                 val buildTypeElement = data.getOptionalField("buildType")
                 val buildType = buildTypeElement?.let {
                     elementToString(buildTypeElement, "buildType")
-                } ?: null
+                }
                 return BuildInfo(buildNumber, startTime, endTime, CommitsList(commits), branch, agentInfo, buildType)
             } else {
                 error("Top level entity is expected to be an object. Please, check origin files.")
@@ -161,7 +161,7 @@ abstract class ElasticSearchIndex(val indexName: String, val connector: ElasticS
                 "mappings": {
                 "properties": {
                     ${mapping.map { (property, type) ->
-                        "\"${property}\": { \"type\": \"${type.name.toLowerCase()}\"${if (type == ElasticSearchType.DATE) "," +
+                        "\"${property}\": { \"type\": \"${type.name.lowercase()}\"${if (type == ElasticSearchType.DATE) "," +
                     "\"format\": \"basic_date_time_no_millis\"" else ""} }"
                     }.joinToString()}}
                 }

@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -208,6 +205,11 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             return value
         }
 
+        if (value.isNullConst() && fromClass.isExternal != toClass.isExternal) {
+            value.type = toType
+            return value
+        }
+
         if (fromClass.isExternal && !toClass.isExternal) {
             val narrowingToAny = builder.irCall(symbols.jsInteropAdapters.jsToKotlinAnyAdapter).also {
                 it.putValueArgument(0, value)
@@ -234,7 +236,13 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        return builder.irCall(symbols.refCast, type = toType).apply {
+        if (toType == symbols.voidType) {
+            return builder.irCall(symbols.findVoidConsumer(value.type)).apply {
+                putValueArgument(0, value)
+            }
+        }
+
+        return builder.irCall(symbols.refCastNull, type = toType).apply {
             putTypeArgument(0, toType)
             putValueArgument(0, value)
         }
@@ -324,9 +332,14 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun generateIsExternalClass(argument: IrExpression, klass: IrClass): IrExpression {
-        val function = context.mapping.wasmJsInteropFunctionToWrapper[context.mapping.wasmExternalClassToInstanceCheck[klass]!!]!!
-        return builder.irCall(function).also {
-            it.putValueArgument(0, argument)
+        val instanceCheckFunction = context.mapping.wasmExternalClassToInstanceCheck[klass]!!
+        val wrappedInstanceCheckIfAny = context.mapping.wasmJsInteropFunctionToWrapper[instanceCheckFunction] ?: instanceCheckFunction
+
+        return builder.irCall(wrappedInstanceCheckIfAny).also {
+            it.putValueArgument(
+                index = 0,
+                valueArgument = narrowType(argument.type, context.irBuiltIns.anyType, argument) //TODO("Why we need it?)
+            )
         }
     }
 }

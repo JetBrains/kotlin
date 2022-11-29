@@ -4,3 +4,7 @@ plugins {
     id "org.jetbrains.kotlin.plugin.lombok"
     id "io.freefair.lombok" version "5.3.0"
 }
+
+dependencies {
+    implementation("com.google.guava:guava:29.0-jre")
+}

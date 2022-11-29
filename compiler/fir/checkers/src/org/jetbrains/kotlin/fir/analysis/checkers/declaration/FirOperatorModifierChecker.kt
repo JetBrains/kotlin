@@ -1,15 +1,13 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
-/*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.Returns
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.ValueParametersCount
@@ -20,12 +18,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.noDefaultAn
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -99,7 +98,7 @@ private object Checks {
     }
 
     val memberOrExtension = simple("must be a member or an extension function") {
-        it.dispatchReceiverType != null || it.receiverTypeRef != null
+        it.dispatchReceiverType != null || it.receiverParameter != null
     }
 
     val member = simple("must be a member function") {
@@ -143,20 +142,20 @@ private object Checks {
         }
     }
 
-    private val kPropertyType = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(StandardClassIds.KProperty),
-        arrayOf(ConeStarProjection),
-        isNullable = false
-    )
-
     val isKProperty = full("second parameter must be of type KProperty<*> or its supertype") { ctx, function ->
         val paramType = function.valueParameters[1].returnTypeRef.coneType
-        paramType.isSupertypeOf(ctx.session.typeContext, kPropertyType)
+        paramType.isSupertypeOf(
+            ctx.session.typeContext,
+            ConeClassLikeTypeImpl(
+                ConeClassLikeLookupTagImpl(StandardClassIds.KProperty),
+                arrayOf(ConeStarProjection),
+                isNullable = false
+            )
+        )
     }
 
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 private object OperatorFunctionChecks {
 
     //reimplementation of org.jetbrains.kotlin.util.OperatorChecks for FIR
@@ -184,10 +183,25 @@ private object OperatorFunctionChecks {
         checkFor(
             EQUALS,
             member,
-            Checks.full("must override ''equals()'' in Any") { ctx, function ->
-                val containingClassSymbol = function.containingClass()?.toFirRegularClassSymbol(ctx.session) ?: return@full true
-                function.overriddenFunctions(containingClassSymbol, ctx).any {
-                    it.containingClass()?.classId == StandardClassIds.Any
+            object : Check {
+                override fun check(context: CheckerContext, function: FirSimpleFunction): String? {
+                    val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) ?: return null
+                    val customEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)
+
+                    if (function.overriddenFunctions(containingClassSymbol, context)
+                            .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
+                        || (customEqualsSupported && function.isTypedEqualsInInlineClass(context.session))
+                    ) {
+                        return null
+                    }
+                    return buildString {
+                        append("must override ''equals()'' in Any")
+                        if (customEqualsSupported && containingClassSymbol.isInline) {
+                            val expectedParameterTypeRendered =
+                                containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable();
+                            append(" or define ''equals(other: ${expectedParameterTypeRendered}): Boolean''")
+                        }
+                    }
                 }
             }
         )
@@ -198,7 +212,7 @@ private object OperatorFunctionChecks {
             setOf(INC, DEC),
             memberOrExtension,
             Checks.full("receiver must be a supertype of the return type") { ctx, function ->
-                val receiver = function.dispatchReceiverType ?: function.receiverTypeRef?.coneType ?: return@full false
+                val receiver = function.dispatchReceiverType ?: function.receiverParameter?.typeRef?.coneType ?: return@full false
                 function.returnTypeRef.coneType.isSubtypeOf(ctx.session.typeContext, receiver)
             }
         )

@@ -99,7 +99,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
             super.defineClass(origin, version, access, name, signature, superName, interfaces)
         }
 
-        override fun done() {
+        override fun done(generateSmapCopyToAnnotation: Boolean) {
             if (!isClinitGenerated && currentClass != null && currentClassName != null) {
                 val descriptor = bindingContext[BindingContext.CLASS, currentClass]
                 if (descriptor != null && declarationOrigin.descriptor == descriptor && descriptor.isParcelize) {
@@ -112,7 +112,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 }
             }
 
-            super.done()
+            super.done(generateSmapCopyToAnnotation)
         }
 
         override fun newMethod(

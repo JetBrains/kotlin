@@ -24,14 +24,12 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.util.transformToReceiverWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SimpleTypeArgumentImpl(
     val typeProjection: KtTypeProjection,
@@ -61,8 +59,8 @@ val KotlinCallArgument.psiCallArgument: PSIKotlinCallArgument
 val KotlinCallArgument.psiExpression: KtExpression?
     get() {
         return when (this) {
-            is ReceiverExpressionKotlinCallArgument -> receiver.receiverValue.safeAs<ExpressionReceiver>()?.expression
-            is QualifierReceiverKotlinCallArgument -> receiver.safeAs<Qualifier>()?.expression
+            is ReceiverExpressionKotlinCallArgument -> (receiver.receiverValue as? ExpressionReceiver)?.expression
+            is QualifierReceiverKotlinCallArgument -> (receiver as? Qualifier)?.expression
             is EmptyLabeledReturn -> returnExpression
             else -> psiCallArgument.valueArgument.getArgumentExpression()
         }

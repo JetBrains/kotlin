@@ -15,8 +15,6 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
@@ -123,15 +121,14 @@ private fun detectModules(targets: Iterable<KotlinTarget>, sourceSets: Iterable<
 
 @Suppress("unused")
 class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExplicit: Boolean) {
-    private fun getModulesFromPm20Project(project: Project) = project.kpmModules.toList()
+    private fun getModulesFromPm20Project(project: Project) = project.pm20Extension.modules.toList()
 
     fun buildModulesFromProject(project: Project): List<KpmModule> {
-        if (project.hasKpmModel)
+        if (project.pm20ExtensionOrNull != null)
             return getModulesFromPm20Project(project)
 
         val extension = project.multiplatformExtensionOrNull
             ?: project.kotlinExtension
-            ?: return emptyList()
 
         val targets = when (extension) {
             is KotlinMultiplatformExtension -> extension.targets.filter { it.name != KotlinMultiplatformPlugin.METADATA_TARGET_NAME }
@@ -219,7 +216,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
         if (addInferredSourceSetVisibilityAsExplicit) {
             project.kotlinExtension.sourceSets.forEach { sourceSet ->
                 val fragment = fragmentByName(sourceSet.name)
-                getVisibleSourceSetsFromAssociateCompilations(project, sourceSet).forEach { dependency ->
+                getVisibleSourceSetsFromAssociateCompilations(sourceSet).forEach { dependency ->
                     val dependencyFragment = fragmentByName(dependency.name)
                     fragment.declaredModuleDependencies.add(KpmModuleDependency(dependencyFragment.containingModule.moduleIdentifier))
                 }
@@ -319,7 +316,7 @@ class KpmGradleModuleVariantResolver : KpmModuleVariantResolver {
 
     private fun getCompileDependenciesConfigurationForVariant(project: Project, requestingVariant: KpmVariant): Configuration =
         when {
-            project.hasKpmModel -> {
+            project.pm20ExtensionOrNull != null -> {
                 (requestingVariant as GradleKpmVariant).compileDependenciesConfiguration
             }
             else -> {

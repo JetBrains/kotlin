@@ -90,7 +90,8 @@ fun trimMarginConstantCustomPrefixInterpolatedUsingConstant(): String {
     """.trimMargin(marginPrefix = "$OCTOTHORPE@$OCTOTHORPE")
 }
 
-// CHECK_CALLED_IN_SCOPE: function=trimMargin$default scope=trimMarginNotConstant
+// CHECK_CALLED_IN_SCOPE: function=trimMargin$default scope=trimMarginNotConstant IGNORED_BACKENDS=JS_IR
+// CHECK_CALLED_IN_SCOPE: function=trimMargin scope=trimMarginNotConstant TARGET_BACKENDS=JS_IR
 fun trimMarginNotConstant(arg: String): String {
     return arg.trimMargin()
 }
@@ -100,7 +101,8 @@ fun trimMarginNotConstantCustomPrefix(arg: String): String {
     return arg.trimMargin("###")
 }
 
-// CHECK_CALLED_IN_SCOPE: function=trimMargin$default scope=trimMarginInterpolated
+// CHECK_CALLED_IN_SCOPE: function=trimMargin$default scope=trimMarginInterpolated IGNORED_BACKENDS=JS_IR
+// CHECK_CALLED_IN_SCOPE: function=trimMargin scope=trimMarginInterpolated TARGET_BACKENDS=JS_IR
 fun trimMarginInterpolated(arg: Int): String {
     return """
         |Hello,

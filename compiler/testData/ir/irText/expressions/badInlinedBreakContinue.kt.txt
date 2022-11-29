@@ -7,6 +7,10 @@ inline fun bar(block1: Function0<Unit>, noinline block2: Function0<Unit>) {
   block2.invoke()
 }
 
+inline fun baz(crossinline block: Function0<Unit>) {
+  block.invoke()
+}
+
 inline fun <T : Any?> Iterable<T>.myForEach(action: Function1<T, Unit>) {
   { // BLOCK
     val tmp0_iterator: Iterator<T> = <this>.iterator()
@@ -218,5 +222,14 @@ fun test7() {
     }
   }
 )
+}
+
+fun test8() {
+  while (true) { // BLOCK
+    baz(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+  }
 }
 

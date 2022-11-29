@@ -11,24 +11,40 @@ import kotlin.reflect.KProperty;
 
 @SuppressWarnings("rawtypes")
 public abstract class PropertyReference extends CallableReference implements KProperty {
+    private final boolean syntheticJavaProperty;
+
     public PropertyReference() {
         super();
+
+        syntheticJavaProperty = false;
     }
 
     @SinceKotlin(version = "1.1")
     public PropertyReference(Object receiver) {
         super(receiver);
+
+        syntheticJavaProperty = false;
     }
 
     @SinceKotlin(version = "1.4")
     public PropertyReference(Object receiver, Class owner, String name, String signature, int flags) {
         super(receiver, owner, name, signature, (flags & 1) == 1);
+
+        syntheticJavaProperty = (flags & 2) == 2;
     }
 
     @Override
     @SinceKotlin(version = "1.1")
     protected KProperty getReflected() {
+        if (syntheticJavaProperty) {
+            throw new UnsupportedOperationException("Kotlin reflection is not yet supported for synthetic Java properties");
+        }
         return (KProperty) super.getReflected();
+    }
+
+    @Override
+    public KCallable compute() {
+        return syntheticJavaProperty ? this : super.compute();
     }
 
     @Override

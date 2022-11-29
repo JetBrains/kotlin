@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
@@ -61,7 +61,7 @@ private fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultK
         compatibility metadata variant will still register
         a 'KotlinMetadataCompilation for 'commonMain' which is irrelevant here
         */
-        val compilations = CompilationSourceSetUtil.compilationsBySourceSets(this)[sourceSet].orEmpty()
+        val compilations = sourceSet.internal.compilations
             .filter { compilation -> compilation !is KotlinMetadataCompilation }
 
         /* Participating in multiple compilations? -> can't propagate -> should be commonized */

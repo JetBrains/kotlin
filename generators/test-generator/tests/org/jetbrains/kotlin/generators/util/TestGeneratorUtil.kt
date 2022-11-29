@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.generators.util
 
 import org.intellij.lang.annotations.Language
-import kotlin.text.capitalize
 import java.io.File
 import java.lang.StringBuilder
 
@@ -35,6 +34,9 @@ object TestGeneratorUtil {
     fun fileNameToJavaIdentifier(file: File): String {
         return escapeForJavaIdentifier(file.name).replaceFirstChar(Char::uppercaseChar)
     }
+
+    fun getMainClassName(): String? =
+        Throwable().stackTrace.lastOrNull()?.className
 }
 
 private val defaultPackages = listOf(

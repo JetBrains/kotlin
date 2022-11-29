@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.replaceStubsAndTypeVariablesToErrors
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -127,7 +128,6 @@ class FirBuilderInferenceSession(
         }
 
         val context = commonSystem.asConstraintSystemCompleterContext()
-        @Suppress("UNCHECKED_CAST")
         components.callCompleter.completer.complete(
             context,
             completionMode,
@@ -230,10 +230,11 @@ class FirBuilderInferenceSession(
         return introducedConstraint
     }
 
-    private fun getResultingSubstitutor(commonSystem: NewConstraintSystemImpl): ChainedSubstitutor {
+    private fun getResultingSubstitutor(commonSystem: NewConstraintSystemImpl): ConeSubstitutor {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
         return ChainedSubstitutor(nonFixedToVariablesSubstitutor, commonSystemSubstitutor)
+            .replaceStubsAndTypeVariablesToErrors(resolutionContext.typeContext, stubsForPostponedVariables.values.map { it.constructor })
     }
 
     private fun updateCalls(substitutor: ConeSubstitutor) {
@@ -241,7 +242,8 @@ class FirBuilderInferenceSession(
         lambda.transformSingle(stubTypeSubstitutor, null)
 
         for (receiver in lambdaImplicitReceivers) {
-            receiver.replaceType(substitutor.substituteOrSelf(receiver.type))
+            @Suppress("DEPRECATION_ERROR")
+            receiver.updateTypeInBuilderInference(substitutor.substituteOrSelf(receiver.type))
         }
 
         // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]

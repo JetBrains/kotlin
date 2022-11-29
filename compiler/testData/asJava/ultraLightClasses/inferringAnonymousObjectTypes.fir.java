@@ -27,6 +27,7 @@ final class C /* C*/ {
 }
 
 final class null /* null*/ {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.String toString();//  toString()
 
@@ -49,16 +50,18 @@ public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
 }
 
 final class null /* null*/ implements java.lang.Runnable {
-  private  ();//  .ctor()
-
+  @java.lang.Override()
   public void run();//  run()
+
+  private  ();//  .ctor()
 
 }
 
 final class null /* null*/ implements java.lang.Runnable {
-  private  ();//  .ctor()
-
+  @java.lang.Override()
   public void run();//  run()
+
+  private  ();//  .ctor()
 
 }
 
@@ -67,28 +70,30 @@ public abstract interface I /* I*/ {
 
 public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.Object x;
+  private final java.lang.Runnable x;
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.Object bar();//  bar()
+  public final java.lang.Runnable bar();//  bar()
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.Object getX();//  getX()
+  public final java.lang.Runnable getX();//  getX()
 
   public  InvalidPublicSupertype();//  .ctor()
 
 }
 
 final class null /* null*/ implements I, java.lang.Runnable {
-  private  ();//  .ctor()
-
+  @java.lang.Override()
   public void run();//  run()
+
+  private  ();//  .ctor()
 
 }
 
 final class null /* null*/ implements I, java.lang.Runnable {
-  private  ();//  .ctor()
-
+  @java.lang.Override()
   public void run();//  run()
+
+  private  ();//  .ctor()
 
 }

@@ -35,6 +35,31 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Inner (with reference to outer this) serializable classes are not supported. Remove @Serializable annotation or 'inner' keyword."
         )
         MAP.put(
+            SerializationErrors.COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED,
+            "Class ''{0}'' has implicit custom serializer as its companion object. This behaviour is not properly reflected by @Serializable annotation without arguments and therefore is deprecated. " +
+            "To be able to use companion object as the ''{0}'' default serializer, please explicitly mention it in the annotation on ''{0}'': @Serializable(''{0}''.Companion::class). " +
+            "For more details, refer to this YouTrack ticket: https://youtrack.jetbrains.com/issue/KT-54441",
+            Renderers.NAME
+        )
+        MAP.put(
+            SerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS,
+            "This class is a Companion object for @Serializable class ''{0}'', but itself is an external serializer for another class ''{1}''. " +
+                    "Such declarations are potentially problematic and user-confusing and therefore are deprecated. " +
+                    "Please define external serializers as non-companion, preferably top-level objects. " +
+                    "For more details, refer to this YouTrack ticket: https://youtrack.jetbrains.com/issue/KT-54441",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+        MAP.put(
+            SerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS,
+            "This class is a Companion object for non-serializable class ''{0}'', but itself is an external serializer for another class ''{1}''. " +
+                    "Such declarations are potentially problematic and user-confusing and therefore are deprecated. " +
+                    "Please define external serializers as non-companion, preferably top-level objects. " +
+                    "For more details, refer to this YouTrack ticket: https://youtrack.jetbrains.com/issue/KT-54441",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+        MAP.put(
             SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
             "Explicit @Serializable annotation on enum class is required when @SerialName or @SerialInfo annotations are used on its members."
         )
@@ -96,6 +121,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Property does not have backing field which makes it non-serializable and therefore @Transient is redundant"
         )
         MAP.put(
+            SerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
+            "Serialization of Arrays with generic type arguments is impossible because of unknown compile-time type."
+        )
+        MAP.put(
             SerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT,
             "Redundant creation of Json default format. Creating instances for each usage can be slow."
         )
@@ -130,6 +159,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Argument values for inheritable serial info annotation ''{0}'' must be the same as the values in parent type ''{1}''",
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
+        )
+        MAP.put(
+            SerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE,
+            "@MetaSerializable annotation should be used only on top-level annotation classes. Usage on nested annotation classes is deprecated and will yield errors in the future."
         )
 
         MAP.put(

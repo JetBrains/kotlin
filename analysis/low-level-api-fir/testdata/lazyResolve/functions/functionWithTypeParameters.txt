@@ -41,6 +41,11 @@ FILE: functionWithTypeParameters.kt
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun <[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K> resolveMe(): R|kotlin/Unit| {
     }
 
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: functionWithTypeParameters.kt
+    public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun <[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> resolveMe(): R|kotlin/Unit| {
+    }
+
 EXPECT_ACTUAL_MATCHING:
 FILE: functionWithTypeParameters.kt
     public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> resolveMe(): R|kotlin/Unit| {

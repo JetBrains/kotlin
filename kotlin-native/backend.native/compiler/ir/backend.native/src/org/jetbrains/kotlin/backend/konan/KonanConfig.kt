@@ -17,21 +17,16 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.MetaVersion
-import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
-
-    fun dispose() {
-        tempFiles.dispose()
-    }
 
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
@@ -149,7 +144,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 // TODO: When moving into proper deprecation cycle replace with WARNING.
                 configuration.report(
                         CompilerMessageSeverity.INFO,
-                        "`freezing` should not be enabled with the new MM. Freezing API is deprecated since 1.7.20. See https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#freezing-deprecation for details"
+                        "`freezing` should not be enabled with the new MM. Freezing API is deprecated since 1.7.20. See https://kotlinlang.org/docs/native-migration-guide.html for details"
                 )
                 freezingMode
             }
@@ -184,8 +179,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.appStateTracking) ?: AppStateTracking.DISABLED
     }
 
-    val mimallocUseDefaultOptions by lazy {
+
+    val mimallocUseDefaultOptions: Boolean by lazy {
         configuration.get(BinaryOptions.mimallocUseDefaultOptions) ?: false
+    }
+
+    val mimallocUseCompaction: Boolean by lazy {
+        // Turned off by default, because it slows down allocation.
+        configuration.get(BinaryOptions.mimallocUseCompaction) ?: false
     }
 
     init {
@@ -239,7 +240,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).cast()
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
     }
 
     val shouldCoverSources = configuration.getBoolean(KonanConfigKeys.COVERAGE)
@@ -338,6 +339,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val friendModuleFiles: Set<File> =
             configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
 
+    internal val refinesModuleFiles: Set<File> =
+            configuration.get(KonanConfigKeys.REFINES_MODULES)?.map { File(it) }?.toSet().orEmpty()
+
     internal val manifestProperties = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
         File(it).loadProperties()
     }
@@ -405,24 +409,24 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val libraryToCache: PartialCacheInfo?
         get() = cacheSupport.libraryToCache
 
-    internal val producePerFileCache = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
+    internal val producePerFileCache
+        get() = configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true
 
-    val outputFiles =
-            OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
-                    target, produce, producePerFileCache)
-
-    val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
-
-    val outputFile get() = outputFiles.mainFileName
+    val outputPath get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
 
     private val implicitModuleName: String
-        get() = if (produce.isCache) outputFiles.cacheFileName else File(outputFiles.outputName).name
+        get() = cacheSupport.libraryToCache?.let {
+            if (producePerFileCache)
+                CachedLibraries.getPerFileCachedLibraryName(it.klib)
+            else
+                CachedLibraries.getCachedLibraryName(it.klib)
+        }
+                ?: File(outputPath).name
 
     val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
             && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
             && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
             && libraryToCache == null)
-            || (producePerFileCache && outputFiles.mainFile.exists)
 
     /**
      * Do not compile binary when compiling framework.

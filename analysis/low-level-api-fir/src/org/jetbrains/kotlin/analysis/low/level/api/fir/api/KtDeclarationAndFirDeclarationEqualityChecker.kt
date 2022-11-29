@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -41,8 +40,8 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     private fun receiverTypeMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
-        if ((fir.receiverTypeRef != null) != (psi.receiverTypeReference != null)) return false
-        if (fir.receiverTypeRef != null && !isTheSameTypes(psi.receiverTypeReference!!, fir.receiverTypeRef!!, isVararg = false)) {
+        if ((fir.receiverParameter != null) != (psi.receiverTypeReference != null)) return false
+        if (fir.receiverParameter != null && !isTheSameTypes(psi.receiverTypeReference!!, fir.receiverParameter!!.typeRef, isVararg = false)) {
             return false
         }
         return true
@@ -121,7 +120,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                     append(classId.asSingleFqName().toString())
                     val parameters = buildList {
                         receiverTypeRef?.let(::add)
-                        valueParameters.mapTo(this) { it.returnTypeRef }
+                        parameters.mapTo(this) { it.returnTypeRef }
                         returnTypeRef.let(::add)
                     }
                     if (parameters.isNotEmpty()) {
@@ -180,7 +179,6 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         return RawFirBuilder(
             createEmptySession(),
             DummyScopeProvider,
-            psiMode = PsiHandlingMode.IDE,
             bodyBuildingMode = BodyBuildingMode.NORMAL
         ).buildTypeReference(this)
     }
@@ -223,7 +221,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
 
     @TestOnly
     fun renderFir(firFunction: FirFunction): String = buildString {
-        appendLine("receiver: ${firFunction.receiverTypeRef?.renderTypeAsKotlinType()}")
+        appendLine("receiver: ${firFunction.receiverParameter?.typeRef?.renderTypeAsKotlinType()}")
         firFunction.valueParameters.forEach { parameter ->
             appendLine("${parameter.name}: ${parameter.returnTypeRef.renderTypeAsKotlinType()}")
         }

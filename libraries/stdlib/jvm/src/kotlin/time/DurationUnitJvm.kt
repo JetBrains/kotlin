@@ -46,15 +46,15 @@ public actual enum class DurationUnit(internal val timeUnit: TimeUnit) {
 /**
  * Converts this [kotlin.time.DurationUnit][DurationUnit] enum value to the corresponding [java.util.concurrent.TimeUnit][java.util.concurrent.TimeUnit] value.
  */
-@SinceKotlin("1.6")
-@ExperimentalTime
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalTime::class)
 public fun DurationUnit.toTimeUnit(): TimeUnit = timeUnit
 
 /**
  * Converts this [java.util.concurrent.TimeUnit][java.util.concurrent.TimeUnit] enum value to the corresponding [kotlin.time.DurationUnit][DurationUnit] value.
  */
-@SinceKotlin("1.6")
-@ExperimentalTime
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalTime::class)
 public fun TimeUnit.toDurationUnit(): DurationUnit = when (this) {
     TimeUnit.NANOSECONDS -> DurationUnit.NANOSECONDS
     TimeUnit.MICROSECONDS -> DurationUnit.MICROSECONDS

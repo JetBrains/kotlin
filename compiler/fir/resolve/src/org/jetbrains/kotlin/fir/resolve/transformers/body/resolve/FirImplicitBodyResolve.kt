@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -236,6 +237,15 @@ private class ReturnTypeCalculatorWithJump(
             return tryCalculateReturnType(declaration.getter.delegate)
         }
 
+        val unwrappedDelegate = declaration.delegatedWrapperData?.wrapped
+        if (unwrappedDelegate != null) {
+            return tryCalculateReturnType(unwrappedDelegate).also {
+                if (declaration.returnTypeRef is FirImplicitTypeRef) {
+                    declaration.replaceReturnTypeRef(it)
+                }
+            }
+        }
+
         if (declaration.isSubstitutionOrIntersectionOverride) {
             val fakeOverrideSubstitution = declaration.attributes.fakeOverrideSubstitution
                 ?: return declaration.returnTypeRef as FirResolvedTypeRef
@@ -287,7 +297,7 @@ private class ReturnTypeCalculatorWithJump(
             val provider = session.firProvider
             val file = provider.getFirCallableContainerFile(symbol)
 
-            val outerClasses = generateSequence(symbol.containingClass()?.classId) { classId ->
+            val outerClasses = generateSequence(symbol.containingClassLookupTag()?.classId) { classId ->
                 classId.outerClassId
             }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 

@@ -435,7 +435,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         const val testClassName = "CodegenTestCaseOnAndroid"
         const val baseTestClassPackage = "org.jetbrains.kotlin.android.tests"
         const val baseTestClassName = "AbstractCodegenTestCaseOnAndroid"
-        const val generatorName = "CodegenTestsOnAndroidGenerator"
 
 
         @JvmOverloads

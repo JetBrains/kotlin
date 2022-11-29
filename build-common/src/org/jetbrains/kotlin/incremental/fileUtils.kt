@@ -29,15 +29,15 @@ fun File.isClassFile(): Boolean =
         extension.equals("class", ignoreCase = true)
 
 /**
- * Deletes the contents of this directory (not the directory itself) if it exists, or creates the directory if it does not yet exist.
+ * Deletes the contents of this directory (not the directory itself).
  *
- * If this is a regular file, this method will throw an exception.
+ * If the directory does not exist or if this is a regular file, this method will throw an exception.
  */
-fun File.cleanDirectoryContents() {
+fun File.deleteDirectoryContents() {
     when {
         isDirectory -> listFiles()!!.forEach { it.deleteRecursivelyOrThrow() }
-        isFile -> error("File.cleanDirectoryContents does not accept a regular file: $path")
-        else -> mkdirsOrThrow()
+        isFile -> error("Expected a directory but found a regular file: $path")
+        else -> error("Directory does not exist: $path")
     }
 }
 
@@ -49,11 +49,12 @@ fun File.deleteRecursivelyOrThrow() {
 }
 
 /**
- * Creates this directory (if it does not yet exist), throwing an exception if the directiory creation failed or if a regular file already
- * exists at this path.
+ * Creates this directory (if it does not yet exist).
+ *
+ * If a regular file already exists at this path, this method will throw an exception.
  */
 @Suppress("SpellCheckingInspection")
-fun File.mkdirsOrThrow() {
+fun File.createDirectory() {
     when {
         isDirectory -> Unit
         isFile -> error("A regular file already exists at this path: $path")

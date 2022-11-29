@@ -81,3 +81,16 @@ public inline fun checkWithAttachmentBuilder(
         buildErrorWithAttachment(message(), buildAttachment = buildAttachment)
     }
 }
+
+@OptIn(ExperimentalContracts::class)
+public inline fun requireWithAttachmentBuilder(
+    condition: Boolean,
+    message: () -> String,
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+) {
+    contract { returns() implies (condition) }
+
+    if (!condition) {
+        buildErrorWithAttachment(message(), buildAttachment = buildAttachment)
+    }
+}

@@ -5,71 +5,98 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiType
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassLike
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
-import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
-context(KtAnalysisSession)
-internal class SymbolLightFieldForObject(
-    private val objectSymbol: KtNamedClassOrObjectSymbol,
-    containingClass: KtLightClass,
+internal class SymbolLightFieldForObject private constructor(
+    containingClass: SymbolLightClassForClassLike<*>,
     private val name: String,
     lightMemberOrigin: LightMemberOrigin?,
+    private val objectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+    override val kotlinOrigin: KtObjectDeclaration?,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
+    internal constructor(
+        ktAnalysisSession: KtAnalysisSession,
+        objectSymbol: KtNamedClassOrObjectSymbol,
+        name: String,
+        lightMemberOrigin: LightMemberOrigin?,
+        containingClass: SymbolLightClassForClassLike<*>,
+    ) : this(
+        containingClass = containingClass,
+        name = name,
+        lightMemberOrigin = lightMemberOrigin,
+        kotlinOrigin = objectSymbol.sourcePsiSafe(),
+        objectSymbolPointer = with(ktAnalysisSession) { objectSymbol.createPointer() },
+    )
 
-    override val kotlinOrigin: KtDeclaration? = objectSymbol.psi as? KtDeclaration
+    private inline fun <T> withObjectDeclarationSymbol(crossinline action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
+        objectSymbolPointer.withSymbol(ktModule, action)
 
     override fun getName(): String = name
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val modifiers = setOf(objectSymbol.toPsiVisibilityForMember(isTopLevel = false), PsiModifier.STATIC, PsiModifier.FINAL)
-        val notNullAnnotation = SymbolLightSimpleAnnotation(NotNull::class.java.name, this)
-        SymbolLightMemberModifierList(this, modifiers, listOf(notNullAnnotation))
+        val lazyModifiers = lazyPub {
+            withObjectDeclarationSymbol { objectSymbol ->
+                setOf(objectSymbol.toPsiVisibilityForMember(), PsiModifier.STATIC, PsiModifier.FINAL)
+            }
+        }
+
+        val lazyAnnotations = lazyPub {
+            val notNullAnnotation = SymbolLightSimpleAnnotation(NotNull::class.java.name, this)
+            listOf(notNullAnnotation)
+        }
+
+        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     private val _isDeprecated: Boolean by lazyPub {
-        objectSymbol.hasDeprecatedAnnotation()
+        withObjectDeclarationSymbol { objectSymbol ->
+            objectSymbol.hasDeprecatedAnnotation()
+        }
     }
 
     override fun isDeprecated(): Boolean = _isDeprecated
 
-    override fun getModifierList(): PsiModifierList? = _modifierList
+    override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _type: PsiType by lazyPub {
-        objectSymbol.buildSelfClassType().asPsiType(this@SymbolLightFieldForObject)
-            ?: nonExistentType()
+        withObjectDeclarationSymbol { objectSymbol ->
+            objectSymbol.buildSelfClassType().asPsiType(this@SymbolLightFieldForObject)
+        } ?: nonExistentType()
     }
-
-    private val _identifier: PsiIdentifier by lazyPub {
-        SymbolLightIdentifier(this, objectSymbol)
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
-
 
     override fun getType(): PsiType = _type
 
     override fun getInitializer(): PsiExpression? = null //TODO
 
-    override fun equals(other: Any?): Boolean =
-        this === other ||
-                (other is SymbolLightFieldForObject &&
-                        kotlinOrigin == other.kotlinOrigin &&
-                        objectSymbol == other.objectSymbol)
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SymbolLightFieldForObject || other.ktModule != ktModule) return false
+        if (kotlinOrigin != null) {
+            return other.kotlinOrigin == kotlinOrigin
+        }
+
+        return other.kotlinOrigin == null &&
+                other.containingClass == containingClass &&
+                compareSymbolPointers(ktModule, other.objectSymbolPointer, objectSymbolPointer)
+    }
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && objectSymbol.isValid()
+    override fun isValid(): Boolean = kotlinOrigin?.isValid ?: objectSymbolPointer.isValid(ktModule)
 }

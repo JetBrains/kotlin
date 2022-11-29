@@ -18,6 +18,7 @@ import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -116,6 +117,7 @@ private fun configureDiscoveryTransformation(
 
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<TransformParameters.None> {
     @get:InputArtifact
+    @get:NormalizeLineEndings
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {

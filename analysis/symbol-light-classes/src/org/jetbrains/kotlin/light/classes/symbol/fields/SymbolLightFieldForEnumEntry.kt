@@ -7,57 +7,66 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClass
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-context(KtAnalysisSession)
 internal class SymbolLightFieldForEnumEntry(
-    private val enumEntrySymbol: KtEnumEntrySymbol,
-    containingClass: SymbolLightClass,
-    override val lightMemberOrigin: LightMemberOrigin?
-) : SymbolLightField(containingClass, lightMemberOrigin), PsiEnumConstant {
+    private val enumEntry: KtEnumEntry,
+    private val enumEntryName: String,
+    containingClass: SymbolLightClassForClassOrObject,
+) : SymbolLightField(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
+    internal inline fun <T> withEnumEntrySymbol(crossinline action: KtAnalysisSession.(KtEnumEntrySymbol) -> T): T =
+        analyzeForLightClasses(ktModule) {
+            action(enumEntry.getEnumEntrySymbol())
+        }
 
     private val _modifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightFieldForEnumEntry,
-            modifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
-            annotations = emptyList()
+            lazyModifiers = lazyOf(setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)),
+            lazyAnnotations = lazyPub {
+                withEnumEntrySymbol { enumEntrySymbol ->
+                    enumEntrySymbol.computeAnnotations(
+                        this@SymbolLightFieldForEnumEntry,
+                        nullability = NullabilityType.Unknown, // there is no need to add nullability annotations on enum entries
+                        annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
+                    )
+                }
+            }
         )
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    override val kotlinOrigin: KtEnumEntry? = enumEntrySymbol.psi as? KtEnumEntry
+    override val kotlinOrigin: KtEnumEntry = enumEntry
 
     override fun isDeprecated(): Boolean = false
 
-    //TODO Make with KtSymbols
-    private val hasBody: Boolean get() = kotlinOrigin?.let { it.body != null } ?: true
+    private val hasBody: Boolean get() = enumEntry.body != null
 
     private val _initializingClass: PsiEnumConstantInitializer? by lazyPub {
         hasBody.ifTrue {
             SymbolLightClassForEnumEntry(
-                enumEntrySymbol = enumEntrySymbol,
                 enumConstant = this@SymbolLightFieldForEnumEntry,
                 enumClass = containingClass,
-                manager = manager
+                ktModule = ktModule,
             )
         }
     }
 
     override fun getInitializingClass(): PsiEnumConstantInitializer? = _initializingClass
-    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer =
-        _initializingClass ?: cannotModify()
+    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer = _initializingClass ?: cannotModify()
 
     override fun getArgumentList(): PsiExpressionList? = null
     override fun resolveMethod(): PsiMethod? = null
@@ -66,27 +75,22 @@ internal class SymbolLightFieldForEnumEntry(
     override fun resolveMethodGenerics(): JavaResolveResult = JavaResolveResult.EMPTY
 
     override fun hasInitializer() = true
-    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?) = this
+    override fun computeConstantValue() = this
 
-    override fun getName(): String = enumEntrySymbol.name.asString()
+    override fun getName(): String = enumEntryName
 
     private val _type: PsiType by lazyPub {
-        enumEntrySymbol.returnType.asPsiType(this@SymbolLightFieldForEnumEntry) ?: nonExistentType()
+        withEnumEntrySymbol { enumEntrySymbol ->
+            enumEntrySymbol.returnType.asPsiType(this@SymbolLightFieldForEnumEntry) ?: nonExistentType()
+        }
     }
 
     override fun getType(): PsiType = _type
     override fun getInitializer(): PsiExpression? = null
 
-    override fun hashCode(): Int = enumEntrySymbol.hashCode()
+    override fun isValid(): Boolean = enumEntry.isValid
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        SymbolLightIdentifier(this, enumEntrySymbol)
-    }
+    override fun hashCode(): Int = enumEntry.hashCode()
 
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
-
-    override fun isValid(): Boolean = super.isValid() && enumEntrySymbol.isValid()
-
-
-    override fun equals(other: Any?): Boolean = other is SymbolLightFieldForEnumEntry && enumEntrySymbol == other.enumEntrySymbol
+    override fun equals(other: Any?): Boolean = other is SymbolLightFieldForEnumEntry && enumEntry == other.enumEntry
 }

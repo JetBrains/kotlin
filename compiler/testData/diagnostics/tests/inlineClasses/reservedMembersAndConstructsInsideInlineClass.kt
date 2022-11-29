@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +CustomEqualsInInlineClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline class IC1(val x: Any) {
@@ -8,8 +8,8 @@ inline class IC1(val x: Any) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(x: Any) {}
 
-    override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(other: Any?): Boolean = true
-    override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>hashCode<!>(): Int = 0
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS!>equals<!>(other: Any?): Boolean = true
+    override fun hashCode(): Int = 0
 }
 
 inline class IC2(val x: Any) {
@@ -19,15 +19,15 @@ inline class IC2(val x: Any) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(x: Any) {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(): Any = TODO()
 
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(my: Any, other: Any): Boolean = true
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>hashCode<!>(a: Any): Int = 0
+    fun equals(my: Any, other: Any): Boolean = true
+    fun hashCode(a: Any): Int = 0
 }
 
 inline class IC3(val x: Any) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>(x: Any): Any = TODO()
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(x: Any): Any = TODO()
 
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(): Boolean = true
+    fun equals(): Boolean = true
 }
 
 interface WithBox {

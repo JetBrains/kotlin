@@ -56,14 +56,12 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ThrowingScope
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.min
 
 class TypeResolver(
@@ -417,7 +415,7 @@ class TypeResolver(
                 for (parametersGroup in parametersByName.values) {
                     if (parametersGroup.size < 2) continue
                     for (parameter in parametersGroup) {
-                        val ktParameter = parameter.source.getPsi()?.safeAs<KtParameter>() ?: continue
+                        val ktParameter = (parameter.source.getPsi() as? KtParameter) ?: continue
                         c.trace.report(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE.on(ktParameter))
                     }
                 }
@@ -551,9 +549,9 @@ class TypeResolver(
 
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): MemberScope {
         return when {
-            c.checkBounds -> intersectWrappedTypes(typeParameterDescriptor.upperBounds).memberScope
+            c.checkBounds -> TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
             else -> LazyScopeAdapter {
-                intersectWrappedTypes(typeParameterDescriptor.upperBounds).memberScope
+                TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
             }
         }
     }

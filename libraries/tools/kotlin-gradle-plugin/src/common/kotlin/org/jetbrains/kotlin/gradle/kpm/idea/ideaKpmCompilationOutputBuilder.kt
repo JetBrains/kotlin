@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmCompilationOutput
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmCompilationOutputImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 
 internal fun IdeaKpmCompilationOutput(compilation: KotlinCompilationOutput): IdeaKpmCompilationOutput {

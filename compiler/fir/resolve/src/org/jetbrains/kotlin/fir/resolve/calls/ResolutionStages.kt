@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -127,7 +128,7 @@ object CheckExtensionReceiver : ResolutionStage() {
 
     private fun Candidate.getExpectedReceiverType(): ConeKotlinType? {
         val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
-        return callableSymbol.fir.receiverTypeRef?.coneType
+        return callableSymbol.fir.receiverParameter?.typeRef?.coneType
     }
 }
 
@@ -463,7 +464,7 @@ internal object CheckArguments : CheckerStage() {
 
 private fun Candidate.isJavaApplicableCandidate(): Boolean {
     val symbol = symbol as? FirFunctionSymbol ?: return false
-    if (symbol.origin == FirDeclarationOrigin.Enhancement) return true
+    if (symbol.isJavaOrEnhancement) return true
     if (originScope !is FirTypeScope) return false
     // Note: constructor can also be Java applicable with enhancement origin, but it doesn't have overridden functions
     // See samConstructorVsFun.kt diagnostic test
@@ -472,7 +473,7 @@ private fun Candidate.isJavaApplicableCandidate(): Boolean {
     var result = false
 
     originScope.processOverriddenFunctions(symbol) {
-        if (it.origin == FirDeclarationOrigin.Enhancement) {
+        if (it.isJavaOrEnhancement) {
             result = true
             ProcessorAction.STOP
         } else {
@@ -540,7 +541,10 @@ internal object CheckVisibility : CheckerStage() {
                     sink.yieldDiagnostic(VisibilityError)
                 }
 
-                if (!visibilityChecker.isVisible(declaration, candidate.callInfo, dispatchReceiverValue = null)) {
+                if (!visibilityChecker.isVisible(
+                        declaration, candidate.callInfo, dispatchReceiverValue = null, importedQualifierForStatic = null
+                    )
+                ) {
                     sink.yieldDiagnostic(VisibilityError)
                 }
             }
@@ -649,6 +653,21 @@ internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
     }
 }
 
+private val DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(DYNAMIC_EXTENSION_FQ_NAME)
+
+internal object ProcessDynamicExtensionAnnotation : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (candidate.symbol.origin === FirDeclarationOrigin.DynamicScope) return
+        val extensionReceiver = candidate.chosenExtensionReceiverValue ?: return
+        val argumentIsDynamic = extensionReceiver.type is ConeDynamicType
+        val parameterIsDynamic = (candidate.symbol as? FirCallableSymbol)?.resolvedReceiverTypeRef?.type is ConeDynamicType
+        if (parameterIsDynamic != argumentIsDynamic ||
+            parameterIsDynamic && !candidate.symbol.hasAnnotation(DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID)) {
+            candidate.addDiagnostic(HiddenCandidate)
+        }
+    }
+}
+
 internal object LowerPriorityIfDynamic : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         when {
@@ -664,10 +683,8 @@ internal object ConstraintSystemForks : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (candidate.system.hasContradiction) return
 
-        candidate.system.processForkConstraints()
-
-        if (candidate.system.hasContradiction) {
-            sink.yieldDiagnostic(candidate.system.errors.firstOrNull()?.let(::InferenceError) ?: InapplicableCandidate)
+        candidate.system.checkIfForksMightBeSuccessfullyResolved()?.let { csError ->
+            sink.yieldDiagnostic(InferenceError(csError))
         }
     }
 }

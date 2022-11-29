@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import com.android.build.gradle.api.AndroidSourceDirectorySet
 import com.android.build.gradle.api.AndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 internal object MultiplatformLayoutV2SourceDirConfigurator : KotlinAndroidSourceSetConfigurator {
     override fun configure(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
-        val androidKotlinSourceDirectorySet = androidSourceSet.javaClass.getMethod("getKotlin")
-            .invoke(androidSourceSet) as AndroidSourceDirectorySet
-
-        androidKotlinSourceDirectorySet.srcDirs(target.project.provider { kotlinSourceSet.kotlin.srcDirs })
         kotlinSourceSet.kotlin.srcDir(target.project.provider { androidSourceSet.java.srcDirs })
         kotlinSourceSet.kotlin.srcDir("src/${androidSourceSet.name}/kotlin")
     }
 }
+

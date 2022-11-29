@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerC
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.isDefinitelyEmpty
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -55,25 +58,21 @@ class NewConstraintSystemImpl(
      * If remove spread operator then call `checkState` will resolve to itself
      *   instead of fun checkState(vararg allowedState: State)
      */
-    @Suppress("RemoveRedundantSpreadOperator")
     private fun checkState(a: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         checkState(*arrayOf(a))
     }
 
-    @Suppress("RemoveRedundantSpreadOperator")
     private fun checkState(a: State, b: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         checkState(*arrayOf(a, b))
     }
 
-    @Suppress("RemoveRedundantSpreadOperator")
     private fun checkState(a: State, b: State, c: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         checkState(*arrayOf(a, b, c))
     }
 
-    @Suppress("RemoveRedundantSpreadOperator")
     private fun checkState(a: State, b: State, c: State, d: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         checkState(*arrayOf(a, b, c, d))
@@ -207,46 +206,64 @@ class NewConstraintSystemImpl(
         state = beforeState
     }
 
-    override fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean {
-        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        val beforeState = state
-        val beforeInitialConstraintCount = storage.initialConstraints.size
-        val beforeErrorsCount = storage.errors.size
-        val beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints
-        val beforeTypeVariablesTransactionSize = typeVariablesTransaction.size
-        val beforeMissedConstraintsCount = storage.missedConstraints.size
-        val beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount }
-        val beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size
-
-        state = State.TRANSACTION
-        // typeVariablesTransaction is clear
-        if (runOperations()) {
-            closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
-            return true
+    private inner class TransactionState(
+        private val beforeState: State,
+        private val beforeInitialConstraintCount: Int,
+        private val beforeErrorsCount: Int,
+        private val beforeMaxTypeDepthFromInitialConstraints: Int,
+        private val beforeTypeVariablesTransactionSize: Int,
+        private val beforeMissedConstraintsCount: Int,
+        private val beforeConstraintCountByVariables: Map<TypeConstructorMarker, Int>,
+        private val beforeConstraintsFromAllForks: Int,
+    ) : ConstraintSystemTransaction() {
+        override fun closeTransaction() {
+            checkState(State.TRANSACTION)
+            typeVariablesTransaction.trimToSize(beforeTypeVariablesTransactionSize)
+            state = beforeState
         }
 
-        for (addedTypeVariable in typeVariablesTransaction.subList(beforeTypeVariablesTransactionSize, typeVariablesTransaction.size)) {
-            storage.allTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
-            storage.notFixedTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
-        }
-        storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
-        storage.errors.trimToSize(beforeErrorsCount)
-        storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
-        storage.constraintsFromAllForkPoints.trimToSize(beforeConstraintsFromAllForks)
-
-        val addedInitialConstraints = storage.initialConstraints.subList(beforeInitialConstraintCount, storage.initialConstraints.size)
-
-        for (variableWithConstraint in storage.notFixedTypeVariables.values) {
-            val sinceIndexToRemoveConstraints =
-                beforeConstraintCountByVariables[variableWithConstraint.typeVariable.freshTypeConstructor()]
-            if (sinceIndexToRemoveConstraints != null) {
-                variableWithConstraint.removeLastConstraints(sinceIndexToRemoveConstraints)
+        override fun rollbackTransaction() {
+            for (addedTypeVariable in typeVariablesTransaction.subList(beforeTypeVariablesTransactionSize, typeVariablesTransaction.size)) {
+                storage.allTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
+                storage.notFixedTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
             }
-        }
+            storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
+            storage.errors.trimToSize(beforeErrorsCount)
+            storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
+            storage.constraintsFromAllForkPoints.trimToSize(beforeConstraintsFromAllForks)
 
-        addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
-        closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
-        return false
+            val addedInitialConstraints = storage.initialConstraints.subList(
+                beforeInitialConstraintCount,
+                storage.initialConstraints.size
+            )
+
+            for (variableWithConstraint in storage.notFixedTypeVariables.values) {
+                val sinceIndexToRemoveConstraints =
+                    beforeConstraintCountByVariables[variableWithConstraint.typeVariable.freshTypeConstructor()]
+                if (sinceIndexToRemoveConstraints != null) {
+                    variableWithConstraint.removeLastConstraints(sinceIndexToRemoveConstraints)
+                }
+            }
+
+            addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
+            closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
+        }
+    }
+
+    override fun prepareTransaction(): ConstraintSystemTransaction {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        return TransactionState(
+            beforeState = state,
+            beforeInitialConstraintCount = storage.initialConstraints.size,
+            beforeErrorsCount = storage.errors.size,
+            beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints,
+            beforeTypeVariablesTransactionSize = typeVariablesTransaction.size,
+            beforeMissedConstraintsCount = storage.missedConstraints.size,
+            beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount },
+            beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size,
+        ).also {
+            state = State.TRANSACTION
+        }
     }
 
     // ConstraintSystemBuilder, KotlinConstraintSystemCompleter.Context
@@ -277,6 +294,7 @@ class NewConstraintSystemImpl(
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
+        storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
@@ -293,7 +311,7 @@ class NewConstraintSystemImpl(
     private fun isProperTypeImpl(type: KotlinTypeMarker): Boolean =
         !type.contains {
             val capturedType = it.asSimpleType()?.asCapturedType()
-            // TODO: change NewCapturedType to markered one for FE-IR
+
             val typeToCheck = if (capturedType is CapturedTypeMarker && capturedType.captureStatus() == CaptureStatus.FROM_EXPRESSION)
                 capturedType.typeConstructorProjection().takeUnless { projection -> projection.isStarProjection() }?.getType()
             else
@@ -358,7 +376,11 @@ class NewConstraintSystemImpl(
             return storage.constraintsFromAllForkPoints
         }
 
-    override fun processForkConstraints() {
+    /**
+     * This function tries to find the solution (set of constraints) that is consistent with some branch of each fork
+     * And those constraints are being immediately applied to the system
+     */
+    override fun resolveForkPointsConstraints() {
         if (constraintsFromAllForkPoints.isEmpty()) return
         val allForkPointsData = constraintsFromAllForkPoints.toList()
         constraintsFromAllForkPoints.clear()
@@ -370,29 +392,60 @@ class NewConstraintSystemImpl(
         // 1. {Xv=Int} – is a one-element set (but potentially there might be more constraints in the set)
         // 2. {Xv=T} – second constraints set
         for ((position, forkPointData) in allForkPointsData) {
-            if (!processForkPointData(forkPointData, position)) {
+            if (!applyConstraintsFromFirstSuccessfulBranchOfTheFork(forkPointData, position)) {
                 addError(NoSuccessfulFork(position))
             }
         }
     }
 
     /**
+     * Checks if current state of forked constraints is not contradictory.
+     *
+     * That function is expected to be pure, i.e. it should leave the system in the same state it was found before the call.
+     *
+     * @return null if for each fork we found a possible branch that doesn't contradict with all other constraints
+     * @return non-nullable error if there's a contradiction we didn't manage to resolve
+     */
+    fun checkIfForksMightBeSuccessfullyResolved(): ConstraintSystemError? {
+        if (constraintsFromAllForkPoints.isEmpty()) return null
+
+        val allForkPointsData = constraintsFromAllForkPoints.toList()
+        constraintsFromAllForkPoints.clear()
+
+        var result: ConstraintSystemError? = null
+        runTransaction {
+            for ((position, forkPointData) in allForkPointsData) {
+                if (!applyConstraintsFromFirstSuccessfulBranchOfTheFork(forkPointData, position)) {
+                    result = NoSuccessfulFork(position)
+                    break
+                }
+            }
+
+            false
+        }
+
+        constraintsFromAllForkPoints.addAll(allForkPointsData)
+
+        return result
+    }
+
+    /**
      * @return true if there is a successful constraints set for the fork
      */
-    private fun processForkPointData(
+    private fun applyConstraintsFromFirstSuccessfulBranchOfTheFork(
         forkPointData: ForkPointData,
         position: IncorporationConstraintPosition
     ): Boolean {
-        return forkPointData.any { constraintSetForSingleFork ->
+        return forkPointData.any { constraintSetForForkBranch ->
             runTransaction {
-                constraintInjector.processForkConstraints(
+                constraintInjector.processGivenForkPointBranchConstraints(
                     this@NewConstraintSystemImpl.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-                    constraintSetForSingleFork,
+                    constraintSetForForkBranch,
                     position,
                 )
 
                 if (constraintsFromAllForkPoints.isNotEmpty()) {
-                    processForkConstraints()
+                    resolveForkPointsConstraints()
                 }
 
                 !hasContradiction

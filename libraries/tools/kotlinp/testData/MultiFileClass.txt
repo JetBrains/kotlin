@@ -11,6 +11,8 @@ package {
   // field: x:I
   public final const val x: kotlin/Int /* = ... */
     public final get
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

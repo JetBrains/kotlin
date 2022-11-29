@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
@@ -135,8 +133,7 @@ class FirSpecificTypeResolverTransformer(
             resolvedType is ConeErrorType -> {
                 buildErrorTypeRef {
                     val typeRefSourceKind = typeRef.source?.kind
-                    val diagnosticSource = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
-                        ?.source.safeAs<KtSourceElement>()
+                    val diagnosticSource = (resolvedType.diagnostic as? ConeUnexpectedTypeArgumentsError)?.source
 
                     source = if (diagnosticSource != null) {
                         if (typeRefSourceKind is KtFakeSourceElementKind) {

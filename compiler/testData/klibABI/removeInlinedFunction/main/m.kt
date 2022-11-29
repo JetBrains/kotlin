@@ -1,12 +1,5 @@
-fun box(): String {
-    try {
-        return bar()
-    } catch(e: Throwable) {
-        if (e.isLinkageError("/foo")) return "OK"
-    }
+import abitestutils.abiTest
 
-    return "FAIL2"
+fun box() = abiTest {
+    expectFailure(prefixed("function foo can not be called")) { bar() }
 }
-
-private fun Throwable.isLinkageError(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError" && message?.startsWith("Unlinked IR symbol $symbolName|") == true

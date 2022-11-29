@@ -39,6 +39,10 @@ public actual annotation class Strictfp
  * Marks the JVM method generated from the annotated function as `synchronized`, meaning that the method
  * will be protected from concurrent execution by multiple threads by the monitor of the instance (or,
  * for static methods, the class) on which the method is defined.
+ *
+ * Note that for an extension function, the monitor of the facade class, where it gets compiled to a static method, is used.
+ * Therefore, this annotation is recommended to be applied only to member functions and properties.
+ * In other cases, use [synchronized] function and explicitly specify the lock to be used.
  */
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)

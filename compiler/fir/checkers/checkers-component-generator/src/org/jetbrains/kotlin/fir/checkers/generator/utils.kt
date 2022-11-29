@@ -16,7 +16,6 @@ fun getGenerationPath(rootPath: File, packageName: String): File =
         .apply { mkdirs() }
 
 
-@OptIn(ExperimentalStdlibApi::class)
 fun KType.collectClassNamesTo(set: MutableSet<String>) {
     (classifier as? KClass<*>)?.qualifiedName?.let(set::add)
     for (argument in arguments) {

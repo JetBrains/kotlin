@@ -8,21 +8,22 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.cValuesOf
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
 
-private fun ConstPointer.add(index: Int): ConstPointer {
-    return constPointer(LLVMConstGEP(llvm, cValuesOf(Int32(index).llvm), 1)!!)
+private fun ConstPointer.add(index: LLVMValueRef): ConstPointer {
+    return constPointer(LLVMConstGEP(llvm, cValuesOf(index), 1)!!)
 }
 
-internal class KotlinStaticData(override val context: Context) : ContextUtils, StaticData(context.llvmModule!!) {
+internal class KotlinStaticData(override val generationState: NativeGenerationState, override val llvm: Llvm, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
     private val stringLiterals = mutableMapOf<String, ConstPointer>()
 
     // Must match OBJECT_TAG_PERMANENT_CONTAINER in C++.
     private fun permanentTag(typeInfo: ConstPointer): ConstPointer {
         // Only pointer arithmetic via GEP works on constant pointers in LLVM.
-        return typeInfo.bitcast(int8TypePtr).add(1).bitcast(kTypeInfoPtr)
+        return typeInfo.bitcast(llvm.int8PtrType).add(llvm.int32(1)).bitcast(kTypeInfoPtr)
     }
 
 
@@ -32,13 +33,13 @@ internal class KotlinStaticData(override val context: Context) : ContextUtils, S
 
     private fun arrayHeader(typeInfo: ConstPointer, length: Int): Struct {
         assert(length >= 0)
-        return Struct(runtime.arrayHeaderType, permanentTag(typeInfo), Int32(length))
+        return Struct(runtime.arrayHeaderType, permanentTag(typeInfo), llvm.constInt32(length))
     }
 
     private fun createRef(objHeaderPtr: ConstPointer) = objHeaderPtr.bitcast(kObjHeaderPtr)
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
-        val elements = value.toCharArray().map(::Char16)
+        val elements = value.toCharArray().map(llvm::constChar16)
         val objRef = createConstKotlinArray(context.ir.symbols.string.owner, elements)
         return objRef
     }
@@ -51,15 +52,15 @@ internal class KotlinStaticData(override val context: Context) : ContextUtils, S
     fun createConstKotlinArray(arrayClass: IrClass, elements: List<ConstValue>): ConstPointer {
         val typeInfo = arrayClass.typeInfoPtr
 
-        val bodyElementType: LLVMTypeRef = elements.firstOrNull()?.llvmType ?: int8Type
+        val bodyElementType: LLVMTypeRef = elements.firstOrNull()?.llvmType ?: llvm.int8Type
         // (use [0 x i8] as body if there are no elements)
         val arrayBody = ConstArray(bodyElementType, elements)
 
-        val compositeType = structType(runtime.arrayHeaderType, arrayBody.llvmType)
+        val compositeType = llvm.structType(runtime.arrayHeaderType, arrayBody.llvmType)
 
         val global = this.createGlobal(compositeType, "")
 
-        val objHeaderPtr = global.pointer.getElementPtr(0)
+        val objHeaderPtr = global.pointer.getElementPtr(llvm, 0)
         val arrayHeader = arrayHeader(typeInfo, elements.size)
 
         global.setInitializer(Struct(compositeType, arrayHeader, arrayBody))
@@ -73,17 +74,17 @@ internal class KotlinStaticData(override val context: Context) : ContextUtils, S
         val typeInfo = type.typeInfoPtr
         val objHeader = objHeader(typeInfo)
 
-        val global = this.placeGlobal("", Struct(objHeader, *fields))
+        val global = this.placeGlobal("", llvm.struct(objHeader, *fields))
         global.setUnnamedAddr(true)
         global.setConstant(true)
 
-        val objHeaderPtr = global.pointer.getElementPtr(0)
+        val objHeaderPtr = global.pointer.getElementPtr(llvm, 0)
 
         return createRef(objHeaderPtr)
     }
 
     fun createInitializer(type: IrClass, vararg fields: ConstValue): ConstValue =
-            Struct(objHeader(type.typeInfoPtr), *fields)
+            llvm.struct(objHeader(type.typeInfoPtr), *fields)
 
     fun createUniqueInstance(
             kind: UniqueKind, bodyType: LLVMTypeRef, typeInfo: ConstPointer): ConstPointer {
@@ -104,10 +105,10 @@ internal class KotlinStaticData(override val context: Context) : ContextUtils, S
         }
         return if (isExternal(descriptor)) {
             constPointer(importGlobal(
-                    kind.llvmName, context.llvm.runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
+                    kind.llvmName, runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
             ))
         } else {
-            context.llvmDeclarations.forUnique(kind).pointer
+            generationState.llvmDeclarations.forUnique(kind).pointer
         }
     }
 
@@ -117,7 +118,7 @@ internal class KotlinStaticData(override val context: Context) : ContextUtils, S
      * @param args data for constant creation.
      */
     fun createImmutableBlob(value: IrConst<String>): LLVMValueRef {
-        val args = value.value.map { Int8(it.code.toByte()).llvm }
+        val args = value.value.map { llvm.int8(it.code.toByte()) }
         return createConstKotlinArray(context.ir.symbols.immutableBlob.owner, args)
     }
 }

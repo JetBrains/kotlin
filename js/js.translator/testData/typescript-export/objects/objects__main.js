@@ -7,6 +7,7 @@ var getParent = JS_TESTS.foo.getParent;
 var createNested1 = JS_TESTS.foo.createNested1;
 var createNested2 = JS_TESTS.foo.createNested2;
 var createNested3 = JS_TESTS.foo.createNested3;
+var WithSimpleObjectInside = JS_TESTS.foo.WithSimpleObjectInside;
 function assert(condition) {
     if (!condition) {
         throw "Assertion failed";
@@ -27,5 +28,7 @@ function box() {
     assert(createNested1() === nested1);
     assert(createNested2() !== nested2 && createNested2() instanceof Parent.Nested1.Nested2);
     assert(createNested3() !== nested3 && createNested3() instanceof Parent.Nested1.Nested2.Companion.Nested3);
+    assert(WithSimpleObjectInside.value === "WithSimpleObjectInside");
+    assert(WithSimpleObjectInside.SimpleObject.value === "SimpleObject");
     return "OK";
 }

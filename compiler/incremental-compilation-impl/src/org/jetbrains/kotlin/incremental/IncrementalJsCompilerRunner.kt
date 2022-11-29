@@ -93,6 +93,7 @@ class IncrementalJsCompilerRunner(
     "caches-js",
     reporter,
     buildHistoryFile = buildHistoryFile,
+    outputDirs = null,
     withAbiSnapshot = withAbiSnapshot
 ) {
 
@@ -108,14 +109,13 @@ class IncrementalJsCompilerRunner(
     }
 
     override fun destinationDir(args: K2JSCompilerArguments): File {
-        val outputFile = File(args.outputFile!!)
         return if (args.isIrBackendEnabled())
-            outputFile
+            File(args.outputDir!!)
         else
-            outputFile.parentFile
+            File(args.outputFile!!).parentFile
     }
 
-    override fun calculateSourcesToCompileImpl(
+    override fun calculateSourcesToCompile(
         caches: IncrementalJsCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JSCompilerArguments,
@@ -125,7 +125,7 @@ class IncrementalJsCompilerRunner(
         if (!withAbiSnapshot && !buildHistoryFile.isFile) {
             return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
         }
-        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
 
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
@@ -153,6 +153,10 @@ class IncrementalJsCompilerRunner(
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
+
+        if (dirtyFiles.isEmpty() && changedFiles.removed.isNotEmpty()) {
+            return CompilationMode.Rebuild(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
+        }
         return CompilationMode.Incremental(dirtyFiles)
     }
 

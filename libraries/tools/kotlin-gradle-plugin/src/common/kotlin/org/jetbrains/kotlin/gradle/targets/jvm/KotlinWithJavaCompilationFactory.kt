@@ -6,25 +6,59 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationTaskNamesContainerFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 
-class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions>(
-    val project: Project,
-    val target: KotlinWithJavaTarget<KotlinOptionsType>,
-    val kotlinOptionsFactory: () -> KotlinOptionsType
-) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType>> {
-
-    override val itemClass: Class<KotlinWithJavaCompilation<KotlinOptionsType>>
-        @Suppress("UNCHECKED_CAST")
-        get() = KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>
+class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> internal constructor(
+    override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
+    val compilerOptionsFactory: () -> HasCompilerOptions<CO>,
+    val kotlinOptionsFactory: (CO) -> KotlinOptionsType
+) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType, CO>> {
 
     @Suppress("UNCHECKED_CAST")
-    override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType> =
-        project.objects.newInstance(
-            KotlinWithJavaCompilation::class.java,
-            target,
-            name,
-            kotlinOptionsFactory()
-        ) as KotlinWithJavaCompilation<KotlinOptionsType>
+    override val itemClass: Class<KotlinWithJavaCompilation<KotlinOptionsType, CO>>
+        get() = KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType, CO>>
+
+    @Suppress("UNCHECKED_CAST")
+    override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType, CO> {
+        val javaSourceSet = project.javaSourceSets.findByName(name) ?: run {
+            /*
+            Creating the java SourceSet first here:
+            After the javaSourceSet is created, another .all hook will call into this factory creating the KotlinCompilation.
+            This call will just return this instance instead eagerly
+             */
+            project.javaSourceSets.create(name)
+            return target.compilations.getByName(name)
+        }
+
+        val compilationImplFactory = KotlinCompilationImplFactory(
+            compilerOptionsFactory = { _, _ ->
+                val compilerOptions = compilerOptionsFactory()
+                val kotlinOptions = kotlinOptionsFactory(compilerOptions.options)
+                KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options(compilerOptions, kotlinOptions)
+            },
+            compilationAssociator = KotlinJvmCompilationAssociator,
+            compilationOutputFactory = { _, compilationName ->
+                KotlinWithJavaCompilationOutput(project.javaSourceSets.maybeCreate(compilationName))
+            },
+            compilationDependencyConfigurationsFactory = JvmWithJavaCompilationDependencyConfigurationsFactory(target),
+            compilationTaskNamesContainerFactory = JvmWithJavaCompilationTaskNamesContainerFactory(javaSourceSet),
+
+            /* Use compile & runtime classpath from javaSourceSet by default */
+            preConfigureAction = { compilation ->
+                compilation.compileDependencyFiles = project.filesProvider { javaSourceSet.compileClasspath }
+                compilation.runtimeDependencyFiles = project.filesProvider { javaSourceSet.runtimeClasspath }
+            }
+        )
+
+        return project.objects.newInstance(
+            KotlinWithJavaCompilation::class.java, compilationImplFactory.create(target, name), javaSourceSet
+        ) as KotlinWithJavaCompilation<KotlinOptionsType, CO>
+    }
 }

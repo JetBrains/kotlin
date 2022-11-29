@@ -19,10 +19,15 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeConstraint>> {
+import java.util.List;
+
+public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeConstraint>>
+        implements KtAnnotated, KtAnnotationsContainer {
     public KtTypeConstraint(@NotNull ASTNode node) {
         super(node);
     }
@@ -44,5 +49,17 @@ public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<Kt
     @Nullable @IfNotParsed
     public KtTypeReference getBoundTypeReference() {
         return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+    }
+
+    @Override
+    @NotNull
+    public List<KtAnnotation> getAnnotations() {
+        return findChildrenByType(KtNodeTypes.ANNOTATION);
+    }
+
+    @Override
+    @NotNull
+    public List<KtAnnotationEntry> getAnnotationEntries() {
+        return KtPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);
     }
 }

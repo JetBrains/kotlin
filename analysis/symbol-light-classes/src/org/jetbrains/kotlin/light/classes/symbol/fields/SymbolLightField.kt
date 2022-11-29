@@ -13,17 +13,19 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.PlatformIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import javax.swing.Icon
 
 internal abstract class SymbolLightField protected constructor(
-    private val containingClass: KtLightClass,
+    containingClass: SymbolLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
 ) : SymbolLightMemberBase<PsiField>(lightMemberOrigin, containingClass), KtLightField {
     override fun setInitializer(initializer: PsiExpression?) = cannotModify()
@@ -33,12 +35,15 @@ internal abstract class SymbolLightField protected constructor(
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
-    override fun getParent() = containingClass
-    override fun getContainingClass() = containingClass
-    override fun getContainingFile(): PsiFile? = containingClass.containingFile
     override fun hasInitializer(): Boolean = initializer !== null
 
-    override fun computeConstantValue(): Any? = null //TODO _constantInitializer?.value
+    private val _identifier: PsiIdentifier by lazyPub {
+        KtLightIdentifier(this, kotlinOrigin)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
+
+    override fun computeConstantValue(): Any? = null
 
     override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? = computeConstantValue()
 

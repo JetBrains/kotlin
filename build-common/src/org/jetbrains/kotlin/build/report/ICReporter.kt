@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.build.report
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.io.File
+import kotlin.reflect.KFunction1
 
 interface ICReporter {
 
@@ -24,6 +27,7 @@ interface ICReporter {
     fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String)
 }
 
+//TODO check and remove?
 fun ICReporter.warn(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.WARNING)
 fun ICReporter.info(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.INFO)
 fun ICReporter.debug(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.DEBUG)
@@ -35,3 +39,4 @@ object DoNothingICReporter : ICReporter {
     override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}
     override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {}
 }
+

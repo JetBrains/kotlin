@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.util.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.util.isSuperOrDelegatingConstructorCall
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.SimpleConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.isBuilderInferenceCall
@@ -37,10 +37,10 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.util.isCallWithSuperReceiver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionStatelessCallbacksImpl(
     private val deprecationResolver: DeprecationResolver,
@@ -89,17 +89,21 @@ class KotlinResolutionStatelessCallbacksImpl(
     override fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower =
         (argument as CallableReferenceKotlinCallArgumentImpl).scopeTowerForResolution
 
-    override fun getVariableCandidateIfInvoke(functionCall: KotlinCall) =
-        functionCall.safeAs<PSIKotlinCallForInvoke>()?.variableCall
+    override fun getVariableCandidateIfInvoke(functionCall: KotlinCall): ResolutionCandidate? =
+        (functionCall as? PSIKotlinCallForInvoke)?.variableCall
 
     override fun isBuilderInferenceCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean =
-        isBuilderInferenceCall(parameter, argument.psiCallArgument.valueArgument)
+        isBuilderInferenceCall(parameter, argument.psiCallArgument.valueArgument, languageVersionSettings)
 
     override fun isApplicableCallForBuilderInference(
         descriptor: CallableDescriptor,
         languageVersionSettings: LanguageVersionSettings,
     ): Boolean {
         return org.jetbrains.kotlin.resolve.calls.inference.isApplicableCallForBuilderInference(descriptor, languageVersionSettings)
+    }
+
+    override fun isOldIntersectionIsEmpty(types: Collection<KotlinType>): Boolean {
+        return TypeIntersector.intersectTypes(types) == null
     }
 
     override fun createConstraintSystemForOverloadResolution(

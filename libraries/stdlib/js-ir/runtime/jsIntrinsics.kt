@@ -19,6 +19,9 @@ internal fun jsEqeq(a: Any?, b: Any?): Boolean
 internal fun jsNotEq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
+internal fun jsUndefined(): Nothing?
+
+@JsIntrinsic
 internal fun jsEqeqeq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
@@ -117,6 +120,10 @@ internal fun jsBitShiftL(a: Any?, b: Any?): Int
 @JsIntrinsic
 internal fun jsInstanceOfIntrinsic(a: Any?, b: Any?): Boolean
 
+// @JsIntrinsic
+//  To prevent people to insert @OptIn every time
+public external fun jsTypeOf(a: Any?): String
+
 @JsIntrinsic
 internal fun jsNewTarget(a: Any?): Any?
 
@@ -169,9 +176,6 @@ internal fun float32ArrayOf(a: Any?): Any?
 internal fun float64ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
-internal fun <T> objectCreate(): T
-
-@JsIntrinsic
 internal fun <T> sharedBoxCreate(v: T?): dynamic
 
 @JsIntrinsic
@@ -181,13 +185,13 @@ internal fun <T> sharedBoxRead(box: dynamic): T?
 internal fun <T> sharedBoxWrite(box: dynamic, nv: T?)
 
 @JsIntrinsic
-internal fun jsUndefined(): Nothing?
-
-@JsIntrinsic
 internal fun <T> DefaultType(): T
 
 @JsIntrinsic
 internal fun jsBind(receiver: Any?, target: Any?): Any?
+
+@JsIntrinsic
+internal fun jsCall(receiver: Any?, target: Any?, vararg args: Any?): Any?
 
 @JsIntrinsic
 internal fun <A> slice(a: A): A
@@ -217,3 +221,6 @@ internal fun jsInIntrinsic(lhs: Any?, rhs: Any): Boolean
 
 @JsIntrinsic
 internal fun jsDelete(e: Any?)
+
+@JsIntrinsic
+internal fun jsContextfulRef(context: dynamic, fn: dynamic): dynamic

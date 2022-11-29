@@ -32,10 +32,6 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractIncrementalJsJpsTest> {
-                model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
-            }
-
             testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
                 model(
                     "incremental/multiModule/multiplatform/withGeneratedContent", extension = null, excludeParentDirs = true,

@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -17,9 +20,14 @@ import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -35,10 +43,11 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -48,7 +57,6 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class Fir2IrVisitor(
     private val components: Fir2IrComponents,
@@ -71,7 +79,7 @@ class Fir2IrVisitor(
 
     override fun visitField(field: FirField, data: Any?): IrField {
         if (field.isSynthetic) {
-            return declarationStorage.getCachedIrField(field)!!.apply {
+            return declarationStorage.getCachedIrDelegateOrBackingField(field)!!.apply {
                 // If this is a property backing field, then it has no separate initializer,
                 // so we shouldn't convert it
                 if (correspondingPropertySymbol == null) {
@@ -109,6 +117,8 @@ class Fir2IrVisitor(
         annotationGenerator.generate(irEnumEntry, enumEntry)
         val correspondingClass = irEnumEntry.correspondingClass
         val initializer = enumEntry.initializer
+        val irType = enumEntry.returnTypeRef.toIrType()
+        val irParentEnumClass = irEnumEntry.parent as? IrClass
         // If the enum entry has its own members, we need to introduce a synthetic class.
         if (correspondingClass != null) {
             declarationStorage.enterScope(irEnumEntry)
@@ -122,7 +132,7 @@ class Fir2IrVisitor(
                 val constructor = correspondingClass.constructors.first()
                 irEnumEntry.initializerExpression = irFactory.createExpressionBody(
                     IrEnumConstructorCallImpl(
-                        startOffset, endOffset, enumEntry.returnTypeRef.toIrType(),
+                        startOffset, endOffset, irType,
                         constructor.symbol,
                         typeArgumentsCount = constructor.typeParameters.size,
                         valueArgumentsCount = constructor.valueParameters.size
@@ -140,6 +150,20 @@ class Fir2IrVisitor(
                         delegatedConstructor.toIrDelegatingConstructorCall()
                     )
                 }
+            }
+        } else if (irParentEnumClass != null && initializer == null) {
+            // a default-ish enum entry whose initializer would be a delegating constructor call
+            val constructor =
+                irParentEnumClass.defaultConstructor ?: error("Assuming that default constructor should exist and be converted at this point")
+            enumEntry.convertWithOffsets { startOffset, endOffset ->
+                irEnumEntry.initializerExpression = irFactory.createExpressionBody(
+                    IrEnumConstructorCallImpl(
+                        startOffset, endOffset, irType, constructor.symbol,
+                        valueArgumentsCount = constructor.valueParameters.size,
+                        typeArgumentsCount = constructor.typeParameters.size
+                    )
+                )
+                irEnumEntry
             }
         }
         return irEnumEntry
@@ -165,6 +189,25 @@ class Fir2IrVisitor(
             conversionScope.withContainingFirClass(regularClass) {
                 memberGenerator.convertClassContent(irClass, regularClass)
             }
+        }
+    }
+
+    override fun visitScript(script: FirScript, data: Any?): IrElement {
+        return declarationStorage.getCachedIrScript(script)!!.also { irScript ->
+            irScript.parent = conversionScope.parentFromStack()
+            symbolTable.enterScope(irScript)
+            conversionScope.withParent(irScript) {
+                for (statement in script.statements) {
+                    if (statement is FirDeclaration) {
+                        val irDeclaration = statement.accept(this@Fir2IrVisitor, null) as IrDeclaration
+                        irScript.statements.add(irDeclaration)
+                    } else {
+                        val irStatement = statement.toIrStatement()!!
+                        irScript.statements.add(irStatement)
+                    }
+                }
+            }
+            symbolTable.leaveScope(irScript)
         }
     }
 
@@ -491,7 +534,14 @@ class Fir2IrVisitor(
         if (boundSymbol is FirClassSymbol) {
             // Object case
             val firClass = boundSymbol.fir as FirClass
-            val irClass = classifierStorage.getCachedIrClass(firClass)!!
+            val irClass = if (firClass.origin == FirDeclarationOrigin.Source) {
+                // We anyway can use 'else' branch as fallback, but
+                // this is an additional check of FIR2IR invariants
+                // (source classes should be already built when we analyze bodies)
+                classifierStorage.getCachedIrClass(firClass)!!
+            } else {
+                classifierStorage.getIrClassSymbol(boundSymbol).owner
+            }
             // NB: IR generates anonymous objects as classes, not singleton objects
             if (firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT && !isThisForClassPhysicallyAvailable(irClass)) {
                 return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
@@ -747,7 +797,7 @@ class Fir2IrVisitor(
 
     private val FirExpression.isIncrementOrDecrementCall: Boolean
         get() {
-            val name = safeAs<FirFunctionCall>()?.calleeReference?.resolved?.name
+            val name = (this as? FirFunctionCall)?.calleeReference?.resolved?.name
             return name == OperatorNameConventions.INC || name == OperatorNameConventions.DEC
         }
 

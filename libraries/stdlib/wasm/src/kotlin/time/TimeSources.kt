@@ -7,6 +7,7 @@ package kotlin.time
 
 import kotlin.wasm.internal.ExternalInterfaceType
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
+import kotlin.time.Duration.Companion.milliseconds
 
 @JsFun("() => typeof globalThis !== 'undefined' && typeof globalThis.performance !== 'undefined' ? globalThis.performance : null")
 private external fun tryGetPerformance(): ExternalInterfaceType?
@@ -19,7 +20,7 @@ private external fun dateNow(): Double
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal actual object MonotonicTimeSource : TimeSource {
+internal actual object MonotonicTimeSource : TimeSource.WithComparableMarks {
     private val performance: ExternalInterfaceType? = tryGetPerformance()
 
     private fun read(): Double =
@@ -29,6 +30,12 @@ internal actual object MonotonicTimeSource : TimeSource {
     actual fun elapsedFrom(timeMark: ValueTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
     actual fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
         ValueTimeMark(sumCheckNaN(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS)))
+
+    actual fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration {
+        val ms1 = one.reading as Double
+        val ms2 = another.reading as Double
+        return if (ms1 == ms2) Duration.ZERO else (ms1 - ms2).milliseconds
+    }
 
     override fun toString(): String =
         if (performance != null) "TimeSource(globalThis.performance.now())" else "TimeSource(Date.now())"

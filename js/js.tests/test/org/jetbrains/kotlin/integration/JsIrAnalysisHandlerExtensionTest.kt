@@ -65,11 +65,14 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
             writeText(src.content)
         }
         val plugin = writePlugin()
+        val outputFile = File(outFile)
         val args = listOf(
             "-Xplugin=$plugin",
             "-libraries", libs,
-            "-output", outFile,
-            mainKt.absolutePath)
+            "-ir-output-dir", outputFile.parentFile.path,
+            "-ir-output-name", outputFile.nameWithoutExtension,
+            mainKt.absolutePath
+        )
         CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras)
     }
 

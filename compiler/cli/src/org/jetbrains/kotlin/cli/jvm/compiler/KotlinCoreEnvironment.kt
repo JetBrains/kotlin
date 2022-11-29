@@ -27,7 +27,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.*
+import com.intellij.openapi.vfs.PersistentFSConstants
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
@@ -42,20 +45,21 @@ import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.KotlinK1LightClassFactory
-import org.jetbrains.kotlin.asJava.classes.KotlinLightClassFactory
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrar
@@ -70,6 +74,7 @@ import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
+import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -82,6 +87,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
+import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -127,22 +133,14 @@ class KotlinCoreEnvironment private constructor(
                     applicationEnvironment.jarFileSystem
                 }
                 configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM) || configuration.getBoolean(CommonConfigurationKeys.USE_FIR) -> {
-                    val fastJarFs = FastJarFileSystem.createIfUnmappingPossible()
-
+                    val fastJarFs = applicationEnvironment.fastJarFileSystem
                     if (fastJarFs == null) {
                         messageCollector?.report(
-                            STRONG_WARNING,
+                            CompilerMessageSeverity.STRONG_WARNING,
                             "Your JDK doesn't seem to support mapped buffer unmapping, so the slower (old) version of JAR FS will be used"
                         )
                         applicationEnvironment.jarFileSystem
-                    } else {
-
-                        Disposer.register(disposable) {
-                            fastJarFs.clearHandlersCache()
-                        }
-
-                        fastJarFs
-                    }
+                    } else fastJarFs
                 }
 
                 else -> applicationEnvironment.jarFileSystem
@@ -352,7 +350,7 @@ class KotlinCoreEnvironment private constructor(
 
     fun updateClasspath(contentRoots: List<ContentRoot>): List<File>? {
         // TODO: add new Java modules to CliJavaModuleResolver
-        val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots
+        val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots - initialRoots
 
         if (packagePartProviders.isEmpty()) {
             initialRoots.addAll(newRoots)
@@ -411,7 +409,11 @@ class KotlinCoreEnvironment private constructor(
         return result
     }
 
-    fun getSourceFiles(): List<KtFile> = sourceFiles
+    fun getSourceFiles(): List<KtFile> =
+        ProcessSourcesBeforeCompilingExtension.getInstances(project)
+            .fold(sourceFiles as Collection<KtFile>) { files, extension ->
+                extension.processSources(files, configuration)
+            }.toList()
 
     internal fun report(severity: CompilerMessageSeverity, message: String) = configuration.report(severity, message)
 
@@ -436,9 +438,6 @@ class KotlinCoreEnvironment private constructor(
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
             val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
 
-            synchronized(APPLICATION_LOCK) {
-                ourProjectCount++
-            }
             return environment
         }
 
@@ -446,15 +445,7 @@ class KotlinCoreEnvironment private constructor(
         fun createForProduction(
             projectEnvironment: ProjectEnvironment, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
-            val environment = KotlinCoreEnvironment(projectEnvironment, configuration, configFiles)
-
-            if (projectEnvironment.environment == applicationEnvironment) {
-                // accounting for core environment disposing
-                synchronized(APPLICATION_LOCK) {
-                    ourProjectCount++
-                }
-            }
-            return environment
+            return KotlinCoreEnvironment(projectEnvironment, configuration, configFiles)
         }
 
         @TestOnly
@@ -464,7 +455,10 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
             // Tests are supposed to create a single project and dispose it right after use
-            val appEnv = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
+            val appEnv =
+                createApplicationEnvironment(
+                    parentDisposable, configuration, unitTestMode = true
+                )
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
             return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
         }
@@ -479,7 +473,11 @@ class KotlinCoreEnvironment private constructor(
 
         @TestOnly
         fun createProjectEnvironmentForTests(parentDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
-            val appEnv = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
+            val appEnv = createApplicationEnvironment(
+                parentDisposable,
+                configuration,
+                unitTestMode = true
+            )
             return ProjectEnvironment(parentDisposable, appEnv, configuration)
         }
 
@@ -499,15 +497,13 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment == null) {
-                    val disposable = if (unitTestMode) {
-                        parentDisposable
-                    } else {
-                        // TODO this is a memory leak in the compiler, as this Disposable is not registered and thus is never disposed
-                        // but using parentDisposable as disposable in compiler, causes access to application extension points after
-                        // they was disposed, this needs to be fixed
-                        Disposer.newDisposable("Disposable for the KotlinCoreApplicationEnvironment")
-                    }
-                    ourApplicationEnvironment = createApplicationEnvironment(disposable, configuration, unitTestMode)
+                    val disposable = Disposer.newDisposable("Disposable for the KotlinCoreApplicationEnvironment")
+                    ourApplicationEnvironment =
+                        createApplicationEnvironment(
+                            disposable,
+                            configuration,
+                            unitTestMode
+                        )
                     ourProjectCount = 0
                     Disposer.register(disposable, Disposable {
                         synchronized(APPLICATION_LOCK) {
@@ -515,18 +511,31 @@ class KotlinCoreEnvironment private constructor(
                         }
                     })
                 }
-                // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
-                // breaks a lot of tests, therefore it is disabled for production and enabled for tests
-                if (CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true) {
-                    // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
-                    // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
-                    Disposer.register(parentDisposable, Disposable {
-                        synchronized(APPLICATION_LOCK) {
-                            if (--ourProjectCount <= 0) {
-                                disposeApplicationEnvironment()
+                try {
+                    // Disposer uses identity of passed object to deduplicate registered disposables
+                    // We should everytime pass new instance to avoid un-registering from previous one
+                    @Suppress("ObjectLiteralToLambda")
+                    Disposer.register(parentDisposable, object : Disposable {
+                        override fun dispose() {
+                            synchronized(APPLICATION_LOCK) {
+                                // Build-systems may run many instances of the compiler in parallel
+                                // All projects share the same ApplicationEnvironment, and when the last project is disposed,
+                                // the ApplicationEnvironment is disposed as well
+                                if (--ourProjectCount <= 0) {
+                                    // Do not use this property unless you sure need it, causes Application to MEMORY LEAK
+                                    // Only valid use-case is when Application should be cached to avoid
+                                    // initialization costs
+                                    if (CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true) {
+                                        disposeApplicationEnvironment()
+                                    } else {
+                                        ourApplicationEnvironment?.idleCleanup()
+                                    }
+                                }
                             }
                         }
                     })
+                } finally {
+                    ourProjectCount++
                 }
 
                 return ourApplicationEnvironment!!
@@ -574,7 +583,9 @@ class KotlinCoreEnvironment private constructor(
         private fun createApplicationEnvironment(
             parentDisposable: Disposable, configuration: CompilerConfiguration, unitTestMode: Boolean
         ): KotlinCoreApplicationEnvironment {
-            val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, unitTestMode)
+            val applicationEnvironment = KotlinCoreApplicationEnvironment.create(
+                parentDisposable, unitTestMode
+            )
 
             registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
 
@@ -614,6 +625,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         @JvmStatic
+        @OptIn(InternalNonStableExtensionPoints::class)
         @Suppress("MemberVisibilityCanPrivate") // made public for CLI Android Lint
         fun registerPluginExtensionPoints(project: MockProject) {
             ExpressionCodegenExtension.registerExtensionPoint(project)
@@ -639,6 +651,7 @@ class KotlinCoreEnvironment private constructor(
             DescriptorSerializerPlugin.registerExtensionPoint(project)
             FirExtensionRegistrarAdapter.registerExtensionPoint(project)
             TypeAttributeTranslatorExtension.registerExtensionPoint(project)
+            AssignResolutionAltererExtension.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
@@ -658,7 +671,9 @@ class KotlinCoreEnvironment private constructor(
                     if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
                         messageCollector?.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
                     } else {
-                        throw IllegalStateException(message, e)
+                        val errorMessageWithStackTrace = "$message.\n" +
+                                e.stackTraceToString().lines().take(6).joinToString("\n")
+                        messageCollector?.report(ERROR, errorMessageWithStackTrace)
                     }
                 }
             }
@@ -674,7 +689,6 @@ class KotlinCoreEnvironment private constructor(
             // ability to get text from annotations xml files
             applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml")
             applicationEnvironment.registerParserDefinition(JavaParserDefinition())
-            applicationEnvironment.registerApplicationService(KotlinLightClassFactory::class.java, KotlinK1LightClassFactory())
         }
 
         // made public for Upsource

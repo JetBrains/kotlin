@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.report
 
-import com.google.gson.Gson
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
@@ -16,14 +16,10 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
-import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
-import org.gradle.tooling.events.task.TaskSkippedResult
-import org.gradle.tooling.events.task.TaskSuccessResult
 import org.jetbrains.kotlin.build.report.metrics.SizeMetricType
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.stat.BuildFinishStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.GradleBuildStartParameters
@@ -31,19 +27,14 @@ import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.utils.formatSize
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
-import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
-import java.io.IOException
-import java.lang.management.ManagementFactory
-import java.net.HttpURLConnection
+import java.io.File
 import java.net.InetAddress
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
 abstract class BuildReportsService : BuildService<BuildReportsService.Parameters>, AutoCloseable, OperationCompletionListener {
@@ -66,6 +57,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
         val reportingSettings: Property<ReportingSettings>
         var buildMetricsService: Provider<BuildMetricsService>
 
+        val projectDir: DirectoryProperty
         val label: Property<String?>
         val projectName: Property<String>
         val kotlinVersion: Property<String>
@@ -111,6 +103,17 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     }
 
     private fun reportBuildFinish() {
+        val httpReportSettings = parameters.reportingSettings.get().httpReportSettings ?: return
+
+        val branchName = if (httpReportSettings.includeGitBranchName) {
+            val process = ProcessBuilder("git", "rev-parse", "--abbrev-ref", "HEAD")
+                .directory(parameters.projectDir.asFile.get())
+                .start().also {
+                    it.waitFor(5, TimeUnit.SECONDS)
+                }
+            process.inputStream.reader().readText()
+        } else "is not set"
+
         val buildFinishData = BuildFinishStatisticsData(
             projectName = parameters.projectName.get(),
             startParameters = parameters.startParameters.get()
@@ -119,9 +122,12 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             label = parameters.label.orNull,
             totalTime = (System.nanoTime() - startTime) / 1_000_000,
             finishTime = System.currentTimeMillis(),
-            hostName = hostName
+            hostName = hostName,
+            tags = tags.toList(),
+            gitBranch = branchName
         )
-        sendDataViaHttp(buildFinishData)
+
+        sendDataViaHttp(httpReportSettings, buildFinishData, log)
     }
 
     private fun GradleBuildStartParameters.includeVerboseEnvironment(verboseEnvironment: Boolean): GradleBuildStartParameters {
@@ -148,67 +154,13 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                         buildUuid,
                         parameters.label.orNull,
                         parameters.kotlinVersion.get(),
+                        parameters.buildMetricsService.get().buildOperationRecords,
                         parameters.additionalTags.get()
                     )
-                data?.also { executorService.submit { sendDataViaHttp(data) } }
+                data?.also {  parameters.reportingSettings.get().httpReportSettings?.also {  executorService.submit { sendDataViaHttp(it, data, log) } } }
             }
         }
 
-    }
-
-    private var invalidUrl = false
-    private var requestPreviousFailed = false
-    private fun sendDataViaHttp(data: Any) {
-        val httpSettings = parameters.reportingSettings.get().httpReportSettings ?: return
-
-        val elapsedTime = measureTimeMillis {
-            if (invalidUrl) {
-                return
-            }
-            val connection = try {
-                URL(httpSettings.url).openConnection() as HttpURLConnection
-            } catch (e: IOException) {
-                log.warn("Unable to open connection to ${httpSettings.url}: ${e.message}")
-                invalidUrl = true
-                return
-            }
-
-            try {
-                if (httpSettings.user != null && httpSettings.password != null) {
-                    val auth = Base64.getEncoder()
-                        .encode("${httpSettings.user}:${httpSettings.password}".toByteArray())
-                        .toString(Charsets.UTF_8)
-                    connection.addRequestProperty("Authorization", "Basic $auth")
-                }
-                connection.addRequestProperty("Content-Type", "application/json")
-                connection.requestMethod = "POST"
-                connection.doOutput = true
-                connection.outputStream.use {
-                    it.write(Gson().toJson(data).toByteArray())
-                }
-                connection.connect()
-                checkResponseAndLog(connection)
-            } catch (e: Exception) {
-                log.debug("Unexpected exception happened ${e.message}: ${e.stackTrace}")
-                checkResponseAndLog(connection)
-            } finally {
-                connection.disconnect()
-            }
-        }
-        log.debug("Report statistic by http takes $elapsedTime ms")
-    }
-
-    private fun checkResponseAndLog(connection: HttpURLConnection) {
-        val isResponseBad = connection.responseCode !in 200..299
-        if (isResponseBad) {
-            val message = "Failed to send statistic to ${connection.url} with ${connection.responseCode}: ${connection.responseMessage}"
-            if (!requestPreviousFailed) {
-                log.warn(message)
-            } else {
-                log.debug(message)
-            }
-            requestPreviousFailed = true
-        }
     }
 
 
@@ -217,7 +169,11 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
         if (buildScanSettings != null && buildScan.buildScan != null) {
             if (event is TaskFinishEvent) {
                 val (collectDataDuration, compileStatData) = measureTimeMillisWithResult {
-                    prepareData(event, parameters.projectName.get(), buildUuid, parameters.label.orNull, parameters.kotlinVersion.get())
+                    prepareData(
+                        event, parameters.projectName.get(), buildUuid, parameters.label.orNull,
+                        parameters.kotlinVersion.get(),
+                        parameters.buildMetricsService.get().buildOperationRecords,
+                    )
                 }
                 log.debug("Collect data takes $collectDataDuration: $compileStatData")
 
@@ -231,12 +187,6 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     private fun addBuildScanReport(data: CompileStatisticsData, customValuesLimit: Int, buildScan: BuildScanExtensionHolder) {
         val elapsedTime = measureTimeMillis {
             buildScan.buildScan?.also {
-                if (!tags.contains(buildUuid)) {
-                    addBuildScanTag(buildScan, buildUuid)
-                }
-                data.label?.takeIf { !tags.contains(it) }?.also {
-                    addBuildScanTag(buildScan, it)
-                }
                 data.tags
                     .filter { !tags.contains(it) }
                     .forEach {
@@ -323,9 +273,15 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
         return splattedString
     }
 
+    private fun initBuildScanTags(buildScan: BuildScanExtensionHolder) {
+        buildScan.buildScan?.tag(buildUuid)
+        parameters.label.orNull?.also {
+            buildScan.buildScan?.tag(it)
+        }
+    }
+
     companion object {
 
-        private val log = Logging.getLogger(this.javaClass)
         const val lengthLimit = 100_000
 
         fun getStartParameters(project: Project) = project.gradle.startParameter.let {
@@ -361,6 +317,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                 it.parameters.startParameters.set(getStartParameters(project))
                 it.parameters.reportingSettings.set(reportingSettings)
                 it.parameters.buildMetricsService = buildMetricsService
+                it.parameters.projectDir.set(project.rootProject.layout.projectDirectory)
 
                 //init gradle tags for build scan and http reports
                 it.parameters.additionalTags.value(setupTags(gradle))
@@ -371,6 +328,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
 
                 val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
                 if (reportingSettings.buildScanReportSettings != null && buildScanExtension != null) {
+                    it.get().initBuildScanTags(BuildScanExtensionHolder(buildScanExtension))
                     BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
                         OperationCompletionListener { event ->
                             it.get().addBuildScanReport(event, BuildScanExtensionHolder(buildScanExtension))
@@ -391,101 +349,12 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             return additionalTags
         }
 
-        internal fun prepareData(
-            event: TaskFinishEvent,
-            projectName: String,
-            uuid: String,
-            label: String?,
-            kotlinVersion: String,
-            additionalTags: List<StatTag> = emptyList()
-        ): CompileStatisticsData? {
-            val result = event.result
-            val taskPath = event.descriptor.taskPath
-            val durationMs = result.endTime - result.startTime
-            val taskResult = when (result) {
-                is TaskSuccessResult -> when {
-                    result.isFromCache -> TaskExecutionState.FROM_CACHE
-                    result.isUpToDate -> TaskExecutionState.UP_TO_DATE
-                    else -> TaskExecutionState.SUCCESS
-                }
-
-                is TaskSkippedResult -> TaskExecutionState.SKIPPED
-                is TaskFailureResult -> TaskExecutionState.FAILED
-                else -> TaskExecutionState.UNKNOWN
-            }
-
-            if (!availableForStat(taskPath)) {
-                return null
-            }
-
-            val taskExecutionResult = TaskExecutionResults[taskPath]
-            val buildTimesMs = taskExecutionResult?.buildMetrics?.buildTimes?.asMapMs()?.filterValues { value -> value != 0L } ?: emptyMap()
-            val perfData =
-                taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
-            val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
-                is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
-                is ChangedFiles.Dependencies -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
-                else -> emptyList<String>()
-
-            }
-            return CompileStatisticsData(
-                durationMs = durationMs,
-                taskResult = taskResult.name,
-                label = label,
-                buildTimesMetrics = buildTimesMs,
-                performanceMetrics = perfData,
-                projectName = projectName,
-                taskName = taskPath,
-                changes = changes,
-                tags = parseTags(taskExecutionResult, additionalTags).map { it.name },
-                nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys
-                    ?: emptySet(),
-                hostName = hostName,
-                kotlinVersion = kotlinVersion,
-                buildUuid = uuid,
-                finishTime = System.currentTimeMillis(),
-                compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList()
-            )
-        }
-
         val hostName: String? = try {
             InetAddress.getLocalHost().hostName
         } catch (_: Exception) {
             //do nothing
             null
         }
-
-        private fun availableForStat(taskPath: String): Boolean {
-            return taskPath.contains("Kotlin") && (TaskExecutionResults[taskPath] != null)
-        }
-
-        private fun parseTags(taskExecutionResult: TaskExecutionResult?, additionalTags: List<StatTag>): List<StatTag> {
-            val tags = ArrayList(additionalTags)
-
-            val nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap()
-
-            if (nonIncrementalAttributes.isEmpty()) {
-                tags.add(StatTag.INCREMENTAL)
-            } else {
-                tags.add(StatTag.NON_INCREMENTAL)
-            }
-
-            val taskInfo = taskExecutionResult?.taskInfo
-
-            taskInfo?.withAbiSnapshot?.ifTrue {
-                tags.add(StatTag.ABI_SNAPSHOT)
-            }
-            taskInfo?.withArtifactTransform?.ifTrue {
-                tags.add(StatTag.ARTIFACT_TRANSFORM)
-            }
-
-            val debugConfiguration = "-agentlib:"
-            if (ManagementFactory.getRuntimeMXBean().inputArguments.firstOrNull { it.startsWith(debugConfiguration) } != null) {
-                tags.add(StatTag.GRADLE_DEBUG)
-            }
-            return tags
-        }
-
     }
 
 }

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
@@ -63,13 +63,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
 
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
-
-    public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
 
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
@@ -186,8 +184,11 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_6) {
-            String jdk6 = System.getenv("JDK_16");
-            assert jdk6 != null : "Environment variable JDK_16 is not set";
+            String jdk6 = System.getenv("JDK_1_6");
+            if (jdk6 == null) {
+                jdk6 = System.getenv("JDK_16");
+            }
+            assert jdk6 != null : "Environment variable JDK_1_6 is not set";
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_17) {
@@ -430,7 +431,7 @@ public class KotlinTestUtils {
     }
 
     public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile);
+        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIXES), testCase, testDataFile);
     }
 
     public static void runTest(@NotNull TestCase testCase, @NotNull Function0<Unit> test) {
@@ -468,7 +469,7 @@ public class KotlinTestUtils {
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
     public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), null, testDataFilePath);
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIXES), null, testDataFilePath);
     }
 
     private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
@@ -503,11 +504,11 @@ public class KotlinTestUtils {
         return false;
     }
 
-    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {
+    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String... ignoreDirectives) throws Exception {
         return filePath -> {
             File testDataFile = new File(filePath);
 
-            boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirective);
+            boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirectives);
 
             if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
                 // Only ignore if it is ignored for both backends
@@ -522,7 +523,7 @@ public class KotlinTestUtils {
             catch (Throwable e) {
                 if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
                     String text = KtTestUtil.doLoadFile(testDataFile);
-                    String directive = ignoreDirective + targetBackend.name() + "\n";
+                    String directive = ignoreDirectives[0] + targetBackend.name() + "\n";
 
                     String newText;
                     if (text.startsWith("// !")) {
@@ -555,23 +556,28 @@ public class KotlinTestUtils {
                 if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
                     e.printStackTrace();
                 } else {
-                    System.err.println("MUTED TEST with `" + ignoreDirective + "`");
+                    System.err.println("MUTED TEST with `" + ignoreDirectives[0] + "`");
                 }
                 return;
             }
 
             if (isIgnored) {
+                StringBuilder directivesToRemove = new StringBuilder();
                 if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
-                    String text = KtTestUtil.doLoadFile(testDataFile);
-                    String directive = ignoreDirective + targetBackend.name();
-                    String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
-                    if (!newText.equals(text)) {
-                        System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
-                        FileUtil.writeToFile(testDataFile, newText);
+                    for (String ignoreDirective: ignoreDirectives){
+                        String text = KtTestUtil.doLoadFile(testDataFile);
+                        String directive = ignoreDirective + targetBackend.name();
+                        directivesToRemove.append(directive);
+                        directivesToRemove.append(", ");
+                        String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
+                        if (!newText.equals(text)) {
+                            System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
+                            FileUtil.writeToFile(testDataFile, newText);
+                        }
                     }
                 }
 
-                throw new AssertionError(String.format("Looks like this test can be unmuted. Remove \"%s%s\" directive.", ignoreDirective, targetBackend));
+                throw new AssertionError(String.format("Looks like this test can be unmuted. Remove \"%s\" directive.", directivesToRemove.toString()));
             }
         };
     }
@@ -593,7 +599,7 @@ public class KotlinTestUtils {
     @NotNull
     public static KtFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile, true);
-        return KtPsiFactoryKt.KtPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
+        return new KtPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
     }
 
     @NotNull

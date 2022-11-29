@@ -26,7 +26,6 @@ data class NpmDependency(
     private val name: String,
     private val version: String,
     val scope: Scope = Scope.NORMAL,
-    val generateExternals: Boolean = false
 ) : SelfResolvingDependency,
     SelfResolvingDependencyInternal,
     ResolvableDependency,
@@ -118,7 +117,6 @@ internal fun directoryNpmDependency(
     name: String,
     directory: File,
     scope: NpmDependency.Scope,
-    generateExternals: Boolean
 ): NpmDependency {
     check(directory.isDirectory) {
         "Dependency on local path should point on directory but $directory found"
@@ -129,14 +127,7 @@ internal fun directoryNpmDependency(
         name = name,
         version = fileVersion(directory),
         scope = scope,
-        generateExternals = generateExternals
     )
-}
-
-internal fun onlyNameNpmDependency(
-    name: String
-): Nothing {
-    throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
 }
 
 fun String.isFileVersion() =

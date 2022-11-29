@@ -48,8 +48,5 @@ fun box(): String {
         return "Fail6: ${res.component2}"
     }
 
-
-
-
     return "OK"
 }

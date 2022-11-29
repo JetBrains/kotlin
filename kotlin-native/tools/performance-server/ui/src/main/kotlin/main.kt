@@ -103,8 +103,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
         var element = data.element
         if (data.type == "point") {
             val pointSize = 12
-            val currentBuild = builds.get(data.index)
-            currentBuild?.let { currentBuild ->
+            builds.get(data.index)?.let { currentBuild ->
                 // Higlight builds with failures.
                 if (currentBuild.failuresNumber > 0) {
                     val svgParameters: dynamic = object {}
@@ -148,9 +147,10 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                     append("time: ${currentBuild.formattedStartTime}-${currentBuild.formattedFinishTime}<br>")
                     append("Commits:<br>")
                     val commitsList = (JsonTreeParser.parse("{${currentBuild.commits}}") as JsonObject).getArray("commits").map {
+                        it as JsonObject
                         Commit(
-                                (it as JsonObject).getPrimitive("revision").content,
-                                (it as JsonObject).getPrimitive("developer").content
+                                it.getPrimitive("revision").content,
+                                it.getPrimitive("developer").content
                         )
                     }
                     val commits = if (commitsList.size > 3) commitsList.slice(0..2) else commitsList
@@ -171,11 +171,11 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
     })
     chart.on("created", {
         val currentChart = jquerySelector
-        val parameters: dynamic = object {}
-        parameters["selector"] = "[data-chart-tooltip=\"$chartContainer\"]"
-        parameters["container"] = "#$chartContainer"
-        parameters["html"] = true
-        currentChart.tooltip(parameters)
+        val chartParameters: dynamic = object {}
+        chartParameters["selector"] = "[data-chart-tooltip=\"$chartContainer\"]"
+        chartParameters["container"] = "#$chartContainer"
+        chartParameters["html"] = true
+        currentChart.tooltip(chartParameters)
     })
 }
 
@@ -189,7 +189,7 @@ external fun encodeURIComponent(url: String): String
 fun getDatesComponents() = "${beforeDate?.let {"&before=${encodeURIComponent(it)}"} ?: ""}" +
         "${afterDate?.let {"&after=${encodeURIComponent(it)}"} ?: ""}"
 
-fun main(args: Array<String>) {
+fun main() {
     val serverUrl = window.location.origin // use "http://localhost:3000" for local debug.
     val zoomRatio = 2
 
@@ -216,6 +216,7 @@ fun main(args: Array<String>) {
         // Add release branches to selector.
         branches.filter { it != "master" }.forEach {
             if ("^v?(\\d|\\.)+(-M\\d)?(-fixes)?$".toRegex().matches(it)) {
+                @Suppress("UNUSED_VARIABLE") // it's used within js block
                 val option = Option(it, it)
                 js("$('#inputGroupBranch')").append(js("$(option)"))
             }
@@ -310,8 +311,7 @@ fun main(args: Array<String>) {
 
     val metricUrl = "$serverUrl/metricValue/${parameters["target"]}/"
 
-    val unstableBenchmarksPromise = sendGetRequest("$serverUrl/unstable").then { response ->
-        val unstableList = response as String
+    val unstableBenchmarksPromise = sendGetRequest("$serverUrl/unstable").then { unstableList ->
         val data = JsonTreeParser.parse(unstableList)
         if (data !is JsonArray) {
             error("Response is expected to be an array.")
@@ -322,15 +322,13 @@ fun main(args: Array<String>) {
     }
 
     // Get builds description.
-    val buildsInfoPromise = sendGetRequest(descriptionUrl).then { response ->
-        val buildsInfo = response as String
+    val buildsInfoPromise = sendGetRequest(descriptionUrl).then { buildsInfo ->
         val data = JsonTreeParser.parse(buildsInfo)
         if (data !is JsonArray) {
             error("Response is expected to be an array.")
         }
         data.jsonArray.map {
-            val element = it as JsonElement
-            if (element.isNull) null else Build.create(element as JsonObject)
+            if (it.isNull) null else Build.create(it as JsonObject)
         }
     }
 
@@ -405,12 +403,12 @@ fun main(args: Array<String>) {
                 else ""
 
                 val requestedMetric = if (metric.startsWith("EXECUTION_TIME")) "EXECUTION_TIME" else metric
-                val url = "$metricUrl$requestedMetric$getParameters$branchParameter${
+                val queryUrl = "$metricUrl$requestedMetric$getParameters$branchParameter${
                     if (parameters["type"] != "all")
                         (if (getParameters.isEmpty() && branchParameter.isEmpty()) "?" else "&") + "type=${parameters["type"]}"
                     else ""
                 }&count=$buildsNumberToShow${getDatesComponents()}"
-                sendGetRequest(url)
+                sendGetRequest(queryUrl)
             }.toTypedArray()
 
             // Get metrics values for charts.
@@ -422,8 +420,7 @@ fun main(args: Array<String>) {
                     }
 
                     val labels = results.map { it.first }
-                    val values = results[0]?.second?.size?.let { (0..it - 1).map { i -> results.map { it.second[i] } } }
-                            ?: emptyList()
+                    val values = results[0].second.size.let { (0..it - 1).map { i -> results.map { it.second[i] } } }
                     labels to values
                 }
                 val labels = valuesList[0].first
@@ -436,7 +433,7 @@ fun main(args: Array<String>) {
                         compileData = labels to values.map { it.map { it?.let { it / 1000 } } }
                         compileChart = Chartist.Line("#compile_chart",
                                 getChartData(labels, compileData.second),
-                                getChartOptions(valuesToShow["COMPILE_TIME"]!![0]!!["samples"]!!.split(',').toTypedArray(),
+                                getChartOptions(valuesToShow["COMPILE_TIME"]!![0]["samples"]!!.split(',').toTypedArray(),
                                         "Time, milliseconds"))
                         buildsInfoPromise.then { builds ->
                             customizeChart(compileChart, "compile_chart", js("$(\"#compile_chart\")"), builds, parameters)

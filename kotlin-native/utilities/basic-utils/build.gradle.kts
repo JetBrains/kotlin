@@ -15,12 +15,11 @@ plugins {
 
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xskip-metadata-version-check")
+        freeCompilerArgs += listOf("-Xskip-metadata-version-check")
     }
 }
 
 dependencies {
     api(project(":kotlin-stdlib"))
-    implementation(project(project.project(":kotlin-native").extra["kotlinCompilerModule"] as Map<String, *>))
     implementation(project(":compiler:util"))
 }

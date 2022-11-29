@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+
 abstract class IrStatementOriginImpl(val debugName: String) : IrStatementOrigin {
     override fun toString(): String = debugName
 }
@@ -89,6 +91,8 @@ interface IrStatementOrigin {
     object PROPERTY_REFERENCE_FOR_DELEGATE : IrStatementOriginImpl("PROPERTY_REFERENCE_FOR_DELEGATE")
 
     object BRIDGE_DELEGATION : IrStatementOriginImpl("BRIDGE_DELEGATION")
+
+    object SYNTHETIC_NOT_AUTOBOXED_CHECK : IrStatementOriginImpl("SYNTHETIC_NOT_AUTOBOXED_CHECK")
 
     data class COMPONENT_N private constructor(val index: Int) : IrStatementOriginImpl("COMPONENT_$index") {
         companion object {

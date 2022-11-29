@@ -58,7 +58,7 @@ abstract class KtLightMethodImpl protected constructor(
 
         val nameExpression = jvmNameAnnotation?.let { JvmFileClassUtil.getLiteralStringEntryFromAnnotation(it) }
         if (nameExpression != null) {
-            nameExpression.replace(KtPsiFactory(this).createLiteralStringTemplateEntry(name))
+            nameExpression.replace(KtPsiFactory(project).createLiteralStringTemplateEntry(name))
         } else {
             val toRename = kotlinOrigin as? PsiNamedElement ?: cannotModify()
             toRename.setName(newNameForOrigin)
@@ -122,22 +122,26 @@ abstract class KtLightMethodImpl protected constructor(
         }
     }
 
-    override fun getTextOffset(): Int {
+    private inline fun <R> getTextVariantFromPropertyAccessorIfNeeded(
+        retriever: (KtPropertyAccessor) -> R
+    ): R? {
         val auxiliaryOrigin = lightMemberOrigin?.auxiliaryOriginalElement
-        if (auxiliaryOrigin is KtPropertyAccessor) {
-            return auxiliaryOrigin.textOffset
-        }
+        return (auxiliaryOrigin as? KtPropertyAccessor)?.let(retriever)
+    }
 
-        return super.getTextOffset()
+    override fun getText(): String {
+        return getTextVariantFromPropertyAccessorIfNeeded(KtPropertyAccessor::getText)
+            ?: super.getText()
+    }
+
+    override fun getTextOffset(): Int {
+        return getTextVariantFromPropertyAccessorIfNeeded(KtPropertyAccessor::getTextOffset)
+            ?: super.getTextOffset()
     }
 
     override fun getTextRange(): TextRange {
-        val auxiliaryOrigin = lightMemberOrigin?.auxiliaryOriginalElement
-        if (auxiliaryOrigin is KtPropertyAccessor) {
-            return auxiliaryOrigin.textRange
-        }
-
-        return super.getTextRange()
+        return getTextVariantFromPropertyAccessorIfNeeded(KtPropertyAccessor::getTextRange)
+            ?: super.getTextRange()
     }
 
     abstract override fun getThrowsList(): PsiReferenceList

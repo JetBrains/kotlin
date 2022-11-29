@@ -11,7 +11,6 @@
 #include "Freezing.hpp"
 #include "GC.hpp"
 #include "GlobalsRegistry.hpp"
-#include "InitializationScheme.hpp"
 #include "KAssert.h"
 #include "Natives.h"
 #include "ObjectOps.hpp"
@@ -118,10 +117,11 @@ extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
         // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
         mm::GlobalData::Instance().gc().StopFinalizerThreadIfRunning();
     }
-    mm::ThreadRegistry::Instance().Unregister(node);
-    if (destroyRuntime) {
+    if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
+        // we can clear reference in advance, as Unregister function can't use it anyway
         mm::ThreadRegistry::ClearCurrentThreadData();
     }
+    mm::ThreadRegistry::Instance().Unregister(node);
 }
 
 extern "C" void RestoreMemory(MemoryState*) {
@@ -143,18 +143,6 @@ extern "C" OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elem
     }
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     RETURN_RESULT_OF(mm::AllocateArray, threadData, typeInfo, static_cast<uint32_t>(elements));
-}
-
-extern "C" ALWAYS_INLINE OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-
-    RETURN_RESULT_OF(mm::InitThreadLocalSingleton, threadData, location, typeInfo, ctor);
-}
-
-extern "C" ALWAYS_INLINE OBJ_GETTER(InitSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-
-    RETURN_RESULT_OF(mm::InitSingleton, threadData, location, typeInfo, ctor);
 }
 
 extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {
@@ -307,6 +295,12 @@ extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
+}
+
+extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->gc().Schedule();
 }
 
 extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
@@ -631,4 +625,21 @@ void kotlin::StartFinalizerThreadIfNeeded() noexcept {
 
 bool kotlin::FinalizersThreadIsRunning() noexcept {
     return mm::GlobalData::Instance().gc().FinalizersThreadIsRunning();
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {
+    gc::GC::processObjectInMark(state, object);
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object) {
+    gc::GC::processArrayInMark(state, object->array());
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processFieldInMark(void* state, ObjHeader* field) {
+    gc::GC::processFieldInMark(state, field);
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
+    // Empty object. Nothing to do.
+    // TODO: Try to generate it in the code generator.
 }

@@ -99,6 +99,10 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             containerClassFir.declarations.firstOrNull { it.psi === this }
         }
         this is KtTypeAlias -> findFir(provider)
+        this is KtDestructuringDeclaration -> {
+            val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
+            firFile.declarations.firstOrNull { it.psi == this }
+        }
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
@@ -113,9 +117,7 @@ var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
     val classId = getClassId() ?: return null
-    return executeWithoutPCE {
-        provider.getFirClassifierByFqName(classId) as? FirRegularClass
-    }
+    return provider.getFirClassifierByFqName(classId) as? FirRegularClass
 }
 
 

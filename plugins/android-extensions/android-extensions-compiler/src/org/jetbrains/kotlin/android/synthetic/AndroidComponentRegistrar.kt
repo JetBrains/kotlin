@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
@@ -103,6 +105,16 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
 @Suppress("DEPRECATION")
 class AndroidComponentRegistrar : ComponentRegistrar {
     companion object {
+        fun reportRemovedError(configuration: CompilerConfiguration) {
+            val errorMessage =
+                "The Android extensions ('kotlin-android-extensions') compiler plugin is no longer supported. " +
+                        "Please use kotlin parcelize and view binding. " +
+                        "More information: https://goo.gle/kotlin-android-extensions-deprecation"
+            configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                ?.report(CompilerMessageSeverity.ERROR, errorMessage, null)
+                ?: throw IllegalStateException(errorMessage)
+        }
+
         fun registerParcelExtensions(project: Project) {
             ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
             IrGenerationExtension.registerExtension(project, ParcelableIrGeneratorExtension())
@@ -153,6 +165,8 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     }
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+        reportRemovedError(configuration)
+
         val features = configuration.get(AndroidConfigurationKeys.FEATURES) ?: AndroidExtensionsFeature.values().toSet()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
 

@@ -1,5 +1,3 @@
-import java.io.File
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -52,7 +50,10 @@ sourceSets {
     }
 }
 
-projectTest(parallel = true) {
+projectTest(
+    parallel = true,
+    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+) {
     dependsOn(":dist")
 
     workingDir = rootDir

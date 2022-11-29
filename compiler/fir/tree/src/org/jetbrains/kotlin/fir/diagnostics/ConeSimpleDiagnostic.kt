@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
@@ -43,6 +41,11 @@ class ConeRecursiveTypeParameterDuringErasureError(val typeParameterName: Name) 
         get() = "self-recursive type parameter $typeParameterName"
 }
 
+object ConeDestructuringDeclarationsOnTopLevel : ConeDiagnostic {
+    override val reason: String
+        get() = "Destructuring declarations are only allowed for local variables/values"
+}
+
 enum class DiagnosticKind {
     Syntax,
     ExpressionExpected,
@@ -69,6 +72,7 @@ enum class DiagnosticKind {
     MissingStdlibClass,
     NotASupertype,
     SuperNotAvailable,
+    AnnotationNotAllowed,
 
     LoopInSupertype,
     RecursiveTypealiasExpansion,
@@ -83,6 +87,7 @@ enum class DiagnosticKind {
     IntLiteralOutOfRange,
     FloatLiteralOutOfRange,
     WrongLongSuffix,
+    UnsignedNumbersAreNotPresent,
 
     IsEnumEntry,
     EnumEntryAsType,

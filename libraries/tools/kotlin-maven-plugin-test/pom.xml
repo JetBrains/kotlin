@@ -82,7 +82,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <jvm>${env.JDK_18}/bin/java</jvm>
+                                    <jvm>${jdk_1_8}/bin/java</jvm>
                                     <forkMode>once</forkMode>
                                     <systemProperties>
                                         <property>
@@ -166,7 +166,7 @@
                                 <configuration>
                                     <projectsDirectory>src/it/java9</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java9</cloneProjectsTo>
-                                    <javaHome>${env.JDK_9}</javaHome>
+                                    <javaHome>${jdk_9_0}</javaHome>
                                 </configuration>
                                 <goals>
                                     <goal>install</goal>

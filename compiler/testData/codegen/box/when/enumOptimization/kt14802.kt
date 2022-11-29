@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: JS_IR
 // CHECK_CASES_COUNT: function=crash count=2 TARGET_BACKENDS=JS
 // CHECK_CASES_COUNT: function=crash count=0 IGNORED_BACKENDS=JS
 // CHECK_IF_COUNT: function=crash count=1 TARGET_BACKENDS=JS

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.WidgetKit
+
+modules = WidgetKit
+compilerOpts = -framework WidgetKit
+linkerOpts = -framework WidgetKit
+#Disabled: Not officially available for watchos

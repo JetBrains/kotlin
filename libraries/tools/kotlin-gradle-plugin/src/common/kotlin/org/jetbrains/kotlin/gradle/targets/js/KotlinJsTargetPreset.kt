@@ -10,9 +10,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublicationRegistrationMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
@@ -96,19 +93,11 @@ open class KotlinJsTargetPreset(
     }
 
     override fun createCompilationFactory(forTarget: KotlinJsTarget): KotlinJsCompilationFactory {
-        return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { forTarget.irTarget })
+        return KotlinJsCompilationFactory(forTarget)
     }
 
     companion object {
         const val PRESET_NAME = "js"
-    }
-
-    override fun createTarget(name: String): KotlinJsTarget {
-        val result = super.createTarget(name)
-        if (project.hasKpmModel) {
-            mapTargetCompilationsToKpmVariants(result, PublicationRegistrationMode.IMMEDIATE)
-        }
-        return result
     }
 }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.Companion.asMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
@@ -79,6 +79,7 @@ internal class GradleKpmFragmentGranularMetadataResolver(
                 is GradleKpmExternalPlainModule -> {
                     MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult, isResolvedAsProject)
                 }
+
                 else -> run {
 
                     val metadataSourceComponent = dependencyNode.run { metadataSourceComponent ?: selectedComponent }
@@ -108,14 +109,17 @@ internal class GradleKpmFragmentGranularMetadataResolver(
                             moduleIdentifier = projectStructureMetadataExtractor.moduleIdentifier
                         )
 
-                        is JarMppDependencyProjectStructureMetadataExtractor -> CompositeMetadataJar(
-                            moduleIdentifier = ModuleIds.fromComponent(project, metadataSourceComponent).toString(),
-                            projectStructureMetadata = projectStructureMetadata,
-                            primaryArtifactFile = projectStructureMetadataExtractor.primaryArtifactFile,
-                            hostSpecificArtifactsBySourceSet = if (
-                                dependencyModule is GradleKpmExternalImportedModule && chosenFragments != null
-                            ) resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments) else emptyMap(),
-                        ).asMetadataProvider()
+                        is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
+                            CompositeMetadataArtifactImpl(
+                                moduleDependencyIdentifier = ModuleIds.fromComponent(project, metadataSourceComponent),
+                                moduleDependencyVersion = metadataSourceComponent.moduleVersion?.version ?: "unspecified",
+                                kotlinProjectStructureMetadata = projectStructureMetadata,
+                                primaryArtifactFile = projectStructureMetadataExtractor.primaryArtifactFile,
+                                hostSpecificArtifactFilesBySourceSetName = if (
+                                    dependencyModule is GradleKpmExternalImportedModule && chosenFragments != null
+                                ) resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments) else emptyMap(),
+                            )
+                        )
                     }
 
                     MetadataDependencyResolution.ChooseVisibleSourceSets(

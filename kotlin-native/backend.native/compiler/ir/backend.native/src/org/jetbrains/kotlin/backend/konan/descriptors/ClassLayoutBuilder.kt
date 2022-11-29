@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import llvm.LLVMStoreSizeOfType
+import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
-import org.jetbrains.kotlin.backend.konan.llvm.getLLVMType
+import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
@@ -356,6 +358,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     val interfaceVTableEntries: List<IrSimpleFunction> by lazy {
         require(irClass.isInterface)
         irClass.simpleFunctions()
+                .map { it.getLoweredVersion() }
                 .filter { f ->
                     f.isOverridable && f.bridgeTarget == null
                             && (f.isReal || f.overriddenSymbols.any { f.needBridgeTo(it.owner) })
@@ -405,22 +408,34 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
      * All fields of the class instance.
      * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
      */
-    val fields: List<FieldInfo> by lazy {
+    fun getFields(llvm: Llvm): List<FieldInfo> = getFieldsInternal(llvm).map { fieldInfo ->
+        val mappedField = fieldInfo.irField?.let { context.mapping.lateInitFieldToNullableField[it] ?: it }
+        if (mappedField == fieldInfo.irField)
+            fieldInfo
+        else
+            mappedField!!.toFieldInfo().also { it.index = fieldInfo.index }
+    }
+
+    private var fields: List<FieldInfo>? = null
+
+    private fun getFieldsInternal(llvm: Llvm): List<FieldInfo> {
+        fields?.let { return it }
+
         val superClass = irClass.getSuperClassNotAny()
-        val superFields = if (superClass != null) context.getLayoutBuilder(superClass).fields else emptyList()
+        val superFields = if (superClass != null) context.getLayoutBuilder(superClass).getFieldsInternal(llvm) else emptyList()
 
         val declaredFields = getDeclaredFields()
         val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
             declaredFields
         else
             declaredFields.sortedByDescending {
-                with(context.llvm) { LLVMStoreSizeOfType(runtime.targetData, getLLVMType(it.type)) }
+                with(llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toLLVMType(this)) }
             }
 
         val superFieldsCount = 1 /* First field is ObjHeader */ + superFields.size
         sortedDeclaredFields.forEachIndexed { index, field -> field.index = superFieldsCount + index }
 
-        superFields + sortedDeclaredFields
+        return (superFields + sortedDeclaredFields).also { fields = it }
     }
 
     val associatedObjects by lazy {
@@ -487,15 +502,24 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         }
         return declarations.mapNotNull {
             when (it) {
-                is IrField -> it.takeIf { it.isReal }?.toFieldInfo()
-                is IrProperty -> it.takeIf { it.isReal }?.backingField?.toFieldInfo()
+                is IrField -> it.takeIf { it.isReal && !it.isStatic }?.toFieldInfo()
+                is IrProperty -> it.takeIf { it.isReal }?.backingField?.takeIf { !it.isStatic }?.toFieldInfo()
                 else -> null
             }
         }
     }
 
+    /**
+     * Normally, function should be already replaced. But if the function come from LazyIr, it can be not replaced.
+     */
+    fun IrSimpleFunction.getLoweredVersion() = when {
+        isSuspend -> this.getOrCreateFunctionWithContinuationStub(context)
+        else -> this
+    }
     private val overridableOrOverridingMethods: List<IrSimpleFunction>
-        get() = irClass.simpleFunctions().filter { it.isOverridableOrOverrides && it.bridgeTarget == null }
+        get() = irClass.simpleFunctions()
+                .map {it.getLoweredVersion() }
+                .filter { it.isOverridableOrOverrides && it.bridgeTarget == null }
 
     private val IrFunction.uniqueName get() = computeFunctionName()
 }

@@ -14,6 +14,8 @@ class SomeClass {
 
     inline fun inlineFunctionChangedSignature(): Long = 0
     inline fun inlineFunctionChangedImplementation(): Int = 1000
+
+    inline fun inlineFunctionChangedLineNumber(): Int = 0
     inline fun inlineFunctionChangedUnchanged(): Int = 0
     private inline fun privateInlineFunctionChangedSignature(): Long = 0
 }

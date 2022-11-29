@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.components.KtClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KtTypeCreator
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -52,7 +53,14 @@ internal class KtFe10TypeCreator(
         }
 
         if (descriptor == null) {
-            val kotlinType = ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_CLASS, builder.toString())
+            val name = when (builder) {
+                is KtClassTypeBuilder.ByClassId -> builder.classId.asString()
+                is KtClassTypeBuilder.BySymbol ->
+                    builder.symbol.classIdIfNonLocal?.asString()
+                        ?: builder.symbol.name?.asString()
+                        ?: SpecialNames.ANONYMOUS_STRING
+            }
+            val kotlinType = ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, name)
             return KtFe10ClassErrorType(kotlinType, analysisContext)
         }
 
@@ -60,7 +68,7 @@ internal class KtFe10TypeCreator(
         val type = if (typeParameters.size == builder.arguments.size) {
             val projections = builder.arguments.mapIndexed { index, arg ->
                 when (arg) {
-                    is KtStarProjectionTypeArgument -> StarProjectionImpl(typeParameters[index])
+                    is KtStarTypeProjection -> StarProjectionImpl(typeParameters[index])
                     is KtTypeArgumentWithVariance -> TypeProjectionImpl(arg.variance, (arg.type as KtFe10Type).type)
                 }
             }

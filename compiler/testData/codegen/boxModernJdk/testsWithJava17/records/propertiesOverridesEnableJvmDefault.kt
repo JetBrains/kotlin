@@ -1,7 +1,6 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
 // ENABLE_JVM_PREVIEW
-// IGNORE_BACKEND_FIR: JVM_IR
 // !JVM_DEFAULT_MODE: enable
 
 // FILE: JavaClass.java

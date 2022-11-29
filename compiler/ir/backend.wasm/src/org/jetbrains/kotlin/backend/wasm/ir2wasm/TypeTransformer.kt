@@ -82,7 +82,7 @@ class WasmTypeTransformer(
                 WasmF64
 
             builtIns.nothingNType ->
-                WasmAnyRef
+                WasmRefNullNoneType
 
             // Value will not be created. Just using a random Wasm type.
             builtIns.nothingType ->
@@ -96,7 +96,7 @@ class WasmTypeTransformer(
                 val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
 
                 if (klass.isExternal) {
-                    WasmAnyRef
+                    WasmExternRef
                 } else if (isBuiltInWasmRefType(this)) {
                     when (val name = klass.name.identifier) {
                         "anyref" -> WasmAnyRef

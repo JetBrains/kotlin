@@ -213,7 +213,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
             is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.TypeIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.MemoryIdx -> appendModuleFieldReference(x.value.owner)
-            is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value)
+            is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.TagIdx -> b.writeVarUInt32(x.value)
@@ -490,9 +490,6 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
         }
         if (type is WasmRefNullType) {
             appendHeapType(type.heapType)
-        }
-        if (type is WasmRtt) {
-            appendModuleFieldReference(type.type.owner)
         }
     }
 

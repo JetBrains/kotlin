@@ -51,7 +51,7 @@ abstract class KotlinTest : AbstractTestTask() {
 
     private val runListeners = mutableListOf<KotlinTestRunnerListener>()
 
-    @Input
+    @Internal
     var ignoreRunFailures: Boolean = false
 
     fun addRunListener(listener: KotlinTestRunnerListener) {

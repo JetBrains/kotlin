@@ -134,26 +134,10 @@ class KotlinCompileApiTest {
         assertEquals(false, taskImpl.useModuleDetection.get())
     }
 
-
-    @Test
-    fun testParentKotlinOptions() {
-        val parentOptions = plugin.createKotlinJvmOptions()
-        parentOptions.moduleName = "foo"
-        parentOptions.javaParameters = true
-        parentOptions.languageVersion = "lang_version"
-        taskApi.parentKotlinOptions.set(parentOptions)
-
-        taskImpl.parentKotlinOptions.get().let {
-            assertEquals(parentOptions.moduleName, it.moduleName)
-            assertEquals(parentOptions.javaParameters, it.javaParameters)
-            assertEquals(parentOptions.languageVersion, it.languageVersion)
-        }
-    }
-
     @Test
     fun testTopLevelExtension() {
         plugin.kotlinExtension.explicitApi = ExplicitApiMode.Strict
         project.evaluate()
-        assertTrue(ExplicitApiMode.Strict.toCompilerArg() in taskImpl.kotlinOptions.freeCompilerArgs)
+        assertTrue(ExplicitApiMode.Strict.toCompilerArg() in taskImpl.compilerOptions.freeCompilerArgs.get())
     }
 }

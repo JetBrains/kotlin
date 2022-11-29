@@ -17,7 +17,7 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
     /**
      * A list of annotations applied.
      *
-     * To check if annotation is present, please use [containsAnnotation].
+     * To check if annotation is present, please use [hasAnnotation].
      *
      * @see KtAnnotationApplication
      */
@@ -31,12 +31,12 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      * annotationsList.containsAnnotation(classId) == annotationsList.annotations.any { it.classId == classId }
      * ```
      */
-    public abstract fun containsAnnotation(classId: ClassId): Boolean
+    public abstract fun hasAnnotation(classId: ClassId): Boolean
 
     /**
      * A list of annotations applied with specified [classId].
      *
-     * To check if annotation is present, please use [containsAnnotation].
+     * To check if annotation is present, please use [hasAnnotation].
      *
      * The semantic is equivalent to
      * ```
@@ -50,7 +50,7 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
     /**
      * A list of annotations [ClassId].
      *
-     * To check if annotation is present, please use [containsAnnotation].
+     * To check if annotation is present, please use [hasAnnotation].
      *
      * The semantic is equivalent to
      * ```

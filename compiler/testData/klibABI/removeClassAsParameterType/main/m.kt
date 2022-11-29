@@ -1,20 +1,7 @@
-fun test1(d: D): String {
-    try {
-        d.bar()
-    } catch(e: Throwable) {
-        if (e.isLinkageError("/E.<init>")) return "O"
-    }
+import abitestutils.abiTest
 
-    return "FAIL2"
+fun box() = abiTest {
+    val d = D()
+    expectFailure(prefixed("constructor E.<init> can not be called")) { d.bar() }
+    expectSuccess { d.foo() }
 }
-
-fun test2(d: D): String {
-    return d.foo()
-}
-
-fun box(): String {
-    return test1(D()) + test2(D())
-}
-
-private fun Throwable.isLinkageError(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError" && message?.startsWith("Unlinked IR symbol $symbolName|") == true

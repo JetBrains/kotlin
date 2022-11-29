@@ -24,6 +24,7 @@ class JsDtsHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         val referenceDtsFile = module.files.first().originalFile.withReplacedExtensionOrNull(".kt", ".d.ts")
             ?: error("Can't find reference .d.ts file")
         val generatedDtsFile = info.outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
+            ?: info.outputFile.withReplacedExtensionOrNull("_v5.mjs", ".d.ts")
             ?: error("Can't find generated .d.ts file")
 
         val generatedDts = generatedDtsFile.readText()

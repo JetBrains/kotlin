@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.RoomPlan
+
+modules = RoomPlan
+compilerOpts = -framework RoomPlan
+linkerOpts = -framework RoomPlan
+#Disabled: Swift-only framework

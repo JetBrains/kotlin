@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -22,8 +21,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
-import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -39,26 +36,11 @@ internal object INTERNAL_ABI_ORIGIN : IrDeclarationOriginImpl("INTERNAL_ABI")
  * In case of compiler caches, this means that it is not accessible as Lazy IR
  * and we have to explicitly add an external declaration.
  */
-internal class CachesAbiSupport(mapping: NativeMapping, symbols: KonanSymbols, private val irFactory: IrFactory) {
-    private val companionObjectAccessors = mapping.companionObjectCacheAccessors
+internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: IrFactory) {
     private val outerThisAccessors = mapping.outerThisCacheAccessors
     private val lateinitPropertyAccessors = mapping.lateinitPropertyCacheAccessors
-    private val enumValuesAccessors = mapping.enumValuesCacheAccessors
     private val lateInitFieldToNullableField = mapping.lateInitFieldToNullableField
-    private val array = symbols.array
 
-    fun getCompanionObjectAccessor(irClass: IrClass): IrSimpleFunction {
-        require(irClass.isCompanion) { "Expected a companion object but was: ${irClass.render()}" }
-        return companionObjectAccessors.getOrPut(irClass) {
-            irFactory.buildFun {
-                name = getMangledNameFor("globalAccessor", irClass)
-                origin = INTERNAL_ABI_ORIGIN
-                returnType = irClass.defaultType
-            }.apply {
-                parent = irClass.getPackageFragment()
-            }
-        }
-    }
 
     fun getOuterThisAccessor(irClass: IrClass): IrSimpleFunction {
         require(irClass.isInner) { "Expected an inner class but was: ${irClass.render()}" }
@@ -103,19 +85,6 @@ internal class CachesAbiSupport(mapping: NativeMapping, symbols: KonanSymbols, p
         }
     }
 
-    fun getEnumValuesAccessor(irClass: IrClass): IrSimpleFunction {
-        require(irClass.isEnumClass) { "Expected a enum class but was: ${irClass.render()}" }
-        return enumValuesAccessors.getOrPut(irClass) {
-            irFactory.buildFun {
-                name = getMangledNameFor("getValues", irClass)
-                returnType = array.typeWith(irClass.defaultType)
-                origin = INTERNAL_ABI_ORIGIN
-            }.apply {
-                parent = irClass.getPackageFragment()
-            }
-        }
-    }
-
     /**
      * Generate name for declaration that will be a part of internal ABI.
      */
@@ -143,15 +112,6 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
 
         if (declaration.isLocal) return
 
-        if (declaration.isCompanion) {
-            val function = cachesAbiSupport.getCompanionObjectAccessor(declaration)
-            context.createIrBuilder(function.symbol).apply {
-                function.body = irBlockBody {
-                    +irReturn(irGetObjectValue(declaration.defaultType, declaration.symbol))
-                }
-            }
-            data.add(function)
-        }
 
         if (declaration.isInner) {
             val function = cachesAbiSupport.getOuterThisAccessor(declaration)
@@ -161,16 +121,6 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
                             irGet(function.valueParameters[0]),
                             this@ExportCachesAbiVisitor.context.innerClassesSupport.getOuterThisField(declaration))
                     )
-                }
-            }
-            data.add(function)
-        }
-
-        if (declaration.isEnumClass) {
-            val function = cachesAbiSupport.getEnumValuesAccessor(declaration)
-            context.createIrBuilder(function.symbol).run {
-                function.body = irBlockBody {
-                    +irReturn(with(this@ExportCachesAbiVisitor.context.enumsSupport) { irGetValuesField(declaration) })
                 }
             }
             data.add(function)
@@ -196,30 +146,15 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
     }
 }
 
-internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPass, IrElementTransformerVoid() {
-    private val cachesAbiSupport = context.cachesAbiSupport
-    private val enumsSupport = context.enumsSupport
+internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass, IrElementTransformerVoid() {
+    private val cachesAbiSupport = generationState.context.cachesAbiSupport
+    private val innerClassesSupport = generationState.context.innerClassesSupport
+    private val llvmImports = generationState.llvmImports
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
 
-    override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        val irClass = expression.symbol.owner
-        if (!irClass.isCompanion || context.llvmModuleSpecification.containsDeclaration(irClass)) {
-            return expression
-        }
-        val parent = irClass.parentAsClass
-        if (parent.isObjCClass()) {
-            // Access to Obj-C metaclass is done via intrinsic.
-            return expression
-        }
-        val accessor = cachesAbiSupport.getCompanionObjectAccessor(irClass)
-        context.llvmImports.add(irClass.llvmSymbolOrigin)
-        return irCall(expression.startOffset, expression.endOffset, accessor, emptyList())
-    }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
         expression.transformChildrenVoid(this)
@@ -229,11 +164,11 @@ internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPa
         val property = field.correspondingPropertySymbol?.owner
 
         return when {
-            context.llvmModuleSpecification.containsDeclaration(field) -> expression
+            generationState.llvmModuleSpecification.containsDeclaration(field) -> expression
 
-            irClass?.isInner == true && context.innerClassesSupport.getOuterThisField(irClass) == field -> {
+            irClass?.isInner == true && innerClassesSupport.getOuterThisField(irClass) == field -> {
                 val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
-                context.llvmImports.add(irClass.llvmSymbolOrigin)
+                llvmImports.add(irClass.llvmSymbolOrigin)
                 return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
                     putValueArgument(0, expression.receiver)
                 }
@@ -241,22 +176,11 @@ internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPa
 
             property?.isLateinit == true -> {
                 val accessor = cachesAbiSupport.getLateinitPropertyAccessor(property)
-                context.llvmImports.add(property.llvmSymbolOrigin)
+                llvmImports.add(property.llvmSymbolOrigin)
                 return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
                     if (irClass != null)
                         putValueArgument(0, expression.receiver)
                 }
-            }
-
-            field.origin == DECLARATION_ORIGIN_ENUM -> {
-                val enumClass = irClass?.parentClassOrNull
-                require(enumClass != null) { "Unexpected usage of enum VALUES field" }
-                require(enumClass.isEnumClass) { "Expected a enum class: ${enumClass.render()}" }
-                require(enumsSupport.getImplObject(enumClass) == irClass) { "Expected a enum's impl object: ${irClass.render()}" }
-                require(field == enumsSupport.getValuesField(irClass)) { "Expected VALUES field: ${field.render()}" }
-                val accessor = cachesAbiSupport.getEnumValuesAccessor(enumClass)
-                context.llvmImports.add(enumClass.llvmSymbolOrigin)
-                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList())
             }
 
             else -> expression

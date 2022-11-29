@@ -92,7 +92,6 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         return arrayMap[index] != null
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     operator fun plus(attribute: ConeAttribute<*>): ConeAttributes {
         if (attribute in this) return this
         if (isEmpty()) return predefinedAttributes[attribute] ?: ConeAttributes(attribute)

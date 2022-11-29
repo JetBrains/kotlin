@@ -5,19 +5,46 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.utils.RESERVED_IDENTIFIERS
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object ModuleWrapperTranslation {
     object Namer {
+        private val RESERVED_IDENTIFIERS = setOf(
+            // keywords
+            "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",
+            "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with",
+
+            // future reserved words
+            "class", "const", "enum", "export", "extends", "import", "super",
+
+            // as future reserved words in strict mode
+            "implements", "interface", "let", "package", "private", "protected", "public", "static", "yield",
+
+            // additional reserved words
+            "null", "true", "false",
+
+            // disallowed as variable names in strict mode
+            "eval", "arguments",
+
+            // global identifiers usually declared in a typical JS interpreter
+            "NaN", "isNaN", "Infinity", "undefined",
+
+            "Error", "Object", "Number", "String",
+
+            "Math", "String", "Boolean", "Date", "Array", "RegExp", "JSON", "Map",
+
+            // global identifiers usually declared in know environments (node.js, browser, require.js, WebWorkers, etc)
+            "require", "define", "module", "window", "self", "globalThis"
+        )
+
         fun requiresEscaping(name: String) =
             !name.isValidES5Identifier() || name in RESERVED_IDENTIFIERS
     }
 
     fun wrap(
-        moduleId: String, function: JsExpression, importedModules: List<JsImportedModule>,
+        moduleId: String, function: JsFunction, importedModules: List<JsImportedModule>,
         program: JsProgram, kind: ModuleKind
     ): List<JsStatement> {
         return when (kind) {
@@ -25,7 +52,7 @@ object ModuleWrapperTranslation {
             ModuleKind.COMMON_JS -> wrapCommonJs(function, importedModules, program)
             ModuleKind.UMD -> wrapUmd(moduleId, function, importedModules, program)
             ModuleKind.PLAIN -> wrapPlain(moduleId, function, importedModules, program)
-            ModuleKind.ES -> error("ES modules are not supported in legacy wrapper")
+            ModuleKind.ES -> wrapEsModule(function, importedModules)
         }
     }
 
@@ -99,6 +126,21 @@ object ModuleWrapperTranslation {
         val invocation = JsInvocation(function, listOf(JsNameRef("exports", moduleName.makeRef())) + invocationArgs)
         return listOf(invocation.makeStmt())
     }
+
+    private fun wrapEsModule(function: JsFunction, importedModules: List<JsImportedModule>): List<JsStatement> {
+        val importStatements = importedModules.zip(function.parameters.drop(1)).map {
+            JsImport(
+                it.first.externalName,
+                if (it.first.plainReference == null) {
+                    JsImport.Target.All(alias = it.second.name)
+                } else {
+                    JsImport.Target.Default(name = it.second.name)
+                }
+            )
+        }
+       return importStatements + function.body.statements.dropLast(1)
+    }
+
 
     private fun wrapPlain(
         moduleId: String, function: JsExpression,

@@ -43,3 +43,4 @@ fun bar(x: Int) =
 // foo.kt:4 foo
 // foo.kt:5 foo
 // test.kt:21 bar
+// test.kt:14 box

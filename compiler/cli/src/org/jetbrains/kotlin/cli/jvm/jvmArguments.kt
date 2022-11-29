@@ -161,10 +161,12 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
             messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
             return false
         }
-
         messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
-
         put(JVMConfigurationKeys.JDK_HOME, jdkHome)
+    } else {
+        val javaHome = File(System.getProperty("java.home"))
+        messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
+        put(JVMConfigurationKeys.JDK_HOME, javaHome)
     }
 
     return true
@@ -265,20 +267,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
                 arguments.useIR && !useOldBackend
             }
 
-    if (arguments.useOldBackend) {
-        messageCollector.report(
-            STRONG_WARNING,
-            "-Xuse-old-backend is deprecated and will be removed in a future release"
-        )
-        if (arguments.useIR) {
-            messageCollector.report(
-                STRONG_WARNING,
-                "Both -Xuse-ir and -Xuse-old-backend are passed. This is an inconsistent configuration. " +
-                        "The compiler will use the ${if (useIR) "JVM IR" else "old JVM"} backend"
-            )
-        }
-    }
-
     messageCollector.report(LOGGING, "Using ${if (useIR) "JVM IR" else "old JVM"} backend")
 
     put(JVMConfigurationKeys.IR, useIR)
@@ -307,6 +295,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.NO_KOTLIN_NOTHING_VALUE_EXCEPTION, arguments.noKotlinNothingValueException)
     put(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS, arguments.noResetJarTimestamps)
     put(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS, arguments.noUnifiedNullChecks)
+    put(JVMConfigurationKeys.NO_SOURCE_DEBUG_EXTENSION, arguments.noSourceDebugExtension)
 
     put(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.fromString(arguments.serializeIr))
 
@@ -376,7 +365,6 @@ private fun parseBackendThreads(stringValue: String, messageCollector: MessageCo
 
 fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {
     val libraries = arguments.klibLibraries ?: return
-    assert(arguments.useIR && !arguments.useOldBackend) { "Klib libraries can only be used with IR backend" }
     put(JVMConfigurationKeys.KLIB_PATHS, libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty))
 }
 

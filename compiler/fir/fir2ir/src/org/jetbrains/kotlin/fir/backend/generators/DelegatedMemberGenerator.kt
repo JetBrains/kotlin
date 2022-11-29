@@ -212,7 +212,7 @@ class DelegatedMemberGenerator(
         val delegateFunction =
             declarationStorage.createIrFunction(
                 delegateOverride, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
-                containingClass = firSubClass.symbol.toLookupTag()
+                fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
             )
         val baseSymbols = mutableListOf<FirNamedFunctionSymbol>()
         // the overridden symbols should be collected only after all fake overrides for all superclases are created and bound to their
@@ -293,7 +293,7 @@ class DelegatedMemberGenerator(
         val delegateProperty =
             declarationStorage.createIrProperty(
                 firDelegateProperty, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
-                containingClass = firSubClass.symbol.toLookupTag()
+                fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
             )
         // the overridden symbols should be collected only after all fake overrides for all superclases are created and bound to their
         // overridden symbols, otherwise in some cases they will be left in inconsistent state leading to the errors in IR
@@ -352,7 +352,7 @@ class DelegatedMemberGenerator(
                     originalForSubstitutionOverride!!.isDefaultJavaMethod()
                 else -> {
                     // Check that we have a non-abstract method from Java interface
-                    origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
+                    isJavaOrEnhancement && modality == Modality.OPEN
                 }
             }
     }

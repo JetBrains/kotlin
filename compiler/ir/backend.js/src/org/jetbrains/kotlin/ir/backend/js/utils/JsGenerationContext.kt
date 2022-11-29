@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getSourceLocation
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getStartSourceLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
@@ -32,7 +34,8 @@ class JsGenerationContext(
     private val nameCache: MutableMap<IrElement, JsName> = mutableMapOf(),
     private val useBareParameterNames: Boolean = false,
 ) : IrNamer by staticContext {
-    private val locationCache = mutableMapOf<Int, JsLocation>()
+    private val startLocationCache = mutableMapOf<Int, JsLocation>()
+    private val endLocationCache = mutableMapOf<Int, JsLocation>()
 
     fun newFile(file: IrFile, func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
         return JsGenerationContext(
@@ -86,7 +89,18 @@ class JsGenerationContext(
 
     fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean = staticContext.backendContext.getJsCodeForFunction(symbol) != null
 
-    fun getLocationFromCache(node: IrElement) = locationCache[node.startOffset]
+    fun getStartLocationForIrElement(irElement: IrElement, originalName: String? = null) =
+        getLocationForIrElement(irElement, originalName, startLocationCache) { startOffset }
 
-    fun saveLocationToCache(node: IrElement, location: JsLocation) = locationCache.put(node.startOffset, location)
+    fun getEndLocationForIrElement(irElement: IrElement, originalName: String? = null) =
+        getLocationForIrElement(irElement, originalName, endLocationCache) { endOffset }
+
+    private inline fun getLocationForIrElement(
+        irElement: IrElement,
+        originalName: String?,
+        cache: MutableMap<Int, JsLocation>,
+        offsetSelector: IrElement.() -> Int,
+    ): JsLocation? = cache.getOrPut(irElement.offsetSelector()) {
+        irElement.getSourceLocation(currentFile.fileEntry, offsetSelector) ?: return null
+    }.copy(name = originalName)
 }

@@ -3,11 +3,11 @@ PsiJetFileStubImpl[package=]
   IMPORT_LIST
   PROPERTY[fqName=property, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
     CONTEXT_RECEIVER_LIST
-      CONTEXT_RECEIVER
+      CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=A]
-      CONTEXT_RECEIVER
+      CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=B]
@@ -24,11 +24,11 @@ PsiJetFileStubImpl[package=]
         REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=propertyWithSetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
     CONTEXT_RECEIVER_LIST
-      CONTEXT_RECEIVER
+      CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=A]
-      CONTEXT_RECEIVER
+      CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=B]
@@ -45,11 +45,11 @@ PsiJetFileStubImpl[package=]
         REFERENCE_EXPRESSION[referencedName=Int]
   FUN[fqName=function, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
     CONTEXT_RECEIVER_LIST
-      CONTEXT_RECEIVER
+      CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=A]
-      CONTEXT_RECEIVER
+      CONTEXT_RECEIVER[label=null]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=B]

@@ -23,4 +23,7 @@ object JavaScript {
 
     const val EXTENSION = "js"
     const val DOT_EXTENSION = "." + EXTENSION
+
+    const val MODULE_EXTENSION = "mjs"
+    const val DOT_MODULE_EXTENSION = "." + MODULE_EXTENSION
 }

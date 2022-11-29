@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.name.SpecialNames
 
 @OptIn(FirImplementationDetail::class)
 abstract class FirDefaultPropertyAccessor(
@@ -64,7 +64,7 @@ abstract class FirDefaultPropertyAccessor(
     typeParameters = mutableListOf(),
 ) {
     override val dispatchReceiverType: ConeSimpleKotlinType?
-        get() = propertySymbol?.dispatchReceiverType
+        get() = propertySymbol.dispatchReceiverType
 
     final override var body: FirBlock?
         get() = null
@@ -126,7 +126,7 @@ class FirDefaultPropertySetter(
     propertySymbol: FirPropertySymbol,
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
-    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+    propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     parameterAnnotations: List<FirAnnotation> = emptyList(),
 ) : FirDefaultPropertyAccessor(
     source,
@@ -136,10 +136,11 @@ class FirDefaultPropertySetter(
     valueParameters = mutableListOf(
         buildDefaultSetterValueParameter builder@{
             this@builder.source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+            this@builder.containingFunctionSymbol = propertyAccessorSymbol
             this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
-            this@builder.symbol = FirValueParameterSymbol(SpecialNames.IMPLICIT_SET_PARAMETER)
+            this@builder.symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
             this@builder.annotations += parameterAnnotations
         }
     ),
@@ -148,5 +149,5 @@ class FirDefaultPropertySetter(
     visibility = visibility,
     modality = modality,
     effectiveVisibility = effectiveVisibility,
-    symbol = symbol
+    symbol = propertyAccessorSymbol
 )

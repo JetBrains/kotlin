@@ -1,0 +1,49 @@
+@kotlin.Metadata
+public final class ConditionalExpressionsKt {
+    // source: 'conditionalExpressions.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method ifBody(): void
+    public final static @org.jetbrains.annotations.NotNull method ifExpr(): DPoint
+    public final static method whenBody(): void
+    public final static @org.jetbrains.annotations.NotNull method whenExpr(): DPoint
+    public final inner class DPoint$Companion
+}
+
+@kotlin.Metadata
+public final class DPoint$Companion {
+    // source: 'conditionalExpressions.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getCounter$annotations(): void
+    public final method getCounter(): int
+    public final method setCounter(p0: int): void
+    public final inner class DPoint$Companion
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class DPoint {
+    // source: 'conditionalExpressions.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: DPoint$Companion
+    private static field counter: int
+    private final field field-0: double
+    private final field field-1: double
+    static method <clinit>(): void
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method access$getCounter$cp(): int
+    public synthetic final static method access$setCounter$cp(p0: int): void
+    public synthetic final static method box-impl(p0: double, p1: double): DPoint
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final static method getCounter(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public final static method setCounter(p0: int): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-0(): double
+    public synthetic final method unbox-impl-1(): double
+    public final inner class DPoint$Companion
+}

@@ -1,3 +1,4 @@
+// !LANGUAGE: +EnumEntries
 // IGNORE_BACKEND: JS
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
@@ -95,6 +96,8 @@ function box() {
 
     if (this["export_enum_class"].OuterClass.NestedEnum.A.ordinal !== 0) return "fail29"
     if (this["export_enum_class"].OuterClass.NestedEnum.B.ordinal !== 1) return "fail30"
+
+    if (this["export_enum_class"].Foo.entries !== undefined) return "fail31"
 
     return "OK"
 }

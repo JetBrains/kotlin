@@ -23,16 +23,19 @@ import org.gradle.api.tasks.*
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptionsImpl
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.utils.canonicalPathWithoutExtension
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
 
@@ -40,30 +43,36 @@ import javax.inject.Inject
 abstract class KotlinJsDce @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompileTool<K2JSDceArguments>(objectFactory),
+    KotlinToolTask<KotlinJsDceCompilerToolOptions>,
     KotlinJsDce {
 
     init {
         cacheOnlyIfEnabledForKotlin()
+        outputs.cacheIf { !isDevMode }
 
         include("js".fileExtensionCasePermutations().map { "**/*.$it" })
     }
 
+    override val toolOptions: KotlinJsDceCompilerToolOptions = objectFactory.newInstance<KotlinJsDceCompilerToolOptionsDefault>()
+
     override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
 
     override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        dceOptionsImpl.updateArguments(args)
+        (toolOptions as KotlinJsDceCompilerToolOptionsDefault).fillCompilerArguments(args)
         args.declarationsToKeep = keep.toTypedArray()
     }
-
-    private val dceOptionsImpl = KotlinJsDceOptionsImpl()
 
     // DCE can be broken in case of non-kotlin js files or modules
     @Internal
     var kotlinFilesOnly: Boolean = false
 
+    @Deprecated("Replaced with toolOptions", replaceWith = ReplaceWith("toolOptions"))
+    @Suppress("DEPRECATION")
     @get:Internal
-    override val dceOptions: KotlinJsDceOptions
-        get() = dceOptionsImpl
+    override val dceOptions: KotlinJsDceOptions = object : KotlinJsDceOptions {
+        override val options: KotlinJsDceCompilerToolOptions
+            get() = toolOptions
+    }
 
     @get:Input
     override val keep: MutableList<String> = mutableListOf()
@@ -79,21 +88,23 @@ abstract class KotlinJsDce @Inject constructor(
     @get:Incremental
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     override val sources: FileCollection = super.sources
 
     @get:Incremental
     @get:InputFiles
+    @get:NormalizeLineEndings
     abstract override val libraries: ConfigurableFileCollection
 
     private val buildDir = project.layout.buildDirectory
 
     private val isDevMode
-        get() = dceOptions.devMode || "-dev-mode" in dceOptions.freeCompilerArgs
+        get() = toolOptions.devMode.get() || toolOptions.freeCompilerArgs.get().contains("-dev-mode")
 
     private val isExplicitDevModeAllStrategy
-        get() = strategyAllArg in dceOptions.freeCompilerArgs ||
-                strategyOlderArg !in dceOptions.freeCompilerArgs &&
+        get() = strategyAllArg in toolOptions.freeCompilerArgs.get() ||
+                strategyOlderArg !in toolOptions.freeCompilerArgs.get() &&
                 System.getProperty("kotlin.js.dce.devmode.overwriting.strategy") == DevModeOverwritingStrategies.ALL
 
     @TaskAction
@@ -137,7 +148,7 @@ abstract class KotlinJsDce @Inject constructor(
             buildDir.get().asFile,
             jvmArgs
         )
-        throwGradleExceptionIfError(exitCode, KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
+        throwExceptionIfCompilationFailed(exitCode, KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
     }
 
     private fun isDceCandidate(file: File): Boolean {

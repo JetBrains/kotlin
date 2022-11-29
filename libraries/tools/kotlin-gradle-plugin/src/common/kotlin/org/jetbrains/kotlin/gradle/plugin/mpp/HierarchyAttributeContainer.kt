@@ -17,6 +17,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.provider.Provider
 import java.util.*
 
 // TODO better implementation: attribute invariants (no attrs with same name and different types allowed), thread safety?
@@ -32,26 +33,44 @@ class HierarchyAttributeContainer(
     val filterParentAttributes: (Attribute<*>) -> Boolean = { true }
 ) : AttributeContainer {
     private val attributesMap = Collections.synchronizedMap(mutableMapOf<Attribute<*>, Any>())
+    private val lazyAttributesMap = Collections.synchronizedMap(mutableMapOf<Attribute<*>, Provider<out Any>>())
 
     private fun getFilteredParentAttribute(key: Attribute<*>) =
         if (parent != null && filterParentAttributes(key)) parent.getAttribute(key) else null
 
     override fun contains(key: Attribute<*>): Boolean =
-        attributesMap.contains(key) || getFilteredParentAttribute(key) != null
+        lazyAttributesMap.contains(key) ||
+                attributesMap.contains(key) ||
+                getFilteredParentAttribute(key) != null
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> getAttribute(key: Attribute<T>): T? =
-        attributesMap.get(key as Attribute<*>) as T? ?: getFilteredParentAttribute(key) as T?
+    override fun <T : Any> getAttribute(key: Attribute<T>): T? = lazyAttributesMap[key]?.get() as T?
+        ?: attributesMap[key] as T?
+        ?: getFilteredParentAttribute(key) as T?
 
-    override fun isEmpty(): Boolean = attributesMap.isEmpty() && (parent?.keySet().orEmpty().filter(filterParentAttributes).isEmpty())
+    override fun isEmpty(): Boolean = lazyAttributesMap.isEmpty() &&
+            attributesMap.isEmpty() &&
+            (parent?.keySet().orEmpty().filter(filterParentAttributes).isEmpty())
 
-    override fun keySet(): Set<Attribute<*>> = attributesMap.keys + parent?.keySet().orEmpty().filter(filterParentAttributes)
+    override fun keySet(): Set<Attribute<*>> = lazyAttributesMap.keys +
+            attributesMap.keys +
+            parent?.keySet().orEmpty().filter(filterParentAttributes)
 
     override fun <T : Any> attribute(key: Attribute<T>, value: T): AttributeContainer {
         val checkedValue = requireNotNull(value as Any?) { "null values for attributes are not supported" }
         attributesMap[key] = checkedValue
+        lazyAttributesMap.remove(key)
         return this
     }
 
     override fun getAttributes(): AttributeContainer = this
+
+    override fun <T : Any> attributeProvider(
+        key: Attribute<T>,
+        provider: Provider<out T>
+    ): AttributeContainer {
+        lazyAttributesMap[key] = provider
+        attributesMap.remove(key)
+        return this
+    }
 }

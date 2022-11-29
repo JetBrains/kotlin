@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.CallableId
@@ -38,6 +39,12 @@ open class FirPropertySymbol(
 
     val hasInitializer: Boolean
         get() = fir.initializer != null
+
+    val resolvedInitializer: FirExpression?
+        get() {
+            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            return fir.initializer
+        }
 
     val hasDelegate: Boolean
         get() = fir.delegate != null

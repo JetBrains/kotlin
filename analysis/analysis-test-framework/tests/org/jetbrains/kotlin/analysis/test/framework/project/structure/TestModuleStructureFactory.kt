@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.nio.file.Path
+import kotlin.io.path.absolute
 import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
@@ -161,7 +161,9 @@ object TestModuleStructureFactory {
         libraryName: String = jar.nameWithoutExtension,
     ): KtLibraryModuleImpl {
         check(jar.extension == "jar")
-        check(jar.exists())
+        check(jar.exists()) {
+            "library $jar does not exist"
+        }
         return KtLibraryModuleImpl(
             libraryName,
             JvmPlatforms.defaultJvmPlatform,
@@ -179,12 +181,10 @@ object TestModuleStructureFactory {
     ): List<KtLibraryModule> {
         val configurationKind = JvmEnvironmentConfigurator.extractConfigurationKind(testModule.directives)
         if (!configurationKind.withRuntime) return emptyList()
+        val lib = testServices.standardLibrariesPathProvider.runtimeJarForTests().toPath().absolute()
         return listOf(
-            KotlinPaths.Jar.StdLib to PathUtil.KOTLIN_JAVA_STDLIB_NAME,
-        ).map { (jar, name) ->
-            val lib = PathUtil.kotlinPathsForDistDirectory.jar(jar).toPath().toAbsolutePath()
-            createKtLibraryModuleByJar(lib, testServices, project, name)
-        }
+            createKtLibraryModuleByJar(lib, testServices, project, PathUtil.KOTLIN_JAVA_STDLIB_NAME),
+        )
     }
 
     private fun getJdkModule(

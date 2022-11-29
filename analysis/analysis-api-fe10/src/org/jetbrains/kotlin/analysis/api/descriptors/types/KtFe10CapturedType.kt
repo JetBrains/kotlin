@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeProjection
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
 import org.jetbrains.kotlin.analysis.api.types.KtCapturedType
@@ -23,4 +24,7 @@ internal class KtFe10CapturedType(
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { type.ktNullability }
+
+    override val projection: KtTypeProjection
+        get() = withValidityAssertion { type.typeProjection.toKtTypeProjection(analysisContext) }
 }

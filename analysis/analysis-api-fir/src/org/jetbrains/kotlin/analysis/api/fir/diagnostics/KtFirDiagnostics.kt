@@ -179,6 +179,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = WrongLongSuffix::class
     }
 
+    abstract class UnsignedLiteralWithoutDeclarationsOnClasspath : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = UnsignedLiteralWithoutDeclarationsOnClasspath::class
+    }
+
     abstract class DivisionByZero : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = DivisionByZero::class
     }
@@ -689,6 +693,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = WrongExtensionFunctionTypeWarning::class
     }
 
+    abstract class AnnotationInWhereClauseError : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = AnnotationInWhereClauseError::class
+    }
+
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName
@@ -1011,6 +1019,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val expectedType: KtType
         abstract val actualType: KtType
         abstract val isMismatchDueToNullability: Boolean
+    }
+
+    abstract class TypeInferenceOnlyInputTypesError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeInferenceOnlyInputTypesError::class
+        abstract val typeParameter: KtTypeParameterSymbol
     }
 
     abstract class ThrowableTypeMismatch : KtFirDiagnostic<PsiElement>() {
@@ -1356,6 +1369,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualType: KtType
         abstract val targetFunction: KtSymbol
         abstract val isMismatchDueToNullability: Boolean
+    }
+
+    abstract class ImplicitNothingReturnType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ImplicitNothingReturnType::class
+    }
+
+    abstract class ImplicitNothingPropertyType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ImplicitNothingPropertyType::class
     }
 
     abstract class CyclicGenericUpperBound : KtFirDiagnostic<PsiElement>() {
@@ -1985,6 +2006,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class LocalVariableWithTypeParameters : KtFirDiagnostic<KtProperty>() {
         override val diagnosticClass get() = LocalVariableWithTypeParameters::class
+    }
+
+    abstract class ExplicitTypeArgumentsInPropertyAccess : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ExplicitTypeArgumentsInPropertyAccess::class
     }
 
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {
@@ -2700,6 +2725,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantInlineSuspendFunctionType::class
     }
 
+    abstract class InefficientEqualsOverridingInInlineClass : KtFirDiagnostic<KtNamedFunction>() {
+        override val diagnosticClass get() = InefficientEqualsOverridingInInlineClass::class
+        abstract val type: KtType
+    }
+
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         abstract val objectName: Name
@@ -2902,6 +2932,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class PositionedValueArgumentForJavaAnnotation : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = PositionedValueArgumentForJavaAnnotation::class
+    }
+
+    abstract class RedundantRepeatableAnnotation : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RedundantRepeatableAnnotation::class
+        abstract val kotlinRepeatable: FqName
+        abstract val javaRepeatable: FqName
     }
 
     abstract class LocalJvmRecord : KtFirDiagnostic<PsiElement>() {

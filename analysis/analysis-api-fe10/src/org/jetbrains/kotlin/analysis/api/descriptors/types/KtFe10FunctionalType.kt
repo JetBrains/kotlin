@@ -5,20 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
-import org.jetbrains.kotlin.analysis.api.KtTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeArgument
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeProjection
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
@@ -36,6 +38,17 @@ internal class KtFe10FunctionalType(
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { type.ktNullability }
 
+    override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier>
+        get() = withValidityAssertion {
+            KtFe10JvmTypeMapperContext.getNestedType(type).allInnerTypes.map { innerType ->
+                KtClassTypeQualifier.KtResolvedClassTypeQualifier(
+                    innerType.classDescriptor.toKtClassSymbol(analysisContext),
+                    innerType.arguments.map { it.toKtTypeProjection(analysisContext) },
+                    token
+                )
+            }
+        }
+
     override val isSuspend: Boolean
         get() = withValidityAssertion { descriptor.functionKind.isSuspendType }
 
@@ -43,16 +56,32 @@ internal class KtFe10FunctionalType(
         get() = withValidityAssertion { descriptor.arity }
 
     override val hasReceiver: Boolean
-        get() = withValidityAssertion { type.getReceiverTypeFromFunctionType() != null }
+        get() = withValidityAssertion {
+            if (descriptor.functionKind.isReflectType) false
+            else type.getReceiverTypeFromFunctionType() != null
+        }
 
     override val receiverType: KtType?
-        get() = withValidityAssertion { type.getReceiverTypeFromFunctionType()?.toKtType(analysisContext) }
+        get() = withValidityAssertion {
+            if (descriptor.functionKind.isReflectType) null
+            else type.getReceiverTypeFromFunctionType()?.toKtType(analysisContext)
+        }
 
     override val parameterTypes: List<KtType>
-        get() = withValidityAssertion { type.getValueParameterTypesFromFunctionType().map { it.type.toKtType(analysisContext) } }
+        get() = withValidityAssertion {
+            when {
+                descriptor.functionKind.isReflectType -> type.arguments.dropLast(1)
+                else -> type.getValueParameterTypesFromFunctionType()
+            }.map { it.type.toKtType(analysisContext) }
+        }
 
     override val returnType: KtType
-        get() = withValidityAssertion { type.getReturnTypeFromFunctionType().toKtType(analysisContext) }
+        get() = withValidityAssertion {
+            when {
+                descriptor.functionKind.isReflectType -> type.arguments.last().type
+                else -> type.getReturnTypeFromFunctionType()
+            }.toKtType(analysisContext)
+        }
 
     override val classId: ClassId
         get() = withValidityAssertion {
@@ -65,6 +94,6 @@ internal class KtFe10FunctionalType(
     override val classSymbol: KtClassLikeSymbol
         get() = withValidityAssertion { KtFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }
 
-    override val typeArguments: List<KtTypeArgument>
-        get() = withValidityAssertion { type.arguments.map { it.toKtTypeArgument(analysisContext) } }
+    override val ownTypeArguments: List<KtTypeProjection>
+        get() = withValidityAssertion { type.arguments.map { it.toKtTypeProjection(analysisContext) } }
 }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import java.io.File
 import javax.inject.Inject
 
 open class KotlinJsBinaryContainer
@@ -43,23 +42,21 @@ constructor(
     private fun configureBinaryen(binary: JsIrBinary, binaryenDsl: BinaryenExec.() -> Unit) {
         val linkTask = binary.linkTask
 
-        val compiledMjsFile = linkTask.map { link ->
-            link.kotlinOptions.outputFile?.let(::File)
-                ?: link.destinationDirectory.locationOnly.get().asFile.resolve("${link.compilation.ownModuleName}.mjs")
-        }
-
-        val compiledWasmFile = compiledMjsFile.map {
-            it.parentFile.resolve("${it.nameWithoutExtension}.wasm")
+        val compiledWasmFile = linkTask.map { link ->
+            link.destinationDirectory.asFile.get().resolve(link.compilerOptions.moduleName.get() + ".wasm")
         }
 
         //TODO This is temporary solution that overrides compiled files that triggers recompile and reoptimize wasm every time (when binaryen is enabled)
         val binaryenTask = BinaryenExec.create(binary.compilation, "${linkTask.name}Optimize") {
+            dependsOn(linkTask)
             inputFileProperty.fileProvider(compiledWasmFile)
             outputFileProperty.fileProvider(compiledWasmFile)
             binaryenDsl()
         }
 
-        binary.compilation.compileKotlinTask.finalizedBy(binaryenTask)
+        binary.compilation.compileTaskProvider.configure {
+            it.finalizedBy(binaryenTask)
+        }
         binary.linkSyncTask.configure {
             it.dependsOn(binaryenTask)
         }

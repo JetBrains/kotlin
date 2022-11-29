@@ -28,7 +28,8 @@ class SourceMap(val sourceContentResolver: (String) -> Reader?) {
         for ((index, group) in groups.withIndex()) {
             writer.print("${index + 1}:")
             for (segment in group.segments) {
-                writer.print(" ${segment.generatedColumnNumber + 1}:${segment.sourceLineNumber + 1},${segment.sourceColumnNumber + 1}")
+                val nameIfPresent = if (segment.name != null) "(${segment.name})" else ""
+                writer.print(" ${segment.generatedColumnNumber + 1}:${segment.sourceLineNumber + 1},${segment.sourceColumnNumber + 1}$nameIfPresent")
             }
             writer.println()
         }
@@ -42,8 +43,9 @@ class SourceMap(val sourceContentResolver: (String) -> Reader?) {
             val generatedLine = generatedLines[index]
             val segmentsByColumn = group.segments.map { it.generatedColumnNumber to it }.toMap()
             for (i in generatedLine.indices) {
-                segmentsByColumn[i]?.let { (_, sourceFile, sourceLine, sourceColumn) ->
-                    writer.print("<$sourceFile:${sourceLine + 1}:${sourceColumn + 1}>")
+                segmentsByColumn[i]?.let { (_, sourceFile, sourceLine, sourceColumn, name) ->
+                    val nameIfPresent = if (name != null) "($name)" else ""
+                    writer.print("<$sourceFile:${sourceLine + 1}:${sourceColumn + 1}$nameIfPresent>")
                 }
                 writer.print(generatedLine[i])
             }
@@ -96,7 +98,8 @@ data class SourceMapSegment(
     val generatedColumnNumber: Int,
     val sourceFileName: String?,
     val sourceLineNumber: Int,
-    val sourceColumnNumber: Int
+    val sourceColumnNumber: Int,
+    val name: String?,
 )
 
 class SourceMapGroup {

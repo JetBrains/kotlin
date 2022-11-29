@@ -8,18 +8,28 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
+val ConeKotlinType.isByte: Boolean get() = isBuiltinType(StandardClassIds.Byte, false)
+val ConeKotlinType.isShort: Boolean get() = isBuiltinType(StandardClassIds.Short, false)
+val ConeKotlinType.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
+val ConeKotlinType.isLong: Boolean get() = isBuiltinType(StandardClassIds.Long, false)
+val ConeKotlinType.isFloat: Boolean get() = isBuiltinType(StandardClassIds.Float, false)
+val ConeKotlinType.isDouble: Boolean get() = isBuiltinType(StandardClassIds.Double, false)
+
 val ConeKotlinType.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
 val ConeKotlinType.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
 val ConeKotlinType.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
 val ConeKotlinType.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
+
 val ConeKotlinType.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
 val ConeKotlinType.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
 val ConeKotlinType.isNullableBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, true)
 val ConeKotlinType.isBooleanOrNullableBoolean: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Boolean))
-val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
+
+val ConeKotlinType.isChar: Boolean get() = isBuiltinType(StandardClassIds.Char, false)
 val ConeKotlinType.isString: Boolean get() = isBuiltinType(StandardClassIds.String, false)
-val ConeKotlinType.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
-val ConeKotlinType.isLong: Boolean get() = isBuiltinType(StandardClassIds.Long, false)
+
+val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
+
 val ConeKotlinType.isUInt: Boolean get() = isBuiltinType(StandardClassIds.UInt, false)
 val ConeKotlinType.isULong: Boolean get() = isBuiltinType(StandardClassIds.ULong, false)
 val ConeKotlinType.isPrimitiveOrNullablePrimitive: Boolean get() = isAnyOfBuiltinType(StandardClassIds.primitiveTypes)

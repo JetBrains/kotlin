@@ -25,14 +25,14 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSets.applyKotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -41,9 +41,7 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.androidPluginIds
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -51,7 +49,7 @@ import java.io.Serializable
 import java.util.concurrent.Callable
 
 internal class AndroidProjectHandler(
-    private val kotlinConfigurationTools: KotlinConfigurationTools
+    private val kotlinTasksProvider: KotlinTasksProvider
 ) {
     private val logger = Logging.getLogger(this.javaClass)
 
@@ -61,8 +59,12 @@ internal class AndroidProjectHandler(
 
         applyKotlinAndroidSourceSetLayout(kotlinAndroidTarget)
 
-        val kotlinOptions = KotlinJvmOptionsImpl()
-        kotlinOptions.noJdk = true
+        val androidExtensionCompilerOptions = project.objects.newInstance<KotlinJvmCompilerOptionsDefault>()
+        androidExtensionCompilerOptions.noJdk.value(true).finalizeValueOnRead()
+        @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
+            override val options: KotlinJvmCompilerOptions
+                get() = androidExtensionCompilerOptions
+        }
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
         val plugin = androidPluginIds
@@ -73,18 +75,21 @@ internal class AndroidProjectHandler(
                                                     "plugins to be applied to the project:\n\t" +
                                                     androidPluginIds.joinToString("\n\t") { "* $it" })
 
-        project.forEachVariant { variant ->
+        project.forAllAndroidVariants { variant ->
+            val compilationFactory = KotlinJvmAndroidCompilationFactory(kotlinAndroidTarget, variant)
             val variantName = getVariantName(variant)
 
             // Create the compilation and configure it first, then add to the compilations container. As this code is executed
             // in afterEvaluate, a user's build script might have already attached item handlers to the compilations container, and those
             // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
-            kotlinAndroidTarget.compilationFactory.create(variantName).let { compilation ->
-                compilation.androidVariant = variant
-
+            compilationFactory.create(variantName).let { compilation ->
                 setUpDependencyResolution(variant, compilation)
+                project.wireExtensionOptionsToCompilation(
+                    androidExtensionCompilerOptions,
+                    compilation.compilerOptions.options as KotlinJvmCompilerOptions
+                )
 
-                preprocessVariant(variant, compilation, project, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider)
+                preprocessVariant(variant, compilation, project, kotlinTasksProvider)
 
                 @Suppress("UNCHECKED_CAST")
                 (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
@@ -93,7 +98,7 @@ internal class AndroidProjectHandler(
         }
 
         project.whenEvaluated {
-            forEachVariant { variant ->
+            forAllAndroidVariants { variant ->
                 val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
                 postprocessVariant(variant, compilation, project, ext, plugin)
 
@@ -108,6 +113,38 @@ internal class AndroidProjectHandler(
         project.includeKotlinToolingMetadataInApk()
 
         addAndroidUnitTestTasksAsDependenciesToAllTest(project)
+    }
+
+    private fun Project.wireExtensionOptionsToCompilation(
+        extensionCompilerOptions: KotlinJvmCompilerOptions,
+        compilationCompilerOptions: KotlinJvmCompilerOptions
+    ) {
+        // CompilerCommonToolOptions
+        compilationCompilerOptions.allWarningsAsErrors.convention(extensionCompilerOptions.allWarningsAsErrors)
+        compilationCompilerOptions.suppressWarnings.convention(extensionCompilerOptions.suppressWarnings)
+        compilationCompilerOptions.verbose.convention(extensionCompilerOptions.verbose)
+        compilationCompilerOptions.freeCompilerArgs.addAll(extensionCompilerOptions.freeCompilerArgs)
+
+        // CompilerCommonOptions
+        compilationCompilerOptions.apiVersion.convention(extensionCompilerOptions.apiVersion)
+        compilationCompilerOptions.languageVersion.convention(extensionCompilerOptions.languageVersion)
+        compilationCompilerOptions.useK2.convention(extensionCompilerOptions.useK2)
+
+        // CompilerJvmOptions
+        compilationCompilerOptions.javaParameters.convention(extensionCompilerOptions.javaParameters)
+        compilationCompilerOptions.noJdk.value(extensionCompilerOptions.noJdk).finalizeValue()
+
+        // Special handling of jvmTarget to correctly override convention set by DefaultJavaToolchainSetter
+        // plus for 'moduleName' which could be overriden either by compilation or by task itself
+        // TODO: fix it once proper extension DSL will be available
+        afterEvaluate {
+            if (extensionCompilerOptions.jvmTarget.isPresent) {
+                compilationCompilerOptions.jvmTarget.set(extensionCompilerOptions.jvmTarget)
+            }
+            if (extensionCompilerOptions.moduleName.isPresent) {
+                compilationCompilerOptions.moduleName.set(extensionCompilerOptions.moduleName)
+            }
+        }
     }
 
     /**
@@ -161,7 +198,7 @@ internal class AndroidProjectHandler(
         project.tasks.matching { it.name == allTestTaskName }.configureEach { task ->
             task.dependsOn(project.provider {
                 val androidUnitTestTasks = mutableListOf<Any>()
-                forEachVariant(project) { variant ->
+                project.forAllAndroidVariants { variant ->
                     if (variant is UnitTestVariant) {
                         // There's no API for getting the Android unit test tasks from the variant, so match them by name:
                         androidUnitTestTasks.add(project.provider {
@@ -178,7 +215,6 @@ internal class AndroidProjectHandler(
         variantData: BaseVariant,
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
-        rootKotlinOptions: KotlinJvmOptionsImpl,
         tasksProvider: KotlinTasksProvider
     ) {
         // This function is called before the variantData is completely filled by the Android plugin.
@@ -188,15 +224,19 @@ internal class AndroidProjectHandler(
 
         val defaultSourceSet = project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName)
 
-        val configAction = KotlinCompileConfig(compilation)
+        val configAction = KotlinCompileConfig(KotlinCompilationInfo(compilation))
         configAction.configureTask { task ->
-            task.parentKotlinOptions.value(rootKotlinOptions).disallowChanges()
             task.useModuleDetection.value(true).disallowChanges()
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
             task.destinationDirectory.set(project.layout.buildDirectory.dir("tmp/kotlin-classes/$variantDataName"))
             task.description = "Compiles the $variantDataName kotlin."
         }
-        tasksProvider.registerKotlinJVMTask(project, compilation.compileKotlinTaskName, compilation.kotlinOptions, configAction)
+        tasksProvider.registerKotlinJVMTask(
+            project,
+            compilation.compileKotlinTaskName,
+            compilation.compilerOptions.options as KotlinJvmCompilerOptions,
+            configAction
+        )
 
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
@@ -301,8 +341,6 @@ internal class AndroidProjectHandler(
     fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
         val project = compilation.target.project
 
-        AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation)
-
         compilation.compileDependencyFiles = variant.compileConfiguration.apply {
             usesPlatformOf(compilation.target)
             project.addExtendsFromRelation(name, compilation.compileDependencyConfigurationName)
@@ -354,24 +392,6 @@ internal fun BaseVariant.getJavaTaskProvider(): TaskProvider<out JavaCompile> =
     this::class.java.methods.firstOrNull { it.name == "getJavaCompileProvider" }
         ?.invoke(this) as? TaskProvider<JavaCompile>
         ?: @Suppress("DEPRECATION") javaCompile.thisTaskProvider
-
-internal fun forEachVariant(project: Project, action: (BaseVariant) -> Unit) {
-    val androidExtension = project.extensions.getByName("android")
-    when (androidExtension) {
-        is AppExtension -> androidExtension.applicationVariants.all(action)
-        is LibraryExtension -> {
-            androidExtension.libraryVariants.all(action)
-            if (androidExtension is FeatureExtension) {
-                androidExtension.featureVariants.all(action)
-            }
-        }
-        is TestExtension -> androidExtension.applicationVariants.all(action)
-    }
-    if (androidExtension is TestedExtension) {
-        androidExtension.testVariants.all(action)
-        androidExtension.unitTestVariants.all(action)
-    }
-}
 
 /** Filter for the AGP test variant classpath artifacts. */
 class AndroidTestedVariantArtifactsFilter(
@@ -429,3 +449,4 @@ internal inline fun BaseVariant.forEachKotlinSourceDirectorySet(
 internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {
     getSourceFolders(SourceKind.JAVA).forEach(action)
 }
+

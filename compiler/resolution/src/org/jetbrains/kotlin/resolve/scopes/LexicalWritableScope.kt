@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class LexicalWritableScope(
     parent: LexicalScope,
@@ -84,8 +83,7 @@ class LexicalWritableScope(
             name: Name,
             location: LookupLocation
         ): DescriptorWithDeprecation<ClassifierDescriptor>? {
-            return variableOrClassDescriptorByName(name, descriptorLimit)
-                ?.safeAs<ClassifierDescriptor>()
+            return (variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor)
                 ?.let { DescriptorWithDeprecation.createNonDeprecated(it) }
         }
 

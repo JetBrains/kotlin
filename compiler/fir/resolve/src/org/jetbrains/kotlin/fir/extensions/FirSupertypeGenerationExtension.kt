@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import kotlin.reflect.KClass
 
 abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtension(session) {
@@ -22,12 +23,21 @@ abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtensi
 
     abstract fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean
 
+    context(TypeResolveServiceContainer)
+    @Suppress("IncorrectFormatting") // KTIJ-22227
     abstract fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>
     ): List<FirResolvedTypeRef>
 
     fun interface Factory : FirExtension.Factory<FirSupertypeGenerationExtension>
+
+    class TypeResolveServiceContainer(val typeResolver: TypeResolveService)
+
+    abstract class TypeResolveService {
+        abstract fun resolveUserType(type: FirUserTypeRef): FirResolvedTypeRef
+    }
 }
 
 val FirExtensionService.supertypeGenerators: List<FirSupertypeGenerationExtension> by FirExtensionService.registeredExtensions()
+

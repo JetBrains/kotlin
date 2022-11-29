@@ -9,10 +9,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMappedJvmCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAwareTargetWithTestsConfigurator
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
 
@@ -28,16 +24,10 @@ class KotlinJvmTargetPreset(
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(forTarget: KotlinJvmTarget): KotlinCompilationFactory<KotlinJvmCompilation> =
-        if (PropertiesProvider(project).experimentalKpmModelMapping)
-            KotlinMappedJvmCompilationFactory(forTarget)
-        else KotlinJvmCompilationFactory(forTarget)
+        KotlinJvmCompilationFactory(forTarget)
 
-    override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJvmTarget> {
-        val configurator = KotlinJvmTargetConfigurator()
-        return if (project.hasKpmModel)
-            GradleKpmAwareTargetWithTestsConfigurator(configurator)
-        else configurator
-    }
+    override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJvmTarget> =
+        KotlinJvmTargetConfigurator()
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm

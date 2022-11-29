@@ -63,4 +63,16 @@ public annotation class ExperimentalJsExport
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
 @SinceKotlin("1.4")
 @OptionalExpectation
-public expect annotation class JsExport()
+public expect annotation class JsExport() {
+    /*
+    * The annotation prevents exporting the annotated member of an exported class.
+    * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+    */
+    @ExperimentalJsExport
+    @Retention(AnnotationRetention.BINARY)
+    @Target(CLASS, PROPERTY, FUNCTION)
+    @SinceKotlin("1.8")
+    @OptionalExpectation
+    public annotation class Ignore()
+}
+

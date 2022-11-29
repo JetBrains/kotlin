@@ -122,7 +122,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
         val result =
             when (compiler) {
-                is K2JSCompiler -> compileJsLibrary(libraryName, additionalOptions = libraryOptions)
+                is K2JSCompiler -> compileJsLibrary(
+                    libraryName,
+                    additionalOptions = libraryOptions + "-Xlegacy-deprecated-no-warn" + "-Xuse-deprecated-legacy-compiler"
+                )
                 is K2JVMCompiler -> compileLibrary(libraryName, additionalOptions = libraryOptions)
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
@@ -291,17 +294,19 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
-        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
-    }
+//    https://youtrack.jetbrains.com/issue/KT-54905
+//    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
+//        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
+//    }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-prerelease-check")
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
-        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
-    }
+//    https://youtrack.jetbrains.com/issue/KT-54905
+//    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
+//        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
+//    }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
@@ -692,12 +697,12 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testUnreachableExtensionVarPropertyDeclaration() {
         val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
-        assertEquals("Output:\n$output", ExitCode.INTERNAL_ERROR, exitCode)
+        assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
     fun testUnreachableExtensionValPropertyDeclaration() {
         val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
-        assertEquals("Output:\n$output", ExitCode.INTERNAL_ERROR, exitCode)
+        assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
     fun testAnonymousObjectTypeMetadata() {

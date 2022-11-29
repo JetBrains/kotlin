@@ -33,13 +33,15 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
 
         val runTaskHolder = D8Exec.create(binary.compilation, name) {
             group = taskGroupName
-            inputFileProperty.set(
-                project.layout.file(
-                    binary.linkSyncTask.map {
-                        it.destinationDir
-                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
+            dependsOn(binary.linkSyncTask)
+            inputFileProperty.fileProvider(
+                binary.linkSyncTask.flatMap { linkSyncTask ->
+                    binary.linkTask.flatMap { linkTask ->
+                        linkTask.outputFileProperty.map {
+                            linkSyncTask.destinationDir.resolve(it.name)
+                        }
                     }
-                )
+                }
             )
         }
         target.runTask.dependsOn(runTaskHolder)

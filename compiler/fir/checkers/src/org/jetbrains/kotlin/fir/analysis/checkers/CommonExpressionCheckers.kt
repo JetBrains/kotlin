@@ -64,6 +64,11 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirUnderscoredTypeArgumentSyntaxChecker,
         )
 
+    override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
+        get() = setOf(
+            FirPropertyAccessTypeArgumentsChecker,
+        )
+
     override val tryExpressionCheckers: Set<FirTryExpressionChecker>
         get() = setOf(
             FirCatchParameterChecker

@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 interface KotlinJsCompilerTypeHolder {
+    val compilerTypeFromProperties: KotlinJsCompilerType?
+
     val defaultJsCompilerType: KotlinJsCompilerType
+        get() = compilerTypeFromProperties ?: KotlinJsCompilerType.IR
 
     // Necessary to get rid of KotlinJsCompilerType import in build script
     val LEGACY: KotlinJsCompilerType

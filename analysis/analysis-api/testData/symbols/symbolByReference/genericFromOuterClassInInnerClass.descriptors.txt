@@ -1,6 +1,7 @@
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: test/TopLevel.Base.withOuter
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -14,7 +15,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: withOuter
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: Outer?
   symbolKind: CLASS_MEMBER
   typeParameters: []

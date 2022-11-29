@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.daemon.common
 
-import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
+import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
@@ -46,20 +49,26 @@ interface CompileService : Remote {
             override fun equals(other: Any?): Boolean = other is Good<*> && this.result == other.result
             override fun hashCode(): Int = this::class.java.hashCode() + (result?.hashCode() ?: 1)
         }
+
         class Ok : CallResult<Nothing>() {
             override fun get(): Nothing = throw IllegalStateException("Get is inapplicable to Ok call result")
             override fun equals(other: Any?): Boolean = other is Ok
             override fun hashCode(): Int = this::class.java.hashCode() + 1 // avoiding clash with the hash of class itself
         }
+
         class Dying : CallResult<Nothing>() {
             override fun get(): Nothing = throw IllegalStateException("Service is dying")
             override fun equals(other: Any?): Boolean = other is Dying
             override fun hashCode(): Int = this::class.java.hashCode() + 1 // see comment to Ok.hashCode
         }
-        class Error(val message: String) : CallResult<Nothing>() {
-            override fun get(): Nothing = throw Exception(message)
-            override fun equals(other: Any?): Boolean = other is Error && this.message == other.message
-            override fun hashCode(): Int = this::class.java.hashCode() + message.hashCode()
+
+        class Error(val message: String?, val cause: Throwable?) : CallResult<Nothing>() {
+            constructor(cause: Throwable) : this(message = null, cause = cause)
+            constructor(message: String) : this(message = message, cause = null)
+
+            override fun get(): Nothing = throw Exception(message, cause)
+            override fun equals(other: Any?): Boolean = other is Error && this.message == other.message && this.cause == other.cause
+            override fun hashCode(): Int = this::class.java.hashCode() + (cause?.hashCode() ?: 1) + (message?.hashCode() ?: 2) // see comment to Ok.hashCode
         }
 
         val isGood: Boolean get() = this is Good<*>

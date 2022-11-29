@@ -34,7 +34,7 @@ data class GradleNodeModule(val name: String, val version: String, val path: Fil
         ).mapValues { (_, deps) ->
             deps?.entrySet()?.associate { (k, v) -> k to v.asString }
         }.mapNotNull { (scope, deps) ->
-            deps?.map { (k, v) -> NpmDependencyDeclaration(scope, k, v, false) }
+            deps?.map { (k, v) -> NpmDependencyDeclaration(scope, k, v) }
         }.flatten().toSet()
     }
 }

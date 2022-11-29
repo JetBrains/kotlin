@@ -5,10 +5,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -41,10 +38,12 @@ class SubpluginEnvironment(
 
             if (kotlinCompilation is AbstractKotlinNativeCompilation && !kotlinCompilation.useGenericPluginArtifact) {
                 subplugin.getPluginArtifactForNative()?.let { artifact ->
-                    project.addMavenDependency(kotlinCompilation.pluginConfigurationName, artifact)
+                    project.addMavenDependency(kotlinCompilation.internal.configurations.pluginConfiguration.name, artifact)
                 }
             } else {
-                project.addMavenDependency(kotlinCompilation.pluginConfigurationName, subplugin.getPluginArtifact())
+                project.addMavenDependency(
+                    kotlinCompilation.internal.configurations.pluginConfiguration.name, subplugin.getPluginArtifact()
+                )
             }
 
             val subpluginOptionsProvider = subplugin.applyToCompilation(kotlinCompilation)
@@ -111,7 +110,7 @@ internal fun addCompilationSourcesToExternalCompileTask(
 internal fun findJavaTaskForKotlinCompilation(compilation: KotlinCompilation<*>): TaskProvider<out JavaCompile>? =
     when (compilation) {
         is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
-        is KotlinWithJavaCompilation -> compilation.compileJavaTaskProvider
+        is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider
         is KotlinJvmCompilation -> compilation.compileJavaTaskProvider // may be null for Kotlin-only JVM target in MPP
         else -> null
     }

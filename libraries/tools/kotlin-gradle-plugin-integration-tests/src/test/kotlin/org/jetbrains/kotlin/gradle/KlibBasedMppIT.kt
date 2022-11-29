@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.util.*
 import java.util.zip.ZipFile
-import kotlin.test.Test
 import kotlin.test.Ignore
+import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -92,11 +92,11 @@ class KlibBasedMppIT : BaseGradleIT() {
         checkTaskCompileClasspath(
             "compile${hostSpecificSourceSet.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}KotlinMetadata",
             listOf(
-                "published-producer-$hostSpecificSourceSet.klib",
-                "published-producer-commonMain.klib",
-                "published-dependency-$hostSpecificSourceSet.klib",
-                "published-dependency-commonMain.klib"
-            )
+                "published-producer-1.0-$hostSpecificSourceSet-[\\w-]+.klib",
+                "published-producer-1.0-commonMain-[\\w-]+.klib",
+                "published-dependency-1.0-$hostSpecificSourceSet-[\\w-]+.klib",
+                "published-dependency-1.0-commonMain-[\\w-]+.klib"
+            ).map(::Regex)
         )
     }
 
@@ -326,8 +326,8 @@ class KlibBasedMppIT : BaseGradleIT() {
 
     private fun BaseGradleIT.Project.checkTaskCompileClasspath(
         taskPath: String,
-        checkModulesInClasspath: List<String> = emptyList(),
-        checkModulesNotInClasspath: List<String> = emptyList()
+        checkModulesInClasspath: List<Regex> = emptyList(),
+        checkModulesNotInClasspath: List<Regex> = emptyList()
     ) {
         val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
         val taskName = taskPath.removePrefix(subproject.orEmpty())
@@ -339,8 +339,8 @@ class KlibBasedMppIT : BaseGradleIT() {
     private fun BaseGradleIT.Project.checkPrintedItems(
         subproject: String?,
         itemsExpression: String,
-        checkAnyItemsContains: List<String>,
-        checkNoItemContains: List<String>
+        checkAnyItemsContains: List<Regex>,
+        checkNoItemContains: List<Regex>
     ) = with(testCase) {
         setupWorkingDir()
         val printingTaskName = "printItems${testBuildRunId++}"
@@ -357,9 +357,14 @@ class KlibBasedMppIT : BaseGradleIT() {
         build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName") {
             assertSuccessful()
             val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
+            // NOTE: This does not work for commonized libraries, they may contain the ',' naturally
             val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()
-            checkAnyItemsContains.forEach { pattern -> assertTrue { items.any { pattern in it } } }
-            checkNoItemContains.forEach { pattern -> assertFalse { items.any { pattern in it } } }
+            checkAnyItemsContains.forEach { pattern ->
+                assertTrue(items.any { pattern in it }, "Couldn't find pattern `$pattern` in the output")
+            }
+            checkNoItemContains.forEach { pattern ->
+                assertFalse(items.any { pattern in it }, "Pattern '$pattern' should NOT be present in the output")
+            }
         }
     }
 }

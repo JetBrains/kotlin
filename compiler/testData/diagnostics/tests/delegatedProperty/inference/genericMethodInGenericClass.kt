@@ -7,7 +7,7 @@ class A<R>() {
     operator fun <T> setValue(t: Any?, p: KProperty<*>, x: T) = Unit
 }
 
-var a1: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>A<!>()<!>
+var a1: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>A<!>()<!>
 var a2: Int by A<String>()
 
 class B<R>() {
@@ -24,4 +24,4 @@ class C<R>() {
 }
 
 var c1: Int by C()
-var c2: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>C<Number>()<!>
+var c2: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>C<Number>()<!>

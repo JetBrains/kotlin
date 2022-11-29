@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.UtilsKt
 import org.jetbrains.kotlin.konan.CompilerVersionKt
 import org.jetbrains.kotlin.konan.target.DistributionKt
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 buildscript {
     ext.rootBuildDirectory = file('..')
@@ -24,15 +23,14 @@ buildscript {
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
-    repositories {
-        maven{ url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
-        mavenCentral()
-        jcenter()
-    }
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     }
+}
+
+plugins {
+    id("org.jetbrains.kotlin.multiplatform") apply false
 }
 
 def globalProperties = new java.util.Properties()
@@ -83,24 +81,17 @@ subprojects { proj ->
                 if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
             } ?: proj.ext["buildNumber"]
 
-    proj.buildscript.repositories {
-        jcenter()
-        maven {
-            url proj.ext["bootstrapKotlinRepo"]
-        }
-    }
     proj.repositories {
         mavenCentral()
-        maven {
-            url proj.ext["bootstrapKotlinRepo"]
-        }
     }
 }
 
 def rootBuildDirectory = projectDir.parentFile
 
-task buildAnalyzer {
-    dependsOn gradle.includedBuild("benchmarksAnalyzer").task(":${getAnalyzerTargetName()}Binaries")
+task buildAnalyzer(type: GradleBuild) {
+    buildFile = "../tools/benchmarksAnalyzer/build.gradle"
+    tasks = [":${getAnalyzerTargetName()}Binaries".toString()]
+    startParameter.setProjectProperties(this.project.gradle.startParameter.projectProperties)
 }
 
 task konanRun {

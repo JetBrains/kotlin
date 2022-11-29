@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+
 // FILE: test.kt
 
 public val MASSERTIONS_ENABLED: Boolean = true
@@ -47,3 +47,6 @@ fun box(): String {
 // test.kt:30 box
 
 // EXPECTATIONS JS_IR
+// test.kt:17 box
+// test.kt:7 box
+// test.kt:30 box

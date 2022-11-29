@@ -27,6 +27,15 @@ public interface TimeSource {
     public fun markNow(): TimeMark
 
     /**
+     * A [TimeSource] that returns [time marks][ComparableTimeMark] that can be compared for difference with each other.
+     */
+    @SinceKotlin("1.8")
+    @ExperimentalTime
+    public interface WithComparableMarks : TimeSource {
+        override fun markNow(): ComparableTimeMark
+    }
+
+    /**
      * The most precise time source available in the platform.
      *
      * This time source returns its readings from a source of monotonic time when it is available in a target platform,
@@ -35,28 +44,60 @@ public interface TimeSource {
      * The function [markNow] of this time source returns the specialized [ValueTimeMark] that is an inline value class
      * wrapping a platform-dependent time reading value.
      */
-    public object Monotonic : TimeSource {
+    public object Monotonic : TimeSource.WithComparableMarks {
         override fun markNow(): ValueTimeMark = MonotonicTimeSource.markNow()
         override fun toString(): String = MonotonicTimeSource.toString()
 
         /**
-         * A specialized [kotlin.time.TimeMark] returned by [TimeSource.Monotonic].
+         * A specialized [kotlin.time.TimeMark] returned by [TimeSource.Monotonic] time source.
          *
          * This time mark is implemented as an inline value class wrapping a platform-dependent
          * time reading value of the default monotonic time source, thus allowing to avoid additional boxing
          * of that value.
          *
          * The operations [plus] and [minus] are also specialized to return [ValueTimeMark] type.
+         *
+         * This time mark implements [ComparableTimeMark] and therefore is comparable with other time marks
+         * obtained from the same [TimeSource.Monotonic] time source.
          */
         @ExperimentalTime
         @SinceKotlin("1.7")
         @JvmInline
-        public value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : TimeMark {
+        public value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
             override fun elapsedNow(): Duration = MonotonicTimeSource.elapsedFrom(this)
             override fun plus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, duration)
             override fun minus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, -duration)
             override fun hasPassedNow(): Boolean = !elapsedNow().isNegative()
             override fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
+
+            override fun minus(other: ComparableTimeMark): Duration {
+                if (other !is ValueTimeMark)
+                    throw IllegalArgumentException("Subtracting or comparing time marks from different time sources is not possible: $this and $other")
+                return this.minus(other)
+            }
+
+            /**
+             * Returns the duration elapsed between the [other] time mark obtained from the same [TimeSource.Monotonic] time source and `this` time mark.
+             *
+             * The returned duration can be infinite if the time marks are far away from each other and
+             * the result doesn't fit into [Duration] type,
+             * or if one time mark is infinitely distant, or if both `this` and [other] time marks
+             * lie infinitely distant on the opposite sides of the time scale.
+             *
+             * Two infinitely distant time marks on the same side of the time scale are considered equal and
+             * the duration between them is [Duration.ZERO].
+             */
+            public operator fun minus(other: ValueTimeMark): Duration = MonotonicTimeSource.differenceBetween(this, other)
+
+            /**
+             * Compares this time mark with the [other] time mark for order.
+             *
+             * - Returns zero if this time mark represents *the same moment* of time as the [other] time mark.
+             * - Returns a negative number if this time mark is *earlier* than the [other] time mark.
+             * - Returns a positive number if this time mark is *later* than the [other] time mark.
+             */
+            public operator fun compareTo(other: ValueTimeMark): Int =
+                (this - other).compareTo(Duration.ZERO)
         }
     }
 
@@ -98,7 +139,7 @@ public interface TimeMark {
      * @throws IllegalArgumentException an implementation may throw if a positive infinite duration is added to an infinitely distant past time mark or
      * a negative infinite duration is added to an infinitely distant future time mark.
      */
-    public open operator fun plus(duration: Duration): TimeMark = AdjustedTimeMark(this, duration)
+    public operator fun plus(duration: Duration): TimeMark = AdjustedTimeMark(this, duration)
 
     /**
      * Returns a time mark on the same time source that is behind this time mark by the specified [duration].
@@ -131,26 +172,53 @@ public interface TimeMark {
     public fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
 }
 
-
+/**
+ * A [TimeMark] that can be compared for difference with other time marks obtained from the same [TimeSource.WithComparableMarks] time source.
+ */
+@SinceKotlin("1.8")
 @ExperimentalTime
-@SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-@Deprecated(
-    "Subtracting one TimeMark from another is not a well defined operation because these time marks could have been obtained from the different time sources.",
-    level = DeprecationLevel.ERROR
-)
-@Suppress("UNUSED_PARAMETER")
-public inline operator fun TimeMark.minus(other: TimeMark): Duration = throw Error("Operation is disallowed.")
+public interface ComparableTimeMark : TimeMark, Comparable<ComparableTimeMark> {
+    public abstract override operator fun plus(duration: Duration): ComparableTimeMark
+    public open override operator fun minus(duration: Duration): ComparableTimeMark = plus(-duration)
 
-@ExperimentalTime
-@SinceKotlin("1.3")
-@kotlin.internal.InlineOnly
-@Deprecated(
-    "Comparing one TimeMark to another is not a well defined operation because these time marks could have been obtained from the different time sources.",
-    level = DeprecationLevel.ERROR
-)
-@Suppress("UNUSED_PARAMETER")
-public inline operator fun TimeMark.compareTo(other: TimeMark): Int = throw Error("Operation is disallowed.")
+    /**
+     * Returns the duration elapsed between the [other] time mark and `this` time mark.
+     *
+     * The returned duration can be infinite if the time marks are far away from each other and
+     * the result doesn't fit into [Duration] type,
+     * or if one time mark is infinitely distant, or if both `this` and [other] time marks
+     * lie infinitely distant on the opposite sides of the time scale.
+     *
+     * Two infinitely distant time marks on the same side of the time scale are considered equal and
+     * the duration between them is [Duration.ZERO].
+     *
+     * Note that the other time mark must be obtained from the same time source as this one.
+     *
+     * @throws IllegalArgumentException if time marks were obtained from different time sources.
+     */
+    public operator fun minus(other: ComparableTimeMark): Duration
+
+    /**
+     * Compares this time mark with the [other] time mark for order.
+     *
+     * - Returns zero if this time mark represents *the same moment* of time as the [other] time mark.
+     * - Returns a negative number if this time mark is *earlier* than the [other] time mark.
+     * - Returns a positive number if this time mark is *later* than the [other] time mark.
+     *
+     * Note that the other time mark must be obtained from the same time source as this one.
+     *
+     * @throws IllegalArgumentException if time marks were obtained from different time sources.
+     */
+    public override operator fun compareTo(other: ComparableTimeMark): Int =
+        (this - other).compareTo(Duration.ZERO)
+
+    /**
+     * Returns `true` if two time marks from the same time source represent the same moment of time, and `false` otherwise,
+     * including the situation when the time marks were obtained from different time sources.
+     */
+    override fun equals(other: Any?): Boolean
+    override fun hashCode(): Int
+}
 
 
 @ExperimentalTime

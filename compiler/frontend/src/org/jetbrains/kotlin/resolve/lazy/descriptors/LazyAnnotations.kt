@@ -60,7 +60,7 @@ class LazyAnnotations(
     override fun isEmpty() = annotationEntries.isEmpty()
 
     private val annotation = c.storageManager.createMemoizedFunction { entry: KtAnnotationEntry ->
-        c.trace.get(BindingContext.ANNOTATION, entry) ?: LazyAnnotationDescriptor(c, entry)
+        c.trace.get(BindingContext.ANNOTATION, entry) ?: LazyAnnotationDescriptor(c, entry).also { it.recordToTrace() }
     }
 
     override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.asSequence().map(annotation).iterator()
@@ -77,10 +77,6 @@ class LazyAnnotationDescriptor(
     val c: LazyAnnotationsContext,
     val annotationEntry: KtAnnotationEntry
 ) : AnnotationDescriptor, LazyEntity {
-
-    init {
-        c.trace.record(BindingContext.ANNOTATION, annotationEntry, this)
-    }
 
     override val type by c.storageManager.createLazyValue(
         computable = lazy@{
@@ -125,12 +121,16 @@ class LazyAnnotationDescriptor(
         valueArgumentsWithSourceInfo.mapValues { it.value.first }
     }
 
-    override fun getSourceForArgument(name: Name): SourceElement =
+    fun getSourceForArgument(name: Name): SourceElement =
         valueArgumentsWithSourceInfo[name]?.second ?: SourceElement.NO_SOURCE
 
     override fun forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(type)
         allValueArguments
+    }
+
+    fun recordToTrace() {
+        c.trace.record(BindingContext.ANNOTATION, annotationEntry, this)
     }
 
     private class FileDescriptorForVisibilityChecks(
@@ -149,3 +149,6 @@ class LazyAnnotationDescriptor(
         override fun toString(): String = "${name.asString()} declared in LazyAnnotations.kt"
     }
 }
+
+fun AnnotationDescriptor.getSourceForArgument(name: Name): SourceElement =
+    (this as? LazyAnnotationDescriptor)?.getSourceForArgument(name) ?: SourceElement.NO_SOURCE

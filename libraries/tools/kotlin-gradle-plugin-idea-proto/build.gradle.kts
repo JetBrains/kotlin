@@ -4,11 +4,12 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     kotlin("jvm")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 kotlin {
     sourceSets.all {
-        languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
+        languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
     }
 }
 
@@ -20,9 +21,10 @@ val embedded by configurations.getting {
 
 dependencies {
     api(project(":kotlin-gradle-plugin-idea"))
-    embedded("com.google.protobuf:protobuf-java:3.19.4")
-    embedded("com.google.protobuf:protobuf-kotlin:3.19.4")
+    embedded("com.google.protobuf:protobuf-java:3.21.9")
+    embedded("com.google.protobuf:protobuf-kotlin:3.21.9")
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlin("reflect"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
 }
 
@@ -40,24 +42,29 @@ sourcesJar()
 runtimeJar(tasks.register<ShadowJar>("embeddable")) {
     from(mainSourceSet.output)
     exclude("**/*.proto")
-    relocate("com.google.protobuf", "org.jetbrains.kotlin.kpm.idea.proto.com.google.protobuf")
+    relocate("com.google.protobuf", "org.jetbrains.kotlin.gradle.idea.proto.com.google.protobuf")
 }
 
 /* Setup configuration for binary compatibility tests */
 run {
-    val binaryValidationApiElements by configurations.creating {
-        isCanBeResolved = false
-        isCanBeConsumed = true
-    }
-
     val binaryValidationApiJar = tasks.register<Jar>("binaryValidationApiJar") {
         this.archiveBaseName.set(project.name + "-api")
         from(mainSourceSet.output)
     }
 
-    artifacts.add(binaryValidationApiElements.name, binaryValidationApiJar)
+    apiValidation {
+        ignoredPackages += "org.jetbrains.kotlin.gradle.idea.proto.generated"
+        nonPublicMarkers += "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi"
+    }
+
+    tasks {
+        apiBuild {
+            inputJar.value(binaryValidationApiJar.flatMap { it.archiveFile })
+        }
+    }
 }
 
+/* Setup protoc */
 tasks.register<Exec>("protoc") {
     val protoSources = file("src/main/proto")
     val javaOutput = file("src/generated/java/")
@@ -86,20 +93,29 @@ tasks.register<Exec>("protoc") {
             .filter { it.extension == "proto" }
             .map { it.path },
     )
+}
 
-    doLast {
-        kotlinOutput.walkTopDown()
-            .filter { it.extension == "kt" }
-            .forEach { file -> file.writeText(file.readText().replace("public", "internal")) }
 
-        javaOutput.walkTopDown()
-            .filter { it.extension == "java" }
-            .forEach { file ->
-                file.writeText(
-                    file.readText()
-                        .replace("public final class", "final class")
-                        .replace("public interface", "interface")
-                )
-            }
+/* Setup backwards compatibility tests */
+run {
+    val compatibilityTestClasspath by configurations.creating {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+    }
+
+    dependencies {
+        compatibilityTestClasspath(project(":kotlin-gradle-plugin-idea-for-compatibility-tests"))
+    }
+
+    tasks.test {
+        val capturedCompatibilityTestClasspath: FileCollection = compatibilityTestClasspath
+        dependsOn(capturedCompatibilityTestClasspath)
+        inputs.files(capturedCompatibilityTestClasspath)
+        doFirst {
+            systemProperty("compatibilityTestClasspath", capturedCompatibilityTestClasspath.files.joinToString(";") { it.absolutePath })
+        }
     }
 }
+

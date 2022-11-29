@@ -1,1 +1,2 @@
 Resolved to:
+annotation class MyAnno

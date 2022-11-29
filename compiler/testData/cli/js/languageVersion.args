@@ -1,4 +1,6 @@
 $TESTDATA_DIR$/languageVersion.kt
+-Xlegacy-deprecated-no-warn
+-Xuse-deprecated-legacy-compiler
 -output
 $TEMP_DIR$/out.js
 -language-version

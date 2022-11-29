@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
 import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalBinaryOp
@@ -47,7 +49,13 @@ internal object FirCompileTimeConstantEvaluator {
         when (fir) {
             is FirPropertyAccessExpression -> {
                 when (val referredVariable = fir.referredVariableSymbol) {
-                    is FirPropertySymbol -> referredVariable.toConstExpression(mode)
+                    is FirPropertySymbol -> {
+                        if (referredVariable.callableId.isStringLength) {
+                            evaluate(fir.explicitReceiver, mode)?.evaluateStringLength()
+                        } else {
+                            referredVariable.toConstExpression(mode)
+                        }
+                    }
                     is FirFieldSymbol -> referredVariable.toConstExpression(mode)
                     else -> null
                 }
@@ -66,6 +74,9 @@ internal object FirCompileTimeConstantEvaluator {
             }
             else -> null
         }
+
+    private val CallableId.isStringLength: Boolean
+        get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "length"
 
     private fun FirPropertySymbol.toConstExpression(
         mode: KtConstantEvaluationMode,
@@ -99,11 +110,42 @@ internal object FirCompileTimeConstantEvaluator {
     ): KtConstantValue? {
         val evaluated = evaluate(fir, mode) ?: return null
 
-        val ktConstantValue = KtConstantValueFactory.createConstantValue(evaluated.value, evaluated.psi as? KtElement) ?: return null
-        check(ktConstantValue.constantValueKind == evaluated.kind) {
-            "Expected ${evaluated.kind} for created KtConstantValue but ${ktConstantValue.constantValueKind} found"
+        val value = evaluated.value
+        val psi = evaluated.psi as? KtElement
+        return when (evaluated.kind) {
+            ConstantValueKind.Byte -> KtConstantValue.KtByteConstantValue(value as Byte, psi)
+            ConstantValueKind.Int -> KtConstantValue.KtIntConstantValue(value as Int, psi)
+            ConstantValueKind.Long -> KtConstantValue.KtLongConstantValue(value as Long, psi)
+            ConstantValueKind.Short -> KtConstantValue.KtShortConstantValue(value as Short, psi)
+
+            ConstantValueKind.UnsignedByte -> KtConstantValue.KtUnsignedByteConstantValue(value as UByte, psi)
+            ConstantValueKind.UnsignedInt -> KtConstantValue.KtUnsignedIntConstantValue(value as UInt, psi)
+            ConstantValueKind.UnsignedLong -> KtConstantValue.KtUnsignedLongConstantValue(value as ULong, psi)
+            ConstantValueKind.UnsignedShort -> KtConstantValue.KtUnsignedShortConstantValue(value as UShort, psi)
+
+            ConstantValueKind.Double -> KtConstantValue.KtDoubleConstantValue(value as Double, psi)
+            ConstantValueKind.Float -> KtConstantValue.KtFloatConstantValue(value as Float, psi)
+
+            ConstantValueKind.Boolean -> KtConstantValue.KtBooleanConstantValue(value as Boolean, psi)
+            ConstantValueKind.Char -> KtConstantValue.KtCharConstantValue(value as Char, psi)
+            ConstantValueKind.String -> KtConstantValue.KtStringConstantValue(value as String, psi)
+            ConstantValueKind.Null -> KtConstantValue.KtNullConstantValue(psi)
+
+
+            ConstantValueKind.IntegerLiteral -> {
+                val long = value as Long
+                if (Int.MIN_VALUE < long && long < Int.MAX_VALUE) KtConstantValue.KtIntConstantValue(long.toInt(), psi)
+                else KtConstantValue.KtLongConstantValue(long, psi)
+            }
+
+            ConstantValueKind.UnsignedIntegerLiteral -> {
+                val long = value as ULong
+                if (UInt.MIN_VALUE < long && long < UInt.MAX_VALUE) KtConstantValue.KtUnsignedIntConstantValue(long.toUInt(), psi)
+                else KtConstantValue.KtUnsignedLongConstantValue(long, psi)
+            }
+
+            ConstantValueKind.Error -> errorWithFirSpecificEntries("Should not be possible to get from FIR tree", fir = fir)
         }
-        return ktConstantValue
     }
 
     private fun FirConstExpression<*>.adaptToConstKind(): FirConstExpression<*> {
@@ -124,7 +166,8 @@ internal object FirCompileTimeConstantEvaluator {
             return it.adjustType(functionCall.typeRef)
         }
 
-        val opr2 = evaluate(functionCall.argument, mode) ?: return null
+        val argument = functionCall.arguments.firstOrNull() ?: return null
+        val opr2 = evaluate(argument, mode) ?: return null
         opr1.evaluate(function, opr2)?.let {
             return it.adjustType(functionCall.typeRef)
         }
@@ -172,7 +215,15 @@ internal object FirCompileTimeConstantEvaluator {
     // Unary operators
     private fun FirConstExpression<*>.evaluate(function: FirSimpleFunction): FirConstExpression<*>? {
         if (value == null) return null
-        // TODO: there are a couple operations on String, such as .length and .toString
+        (value as? String)?.let { opr ->
+            evalUnaryOp(
+                function.name.asString(),
+                kind.toCompileTimeType(),
+                opr
+            )?.let {
+                return it.toConstantValueKind().toConstExpression(source, it)
+            }
+        }
         return kind.convertToNumber(value as? Number)?.let { opr ->
             evalUnaryOp(
                 function.name.asString(),
@@ -184,13 +235,37 @@ internal object FirCompileTimeConstantEvaluator {
         }
     }
 
+    private fun FirConstExpression<*>.evaluateStringLength(): FirConstExpression<*>? {
+        return (value as? String)?.length?.let {
+            it.toConstantValueKind().toConstExpression(source, it)
+        }
+    }
+
     // Binary operators
     private fun FirConstExpression<*>.evaluate(
         function: FirSimpleFunction,
         other: FirConstExpression<*>
     ): FirConstExpression<*>? {
         if (value == null || other.value == null) return null
-        // TODO: there are a couple operations on Strings, such as .compareTo, .equals, or .plus
+        // NB: some utils accept very general types, and due to the way operation map works, we should up-cast rhs type.
+        val rightType = when {
+            function.symbol.callableId.isStringEquals -> CompileTimeType.ANY
+            function.symbol.callableId.isStringPlus -> CompileTimeType.ANY
+            else -> other.kind.toCompileTimeType()
+        }
+        (value as? String)?.let { opr1 ->
+            other.value?.let { opr2 ->
+                evalBinaryOp(
+                    function.name.asString(),
+                    kind.toCompileTimeType(),
+                    opr1,
+                    rightType,
+                    opr2
+                )?.let {
+                    return it.toConstantValueKind().toConstExpression(source, it)
+                }
+            }
+        }
         return kind.convertToNumber(value as? Number)?.let { opr1 ->
             other.kind.convertToNumber(other.value as? Number)?.let { opr2 ->
                 evalBinaryOp(
@@ -205,6 +280,12 @@ internal object FirCompileTimeConstantEvaluator {
             }
         }
     }
+
+    private val CallableId.isStringEquals: Boolean
+        get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "equals"
+
+    private val CallableId.isStringPlus: Boolean
+        get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "plus"
 
     ////// KINDS
 
@@ -287,6 +368,7 @@ internal object FirCompileTimeConstantEvaluator {
             ConstantValueKind.UnsignedShort -> value.toLong().toUShort()
             ConstantValueKind.UnsignedInt -> value.toLong().toUInt()
             ConstantValueKind.UnsignedLong -> value.toLong().toULong()
+            ConstantValueKind.UnsignedIntegerLiteral -> value.toLong().toULong()
             else -> null
         }
     }

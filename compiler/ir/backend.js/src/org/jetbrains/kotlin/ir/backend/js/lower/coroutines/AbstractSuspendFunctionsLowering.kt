@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -93,7 +94,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         })
         // It is important to optimize the case where there is only one suspend call and it is the last statement
         // because we don't need to build a fat coroutine class in that case.
-        // This happens a lot in practise because of suspend functions with default arguments.
+        // This happens a lot in practice because of suspend functions with default arguments.
         // TODO: use TailRecursionCallsCollector.
         val lastCall = when (val lastStatement = (body as IrBlockBody).statements.lastOrNull()) {
             is IrCall -> lastStatement
@@ -181,7 +182,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         // It is not a lambda - replace original function with a call to constructor of the built coroutine.
 
         with(function) {
-            val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
+            val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             val functionBody = body as IrBlockBody
             functionBody.statements.clear()
             functionBody.statements.addAll(irBuilder.irBlockBody {
@@ -221,8 +222,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass =
             context.irFactory.buildClass {
-                startOffset = function.startOffset
-                endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = nameForCoroutineClass(function)
                 visibility = function.visibility
@@ -243,8 +242,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }
 
             return context.irFactory.buildConstructor {
-                startOffset = function.startOffset
-                endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = coroutineBaseClassConstructor.name
                 visibility = function.visibility
@@ -261,6 +258,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 valueParameters += continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
                     index = valueParameters.size,
+                    startOffset = function.startOffset,
+                    endOffset = function.endOffset,
                     type = continuationType,
                     defaultValue = null
                 )
@@ -329,8 +328,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         // return i
         private fun buildCreateMethod(superCreateFunction: IrSimpleFunction?, constructor: IrConstructor): IrSimpleFunction =
             context.irFactory.buildFun {
-                startOffset = function.startOffset
-                endOffset = function.endOffset
+                startOffset = UNDEFINED_OFFSET
+                endOffset = UNDEFINED_OFFSET
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = Name.identifier("create")
                 visibility = DescriptorVisibilities.PROTECTED
@@ -396,7 +395,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }
 
         private fun transformInvokeMethod(createFunction: IrSimpleFunction, stateMachineFunction: IrSimpleFunction) {
-            val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
+            val irBuilder = context.createIrBuilder(function.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             val thisReceiver = function.dispatchReceiverParameter
                 ?: compilationException(
                     "Expected dispatch receiver for invoke",
@@ -404,7 +403,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 )
             val functionBody = function.body as IrBlockBody
             functionBody.statements.clear()
-            functionBody.statements.addAll(irBuilder.irBlockBody(startOffset, endOffset) {
+            functionBody.statements.addAll(irBuilder.irBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 generateCoroutineStart(stateMachineFunction, irCall(createFunction).apply {
                     dispatchReceiver = irGet(thisReceiver)
                     var index = 0
@@ -486,11 +485,24 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             if (delegatingCall.isReturnIfSuspendedCall())
                 delegatingCall.getValueArgument(0)!!
             else delegatingCall
-        context.createIrBuilder(irFunction.symbol).run {
-            val statements = (irFunction.body as IrBlockBody).statements
+        val body = irFunction.body as IrBlockBody
+
+        // Set both offsets to body.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
+        // could be hit.
+        context.createIrBuilder(irFunction.symbol, startOffset = body.endOffset - 1, endOffset = body.endOffset - 1).run {
+            val statements = body.statements
             val lastStatement = statements.last()
             assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
-            statements[statements.lastIndex] = irReturn(generateDelegatedCall(irFunction.returnType, returnValue))
+
+            // Instead of returning right away, we save the value to a temporary variable and after that return that variable.
+            // This is done solely to improve the debugging experience. Otherwise, a breakpoint set to the closing brace of the function
+            // cannot be hit.
+            val tempVar = scope.createTemporaryVariable(
+                generateDelegatedCall(irFunction.returnType, returnValue),
+                irType = context.irBuiltIns.anyType,
+            )
+            statements[statements.lastIndex] = tempVar
+            statements.add(irReturn(irGet(tempVar)))
         }
     }
 

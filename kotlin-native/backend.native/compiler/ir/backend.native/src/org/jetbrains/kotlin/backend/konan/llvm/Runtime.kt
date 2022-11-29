@@ -14,14 +14,14 @@ interface RuntimeAware {
     val runtime: Runtime
 }
 
-class Runtime(bitcodeFile: String) {
-    val llvmModule: LLVMModuleRef = parseBitcodeFile(bitcodeFile)
+class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
+    val llvmModule: LLVMModuleRef = parseBitcodeFile(llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 
-    internal fun getStructTypeOrNull(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")
-    internal fun getStructType(name: String) = getStructTypeOrNull(name)
-            ?: throw Error("struct.$name is not found in the Runtime module.")
+    private fun getStructTypeOrNull(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")
+    private fun getStructType(name: String) = getStructTypeOrNull(name)
+            ?: error("struct.$name is not found in the Runtime module.")
 
     val typeInfoType = getStructType("TypeInfo")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
@@ -49,6 +49,19 @@ class Runtime(bitcodeFile: String) {
     val objCToKotlinMethodAdapter by lazy { getStructType("ObjCToKotlinMethodAdapter") }
     val kotlinToObjCMethodAdapter by lazy { getStructType("KotlinToObjCMethodAdapter") }
     val typeInfoObjCExportAddition by lazy { getStructType("TypeInfoObjCExportAddition") }
+
+    val objCClassObjectType by lazy { getStructType("_class_t") }
+    val objCCache by lazy { getStructType("_objc_cache") }
+    val objCClassRoType by lazy { getStructType("_class_ro_t") }
+    val objCMethodType by lazy { getStructType("_objc_method") }
+    val objCMethodListType by lazy { getStructType("__method_list_t") }
+    val objCProtocolListType by lazy { getStructType("_objc_protocol_list") }
+    val objCIVarListType by lazy { getStructType("_ivar_list_t") }
+    val objCPropListType by lazy { getStructType("_prop_list_t") }
+
+    val kRefSharedHolderType by lazy { LLVMGetTypeByName(llvmModule, "class.KRefSharedHolder")!! }
+    val blockLiteralType by lazy { getStructType("Block_literal_1") }
+    val blockDescriptorType by lazy { getStructType("Block_descriptor_1") }
 
     val pointerSize: Int by lazy {
         LLVMABISizeOfType(targetData, objHeaderPtrType).toInt()

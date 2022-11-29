@@ -101,6 +101,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
+            if (arguments.useOldBackend) {
+                messageCollector.report(WARNING, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
+            }
+
             if (arguments.script || arguments.expression != null) {
                 val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (scriptingEvaluator == null) {
@@ -116,6 +120,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
                 return shell.run(arguments, configuration, projectEnvironment)
             }
+        }
+
+        if (arguments.useOldBackend) {
+            val severity = if (isUseOldBackendAllowed()) WARNING else ERROR
+            messageCollector.report(severity, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
+            if (severity == ERROR) return COMPILATION_ERROR
         }
 
         messageCollector.report(LOGGING, "Configuring the compilation environment")
@@ -251,6 +261,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         val argument = arguments.profileCompilerCommand ?: return defaultPerformanceManager
         return ProfilingCompilerPerformanceManager.create(argument)
     }
+
+    private fun isUseOldBackendAllowed(): Boolean =
+        K2JVMCompiler::class.java.classLoader.getResource("META-INF/unsafe-allow-use-old-backend") != null
 }
 
 fun CompilerConfiguration.configureModuleChunk(

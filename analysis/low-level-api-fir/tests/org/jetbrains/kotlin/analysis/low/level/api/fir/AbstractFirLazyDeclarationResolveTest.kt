@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
+import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -39,10 +40,12 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             var result: FirDeclaration? = null
             override fun visitElement(element: FirElement) {
                 if (result != null) return
-                val declaration = element.realPsi as? KtDeclaration
-                if (element is FirDeclaration && declaration != null && declaration.name?.decapitalizeAsciiOnly() == "resolveMe") {
-                    result = element
-                    return
+                if (element is FirDeclaration) {
+                    val declaration = element.realPsi as? KtDeclaration
+                    if (declaration != null && declaration.name?.decapitalizeAsciiOnly() == "resolveMe") {
+                        result = element
+                        return
+                    }
                 }
                 element.acceptChildren(this)
             }
@@ -57,7 +60,8 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         val renderer = FirRenderer(
             builder = resultBuilder,
             declarationRenderer = FirDeclarationRendererWithAttributes(),
-            resolvePhaseRenderer = FirResolvePhaseRenderer()
+            resolvePhaseRenderer = FirResolvePhaseRenderer(),
+            errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
         )
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession is LLFirSourceResolveSession)

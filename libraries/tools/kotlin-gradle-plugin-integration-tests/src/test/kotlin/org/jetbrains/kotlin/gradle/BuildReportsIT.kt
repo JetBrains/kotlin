@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -93,6 +94,33 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("validation")
+    @GradleTest
+    fun testSingleBuildMetricsFileValidation(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildAndFail(
+                "compileKotlin", "-Pkotlin.build.report.output=SINGLE_FILE",
+            ) {
+                assertOutputContains("Can't configure single file report: 'kotlin.build.report.single_file' property is mandatory")
+            }
+        }
+    }
+
+    @DisplayName("deprecated property")
+    @GradleTest
+    fun testDeprecatedAndNewSingleBuildMetricsFile(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            val newMetricsPath = projectPath.resolve("metrics.bin")
+            val deprecatedMetricsPath = projectPath.resolve("deprecated_metrics.bin")
+            build(
+                "compileKotlin", "-Pkotlin.build.report.single_file=${newMetricsPath.pathString}",
+                "-Pkotlin.internal.single.build.metrics.file=${deprecatedMetricsPath.pathString}"
+            )
+            assertTrue { deprecatedMetricsPath.exists() }
+            assertTrue { newMetricsPath.notExists() }
+        }
+    }
+
     @DisplayName("smoke")
     @GradleTest
     fun testSingleBuildMetricsFileSmoke(gradleVersion: GradleVersion) {
@@ -140,4 +168,59 @@ class BuildReportsIT : KGPBaseTest() {
             }
         }
     }
+
+    private val kotlinErrorPath = ".gradle/kotlin/errors"
+
+    @DisplayName("Error file is created")
+    @GradleTest
+    fun testErrorsFileSmokeTest(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+
+            val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
+            buildGradle.appendText("""
+                tasks.named("compileKotlin") {
+                    doLast {
+                        new File("${lookupsTab.toUri().path}").write("Invalid contents")
+                    }
+                }
+            """.trimIndent())
+            build("compileKotlin") {
+                assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
+            }
+            val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
+            kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
+            buildAndFail("compileKotlin") {
+                val buildErrorDir = projectPath.resolve(kotlinErrorPath).toFile()
+                val files = buildErrorDir.listFiles()
+                assertTrue { files?.first()?.exists() ?: false }
+                files?.first()?.bufferedReader().use { reader ->
+                    val kotlinVersion = reader?.readLine()
+                    assertTrue("kotlin version should be in the error file") {
+                        kotlinVersion != null && kotlinVersion.trim().equals("kotlin version: ${buildOptions.kotlinVersion}")
+                    }
+                    val errorMessage = reader?.readLine()
+                    assertTrue("Error message should start with 'error message: ' to parse it on IDEA side") {
+                        errorMessage != null && errorMessage.trim().startsWith("error message:")
+                    }
+                }
+
+            }
+        }
+    }
+
+    @DisplayName("Error file should not contain compilation exceptions")
+    @GradleTest
+    fun testErrorsFileWithCompilationError(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("compileKotlin") {
+                assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
+            }
+            val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
+            kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
+            buildAndFail("compileKotlin") {
+                assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
+            }
+        }
+    }
+
 }

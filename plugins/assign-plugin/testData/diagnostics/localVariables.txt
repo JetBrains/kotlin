@@ -1,0 +1,27 @@
+package
+
+public fun `should not work with local val for different type`(): kotlin.Unit
+public fun `should not work with local val for same type`(): kotlin.Unit
+public fun `should not work with local var for different type`(): kotlin.Unit
+public fun `should not work with method parameters`(): kotlin.Unit
+public fun `should work with local var for same type`(): kotlin.Unit
+
+@ValueContainer public final data class StringProperty {
+    public constructor StringProperty(/*0*/ v: kotlin.String)
+    public final var v: kotlin.String
+    public final fun assign(/*0*/ v: StringProperty): kotlin.Unit
+    public final fun assign(/*0*/ v: kotlin.String): kotlin.Unit
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ v: kotlin.String = ...): StringProperty
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final annotation class ValueContainer : kotlin.Annotation {
+    public constructor ValueContainer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

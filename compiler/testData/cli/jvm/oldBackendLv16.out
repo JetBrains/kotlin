@@ -1,2 +1,0 @@
-error: old JVM backend does not support language version 1.6 or above. Please use language version 1.5 or below, or remove -Xuse-old-backend
-COMPILATION_ERROR

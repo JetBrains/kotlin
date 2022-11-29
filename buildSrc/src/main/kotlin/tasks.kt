@@ -26,6 +26,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 val kotlinGradlePluginAndItsRequired = arrayOf(
+    ":kotlin-assignment",
     ":kotlin-allopen",
     ":kotlin-noarg",
     ":kotlin-sam-with-receiver",
@@ -43,6 +44,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-daemon-client",
     ":kotlin-project-model",
     ":kotlin-gradle-plugin-api",
+    ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin",
@@ -105,6 +107,7 @@ fun Project.projectTest(
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
     reservedCodeCacheSizeMb: Int = 256,
+    defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> {
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
@@ -246,6 +249,11 @@ fun Project.projectTest(
                 project.providers.gradleProperty("kotlin.test.maxParallelForks").forUseAtConfigurationTime().orNull?.toInt()
                     ?: forks.coerceIn(1, Runtime.getRuntime().availableProcessors())
         }
+
+        defineJDKEnvVariables.forEach { version ->
+            val javaLauncher = project.getToolchainLauncherFor(version).orNull ?: error("Can't find toolchain for $version")
+            environment(version.envName, javaLauncher.metadata.installationPath.asFile.absolutePath)
+        }
     }.apply { configure(body) }
 }
 
@@ -332,6 +340,7 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
 }
 
 fun Project.optInToExperimentalCompilerApi() {
+    @Suppress("DEPRECATION")
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
         kotlinOptions {
             freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"

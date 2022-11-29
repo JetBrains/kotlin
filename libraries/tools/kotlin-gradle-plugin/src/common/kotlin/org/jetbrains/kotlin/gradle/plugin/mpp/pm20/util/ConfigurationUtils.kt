@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencySet
+import org.gradle.api.artifacts.PublishArtifactSet
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.capabilities.Capability
@@ -98,3 +100,14 @@ internal fun copyAttributes(from: AttributeContainer, to: AttributeContainer, ke
 
 internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () -> Iterable<T>) =
     objects.listProperty(T::class.java).apply { set(provider(itemsProvider)) }
+
+
+internal fun Configuration.markConsumable(): Configuration = apply {
+    this.isCanBeConsumed = true
+    this.isCanBeResolved = false
+}
+
+internal fun Configuration.markResolvable(): Configuration = apply {
+    this.isCanBeConsumed = false
+    this.isCanBeResolved = true
+}

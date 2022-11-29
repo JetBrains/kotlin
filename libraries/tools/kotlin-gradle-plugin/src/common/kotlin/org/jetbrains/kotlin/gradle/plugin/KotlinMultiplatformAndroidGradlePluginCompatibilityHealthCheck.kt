@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import com.android.Version
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN
@@ -18,8 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
 
     val compatibleAndroidGradlePluginVersionRange = AndroidGradlePluginVersionRange(
-        minSupportedVersion = AndroidGradlePluginVersion(4, 0),
-        maxSupportedVersion = AndroidGradlePluginVersion(7, 2)
+        minSupportedVersion = AndroidGradlePluginVersionRange.Version(4, 1),
+        maxSupportedVersion = AndroidGradlePluginVersionRange.Version(7, 4)
     )
 
     /**
@@ -32,81 +31,47 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
      */
     const val PROPERTY_KEY_EXECUTED_PROJECT_PATHS = "KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.executedProjects"
 
-    data class AndroidGradlePluginVersion(val major: Int, val minor: Int) : Comparable<AndroidGradlePluginVersion> {
-        override fun compareTo(other: AndroidGradlePluginVersion): Int {
-            if (this.major != other.major) return this.major.compareTo(other.major)
-            return this.minor.compareTo(other.minor)
-        }
-
-        override fun toString(): String {
-            return "$major.$minor"
-        }
-    }
-
     data class AndroidGradlePluginVersionRange(
-        val minSupportedVersion: AndroidGradlePluginVersion,
-        val maxSupportedVersionMajor: Int,
-        val maxSupportedVersionMinor: Int?
+        val minSupportedVersion: Version,
+        val maxSupportedVersion: Version
     ) {
-        constructor(
-            minSupportedVersionMajor: Int,
-            minSupportedVersionMinor: Int,
-            maxSupportedVersionMajor: Int,
-            maxSupportedVersionMinor: Int? = null
-        ) : this(
-            minSupportedVersion = AndroidGradlePluginVersion(minSupportedVersionMajor, minSupportedVersionMinor),
-            maxSupportedVersionMajor = maxSupportedVersionMajor,
-            maxSupportedVersionMinor = maxSupportedVersionMinor
-        )
 
         constructor(
-            minSupportedVersion: AndroidGradlePluginVersion,
-            maxSupportedVersion: AndroidGradlePluginVersion
+            minSupportedVersionMajor: Int, minSupportedVersionMinor: Int = 0,
+            maxSupportedVersionMajor: Int, maxSupportedVersionMinor: Int = 0
         ) : this(
-            minSupportedVersion = minSupportedVersion,
-            maxSupportedVersionMajor = maxSupportedVersion.major,
-            maxSupportedVersionMinor = maxSupportedVersion.minor
+            minSupportedVersion = Version(minSupportedVersionMajor, minSupportedVersionMinor),
+            maxSupportedVersion = Version(maxSupportedVersionMajor, maxSupportedVersionMinor)
         )
+
+        data class Version(val major: Int, val minor: Int)
 
         fun isTooHigh(version: AndroidGradlePluginVersion): Boolean {
-            return if (maxSupportedVersionMinor != null)
-                version > AndroidGradlePluginVersion(maxSupportedVersionMajor, maxSupportedVersionMinor)
-            else version.major > maxSupportedVersionMajor
+            if (version.major > this.maxSupportedVersion.major) return true
+            if (version.major < this.maxSupportedVersion.major) return false
+            return version.minor > this.maxSupportedVersion.minor
         }
 
         fun isTooLow(version: AndroidGradlePluginVersion): Boolean {
-            return version < minSupportedVersion
+            if (version.major < this.minSupportedVersion.major) return true
+            if (version.major > this.minSupportedVersion.major) return false
+            return version.minor < this.minSupportedVersion.minor
         }
     }
 
-    interface AndroidGradlePluginStringProvider {
-        fun getAndroidGradlePluginString(): String?
+    interface AndroidGradlePluginVersionProvider {
+        fun getAndroidGradlePluginVersion(): AndroidGradlePluginVersion?
 
-        object Default : AndroidGradlePluginStringProvider {
-            override fun getAndroidGradlePluginString(): String? =
-                runCatching { Version.ANDROID_GRADLE_PLUGIN_VERSION }.getOrElse { return null }
-        }
-    }
-
-    interface AndroidGradlePluginVersionParser {
-        fun parseVersionString(version: String): AndroidGradlePluginVersion?
-
-        object Default : AndroidGradlePluginVersionParser {
-            private val versionRegex = Regex("""(\d+)\.(\d+)(\.\d+)?(.*)""")
-
-            override fun parseVersionString(version: String): AndroidGradlePluginVersion? {
-                val matchResult = versionRegex.matchEntire(version) ?: return null
-                val major = matchResult.groups[1]?.value?.toIntOrNull() ?: return null
-                val minor = matchResult.groups[2]?.value?.toIntOrNull() ?: return null
-                return AndroidGradlePluginVersion(major, minor)
+        object Default : AndroidGradlePluginVersionProvider {
+            override fun getAndroidGradlePluginVersion(): AndroidGradlePluginVersion? {
+                return AndroidGradlePluginVersion.currentOrNull
             }
         }
     }
 
     fun Project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied(
         warningLogger: (warningMessage: String) -> Unit = project.logger::warn,
-        androidGradlePluginStringProvider: AndroidGradlePluginStringProvider = AndroidGradlePluginStringProvider.Default,
-        androidGradlePluginVersionParser: AndroidGradlePluginVersionParser = AndroidGradlePluginVersionParser.Default
+        androidGradlePluginVersionProvider: AndroidGradlePluginVersionProvider = AndroidGradlePluginVersionProvider.Default
     ) {
         val emittedMessages = project.getOrPutRootProjectProperty(PROPERTY_KEY_EMITTED_MESSAGES) { mutableSetOf<String>() }
 
@@ -121,7 +86,7 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
             plugins.withId(id) {
                 if (!executed.getAndSet(true)) {
                     runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(
-                        deduplicateWarningMessageLogger, androidGradlePluginStringProvider, androidGradlePluginVersionParser
+                        deduplicateWarningMessageLogger, androidGradlePluginVersionProvider
                     )
                 }
             }
@@ -130,8 +95,7 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
 
     fun Project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(
         warningLogger: (warningMessage: String) -> Unit = project.logger::warn,
-        androidGradlePluginStringProvider: AndroidGradlePluginStringProvider = AndroidGradlePluginStringProvider.Default,
-        androidGradlePluginVersionParser: AndroidGradlePluginVersionParser = AndroidGradlePluginVersionParser.Default,
+        androidGradlePluginVersionProvider: AndroidGradlePluginVersionProvider = AndroidGradlePluginVersionProvider.Default,
         compatibleAndroidGradlePluginVersionRange: AndroidGradlePluginVersionRange =
             KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.compatibleAndroidGradlePluginVersionRange
     ) = runProjectConfigurationHealthCheck check@{
@@ -141,26 +105,22 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
         /* Return when no android plugin is applied */
         findAppliedAndroidPluginIdOrNull() ?: return@check
 
-        val androidGradlePluginVersionString = androidGradlePluginStringProvider.getAndroidGradlePluginString()
-            ?: return warningLogger(Messages.FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING)
-
-        val androidGradlePluginVersion = androidGradlePluginVersionParser.parseVersionString(androidGradlePluginVersionString)
-            ?: return warningLogger(Messages.failedParsingAndroidGradlePluginVersion(androidGradlePluginVersionString))
+        val androidGradlePluginVersion = androidGradlePluginVersionProvider.getAndroidGradlePluginVersion()
+            ?: return warningLogger(Messages.failedGettingAndroidGradlePluginVersion())
 
         if (compatibleAndroidGradlePluginVersionRange.isTooLow(androidGradlePluginVersion)) {
-            warningLogger(Messages.androidGradlePluginVersionTooLow(androidGradlePluginVersionString))
+            warningLogger(Messages.androidGradlePluginVersionTooLow(androidGradlePluginVersion.toString()))
         }
 
         if (compatibleAndroidGradlePluginVersionRange.isTooHigh(androidGradlePluginVersion)) {
-            warningLogger(Messages.androidGradlePluginVersionTooHigh(androidGradlePluginVersionString))
+            warningLogger(Messages.androidGradlePluginVersionTooHigh(androidGradlePluginVersion.toString()))
         }
     }
 
     object Messages {
-        const val FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING = "Failed to get the version of the applied Android Gradle Plugin"
 
-        fun failedParsingAndroidGradlePluginVersion(androidGradlePluginVersionString: String) =
-            "w: Failed to parse the version of the applied Android Gradle Plugin: $androidGradlePluginVersionString"
+        fun failedGettingAndroidGradlePluginVersion() =
+            "w: Failed to get AndroidGradlePluginVersion"
 
         fun androidGradlePluginVersionTooLow(androidGradlePluginVersionString: String) = createCompatibilityWarningMessage(
             "The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is lower than the minimum supported"
@@ -169,7 +129,7 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
         fun androidGradlePluginVersionTooHigh(androidGradlePluginVersionString: String) = createCompatibilityWarningMessage(
             "The applied Android Gradle Plugin version ($androidGradlePluginVersionString) " +
                     "is higher than the maximum known to the Kotlin Gradle Plugin. " +
-                    "Tooling stability in such configuration isn't tested, please report encountered issues to kotl.in/issue"
+                    "Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue"
         )
 
         private fun createCompatibilityWarningMessage(warning: String) = buildString {
@@ -181,10 +141,10 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
             )
             appendLine(
                 "Maximum tested Android Gradle Plugin version: " +
-                        "${compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMajor}." +
-                        "${compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMinor ?: "*"}"
+                        "${compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.major}." +
+                        "${compatibleAndroidGradlePluginVersionRange.maxSupportedVersion.minor}"
             )
-            appendLine("To suppress this message add $KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN=true to your gradle.properties")
+            appendLine("To suppress this message add '$KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN=true' to your gradle.properties")
         }
     }
 }

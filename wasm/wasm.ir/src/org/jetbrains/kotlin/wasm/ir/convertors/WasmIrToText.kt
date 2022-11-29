@@ -453,6 +453,7 @@ class WasmIrToText : SExpressionBuilder() {
         when (type) {
             is WasmFuncRef -> appendElement("func")
             is WasmAnyRef -> appendElement("any")
+            is WasmExternRef -> appendElement("extern")
             else -> TODO()
         }
     }
@@ -467,11 +468,6 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmRefNullType ->
                 sameLineList("ref null") {
                     appendHeapType(type.heapType)
-                }
-
-            is WasmRtt ->
-                sameLineList("rtt") {
-                    appendModuleFieldReference(type.type.owner)
                 }
 
             WasmUnreachableType -> {

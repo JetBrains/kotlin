@@ -1,4 +1,6 @@
 $TESTDATA_DIR$/../kotlinPackage.kt
 -no-stdlib
+-Xlegacy-deprecated-no-warn
+-Xuse-deprecated-legacy-compiler
 -output
 $TEMP_DIR$/out.js

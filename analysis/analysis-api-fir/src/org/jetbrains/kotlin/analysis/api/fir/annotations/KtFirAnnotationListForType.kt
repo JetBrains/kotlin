@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotation
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.name.ClassId
@@ -25,7 +26,7 @@ internal class KtFirAnnotationListForType private constructor(
         get() = withValidityAssertion { coneType.customAnnotations.map { it.toKtAnnotationApplication(useSiteSession) } }
 
 
-    override fun containsAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
         coneType.customAnnotations.any { it.fullyExpandedClassId(useSiteSession) == classId }
     }
 

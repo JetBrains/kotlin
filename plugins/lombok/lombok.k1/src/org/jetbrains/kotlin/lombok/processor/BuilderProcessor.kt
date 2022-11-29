@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.descriptors.SyntheticJavaClassDescriptor
@@ -146,36 +147,61 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         val nameInSingularForm = (singular.singularName ?: field.name.identifier.singularForm)?.let(Name::identifier) ?: return
         val typeName = field.type.constructor.declarationDescriptor?.fqNameSafe?.asString() ?: return
 
-        val useGuava = config.useGuava
-        val supportedCollections = LombokNames.getSupportedCollectionsForSingular(useGuava)
-        val supportedMaps = LombokNames.getSupportedMapsForSingular(useGuava)
-
         val addMultipleParameterType: KotlinType
         val valueParameters: List<LombokValueParameter>
 
         when (typeName) {
-            in supportedCollections -> {
-                val parameterType = field.parameterType(0, singular.allowNull) ?: return
+            in LombokNames.SUPPORTED_COLLECTIONS -> {
+                val parameterType = field.parameterType(0) ?: return
                 valueParameters = listOf(
                     LombokValueParameter(nameInSingularForm, parameterType)
                 )
 
-                addMultipleParameterType = field.module.builtIns.collection.defaultType.replace(
-                    newArguments = listOf(TypeProjectionImpl(parameterType))
-                )
+                val builtIns = field.module.builtIns
+                val baseType = when (typeName) {
+                    in LombokNames.SUPPORTED_GUAVA_COLLECTIONS -> builtIns.iterable.defaultType
+                    else -> builtIns.collection.defaultType
+                }
+
+                addMultipleParameterType = baseType.withProperNullability(singular.allowNull)
+                    .replace(newArguments = listOf(TypeProjectionImpl(parameterType)),)
             }
 
-            in supportedMaps -> {
-                val keyType = field.parameterType(0, singular.allowNull) ?: return
-                val valueType = field.parameterType(1, singular.allowNull) ?: return
+            in LombokNames.SUPPORTED_MAPS -> {
+                val keyType = field.parameterType(0) ?: return
+                val valueType = field.parameterType(1) ?: return
                 valueParameters = listOf(
                     LombokValueParameter(Name.identifier("key"), keyType),
                     LombokValueParameter(Name.identifier("value"), valueType),
                 )
 
-                addMultipleParameterType = field.module.builtIns.map.defaultType.replace(
-                    newArguments = listOf(TypeProjectionImpl(keyType), TypeProjectionImpl(valueType))
+                addMultipleParameterType = field.module.builtIns.map.defaultType
+                    .withProperNullability(singular.allowNull)
+                    .replace(newArguments = listOf(TypeProjectionImpl(keyType), TypeProjectionImpl(valueType)))
+            }
+
+            in LombokNames.SUPPORTED_TABLES -> {
+                val rowKeyType = field.parameterType(0) ?: return
+                val columnKeyType = field.parameterType(1) ?: return
+                val valueType = field.parameterType(2) ?: return
+
+                val tableDescriptor = field.module.resolveClassByFqName(LombokNames.TABLE, NoLookupLocation.FROM_SYNTHETIC_SCOPE) ?: return
+
+                valueParameters = listOf(
+                    LombokValueParameter(Name.identifier("rowKey"), rowKeyType),
+                    LombokValueParameter(Name.identifier("columnKey"), columnKeyType),
+                    LombokValueParameter(Name.identifier("value"), valueType),
                 )
+
+                addMultipleParameterType = tableDescriptor.defaultType
+                    .withProperNullability(singular.allowNull)
+                    .replace(
+                        newArguments = listOf(
+                            TypeProjectionImpl(rowKeyType),
+                            TypeProjectionImpl(columnKeyType),
+                            TypeProjectionImpl(valueType),
+                        )
+                    )
             }
 
             else -> return
@@ -217,18 +243,18 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
 
     private class BuilderData(val builder: Builder, val constructingClass: ClassDescriptor)
 
-    private val LombokConfig.useGuava: Boolean
-        get() = getBoolean("lombok.singular.useGuava") ?: false
-
-    private fun PropertyDescriptor.parameterType(index: Int, allowNull: Boolean): KotlinType? {
+    private fun PropertyDescriptor.parameterType(index: Int): KotlinType? {
         val type = returnType?.arguments?.getOrNull(index)?.type ?: return null
-        val typeWithProperNullability =  if (allowNull) type.makeNullable() else type.makeNotNullable()
-        return typeWithProperNullability.replaceAnnotations(
+        return type.replaceAnnotations(
             CompositeAnnotations(
-                typeWithProperNullability.annotations,
+                type.annotations,
                 ENHANCED_NULLABILITY_ANNOTATIONS
             )
         )
+    }
+
+    private fun KotlinType.withProperNullability(allowNull: Boolean): KotlinType {
+        return if (allowNull) makeNullable() else makeNotNullable()
     }
 
     private fun Name.toMethodName(builder: Builder): Name {

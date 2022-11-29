@@ -9,12 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptWithoutKotlincConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
@@ -42,8 +41,16 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return myProject.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
     }
 
+    override fun createCompilerJvmOptions(): KotlinJvmCompilerOptions {
+        return myProject.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+    }
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerJvmOptions", replaceWith = ReplaceWith("createCompilerJvmOptions()"))
     override fun createKotlinJvmOptions(): KotlinJvmOptions {
-        return KotlinJvmOptionsImpl()
+        return object : KotlinJvmOptions {
+            override val options: KotlinJvmCompilerOptions = createCompilerJvmOptions()
+        }
     }
 
     override val kotlinExtension: KotlinProjectExtension by lazy {
@@ -56,7 +63,10 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
 
     override fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile> {
         return taskCreator.registerKotlinJVMTask(
-            myProject, taskName, KotlinJvmOptionsImpl(), KotlinCompileConfig(myProject, kotlinExtension)
+            myProject,
+            taskName,
+            createCompilerJvmOptions(),
+            KotlinCompileConfig(myProject, kotlinExtension)
         )
     }
 

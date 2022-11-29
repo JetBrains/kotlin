@@ -75,27 +75,31 @@ function restoreGlobalState() {
 resetRealm();
 
 // noinspection InfiniteLoopJS
-while (true) {
-    let code = readline().replace(/\\n/g, '\n');
+async function loop() {
+    while (true) {
+        let code = readline().replace(/\\n/g, '\n');
 
-    try {
-        switch (code) {
-            case "!reset":
-                resetRealm()
-                break;
-            case "!saveGlobalState":
-                saveGlobalState();
-                break;
-            case "!restoreGlobalState":
-                restoreGlobalState();
-                break;
-            default:
-                print(Realm.eval(currentRealmIndex, code));
+        try {
+            switch (code) {
+                case "!reset":
+                    resetRealm()
+                    break;
+                case "!saveGlobalState":
+                    saveGlobalState();
+                    break;
+                case "!restoreGlobalState":
+                    restoreGlobalState();
+                    break;
+                default:
+                    print(await Realm.eval(currentRealmIndex, code));
+            }
+        } catch(e) {
+            printErr(e.stack != null ? e.stack : e.toString());
+            printErr('\nCODE:\n' + code);
         }
-    } catch(e) {
-        printErr(e.stack != null ? e.stack : e.toString());
-        printErr('\nCODE:\n' + code);
-    }
 
-    print('<END>');
+        print('<END>');
+    }
 }
+
+loop()

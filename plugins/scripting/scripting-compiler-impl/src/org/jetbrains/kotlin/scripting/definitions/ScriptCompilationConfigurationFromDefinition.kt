@@ -37,7 +37,8 @@ class ScriptCompilationConfigurationFromDefinition(
         @Suppress("DEPRECATION")
         compilerOptions.putIfAny(scriptDefinition.additionalCompilerArguments)
         // TODO: remove this exception when gradle switches to the new definitions and sets the property accordingly
-        if (scriptDefinition.fileExtension == "gradle.kts") {
+        // possible gradle script extensions - see PrecompiledScriptTemplates.kt in the gradle repository
+        if (get(fileExtension) in arrayOf("gradle.kts", "init.gradle.kts", "settings.gradle.kts")) {
             isStandalone(false)
         }
         ide {

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
-import kotlin.reflect.KVisibility
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -37,7 +36,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var jdkHome: String? by NullableStringFreezableVar(null)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(value = "-no-jdk", description = "Don't automatically include the Java runtime into the classpath")
     var noJdk: Boolean by FreezableVar(false)
 
@@ -64,13 +66,16 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var scriptTemplates: Array<String>? by FreezableVar(null)
 
-    @GradleOption(DefaultValues.StringNullDefault::class)
+    @GradleOption(
+        value = DefaultValue.STRING_NULL_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file")
     var moduleName: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
-        value = DefaultValues.JvmTargetVersions::class,
-        backingFieldVisibility = KVisibility.INTERNAL
+        value = DefaultValue.JVM_TARGET_VERSIONS,
+        gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
         value = "-jvm-target",
@@ -79,7 +84,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var jvmTarget: String? by NullableStringFreezableVar(null)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(value = "-java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")
     var javaParameters: Boolean by FreezableVar(false)
 
@@ -91,7 +99,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var useIR: Boolean by FreezableVar(false)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-Xuse-old-backend", description = "Use the old JVM backend")
     var useOldBackend: Boolean by FreezableVar(false)
 
@@ -430,6 +437,12 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         description = "Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details"
     )
     var noUnifiedNullChecks: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xno-source-debug-extension",
+        description = "Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP"
+    )
+    var noSourceDebugExtension: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xprofile",

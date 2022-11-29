@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -125,7 +125,7 @@ abstract class AbstractConeCallConflictResolver(
             origin = call,
             typeParameters = (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             valueParameterTypes = computeSignatureTypes(call, variable),
-            hasExtensionReceiver = variable.receiverTypeRef != null,
+            hasExtensionReceiver = variable.receiverParameter != null,
             contextReceiverCount = variable.contextReceivers.size,
             hasVarargs = false,
             numDefaults = 0,
@@ -139,7 +139,7 @@ abstract class AbstractConeCallConflictResolver(
             origin = call,
             typeParameters = constructor.typeParameters.map { it.symbol.toLookupTag() },
             valueParameterTypes = computeSignatureTypes(call, constructor),
-            //constructor.receiverTypeRef != null,
+            //constructor.receiverParameter != null,
             hasExtensionReceiver = false,
             contextReceiverCount = constructor.contextReceivers.size,
             hasVarargs = constructor.valueParameters.any { it.isVararg },
@@ -154,7 +154,7 @@ abstract class AbstractConeCallConflictResolver(
             origin = call,
             typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },
             valueParameterTypes = computeSignatureTypes(call, function),
-            hasExtensionReceiver = function.receiverTypeRef != null,
+            hasExtensionReceiver = function.receiverParameter != null,
             contextReceiverCount = function.contextReceivers.size,
             hasVarargs = function.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
@@ -175,7 +175,7 @@ abstract class AbstractConeCallConflictResolver(
     ): List<TypeWithConversion> {
         return buildList {
             val session = inferenceComponents.session
-            addIfNotNull(called.receiverTypeRef?.coneType?.fullyExpandedType(session)?.let { TypeWithConversion(it) })
+            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.fullyExpandedType(session)?.let { TypeWithConversion(it) })
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
                 // Return type isn't needed here       v

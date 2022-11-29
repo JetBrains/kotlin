@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType as classicIsSignedOrUnsignedNumberType
 import org.jetbrains.kotlin.types.typeUtil.isStubType as isSimpleTypeStubType
 import org.jetbrains.kotlin.types.typeUtil.isStubTypeForBuilderInference as isSimpleTypeStubTypeForBuilderInference
@@ -122,6 +121,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
+        // TODO: https://youtrack.jetbrains.com/issue/KT-54196 (old captured type here)
         require(this is NewCapturedType, this::errorMessage)
         return this.lowerType
     }
@@ -362,7 +362,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
      *  - type for type parameter
      *  - captured type
      *
-     * Such types can contains error types in our arguments, but type constructor isn't errorTypeConstructor
+     * Such types can contain error types in our arguments, but type constructor isn't errorTypeConstructor
      */
     override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
         require(this is SimpleType, this::errorMessage)
@@ -425,9 +425,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return when (this) {
             is SimpleTypeMarker -> this.withNullability(nullable)
             is FlexibleTypeMarker -> createFlexibleType(lowerBound().withNullability(nullable), upperBound().withNullability(nullable))
-            else -> asSimpleType()?.withNullability(nullable) ?: error("Unwrapped type should be simple")
+            else -> error("sealed")
         }
     }
+
 
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
@@ -475,20 +476,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is UnwrappedType, this::errorMessage)
         val annotationsWithoutExact = this.annotations.filterNot(AnnotationDescriptor::isExactAnnotation)
         return this.replaceAnnotations(Annotations.create(annotationsWithoutExact))
-    }
-
-    override fun KotlinTypeMarker.canHaveSubtypes(typeChecker: AbstractTypeChecker): Boolean? {
-        require(this is KotlinType, this::errorMessage)
-
-        val kotlinTypeChecker = object : KotlinTypeChecker {
-            override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-                typeChecker.isSubtypeOf(this@ClassicTypeSystemContext, subtype, supertype)
-
-            override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-                typeChecker.equalTypes(this@ClassicTypeSystemContext, a, b)
-        }
-
-        return TypeUtils.canHaveSubtypes(kotlinTypeChecker, this)
     }
 
     override fun KotlinTypeMarker.hasExactAnnotation(): Boolean {
@@ -849,7 +836,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(firstCandidate is KotlinType, this::errorMessage)
         require(secondCandidate is KotlinType, this::errorMessage)
 
-        firstCandidate.constructor.safeAs<IntersectionTypeConstructor>()?.let { intersectionConstructor ->
+        (firstCandidate.constructor as? IntersectionTypeConstructor)?.let { intersectionConstructor ->
             val intersectionTypeWithAlternative = intersectionConstructor.setAlternative(secondCandidate).createType()
             return if (firstCandidate.isMarkedNullable) intersectionTypeWithAlternative.makeNullableAsSpecified(true)
             else intersectionTypeWithAlternative
@@ -914,6 +901,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
         return this is UnwrappedType && constructor is NewTypeVariableConstructor
     }
+
+    override val isK2: Boolean
+        get() = false
 
     class WA // Workaround for KT-52313
 }

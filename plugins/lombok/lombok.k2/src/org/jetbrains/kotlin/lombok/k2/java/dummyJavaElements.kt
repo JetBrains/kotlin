@@ -7,16 +7,24 @@ package org.jetbrains.kotlin.lombok.k2.java
 
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object JavaClasses {
+    val Object = DummyJavaClass("Object", javaLangName("Object"), numberOfTypeParameters = 0)
+    val Iterable = DummyJavaClass("Iterable", javaLangName("Iterable"), numberOfTypeParameters = 1)
     val Collection = DummyJavaClass("Collection", javaUtilName("Collection"), numberOfTypeParameters = 1)
     val Map = DummyJavaClass("Map", javaUtilName("Map"), numberOfTypeParameters = 2)
+    val Table = DummyJavaClass("Table", LombokNames.TABLE, numberOfTypeParameters = 3)
 
 
     private fun javaUtilName(name: String): FqName {
         return FqName.fromSegments(listOf("java", "util", name))
+    }
+
+    private fun javaLangName(name: String): FqName {
+        return FqName.fromSegments(listOf("java", "lang", name))
     }
 }
 

@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtu
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -30,7 +32,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     private val binaryModules: Collection<KtBinaryModule>,
     override val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProvider(), AbstractDeclarationFromBinaryModuleProvider {
-    private val psiManager by lazy { PsiManager.getInstance(project) }
+    private val psiManager by lazyPub { PsiManager.getInstance(project) }
 
     private fun clsClassImplsByFqName(
         fqName: FqName,
@@ -63,7 +65,13 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
         return fakeFile.classes.single() as ClsClassImpl
     }
 
-    override fun getClassesByClassId(classId: ClassId): Collection<ClsClassImpl> {
+    override fun getClassesByClassId(classId: ClassId): Collection<PsiClass> {
+        classId.parentClassId?.let { parentClassId ->
+            val innerClassName = classId.relativeClassName.asString().split(".").last()
+            return getClassesByClassId(parentClassId).mapNotNull { parentClsClass ->
+                parentClsClass.innerClasses.find { it.name == innerClassName }
+            }
+        }
         return clsClassImplsByFqName(classId.asSingleFqName(), isPackageName = false)
     }
 
@@ -105,7 +113,6 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
 //  We need a session or facade that maintains such information
 class KotlinStaticPsiDeclarationProviderFactory(
     private val project: Project,
-    private val createPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     private val binaryModules: Collection<KtBinaryModule>,
     private val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProviderFactory() {
@@ -113,7 +120,7 @@ class KotlinStaticPsiDeclarationProviderFactory(
         return KotlinStaticPsiDeclarationFromBinaryModuleProvider(
             project,
             searchScope,
-            createPackagePartProvider.invoke(searchScope),
+            project.createPackagePartProvider(searchScope),
             binaryModules,
             jarFileSystem,
         )

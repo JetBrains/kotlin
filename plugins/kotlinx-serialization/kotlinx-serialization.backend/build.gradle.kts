@@ -9,6 +9,8 @@ dependencies {
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:backend.jvm"))
+    compileOnly(project(":compiler:backend.jvm.codegen"))
+    compileOnly(project(":compiler:backend.jvm.lower"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":js:js.translator"))

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import com.intellij.lang.LighterASTNode
+import com.intellij.openapi.util.Ref
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -15,19 +16,18 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -44,16 +44,15 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
@@ -114,15 +113,14 @@ fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol?
  * or null if no proper declaration has been found.
  */
 fun FirDeclaration.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? =
-    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(session)
+    (this as? FirCallableDeclaration)?.containingClassLookupTag()?.toSymbol(session)
 
 @OptIn(SymbolInternals::class)
 fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = fir.getContainingClassSymbol(session)
 
 fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? {
     if (this !is FirClassSymbol<*>) return null
-    val outerClassId = classId.outerClassId ?: return null
-    return context.session.symbolProvider.getClassLikeSymbolByClassId(outerClassId)
+    return getContainingDeclarationSymbol(context.session)
 }
 
 @OptIn(SymbolInternals::class)
@@ -242,7 +240,7 @@ private fun FirDeclaration.hasBody(): Boolean = when (this) {
  */
 fun FirClass.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? {
     for (superTypeRef in superTypeRefs) {
-        val lookupTag = superTypeRef.coneType.safeAs<ConeClassLikeType>()?.lookupTag ?: continue
+        val lookupTag = (superTypeRef.coneType as? ConeClassLikeType)?.lookupTag ?: continue
 
         val symbol = lookupTag.toSymbol(context.session) as? FirClassSymbol<*> ?: continue
 
@@ -276,35 +274,6 @@ fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinT
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)
     val supertypeFullyExpanded = supertype.fullyExpandedType(context.session)
     return AbstractTypeChecker.isSubtypeOf(context, subtypeFullyExpanded, supertypeFullyExpanded)
-            || isSubtypeOfForFunctionalTypeReturningUnit(context.session.typeContext, subtypeFullyExpanded, supertypeFullyExpanded)
-}
-
-private fun isSubtypeOfForFunctionalTypeReturningUnit(
-    context: ConeInferenceContext,
-    subtype: ConeKotlinType,
-    supertype: ConeKotlinType
-): Boolean {
-    if (!supertype.isBuiltinFunctionalType(context.session)) return false
-    val functionalTypeReturnType = supertype.typeArguments.lastOrNull()
-    if ((functionalTypeReturnType as? ConeClassLikeType)?.isUnit == true) {
-        // We don't try to match return type for this case
-        // Dropping the return type (getting only the lambda args)
-        val superTypeArgs = supertype.typeArguments.dropLast(1)
-        val subTypeArgs = subtype.typeArguments.dropLast(1)
-        if (superTypeArgs.size != subTypeArgs.size) return false
-
-        for (i in superTypeArgs.indices) {
-            val subTypeArg = subTypeArgs[i].type ?: return false
-            val superTypeArg = superTypeArgs[i].type ?: return false
-
-            if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, subTypeArg, superTypeArg)) {
-                return false
-            }
-        }
-
-        return true
-    }
-    return false
 }
 
 fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
@@ -543,10 +512,10 @@ fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSourc
             }
         }
         is FirFunctionTypeRef -> {
-            val valueParameters = delegatedTypeRef.valueParameters
+            val parameters = delegatedTypeRef.parameters
 
             delegatedTypeRef.receiverTypeRef?.let { result.add(FirTypeRefSource(it, it.source)) }
-            for (valueParameter in valueParameters) {
+            for (valueParameter in parameters) {
                 val valueParamTypeRef = valueParameter.returnTypeRef
                 result.add(FirTypeRefSource(valueParamTypeRef, valueParamTypeRef.source))
             }
@@ -671,3 +640,44 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
 }
 
 private typealias TargetLists = AnnotationTargetLists
+
+fun FirQualifiedAccess.explicitReceiverIsNotSuperReference(): Boolean {
+    return (this.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference !is FirSuperReference
+}
+
+
+internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
+    get() = when (this) {
+        is KtPsiSourceElement -> (psi as? KtParameter)?.defaultValue?.toKtPsiSourceElement()
+        is KtLightSourceElement -> findDefaultValue(this)
+    }
+
+private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    source.treeStructure.getChildren(source.lighterASTNode, childrenRef)
+
+    var defaultValue: LighterASTNode? = null
+    var defaultValueOffset = source.startOffset
+
+    for (node in childrenRef.get()) {
+        if (node == null) continue
+        if (node.isExpression()) {
+            defaultValue = node
+            break
+        } else {
+            defaultValueOffset += node.endOffset - node.startOffset
+        }
+    }
+    if (defaultValue == null) return null
+
+    return defaultValue.toKtLightSourceElement(
+        source.treeStructure,
+        startOffset = defaultValueOffset,
+        endOffset = defaultValueOffset + defaultValue.textLength,
+    )
+}
+
+fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlinType {
+    require(this.isInlineClass(session))
+    return toRegularClassSymbol(session)!!.primaryConstructorSymbol()!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
+}

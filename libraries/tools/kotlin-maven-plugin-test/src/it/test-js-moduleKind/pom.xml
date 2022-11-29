@@ -33,6 +33,9 @@
                 </executions>
                 <configuration>
                     <moduleKind>umd</moduleKind>
+                    <args>
+                        <arg>-Xuse-deprecated-legacy-compiler</arg>
+                    </args>
                 </configuration>
             </plugin>
             <plugin>

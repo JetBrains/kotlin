@@ -51,54 +51,70 @@ abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment()
         }
     }
 
-    fun doTest(filePath: String, expectedResult: String) {
-        val file = File(filePath)
-        val fileContent = KtTestUtil.doLoadFile(file)
-
-        val inputFiles = TestFiles.createTestFiles(
-            file.name,
-            fileContent,
-            object : TestFiles.TestFileFactory<TestModule, TestFile> {
-                override fun createFile(module: TestModule?, fileName: String, text: String, directives: Directives) =
-                    module?.let {
-                        TestFile(module, fileName, text, directives)
-                    } ?: error("Expected a module for $fileName in $filePath")
-
-                override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>) =
-                    TestModule(name, dependencies, friends)
-
-            },
-            true,
-            true
-        )
-        val modules = inputFiles
-            .map { it.module }.distinct()
-            .map { it.name to it }.toMap()
-
-        val orderedModules = DFS.topologicalOrder(modules.values) { module ->
-            module.dependenciesSymbols.mapNotNull { modules[it] }
-        }
-
-        val mainModuleName = DEFAULT_MODULE
-        val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
-
-        orderedModules.reversed().filterNot { it === mainModule }.forEach {
-            produceKlib(it, 1)
-            if (it.hasVersions) {
-                produceKlib(it, 2)
-            }
-        }
-        produceProgram(mainModule)
-
-        runProgram(mainModule, expectedResult)
-    }
+    fun doTest(filePath: String, expectedResult: String) = doTest(
+        filePath,
+        expectedResult,
+        produceKlib = ::produceKlib,
+        produceAndRunProgram = ::produceAndRunProgram,
+    )
 
     abstract fun produceKlib(module: TestModule, version: Int)
     abstract fun produceProgram(module: TestModule)
     abstract fun runProgram(module: TestModule, expectedResult: String)
 
+    open fun produceAndRunProgram(module: TestModule, expectedResult: String) {
+        produceProgram(module)
+        runProgram(module, expectedResult)
+    }
+
     companion object {
-        val TEST_FUNCTION = "box"
-        val DEFAULT_MODULE = "main"
+        const val TEST_FUNCTION = "box"
+        const val DEFAULT_MODULE = "main"
+
+        fun doTest(
+            filePath: String,
+            expectedResult: String,
+            produceKlib: (TestModule, Int) -> Unit,
+            produceAndRunProgram: (TestModule, String) -> Unit,
+        ) {
+            val file = File(filePath)
+            val fileContent = KtTestUtil.doLoadFile(file)
+
+            val inputFiles = TestFiles.createTestFiles(
+                file.name,
+                fileContent,
+                object : TestFiles.TestFileFactory<TestModule, TestFile> {
+                    override fun createFile(module: TestModule?, fileName: String, text: String, directives: Directives) =
+                        module?.let {
+                            TestFile(module, fileName, text, directives)
+                        } ?: error("Expected a module for $fileName in $filePath")
+
+                    override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>) =
+                        TestModule(name, dependencies, friends)
+
+                },
+                true,
+                true
+            )
+            val modules = inputFiles
+                .map { it.module }.distinct()
+                .map { it.name to it }.toMap()
+
+            val orderedModules = DFS.topologicalOrder(modules.values) { module ->
+                module.dependenciesSymbols.mapNotNull { modules[it] }
+            }
+
+            val mainModuleName = DEFAULT_MODULE
+            val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
+
+            orderedModules.reversed().filterNot { it === mainModule }.forEach {
+                produceKlib(it, 1)
+                if (it.hasVersions) {
+                    produceKlib(it, 2)
+                }
+            }
+
+            produceAndRunProgram(mainModule, expectedResult)
+        }
     }
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.wasm.ir.*
@@ -29,6 +30,7 @@ class WasmFunctionCodegenContextImpl(
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
+    private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
 
     override fun defineLocal(irValueDeclaration: IrValueSymbol) {
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
@@ -53,15 +55,29 @@ class WasmFunctionCodegenContextImpl(
         return wasmFunction.locals[index]
     }
 
+    private val SyntheticLocalType.wasmType
+        get() = when (this) {
+            SyntheticLocalType.IS_INTERFACE_PARAMETER -> WasmRefNullType(WasmHeapType.Type(referenceGcType(backendContext.irBuiltIns.anyClass)))
+            SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
+        }
+
     override fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {
         WasmLocal(
             wasmFunction.locals.size,
             type.name,
-            WasmRefNullType(WasmHeapType.Type(referenceGcType(backendContext.irBuiltIns.anyClass))),
+            type.wasmType,
             isParameter = false
         ).also {
             wasmFunction.locals += it
         }
+    }
+
+    override fun defineNonLocalReturnLevel(block: IrReturnableBlockSymbol, level: Int) {
+        nonLocalReturnLevels[block] = level
+    }
+
+    override fun referenceNonLocalReturnLevel(block: IrReturnableBlockSymbol): Int {
+        return nonLocalReturnLevels.getValue(block)
     }
 
     override fun defineLoopLevel(irLoop: IrLoop, labelType: LoopLabelType, level: Int) {

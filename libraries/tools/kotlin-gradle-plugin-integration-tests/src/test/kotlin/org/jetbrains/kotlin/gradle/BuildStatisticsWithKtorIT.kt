@@ -86,6 +86,9 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             if (!startParameters.tasks.containsAll(validationData.tasks.toList())) {
                 validationErrors.add("Different set of executed tasks. Expected ${validationData.tasks.asList()} actual ${startParameters.tasks}")
             }
+            if (gitBranch.isBlank()) {
+                validationErrors.add("Git branch is not set")
+            }
             return validationErrors
         }
 

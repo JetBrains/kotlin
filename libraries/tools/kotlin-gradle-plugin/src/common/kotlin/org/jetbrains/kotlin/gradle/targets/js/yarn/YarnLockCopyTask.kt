@@ -12,12 +12,14 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.utils.contentEquals
 import java.io.File
 import javax.inject.Inject
 
 abstract class YarnLockCopyTask : DefaultTask() {
 
+    @get:NormalizeLineEndings
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val inputFile: RegularFileProperty

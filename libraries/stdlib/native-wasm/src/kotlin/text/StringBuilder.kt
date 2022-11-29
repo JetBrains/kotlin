@@ -176,9 +176,6 @@ actual class StringBuilder private constructor (
         return this
     }
 
-    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
-    fun append(value: String): StringBuilder = append(value)
-
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
      *
@@ -340,9 +337,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     actual fun insert(index: Int, value: Any?): StringBuilder = insert(index, value.toString())
-
-    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
-    fun insert(index: Int, value: String): StringBuilder = insert(index, value)
 
     /**
      * Inserts the string [value] into this string builder at the specified [index] and returns this instance.
@@ -803,97 +797,6 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequen
 
 internal fun insertString(array: CharArray, start: Int, value: String): Int =
         insertString(array, start, value, 0, value.length)
-
-// Method parameters renamings
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Boolean) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Boolean): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Byte) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Byte): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Short) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Short): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Int) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Int): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Long) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Long): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Float) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Float): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Double) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Double): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: String) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: String): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: CharArray) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: CharArray): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use ensureCapacity(minimumCapacity: Int) instead", ReplaceWith("ensureCapacity(minimumCapacity = capacity)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.ensureCapacity(capacity: Int): Unit = this.ensureCapacity(minimumCapacity = capacity)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use insert(index: Int, value: Char) instead", ReplaceWith("insert(index, value = c)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.insert(index: Int, c: Char): StringBuilder = this.insert(index, value = c)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use insert(index: Int, value: CharArray) instead", ReplaceWith("insert(index, value = chars)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.insert(index: Int, chars: CharArray): StringBuilder = this.insert(index, value = chars)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use insert(index: Int, value: CharSequence?) instead", ReplaceWith("insert(index, value = csq)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.insert(index: Int, csq: CharSequence?): StringBuilder = this.insert(index, value = csq)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use insert(index: Int, value: String) instead", ReplaceWith("insert(index, value = string)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.insert(index: Int, string: String): StringBuilder = this.insert(index, value = string)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use setLength(newLength: Int) instead", ReplaceWith("setLength(newLength = l)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.setLength(l: Int) = this.setLength(newLength = l)
 
 // Method renamings
 /**

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import java.io.File
 
 internal open class CopyCommonizeCInteropForIdeTask : AbstractCInteropCommonizerTask() {
@@ -16,6 +17,7 @@ internal open class CopyCommonizeCInteropForIdeTask : AbstractCInteropCommonizer
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     val cInteropCommonizerTaskOutputDirectories: Provider<Set<File>> =
         commonizeCInteropTask.map { it.allOutputDirectories }

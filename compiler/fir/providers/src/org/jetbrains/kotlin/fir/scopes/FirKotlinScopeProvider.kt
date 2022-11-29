@@ -10,19 +10,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.*
 
 class FirKotlinScopeProvider(
     val declaredMemberScopeDecorator: (
@@ -125,19 +123,22 @@ fun ConeKotlinType.scopeForSupertype(
 ): FirTypeScope? {
     if (this !is ConeClassLikeType) return null
     if (this is ConeErrorType) return null
-    val symbol = lookupTag.toSymbol(useSiteSession)
-    return if (symbol is FirRegularClassSymbol) {
-        symbol.fir.scopeForClassImpl(
-            substitutor(symbol, this, useSiteSession),
-            useSiteSession,
-            scopeSession,
-            skipPrivateMembers = true,
-            classFirDispatchReceiver = subClass,
-            isFromExpectClass = (subClass as? FirRegularClass)?.isExpect == true
-        )
-    } else {
-        null
+
+    val symbol = lookupTag.toSymbol(useSiteSession) as? FirRegularClassSymbol ?: return null
+
+    val substitutor = when {
+        this.type.attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
+        else -> substitutor(symbol, this, useSiteSession)
     }
+
+    return symbol.fir.scopeForClassImpl(
+        substitutor,
+        useSiteSession,
+        scopeSession,
+        skipPrivateMembers = true,
+        classFirDispatchReceiver = subClass,
+        isFromExpectClass = (subClass as? FirRegularClass)?.isExpect == true
+    )
 }
 
 private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
@@ -165,7 +166,7 @@ private fun FirClass.scopeForClassImpl(
             useSiteSession,
             basicScope,
             key, substitutor,
-            substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()) as ConeClassLikeType,
+            substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()).lowerBoundIfFlexible() as ConeClassLikeType,
             skipPrivateMembers,
             makeExpect = isFromExpectClass
         )

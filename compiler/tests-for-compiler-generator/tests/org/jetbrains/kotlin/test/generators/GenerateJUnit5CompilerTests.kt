@@ -38,11 +38,20 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
-                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_OLD)
+                model(
+                    "diagnostics/testsWithJvmBackend",
+                    targetBackend = TargetBackend.JVM_OLD,
+                    excludedPattern = excludedFirTestdataPattern
+                )
             }
 
             testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
-                model("diagnostics/testsWithJvmBackend", pattern = "^(.+)\\.kts?$", targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "diagnostics/testsWithJvmBackend",
+                    pattern = "^(.+)\\.kts?$",
+                    targetBackend = TargetBackend.JVM_IR,
+                    excludedPattern = excludedFirTestdataPattern
+                )
             }
 
             testClass<AbstractDiagnosticsNativeTest> {
@@ -183,7 +192,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
         testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirDiagnosticTest>(suiteTestClassName = "FirOldFrontendDiagnosticsTestGenerated") {
-                model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
             }
 
@@ -262,6 +271,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractFirDiagnosticsTestWithJvmIrBackend> {
                 model("diagnostics/firTestWithJvmBackend")
+            }
+
+            testClass<AbstractFirDiagnosticsTestWithJvmIrBackend>(suiteTestClassName = "FirOldDiagnosticsTestWithJvmIrBackendGenerated") {
+                model("diagnostics/testsWithJvmBackend", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest> {

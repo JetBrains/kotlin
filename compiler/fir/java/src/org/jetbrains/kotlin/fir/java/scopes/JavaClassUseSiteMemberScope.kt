@@ -220,7 +220,7 @@ class JavaClassUseSiteMemberScope(
     private fun FirPropertySymbol.getBuiltinSpecialPropertyGetterName(): Name? {
         var result: Name? = null
         superTypeScopes.processOverriddenPropertiesAndSelf(this) { overridden ->
-            val fqName = overridden.fir.containingClass()?.classId?.asSingleFqName()?.child(overridden.fir.name)
+            val fqName = overridden.fir.containingClassLookupTag()?.classId?.asSingleFqName()?.child(overridden.fir.name)
 
             BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[fqName]?.let { name ->
                 result = name

@@ -46,33 +46,34 @@ object FirParcelizeClassChecker : FirClassChecker() {
         val symbol = klass.symbol
         if (!symbol.isParcelize(context.session)) return
         val source = klass.source ?: return
-        if (klass !is FirRegularClass) {
-            reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS, context)
-            return
-        }
-
         val classKind = klass.classKind
-        if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.INTERFACE && !klass.isSealed) {
+
+        if (klass is FirRegularClass) {
+            if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.INTERFACE && !klass.isSealed) {
+                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS, context)
+                return
+            }
+
+            klass.companionObjectSymbol?.let { companionSymbol ->
+                if (companionSymbol.classId.shortClassName == CREATOR_NAME) {
+                    reporter.reportOn(companionSymbol.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
+                }
+            }
+
+            if (klass.isInner) {
+                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS, context)
+            }
+
+            if (klass.isLocal) {
+                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS, context)
+            }
+        } else if (classKind != ClassKind.ENUM_ENTRY) {
             reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS, context)
             return
-        }
-
-        klass.companionObjectSymbol?.let { companionSymbol ->
-            if (companionSymbol.classId.shortClassName == CREATOR_NAME) {
-                reporter.reportOn(companionSymbol.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
-            }
         }
 
         if (classKind == ClassKind.CLASS && klass.isAbstract) {
             reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE, context)
-        }
-
-        if (klass.isInner) {
-            reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS, context)
-        }
-
-        if (klass.isLocal) {
-            reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS, context)
         }
 
         val supertypes = lookupSuperTypes(klass, lookupInterfaces = true, deep = true, context.session, substituteTypes = false)

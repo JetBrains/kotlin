@@ -19,7 +19,7 @@ public final class k/KotlinParcelable$Creator : java/lang/Object, android/os/Par
           ISTORE (2)
         LABEL (L2)
         LINENUMBER (24)
-          NEW
+          NEW (k/KotlinParcelable)
           DUP
           ILOAD (2)
           INVOKESPECIAL (k/KotlinParcelable, <init>, (I)V)
@@ -49,14 +49,14 @@ public final class k/KotlinParcelable : java/lang/Object, android/os/Parcelable 
     private int data
 
     static void <clinit>() {
-          NEW
+          NEW (k/KotlinParcelable$Companion)
           DUP
           ACONST_NULL
           INVOKESPECIAL (k/KotlinParcelable$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
           PUTSTATIC (k/KotlinParcelable, Companion, Lk/KotlinParcelable$Companion;)
         LABEL (L0)
         LINENUMBER (18)
-          NEW
+          NEW (k/KotlinParcelable$Creator)
           DUP
           INVOKESPECIAL (k/KotlinParcelable$Creator, <init>, ()V)
           PUTSTATIC (k/KotlinParcelable, CREATOR, Lk/KotlinParcelable$Creator;)
@@ -109,13 +109,13 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (test/Foo)
           DUP
           ALOAD (1)
           LDC (Ltest/Foo;)
           INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
           INVOKEVIRTUAL (android/os/Parcel, readParcelable, (Ljava/lang/ClassLoader;)Landroid/os/Parcelable;)
-          CHECKCAST
+          CHECKCAST (k/KotlinParcelable)
           INVOKESPECIAL (test/Foo, <init>, (Lk/KotlinParcelable;)V)
           ARETURN
         LABEL (L1)
@@ -141,7 +141,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
     private final k.KotlinParcelable kp
 
     static void <clinit>() {
-          NEW
+          NEW (test/Foo$Creator)
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
           PUTSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)

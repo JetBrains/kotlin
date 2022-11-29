@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 private val javaLangCloneable = FqNameUnsafe("java.lang.Cloneable")
 
@@ -92,7 +92,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         var baseParametersOk = true
-        val baseParameterTypes = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingTypes() ?: emptyList()
+        val baseParameterTypes = (descriptor as? ClassDescriptor)?.defaultType?.substitutedUnderlyingTypes() ?: emptyList()
 
         for ((baseParameter, baseParameterType) in primaryConstructor.valueParameters zip baseParameterTypes) {
             if (!isParameterAcceptableForInlineClass(baseParameter)) {
@@ -103,10 +103,20 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
             val baseParameterTypeReference = baseParameter.typeReference
             if (baseParameterType != null && baseParameterTypeReference != null) {
-                if (baseParameterType.isInapplicableParameterType() &&
-                    !(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                        (baseParameterType.isTypeParameter() || baseParameterType.isGenericArrayOfTypeParameter()))
+                if (!context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                    (baseParameterType.isTypeParameter() || baseParameterType.isGenericArrayOfTypeParameter())
                 ) {
+                    trace.report(
+                        Errors.UNSUPPORTED_FEATURE.on(
+                            baseParameterTypeReference,
+                            LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings
+                        )
+                    )
+                    baseParametersOk = false
+                    continue
+                }
+
+                if (baseParameterType.isInapplicableParameterType()) {
                     trace.report(Errors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(baseParameterTypeReference, baseParameterType))
                     baseParametersOk = false
                     continue
@@ -151,10 +161,36 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             trace.report(Errors.VALUE_CLASS_CANNOT_BE_CLONEABLE.on(inlineOrValueKeyword))
             return
         }
+
+        fun getFunctionDescriptor(declaration: KtNamedFunction): SimpleFunctionDescriptor? =
+            context.trace.bindingContext.get(BindingContext.FUNCTION, declaration)
+
+        fun isUntypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.overridesEqualsFromAny() ?: false
+        fun isTypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInInlineClass() ?: false
+        fun KtClass.namedFunctions() = declarations.filterIsInstance<KtNamedFunction>()
+
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
+            val typedEquals = declaration.namedFunctions().firstOrNull { isTypedEquals(it) }
+
+            if (typedEquals?.typeParameters?.isNotEmpty() == true) {
+                trace.report(Errors.TYPE_PARAMETERS_NOT_ALLOWED.on(typedEquals))
+            }
+
+            declaration.namedFunctions().singleOrNull { isUntypedEquals(it) }?.apply {
+                if (typedEquals == null) {
+                    trace.report(
+                        Errors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(
+                            this@apply,
+                            descriptor.defaultType.replaceArgumentsWithStarProjections()
+                        )
+                    )
+                }
+            }
+        }
     }
 
     private fun KotlinType.isInapplicableParameterType() =
-        isUnit() || isNothing() || isTypeParameter() || isGenericArrayOfTypeParameter()
+        isUnit() || isNothing()
 
     private fun KotlinType.isGenericArrayOfTypeParameter(): Boolean {
         if (!KotlinBuiltIns.isArray(this)) return false
@@ -203,7 +239,8 @@ class InnerClassInsideInlineClass : DeclarationChecker {
 class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
 
     companion object {
-        private val reservedFunctions = setOf("box", "unbox", "equals", "hashCode")
+        private val boxAndUnboxNames = setOf("box", "unbox")
+        private val equalsAndHashCodeNames = setOf("equals", "hashCode")
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -216,7 +253,10 @@ class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
             is SimpleFunctionDescriptor -> {
                 val ktFunction = declaration as? KtFunction ?: return
                 val functionName = descriptor.name.asString()
-                if (functionName in reservedFunctions) {
+                if (functionName in boxAndUnboxNames
+                    || (functionName in equalsAndHashCodeNames
+                            && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
+                ) {
                     val nameIdentifier = ktFunction.nameIdentifier ?: return
                     context.trace.report(Errors.RESERVED_MEMBER_INSIDE_VALUE_CLASS.on(nameIdentifier, functionName))
                 }

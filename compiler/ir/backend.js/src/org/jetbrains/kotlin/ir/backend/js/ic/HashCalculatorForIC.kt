@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -37,7 +37,18 @@ private class HashCalculatorForIC {
     private val md5 = MessageDigest.getInstance("MD5")
 
     fun update(data: ByteArray) = md5.update(data)
-    fun update(data: String) = md5.update(data.toByteArray())
+
+    fun update(data: Int) = (0..3).forEach { md5.update((data shr (it * 8)).toByte()) }
+
+    fun update(data: String) {
+        update(data.length)
+        update(data.toByteArray())
+    }
+
+    inline fun <T> updateForEach(collection: Collection<T>, f: (T) -> Unit) {
+        update(collection.size)
+        collection.forEach { f(it) }
+    }
 
     private fun bytesToULong(d: ByteArray, offset: Int): ULong {
         var hash = 0UL
@@ -71,19 +82,21 @@ internal fun File.fileHashForIC(): ICHash {
 
 internal fun CompilerConfiguration.configHashForIC() = HashCalculatorForIC().apply {
     val importantBooleanSettingKeys = listOf(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION)
-    for (key in importantBooleanSettingKeys) {
+    updateForEach(importantBooleanSettingKeys) { key ->
         update(key.toString())
         update(getBoolean(key).toString())
     }
+
+    update(languageVersionSettings.toString())
 }.finalize()
 
 internal fun IrElement.irElementHashForIC() = HashCalculatorForIC().also {
     accept(
         visitor = DumpIrTreeVisitor(
             out = object : Appendable {
-                override fun append(csq: CharSequence) = this.apply { it.update(csq.toString()) }
+                override fun append(csq: CharSequence) = this.apply { it.update(csq.toString().toByteArray()) }
                 override fun append(csq: CharSequence, start: Int, end: Int) = append(csq.subSequence(start, end))
-                override fun append(c: Char) = this.apply { it.update(c.toString()) }
+                override fun append(c: Char) = append(c.toString())
             }
         ), data = ""
     )
@@ -94,8 +107,15 @@ internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
     // symbol rendering prints very little information about type parameters
     // TODO may be it make sense to update rendering?
     (owner as? IrTypeParametersContainer)?.let { typeParameters ->
-        typeParameters.typeParameters.forEach { typeParameter ->
+        it.updateForEach(typeParameters.typeParameters) { typeParameter ->
             it.update(typeParameter.symbol.toString())
+        }
+    }
+    (owner as? IrFunction)?.let { irFunction ->
+        it.updateForEach(irFunction.valueParameters) { functionParam ->
+            // symbol rendering doesn't print default params information
+            // it is important to understand if default params were added or removed
+            it.update(functionParam.defaultValue?.let { 1 } ?: 0)
         }
     }
 }.finalize()
@@ -111,18 +131,25 @@ internal fun KotlinLibrary.fingerprint(fileIndex: Int) = HashCalculatorForIC().a
 }.finalize()
 
 internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalculatorForIC().apply {
-    for (importedModule in importedModules) {
+    update(moduleKind.ordinal)
+
+    updateForEach(importedModules) { importedModule ->
         update(importedModule.externalName)
         update(importedModule.internalName.toString())
+        update(importedModule.relativeRequirePath ?: "")
     }
-    for (exportFrom in transitiveJsExportFrom) {
-        update(exportFrom.toString())
+
+    updateForEach(transitiveJsExportFrom) { transitiveExport ->
+        update(transitiveExport.internalName.toString())
+        update(transitiveExport.externalName)
     }
-    for (tag in exports.keys.sorted()) {
+
+    updateForEach(exports.keys.sorted()) { tag ->
         update(tag)
         update(exports[tag]!!)
     }
-    for (tag in imports.keys.sorted()) {
+
+    updateForEach(imports.keys.sorted()) { tag ->
         val import = imports[tag]!!
         update(tag)
         update(import.exportedAs)

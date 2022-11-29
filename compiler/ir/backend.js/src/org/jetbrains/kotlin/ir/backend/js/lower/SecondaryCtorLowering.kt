@@ -86,7 +86,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
     private fun generateFactoryBody(constructor: IrConstructor, irClass: IrClass, stub: IrSimpleFunction, delegate: IrSimpleFunction) {
         stub.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             val type = irClass.defaultType
-            val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
+            val createFunctionIntrinsic = context.intrinsics.jsObjectCreateSymbol
             val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic, type, listOf(type))
             val irDelegateCall = JsIrBuilder.buildCall(delegate.symbol, type).also { call ->
                 for (i in 0 until stub.typeParameters.size) {
@@ -179,6 +179,8 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
     val functionName = "${constructorName}_\$Init\$"
 
     return irFactory.buildFun {
+        startOffset = constructor.startOffset
+        endOffset = constructor.endOffset
         name = Name.identifier(functionName)
         returnType = type
         visibility = DescriptorVisibilities.INTERNAL
@@ -201,6 +203,8 @@ private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructo
     val functionName = "${constructorName}_\$Create\$"
 
     return irFactory.buildFun {
+        startOffset = constructor.startOffset
+        endOffset = constructor.endOffset
         name = Name.identifier(functionName)
         returnType = type
         visibility = constructor.visibility

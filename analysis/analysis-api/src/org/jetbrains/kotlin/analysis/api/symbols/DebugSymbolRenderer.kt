@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProviderMixIn
@@ -34,17 +31,25 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.*
 
-public object DebugSymbolRenderer {
+public class DebugSymbolRenderer(
+    public val renderExtra: Boolean = false,
+) {
+
+    context(KtAnalysisSession)
     public fun render(symbol: KtSymbol): String = prettyPrint { renderSymbol(symbol) }
 
+    context(KtAnalysisSession)
     public fun renderAnnotationApplication(application: KtAnnotationApplication): String =
         prettyPrint { renderAnnotationApplication(application) }
 
+    context(KtAnalysisSession)
     public fun renderType(type: KtType): String = prettyPrint { renderType(type) }
 
-    public fun KtAnalysisSession.renderExtra(symbol: KtSymbol): String = prettyPrint {
-        renderSymbol(symbol)
+    context(KtAnalysisSession)
+    private fun PrettyPrinter.renderSymbol(symbol: KtSymbol) {
+        renderSymbolInternals(symbol)
 
+        if (!renderExtra) return
         withIndent {
             @Suppress("DEPRECATION")
             (symbol as? KtCallableSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
@@ -56,13 +61,13 @@ public object DebugSymbolRenderer {
                 .declaredMemberExtensionFunctions
                 .filter { it.name == "getContainingModule" }
                 .forEach {
-                    renderFunction(it, this@renderExtra, symbol)
+                    renderFunction(it, renderSymbolsFully = false, this@KtAnalysisSession, symbol)
                 }
 
             KtSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties
                 .asSequence()
                 .filter { (it.extensionReceiverParameter?.type?.classifier as? KClass<*>)?.isInstance(symbol) == true }
-                .forEach { renderProperty(it, this@renderExtra, symbol) }
+                .forEach { renderProperty(it, renderSymbolsFully = false, this@KtAnalysisSession, symbol) }
         }
     }
 
@@ -72,33 +77,37 @@ public object DebugSymbolRenderer {
         renderSymbolHeader(symbol)
 
         withIndent {
-            renderProperty(KtCallableSymbol::callableIdIfNonLocal, symbol)
+            renderProperty(KtCallableSymbol::callableIdIfNonLocal, renderSymbolsFully = false, symbol)
             if (symbol is KtNamedSymbol) {
-                renderProperty(KtNamedSymbol::name, symbol)
+                renderProperty(KtNamedSymbol::name, renderSymbolsFully = false, symbol)
             }
-            renderProperty(KtCallableSymbol::origin, symbol)
+            renderProperty(KtCallableSymbol::origin, renderSymbolsFully = false, symbol)
         }
     }
 
-    private fun PrettyPrinter.renderFunction(function: KFunction<*>, vararg args: Any) {
+    context(KtAnalysisSession)
+    private fun PrettyPrinter.renderFunction(function: KFunction<*>, renderSymbolsFully: Boolean, vararg args: Any) {
         appendLine().append(function.name).append(": ")
-        renderFunctionCall(function, args)
+        renderFunctionCall(function, renderSymbolsFully, args)
     }
 
-    private fun PrettyPrinter.renderProperty(property: KProperty<*>, vararg args: Any ) {
+    context(KtAnalysisSession)
+    private fun PrettyPrinter.renderProperty(property: KProperty<*>, renderSymbolsFully: Boolean, vararg args: Any) {
         appendLine().append(property.name).append(": ")
-        renderFunctionCall(property.getter, args)
+        renderFunctionCall(property.getter, renderSymbolsFully, args)
     }
 
-    private fun PrettyPrinter.renderFunctionCall(function: KFunction<*>, args: Array<out Any>) {
+    context(KtAnalysisSession)
+    private fun PrettyPrinter.renderFunctionCall(function: KFunction<*>, renderSymbolsFully: Boolean, args: Array<out Any>) {
         try {
-            renderValue(function.call(*args))
+            renderValue(function.call(*args), renderSymbolsFully)
         } catch (e: InvocationTargetException) {
             append("Could not render due to ").appendLine(e.cause.toString())
         }
     }
 
-    private fun PrettyPrinter.renderSymbol(symbol: KtSymbol) {
+    context(KtAnalysisSession)
+    private fun PrettyPrinter.renderSymbolInternals(symbol: KtSymbol) {
         renderSymbolHeader(symbol)
         val apiClass = getSymbolApiClass(symbol)
         withIndent {
@@ -107,62 +116,76 @@ public object DebugSymbolRenderer {
                 .filterIsInstance<KProperty<*>>()
                 .filter { it.name !in ignoredPropertyNames }
                 .sortedBy { it.name }
-                .forEach { renderProperty(it, symbol) }
+                .forEach { member ->
+                    renderProperty(
+                        member,
+                        renderSymbolsFully = member.name == KtValueParameterSymbol::generatedPrimaryConstructorProperty.name,
+                        symbol
+                    )
+                }
         }
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.renderSymbolHeader(symbol: KtSymbol) {
         val apiClass = getSymbolApiClass(symbol)
         append(apiClass.simpleName).append(':')
     }
 
-    private fun PrettyPrinter.renderList(values: List<*>) {
+    context(KtAnalysisSession)
+    private fun PrettyPrinter.renderList(values: List<*>, renderSymbolsFully: Boolean) {
         if (values.isEmpty()) {
             append("[]")
             return
         }
 
         withIndentInSquareBrackets {
-            printCollection(values, separator = "\n") { renderValue(it) }
+            printCollection(values, separator = "\n") { renderValue(it, renderSymbolsFully) }
         }
     }
 
-    private fun PrettyPrinter.renderSymbolTag(symbol: KtSymbol) {
+    context(KtAnalysisSession)
+    private fun PrettyPrinter.renderSymbolTag(symbol: KtSymbol, renderSymbolsFully: Boolean) {
         fun renderId(id: Any?, symbol: KtSymbol) {
             if (id != null) {
-                renderValue(id)
+                renderValue(id, renderSymbolsFully)
             } else {
                 val outerName = (symbol as? KtPossiblyNamedSymbol)?.name ?: SpecialNames.NO_NAME_PROVIDED
                 append("<local>/" + outerName.asString())
             }
         }
 
+        if (renderSymbolsFully || symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol || symbol is KtValueParameterSymbol || symbol is KtReceiverParameterSymbol) {
+            renderSymbol(symbol)
+            return
+        }
+
         append(getSymbolApiClass(symbol).simpleName)
         append("(")
         when (symbol) {
             is KtClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
-            is KtValueParameterSymbol -> renderValue(symbol.name)
-            is KtPropertyGetterSymbol -> append("<getter>")
-            is KtPropertySetterSymbol -> append("<setter>")
             is KtCallableSymbol -> renderId(symbol.callableIdIfNonLocal, symbol)
-            is KtNamedSymbol -> renderValue(symbol.name)
+            is KtNamedSymbol -> renderValue(symbol.name, renderSymbolsFully = false)
             else -> error("Unsupported symbol ${symbol::class.java.name}")
         }
         append(")")
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.renderAnnotationValue(value: KtAnnotationValue) {
         append(KtAnnotationValueRenderer.render(value))
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.renderNamedConstantValue(value: KtNamedAnnotationValue) {
         append(value.name.render()).append(" = ")
-        renderValue(value.expression)
+        renderValue(value.expression, renderSymbolsFully = false)
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.renderType(type: KtType) {
         if (type.annotations.isNotEmpty()) {
-            renderList(type.annotations)
+            renderList(type.annotations, renderSymbolsFully = false)
             append(' ')
         }
         when (type) {
@@ -171,20 +194,21 @@ public object DebugSymbolRenderer {
         }
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.renderAnnotationApplication(call: KtAnnotationApplication) {
-        renderValue(call.classId)
+        renderValue(call.classId, renderSymbolsFully = false)
         append('(')
         call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
             if (index > 0) {
                 append(", ")
             }
-            renderValue(value)
+            renderValue(value, renderSymbolsFully = false)
         }
         append(')')
 
         withIndent {
             appendLine().append("psi: ")
-            renderValue(call.psi?.javaClass?.simpleName)
+            renderValue(call.psi?.javaClass?.simpleName, renderSymbolsFully = false)
         }
     }
 
@@ -196,10 +220,11 @@ public object DebugSymbolRenderer {
         append(")")
     }
 
-    private fun PrettyPrinter.renderValue(value: Any?) {
+    context(KtAnalysisSession)
+    private fun PrettyPrinter.renderValue(value: Any?, renderSymbolsFully: Boolean) {
         when (value) {
             // Symbol-related values
-            is KtSymbol -> renderSymbolTag(value)
+            is KtSymbol -> renderSymbolTag(value, renderSymbolsFully)
             is KtType -> renderType(value)
             is KtAnnotationValue -> renderAnnotationValue(value)
             is KtNamedAnnotationValue -> renderNamedConstantValue(value)
@@ -221,21 +246,23 @@ public object DebugSymbolRenderer {
             is ULong -> append(value.toString())
             // Java values
             is Enum<*> -> append(value.name)
-            is List<*> -> renderList(value)
+            is List<*> -> renderList(value, renderSymbolsFully = false)
             else -> append(value.toString())
         }
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.rendeContextReceiver(receiver: KtContextReceiver) {
         append("ContextReceiver(")
         receiver.label?.let { label ->
-            renderValue(label)
+            renderValue(label, renderSymbolsFully = false)
             append("@")
         }
         renderType(receiver.type)
         append(")")
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.renderKtModule(ktModule: KtModule) {
         val ktModuleClass = ktModule::class.allSuperclasses.filter { it in ktModuleSubclasses }.first()
         append("${ktModuleClass.simpleName} \"${ktModule.moduleDescription}\"")
@@ -255,6 +282,7 @@ public object DebugSymbolRenderer {
         }
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.renderKtInitializerValue(value: KtInitializerValue) {
         when (value) {
             is KtConstantInitializerValue -> {
@@ -262,16 +290,24 @@ public object DebugSymbolRenderer {
                 append(value.constant.renderAsKotlinConstant())
                 append(")")
             }
+
             is KtNonConstantInitializerValue -> {
                 append("KtNonConstantInitializerValue(")
                 append(value.initializerPsi?.firstLineOfPsi() ?: "NO_PSI")
                 append(")")
             }
+
+            is KtConstantValueForAnnotation -> {
+                append("KtConstantValueForAnnotation(")
+                append(value.annotationValue.renderAsSourceCode())
+                append(")")
+            }
         }
     }
 
+    context(KtAnalysisSession)
     private fun PrettyPrinter.renderAnnotationsList(value: KtAnnotationsList) {
-        renderList(value.annotations)
+        renderList(value.annotations, renderSymbolsFully = false)
     }
 
     private fun getSymbolApiClass(symbol: KtSymbol): KClass<*> {
@@ -286,6 +322,7 @@ public object DebugSymbolRenderer {
         }
     }
 
+    context(KtAnalysisSession)
     private fun PsiElement.firstLineOfPsi(): String {
         val text = text
         val lines = text.lines()

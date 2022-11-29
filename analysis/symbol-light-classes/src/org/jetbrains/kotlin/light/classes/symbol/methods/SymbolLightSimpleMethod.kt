@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
@@ -23,25 +26,27 @@ import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
-context(KtAnalysisSession)
 internal class SymbolLightSimpleMethod(
-    private val functionSymbol: KtFunctionSymbol,
+    ktAnalysisSession: KtAnalysisSession,
+    functionSymbol: KtFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     private val isTopLevel: Boolean,
     argumentsSkipMask: BitSet? = null,
-    private val suppressStatic: Boolean = false
-) : SymbolLightMethod(
+    private val suppressStatic: Boolean = false,
+) : SymbolLightMethod<KtFunctionSymbol>(
+    ktAnalysisSession = ktAnalysisSession,
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     argumentsSkipMask = argumentsSkipMask,
 ) {
-
     private val _name: String by lazyPub {
-        functionSymbol.computeJvmMethodName(functionSymbol.name.asString(), containingClass)
+        withFunctionSymbol { functionSymbol ->
+            functionSymbol.computeJvmMethodName(functionSymbol.name.asString(), containingClass, annotationUseSiteTarget = null)
+        }
     }
 
     override fun getName(): String = _name
@@ -50,47 +55,38 @@ internal class SymbolLightSimpleMethod(
         hasTypeParameters().ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,
-                symbolWithTypeParameterList = functionSymbol,
+                symbolWithTypeParameterPointer = functionSymbolPointer,
+                ktModule = ktModule,
+                ktDeclaration = functionDeclaration,
             )
         }
     }
 
-    override fun hasTypeParameters(): Boolean =
-        functionSymbol.typeParameters.isNotEmpty()
+    override fun hasTypeParameters(): Boolean = hasTypeParameters(ktModule, functionDeclaration, functionSymbolPointer)
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
-    override fun getTypeParameters(): Array<PsiTypeParameter> =
-        _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
+    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
-    private fun computeAnnotations(isPrivate: Boolean): List<PsiAnnotation> {
-        val nullability = if (isPrivate) {
-            NullabilityType.Unknown
-        } else {
-            run l@{
-                val ktType =
-                    when {
-                        functionSymbol.isSuspend -> // Any?
-                            return@l NullabilityType.Nullable
-
-                        isVoidReturnType ->
-                            return@l NullabilityType.Unknown
-
-                        else ->
-                            functionSymbol.returnType
-                    }
-                getTypeNullability(ktType)
+    context(KtAnalysisSession)
+    private fun computeAnnotations(functionSymbol: KtFunctionSymbol, isPrivate: Boolean): List<PsiAnnotation> {
+        val nullability = when {
+            isPrivate -> NullabilityType.Unknown
+            functionSymbol.isSuspend -> /* Any? */ NullabilityType.Nullable
+            else -> {
+                val returnType = functionSymbol.returnType
+                if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
             }
         }
 
         return functionSymbol.computeAnnotations(
-            parent = this,
+            parent = this@SymbolLightSimpleMethod,
             nullability = nullability,
             annotationUseSiteTarget = null,
         )
     }
 
-    private fun computeModifiers(): Set<String> {
-
+    context(KtAnalysisSession)
+    private fun computeModifiers(functionSymbol: KtFunctionSymbol): Set<String> {
         if (functionSymbol.hasInlineOnlyAnnotation()) return setOf(PsiModifier.FINAL, PsiModifier.PRIVATE)
 
         val finalModifier = kotlinOrigin?.hasModifier(KtTokens.FINAL_KEYWORD) == true
@@ -99,14 +95,14 @@ internal class SymbolLightSimpleMethod(
 
         functionSymbol.computeModalityForMethod(
             isTopLevel = isTopLevel,
-            suppressFinal = !finalModifier && functionSymbol.isOverride,
+            suppressFinal = containingClass.isInterface || (!finalModifier && functionSymbol.isOverride),
             result = modifiers
         )
 
         val visibility: String = functionSymbol.isOverride.ifTrue {
             tryGetEffectiveVisibility(functionSymbol)
-                ?.toPsiVisibilityForMember(isTopLevel)
-        } ?: functionSymbol.toPsiVisibilityForMember(isTopLevel = isTopLevel)
+                ?.toPsiVisibilityForMember()
+        } ?: functionSymbol.toPsiVisibilityForMember()
 
         modifiers.add(visibility)
 
@@ -123,51 +119,43 @@ internal class SymbolLightSimpleMethod(
         return modifiers
     }
 
-    private val _isDeprecated: Boolean by lazyPub {
-        functionSymbol.hasDeprecatedAnnotation()
-    }
-
-    override fun isDeprecated(): Boolean = _isDeprecated
-
     private val _modifierList: PsiModifierList by lazyPub {
-        val modifiers = computeModifiers()
-        val annotations = computeAnnotations(modifiers.contains(PsiModifier.PRIVATE))
-        SymbolLightMemberModifierList(this, modifiers, annotations)
+        val lazyModifiers = lazyPub {
+            withFunctionSymbol { functionSymbol ->
+                computeModifiers(functionSymbol)
+            }
+        }
+
+        val lazyAnnotations = lazyPub {
+            withFunctionSymbol { functionSymbol ->
+                computeAnnotations(functionSymbol, PsiModifier.PRIVATE in lazyModifiers.value)
+            }
+        }
+
+        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun isConstructor(): Boolean = false
 
-    private val isVoidReturnType: Boolean
-        get() = functionSymbol.returnType.run {
-            isUnit && nullabilityType != NullabilityType.Nullable
-        }
+    private val KtType.isVoidType: Boolean get() = isUnit && nullabilityType != NullabilityType.Nullable
 
     private val _returnedType: PsiType by lazyPub {
-        val ktType = when {
-            functionSymbol.isSuspend -> // Any?
-                analysisSession.builtinTypes.NULLABLE_ANY
+        withFunctionSymbol { functionSymbol ->
+            val ktType = if (functionSymbol.isSuspend) {
+                analysisSession.builtinTypes.NULLABLE_ANY // Any?
+            } else {
+                functionSymbol.returnType.takeUnless { it.isVoidType } ?: return@withFunctionSymbol PsiType.VOID
+            }
 
-            isVoidReturnType ->
-                return@lazyPub PsiType.VOID
-
-            else ->
-                functionSymbol.returnType
-        }
-        ktType.asPsiType(
-            this@SymbolLightSimpleMethod,
-            KtTypeMappingMode.RETURN_TYPE,
-            containingClass.isAnnotationType
-        ) ?: nonExistentType()
+            ktType.asPsiType(
+                this@SymbolLightSimpleMethod,
+                KtTypeMappingMode.RETURN_TYPE,
+                containingClass.isAnnotationType,
+            )
+        } ?: nonExistentType()
     }
 
     override fun getReturnType(): PsiType = _returnedType
-
-    override fun equals(other: Any?): Boolean =
-        this === other || (other is SymbolLightSimpleMethod && functionSymbol == other.functionSymbol)
-
-    override fun hashCode(): Int = functionSymbol.hashCode()
-
-    override fun isValid(): Boolean = super.isValid() && functionSymbol.isValid()
 }

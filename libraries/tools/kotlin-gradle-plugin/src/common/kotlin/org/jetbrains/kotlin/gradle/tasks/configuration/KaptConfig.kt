@@ -63,7 +63,7 @@ internal open class KaptConfig<TASK : KaptTask>(
 
     internal constructor(kotlinCompileTask: KotlinCompile, ext: KaptExtension) : this(kotlinCompileTask.project, ext) {
         configureTask { task ->
-            task.classpath.from(kotlinCompileTask.libraries)
+            task.classpath.from(kotlinCompileTask.libraries - project.files(task.classesDir))
             task.compiledSources.from(
                 kotlinCompileTask.destinationDirectory,
                 Callable { kotlinCompileTask.javaOutputDir.takeIf { it.isPresent } })
@@ -128,14 +128,7 @@ internal open class KaptConfig<TASK : KaptTask>(
                 if ("-source" in result || "--source" in result || "--release" in result) return@also
 
                 if (defaultJavaSourceCompatibility.isPresent) {
-                    val atLeast12Java =
-                        if (isConfigurationCacheAvailable(project.gradle)) {
-                            val currentJavaVersion =
-                                JavaVersion.parse(project.providers.systemProperty("java.version").forUseAtConfigurationTime().get())
-                            currentJavaVersion.feature >= 12
-                        } else {
-                            SystemInfo.isJavaVersionAtLeast(12, 0, 0)
-                        }
+                    val atLeast12Java = SystemInfo.isJavaVersionAtLeast(12, 0, 0)
                     val sourceOptionKey = if (atLeast12Java) {
                         "--source"
                     } else {

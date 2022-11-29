@@ -1,6 +1,6 @@
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
-  public final Foo onString(java.lang.String, @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends java.lang.Object>);//  onString(java.lang.String, kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends java.lang.Object>)
+  public final Foo onString(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends java.lang.Object>);//  onString(java.lang.String, kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends java.lang.Object>)
 
   @org.jetbrains.annotations.NotNull()
   public final Foo plus(int);//  plus(int)

@@ -21,3 +21,7 @@ enum class Nested1 {
         }
     };
 }
+
+interface I {
+    enum class Nested { WHITE }
+}

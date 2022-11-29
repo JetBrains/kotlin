@@ -11,10 +11,10 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
-import org.jetbrains.kotlin.analysis.api.components.RendererModifier
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.prettyPrintSignature
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererModifierFilter
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractTypeScopeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
@@ -38,7 +39,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiSingleFileTest() {
 
             val scopeStringRepresentation = prettyPrint {
                 appendLine("expression: ${expression.text}")
-                appendLine("KtType: ${type.render()}")
+                appendLine("KtType: ${type.render(position = Variance.INVARIANT)}")
                 appendLine()
                 appendLine("KtTypeScope:")
                 appendLine(typeScope?.let { renderForTests(it) } ?: "NO_SCOPE")
@@ -86,7 +87,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiSingleFileTest() {
         val callables = scope.getCallableSymbols().toList()
         return prettyPrint {
             callables.forEach {
-                appendLine(DebugSymbolRenderer.render(it))
+                appendLine(DebugSymbolRenderer().render(it))
             }
         }
     }
@@ -95,9 +96,14 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiSingleFileTest() {
         val callables = scope.getCallableSymbols().toList()
         return prettyPrint {
             callables.forEach {
-                appendLine(it.render(options = KtDeclarationRendererOptions.DEFAULT.copy(modifiers = RendererModifier.NONE)))
+                appendLine(it.render(renderer))
             }
         }
     }
 
+    companion object {
+        private val renderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
+            modifiersRenderer = modifiersRenderer.with { modifierFilter = KtRendererModifierFilter.NONE }
+        }
+    }
 }

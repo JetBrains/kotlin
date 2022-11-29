@@ -7,8 +7,6 @@ FILE: init.kt
         public? final? val x: Int
             public? get(): Int
 
-        init {
-            this#.x# = x#
-        }
+        init { LAZY_BLOCK }
 
     }

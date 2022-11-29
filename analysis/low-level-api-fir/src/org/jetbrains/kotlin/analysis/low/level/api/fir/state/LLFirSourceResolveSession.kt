@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProvider
+import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -36,6 +37,7 @@ internal class LLFirSourceResolveSession(
     override fun getModuleKind(module: KtModule): ModuleKind {
         return when (module) {
             is KtSourceModule -> ModuleKind.RESOLVABLE_MODULE
+            is KtBuiltinsModule,
             is KtLibraryModule -> ModuleKind.BINARY_MODULE
             else -> unexpectedElementError("module", module)
         }

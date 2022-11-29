@@ -15,12 +15,11 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
-import org.jetbrains.kotlin.gradle.targets.metadata.isSharedNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.w3c.dom.Document
@@ -92,6 +91,11 @@ sealed class SourceSetMetadataLayout(
     }
 }
 
+/**
+ * Represents the structure of "shared" source sets within a Kotlin Project.
+ * Note: This entity is designed to only list "shared" source sets.
+ * No "platform" source sets will be listed.
+ */
 data class KotlinProjectStructureMetadata(
     @Input
     val sourceSetNamesByVariantName: Map<String, Set<String>>,
@@ -114,8 +118,11 @@ data class KotlinProjectStructureMetadata(
     @get:Input
     val isPublishedAsRoot: Boolean,
 
+    @get:Input
+    val sourceSetNames: Set<String>,
+
     @Input
-    val formatVersion: String = FORMAT_VERSION_0_3_2
+    val formatVersion: String = FORMAT_VERSION_0_3_3
 ) : Serializable {
     @Suppress("UNUSED") // Gradle input
     @get:Input
@@ -136,8 +143,12 @@ data class KotlinProjectStructureMetadata(
 
         // + 'sourceSetCInteropMetadataDirectory' map
         internal const val FORMAT_VERSION_0_3_2 = "0.3.2"
+
+        // + 'sourceSetsNames'
+        internal const val FORMAT_VERSION_0_3_3 = "0.3.3"
     }
 }
+
 
 internal val KotlinMultiplatformExtension.kotlinProjectStructureMetadata: KotlinProjectStructureMetadata
     get() = project.extensions.extraProperties.getOrPut("org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata") {
@@ -146,7 +157,6 @@ internal val KotlinMultiplatformExtension.kotlinProjectStructureMetadata: Kotlin
 
 private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformExtension): KotlinProjectStructureMetadata {
     val project = extension.project
-    require(!project.hasKpmModel) { "this function only works with the stable plugin" }
     require(project.state.executed) { "Cannot build 'KotlinProjectStructureMetadata' during project configuration phase" }
 
     val sourceSetsWithMetadataCompilations = extension.targets
@@ -168,14 +178,14 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
              * published as API dependencies of the metadata module to get into the resolution result, see
              * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
              */
-            val isNativeSharedSourceSet = isSharedNativeSourceSet(project, sourceSet)
+            val isNativeSharedSourceSet = isNativeSourceSet(sourceSet)
             val scopes = listOfNotNull(
                 KotlinDependencyScope.API_SCOPE,
                 KotlinDependencyScope.IMPLEMENTATION_SCOPE.takeIf { isNativeSharedSourceSet }
             )
             val sourceSetsToIncludeDependencies =
                 if (isNativeSharedSourceSet)
-                    dependsOnClosureWithInterCompilationDependencies(project, sourceSet).plus(sourceSet)
+                    dependsOnClosureWithInterCompilationDependencies(sourceSet).plus(sourceSet)
                 else listOf(sourceSet)
             val sourceSetExportedDependencies = scopes.flatMap { scope ->
                 sourceSetsToIncludeDependencies.flatMap { hierarchySourceSet ->
@@ -185,7 +195,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
             sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
         },
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
-            .filter { isSharedNativeSourceSet(project, it) }
+            .filter { isNativeSourceSet(it) }
             .associate { sourceSet -> sourceSet.name to cinteropMetadataDirectoryPath(sourceSet.name) },
         hostSpecificSourceSets = getHostSpecificSourceSets(project)
             .filter { it in sourceSetsWithMetadataCompilations }.map { it.name }
@@ -193,7 +203,8 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
             sourceSet.name to SourceSetMetadataLayout.chooseForProducingProject()
         },
-        isPublishedAsRoot = true
+        isPublishedAsRoot = true,
+        sourceSetNames = sourceSetsWithMetadataCompilations.keys.map { it.name }.toSet(),
     )
 }
 
@@ -226,7 +237,8 @@ internal fun buildProjectStructureMetadata(module: GradleKpmModule): KotlinProje
         sourceSetModuleDependencies = fragmentDependencies,
         sourceSetCInteropMetadataDirectory = emptyMap(), // Not supported yet
         hostSpecificSourceSets = getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name },
-        isPublishedAsRoot = true
+        isPublishedAsRoot = true,
+        sourceSetNames = module.fragments.map { it.name }.toSet()
     )
 }
 
@@ -253,8 +265,7 @@ internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
         }
 
         multiNodes(SOURCE_SETS_NODE_NAME) {
-            val keys = sourceSetsDependsOnRelation.keys + sourceSetModuleDependencies.keys
-            for (sourceSet in keys) {
+            for (sourceSet in sourceSetNames) {
                 multiNodesItem(SOURCE_SET_NODE_NAME) {
                     value(NAME_NODE_NAME, sourceSet)
                     multiValue(DEPENDS_ON_NODE_NAME, sourceSetsDependsOnRelation[sourceSet].orEmpty().toList())
@@ -304,7 +315,7 @@ internal fun KotlinProjectStructureMetadata.toJson(): String {
 
 private val NodeList.elements: Iterable<Element> get() = (0 until length).map { this@elements.item(it) }.filterIsInstance<Element>()
 
-internal fun parseKotlinSourceSetMetadataFromJson(string: String): KotlinProjectStructureMetadata? {
+internal fun parseKotlinSourceSetMetadataFromJson(string: String): KotlinProjectStructureMetadata {
     @Suppress("DEPRECATION") // The replacement doesn't compile against old dependencies such as AS 4.0
     val json = JsonParser().parse(string).asJsonObject
     val valueNamed: JsonObject.(String) -> String? = { name -> get(name)?.asString }
@@ -314,7 +325,7 @@ internal fun parseKotlinSourceSetMetadataFromJson(string: String): KotlinProject
     return parseKotlinSourceSetMetadata({ json.get(ROOT_NODE_NAME).asJsonObject }, valueNamed, multiObjects, multiValues)
 }
 
-internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProjectStructureMetadata? {
+internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProjectStructureMetadata {
     val nodeNamed: Element.(String) -> Element? = { name -> getElementsByTagName(name).elements.singleOrNull() }
     val valueNamed: Element.(String) -> String? =
         { name -> getElementsByTagName(name).run { if (length > 0) item(0).textContent else null } }
@@ -334,7 +345,7 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     valueNamed: ParsingContext.(key: String) -> String?,
     multiObjects: ParsingContext.(named: String) -> Iterable<ParsingContext>,
     multiValues: ParsingContext.(named: String) -> Iterable<String>
-): KotlinProjectStructureMetadata? {
+): KotlinProjectStructureMetadata {
     val projectStructureNode = getRoot()
 
     val formatVersion = checkNotNull(projectStructureNode.valueNamed(FORMAT_VERSION_NODE_NAME))
@@ -355,11 +366,13 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     val sourceSetBinaryLayout = mutableMapOf<String, SourceSetMetadataLayout>()
     val sourceSetCInteropMetadataDirectory = mutableMapOf<String, String>()
     val hostSpecificSourceSets = mutableSetOf<String>()
+    val sourceSetNames = mutableSetOf<String>()
 
     val sourceSetsNode = projectStructureNode.multiObjects(SOURCE_SETS_NODE_NAME)
 
     sourceSetsNode.forEach { sourceSetNode ->
         val sourceSetName = checkNotNull(sourceSetNode.valueNamed(NAME_NODE_NAME))
+        sourceSetNames.add(sourceSetName)
 
         val dependsOn = sourceSetNode.multiValues(DEPENDS_ON_NODE_NAME).toSet()
         val moduleDependencies = sourceSetNode.multiValues(MODULE_DEPENDENCY_NODE_NAME).mapTo(mutableSetOf()) {
@@ -390,6 +403,7 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
         sourceSetCInteropMetadataDirectory = sourceSetCInteropMetadataDirectory,
         hostSpecificSourceSets = hostSpecificSourceSets,
         isPublishedAsRoot = isPublishedAsRoot,
+        sourceSetNames = sourceSetNames,
         formatVersion = formatVersion
     )
 }

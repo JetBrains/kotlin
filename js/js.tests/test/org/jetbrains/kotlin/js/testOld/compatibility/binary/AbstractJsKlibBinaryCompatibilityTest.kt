@@ -53,7 +53,8 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
         val args = K2JSCompilerArguments().apply {
             freeArgs = createFiles(module.versionFiles(version))
             libraries = module.dependenciesToLibrariesArg(version = version)
-            outputFile = File(workingDir, "${module.name(version)}.$KLIB_FILE_EXTENSION").absolutePath
+            outputDir = workingDir.normalize().absolutePath
+            moduleName = module.name(version)
             irProduceKlibFile = true
             irOnly = true
             irModuleName = module.name
@@ -67,7 +68,8 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
         val args = K2JSCompilerArguments().apply {
             freeArgs = createFiles(module.files) + runnerFunctionFile()
             libraries = module.dependenciesToLibrariesArg(version = 2)
-            outputFile = File(workingDir, module.name.js).absolutePath
+            outputDir = workingDir.normalize().absolutePath
+            moduleName = module.name
             irProduceJs = true
             irOnly = true
             irModuleName = module.name

@@ -46,8 +46,7 @@ import org.jetbrains.kotlin.fir.pipeline.convertToIr
 import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.pipeline.runResolution
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
-import org.jetbrains.kotlin.fir.session.FirSessionFactory.createSessionWithDependencies
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -148,7 +147,7 @@ object FirKotlinToJvmBytecodeCompiler {
             findMainClass(outputs.single().first.fir)
         }
 
-        return writeOutputs(
+        return writeOutputsIfNeeded(
             project,
             projectConfiguration,
             chunk,
@@ -186,7 +185,10 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyIRTranslationStarted()
 
         val fir2IrExtensions = JvmFir2IrExtensions(moduleConfiguration, JvmIrDeserializerImpl(), JvmIrMangler)
-        val fir2IrResult = firResult.session.convertToIr(firResult.scopeSession, firResult.fir, fir2IrExtensions, irGenerationExtensions)
+        val linkViaSignatures = moduleConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
+        val fir2IrResult = firResult.session.convertToIr(
+            firResult.scopeSession, firResult.fir, fir2IrExtensions, irGenerationExtensions, linkViaSignatures
+        )
 
         performanceManager?.notifyIRTranslationFinished()
 
@@ -245,7 +247,7 @@ object FirKotlinToJvmBytecodeCompiler {
             needRegisterJavaElementFinder: Boolean,
             dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {}
         ): FirSession {
-            return createSessionWithDependencies(
+            return FirSessionFactoryHelper.createSessionWithDependencies(
                 Name.identifier(name),
                 platform,
                 analyzerServices,

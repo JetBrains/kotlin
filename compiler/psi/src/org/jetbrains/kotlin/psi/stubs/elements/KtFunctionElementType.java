@@ -34,6 +34,8 @@ import java.io.IOException;
 
 public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub, KtNamedFunction> {
 
+    private static final String NAME = "kotlin.FUNCTION";
+
     public KtFunctionElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtNamedFunction.class, KotlinFunctionStub.class);
     }
@@ -92,5 +94,11 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
     @Override
     public void indexStub(@NotNull KotlinFunctionStub stub, @NotNull IndexSink sink) {
         StubIndexService.getInstance().indexFunction(stub, sink);
+    }
+
+    @NotNull
+    @Override
+    public String getExternalId() {
+        return NAME;
     }
 }

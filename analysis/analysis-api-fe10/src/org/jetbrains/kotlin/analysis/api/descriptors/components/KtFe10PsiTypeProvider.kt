@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import java.text.StringCharacterIterator
 
 internal class KtFe10PsiTypeProvider(
@@ -43,8 +44,10 @@ internal class KtFe10PsiTypeProvider(
     ): PsiType? {
         val kotlinType = (type as KtFe10Type).type
 
-        if (kotlinType.isError || kotlinType.arguments.any { !it.isStarProjection && it.type.isError }) {
-            return null
+        with(typeMapper.typeContext) {
+            if (kotlinType.contains { it.isError() }) {
+                return null
+            }
         }
 
         return asPsiType(simplifyType(kotlinType), useSitePosition, mode.toTypeMappingMode(type, isAnnotationMethod))
@@ -79,15 +82,16 @@ internal class KtFe10PsiTypeProvider(
     }
 
     private fun asPsiType(type: KotlinType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiType? {
+        if (type !is SimpleTypeMarker) return null
+
         val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
         typeMapper.mapType(type, mode, signatureWriter)
 
         val canonicalSignature = signatureWriter.toString()
         require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
 
-        if (canonicalSignature.contains("L<error>")) {
-            return null
-        }
+        if (canonicalSignature.contains("L<error>")) return null
+        if (canonicalSignature.contains(SpecialNames.NO_NAME_PROVIDED.asString())) return null
 
         val signature = StringCharacterIterator(canonicalSignature)
         val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)

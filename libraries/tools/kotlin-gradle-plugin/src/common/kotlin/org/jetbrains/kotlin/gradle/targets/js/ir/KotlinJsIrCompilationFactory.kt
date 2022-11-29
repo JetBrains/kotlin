@@ -5,17 +5,26 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsIrCompilationSourceSetsContainerFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsKotlinCompilationDependencyConfigurationsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJsCompilerOptionsFactory
 
-class KotlinJsIrCompilationFactory(
-    val project: Project,
-    val target: KotlinOnlyTarget<KotlinJsIrCompilation>
+class KotlinJsIrCompilationFactory internal constructor(
+    override val target: KotlinOnlyTarget<KotlinJsIrCompilation>
 ) : KotlinCompilationFactory<KotlinJsIrCompilation> {
     override val itemClass: Class<KotlinJsIrCompilation>
         get() = KotlinJsIrCompilation::class.java
 
-    override fun create(name: String): KotlinJsIrCompilation =
-        target.project.objects.newInstance(KotlinJsIrCompilation::class.java, target, name)
+    private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
+        compilerOptionsFactory = KotlinJsCompilerOptionsFactory,
+        compilationSourceSetsContainerFactory = JsIrCompilationSourceSetsContainerFactory,
+        compilationDependencyConfigurationsFactory = JsKotlinCompilationDependencyConfigurationsFactory
+    )
+
+    override fun create(name: String): KotlinJsIrCompilation = target.project.objects.newInstance(
+        itemClass, compilationImplFactory.create(target, name)
+    )
 }

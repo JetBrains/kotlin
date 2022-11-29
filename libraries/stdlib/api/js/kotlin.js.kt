@@ -17,7 +17,7 @@ public external fun eval(expr: kotlin.String): dynamic
 
 public external fun js(code: kotlin.String): dynamic
 
-/*∆*/ public fun jsTypeOf(value_hack: kotlin.Any?): kotlin.String
+/*∆*/ public external fun jsTypeOf(a: kotlin.Any?): kotlin.String
 
 public fun json(vararg pairs: kotlin.Pair<kotlin.String, kotlin.Any?>): kotlin.js.Json
 
@@ -239,6 +239,14 @@ public external interface JsClass<T : kotlin.Any> {
 @kotlin.SinceKotlin(version = "1.3")
 public final annotation class JsExport : kotlin.Annotation {
     public constructor JsExport()
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR})
+    @kotlin.SinceKotlin(version = "1.8")
+    public final annotation class Ignore : kotlin.Annotation {
+        public constructor Ignore()
+    }
 }
 
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)

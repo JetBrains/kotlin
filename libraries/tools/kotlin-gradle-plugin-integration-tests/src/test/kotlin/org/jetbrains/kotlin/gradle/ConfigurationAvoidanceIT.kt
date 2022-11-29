@@ -25,14 +25,20 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests // TODO: move it into Android tests tag
+    @AndroidGradlePluginTests
     @DisplayName("Android unrelated tasks are not configured")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
-    @GradleTest
-    fun testAndroidUnrelatedTaskNotConfigured(gradleVersion: GradleVersion) {
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
+    fun testAndroidUnrelatedTaskNotConfigured(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
         project(
             "AndroidProject",
-            gradleVersion
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = providedJdk.location
         ) {
 
             listOf("Android", "Test").forEach { subproject ->
@@ -69,12 +75,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
                     """.trimIndent()
                 )
 
-            build(
-                "help",
-                buildOptions = defaultBuildOptions.copy(
-                    androidVersion = TestVersions.AGP.AGP_42.version
-                )
-            )
+            build("help")
         }
     }
 

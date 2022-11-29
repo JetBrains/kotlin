@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -21,14 +21,13 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.registerDefaultVariantFactories
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupFragmentsMetadataForKpmModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupKpmModulesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
@@ -49,30 +48,9 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.0"))
 
-        if (PropertiesProvider(project).mppStabilityNoWarn != true) {
-            SingleWarningPerBuild.show(
-                project,
-                "Kotlin Multiplatform Projects are an Alpha feature. " +
-                        "See: https://kotlinlang.org/docs/reference/evolution/components-stability.html. " +
-                        "To hide this message, add '$STABILITY_NOWARN_FLAG=true' to the Gradle properties.\n"
-            )
-        }
-
         handleHierarchicalStructureFlagsMigration(project)
 
         project.plugins.apply(JavaBasePlugin::class.java)
-
-        if (project.hasKpmModel) {
-            setupFragmentsMetadataForKpmModules(project)
-            setupKpmModulesPublication(project)
-            registerDefaultVariantFactories(project)
-            with(project.kpmModules) {
-                create(GradleKpmModule.MAIN_MODULE_NAME) {
-                    it.makePublic()
-                }
-                create(GradleKpmModule.TEST_MODULE_NAME)
-            }
-        }
 
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
 
@@ -87,9 +65,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         )
         project.registerKotlinArtifactsExtension()
 
-        if (!project.hasKpmModel) {
-            configurePublishingWithMavenPublish(project)
-        }
+        configurePublishingWithMavenPublish(project)
+
         kotlinMultiplatformExtension.targets.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
@@ -115,8 +92,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
             project.multiplatformExtension.metadata().compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         val primaryCompilationsBySourceSet by lazy { // don't evaluate eagerly: Android targets are not created at this point
-            val allCompilationsForSourceSets = CompilationSourceSetUtil.compilationsBySourceSets(project).mapValues { (_, compilations) ->
-                compilations.filter { it.target.platformType != KotlinPlatformType.common }
+            val allCompilationsForSourceSets = project.multiplatformExtension.sourceSets.associateWith { sourceSet ->
+                sourceSet.internal.compilations.filter { compilation -> compilation.target.platformType != KotlinPlatformType.common }
             }
 
             allCompilationsForSourceSets.mapValues { (_, compilations) -> // choose one primary compilation
@@ -129,6 +106,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                             1 -> sourceSetTargets.single().compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
                                 ?: // use any of the compilations for now, looks OK for Android TODO maybe reconsider
                                 compilations.first()
+
                             else -> metadataCompilation
                         }
                     }
@@ -170,8 +148,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                     val targetToAdd = when (konanTarget) {
                         in nativeTargetsWithHostTests ->
                             KotlinNativeTargetWithHostTestsPreset(konanTarget.presetName, project, konanTarget)
+
                         in nativeTargetsWithSimulatorTests ->
                             KotlinNativeTargetWithSimulatorTestsPreset(konanTarget.presetName, project, konanTarget)
+
                         else -> KotlinNativeTargetPreset(konanTarget.presetName, project, konanTarget)
                     }
 
@@ -213,8 +193,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         internal fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
             "kotlin.mpp.freeCompilerArgsForSourceSet.$sourceSetName"
-
-        internal const val STABILITY_NOWARN_FLAG = "kotlin.mpp.stability.nowarn"
     }
 }
 
@@ -224,52 +202,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
  * 2. Resolvable configurations of each compilation need the compilation's attributes
  */
 internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
-    val project = target.project
-
-    if (!project.hasKpmModel) {
-        applyUserDefinedAttributesWithLegacyModel(target)
-    } else {
-        applyUserDefinedAttributesWithKpm(target)
-    }
-}
-
-private fun applyUserDefinedAttributesWithKpm(
-    target: AbstractKotlinTarget,
-) {
-    fun copyAttributesToVariant(variant: GradleKpmVariant, from: AttributeContainer) {
-        variant.gradleVariantNames.forEach { configurationOrVariantName ->
-            val configuration = variant.project.configurations.findByName(configurationOrVariantName)
-                ?: return@forEach
-            copyAttributes(from, configuration.attributes)
-        }
-    }
-
-    val project = target.project
-    project.whenEvaluated {
-        multiplatformExtension.targets.all target@{ target ->
-            if (target is KotlinMetadataTarget)
-                return@target
-
-            target.compilations.all compilation@{ compilation ->
-                if (compilation is AbstractKotlinCompilation) {
-                    val details = compilation.compilationDetails as? VariantMappedCompilationDetails<*>
-                        ?: return@compilation
-                    copyAttributesToVariant(details.variant, compilation.attributes)
-                }
-            }
-        }
-    }
-
-    // Also handle the legacy-mapped variants, which are not accessible through the compilations in the loop above
-    project.kpmModules.getByName(GradleKpmModule.MAIN_MODULE_NAME).variants.withType(GradleKpmLegacyMappedVariant::class.java).all { variant ->
-        val compilation = variant.compilation
-        copyAttributesToVariant(variant, compilation.attributes)
-    }
-}
-
-private fun applyUserDefinedAttributesWithLegacyModel(
-    target: AbstractKotlinTarget,
-) {
     val project = target.project
     project.whenEvaluated {
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
@@ -301,21 +233,29 @@ private fun applyUserDefinedAttributesWithLegacyModel(
     }
 }
 
-internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String?, artifactNameAppendix: String): TaskProvider<Jar> =
-    sourcesJarTask(compilation.target.project, lazy { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } }, componentName, artifactNameAppendix)
+internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String, artifactNameAppendix: String): TaskProvider<Jar> =
+    sourcesJarTask(
+        compilation.target.project,
+        lazy { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } },
+        componentName,
+        artifactNameAppendix
+    )
 
-internal fun sourcesJarTask(
+private fun sourcesJarTask(
     project: Project,
     sourceSets: Lazy<Map<String, Iterable<File>>>,
-    componentName: String?,
+    taskNamePrefix: String,
     artifactNameAppendix: String
-): TaskProvider<Jar> = sourcesJarTaskNamed(lowerCamelCaseName(componentName, "sourcesJar"), project, sourceSets, artifactNameAppendix)
+): TaskProvider<Jar> =
+    sourcesJarTaskNamed(lowerCamelCaseName(taskNamePrefix, "sourcesJar"), taskNamePrefix, project, sourceSets, artifactNameAppendix)
 
 internal fun sourcesJarTaskNamed(
     taskName: String,
+    componentName: String,
     project: Project,
     sourceSets: Lazy<Map<String, Iterable<File>>>,
-    artifactNameAppendix: String
+    artifactNameAppendix: String,
+    componentTypeName: String = "target",
 ): TaskProvider<Jar> {
     project.locateTask<Jar>(taskName)?.let {
         return it
@@ -326,6 +266,8 @@ internal fun sourcesJarTaskNamed(
         sourcesJar.archiveClassifier.set("sources")
         sourcesJar.isPreserveFileTimestamps = false
         sourcesJar.isReproducibleFileOrder = true
+        sourcesJar.group = BasePlugin.BUILD_GROUP
+        sourcesJar.description = "Assembles a jar archive containing the sources of $componentTypeName '$componentName'."
     }
 
     project.whenEvaluated {
@@ -347,14 +289,14 @@ internal fun sourcesJarTaskNamed(
 
 internal fun Project.setupGeneralKotlinExtensionParameters() {
     val sourceSetsInMainCompilation by lazy {
-        CompilationSourceSetUtil.compilationsBySourceSets(project).filterValues { compilations ->
-            compilations.any {
+        kotlinExtension.sourceSets.filter { sourceSet ->
+            sourceSet.internal.compilations.any {
                 // kotlin main compilation
                 it.isMain()
                         // android compilation which is NOT in tested variant
                         || (it as? KotlinJvmAndroidCompilation)?.let { getTestedVariantData(it.androidVariant) == null } == true
             }
-        }.keys
+        }
     }
 
     kotlinExtension.sourceSets.all { sourceSet ->

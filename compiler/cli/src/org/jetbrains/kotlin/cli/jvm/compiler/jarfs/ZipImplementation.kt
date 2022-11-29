@@ -28,6 +28,7 @@ class ZipEntryDescription(
 }
 
 private const val END_OF_CENTRAL_DIR_SIZE = 22
+private const val END_OF_CENTRAL_DIR_ZIP64_SIZE = 56
 private const val LOCAL_FILE_HEADER_EXTRA_OFFSET = 28
 private const val LOCAL_FILE_HEADER_SIZE = LOCAL_FILE_HEADER_EXTRA_OFFSET + 2
 
@@ -55,6 +56,7 @@ fun MappedByteBuffer.contentsToByteArray(
 
             result
         }
+
         ZipEntryDescription.CompressionKind.PLAIN -> compressed.copyOf(zipEntryDescription.compressedSize)
     }
 }
@@ -62,15 +64,7 @@ fun MappedByteBuffer.contentsToByteArray(
 fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
     order(ByteOrder.LITTLE_ENDIAN)
 
-    var endOfCentralDirectoryOffset = capacity() - END_OF_CENTRAL_DIR_SIZE
-    while (endOfCentralDirectoryOffset >= 0) {
-        // header of "End of central directory"
-        if (getInt(endOfCentralDirectoryOffset) == 0x06054b50) break
-        endOfCentralDirectoryOffset--
-    }
-
-    val entriesNumber = getUnsignedShort(endOfCentralDirectoryOffset + 10)
-    val offsetOfCentralDirectory = getInt(endOfCentralDirectoryOffset + 16)
+    val (entriesNumber, offsetOfCentralDirectory) = parseCentralDirectoryRecordsNumberAndOffset()
 
     var currentOffset = offsetOfCentralDirectory
 
@@ -88,9 +82,9 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
 
         val compressedSize = getInt(currentOffset + 20)
         val uncompressedSize = getInt(currentOffset + 24)
-        val fileNameLength = getUnsignedShort(currentOffset + 28).toInt()
-        val extraLength = getUnsignedShort(currentOffset + 30).toInt()
-        val fileCommentLength = getUnsignedShort(currentOffset + 32).toInt()
+        val fileNameLength = getUnsignedShort(currentOffset + 28)
+        val extraLength = getUnsignedShort(currentOffset + 30)
+        val fileCommentLength = getUnsignedShort(currentOffset + 32)
 
         val offsetOfFileData = getInt(currentOffset + 42)
 
@@ -110,7 +104,7 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
         // We support version needed to extract 10 and 20. However, there are zip
         // files in the eco-system with entries with invalid version to extract
         // of 0. Therefore, we just check that the version is between 0 and 20.
-        require(0 <= versionNeededToExtract && versionNeededToExtract <= 20) {
+        require(versionNeededToExtract in 0..20) {
             "Unexpected versionNeededToExtract ($versionNeededToExtract) at $name"
         }
 
@@ -127,6 +121,45 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
     }
 
     return result
+}
+
+private fun MappedByteBuffer.parseCentralDirectoryRecordsNumberAndOffset(): Pair<Int, Int> {
+    var endOfCentralDirectoryOffset = capacity() - END_OF_CENTRAL_DIR_SIZE
+    while (endOfCentralDirectoryOffset >= 0) {
+        // header of "End of central directory" (see https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT)
+        if (getInt(endOfCentralDirectoryOffset) == 0x06054b50) break
+        endOfCentralDirectoryOffset--
+    }
+
+    val entriesNumber = getUnsignedShort(endOfCentralDirectoryOffset + 10)
+    val offsetOfCentralDirectory = getInt(endOfCentralDirectoryOffset + 16)
+    // Offset of start of central directory, relative to start of archive (or -1 for ZIP64)
+    // (see https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT)
+    if (entriesNumber == 0xffff || offsetOfCentralDirectory == -1) return parseZip64CentralDirectoryRecordsNumberAndOffset()
+
+    return Pair(entriesNumber, offsetOfCentralDirectory)
+}
+
+private fun MappedByteBuffer.parseZip64CentralDirectoryRecordsNumberAndOffset(): Pair<Int, Int> {
+    var endOfCentralDirectoryOffset = capacity() - END_OF_CENTRAL_DIR_ZIP64_SIZE
+    while (endOfCentralDirectoryOffset >= 0) {
+        // header of "End of central directory" (see https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT)
+        if (getInt(endOfCentralDirectoryOffset) == 0x06064b50) break
+        endOfCentralDirectoryOffset--
+    }
+
+    val entriesNumber = getLong(endOfCentralDirectoryOffset + 32)
+    val offsetOfCentralDirectory = getLong(endOfCentralDirectoryOffset + 48)
+
+    require(entriesNumber <= Int.MAX_VALUE) {
+        "Jar $entriesNumber entries number equal or more than ${Int.MAX_VALUE} is not supported by FastJarFS"
+    }
+
+    require(offsetOfCentralDirectory <= Int.MAX_VALUE) {
+        "Jar $offsetOfCentralDirectory offset equal or more than ${Int.MAX_VALUE} is not supported by FastJarFS"
+    }
+
+    return Pair(entriesNumber.toInt(), offsetOfCentralDirectory.toInt())
 }
 
 private fun ByteBuffer.getUnsignedShort(offset: Int): Int = java.lang.Short.toUnsignedInt(getShort(offset))

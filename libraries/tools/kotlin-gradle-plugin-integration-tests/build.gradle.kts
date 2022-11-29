@@ -12,6 +12,10 @@ pill {
 
 testsJar()
 
+kotlin.sourceSets.all {
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+}
+
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
@@ -40,6 +44,11 @@ dependencies {
             requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")
         }
     }
+    testImplementation(project(":kotlin-assignment")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-assignment-common")
+        }
+    }
     testImplementation(project(":atomicfu")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:atomicfu-common")
@@ -64,7 +73,6 @@ dependencies {
 
     testImplementation(project(path = ":examples:annotation-processor-example"))
     testImplementation(kotlinStdlib("jdk8"))
-    testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-parcelize-compiler"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testImplementation(commonDependency("io.ktor", "ktor-server-test-host"))
@@ -77,7 +85,6 @@ dependencies {
     testImplementation(commonDependency("com.google.code.gson:gson"))
     testApiJUnit5(vintageEngine = true, jupiterParams = true)
 
-    testRuntimeOnly(project(":kotlin-android-extensions"))
     testRuntimeOnly(project(":compiler:tests-mutes"))
 
     // Workaround for missing transitive import of the common(project `kotlin-test-common`
@@ -89,13 +96,9 @@ dependencies {
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
 val shortenTempRootName = project.providers.systemProperty("os.name").forUseAtConfigurationTime().get().contains("Windows")
 
-val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
-        try {
-            project.providers.gradleProperty("gradle.integration.tests.split.tasks").forUseAtConfigurationTime().orNull
-                ?.toBoolean() ?: false
-        } catch (_: Exception) {
-            false
-        }
+val splitGradleIntegrationTestTasks =
+    project.providers.gradleProperty("gradle.integration.tests.split.tasks").forUseAtConfigurationTime().orNull?.toBoolean()
+        ?: project.kotlinBuildProperties.isTeamcityBuild
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.io.path.ExperimentalPathApi"
@@ -117,7 +120,7 @@ fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
 }
 
 fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
-    if (isTeamcityBuild) {
+    if (splitGradleIntegrationTestTasks) {
         val filter = if (include)
             filter.includePatterns
         else
@@ -127,7 +130,7 @@ fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>
 }
 
 fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "7.2"
+    val gradleVersionForTests = "7.3.3"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 
@@ -172,7 +175,7 @@ projectTest(
     includeNative(false)
 }
 
-if (isTeamcityBuild) {
+if (splitGradleIntegrationTestTasks) {
     projectTest(
         "testNative",
         shortenTempRootName = shortenTempRootName,
@@ -300,7 +303,7 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
     dependsOn(jvmTestsTask, jsTestsTask, nativeTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
-    if (isTeamcityBuild) {
+    if (splitGradleIntegrationTestTasks) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
         dependsOn("testNative")
@@ -326,10 +329,11 @@ tasks.withType<Test> {
     }
 
     val jdk8Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk9Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_9).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk16Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_16).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk9Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_9_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk16Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_16_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk17Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0).map { it.metadata.installationPath.asFile.absolutePath }
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").forUseAtConfigurationTime().orNull
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
@@ -339,6 +343,7 @@ tasks.withType<Test> {
         systemProperty("jdk10Home", jdk10Provider.get())
         systemProperty("jdk11Home", jdk11Provider.get())
         systemProperty("jdk16Home", jdk16Provider.get())
+        systemProperty("jdk17Home", jdk17Provider.get())
         if (mavenLocalRepo != null) {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }

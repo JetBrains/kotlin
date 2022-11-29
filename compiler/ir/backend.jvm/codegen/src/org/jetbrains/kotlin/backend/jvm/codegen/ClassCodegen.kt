@@ -215,7 +215,7 @@ class ClassCodegen private constructor(
 
         generateInnerAndOuterClasses()
 
-        visitor.done()
+        visitor.done(state.generateSmapCopyToAnnotation)
         jvmSignatureClashDetector.reportErrors(classOrigin)
     }
 

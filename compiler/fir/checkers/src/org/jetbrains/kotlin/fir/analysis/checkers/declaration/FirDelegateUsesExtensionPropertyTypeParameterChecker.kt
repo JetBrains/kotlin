@@ -18,11 +18,10 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val delegate = declaration.delegate.safeAs<FirFunctionCall>() ?: return
+        val delegate = declaration.delegate as? FirFunctionCall ?: return
         val parameters = declaration.typeParameters.mapTo(hashSetOf()) { it.symbol }
 
         val usedTypeParameterSymbol = delegate.typeRef.coneType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)

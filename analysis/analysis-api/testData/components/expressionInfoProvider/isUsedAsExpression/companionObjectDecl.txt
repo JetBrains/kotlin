@@ -1,0 +1,5 @@
+expression: OBJECT_DECLARATION
+text: companion object {
+        val K: Int = 58
+    }
+isUsedAsExpression: false

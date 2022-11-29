@@ -781,7 +781,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             } catch (e: Exception) {
                 TestCase.assertEquals(
                     "Unable to use scripting/REPL in the daemon: no scripting plugin loaded",
-                    e.message
+                    e.cause?.message
                 )
                 isErrorThrown = true
             } finally {

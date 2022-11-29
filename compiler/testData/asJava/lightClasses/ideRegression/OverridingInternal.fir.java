@@ -1,9 +1,7 @@
 public final class C /* p.C*/ {
-  private final int ip;
+  private final int ip = 5 /* initializer type: int */;
 
   public  C();//  .ctor()
-
-  public int <no name provided>();//  <no name provided>()
 
   public int af();//  af()
 

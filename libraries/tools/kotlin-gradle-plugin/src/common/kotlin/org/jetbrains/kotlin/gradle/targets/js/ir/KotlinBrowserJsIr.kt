@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
 import javax.inject.Inject
@@ -117,6 +118,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
+                    task.dependsOn(binary.linkSyncTask)
                     val entryFileProvider = binary.linkSyncTask.flatMap { syncTask ->
                         binary.linkTask.map {
                             syncTask.destinationDir.resolve(it.outputFileProperty.get().name)
@@ -151,7 +153,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     )()
 
 
-                    task.outputs.upToDateWhen { false }
+                    task.doNotTrackStateCompat("Tracked by external webpack tool")
 
                     task.commonConfigure(
                         compilation = compilation,
@@ -203,9 +205,9 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
-                    val entryFileProvider = binary.linkSyncTask.map {
-                        it.destinationDir
-                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
+                    val entryFileProvider = binary.linkSyncTask.zip(binary.linkTask) { sync, link ->
+                        sync.destinationDir
+                            .resolve(link.compilerOptions.moduleName.get() + ".js")
                     }
 
                     task.description = "build webpack ${mode.name.toLowerCase()} bundle"
@@ -266,9 +268,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         configureOptimization(mode)
 
-        entryProperty.set(
-            project.layout.file(entryFileProvider)
-        )
+        entryProperty.fileProvider(entryFileProvider)
 
         configurationActions.forEach { configure ->
             configure()

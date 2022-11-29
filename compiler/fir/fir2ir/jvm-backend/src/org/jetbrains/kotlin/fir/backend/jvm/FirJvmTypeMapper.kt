@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatureWriter>, FirSessionComponent {
@@ -255,8 +254,11 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         require(this is ConeTypeParameterLookupTag)
         val bounds = this.typeParameterSymbol.resolvedBounds.map { it.coneType }
         return bounds.firstOrNull {
-            val classSymbol = it.safeAs<ConeClassLikeType>()?.fullyExpandedType(session)
-                ?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol ?: return@firstOrNull false
+            val classSymbol = (it as? ConeClassLikeType)
+                ?.fullyExpandedType(session)
+                ?.lookupTag
+                ?.toSymbol(session) as? FirRegularClassSymbol
+                ?: return@firstOrNull false
             val kind = classSymbol.fir.classKind
             kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS
         } ?: bounds.first()

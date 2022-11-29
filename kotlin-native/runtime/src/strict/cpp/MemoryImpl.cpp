@@ -19,14 +19,6 @@ OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elements) {
   RETURN_RESULT_OF(AllocArrayInstanceStrict, typeInfo, elements);
 }
 
-OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(InitThreadLocalSingletonStrict, location, typeInfo, ctor);
-}
-
-OBJ_GETTER(InitSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RETURN_RESULT_OF(InitSingletonStrict, location, typeInfo, ctor);
-}
-
 RUNTIME_NOTHROW void ReleaseHeapRef(const ObjHeader* object) {
   ReleaseHeapRefStrict(object);
 }

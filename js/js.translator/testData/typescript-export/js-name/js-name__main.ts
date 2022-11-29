@@ -11,7 +11,7 @@ function box(): string {
 
     assert(jsNameTest.value === 4)
     assert(jsNameTest.runTest() === "JsNameTest")
-    assert(jsNameTest.acceptObject(Object) === "Function")
+    assert(jsNameTest.acceptObject({ constructor: Function }) === "Function")
 
     const jsNameNestedTest = JsNameTest.NotCompanion.createChild(42);
 

@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.isJavaOrEnhancement
-import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
+import org.jetbrains.kotlin.fir.dispatchReceiverClassTypeOrNull
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -71,21 +71,21 @@ object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatib
         }
 
         if (!originalMember.isJavaOrEnhancement) return false
-        val containingClassName = originalMember.containingClass()?.classId?.asSingleFqName()?.toUnsafe() ?: return false
+        val containingClassName = originalMember.containingClassLookupTag()?.classId?.asSingleFqName()?.toUnsafe() ?: return false
         // If the super class is mapped to a Kotlin built-in class, then we don't require `override` keyword.
         if (JavaToKotlinClassMap.mapKotlinToJava(containingClassName) != null) {
             return true
         }
 
         if (!originalMember.isAbstract) {
-            val containingClass = originalMember.containingClass()?.toFirRegularClassSymbol(context.session)
+            val containingClass = originalMember.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
             if (containingClass?.isInterface == false) {
                 return false
             }
         }
 
         val scope =
-            symbol.dispatchReceiverTypeOrNull()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return false
+            symbol.dispatchReceiverClassTypeOrNull()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return false
         val overriddenSymbols = when (originalMember) {
             is FirSimpleFunction -> scope.getDirectOverriddenFunctions(originalMember.symbol)
             is FirProperty -> scope.getDirectOverriddenProperties(originalMember.symbol)

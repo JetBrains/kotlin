@@ -19,23 +19,23 @@ import java.io.File
 
 internal fun Project.compilerPluginProviderForMetadata(
     fragment: GradleKpmFragment,
-    compilationData: KotlinCommonFragmentMetadataCompilationData
+    compilationData: GradleKpmCommonFragmentMetadataCompilationData
 ) = compilerPluginDataProvider(compilationData, fragment::metadataCompilationPluginData)
 
 internal fun Project.compilerPluginProviderForNativeMetadata(
     fragment: GradleKpmFragment,
-    compilationData: KotlinNativeFragmentMetadataCompilationData
+    compilationData: GradleKpmNativeFragmentMetadataCompilationData
 ) = compilerPluginDataProvider(compilationData, fragment::nativeMetadataCompilationPluginData)
 
 internal fun Project.compilerPluginProviderForPlatformCompilation(
     variant: GradleKpmVariant,
-    compilationData: KotlinCompilationData<*>
+    compilationData: GradleKpmCompilationData<*>
 ) = compilerPluginDataProvider(compilationData, variant::platformCompilationPluginData)
 
-internal fun KotlinCompilationData<*>.pluginClasspathConfigurationName() = "${compileKotlinTaskName}PluginClasspath"
+internal fun GradleKpmCompilationData<*>.pluginClasspathConfigurationName() = "${compileKotlinTaskName}PluginClasspath"
 
 private fun Project.compilerPluginDataProvider(
-    compilationData: KotlinCompilationData<*>,
+    compilationData: GradleKpmCompilationData<*>,
     pluginDataList: () -> List<PluginData>
 ): Provider<KotlinCompilerPluginData> {
     return newProperty {

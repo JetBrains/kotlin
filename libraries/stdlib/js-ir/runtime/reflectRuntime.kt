@@ -7,44 +7,44 @@ package kotlin.js
 
 import kotlin.reflect.KProperty
 
-internal fun getPropertyCallableRef(name: String, paramCount: Int, type: dynamic, getter: dynamic, setter: dynamic): KProperty<*> {
+internal fun getPropertyCallableRef(
+    name: String,
+    paramCount: Int,
+    superType: dynamic,
+    getter: dynamic,
+    setter: dynamic
+): KProperty<*> {
     getter.get = getter
     getter.set = setter
     getter.callableName = name
-    return getPropertyRefClass(getter, getKPropMetadata(paramCount, setter, type)).unsafeCast<KProperty<*>>()
+    return getPropertyRefClass(
+        getter,
+        getKPropMetadata(paramCount, setter),
+        getInterfaceMaskFor(getter, superType)
+    ).unsafeCast<KProperty<*>>()
 }
 
-internal fun getLocalDelegateReference(name: String, type: dynamic, mutable: Boolean, lambda: dynamic): KProperty<*> {
-    return getPropertyCallableRef(name, 0, type, lambda, if (mutable) lambda else null)
+internal fun getLocalDelegateReference(name: String, superType: dynamic, mutable: Boolean, lambda: dynamic): KProperty<*> {
+    return getPropertyCallableRef(name, 0, superType, lambda, if (mutable) lambda else null)
 }
 
-private fun getPropertyRefClass(obj: Ctor, metadata: Metadata): dynamic {
-    obj.`$metadata$` = metadata;
-    obj.constructor = obj;
+private fun getPropertyRefClass(obj: Ctor, metadata: Metadata, imask: BitMask): dynamic {
+    obj.`$metadata$` = metadata
+    obj.constructor = obj
+    obj.`$imask$` = imask
     return obj;
 }
 
-private fun getKPropMetadata(paramCount: Int, setter: Any?, type: dynamic): dynamic {
-    val mdata: Metadata = propertyRefClassMetadataCache[paramCount][if (setter == null) 0 else 1]
+private fun getInterfaceMaskFor(obj: Ctor, superType: dynamic): BitMask =
+    obj.`$imask$` ?: implement(superType)
 
-    if (mdata.interfaces.size == 0) {
-        mdata.interfaces.asDynamic().push(type)
-
-        if (mdata.interfacesCache == null) {
-            mdata.interfacesCache = generateInterfaceCache()
-        } else {
-            mdata.interfacesCache!!.isComplete = false
-        }
-
-        mdata.interfacesCache!!.extendCacheWithSingle(type)
-    }
-
-    return mdata
+@Suppress("UNUSED_PARAMETER")
+private fun getKPropMetadata(paramCount: Int, setter: Any?): dynamic {
+    return propertyRefClassMetadataCache[paramCount][if (setter == null) 0 else 1]
 }
 
 private fun metadataObject(): Metadata {
-    val undef = js("undefined")
-    return classMeta(undef, undef, undef, undef, undef, undef)
+    return classMeta(VOID, VOID, VOID, VOID)
 }
 
 private val propertyRefClassMetadataCache: Array<Array<dynamic>> = arrayOf<Array<dynamic>>(

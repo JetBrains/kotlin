@@ -108,7 +108,6 @@ abstract class KotlinPackageJsonTask : DefaultTask() {
             val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
             val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
-            val npmInstallTask = nodeJs.npmInstallTaskProvider
             val npmCachesSetupTask = nodeJs.npmCachesSetupTaskProvider
             val packageJsonTaskName = npmProject.packageJsonTaskName
             val packageJsonUmbrella = nodeJs.packageJsonUmbrellaTaskProvider
@@ -131,10 +130,6 @@ abstract class KotlinPackageJsonTask : DefaultTask() {
             }
 
             nodeJs.rootPackageJsonTaskProvider!!.configure { it.mustRunAfter(packageJsonTask) }
-
-            compilation.compileKotlinTaskProvider.dependsOn(npmInstallTask!!)
-            compilation.compileKotlinTaskProvider.dependsOn(nodeJs.storeYarnLockTaskProvider!!)
-            compilation.compileKotlinTaskProvider.dependsOn(packageJsonTask)
 
             return packageJsonTask
         }

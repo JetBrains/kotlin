@@ -6,16 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 abstract class Flow {
+    abstract val knownVariables: Set<RealVariable>
+    abstract fun unwrapVariable(variable: RealVariable): RealVariable
     abstract fun getTypeStatement(variable: RealVariable): TypeStatement?
-    abstract fun getImplications(variable: DataFlowVariable): Collection<Implication>
-    abstract fun getVariablesInTypeStatements(): Collection<RealVariable>
-    abstract fun removeOperations(variable: DataFlowVariable): Collection<Implication>
-
-    abstract val directAliasMap: Map<RealVariable, RealVariableAndType>
-    abstract val backwardsAliasMap: Map<RealVariable, List<RealVariable>>
-    abstract val assignmentIndex: Map<RealVariable, Int>
-}
-
-fun Flow.unwrapVariable(variable: RealVariable): RealVariable {
-    return directAliasMap[variable]?.variable ?: variable
 }

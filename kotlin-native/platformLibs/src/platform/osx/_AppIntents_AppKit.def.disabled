@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._AppIntents_AppKit
+
+modules = _AppIntents_AppKit
+compilerOpts = -framework _AppIntents_AppKit
+linkerOpts = -framework _AppIntents_AppKit
+#Disabled: Unavailable

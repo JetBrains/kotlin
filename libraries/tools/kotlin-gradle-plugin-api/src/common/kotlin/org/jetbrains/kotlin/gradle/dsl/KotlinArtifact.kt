@@ -15,6 +15,7 @@ interface KotlinArtifact : Named, ExtensionAware {
     val artifactName: String
     val modules: Set<Any>
     val taskName: String
+    val outDir: String
     fun registerAssembleTask(project: Project)
 }
 
@@ -22,7 +23,13 @@ interface KotlinNativeArtifact : KotlinArtifact {
     val modes: Set<NativeBuildType>
     val isStatic: Boolean
     val linkerOptions: List<String>
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced by toolOptionsConfigure",
+        replaceWith = ReplaceWith("toolOptionsConfigure")
+    )
     val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit
+    val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit
     val binaryOptions: Map<String, String>
 }
 
@@ -58,7 +65,13 @@ interface KotlinNativeArtifactConfig : KotlinArtifactConfig {
     fun modes(vararg modes: NativeBuildType)
     var isStatic: Boolean
     var linkerOptions: List<String>
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions()",
+        replaceWith = ReplaceWith("toolOptions(fn)")
+    )
     fun kotlinOptions(fn: Action<KotlinCommonToolOptions>)
+    fun toolOptions(configure: Action<KotlinCommonCompilerToolOptions>)
     fun binaryOption(name: String, value: String)
 }
 

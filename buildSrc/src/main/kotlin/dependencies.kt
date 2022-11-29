@@ -26,20 +26,6 @@ val Project.intellijRepo
             else -> "https://www.jetbrains.com/intellij-repository/releases"
         }
 
-val Project.internalBootstrapRepo: String?
-    get() =
-        when {
-            bootstrapKotlinRepo?.startsWith("https://buildserver.labs.intellij.net") == true
-                    || bootstrapKotlinRepo?.startsWith("https://teamcity.jetbrains.com") == true ->
-                bootstrapKotlinRepo!!.replace("artifacts/content/maven", "artifacts/content/internal/repo")
-
-            project.kotlinBuildProperties.isJpsBuildEnabled ->
-                "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Aggregate)," +
-                        "number:$bootstrapKotlinVersion,branch:default:any/artifacts/content/internal/repo/"
-
-            else -> null
-        }
-
 fun Project.commonDependency(coordinates: String): String {
     val parts = coordinates.split(':')
     return when (parts.size) {
@@ -279,7 +265,10 @@ private fun String.toMaybeVersionedJarRegex(): Regex {
     return Regex(if (hasJarExtension) escaped else "$escaped(-\\d.*)?\\.jar") // TODO: consider more precise version part of the regex
 }
 
-fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = File(this.property("JDK_18") as String)): File? =
+fun Project.firstFromJavaHomeThatExists(
+    vararg paths: String,
+    jdkHome: File = File((this.property("JDK_1_8") ?: this.property("JDK_18") ?: error("Can't find JDK_1_8 property")) as String)
+): File? =
     paths.map { File(jdkHome, it) }.firstOrNull { it.exists() }.also {
         if (it == null)
             logger.warn("Cannot find file by paths: ${paths.toList()} in $jdkHome")
@@ -292,7 +281,7 @@ fun Project.toolsJarApi(): Any =
         dependencies.project(":dependencies:tools-jar-api")
 
 fun Project.toolsJar(): FileCollection = files(
-    getToolchainLauncherFor(JdkMajorVersion.JDK_1_8)
+    getToolchainLauncherFor(DEFAULT_JVM_TOOLCHAIN)
         .map {
             Jvm.forHome(it.metadata.installationPath.asFile).toolsJar ?: throw GradleException("tools.jar not found!")
         }

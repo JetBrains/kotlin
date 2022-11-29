@@ -1,3 +1,5 @@
+#ifdef KONAN_WASM
+
 #ifndef _ENDIAN_H
 #define _ENDIAN_H
 
@@ -80,3 +82,5 @@ static __inline uint64_t __bswap64(uint64_t __x)
 #endif
 
 #endif
+
+#endif // KONAN_WASM

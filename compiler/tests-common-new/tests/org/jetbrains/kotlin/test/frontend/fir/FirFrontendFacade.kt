@@ -24,17 +24,16 @@ import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
@@ -84,7 +83,9 @@ class FirFrontendFacade(
             testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
 
-        val moduleName = Name.identifier(module.name)
+        // the special name is required for `KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns`
+        // it doesn't seem convincingly legitimate, probably should be refactored
+        val moduleName = Name.special("<${module.name}>")
         val languageVersionSettings = module.languageVersionSettings
         val analyzerServices = module.targetPlatform.getAnalyzerServices()
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
@@ -118,7 +119,7 @@ class FirFrontendFacade(
                 val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
                 val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
 
-                FirSessionFactory.createLibrarySession(
+                FirJvmSessionFactory.createLibrarySession(
                     moduleName,
                     moduleInfoProvider.firSessionProvider,
                     dependencyList,
@@ -130,7 +131,7 @@ class FirFrontendFacade(
             }
             module.targetPlatform.isJs() -> {
                 projectEnvironment = null
-                FirJsSessionFactory.createLibrarySession(
+                TestFirJsSessionFactory.createLibrarySession(
                     moduleName,
                     moduleInfoProvider.firSessionProvider,
                     dependencyList,
@@ -163,7 +164,7 @@ class FirFrontendFacade(
 
         val session = when {
             isCommonOrJvm -> {
-                FirSessionFactory.createModuleBasedSession(
+                FirJvmSessionFactory.createModuleBasedSession(
                     mainModuleData,
                     moduleInfoProvider.firSessionProvider,
                     PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)),
@@ -178,7 +179,7 @@ class FirFrontendFacade(
                 )
             }
             module.targetPlatform.isJs() -> {
-                FirJsSessionFactory.createModuleBasedSession(
+                TestFirJsSessionFactory.createModuleBasedSession(
                     mainModuleData,
                     moduleInfoProvider.firSessionProvider,
                     extensionRegistrars,
@@ -250,7 +251,7 @@ private fun getJsDependencies(module: TestModule, testServices: TestServices): T
     return Triple(runtimeKlibsPaths, transitiveLibraries, friendLibraries)
 }
 
-private fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {
+fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {
     val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getJsDependencies(module, testServices)
     return runtimeKlibsPaths + transitiveLibraries.map { it.path } + friendLibraries.map { it.path }
 }
@@ -262,7 +263,7 @@ fun resolveJsLibraries(
 ): List<KotlinResolvedLibrary> {
     val paths = getAllJsDependenciesPaths(module, testServices)
     val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
-    val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+    val logger = configuration.resolverLogger
     return jsResolveLibraries(paths, repositories, logger).getFullResolvedList()
 }
 

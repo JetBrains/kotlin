@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -21,7 +21,7 @@ abstract class FirFunctionTypeRef : FirTypeRefWithNullability() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val isMarkedNullable: Boolean
     abstract val receiverTypeRef: FirTypeRef?
-    abstract val valueParameters: List<FirValueParameter>
+    abstract val parameters: List<FirFunctionTypeParameter>
     abstract val returnTypeRef: FirTypeRef
     abstract val isSuspend: Boolean
     abstract val contextReceiverTypeRefs: List<FirTypeRef>

@@ -90,6 +90,9 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 
     fun runtime(target: KonanTarget) = runtimeFileOverride ?: "$stdlibDefaultComponent/targets/${target.visibleName}/native/runtime.bc"
 
+    fun compilerInterface(target: KonanTarget) =
+        runtimeFileOverride ?: "$stdlibDefaultComponent/targets/${target.visibleName}/native/compiler_interface.bc"
+
     fun platformDefs(target: KonanTarget) = "$konanHome/konan/platformDef/${target.visibleName}"
 
     fun platformLibs(target: KonanTarget) = "$klib/platform/${target.visibleName}"

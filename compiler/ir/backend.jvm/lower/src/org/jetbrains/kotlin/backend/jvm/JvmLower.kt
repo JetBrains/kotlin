@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.NameUtils
 private var patchParentPhases = 0
 
 @Suppress("unused")
-private fun makePatchParentsPhase(): NamedCompilerPhase<CommonBackendContext, IrFile> {
+private fun makePatchParentsPhase(): SameTypeNamedCompilerPhase<CommonBackendContext, IrFile> {
     val number = patchParentPhases++
     return makeIrFilePhase(
         { PatchDeclarationParents() },
@@ -43,7 +43,7 @@ private fun makePatchParentsPhase(): NamedCompilerPhase<CommonBackendContext, Ir
 private var checkParentPhases = 0
 
 @Suppress("unused")
-private fun makeCheckParentsPhase(): NamedCompilerPhase<CommonBackendContext, IrFile> {
+private fun makeCheckParentsPhase(): SameTypeNamedCompilerPhase<CommonBackendContext, IrFile> {
     val number = checkParentPhases++
     return makeIrFilePhase(
         { CheckDeclarationParents() },
@@ -138,6 +138,7 @@ internal val localDeclarationsPhase = makeIrFilePhase(
                 private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             },
+            compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
             forceFieldsForInlineCaptures = true,
             postLocalDeclarationLoweringCallback = context.localDeclarationsLoweringData?.let {
                 { data ->
@@ -309,6 +310,7 @@ private val jvmFilePhases = listOf(
     forLoopsPhase,
     collectionStubMethodLowering,
     singleAbstractMethodPhase,
+    jvmMultiFieldValueClassPhase,
     jvmInlineClassPhase,
     tailrecPhase,
     // makePatchParentsPhase(),
@@ -357,6 +359,7 @@ private val jvmFilePhases = listOf(
     objectClassPhase,
     readResolveForDataObjectsPhase,
     staticInitializersPhase,
+    uniqueLoopLabelsPhase,
     initializersPhase,
     initializersCleanupPhase,
     functionNVarargBridgePhase,
@@ -386,9 +389,9 @@ val jvmLoweringPhases = buildJvmLoweringPhases("IrLowering", listOf("PerformByIr
 
 private fun buildJvmLoweringPhases(
     name: String,
-    phases: List<Pair<String, List<NamedCompilerPhase<JvmBackendContext, IrFile>>>>
-): NamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
-    return NamedCompilerPhase(
+    phases: List<Pair<String, List<SameTypeNamedCompilerPhase<JvmBackendContext, IrFile>>>>
+): SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
+    return SameTypeNamedCompilerPhase(
         name = name,
         description = "IR lowering",
         nlevels = 1,
@@ -407,8 +410,6 @@ private fun buildJvmLoweringPhases(
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then
                 resolveInlineCallsPhase then
-                // should be last transformation
-                prepareForBytecodeInlining then
                 validateIrAfterLowering
     )
 }
@@ -416,7 +417,7 @@ private fun buildJvmLoweringPhases(
 // Build a compiler phase from a list of lowering sequences: each subsequence is run
 // in parallel per file, and each parallel composition is run in sequence.
 private fun buildLoweringsPhase(
-    perModuleLowerings: List<Pair<String, List<NamedCompilerPhase<JvmBackendContext, IrFile>>>>,
+    perModuleLowerings: List<Pair<String, List<SameTypeNamedCompilerPhase<JvmBackendContext, IrFile>>>>,
 ): CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment> =
     perModuleLowerings.map { (name, lowerings) -> performByIrFile(name, lower = lowerings) }
         .reduce<

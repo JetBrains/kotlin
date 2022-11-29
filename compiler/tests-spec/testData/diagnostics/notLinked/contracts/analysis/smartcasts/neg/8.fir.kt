@@ -8,7 +8,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 3
 fun <T> T?.case_3(value_1: Int?, value_2: Boolean): Boolean {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
         returns(true) implies (value_1 != null)
         returns(false) implies (value_1 == null && !value_2)
         returns(null) implies (value_1 == null && value_2)
@@ -30,7 +30,7 @@ fun case_4(value_1: Number, block: (() -> Unit)?): Boolean? {
 
 // TESTCASE NUMBER: 5
 fun String?.case_5(value_1: Number?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
         returns(true) implies (value_1 == null)
         returns(false) implies (this@case_5 == null)
         returnsNotNull() implies (value_1 is Int)
@@ -41,7 +41,7 @@ fun String?.case_5(value_1: Number?): Boolean? {
 
 // TESTCASE NUMBER: 6
 fun <T> T?.case_6(value_1: Number, value_2: String?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
         returns(true) implies (this@case_6 == null)
         returns(false) implies (value_1 is Int)
         returns(null) implies (this@case_6 is String)
@@ -94,7 +94,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     } else if (contracts.case_4(value_1, value_2) == false) {
         println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
-        value_2()
+        <!UNSAFE_IMPLICIT_INVOKE_CALL!>value_2<!>()
     }
 }
 
@@ -107,7 +107,7 @@ fun case_5(value_1: Number?, value_2: String?) {
         }
         false -> {
             println(value_2<!UNSAFE_CALL!>.<!>length)
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+            println(value_1.inv())
         }
     }
 }
@@ -124,7 +124,7 @@ fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
             println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         null -> {
-            println(value_1.inv())
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
         }
     }
 }

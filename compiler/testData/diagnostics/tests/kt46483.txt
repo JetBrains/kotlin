@@ -1,0 +1,24 @@
+package
+
+public fun </*0*/ @TypeParameterAnn(name = "T") T : kotlin.Any> whereClauseWithAnnotation(): kotlin.Unit where T : Generic<kotlin.String>
+
+public final class Foo</*0*/ @TypeParameterAnn(name = "T") T : kotlin.Any> where T : Generic<kotlin.String> {
+    public constructor Foo</*0*/ @TypeParameterAnn(name = "T") T : kotlin.Any>() where T : Generic<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Generic</*0*/ Z> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Repeatable @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class TypeParameterAnn : kotlin.Annotation {
+    public constructor TypeParameterAnn(/*0*/ name: kotlin.String)
+    public final val name: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

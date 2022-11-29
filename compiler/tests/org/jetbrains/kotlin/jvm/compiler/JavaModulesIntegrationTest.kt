@@ -65,8 +65,9 @@ abstract class JavaModulesIntegrationTest(private val jdkVersion: Int, private v
         return { actual ->
             KotlinTestUtils.assertEqualsToFile(
                 expectedFile,
-                getNormalizedCompilerOutput(actual, null, testDataPath).replace(System.getenv("JDK_11").replace("\\", "/"), "\$JDK11")
-                    .replace(System.getenv("JDK_17").replace("\\", "/"), "\$JDK17")
+                getNormalizedCompilerOutput(actual, null, testDataPath)
+                    .replace((System.getenv("JDK_11_0") ?: System.getenv("JDK_11")).replace("\\", "/"), "\$JDK11")
+                    .replace((System.getenv("JDK_17_0") ?: System.getenv("JDK_17")).replace("\\", "/"), "\$JDK17")
             )
         }
     }

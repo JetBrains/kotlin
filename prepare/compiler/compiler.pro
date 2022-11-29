@@ -57,6 +57,10 @@
 # The appropriate jar is either loaded separately or added explicitly to the classpath then needed
 -dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 
+# Ignore generated Gradle DSL types
+# They will be added separately on generating Gradle DSL for compiler options
+-dontwarn org.jetbrains.kotlin.cli.common.arguments.DefaultValues$*
+
 -dontwarn org.jdom.xpath.jaxen.*
 -dontwarn com.intellij.util.io.Decompressor*
 -dontwarn org.w3c.dom.Location

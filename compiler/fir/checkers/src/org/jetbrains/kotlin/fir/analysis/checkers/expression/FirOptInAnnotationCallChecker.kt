@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.loadExperimentalityForMarkerAnnotation
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassFromArgument
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
-import org.jetbrains.kotlin.resolve.checkers.OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_ANNOTATION_CLASS
 
 object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -45,8 +44,8 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                 if (arguments.isEmpty()) {
                     reporter.reportOn(expression.source, FirErrors.OPT_IN_WITHOUT_ARGUMENTS, context)
                 } else {
-                    val annotationClasses = expression.findArgumentByName(USE_EXPERIMENTAL_ANNOTATION_CLASS)
-                    for (classSymbol in annotationClasses?.extractClassesFromArgument().orEmpty()) {
+                    val annotationClasses = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
+                    for (classSymbol in annotationClasses?.extractClassesFromArgument(context.session).orEmpty()) {
                         checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
                     }
                 }
@@ -73,7 +72,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                     return
                 }
             }
-            val classSymbol = expression.findArgumentByName(USE_EXPERIMENTAL_ANNOTATION_CLASS)?.extractClassFromArgument() ?: return
+            val classSymbol = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)?.extractClassFromArgument(context.session) ?: return
             checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
         }
     }

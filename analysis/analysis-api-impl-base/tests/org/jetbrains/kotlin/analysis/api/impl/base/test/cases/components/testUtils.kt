@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererModifierFilter
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
@@ -43,8 +47,8 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
                 }
             )
             append("(")
-            (this@with as? KtFunctionSymbol)?.receiverType?.let { receiver ->
-                append("<extension receiver>: ${receiver.render()}")
+            (this@with as? KtFunctionSymbol)?.receiverParameter?.let { receiver ->
+                append("<extension receiver>: ${receiver.type.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
 
@@ -60,7 +64,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
         is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         is KtTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
-        is KtSymbol -> DebugSymbolRenderer.render(this)
+        is KtSymbol -> DebugSymbolRenderer().render(this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
             separator = ",\n  ",
@@ -114,15 +118,15 @@ internal fun KtAnalysisSession.prettyPrintSignature(signature: KtCallableSignatu
     when (signature) {
         is KtFunctionLikeSignature -> {
             append("fun ")
-            signature.receiverType?.let { append('.'); append(it.render()) }
+            signature.receiverType?.let { append('.'); append(it.render(position = Variance.INVARIANT)) }
             append((signature.symbol as KtNamedSymbol).name.asString())
             printCollection(signature.valueParameters, prefix = "(", postfix = ")") { parameter ->
                 append(parameter.name.asString())
                 append(": ")
-                append(parameter.returnType.render())
+                append(parameter.returnType.render(position = Variance.INVARIANT))
             }
             append(": ")
-            append(signature.returnType.render())
+            append(signature.returnType.render(position = Variance.INVARIANT))
         }
         is KtVariableLikeSignature -> {
             val symbol = signature.symbol
@@ -130,10 +134,10 @@ internal fun KtAnalysisSession.prettyPrintSignature(signature: KtCallableSignatu
                 append(if (symbol.isVal) "val" else "var")
                 append(" ")
             }
-            signature.receiverType?.let { append('.'); append(it.render()) }
+            signature.receiverType?.let { append('.'); append(it.render(position = Variance.INVARIANT)) }
             append((symbol as KtNamedSymbol).name.asString())
             append(": ")
-            append(signature.returnType.render())
+            append(signature.returnType.render(position = Variance.INVARIANT))
         }
     }
 }
@@ -143,4 +147,50 @@ internal fun KtAnalysisSession.compareCalls(call1: KtCall, call2: KtCall): Int {
     // The order of candidate calls is non-deterministic. Sort by symbol string value.
     if (call1 !is KtCallableMemberCall<*, *> || call2 !is KtCallableMemberCall<*, *>) return 0
     return stringRepresentation(call1.partiallyAppliedSymbol).compareTo(stringRepresentation(call2.partiallyAppliedSymbol))
+}
+
+context(KtAnalysisSession)
+internal fun renderScopeWithParentDeclarations(scope: KtScope): String = prettyPrint {
+    fun KtSymbol.qualifiedNameString() = when (this) {
+        is KtConstructorSymbol -> "<constructor> ${containingClassIdIfNonLocal?.asString()}"
+        is KtClassLikeSymbol -> classIdIfNonLocal!!.asString()
+        is KtCallableSymbol -> callableIdIfNonLocal!!.toString()
+        else -> error("unknown symbol $this")
+    }
+
+    val renderingOptions = KtDeclarationRendererForSource.WITH_SHORT_NAMES.with {
+        modifiersRenderer = modifiersRenderer.with {
+            modifierFilter = KtRendererModifierFilter.NONE
+        }
+    }
+
+    printCollection(scope.getAllSymbols().toList(), separator = "\n\n") { symbol ->
+        val containingDeclaration = symbol.getContainingSymbol() as KtClassLikeSymbol
+        append(symbol.render(renderingOptions))
+        append(" fromClass ")
+        append(containingDeclaration.classIdIfNonLocal?.asString())
+        if (symbol.typeParameters.isNotEmpty()) {
+            appendLine()
+            withIndent {
+                printCollection(symbol.typeParameters, separator = "\n") { typeParameter ->
+                    val containingDeclarationForTypeParameter = typeParameter.getContainingSymbol()
+                    append(typeParameter.render(renderingOptions))
+                    append(" from ")
+                    append(containingDeclarationForTypeParameter?.qualifiedNameString())
+                }
+            }
+        }
+
+        if (symbol is KtFunctionLikeSymbol && symbol.valueParameters.isNotEmpty()) {
+            appendLine()
+            withIndent {
+                printCollection(symbol.valueParameters, separator = "\n") { typeParameter ->
+                    val containingDeclarationForValueParameter = typeParameter.getContainingSymbol()
+                    append(typeParameter.render(renderingOptions))
+                    append(" from ")
+                    append(containingDeclarationForValueParameter?.qualifiedNameString())
+                }
+            }
+        }
+    }
 }

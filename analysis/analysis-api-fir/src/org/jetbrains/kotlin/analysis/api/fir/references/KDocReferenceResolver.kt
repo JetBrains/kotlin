@@ -35,6 +35,8 @@ internal object KDocReferenceResolver {
                     is KtNamedClassOrObjectSymbol -> {
                         collectPrimaryConstructorParameterSymbols(ownerSymbol, singleSegment)
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -107,18 +109,18 @@ internal object KDocReferenceResolver {
 
     context(KtAnalysisSession)
     private fun MutableCollection<KtSymbol>.collectSymbolsByClassId(classId: ClassId) {
-        classId.getCorrespondingToplevelClassOrObjectSymbol()?.let(::add)
+        getClassOrObjectSymbolByClassId(classId)?.let(::add)
     }
 
     context(KtAnalysisSession)
     private fun MutableCollection<KtSymbol>.collectSymbolsByFqNameInterpretationAsCallableId(callableId: CallableId) {
         when (val classId = callableId.classId) {
             null -> {
-                addAll(callableId.packageName.getContainingCallableSymbolsWithName(callableId.callableName))
+                addAll(getTopLevelCallableSymbols(callableId.packageName, callableId.callableName))
             }
 
             else -> {
-                classId.getCorrespondingToplevelClassOrObjectSymbol()
+                getClassOrObjectSymbolByClassId(classId)
                     ?.getDeclaredMemberScope()
                     ?.getCallableSymbols { it == callableId.callableName }
                     ?.let(::addAll)

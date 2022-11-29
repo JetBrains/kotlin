@@ -1,0 +1,118 @@
+FILE: AbstractToolConfig.kt
+    public abstract class AbstractToolConfig : R|kotlin/Any| {
+        public constructor(): R|AbstractToolConfig| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val platformManager: R|PlatformManager| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|()
+            private get(): R|PlatformManager|
+
+        private final val targetManager: R|TargetManager| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|.R|/PlatformManager.targetManager|()
+            private get(): R|TargetManager|
+
+        public final val target: R|KonanTarget| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.targetManager|.R|/TargetManager.target|
+            public get(): R|KonanTarget|
+
+        protected final val platform: R|Platform| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|.R|/PlatformManager.platform|(this@R|/AbstractToolConfig|.R|/AbstractToolConfig.target|)
+            protected get(): R|Platform|
+
+        public final val llvmHome: R|kotlin/String| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platform|.R|/Configurables.absoluteLlvmHome|
+            public get(): R|kotlin/String|
+
+        public abstract fun platformManager(): R|PlatformManager|
+
+    }
+FILE: Platform.kt
+    public final class Platform : R|Configurables| {
+        public constructor(configurables: R|Configurables|): R|Platform| {
+            super<R|kotlin/Any|>()
+        }
+
+        local final field <$$delegate_0>: R|Configurables| = R|<local>/configurables|
+
+        public final val configurables: R|Configurables| = R|<local>/configurables|
+            public get(): R|Configurables|
+
+    }
+    public abstract class PlatformManager : R|HostManager| {
+        public constructor(): R|PlatformManager| {
+            super<R|HostManager|>()
+        }
+
+        private final val loaders: R|kotlin/collections/Map<KonanTarget, Configurables>| = this@R|/PlatformManager|.R|/HostManager.enabled|.R|kotlin/collections/map|<R|KonanTarget|, R|kotlin/Pair<KonanTarget, Configurables>|>(<L> = map@fun <anonymous>(it: R|KonanTarget|): R|kotlin/Pair<KonanTarget, Configurables>| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|<local>/it|.R|kotlin/to|<R|KonanTarget|, R|Configurables|>(this@R|/PlatformManager|.R|/PlatformManager.loadConfigurables|(R|<local>/it|))
+        }
+        ).R|kotlin/collections/toMap|<R|KonanTarget|, R|Configurables|>()
+            private get(): R|kotlin/collections/Map<KonanTarget, Configurables>|
+
+        private final val platforms: R|kotlin/collections/Map<KonanTarget, Platform>| = this@R|/PlatformManager|.R|/PlatformManager.loaders|.R|kotlin/collections/map|<R|KonanTarget|, R|Configurables|, R|kotlin/Pair<KonanTarget, Platform>|>(<L> = map@fun <anonymous>(it: R|kotlin/collections/Map.Entry<KonanTarget, Configurables>|): R|kotlin/Pair<KonanTarget, Platform>| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|<local>/it|.R|SubstitutionOverride<kotlin/collections/Map.Entry.key: R|KonanTarget|>|.R|kotlin/to|<R|KonanTarget|, R|Platform|>(R|/Platform.Platform|(R|<local>/it|.R|SubstitutionOverride<kotlin/collections/Map.Entry.value: R|Configurables|>|))
+        }
+        ).R|kotlin/collections/toMap|<R|KonanTarget|, R|Platform|>()
+            private get(): R|kotlin/collections/Map<KonanTarget, Platform>|
+
+        public abstract fun targetManager(userRequest: R|kotlin/String?| = Null(null)): R|TargetManager|
+
+        public final fun platform(target: R|KonanTarget|): R|Platform| {
+            ^platform this@R|/PlatformManager|.R|/PlatformManager.platforms|.R|kotlin/collections/getValue|<R|KonanTarget|, R|Platform|>(R|<local>/target|)
+        }
+
+        public abstract fun loadConfigurables(target: R|KonanTarget|): R|Configurables|
+
+    }
+FILE: HostManager.kt
+    public open class HostManager : R|kotlin/Any| {
+        public constructor(): R|HostManager| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val enabled: R|kotlin/collections/List<KonanTarget>|
+            public get(): R|kotlin/collections/List<KonanTarget>| {
+                ^ R|kotlin/collections/emptyList|<R|KonanTarget|>()
+            }
+
+    }
+FILE: Configurables.kt
+    public abstract interface Configurables : R|kotlin/Any| {
+        public open val llvmHome: R|kotlin/String?|
+            public get(): R|kotlin/String?| {
+                ^ this@R|/Configurables|.R|/Configurables.hostString|(String(llvmHome))
+            }
+
+        public open val absoluteLlvmHome: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ this@R|/Configurables|.R|/Configurables.absolute|(this@R|/Configurables|.R|/Configurables.llvmHome|)
+            }
+
+        public abstract fun absolute(value: R|kotlin/String?|): R|kotlin/String|
+
+        public abstract fun hostString(key: R|kotlin/String|): R|kotlin/String?|
+
+    }
+FILE: KonanTarget.kt
+    public sealed class KonanTarget : R|kotlin/Any| {
+        protected constructor(): R|KonanTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object ANDROID : R|KonanTarget| {
+            private constructor(): R|KonanTarget.ANDROID| {
+                super<R|KonanTarget|>()
+            }
+
+        }
+
+        public final object IOS : R|KonanTarget| {
+            private constructor(): R|KonanTarget.IOS| {
+                super<R|KonanTarget|>()
+            }
+
+        }
+
+    }
+FILE: TargetManager.kt
+    public abstract interface TargetManager : R|kotlin/Any| {
+        public abstract val target: R|KonanTarget|
+            public get(): R|KonanTarget|
+
+    }

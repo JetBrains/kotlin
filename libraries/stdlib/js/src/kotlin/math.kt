@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package kotlin.math
@@ -391,8 +391,8 @@ public actual inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
 @InlineOnly
 public actual inline fun cbrt(x: Double): Double = nativeMath.cbrt(x)
 
@@ -808,7 +808,7 @@ public actual inline fun log10(x: Float): Float = nativeLog10(x.toDouble()).toFl
 public actual inline fun log2(x: Float): Float = nativeLog2(x.toDouble()).toFloat()
 
 /**
- * Computes `ln(a + 1)`.
+ * Computes `ln(x + 1)`.
  *
  * This function can be implemented to produce more precise result for [x] near zero.
  *
@@ -928,8 +928,8 @@ public actual inline fun max(a: Float, b: Float): Float = nativeMath.max(a, b)
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
 @InlineOnly
 public actual inline fun cbrt(x: Float): Float = nativeMath.cbrt(x.toDouble()).toFloat()
 

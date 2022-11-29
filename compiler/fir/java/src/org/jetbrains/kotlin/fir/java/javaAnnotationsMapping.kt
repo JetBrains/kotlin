@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -52,12 +55,17 @@ internal fun MutableList<FirAnnotation>.addFromJava(
 }
 
 internal fun JavaValueParameter.toFirValueParameter(
-    session: FirSession, moduleData: FirModuleData, index: Int, javaTypeParameterStack: JavaTypeParameterStack
+    session: FirSession,
+    functionSymbol: FirFunctionSymbol<*>,
+    moduleData: FirModuleData,
+    index: Int,
+    javaTypeParameterStack: JavaTypeParameterStack,
 ): FirValueParameter {
     return buildJavaValueParameter {
         source = (this@toFirValueParameter as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
         isFromSource = this@toFirValueParameter.isFromSource
         this.moduleData = moduleData
+        containingFunctionSymbol = functionSymbol
         name = this@toFirValueParameter.name ?: Name.identifier("p$index")
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack)
         isVararg = this@toFirValueParameter.isVararg
@@ -214,7 +222,8 @@ private fun JavaAnnotation.toFirAnnotationCall(
                 type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
             }
         } else {
-            buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError() }
+            val unresolvedName = classId?.shortClassName ?: SpecialNames.NO_NAME_PROVIDED
+            buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError(unresolvedName) }
         }
 
         argumentMapping = buildAnnotationArgumentMapping {

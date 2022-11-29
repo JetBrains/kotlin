@@ -1,7 +1,0 @@
-warning: ATTENTION!
- This build uses experimental K2 compiler:
-  -Xuse-k2
-error: there are some plugins incompatible with K2 compiler:
-  org.jetbrains.kotlin.android.synthetic.AndroidComponentRegistrar
-Please remove -Xuse-k2
-COMPILATION_ERROR

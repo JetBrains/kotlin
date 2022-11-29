@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -245,13 +245,13 @@ val ClassDescriptor?.classSerializer: ClassDescriptor?
 val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
     get() = isInternallySerializableObject || companionObjectDescriptor?.serializerForClass == this.defaultType
 
-// returns only user-overriden Serializer
-val KotlinType.overridenSerializer: KotlinType?
-    get() {
-        val desc = this.toClassDescriptor ?: return null
-        desc.serializableWith?.let { return it }
-        return null
-    }
+// returns only user-overridden Serializer
+fun KotlinType.overriddenSerializer(module: ModuleDescriptor): KotlinType? {
+    annotations.serializableWith(module)?.let { return it }
+    val desc = this.toClassDescriptor ?: return null
+    desc.serializableWith?.let { return it }
+    return null
+}
 
 val KotlinType.genericIndex: Int?
     get() = (this.constructor.declarationDescriptor as? TypeParameterDescriptor)?.index

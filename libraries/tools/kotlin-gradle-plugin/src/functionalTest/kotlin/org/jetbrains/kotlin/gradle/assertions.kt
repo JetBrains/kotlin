@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.utils.`is`
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -30,6 +28,29 @@ fun Task.assertNotDependsOn(other: Task) {
         fail("Expected ${this.path} to *not* depend on ${other.path}")
     }
 }
+
+fun Task.assertNoCircularTaskDependencies() {
+    data class TaskAndDependants(
+        val task: Task,
+        val dependants: List<Task>
+    )
+
+    val visited = mutableSetOf<Task>()
+    val queue = ArrayDeque(taskDependencies.getDependencies(this).map { TaskAndDependants(it, listOf(this)) })
+
+    while(queue.isNotEmpty()) {
+        val (task, dependants) = queue.removeFirst()
+        if (task in visited) {
+            val dependencyChain = dependants.joinToString(" -> ") { it.name }
+            fail("Task $name has circular dependency: $dependencyChain")
+        }
+        visited.add(task)
+
+        val dependencies = task.taskDependencies.getDependencies(null)
+        queue.addAll(dependencies.map { TaskAndDependants(it, dependants + task) })
+    }
+}
+
 
 fun Task.assertTaskDependenciesEquals(dependencies: Set<Task>) {
     assertEquals(

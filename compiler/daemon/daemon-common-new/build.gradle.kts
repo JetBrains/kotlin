@@ -16,6 +16,11 @@ dependencies {
             exclude(group = group, module = module)
         }
     }
+    api(commonDependency("io.ktor", "ktor-utils")) {
+        ktorExcludesForDaemon.forEach { (group, module) ->
+            exclude(group = group, module = module)
+        }
+    }
 }
 
 sourceSets {

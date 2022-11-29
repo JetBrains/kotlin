@@ -12,39 +12,44 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 enum class JdkMajorVersion(
     val majorVersion: Int,
     val targetName: String = majorVersion.toString(),
-    val overrideMajorVersion: Int? = null,
+    private val overrideMajorVersion: Int? = null,
     private val mandatory: Boolean = true
 ) {
     JDK_1_6(6, targetName = "1.6", overrideMajorVersion = 8),
     JDK_1_7(7, targetName = "1.7", overrideMajorVersion = 8),
     JDK_1_8(8, targetName = "1.8"),
-    JDK_9(9, overrideMajorVersion = 11),
-    JDK_10(10, mandatory = false, overrideMajorVersion = 11),
-    JDK_11(11, mandatory = false),
-    JDK_16(16, mandatory = false),
-    JDK_17(17, mandatory = false);
+    JDK_9_0(9, overrideMajorVersion = 11),
+    JDK_10_0(10, mandatory = false, overrideMajorVersion = 11),
+    JDK_11_0(11, mandatory = false),
+    JDK_16_0(16, mandatory = false),
+    JDK_17_0(17, mandatory = false);
 
     fun isMandatory(): Boolean = mandatory
 
-    companion object {
-        fun fromMajorVersion(majorVersion: Int) = values().first { it.majorVersion == majorVersion }
+    val overrideVersion by lazy {
+        if (overrideMajorVersion != null) {
+            values().firstOrNull() { it.majorVersion == overrideMajorVersion }
+                ?: error("Can't find the value with majorVersion=$overrideMajorVersion")
+        } else {
+            null
+        }
     }
+
+    val envName = name
 }
+
+val DEFAULT_JVM_TOOLCHAIN = JdkMajorVersion.JDK_1_8
 
 fun Project.configureJvmDefaultToolchain() {
-    configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+    configureJvmToolchain(DEFAULT_JVM_TOOLCHAIN)
 }
 
-fun Project.shouldOverrideObsoleteJdk(
-    jdkVersion: JdkMajorVersion
-): Boolean = kotlinBuildProperties.isObsoleteJdkOverrideEnabled &&
-        jdkVersion.overrideMajorVersion != null
+fun Project.shouldOverrideObsoleteJdk(jdkVersion: JdkMajorVersion): Boolean =
+    kotlinBuildProperties.isObsoleteJdkOverrideEnabled && jdkVersion.overrideVersion != null
 
-fun Project.configureJvmToolchain(
-    jdkVersion: JdkMajorVersion
-) {
+fun Project.configureJvmToolchain(jdkVersion: JdkMajorVersion) {
     @Suppress("NAME_SHADOWING")
-    val jdkVersion = chooseJdk18ForJpsBuild(jdkVersion)
+    val jdkVersion = chooseJdk_1_8ForJpsBuild(jdkVersion)
     // Ensure java only modules also set default toolchain
     configureJavaOnlyToolchain(jdkVersion)
 
@@ -53,16 +58,12 @@ fun Project.configureJvmToolchain(
 
         if (shouldOverrideObsoleteJdk(jdkVersion)) {
             kotlinExtension.jvmToolchain {
-                languageVersion.set(
-                    JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!)
-                )
+                setupToolchain(jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode"))
             }
             updateJvmTarget(jdkVersion.targetName)
         } else {
             kotlinExtension.jvmToolchain {
-                languageVersion.set(
-                    JavaLanguageVersion.of(jdkVersion.majorVersion)
-                )
+                setupToolchain(jdkVersion)
             }
         }
 
@@ -77,18 +78,20 @@ fun Project.configureJvmToolchain(
     }
 }
 
+fun JavaToolchainSpec.setupToolchain(jdkVersion: JdkMajorVersion) {
+    languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+}
+
 fun Project.configureJavaOnlyToolchain(
     jdkVersion: JdkMajorVersion
 ) {
     @Suppress("NAME_SHADOWING")
-    val jdkVersion = chooseJdk18ForJpsBuild(jdkVersion)
+    val jdkVersion = chooseJdk_1_8ForJpsBuild(jdkVersion)
     plugins.withId("java-base") {
         val javaExtension = extensions.getByType<JavaPluginExtension>()
         if (shouldOverrideObsoleteJdk(jdkVersion)) {
             javaExtension.toolchain {
-                languageVersion.set(
-                    JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!)
-                )
+                setupToolchain(jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode"))
             }
             tasks.withType<JavaCompile>().configureEach {
                 targetCompatibility = jdkVersion.targetName
@@ -96,15 +99,13 @@ fun Project.configureJavaOnlyToolchain(
             }
         } else {
             javaExtension.toolchain {
-                languageVersion.set(
-                    JavaLanguageVersion.of(jdkVersion.majorVersion)
-                )
+                setupToolchain(jdkVersion)
             }
         }
     }
 }
 
-fun Project.chooseJdk18ForJpsBuild(jdkVersion: JdkMajorVersion): JdkMajorVersion {
+fun Project.chooseJdk_1_8ForJpsBuild(jdkVersion: JdkMajorVersion): JdkMajorVersion {
     return if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         maxOf(jdkVersion, JdkMajorVersion.JDK_1_8)
     } else {
@@ -118,11 +119,10 @@ fun KotlinCompile.configureTaskToolchain(
     if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
         kotlinJavaToolchain.toolchain.use(
             project.getToolchainLauncherFor(
-                JdkMajorVersion.fromMajorVersion(
-                    jdkVersion.overrideMajorVersion!!
-                )
+                jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode")
             )
         )
+        @Suppress("DEPRECATION")
         kotlinOptions {
             jvmTarget = jdkVersion.targetName
         }
@@ -139,9 +139,7 @@ fun JavaCompile.configureTaskToolchain(
     if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
         javaCompiler.set(
             project.getToolchainCompilerFor(
-                JdkMajorVersion.fromMajorVersion(
-                    jdkVersion.overrideMajorVersion!!
-                )
+                jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode")
             )
         )
         targetCompatibility = jdkVersion.targetName
@@ -165,6 +163,7 @@ fun Project.updateJvmTarget(
         .withType<KotlinCompile>()
         .matching { it.name != "compileJava9Kotlin" }
         .configureEach {
+            @Suppress("DEPRECATION")
             kotlinOptions.jvmTarget = jvmTarget
         }
 
@@ -199,7 +198,7 @@ fun Project.getToolchainLauncherFor(
 
 fun Project.getJdkVersionWithOverride(jdkVersion: JdkMajorVersion): JdkMajorVersion {
     return if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
-        JdkMajorVersion.fromMajorVersion(jdkVersion.overrideMajorVersion!!)
+        jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode")
     } else {
         jdkVersion
     }

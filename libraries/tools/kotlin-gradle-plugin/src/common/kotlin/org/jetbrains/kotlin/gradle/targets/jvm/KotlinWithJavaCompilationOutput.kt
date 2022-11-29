@@ -8,16 +8,17 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import java.io.File
 import java.util.concurrent.Callable
 
-class KotlinWithJavaCompilationOutput(
-    internal val compilation: KotlinWithJavaCompilation<*>
+class KotlinWithJavaCompilationOutput internal constructor(
+    private val javaSourceSet: SourceSet
 ) : KotlinCompilationOutput, Callable<FileCollection> {
 
     private val javaSourceSetOutput
-        get() = compilation.javaSourceSet.output
+        get() = javaSourceSet.output
 
     override val resourcesDir: File
         get() = javaSourceSetOutput.resourcesDir!!
@@ -28,8 +29,8 @@ class KotlinWithJavaCompilationOutput(
             javaSourceSetOutput.setResourcesDir(value)
         }
 
-    override val classesDirs: ConfigurableFileCollection =
-        javaSourceSetOutput.classesDirs as ConfigurableFileCollection
+    override val classesDirs: ConfigurableFileCollection
+        get() = javaSourceSetOutput.classesDirs as ConfigurableFileCollection
 
     override val allOutputs: FileCollection
         get() = javaSourceSetOutput

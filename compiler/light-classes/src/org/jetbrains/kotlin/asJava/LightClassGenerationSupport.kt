@@ -45,29 +45,23 @@ abstract class LightClassGenerationSupport {
         )
     }
 
-    fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
-        if (element.shouldNotBeVisibleAsLightClass()) {
-            return null
+    fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass = getUltraLightClassSupport(element).let { support ->
+        if (support.languageVersionSettings.getFlag(AnalysisFlags.eagerResolveOfLightClasses)) {
+            val descriptor = resolveToDescriptor(element)
+            (descriptor as? LazyClassDescriptor)?.forceResolveAllContents()
         }
 
-        return getUltraLightClassSupport(element).let { support ->
-            if (support.languageVersionSettings.getFlag(AnalysisFlags.eagerResolveOfLightClasses)) {
-                val descriptor = resolveToDescriptor(element)
-                (descriptor as? LazyClassDescriptor)?.forceResolveAllContents()
-            }
+        when {
+            element is KtObjectDeclaration && element.isObjectLiteral() ->
+                KtUltraLightClassForAnonymousDeclaration(element, support)
 
-            when {
-                element is KtObjectDeclaration && element.isObjectLiteral() ->
-                    KtUltraLightClassForAnonymousDeclaration(element, support)
+            element.safeIsLocal() ->
+                KtUltraLightClassForLocalDeclaration(element, support)
 
-                element.safeIsLocal() ->
-                    KtUltraLightClassForLocalDeclaration(element, support)
+            (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
+                KtUltraLightInlineClass(element, support)
 
-                (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
-                    KtUltraLightInlineClass(element, support)
-
-                else -> KtUltraLightClass(element, support)
-            }
+            else -> KtUltraLightClass(element, support)
         }
     }
 

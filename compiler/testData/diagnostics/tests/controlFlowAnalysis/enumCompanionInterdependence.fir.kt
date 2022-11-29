@@ -9,7 +9,7 @@ enum class B(val x: Int) {
 }
 
 enum class C(val x: Int) {
-    C1(<!UNINITIALIZED_VARIABLE!>SUM<!>),
+    C1(<!UNINITIALIZED_ENUM_COMPANION, UNINITIALIZED_VARIABLE!>SUM<!>),
     C2(1);
 
     companion object {

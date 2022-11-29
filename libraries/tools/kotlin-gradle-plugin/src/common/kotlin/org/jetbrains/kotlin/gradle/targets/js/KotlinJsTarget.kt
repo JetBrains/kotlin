@@ -222,4 +222,12 @@ constructor(
         }
         irTarget?.useCommonJs()
     }
+
+    override fun useEsModules() {
+        error("ES modules are not supported in legacy JS compiler. Please, use IR one instead.")
+    }
+
+    override fun generateTypeScriptDefinitions() {
+        project.logger.warn("Legacy compiler does not support generation of TypeScript Definitions")
+    }
 }

@@ -1,5 +1,5 @@
 // LANGUAGE: +ProhibitAccessToEnumCompanionMembersInEnumConstructorCall
-// ISSUE: KT-49110
+// ISSUE: KT-49110, KT-54055
 
 enum class SomeEnum(val x: Int) {
     A(<!UNINITIALIZED_ENUM_COMPANION!>companionFun()<!>.length),// UNINITIALIZED_ENUM_COMPANION
@@ -35,5 +35,30 @@ enum class OtherEnum(val x: Int) {
 
 fun OtherEnum.Companion.extensionFun(): String = companionFun()
 val OtherEnum.Companion.extensionProp: String
+    get() = companionProp
+
+enum class EnumWithLambda(val lambda: () -> Unit) {
+    M({
+      <!UNINITIALIZED_ENUM_COMPANION!>companionFun()<!>.length
+      <!UNINITIALIZED_ENUM_COMPANION!>companionProp<!>.length
+
+      <!UNINITIALIZED_ENUM_COMPANION!>EnumWithLambda<!>.companionFun().length
+      <!UNINITIALIZED_ENUM_COMPANION!>EnumWithLambda<!>.companionProp.length
+
+      <!UNINITIALIZED_ENUM_COMPANION!>extensionFun()<!>.length
+      <!UNINITIALIZED_ENUM_COMPANION!>extensionProp<!>.length
+
+      <!UNINITIALIZED_ENUM_COMPANION!>EnumWithLambda<!>.extensionFun().length
+      <!UNINITIALIZED_ENUM_COMPANION!>EnumWithLambda<!>.extensionProp.length
+      });
+
+    companion object {
+        val companionProp = "someString"
+        fun companionFun(): String = "someString"
+    }
+}
+
+fun EnumWithLambda.Companion.extensionFun(): String = companionFun()
+val EnumWithLambda.Companion.extensionProp: String
     get() = companionProp
 

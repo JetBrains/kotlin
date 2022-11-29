@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.analysis.utils.caches.getValue
-import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
+import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import java.util.concurrent.ConcurrentHashMap
 
@@ -28,12 +25,11 @@ abstract class LLFirScopeSessionProvider {
 private class LLFirInvalidatableScopeSessionProvider(project: Project, invalidationTrackers: List<Any>) : LLFirScopeSessionProvider() {
     // ScopeSession is thread-local, so we use Thread id as a key
     // We cannot use thread locals here as it may lead to memory leaks
-    private val cache by softCachedValue(
+    private val cache = SoftCachedMap.create<Long, ScopeSession>(
         project,
-        *invalidationTrackers.toTypedArray(),
-    ) {
-        ConcurrentHashMap<Long, ScopeSession>()
-    }
+        SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
+        invalidationTrackers
+    )
 
     override fun getScopeSession(): ScopeSession {
         return cache.getOrPut(Thread.currentThread().id) { ScopeSession() }

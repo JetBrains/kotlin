@@ -73,7 +73,10 @@ sealed class WasmImmediate {
         constructor(value: WasmMemory) : this(WasmSymbol(value))
     }
 
-    class DataIdx(val value: Int) : WasmImmediate()
+    class DataIdx(val value: WasmSymbol<Int>) : WasmImmediate() {
+        constructor(value: Int) : this(WasmSymbol(value))
+    }
+
     class TableIdx(val value: WasmSymbolReadOnly<Int>) : WasmImmediate() {
         constructor(value: Int) : this(WasmSymbol(value))
     }
@@ -331,15 +334,20 @@ enum class WasmOp(
     REF_NULL("ref.null", 0xD0, HEAP_TYPE),
     REF_IS_NULL("ref.is_null", 0xD1),
     REF_FUNC("ref.func", 0xD2, FUNC_IDX),
+
+    // ============================================================
+    // Typed Function References
+    // WIP: https://github.com/WebAssembly/function-references
+    CALL_REF("call_ref", 0x14, TYPE_IDX),
+    RETURN_CALL_REF("return_call_ref", 0x15, TYPE_IDX),
     REF_AS_NOT_NULL("ref.as_non_null", 0xD3),
     BR_ON_NULL("br_on_null", 0xD4, LABEL_IDX),
-    REF_EQ("ref.eq", 0xD5),
+    BR_ON_NON_NULL("br_on_non_null", 0xD6, LABEL_IDX),
 
-    CALL_REF("call_ref", 0x14),
-    RETURN_CALL_REF("return_call_ref", 0x15),
-    FUNC_BIND("func.bind", 0x16, FUNC_IDX),
 
+    // ============================================================
     // GC
+    // WIP: https://github.com/WebAssembly/gc
     STRUCT_NEW("struct.new", 0xFB_07, STRUCT_TYPE_IDX),
     STRUCT_NEW_DEFAULT("struct.new_default", 0xFB_08, STRUCT_TYPE_IDX),
     STRUCT_GET("struct.get", 0xFB_03, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
@@ -353,33 +361,47 @@ enum class WasmOp(
     ARRAY_GET_S("array.get_s", 0xFB_14, listOf(STRUCT_TYPE_IDX)),
     ARRAY_GET_U("array.get_u", 0xFB_15, listOf(STRUCT_TYPE_IDX)),
     ARRAY_SET("array.set", 0xFB_16, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_LEN("array.len", 0xFB_17, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_LEN("array.len", 0xFB_19),
     ARRAY_COPY("array.copy", 0xFB_18, listOf(STRUCT_TYPE_IDX, STRUCT_TYPE_IDX)),
+    ARRAY_NEW_DATA("array.new_data", 0xFB_1D, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
+    ARRAY_NEW_FIXED("array.new_fixed", 0xFB_1A, listOf(STRUCT_TYPE_IDX, CONST_I32)),
+// Not yet supported by Binaryen (supported as 0xFB_10)
+//    ARRAY_NEW_ELEM("array.new_elem", 0xFB_1F, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
 
     I31_NEW("i31.new", 0xFB_20),
     I31_GET_S("i31.get_s", 0xFB_21),
     I31_GET_U("i31.get_u", 0xFB_22),
 
-    REF_TEST_STATIC("ref.test_static", 0xFB_44, STRUCT_TYPE_IDX),
-    REF_CAST_STATIC("ref.cast_static", 0xFB_45, STRUCT_TYPE_IDX),
+    REF_EQ("ref.eq", 0xD5),
+// Not yet supported by Binaryen
+//    REF_TEST("ref.test", 0xFB_40, HEAP_TYPE),
+//    REF_TEST_NULL("ref.test null", 0xFB_48, HEAP_TYPE),
+//    REF_CAST("ref.cast", 0xFB_41, HEAP_TYPE),
+//    REF_CAST_NULL("ref.cast null", 0xFB_49, HEAP_TYPE),
 
-    BR_ON_CAST_STATIC_FAIL("br_on_cast_static_fail", 0xfb47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
+// Not yet supported by V8
+//    BR_ON_CAST("br_on_cast", 0xFB42, listOf(LABEL_IDX, HEAP_TYPE)),
+//    BR_ON_CAST_NULL("br_on_cast null", 0xFB4A, listOf(LABEL_IDX, HEAP_TYPE)),
+//    BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB43, listOf(LABEL_IDX, HEAP_TYPE)),
+//    BR_ON_CAST_FAIL_NULL("br_on_cast_fail null", 0xFB4B, listOf(LABEL_IDX, HEAP_TYPE)),
 
-    REF_IS_FUNC("ref.is_func", 0xfb50),
-    REF_IS_DATA("ref.is_data", 0xfb51),
-    REF_IS_I31("ref.is_i31", 0xfb52),
-    REF_AS_FUNC("ref.as_func", 0xfb58),
-    REF_AS_DATA("ref.as_data", 0xfb59),
-    REF_AS_I31("ref.as_i31", 0xfb5a),
+    EXTERN_INTERNALIZE("extern.internalize", 0xfb70), // externref -> anyref
+    EXTERN_EXTERNALIZE("extern.externalize", 0xfb71), // anyref -> externref
 
-    BR_ON_FUNC("br_on_func", 0xfb60, listOf(LABEL_IDX)),
-    BR_ON_DATA("br_on_data", 0xfb61, listOf(LABEL_IDX)),
-    BR_ON_I31("br_on_i31", 0xfb62, listOf(LABEL_IDX)),
+    // ------------------------
+    // Deprecated instructions
+    // TODO Remove as soon as V8 & Binaryen support new instructions.
+    //      Revert 7f8f7aa0.
 
-    BR_ON_NON_FUNC("br_on_non_func", 0xfb63, listOf(LABEL_IDX)),
-    BR_ON_NON_DATA("br_on_non_data", 0xfb64, listOf(LABEL_IDX)),
-    BR_ON_NON_I31("br_on_non_i31", 0xfb65, listOf(LABEL_IDX)),
+    REF_TEST_DEPRECATED("ref.test", 0xFB_44, STRUCT_TYPE_IDX),
+    REF_CAST_DEPRECATED("ref.cast", 0xFB_45, STRUCT_TYPE_IDX),
 
+    REF_IS_DATA_DEPRECATED("ref.is_data", 0xFB_51),
+    REF_AS_DATA_DEPRECATED("ref.as_data", 0xFB_59),
+
+    BR_ON_CAST_FAIL_DEPRECATED("br_on_cast_fail", 0xFB_47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
+
+    // ============================================================
     // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.
     GET_UNIT("call", 0x10, FUNC_IDX)
     ;

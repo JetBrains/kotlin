@@ -173,20 +173,20 @@ task compileJs(type: NoDebugJavaExec) {
     def rootDir = rootDir
     def projectDir = projectDir
 
-    def compileBuiltinsKotlin2JsFiles = compileBuiltinsKotlin2Js.outputs.files
-    def compileKotlin2JsFiles = compileKotlin2Js.outputs.files
+    def compileBuiltinsKotlin2JsFiles = compileBuiltinsKotlin2Js.destinationDirectory
+    def compileKotlin2JsFiles = compileKotlin2Js.destinationDirectory
     doFirst {
         args = [jsOutputFileName, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
-                (compileBuiltinsKotlin2JsFiles.collect { it.path }.sort() +
-                        compileKotlin2JsFiles.collect { it.path }.sort()).findAll {
-                    it.endsWith(".js") && !it.endsWith(".meta.js")
+                (compileBuiltinsKotlin2JsFiles.asFileTree.files.sort() +
+                        compileKotlin2JsFiles.asFileTree.files.sort()).findAll {
+                    it.name.endsWith(".js") && !it.name.endsWith(".meta.js")
                 }
     }
     classpath = configurations.kotlinCompilerClasspath
 
     def sourceMapFile = file(jsOutputMapFileName)
     def jsOutputMetaFile = file(jsOutputMetaFileName)
-    def compileMetaFile = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js'))
+    def compileMetaFile = file(compileKotlin2Js.outputFileProperty.map { it.path.replaceAll('\\.js$', '.meta.js') })
     def mainJsOutputDir = compileKotlin2Js.destinationDirectory
     doLast {
         ant.replaceregexp(

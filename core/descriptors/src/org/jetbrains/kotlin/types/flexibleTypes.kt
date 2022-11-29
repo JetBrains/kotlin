@@ -101,6 +101,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
 
         assert(!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
         assert(!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
+        // TODO: https://youtrack.jetbrains.com/issue/KT-54198 (two captured types)
         assert(lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
         assert(KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
             "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"

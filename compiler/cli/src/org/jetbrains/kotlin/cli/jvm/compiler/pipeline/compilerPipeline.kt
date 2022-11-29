@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.fir.pipeline.convertToIr
 import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.pipeline.runResolution
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -192,10 +192,13 @@ fun convertAnalyzedFirToIr(
 
     // fir2ir
     val irGenerationExtensions =
-        (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }
+        (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
+            IrGenerationExtension.getInstances(it)
+        } ?: emptyList()
+    val linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
     val (irModuleFragment, components) =
         analysisResults.session.convertToIr(
-            analysisResults.scopeSession, analysisResults.fir, extensions, irGenerationExtensions ?: emptyList()
+            analysisResults.scopeSession, analysisResults.fir, extensions, irGenerationExtensions, linkViaSignatures
         )
 
     return ModuleCompilerIrBackendInput(
@@ -394,7 +397,7 @@ fun createSession(
                 precompiledBinariesFileScope?.let { librariesScope -= it }
             }
 
-    return FirSessionFactory.createSessionWithDependencies(
+    return FirSessionFactoryHelper.createSessionWithDependencies(
         Name.identifier(name),
         platform,
         analyzerServices,

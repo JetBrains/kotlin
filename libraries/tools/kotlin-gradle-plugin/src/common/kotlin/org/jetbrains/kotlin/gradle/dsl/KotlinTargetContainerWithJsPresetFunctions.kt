@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension.Companion.reportJsCompilerMode
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension.Companion.warnAboutDeprecatedCompiler
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -84,8 +85,10 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
 ): KotlinJsTargetDsl {
     val existingTarget = getExistingTarget(name, compiler)
 
-    val compilerOrDefault = compiler
-        ?: existingTarget?.calculateJsCompilerType()
+    val kotlinJsCompilerType = (compiler
+        ?: existingTarget?.calculateJsCompilerType())
+
+    val compilerOrDefault = kotlinJsCompilerType
         ?: defaultJsCompilerType
 
     val targetName = getTargetName(name, compilerOrDefault)
@@ -98,6 +101,7 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
     }
 
     reportJsCompilerMode(compilerOrDefault)
+
     @Suppress("UNCHECKED_CAST")
     return configureOrCreate(
         targetName,
@@ -108,7 +112,9 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
             )
         ) as KotlinTargetPreset<KotlinJsTargetDsl>,
         configure
-    )
+    ).also { target ->
+        warnAboutDeprecatedCompiler(target.project, kotlinJsCompilerType ?: compilerTypeFromProperties)
+    }
 }
 
 // Try to find existing target with exact name

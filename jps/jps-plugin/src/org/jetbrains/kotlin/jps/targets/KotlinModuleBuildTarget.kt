@@ -15,9 +15,7 @@ import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.build.BuildMetaInfo
-import org.jetbrains.kotlin.build.BuildMetaInfoFactory
-import org.jetbrains.kotlin.build.GeneratedFile
+import org.jetbrains.kotlin.build.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
@@ -306,7 +304,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     )
 
     inner class SourcesToCompile(
-        sources: Collection<KotlinModuleBuildTarget.Source>,
+        sources: Collection<Source>,
         val removedFiles: Collection<File>
     ) {
         val allFiles = sources.map { it.file }
@@ -330,45 +328,36 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         }
     }
 
-    abstract val buildMetaInfoFactory: BuildMetaInfoFactory<BuildMetaInfoType>
+    abstract val compilerArgumentsFileName: String
 
-    abstract val buildMetaInfoFileName: String
+    abstract val buildMetaInfo: BuildMetaInfoType
 
-    fun isVersionChanged(chunk: KotlinChunk, buildMetaInfo: BuildMetaInfo): Boolean {
-        val file = chunk.buildMetaInfoFile(jpsModuleBuildTarget)
+    fun isVersionChanged(chunk: KotlinChunk, compilerArguments: CommonCompilerArguments): Boolean {
+        fun printReasonToRebuild(reasonToRebuild: String) {
+            KotlinBuilder.LOG.info("$reasonToRebuild. Performing non-incremental rebuild (kotlin only)")
+        }
+
+        val currentCompilerArgumentsMap = buildMetaInfo.createPropertiesMapFromCompilerArguments(compilerArguments)
+
+        val file = chunk.compilerArgumentsFile(jpsModuleBuildTarget)
         if (Files.notExists(file)) return false
 
-        val prevBuildMetaInfo =
+        val previousCompilerArgsMap =
             try {
-                buildMetaInfoFactory.deserializeFromString(Files.newInputStream(file).bufferedReader().use { it.readText() })
-                    ?: return false
+                buildMetaInfo.deserializeMapFromString(Files.newInputStream(file).bufferedReader().use { it.readText() })
             } catch (e: Exception) {
-                KotlinBuilder.LOG.error("Could not deserialize build meta info", e)
+                KotlinBuilder.LOG.error("Could not deserialize previous compiler arguments info", e)
                 return false
             }
 
-        val prevLangVersion = LanguageVersion.fromVersionString(prevBuildMetaInfo.languageVersionString)
-        val prevApiVersion = ApiVersion.parse(prevBuildMetaInfo.apiVersionString)
+        val rebuildReason = buildMetaInfo.obtainReasonForRebuild(currentCompilerArgumentsMap, previousCompilerArgsMap)
 
-        val reasonToRebuild = when {
-            chunk.langVersion != prevLangVersion -> "Language version was changed ($prevLangVersion -> ${chunk.langVersion})"
-            chunk.apiVersion != prevApiVersion -> "Api version was changed ($prevApiVersion -> ${chunk.apiVersion})"
-            prevLangVersion != LanguageVersion.KOTLIN_1_0 && prevBuildMetaInfo.isEAP && !buildMetaInfo.isEAP -> {
-                // If EAP->Non-EAP build with IC, then rebuild all kotlin
-                "Last build was compiled with EAP-plugin"
-            }
-            else -> PluginClasspathsComparator(
-                prevBuildMetaInfo.pluginClasspaths,
-                buildMetaInfo.pluginClasspaths
-            ).describeDifferencesOrNull()
+        return if (rebuildReason != null) {
+            printReasonToRebuild(rebuildReason)
+            true
+        } else {
+            false
         }
-
-        if (reasonToRebuild != null) {
-            KotlinBuilder.LOG.info("$reasonToRebuild. Performing non-incremental rebuild (kotlin only)")
-            return true
-        }
-
-        return false
     }
 
     private fun checkRepresentativeTarget(chunk: KotlinChunk) {

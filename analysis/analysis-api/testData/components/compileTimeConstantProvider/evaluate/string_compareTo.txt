@@ -1,0 +1,9 @@
+expression: "a".compareTo("b")
+
+CONSTANT_EXPRESSION_EVALUATION
+constant: -1
+constantValueKind: Int
+
+CONSTANT_LIKE_EXPRESSION_EVALUATION
+constantLike: -1
+constantLikeValueKind: Int

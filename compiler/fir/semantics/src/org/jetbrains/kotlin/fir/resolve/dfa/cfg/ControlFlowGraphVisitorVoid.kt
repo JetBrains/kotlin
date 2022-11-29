@@ -273,14 +273,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitEnterContractNode(node: EnterContractNode) {
-        visitNode(node)
-    }
-
-    open fun visitExitContractNode(node: ExitContractNode) {
-        visitNode(node)
-    }
-
     open fun visitEnterSafeCallNode(node: EnterSafeCallNode) {
         visitNode(node)
     }
@@ -568,14 +560,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Nothing?) {
         visitVariableAssignmentNode(node)
-    }
-
-    final override fun visitEnterContractNode(node: EnterContractNode, data: Nothing?) {
-        visitEnterContractNode(node)
-    }
-
-    final override fun visitExitContractNode(node: ExitContractNode, data: Nothing?) {
-        visitExitContractNode(node)
     }
 
     final override fun visitEnterSafeCallNode(node: EnterSafeCallNode, data: Nothing?) {

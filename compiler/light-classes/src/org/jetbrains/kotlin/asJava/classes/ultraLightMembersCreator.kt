@@ -302,8 +302,9 @@ internal class UltraLightMembersCreator(
                 if (forcePrivate || declaration.isPrivate() || accessedProperty?.isPrivate() == true) {
                     return name == PsiModifier.PRIVATE
                 }
-                if (declaration.hasModifier(PROTECTED_KEYWORD) || accessedProperty
-                        ?.hasModifier(PROTECTED_KEYWORD) == true
+                if (declaration.hasModifier(PROTECTED_KEYWORD) ||
+                    accessedProperty?.hasModifier(PROTECTED_KEYWORD) == true ||
+                    (declaration is KtConstructor<*> && containingClassIsSealed)
                 ) {
                     return name == PsiModifier.PROTECTED
                 }
@@ -335,7 +336,7 @@ internal class UltraLightMembersCreator(
         }
 
         private fun KtDeclaration.isPrivate() =
-            hasModifier(PRIVATE_KEYWORD) || this is KtConstructor<*> && containingClassIsSealed || isInlineOnly()
+            hasModifier(PRIVATE_KEYWORD) || isInlineOnly()
 
         private fun KtDeclaration.isInlineOnly(): Boolean {
             if (this !is KtCallableDeclaration || !hasModifier(INLINE_KEYWORD)) return false

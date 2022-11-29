@@ -38,7 +38,7 @@ class SpinLock<MutexThreadStateHandling::kIgnore> : private Pinned {
 public:
     void lock() noexcept {
         while(flag_.test_and_set(std::memory_order_acquire)) {
-            std::this_thread::yield();
+            yield();
         }
     }
 
@@ -48,6 +48,11 @@ public:
 
 private:
     std::atomic_flag flag_ = ATOMIC_FLAG_INIT;
+
+    // No need to check for external calls, because we explicitly ignore thread state.
+    static NO_EXTERNAL_CALLS_CHECK NO_INLINE void yield() {
+        std::this_thread::yield();
+    }
 };
 
 template <>

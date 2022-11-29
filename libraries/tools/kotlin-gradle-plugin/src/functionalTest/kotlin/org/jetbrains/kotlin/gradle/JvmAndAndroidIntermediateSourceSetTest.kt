@@ -72,7 +72,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
 
         val compilation = jvmAndAndroidMainMetadataCompilations.single()
         assertFalse(
-            compilation.compileKotlinTaskProvider.get().enabled,
+            compilation.compileTaskProvider.get().enabled,
             "Expected compilation task to be disabled, because not supported yet"
         )
     }

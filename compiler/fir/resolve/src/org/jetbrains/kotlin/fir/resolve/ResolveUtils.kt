@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,11 +37,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -64,10 +63,11 @@ fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
 
 fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
-        is FirSimpleFunction -> receiverTypeRef
-        is FirAnonymousFunction -> receiverTypeRef
+        is FirSimpleFunction -> receiverParameter
+        is FirAnonymousFunction -> receiverParameter
         else -> null
-    }
+    }?.typeRef
+
     val parameters = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(
             ConeSimpleDiagnostic(
@@ -222,8 +222,7 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
 }
 
 private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(): FirBasedSymbol<*> {
-    val propertyReceiver = resolvedSymbol.safeAs<FirPropertySymbol>()
-        ?: return resolvedSymbol
+    val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
 
     // This can happen in case of 2 properties referencing
     // each other recursively. See: Jet81.fir.kt
@@ -504,7 +503,7 @@ private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTyp
 }
 
 fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? =
-    this.containingClass()?.let { lookupTag ->
+    this.containingClassLookupTag()?.let { lookupTag ->
         session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
     }
 
@@ -525,7 +524,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
     return when (origin) {
         FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
         FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
-        FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.getAsForbiddenNamedArgumentsTarget(session)
+        FirDeclarationOrigin.ImportedFromObjectOrStatic -> importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
         is FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
         FirDeclarationOrigin.SamConstructor -> null
         FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride -> {
@@ -543,7 +542,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
         }
         // referenced function of a Kotlin function type
         FirDeclarationOrigin.BuiltIns -> {
-            if (dispatchReceiverClassOrNull()?.isBuiltinFunctionalType() == true) {
+            if (dispatchReceiverClassLookupTagOrNull()?.isBuiltinFunctionalType() == true) {
                 ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
             } else {
                 null
@@ -568,7 +567,11 @@ fun FirExpression?.isIntegerLiteralOrOperatorCall(): Boolean {
         returns(true) implies (this@isIntegerLiteralOrOperatorCall != null)
     }
     return when (this) {
-        is FirConstExpression<*> -> kind == ConstantValueKind.Int || kind == ConstantValueKind.IntegerLiteral
+        is FirConstExpression<*> -> kind == ConstantValueKind.Int
+                || kind == ConstantValueKind.IntegerLiteral
+                || kind == ConstantValueKind.UnsignedInt
+                || kind == ConstantValueKind.UnsignedIntegerLiteral
+
         is FirIntegerLiteralOperatorCall -> true
         else -> false
     }

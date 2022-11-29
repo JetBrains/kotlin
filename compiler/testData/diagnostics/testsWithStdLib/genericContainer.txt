@@ -1,0 +1,10 @@
+package
+
+public val container: GenericContainer<out GenericContainer<*>!>
+
+public open class GenericContainer</*0*/ SELF : GenericContainer<SELF!>!> {
+    public constructor GenericContainer</*0*/ SELF : GenericContainer<SELF!>!>(/*0*/ dockerImageName: kotlin.String!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

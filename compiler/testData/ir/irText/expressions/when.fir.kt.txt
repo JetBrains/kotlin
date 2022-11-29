@@ -38,20 +38,20 @@ fun testComma(x: Int): String {
     when {
       when {
         when {
-          when {
-            EQEQ(arg0 = tmp1_subject, arg1 = 1) -> true
-            else -> EQEQ(arg0 = tmp1_subject, arg1 = 2)
-          } -> true
-          else -> EQEQ(arg0 = tmp1_subject, arg1 = 3)
+          EQEQ(arg0 = tmp1_subject, arg1 = 1) -> true
+          else -> EQEQ(arg0 = tmp1_subject, arg1 = 2)
         } -> true
-        else -> EQEQ(arg0 = tmp1_subject, arg1 = 4)
+        else -> when {
+          EQEQ(arg0 = tmp1_subject, arg1 = 3) -> true
+          else -> EQEQ(arg0 = tmp1_subject, arg1 = 4)
+        }
       } -> "1234"
       when {
-        when {
-          EQEQ(arg0 = tmp1_subject, arg1 = 5) -> true
-          else -> EQEQ(arg0 = tmp1_subject, arg1 = 6)
-        } -> true
-        else -> EQEQ(arg0 = tmp1_subject, arg1 = 7)
+        EQEQ(arg0 = tmp1_subject, arg1 = 5) -> true
+        else -> when {
+          EQEQ(arg0 = tmp1_subject, arg1 = 6) -> true
+          else -> EQEQ(arg0 = tmp1_subject, arg1 = 7)
+        }
       } -> "567"
       when {
         EQEQ(arg0 = tmp1_subject, arg1 = 8) -> true

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
@@ -48,7 +47,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -515,27 +513,6 @@ private fun ConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
             else -> value.toString()
         }
     }
-
-
-/***
- * @see org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
- */
-fun KotlinType.tryResolveMarkerInterfaceFQName(): String? {
-
-    val classId = constructor.declarationDescriptor.classId
-
-    for (mapping in JavaToKotlinClassMap.mutabilityMappings) {
-        if (mapping.kotlinReadOnly == classId) {
-            return "kotlin.jvm.internal.markers.KMappedMarker"
-        } else if (mapping.kotlinMutable == classId) {
-            return "kotlin.jvm.internal.markers.K" + classId.relativeClassName.asString()
-                .replace("MutableEntry", "Entry") // kotlin.jvm.internal.markers.KMutableMap.Entry for some reason
-                .replace(".", "$")
-        }
-    }
-
-    return null
-}
 
 internal inline fun Project.applyCompilerPlugins(body: (UltraLightClassModifierExtension) -> Unit) {
     UltraLightClassModifierExtension.getInstances(this).forEach { body(it) }

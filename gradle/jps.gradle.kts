@@ -17,6 +17,7 @@ fun updateCompilerXml() {
     val modulesExcludedFromJps = listOf(
         "buildSrc",
         "native/commonizer",
+        "plugins/atomicfu/atomicfu-runtime",
         "libraries/tools/atomicfu",
         "libraries/tools/binary-compatibility-validator",
         "libraries/tools/dukat",
@@ -24,6 +25,7 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-allopen",
         "libraries/tools/kotlin-annotation-processing",
         "libraries/tools/kotlin-annotation-processing-maven",
+        "libraries/tools/kotlin-assignment",
         "libraries/tools/kotlin-bom",
         "libraries/tools/kotlin-gradle-build-metrics",
         "libraries/tools/kotlin-gradle-plugin",
@@ -33,6 +35,7 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests",
         "libraries/tools/kotlin-gradle-plugin-integration-tests",
         "libraries/tools/kotlin-gradle-plugin-kpm-android",
+        "libraries/tools/kotlin-gradle-plugin-tcs-android",
         "libraries/tools/kotlin-gradle-plugin-model",
         "libraries/tools/kotlin-gradle-plugin-npm-versions-codegen",
         "libraries/tools/kotlin-gradle-plugin-test-utils-embeddable",
@@ -67,6 +70,7 @@ fun updateCompilerXml() {
         "native/commonizer-api",
         "libraries/examples",
         "libraries/tools/kotlin-gradle-plugin-idea-proto",
+        "libraries/tools/kotlin-project-model-tests-generator",
     )
 
     val d = '$'
@@ -222,7 +226,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     inheritOutputDirs = true
                 }
             }
-            
+
             if (this != rootProject) {
                 evaluationDependsOn(path)
             }
@@ -417,7 +421,7 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinc() {
         directory("license") {
             directoryContent("$rootDir/license")
         }
-        
+
         file("$rootDir/bootstrap/build.txt")
     }
 }
@@ -519,7 +523,7 @@ fun RecursiveArtifact.sourceJarsFromConfiguration(configuration: Configuration, 
         .resolvedArtifacts
 
     jarsFromExternalModules(resolvedArtifacts, renamer)
-    
+
     resolvedArtifacts
         .map { it.id.componentIdentifier }
         .filterIsInstance<ProjectComponentIdentifier>()

@@ -12,9 +12,9 @@ public inline fun <T: Closeable, R> use(t: T, block: T.(T)-> R) : R {
 }
 
 fun test() {
-    use(C()) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>use<!>(C()) {
         this.close()
         it.close()
-        <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>xx<!>
+        <!UNRESOLVED_REFERENCE!>xx<!>
     }
 }

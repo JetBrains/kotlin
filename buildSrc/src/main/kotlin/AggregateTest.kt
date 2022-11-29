@@ -47,7 +47,7 @@ open class AggregateTest : Test() { // Inherit from Test to see test results in 
     }
 
     private fun subTaskConfigure(testTask: Test) {
-        testTask.outputs.upToDateWhen { false }
+        testTask.doNotTrackState("State is tracked by AggregateTest task")
         testTask.ignoreFailures = true
         testTask.filter {
             isFailOnNoMatchingTests = false

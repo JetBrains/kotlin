@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logging
@@ -18,9 +17,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
-import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
-import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
+import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 import javax.inject.Inject
 
@@ -43,7 +40,7 @@ internal class GradleCompilerRunnerWithWorkers(
         workQueue.submit(GradleKotlinCompilerWorkAction::class.java) { params ->
             params.compilerWorkArguments.set(workArgs)
             if (taskOutputsBackup != null) {
-                params.taskOutputs.set(taskOutputsBackup.outputs)
+                params.taskOutputsToRestore.set(taskOutputsBackup.outputsToRestore)
                 params.buildDir.set(taskOutputsBackup.buildDirectory)
                 params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
                 params.metricsReporter.set(buildMetrics)
@@ -64,8 +61,7 @@ internal class GradleCompilerRunnerWithWorkers(
                     fileSystemOperations,
                     parameters.buildDir,
                     parameters.snapshotsDir,
-                    parameters.taskOutputs.get(),
-                    outputsToExclude = emptyList(),
+                    parameters.taskOutputsToRestore.get(),
                     logger
                 )
             } else {
@@ -76,11 +72,14 @@ internal class GradleCompilerRunnerWithWorkers(
                 GradleKotlinCompilerWork(
                     parameters.compilerWorkArguments.get()
                 ).run()
-            } catch (e: GradleException) {
-                // Currently, metrics are not reported as in the worker we are getting new instance of [BuildMetricsReporter]
-                // [BuildDataRecorder] knows nothing about this new instance. Possibly could be fixed in the future by migrating
-                // [BuildMetricsReporter] to be shared Gradle service.
-                if (taskOutputsBackup != null) {
+            } catch (e: FailedCompilationException) {
+                // Restore outputs only in cases where we expect that the user will make some changes to their project:
+                //   - For a compilation error, the user will need to fix their source code
+                //   - For an OOM error, the user will need to increase their memory settings
+                // In the other cases where there is nothing the user can fix in their project, we should not restore the outputs.
+                // Otherwise, the next build(s) will likely fail in exactly the same way as this build because their inputs and outputs are
+                // the same.
+                if (taskOutputsBackup != null && (e is CompilationErrorException || e is OOMErrorException)) {
                     parameters.metricsReporter.get().measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
                         logger.info("Restoring task outputs to pre-compilation state")
                         taskOutputsBackup.restoreOutputs()
@@ -96,7 +95,7 @@ internal class GradleCompilerRunnerWithWorkers(
 
     internal interface GradleKotlinCompilerWorkParameters : WorkParameters {
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
-        val taskOutputs: ListProperty<File>
+        val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
         val buildDir: DirectoryProperty
         val metricsReporter: Property<BuildMetricsReporter>

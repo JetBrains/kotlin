@@ -71,8 +71,6 @@ object PathUtil {
     const val KOTLIN_SCRIPTING_COMMON_JAR = "$KOTLIN_SCRIPTING_COMMON_NAME.jar"
     const val KOTLIN_SCRIPTING_JVM_NAME = "kotlin-scripting-jvm"
     const val KOTLIN_SCRIPTING_JVM_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
-    const val KOTLIN_SCRIPTING_JS_NAME = "kotlin-scripting-js"
-    const val KOTLIN_SCRIPTING_JS_JAR = "$KOTLIN_SCRIPTING_JS_NAME.jar"
     const val KOTLIN_DAEMON_NAME = "kotlin-daemon"
     const val KOTLIN_DAEMON_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME = "kotlin-scripting-compiler"
@@ -89,7 +87,7 @@ object PathUtil {
         KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
         KOTLINX_COROUTINES_CORE_JAR,
         KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR,
-        KOTLIN_SCRIPTING_JS_JAR, JS_ENGINES_JAR
+        JS_ENGINES_JAR
     )
 
     const val KOTLIN_TEST_NAME = "kotlin-test"
@@ -185,4 +183,10 @@ object PathUtil {
     @JvmStatic
     fun getJdkClassesRoots(jdkHome: File): List<File> =
             JavaSdkUtil.getJdkClassesRoots(jdkHome, false)
+
+    @JvmStatic
+    fun getJdkClassesRootsFromJdkOrJre(javaRoot: File): List<File> {
+        val isJdk = File(javaRoot, "jre/lib").exists()
+        return JavaSdkUtil.getJdkClassesRoots(javaRoot, !isJdk)
+    }
 }

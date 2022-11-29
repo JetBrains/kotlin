@@ -26,7 +26,7 @@ val GradleKpmHostSpecificMetadataArtifact = GradleKpmConfigurationArtifactsSetup
         project.metadataCompilationRegistryByModuleId.getValue(fragment.containingModule.moduleIdentifier)
             .withAll { metadataCompilation ->
                 val metadataFragment = metadataCompilation.fragment
-                if (metadataCompilation is KotlinNativeFragmentMetadataCompilationData) {
+                if (metadataCompilation is GradleKpmNativeFragmentMetadataCompilationData) {
                     jar.from(project.files(project.provider {
                         if (metadataFragment in fragment.withRefinesClosure && metadataFragment.isNativeHostSpecific())
                             project.filesWithUnpackedArchives(metadataCompilation.output.allOutputs, setOf(KLIB_FILE_EXTENSION))

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -32,10 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.writeResultType
+import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOperatorsWithSignedArgument
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -48,6 +46,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -71,8 +70,6 @@ class FirCallCompletionResultsWriterTransformer(
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
-
-    private val declarationWriter by lazy { FirDeclarationCompletionResultsWriter(finalSubstitutor, typeApproximator, session.typeContext) }
 
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     private var enableArrayOfCallTransformation = false
@@ -133,7 +130,7 @@ class FirCallCompletionResultsWriterTransformer(
         var extensionReceiver = subCandidate.chosenExtensionReceiverExpression()
         if (!declaration.isWrappedIntegerOperator()) {
             val expectedDispatchReceiverType = (declaration as? FirCallableDeclaration)?.dispatchReceiverType
-            val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverTypeRef?.coneType
+            val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef?.coneType
             dispatchReceiver = dispatchReceiver.transformSingle(integerOperatorApproximator, expectedDispatchReceiverType)
             extensionReceiver = extensionReceiver.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
@@ -188,10 +185,6 @@ class FirCallCompletionResultsWriterTransformer(
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, qualifiedAccessExpression.source, context.file.source)
 
         if (mode == Mode.DelegatedPropertyCompletion) {
-            subCandidate.symbol.fir.transformSingle(
-                declarationWriter,
-                FirDeclarationCompletionResultsWriter.ApproximationData.NoApproximation
-            )
             val typeUpdater = TypeUpdaterForDelegateArguments()
             result.transformExplicitReceiver(typeUpdater, null)
         }
@@ -244,10 +237,6 @@ class FirCallCompletionResultsWriterTransformer(
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
 
         if (mode == Mode.DelegatedPropertyCompletion) {
-            subCandidate.symbol.fir.transformSingle(
-                declarationWriter,
-                FirDeclarationCompletionResultsWriter.ApproximationData.NoApproximation
-            )
             val typeUpdater = TypeUpdaterForDelegateArguments()
             result.argumentList.transformArguments(typeUpdater, null)
             result.transformExplicitReceiver(typeUpdater, null)
@@ -301,6 +290,10 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
         return annotationCall
+    }
+
+    override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ExpectedArgumentType?): FirStatement {
+        return transformAnnotationCall(errorAnnotationCall, data)
     }
 
     private fun Candidate.handleVarargs() {
@@ -469,7 +462,7 @@ class FirCallCompletionResultsWriterTransformer(
         val arguments = argumentMapping?.map { (argument, valueParameter) ->
             val expectedType = when {
                 isIntegerOperator -> ConeIntegerConstantOperatorTypeImpl(
-                    isUnsigned = symbol.isWrappedIntegerOperatorForUnsignedType(),
+                    isUnsigned = symbol.isWrappedIntegerOperatorForUnsignedType() && callInfo.name in binaryOperatorsWithSignedArgument,
                     ConeNullability.NOT_NULL
                 )
                 valueParameter.isVararg -> valueParameter.returnTypeRef.substitute(this).varargElementType()
@@ -612,10 +605,11 @@ class FirCallCompletionResultsWriterTransformer(
 
         var needUpdateLambdaType = false
 
-        val initialReceiverType = anonymousFunction.receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
+        val receiverParameter = anonymousFunction.receiverParameter
+        val initialReceiverType = receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>()
         val resultReceiverType = initialReceiverType?.let { finalSubstitutor.substituteOrNull(it) }
         if (resultReceiverType != null) {
-            anonymousFunction.replaceReceiverTypeRef(anonymousFunction.receiverTypeRef!!.resolvedTypeFromPrototype(resultReceiverType))
+            receiverParameter.replaceTypeRef(receiverParameter.typeRef.resolvedTypeFromPrototype(resultReceiverType))
             needUpdateLambdaType = true
         }
 
@@ -632,8 +626,10 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (finalType != null) {
-            val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
-            anonymousFunction.transformReturnTypeRef(StoreType, resultType)
+            if (anonymousFunction.returnTypeRef !is FirImplicitUnitTypeRef) {
+                val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
+                anonymousFunction.transformReturnTypeRef(StoreType, resultType)
+            }
             needUpdateLambdaType = true
         }
 
@@ -908,63 +904,3 @@ private fun ExpectedArgumentType.getExpectedType(argument: FirElement): ConeKotl
 }
 
 fun ConeKotlinType.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ExpectedType(this)
-
-internal class FirDeclarationCompletionResultsWriter(
-    private val finalSubstitutor: ConeSubstitutor,
-    private val typeApproximator: ConeTypeApproximator,
-    private val typeContext: ConeInferenceContext
-) : FirDefaultTransformer<FirDeclarationCompletionResultsWriter.ApproximationData>() {
-    override fun <E : FirElement> transformElement(element: E, data: ApproximationData): E {
-        return element
-    }
-
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ApproximationData): FirStatement {
-        return super.transformAnonymousObject(anonymousObject, ApproximationData.NoApproximation)
-    }
-
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ApproximationData): FirStatement {
-        val newData = if (simpleFunction.isLocal || data == ApproximationData.NoApproximation) ApproximationData.NoApproximation
-        else ApproximationData.ApproximateByStatus(simpleFunction.visibility, simpleFunction.isInline)
-        simpleFunction.transformReturnTypeRef(this, newData)
-        simpleFunction.transformValueParameters(this, ApproximationData.NoApproximation)
-        simpleFunction.transformReceiverTypeRef(this, newData)
-        return simpleFunction
-    }
-
-    override fun transformProperty(property: FirProperty, data: ApproximationData): FirStatement {
-        val newData = if (property.isLocal || data == ApproximationData.NoApproximation) ApproximationData.NoApproximation
-        else ApproximationData.ApproximateByStatus(property.visibility, false)
-        property.transformGetter(this, newData)
-        property.transformSetter(this, newData)
-        property.transformReturnTypeRef(this, newData)
-        property.transformReceiverTypeRef(this, newData)
-        return property
-    }
-
-    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ApproximationData): FirStatement {
-        propertyAccessor.transformReturnTypeRef(this, data)
-        propertyAccessor.transformValueParameters(this, ApproximationData.NoApproximation)
-        return propertyAccessor
-    }
-
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: ApproximationData): FirStatement {
-        valueParameter.transformReturnTypeRef(this, ApproximationData.NoApproximation)
-        return valueParameter
-    }
-
-    override fun transformTypeRef(typeRef: FirTypeRef, data: ApproximationData): FirTypeRef {
-        val result = finalSubstitutor.substituteOrNull(typeRef.coneType)?.let {
-            typeRef.resolvedTypeFromPrototype(it)
-        } ?: typeRef
-        if (data is ApproximationData.ApproximateByStatus) {
-            return result.approximatedIfNeededOrSelf(typeApproximator, data.visibility, this.typeContext.session, data.isInline)
-        }
-        return result
-    }
-
-    sealed class ApproximationData {
-        class ApproximateByStatus(val visibility: Visibility?, val isInline: Boolean) : ApproximationData()
-        object NoApproximation : ApproximationData()
-        object Default : ApproximationData()
-    }
-}

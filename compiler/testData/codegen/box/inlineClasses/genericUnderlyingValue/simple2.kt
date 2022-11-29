@@ -1,4 +1,5 @@
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 // LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter
 // IGNORE_BACKED: JVM
 

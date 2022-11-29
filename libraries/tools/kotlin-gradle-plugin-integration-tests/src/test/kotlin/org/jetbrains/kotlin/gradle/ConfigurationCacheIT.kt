@@ -9,8 +9,8 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Configuration cache")
@@ -81,32 +81,45 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
+        val expectedTasks = mutableListOf(
+            ":lib:cinteropMyCinteropLinuxX64",
+            ":lib:commonizeCInterop",
+            ":lib:compileKotlinLinuxX64",
+            ":lib:copyCinteropMyCinteropLinuxX64",
+            ":lib:linkExecutableDebugExecutableLinuxX64",
+            ":lib:linkSharedDebugSharedLinuxX64",
+            ":lib:linkStaticDebugStaticLinuxX64",
+            ":lib:linkDebugTestLinuxX64",
+        )
+
+        if (HostManager.hostIsMac) {
+            expectedTasks += listOf(
+                ":lib:cinteropMyCinteropIosX64",
+                ":lib:compileKotlinIosX64",
+                ":lib:copyCinteropMyCinteropIosX64",
+                ":lib:assembleMyframeDebugFrameworkIosArm64",
+                ":lib:assembleMyfatframeDebugFatFramework",
+                ":lib:assembleLibDebugXCFramework",
+                ":lib:compileTestKotlinIosX64",
+                ":lib:linkDebugTestIosX64",
+            )
+        }
+
         project("native-configuration-cache", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(
-                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
-                warningMode = WarningMode.All
-            )
-            // These tasks currently don't support Configuration Cache and marked as [Task::notCompatibleWithConfigurationCache]
-            val configCacheIncompatibleTaskTypes = listOf(
-                "CInteropMetadataDependencyTransformationTask",
-                "TransformKotlinGranularMetadata"
-            )
-
-            build("build", buildOptions = buildOptions) {
-                // Reduce the problem numbers when a Task become compatible with GCC.
-                // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
-                assertOutputContains("16 problems were found storing the configuration cache, 6 of which seem unique.")
-                configCacheIncompatibleTaskTypes.forEach { taskType ->
-                    assertOutputContains(
-                        """Task `\S+` of type `[\w.]+$taskType`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
-                            .toRegex()
+            testConfigurationCacheOf(
+                "build",
+                executedTaskNames = expectedTasks,
+                checkConfigurationCacheFileReport = false,
+                buildOptions = defaultBuildOptions.copy(
+                    configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
+                    warningMode = WarningMode.All,
+                    freeArgs = listOf(
+                        // remove after KT-49933 is fixed
+                        "-x", ":lib:transformCommonMainDependenciesMetadata",
+                        "-x", ":lib:transformCommonMainCInteropDependenciesMetadata",
                     )
-                }
-
-                // TODO: Enable `warningMode = Fail` back and remove these asserts when KGP supports Gradle 8.0
-                assertOutputContains("The TestReport.destinationDir property has been deprecated.")
-                assertOutputContains("The TestReport.reportOn(Object...) method has been deprecated.")
-            }
+                )
+            )
         }
     }
 
@@ -116,16 +129,23 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val buildOptions = buildOptions.copy(freeArgs = listOf("--rerun-tasks"))
-            testConfigurationCacheOf(
+            val buildOptions = defaultBuildOptions.copy(
+                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
+                warningMode = WarningMode.All
+            )
+            build(
                 ":lib:commonizeCInterop",
                 ":commonizeNativeDistribution",
-                buildOptions = buildOptions,
-                // TODO(alakotka): Report will be still generated due to incorrect consumption of properties and environmental variables.
-                //  https://docs.gradle.org/7.4.2/userguide/configuration_cache.html#config_cache:requirements:reading_sys_props_and_env_vars
-                checkConfigurationCacheFileReport = false,
-                checkUpToDateOnRebuild = false
-            )
+                buildOptions = buildOptions
+            ) {
+                // Reduce the problem numbers when a Task become compatible with GCC.
+                // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
+                assertOutputContains("1 problem was found storing the configuration cache.")
+                assertOutputContains(
+                    """Task `\S+` of type `[\w.]+CInteropMetadataDependencyTransformationTask`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
+                        .toRegex()
+                )
+            }
         }
     }
 
@@ -190,39 +210,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
-    @JsGradlePluginTests
-    @DisplayName("works with Dukat")
-    @GradleTest
-    fun testConfigurationCacheDukatSrc(gradleVersion: GradleVersion) {
-        testConfigurationCacheDukat(gradleVersion)
-    }
-
-    @JsGradlePluginTests
-    @DisplayName("works with Dukat binaries")
-    @GradleTest
-    fun testConfigurationCacheDukatBinaries(gradleVersion: GradleVersion) {
-        testConfigurationCacheDukat(gradleVersion) {
-            gradleProperties.modify {
-                """
-                
-                ${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.BINARY}
-                """.trimIndent()
-            }
-        }
-    }
-
-    private fun testConfigurationCacheDukat(
-        gradleVersion: GradleVersion,
-        configure: TestProject.() -> Unit = {}
-    ) = project("dukat-integration/both", gradleVersion) {
-        buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-        configure(this)
-        testConfigurationCacheOf(
-            "irGenerateExternalsIntegrated",
-            executedTaskNames = listOf(":irGenerateExternalsIntegrated")
-        )
-    }
-
     @MppGradlePluginTests
     @DisplayName("works in MPP withJava project")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0, maxVersion = TestVersions.Gradle.G_7_1)
@@ -241,13 +228,16 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("with build report")
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
-            build("assemble", buildOptions = buildOptions) {
+        project(
+            "simpleProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
+        ) {
+            build("assemble") {
                 assertBuildReportPathIsPrinted()
             }
 
-            build("assemble", buildOptions = buildOptions) {
+            build("assemble") {
                 assertBuildReportPathIsPrinted()
             }
         }

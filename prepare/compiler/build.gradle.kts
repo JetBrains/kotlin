@@ -99,7 +99,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
-    ":kotlin-scripting-js",
     ":js:js.engines",
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
@@ -118,7 +117,8 @@ val distCompilerPluginProjects = listOf(
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":kotlinx-serialization-compiler-plugin",
-    ":kotlin-lombok-compiler-plugin"
+    ":kotlin-lombok-compiler-plugin",
+    ":kotlin-assignment-compiler-plugin"
 )
 
 val distSourcesProjects = listOfNotNull(

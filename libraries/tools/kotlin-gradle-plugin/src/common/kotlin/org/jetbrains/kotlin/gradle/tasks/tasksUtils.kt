@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.GradleException
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
@@ -10,18 +9,19 @@ import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.incremental.cleanDirectoryContents
+import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import org.jetbrains.kotlin.incremental.deleteRecursivelyOrThrow
 import java.io.File
 
-fun throwGradleExceptionIfError(
+/** Throws [FailedCompilationException] if compilation completed with [exitCode] != [ExitCode.OK]. */
+fun throwExceptionIfCompilationFailed(
     exitCode: ExitCode,
     executionStrategy: KotlinCompilerExecutionStrategy
 ) {
     when (exitCode) {
-        ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
-        ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
-        ExitCode.SCRIPT_EXECUTION_ERROR -> throw GradleException("Script execution error. See log for more details")
+        ExitCode.COMPILATION_ERROR -> throw CompilationErrorException("Compilation error. See log for more details")
+        ExitCode.INTERNAL_ERROR -> throw FailedCompilationException("Internal compiler error. See log for more details")
+        ExitCode.SCRIPT_EXECUTION_ERROR -> throw FailedCompilationException("Script execution error. See log for more details")
         ExitCode.OOM_ERROR -> {
             var exceptionMessage = "Not enough memory to run compilation."
             when (executionStrategy) {
@@ -31,12 +31,21 @@ fun throwGradleExceptionIfError(
                     exceptionMessage += " Try to increase it via 'gradle.properties':\norg.gradle.jvmargs=-Xmx<size>"
                 KotlinCompilerExecutionStrategy.OUT_OF_PROCESS -> Unit
             }
-            throw GradleException(exceptionMessage)
+            throw OOMErrorException(exceptionMessage)
         }
         ExitCode.OK -> Unit
         else -> throw IllegalStateException("Unexpected exit code: $exitCode")
     }
 }
+
+/** Exception thrown when [ExitCode] != [ExitCode.OK]. */
+internal open class FailedCompilationException(message: String) : RuntimeException(message)
+
+/** Exception thrown when [ExitCode] == [ExitCode.COMPILATION_ERROR]. */
+internal class CompilationErrorException(message: String) : FailedCompilationException(message)
+
+/** Exception thrown when [ExitCode] == [ExitCode.OOM_ERROR]. */
+internal class OOMErrorException(message: String) : FailedCompilationException(message)
 
 internal fun TaskWithLocalState.cleanOutputsAndLocalState(reason: String? = null) {
     val log = GradleKotlinLogger(logger)
@@ -59,7 +68,7 @@ internal fun cleanOutputsAndLocalState(
             when {
                 file.isDirectory -> {
                     log.debug("Deleting contents of output directory: $file")
-                    file.cleanDirectoryContents()
+                    file.deleteDirectoryContents()
                 }
                 file.isFile -> {
                     log.debug("Deleting output file: $file")

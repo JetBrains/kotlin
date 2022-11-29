@@ -8,26 +8,27 @@ package org.jetbrains.kotlin.backend.konan.llvm.objc
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 
-internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
-    val config = context.config
+internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLVMModuleRef? {
+    val config = generationState.context.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
 
-    val patchBuilder = PatchBuilder(context)
+    val patchBuilder = PatchBuilder(generationState.objCExport.namer)
     patchBuilder.addObjCPatches()
 
     val bitcodeFile = config.objCNativeLibrary
-    val parsedModule = parseBitcodeFile(bitcodeFile)
+    val parsedModule = parseBitcodeFile(generationState.llvmContext, bitcodeFile)
 
-    patchBuilder.buildAndApply(parsedModule)
+    patchBuilder.buildAndApply(parsedModule, generationState.llvm)
     return parsedModule
 }
 
-private class PatchBuilder(val context: Context) {
+private class PatchBuilder(val objCExportNamer: ObjCExportNamer) {
     enum class GlobalKind(val prefix: String) {
         OBJC_CLASS("OBJC_CLASS_\$_"),
         OBJC_METACLASS("OBJC_METACLASS_\$_"),
@@ -50,8 +51,6 @@ private class PatchBuilder(val context: Context) {
 
     val globalPatches = mutableListOf<GlobalPatch>()
     val literalPatches = mutableListOf<LiteralPatch>()
-
-    val objCExportNamer = context.objCExport.namer
 
     // Note: exported classes anyway use the same prefix,
     // so using more unique private prefix wouldn't help to prevent any clashes.
@@ -128,7 +127,7 @@ private fun PatchBuilder.addObjCPatches() {
     }
 }
 
-private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef) {
+private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, llvm: Llvm) {
     val nameToGlobalPatch = globalPatches.associateNonRepeatingBy { it.globalName }
 
     val sectionToValueToLiteralPatch = literalPatches.groupBy { it.generator.section }
@@ -156,7 +155,7 @@ private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef) {
             val value = getStringValue(initializer)
             val patch = valueToLiteralPatch[value]
             if (patch != null) {
-                if (patch.newValue != value) patchLiteral(global, patch.generator, patch.newValue)
+                if (patch.newValue != value) patchLiteral(global, llvm, patch.generator, patch.newValue)
                 unusedPatches -= patch
             } else if (section == ObjCDataGenerator.classNameGenerator.section) {
                 error("Objective-C class name literal is not patched: $value")
@@ -199,16 +198,17 @@ private fun <T, K> List<T>.associateNonRepeatingBy(keySelector: (T) -> K): Map<K
 
 private fun patchLiteral(
         global: LLVMValueRef,
+        llvm: Llvm,
         generator: ObjCDataGenerator.CStringLiteralsGenerator,
         newValue: String
 ) {
     val module = LLVMGetGlobalParent(global)!!
 
-    val newFirstCharPtr = generator.generate(module, newValue).getElementPtr(0).llvm
+    val newFirstCharPtr = generator.generate(module, llvm, newValue).getElementPtr(llvm, 0).llvm
 
     generateSequence(LLVMGetFirstUse(global), { LLVMGetNextUse(it) }).forEach { use ->
         val firstCharPtr = LLVMGetUser(use)!!.also {
-            require(it.isFirstCharPtr(global)) {
+            require(it.isFirstCharPtr(llvm, global)) {
                 "Unexpected literal usage: ${llvm2string(it)}"
             }
         }
@@ -216,8 +216,8 @@ private fun patchLiteral(
     }
 }
 
-private fun LLVMValueRef.isFirstCharPtr(global: LLVMValueRef): Boolean =
-        this.type == int8TypePtr &&
+private fun LLVMValueRef.isFirstCharPtr(llvm: Llvm, global: LLVMValueRef): Boolean =
+        this.type == llvm.int8PtrType &&
                 LLVMIsConstant(this) != 0 && LLVMGetConstOpcode(this) == LLVMOpcode.LLVMGetElementPtr
                 && LLVMGetNumOperands(this) == 3
                 && LLVMGetOperand(this, 0) == global

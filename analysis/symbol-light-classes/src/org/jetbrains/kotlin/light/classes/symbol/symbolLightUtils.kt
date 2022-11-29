@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
@@ -31,21 +31,22 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiExpression
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolPsiLiteral
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import java.util.*
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
 
-internal fun KtAnalysisSession.mapSuperType(
+internal fun KtAnalysisSession.mapType(
     type: KtType,
     psiContext: PsiElement,
-    kotlinCollectionAsIs: Boolean = false
+    mode: KtTypeMappingMode
 ): PsiClassType? {
     if (type is KtClassErrorType) return null
     val psiType = type.asPsiType(
         psiContext,
-        if (kotlinCollectionAsIs) KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else KtTypeMappingMode.SUPER_TYPE,
+        mode,
     )
     return psiType as? PsiClassType
 }
@@ -90,6 +91,13 @@ internal fun KtSymbolWithModality.computeModalityForMethod(
     }
     if (isTopLevel) {
         result.add(PsiModifier.STATIC)
+        val needFinalModifier = when (this) {
+            is KtPropertySymbol -> isDelegatedProperty || isVal
+            else -> true
+        }
+        if (needFinalModifier) {
+            result.add(PsiModifier.FINAL)
+        }
     }
 }
 
@@ -109,23 +117,37 @@ internal fun PsiElement.tryGetEffectiveVisibility(symbol: KtCallableSymbol): Vis
     return visibility
 }
 
-internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
-    visibility.toPsiVisibility(isTopLevel, forClass = false)
+internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(): String =
+    visibility.toPsiVisibilityForMember()
 
-internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isTopLevel: Boolean): String =
-    visibility.toPsiVisibility(isTopLevel, forClass = true)
+internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isNested: Boolean): String =
+    visibility.toPsiVisibilityForClass(isNested)
 
-internal fun Visibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
-    toPsiVisibility(isTopLevel, forClass = false)
+internal fun Visibility.toPsiVisibilityForMember(): String =
+    when (this) {
+        Visibilities.Private, Visibilities.PrivateToThis -> PsiModifier.PRIVATE
+        Visibilities.Protected -> PsiModifier.PROTECTED
+        else -> PsiModifier.PUBLIC
+    }
 
-private fun Visibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
-    // Top-level private class has PACKAGE_LOCAL visibility in Java
-    // Nested private class has PRIVATE visibility
-    Visibilities.Private, Visibilities.PrivateToThis ->
-        if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
+private fun Visibility.toPsiVisibilityForClass(isNested: Boolean): String {
+    return when (isNested) {
+        false -> when (this) {
+            Visibilities.Public,
+            Visibilities.Protected,
+            Visibilities.Local,
+            Visibilities.Internal -> PsiModifier.PUBLIC
 
-    Visibilities.Protected -> PsiModifier.PROTECTED
-    else -> PsiModifier.PUBLIC
+            else -> PsiModifier.PACKAGE_LOCAL
+        }
+
+        true -> when (this) {
+            Visibilities.Public, Visibilities.Internal, Visibilities.Local -> PsiModifier.PUBLIC
+            Visibilities.Protected -> PsiModifier.PROTECTED
+            Visibilities.Private -> PsiModifier.PRIVATE
+            else -> PsiModifier.PACKAGE_LOCAL
+        }
+    }
 }
 
 internal fun basicIsEquivalentTo(`this`: PsiElement?, that: PsiElement?): Boolean {
@@ -149,13 +171,9 @@ internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityTy
     if (ktType.isUnit) return NullabilityType.NotNull
 
     if (ktType is KtTypeParameterType) {
-//        TODO Make supertype checking
-//        val subtypeOfNullableSuperType = context.firRef.withFir(phase) {
-//            it.session.typeCheckerContext.nullableAnyType().isSupertypeOf(it.session.typeCheckerContext, coneType)
-//        }
-//        if (!subtypeOfNullableSuperType) return NullabilityType.NotNull
-
-        return if (!ktType.isMarkedNullable) NullabilityType.Unknown else NullabilityType.NotNull
+        if (ktType.isMarkedNullable) return NullabilityType.Nullable
+        val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.canBeNull }
+        return if (!subtypeOfNullableSuperType) NullabilityType.NotNull else NullabilityType.Unknown
     }
     if (ktType !is KtClassType) return NullabilityType.NotNull
 
@@ -164,7 +182,7 @@ internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityTy
     }
 
     if (ktType !is KtNonErrorClassType) return NullabilityType.NotNull
-    if (ktType.typeArguments.any { it.type is KtClassErrorType }) return NullabilityType.NotNull
+    if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return NullabilityType.NotNull
     if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
 
     val canonicalSignature = ktType.mapTypeToJvmType().descriptor
@@ -248,6 +266,7 @@ private fun KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue.toAnnotation
 
 private fun KtConstantValue.asStringForPsiLiteral(): String =
     when (val value = value) {
+        is Char -> "'$value'"
         is String -> "\"${escapeString(value)}\""
         is Long -> "${value}L"
         is Float -> "${value}f"
@@ -266,3 +285,32 @@ internal fun KtConstantValue.createPsiLiteral(parent: PsiElement): PsiExpression
 
 
 internal fun BitSet.copy(): BitSet = clone() as BitSet
+
+context(KtAnalysisSession)
+internal fun <T : KtSymbol> KtSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T = requireNotNull(restoreSymbol()) {
+    "${this::class} pointer already disposed"
+}
+
+internal fun hasTypeParameters(
+    ktModule: KtModule,
+    declaration: KtTypeParameterListOwner?,
+    declarationPointer: KtSymbolPointer<KtSymbolWithTypeParameters>,
+): Boolean = declaration?.typeParameters?.isNotEmpty() ?: declarationPointer.withSymbol(ktModule) {
+    it.typeParameters.isNotEmpty()
+}
+
+internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeForLightClasses(ktModule) {
+    restoreSymbol() != null
+}
+
+internal fun <T : KtSymbol> compareSymbolPointers(ktModule: KtModule, left: KtSymbolPointer<T>, right: KtSymbolPointer<T>): Boolean {
+    return left === right || analyzeForLightClasses(ktModule) {
+        val leftSymbol = left.restoreSymbol()
+        leftSymbol != null && leftSymbol == right.restoreSymbol()
+    }
+}
+
+internal inline fun <T : KtSymbol, R> KtSymbolPointer<T>.withSymbol(
+    ktModule: KtModule,
+    crossinline action: KtAnalysisSession.(T) -> R,
+): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed()) }

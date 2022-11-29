@@ -18,13 +18,21 @@ repositories {
     mavenCentral()
 }
 
+def shouldBeJs = true
+
 kotlin {
 	// Check the new preset functions:
 	jvm('jvm6') { }
-    js('nodeJs')
-    wasm()
+    if (shouldBeJs) {
+        js('nodeJs') {
+            nodejs {
+
+            }
+        }
+        wasm()
+    }
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
-    
+
     targets {
     	// Also check that the old DSL (fromPreset) works:
         fromPreset(presets.linuxX64, 'linux64')
@@ -33,7 +41,7 @@ kotlin {
 
         // We use this library in the cinterop test which includes a Windows x86 target.
         fromPreset(presets.mingwX86, 'mingw86')
-        
+
         fromPreset(presets.linuxMipsel32, 'linuxMipsel32')
 
         // Check the DSL constructs in the Groovy DSL:
@@ -81,10 +89,12 @@ kotlin {
                 implementation kotlin("test-junit")
             }
         }
-        nodeJsMain {
-        	dependencies {
-                api 'org.jetbrains.kotlin:kotlin-stdlib-js'
-        	}
+        if (shouldBeJs) {
+            nodeJsMain {
+                dependencies {
+                    api 'org.jetbrains.kotlin:kotlin-stdlib-js'
+                }
+            }
         }
     }
 }

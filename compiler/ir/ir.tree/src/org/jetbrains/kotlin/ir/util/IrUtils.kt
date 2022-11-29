@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -192,6 +192,17 @@ fun IrValueParameter.createStubDefaultValue(): IrExpressionBody =
         IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, "Stub expression for default value of $name")
     )
 
+val IrProperty.isSimpleProperty: Boolean
+    get() {
+        val getterFun = getter
+        val setterFun = setter
+        return !isFakeOverride &&
+                !isLateinit &&
+                modality === Modality.FINAL &&
+                (getterFun == null || getterFun.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) &&
+                (setterFun == null || setterFun.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR)
+    }
+
 val IrClass.functions: Sequence<IrSimpleFunction>
     get() = declarations.asSequence().filterIsInstance<IrSimpleFunction>()
 
@@ -200,6 +211,9 @@ val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
 
 val IrClass.constructors: Sequence<IrConstructor>
     get() = declarations.asSequence().filterIsInstance<IrConstructor>()
+
+val IrClass.defaultConstructor: IrConstructor?
+    get() = constructors.firstOrNull { ctor -> ctor.valueParameters.all { it.defaultValue != null } }
 
 val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
     get() = owner.constructors.map { it.symbol }
@@ -1090,13 +1104,15 @@ val IrFunction.allParametersCount: Int
 // This is essentially the same as FakeOverrideBuilder,
 // but it bypasses SymbolTable.
 // TODO: merge it with FakeOverrideBuilder.
-private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(emptyMap()) {
-
-    override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction, compatibilityMode: Boolean) {
+private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(
+    friendModules = emptyMap(),
+    unimplementedOverridesStrategy = ProcessAsFakeOverrides
+) {
+    override fun linkFunctionFakeOverride(declaration: IrFunctionWithLateBinding, compatibilityMode: Boolean) {
         declaration.acquireSymbol(IrSimpleFunctionSymbolImpl())
     }
 
-    override fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty, compatibilityMode: Boolean) {
+    override fun linkPropertyFakeOverride(declaration: IrPropertyWithLateBinding, compatibilityMode: Boolean) {
         val propertySymbol = IrPropertySymbolImpl()
         declaration.getter?.let { it.correspondingPropertySymbol = propertySymbol }
         declaration.setter?.let { it.correspondingPropertySymbol = propertySymbol }
@@ -1105,18 +1121,25 @@ private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(empt
 
         declaration.getter?.let {
             it.correspondingPropertySymbol = declaration.symbol
-            linkFunctionFakeOverride(it as? IrFakeOverrideFunction ?: error("Unexpected fake override getter: $it"), compatibilityMode)
+            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), compatibilityMode)
         }
         declaration.setter?.let {
             it.correspondingPropertySymbol = declaration.symbol
-            linkFunctionFakeOverride(it as? IrFakeOverrideFunction ?: error("Unexpected fake override setter: $it"), compatibilityMode)
+            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), compatibilityMode)
         }
     }
 }
 
-fun IrClass.addFakeOverrides(typeSystem: IrTypeSystemContext, implementedMembers: List<IrOverridableMember> = emptyList()) {
+fun IrClass.addFakeOverrides(
+    typeSystem: IrTypeSystemContext,
+    implementedMembers: List<IrOverridableMember> = emptyList(),
+    ignoredParentSymbols: List<IrSymbol> = emptyList()
+) {
     IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings())
-        .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false)
+        .buildFakeOverridesForClassUsingOverriddenSymbols(this,
+                                                          implementedMembers = implementedMembers,
+                                                          compatibilityMode = false,
+                                                          ignoredParentSymbols = ignoredParentSymbols)
         .forEach { addChild(it) }
 }
 
@@ -1286,3 +1309,25 @@ fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>
 
 fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
+
+fun IrFunction.isToString(): Boolean =
+    name.asString() == "toString" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
+
+fun IrFunction.isHashCode() =
+    name.asString() == "hashCode" && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
+
+fun IrFunction.isEquals() =
+    name.asString() == "equals" &&
+            extensionReceiverParameter == null && contextReceiverParametersCount == 0 &&
+            valueParameters.singleOrNull()?.type?.isNullableAny() == true
+
+fun IrFunction.isTypedEquals(): Boolean {
+    val parentClass = parent as? IrClass ?: return false
+    val enclosingClassStartProjection = parentClass.symbol.starProjectedType
+    return name == OperatorNameConventions.EQUALS
+            && (returnType.isBoolean() || returnType.isNothing())
+            && valueParameters.size == 1
+            && (valueParameters[0].type == enclosingClassStartProjection)
+            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+            && parentClass.isValue
+}

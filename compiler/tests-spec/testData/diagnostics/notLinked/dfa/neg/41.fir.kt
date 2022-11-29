@@ -22,8 +22,8 @@ inline fun <reified T> case_2(x: Any?) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
         }
         is T -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing? & T")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }
         else -> return
     }
@@ -80,8 +80,8 @@ inline fun <reified T> case_7(x: Any?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     } else if (x is T) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing? & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
     } else return
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)

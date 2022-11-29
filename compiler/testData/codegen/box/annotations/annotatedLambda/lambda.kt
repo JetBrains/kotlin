@@ -27,8 +27,6 @@ fun testClass(clazz: Class<*>, name: String) {
 
 fun box(): String {
     testClass(foo0(@Ann("OK") { }), "1")
-    testClass(foo0( @Ann("OK") { }), "2")
-
-    testClass(foo0() @Ann("OK") { }, "3")
+    testClass(foo0() @Ann("OK") { }, "2")
     return "OK"
 }

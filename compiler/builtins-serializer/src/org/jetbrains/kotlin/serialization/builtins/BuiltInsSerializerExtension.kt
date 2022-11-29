@@ -16,25 +16,43 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
 
 class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     private val shortNameToClassId = mapOf(
         "IntRange" to "kotlin/ranges/IntRange",
         "LongRange" to "kotlin/ranges/LongRange",
-        "CharRange" to "kotlin/ranges/CharRange"
+        "CharRange" to "kotlin/ranges/CharRange",
+        "ExperimentalStdlibApi" to "kotlin/ExperimentalStdlibApi",
+    )
+
+    private val ignoredAnnotationShortNames = setOf(
+        "JvmStatic", "JvmField", "OptIn",
     )
 
     override fun createAnnotationSerializer(): AnnotationSerializer = object : AnnotationSerializer(stringTable) {
-        override fun ignoreAnnotation(type: KotlinType): Boolean =
-            type.presentableName == "JvmStatic" || type.presentableName == "JvmField" || super.ignoreAnnotation(type)
+        override fun getAnnotationClassId(annotation: AnnotationDescriptor): ClassId? {
+            val type = annotation.type
+            val annotationClass = annotation.annotationClass ?: error("Annotation type is not a class: $type")
+            if (ErrorUtils.isError(annotationClass)) {
+                if (type.presentableName in ignoredAnnotationShortNames) return null
+                return ClassId.fromString(resolveUnresolvedType(type))
+            }
+
+            return annotationClass.classId
+        }
     }
 
     override val metadataVersion: BinaryVersion
@@ -43,11 +61,16 @@ class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeriali
     override fun shouldUseTypeTable(): Boolean = true
 
     override fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
-        val className = shortNameToClassId[type.presentableName]
-            ?: throw UnsupportedOperationException("Unsupported unresolved type: ${type.unwrap()}")
-
+        val className = resolveUnresolvedType(type)
         builder.className = stringTable.getQualifiedClassNameIndex(className, false)
     }
+
+    private fun resolveUnresolvedType(type: KotlinType): String =
+        shortNameToClassId[type.presentableName]
+            ?: throw UnsupportedOperationException(
+                "Unsupported unresolved type: ${type.unwrap()}.\n" +
+                        "Consider adding it to `BuiltInsSerializerExtension.shortNameToClassId`."
+            )
 
     private val KotlinType.presentableName: String
         get() {

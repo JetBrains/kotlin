@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,9 +40,12 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val variable by sealedElement(Declaration, callableDeclaration, statement)
     val valueParameter by element(Declaration, variable, controlFlowGraphOwner)
+    val receiverParameter by element(Declaration, annotationContainer)
     val property by element(Declaration, variable, typeParametersOwner, controlFlowGraphOwner)
     val field by element(Declaration, variable, controlFlowGraphOwner)
     val enumEntry by element(Declaration, variable)
+
+    val functionTypeParameter by element(Other, baseFirElement)
 
     val classLikeDeclaration by sealedElement(Declaration, memberDeclaration, statement)
     val klass by sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
@@ -57,6 +60,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val backingField by element(Declaration, variable, typeParametersOwner, statement)
     val constructor by element(Declaration, function, typeParameterRefsOwner)
     val file by element(Declaration, declaration)
+    val script by element(Declaration, declaration)
     val packageDirective by element(Other)
 
     val anonymousFunction by element(Declaration, function, typeParametersOwner)
@@ -94,6 +98,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val annotation by element(Expression, expression)
     val annotationCall by element(Expression, annotation, call, resolvable)
     val annotationArgumentMapping by element(Expression)
+    val errorAnnotationCall by element(Expression, annotationCall, diagnosticHolder)
     val comparisonExpression by element(Expression, expression)
     val typeOperatorCall by element(Expression, expression, call)
     val assignmentOperatorStatement by element(Expression, statement)
@@ -112,6 +117,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val errorFunction by element(Declaration, function, diagnosticHolder)
     val errorProperty by element(Declaration, variable, diagnosticHolder)
     val qualifiedAccessExpression by element(Expression, expression, qualifiedAccess)
+    val qualifiedErrorAccessExpression by element(Expression, expression, diagnosticHolder)
     val propertyAccessExpression by element(Expression, qualifiedAccessExpression)
     val functionCall by element(Expression, qualifiedAccessExpression, call)
     val integerLiteralOperatorCall by element(Expression, functionCall)

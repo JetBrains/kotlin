@@ -2,9 +2,9 @@ package mobi.porquenao.poc.kotlin.ui
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_main.*
 import mobi.porquenao.poc.kotlin.R
 
 class MainActivity : BaseActivity() {
@@ -14,7 +14,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        with (list) {
+        with (findViewById(R.id.list) as RecyclerView) {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@MainActivity)
             listAdapter = MainAdapter()
@@ -29,7 +29,7 @@ class MainActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         listAdapter.add()
-        list.smoothScrollToPosition(0)
+        (findViewById(R.id.list) as RecyclerView).smoothScrollToPosition(0)
         return true
     }
 

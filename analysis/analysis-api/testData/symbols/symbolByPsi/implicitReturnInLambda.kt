@@ -1,3 +1,5 @@
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+// DO_NOT_CHECK_SYMBOL_RESTORE_K1
 fun foo() {
     val lam1 = { a: Int ->
         val b = 1

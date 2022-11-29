@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -79,6 +79,11 @@ fun ConeKotlinType.isFunctionalType(session: FirSession): Boolean {
     return isFunctionalType(session) { it == FunctionClassKind.Function }
 }
 
+// Function, SuspendFunction
+fun ConeKotlinType.isFunctionalOrSuspendFunctionalType(session: FirSession): Boolean {
+    return isFunctionalType(session) { it == FunctionClassKind.Function || it == FunctionClassKind.SuspendFunction }
+}
+
 // SuspendFunction, KSuspendFunction
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
     return isFunctionalType(session) { it.isSuspendType }
@@ -112,9 +117,9 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: Fi
     val kind =
         if (isKFunctionType(session)) FunctionClassKind.KFunction
         else FunctionClassKind.Function
-    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size))
     val fullyExpandedType = type.fullyExpandedType(session)
     val typeArguments = fullyExpandedType.typeArguments
+    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size))
     val lastTypeArgument = typeArguments.last()
     return ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(functionalTypeId),
@@ -123,7 +128,7 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: Fi
             isNullable = false
         ) + lastTypeArgument).toTypedArray(),
         isNullable = false,
-        attributes = attributes
+        attributes = fullyExpandedType.attributes
     )
 }
 
@@ -240,7 +245,7 @@ fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): Li
 }
 
 val FirAnonymousFunction.returnType: ConeKotlinType? get() = returnTypeRef.coneTypeSafe()
-val FirAnonymousFunction.receiverType: ConeKotlinType? get() = receiverTypeRef?.coneTypeSafe()
+val FirAnonymousFunction.receiverType: ConeKotlinType? get() = receiverParameter?.typeRef?.coneTypeSafe()
 
 fun ConeTypeContext.isTypeMismatchDueToNullability(
     actualType: ConeKotlinType,

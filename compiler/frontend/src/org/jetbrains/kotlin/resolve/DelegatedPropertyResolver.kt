@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext.*
@@ -291,7 +290,7 @@ class DelegatedPropertyResolver(
 
         resolutionErrorFactory?.let {
             val expectedFunction = renderCall(delegateOperatorCall, trace.bindingContext)
-            trace.reportDiagnosticOnce(it.on(delegateExpression, expectedFunction, delegateOperatorResults.resultingCalls))
+            trace.report(it.on(delegateExpression, expectedFunction, delegateOperatorResults.resultingCalls))
         }
 
         return resolutionErrorFactory != null
@@ -371,7 +370,7 @@ class DelegatedPropertyResolver(
         val hasThis = propertyDescriptor.extensionReceiverParameter != null || propertyDescriptor.dispatchReceiverParameter != null
 
         val arguments = Lists.newArrayList<KtExpression>()
-        val psiFactory = KtPsiFactory(delegateExpression, markGenerated = false)
+        val psiFactory = KtPsiFactory(delegateExpression.project, markGenerated = false)
         arguments.add(psiFactory.createExpression(if (hasThis) "this" else "null"))
         arguments.add(psiFactory.createExpressionForProperty())
 
@@ -459,7 +458,7 @@ class DelegatedPropertyResolver(
         context: ExpressionTypingContext
     ): OverloadResolutionResults<FunctionDescriptor> {
         val propertyHasReceiver = propertyDescriptor.dispatchReceiverParameter != null
-        val arguments = KtPsiFactory(delegateExpression, markGenerated = false).run {
+        val arguments = KtPsiFactory(delegateExpression.project, markGenerated = false).run {
             listOf(
                 createExpression(if (propertyHasReceiver) "this" else "null"),
                 createExpressionForProperty()

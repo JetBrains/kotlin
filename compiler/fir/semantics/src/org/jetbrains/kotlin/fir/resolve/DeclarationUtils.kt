@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -91,6 +91,8 @@ val FirConstructorSymbol.isTypeAliasedConstructor: Boolean
 fun FirSimpleFunction.isEquals(): Boolean {
     if (name != OperatorNameConventions.EQUALS) return false
     if (valueParameters.size != 1) return false
+    if (contextReceivers.isNotEmpty()) return false
+    if (receiverParameter != null) return false
     val parameter = valueParameters.first()
     return parameter.returnTypeRef.isNullableAny
 }

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProv
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -79,6 +78,8 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *   * [KotlinDeclarationProviderFactory]
  *   * [KotlinPackageProviderFactory]
  *   * [PackagePartProviderFactory]
+ *   * [KotlinReferenceProvidersService]
+ *   * [KotlinReferenceProviderContributor]
  *
  *  Note that [ProjectStructureProvider] is built by using
  *    * given [ktFiles] as Kotlin sources
@@ -122,6 +123,16 @@ internal fun configureProjectEnvironment(
         KotlinStaticAnnotationsResolverFactory(ktFiles)
     )
 
+    project.registerService(
+        KotlinReferenceProvidersService::class.java,
+        HLApiReferenceProviderService::class.java
+    )
+
+    project.registerService(
+        KotlinReferenceProviderContributor::class.java,
+        KotlinFirReferenceContributor::class.java
+    )
+
     RegisterComponentService.registerLLFirResolveSessionService(project)
     project.picoContainer.registerComponentInstance(
         FirSealedClassInheritorsProcessorFactory::class.qualifiedName,
@@ -146,7 +157,7 @@ internal fun configureProjectEnvironment(
     )
     project.picoContainer.registerComponentInstance(
         KotlinDeclarationProviderFactory::class.qualifiedName,
-        KotlinStaticDeclarationProviderFactory(ktFiles)
+        KotlinStaticDeclarationProviderFactory(project, ktFiles)
     )
     project.picoContainer.registerComponentInstance(
         KotlinPackageProviderFactory::class.qualifiedName,
@@ -154,11 +165,7 @@ internal fun configureProjectEnvironment(
     )
     project.picoContainer.registerComponentInstance(
         PackagePartProviderFactory::class.qualifiedName,
-        object : PackagePartProviderFactory() {
-            override fun createPackagePartProviderForLibrary(scope: GlobalSearchScope): PackagePartProvider {
-                return packagePartProvider(scope)
-            }
-        }
+        KotlinStaticPackagePartProviderFactory(packagePartProvider)
     )
 }
 

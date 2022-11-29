@@ -31,8 +31,10 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
         check(rootProject.rootProject == rootProject)
     }
 
+    private val logger = rootProject.logger
+
     private val gradleHome = rootProject.gradle.gradleUserHomeDir.also {
-        rootProject.logger.kotlinInfo("Storing cached files in $it")
+        logger.kotlinInfo("Storing cached files in $it")
     }
 
     var installationDir by Property(gradleHome.resolve("nodejs"))
@@ -40,7 +42,11 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
     var download by Property(true)
 
     var nodeDownloadBaseUrl by Property("https://nodejs.org/dist")
-    var nodeVersion by Property("16.13.0")
+
+    // Release schedule: https://github.com/nodejs/Release
+    // Actual LTS and Current versions: https://nodejs.org/en/download/
+    // Older versions and more information, e.g. V8 version inside: https://nodejs.org/en/download/releases/
+    var nodeVersion by Property("18.12.1")
 
     var nodeCommand by Property("node")
 
@@ -49,12 +55,20 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
     @Transient
     private val projectProperties = PropertiesProvider(rootProject)
 
-    inner class Experimental {
-        val discoverTypes: Boolean
-            get() = projectProperties.jsDiscoverTypes == true
+    private val errorGenerateExternals = run {
+        if (projectProperties.errorJsGenerateExternals != null) {
+            logger.warn(
+                """
+                |
+                |==========
+                |Please note, Dukat integration in Gradle plugin does not work now, it was removed.
+                |We rethink how we can integrate properly.
+                |==========
+                |
+                """.trimMargin()
+            )
+        }
     }
-
-    val experimental = Experimental()
 
     val taskRequirements: TasksRequirements = TasksRequirements()
 

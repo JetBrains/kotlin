@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -178,8 +178,9 @@ class FirElementSerializer private constructor(
             builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.underlyingPropertyName)
 
             val property = callableMembers.single {
-                it is FirProperty && it.receiverTypeRef == null && it.name == representation.underlyingPropertyName
+                it is FirProperty && it.receiverParameter == null && it.name == representation.underlyingPropertyName
             }
+
             if (!property.visibility.isPublicAPI) {
                 if (useTypeTable()) {
                     builder.inlineClassUnderlyingTypeId = typeId(representation.underlyingType)
@@ -214,7 +215,6 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun FirClass.declarations(): List<FirCallableDeclaration> = buildList {
         val memberScope =
             defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
@@ -225,7 +225,7 @@ class FirElementSerializer private constructor(
             if (declaration.isSubstitutionOrIntersectionOverride) return
 
             // non-intersection or substitution fake override
-            if (!declaration.isStatic && declaration.dispatchReceiverClassOrNull() != this@declarations.symbol.toLookupTag()) return
+            if (!declaration.isStatic && declaration.dispatchReceiverClassLookupTagOrNull() != this@declarations.symbol.toLookupTag()) return
 
             add(declaration)
         }
@@ -329,8 +329,9 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val receiverTypeRef = property.receiverTypeRef
-        if (receiverTypeRef != null) {
+        val receiverParameter = property.receiverParameter
+        if (receiverParameter != null) {
+            val receiverTypeRef = receiverParameter.typeRef
             if (useTypeTable()) {
                 builder.receiverTypeId = local.typeId(receiverTypeRef)
             } else {
@@ -412,8 +413,9 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val receiverTypeRef = function.receiverTypeRef
-        if (receiverTypeRef != null) {
+        val receiverParameter = function.receiverParameter
+        if (receiverParameter != null) {
+            val receiverTypeRef = receiverParameter.typeRef
             if (useTypeTable()) {
                 builder.receiverTypeId = local.typeId(receiverTypeRef)
             } else {
@@ -628,6 +630,26 @@ class FirElementSerializer private constructor(
         correspondingTypeRef: FirTypeRef? = null,
         isDefinitelyNotNullType: Boolean = false,
     ): ProtoBuf.Type.Builder {
+        val typeProto = typeOrTypealiasProto(type, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
+        val expanded = if (type is ConeClassLikeType) type.fullyExpandedType(session) else type
+        if (expanded === type) {
+            return typeProto
+        }
+        val expandedProto = typeOrTypealiasProto(expanded, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
+        if (useTypeTable()) {
+            expandedProto.abbreviatedTypeId = typeTable[typeProto]
+        } else {
+            expandedProto.setAbbreviatedType(typeProto)
+        }
+        return expandedProto
+    }
+
+    private fun typeOrTypealiasProto(
+        type: ConeKotlinType,
+        toSuper: Boolean,
+        correspondingTypeRef: FirTypeRef?,
+        isDefinitelyNotNullType: Boolean,
+    ): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
         when (type) {
             is ConeDefinitelyNotNullType -> return typeProto(type.original, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
@@ -680,9 +702,9 @@ class FirElementSerializer private constructor(
             }
             is ConeIntersectionType -> {
                 val approximatedType = if (toSuper) {
-                    typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration)
+                    typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
                 } else {
-                    typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration)
+                    typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
                 }
                 assert(approximatedType != type && approximatedType is ConeKotlinType) {
                     "Approximation failed: ${type.renderForDebugging()}"

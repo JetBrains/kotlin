@@ -57,13 +57,7 @@ inline val FirCall.dynamicVarargArguments: List<FirExpression>?
 inline val FirFunctionCall.isCalleeDynamic: Boolean
     get() = (calleeReference.resolvedSymbol?.fir as? FirFunction)?.origin == FirDeclarationOrigin.DynamicScope
 
-inline val FirCall.resolvedArgumentMapping: Map<FirExpression, FirValueParameter>?
-    get() = when (val argumentList = argumentList) {
-        is FirResolvedArgumentList -> argumentList.mapping
-        else -> null
-    }
-
-inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
+inline val FirCall.resolvedArgumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
         is FirResolvedArgumentList -> argumentList.mapping
         else -> null
@@ -80,7 +74,7 @@ fun FirExpression.toReference(): FirReference? {
 }
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
-    return toResolvedCallableReference()?.resolvedSymbol as FirCallableSymbol<*>?
+    return toResolvedCallableReference()?.resolvedSymbol as? FirCallableSymbol<*>?
 }
 
 fun FirReference.toResolvedCallableSymbol(): FirCallableSymbol<*>? {

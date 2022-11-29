@@ -34,6 +34,7 @@
                 <configuration>
                     <args>
                         <arg>-Xno-inline</arg>
+                        <arg>-Xuse-deprecated-legacy-compiler</arg>
                     </args>
                 </configuration>
             </plugin>

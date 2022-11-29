@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.RETENTION_POLICY_ENUM
 import org.jetbrains.kotlin.name.*
@@ -90,6 +91,16 @@ internal fun KtAnnotatedSymbol.hasAnnotation(fqName: FqName, annotationUseSiteTa
         it.useSiteTarget == annotationUseSiteTarget && it.classId?.asSingleFqName() == fqName
     }
 
+internal fun NullabilityType.computeNullabilityAnnotation(parent: PsiElement): SymbolLightSimpleAnnotation? {
+    return when (this) {
+        NullabilityType.NotNull -> NotNull::class.java
+        NullabilityType.Nullable -> Nullable::class.java
+        else -> null
+    }?.let {
+        SymbolLightSimpleAnnotation(it.name, parent)
+    }
+}
+
 internal fun KtAnnotatedSymbol.computeAnnotations(
     parent: PsiElement,
     nullability: NullabilityType,
@@ -97,17 +108,18 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     includeAnnotationsWithoutSite: Boolean = true
 ): List<PsiAnnotation> {
 
-    val nullabilityAnnotation = when (nullability) {
-        NullabilityType.NotNull -> NotNull::class.java
-        NullabilityType.Nullable -> Nullable::class.java
-        else -> null
-    }?.let {
-        SymbolLightSimpleAnnotation(it.name, parent)
-    }
+    val nullabilityAnnotation = nullability.computeNullabilityAnnotation(parent)
 
     val parentIsAnnotation = (parent as? PsiClass)?.isAnnotationType == true
 
     val result = mutableListOf<PsiAnnotation>()
+
+    if (parent is SymbolLightMethod<*>) {
+        if (parent.isDelegated || parent.isOverride()) {
+            result.add(SymbolLightSimpleAnnotation(java.lang.Override::class.java.name, parent))
+        }
+    }
+
     if (annotations.isEmpty()) {
         if (parentIsAnnotation) {
             result.add(createRetentionRuntimeAnnotation(parent))
@@ -134,7 +146,12 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     if (parentIsAnnotation &&
         annotations.none { it.classId?.asFqNameString() == JAVA_LANG_ANNOTATION_RETENTION }
     ) {
-        result.add(createRetentionRuntimeAnnotation(parent))
+        val argumentWithKotlinRetention = annotations.firstOrNull { it.classId == StandardClassIds.Annotations.Retention }
+            ?.arguments
+            ?.firstOrNull { it.name.asString() == "value" }
+            ?.expression
+        val kotlinRetentionName = (argumentWithKotlinRetention as? KtEnumEntryAnnotationValue)?.callableId?.callableName?.asString()
+        result.add(createRetentionRuntimeAnnotation(parent, kotlinRetentionName))
     }
 
     if (nullabilityAnnotation != null) {
@@ -144,7 +161,7 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     return result
 }
 
-private fun createRetentionRuntimeAnnotation(parent: PsiElement): PsiAnnotation =
+private fun createRetentionRuntimeAnnotation(parent: PsiElement, retentionName: String? = null): PsiAnnotation =
     SymbolLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_RETENTION,
         parent,
@@ -154,7 +171,7 @@ private fun createRetentionRuntimeAnnotation(parent: PsiElement): PsiAnnotation 
                 expression = KtEnumEntryAnnotationValue(
                     callableId = CallableId(
                         ClassId.fromString(RETENTION_POLICY_ENUM.asString()),
-                        Name.identifier(AnnotationRetention.RUNTIME.name)
+                        Name.identifier(retentionName ?: AnnotationRetention.RUNTIME.name)
                     ),
                     sourcePsi = null
                 )

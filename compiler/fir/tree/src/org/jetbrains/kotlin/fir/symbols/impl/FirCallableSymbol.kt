@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -28,8 +29,14 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
 
     val resolvedReceiverTypeRef: FirResolvedTypeRef?
         get() {
-            ensureType(fir.receiverTypeRef)
-            return fir.receiverTypeRef as FirResolvedTypeRef?
+            ensureType(fir.receiverParameter?.typeRef)
+            return fir.receiverParameter?.typeRef as FirResolvedTypeRef?
+        }
+
+    val receiverParameter: FirAnnotationContainer?
+        get() {
+            ensureType(fir.receiverParameter?.typeRef)
+            return fir.receiverParameter
         }
 
     val resolvedContextReceivers: List<FirContextReceiver>
@@ -71,7 +78,6 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
             else -> lazyResolveToPhase(FirResolvePhase.TYPES)
         }
     }
-
     override fun toString(): String = "${this::class.simpleName} $callableId"
 }
 
@@ -79,7 +85,7 @@ val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirMemberDeclaration
 
 val FirCallableSymbol<*>.isExtension: Boolean
     get() = when (fir) {
-        is FirFunction -> fir.receiverTypeRef != null
-        is FirProperty -> fir.receiverTypeRef != null
+        is FirFunction -> fir.receiverParameter != null
+        is FirProperty -> fir.receiverParameter != null
         is FirVariable -> false
     }

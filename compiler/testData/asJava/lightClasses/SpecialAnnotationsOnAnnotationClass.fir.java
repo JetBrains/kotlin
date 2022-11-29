@@ -1,4 +1,4 @@
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
 @kotlin.annotation.MustBeDocumented()
 @kotlin.annotation.Repeatable()
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)

@@ -42,6 +42,7 @@ abstract class KotlinArtifactsExtensionImpl @Inject constructor(project: Project
     val watchosX86 = KonanTarget.WATCHOS_X86
     val watchosX64 = KonanTarget.WATCHOS_X64
     val watchosSimulatorArm64 = KonanTarget.WATCHOS_SIMULATOR_ARM64
+    val watchosDeviceArm64 = KonanTarget.WATCHOS_DEVICE_ARM64
     val tvosArm64 = KonanTarget.TVOS_ARM64
     val tvosX64 = KonanTarget.TVOS_X64
     val tvosSimulatorArm64 = KonanTarget.TVOS_SIMULATOR_ARM64

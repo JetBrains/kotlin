@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
-import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
+import org.jetbrains.kotlin.gradle.tasks.throwExceptionIfCompilationFailed
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.incremental.util.ExceptionLocation
+import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.slf4j.LoggerFactory
 import java.io.*
@@ -39,10 +41,10 @@ internal class ProjectFilesForCompilation(
     val buildDir: File
 ) : Serializable {
     //TODO
-    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectRootDir: File, sessionDir: File) : this(
+    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectCacheDirProvider: File, sessionDir: File) : this(
         projectRootFile = projectDir,
         clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(logger, prjectName),
-        sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectRootDir),
+        sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectCacheDirProvider),
         buildDir = buildDir
     )
 
@@ -65,6 +67,8 @@ internal class GradleKotlinCompilerWorkArguments(
     val kotlinScriptExtensions: Array<String>,
     val allWarningsAsErrors: Boolean,
     val compilerExecutionSettings: CompilerExecutionSettings,
+    val errorsFile: File?,
+    val kotlinPluginVersion: String,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 1
@@ -100,6 +104,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val metrics = if (reportingSettings.buildReportOutputs.isNotEmpty()) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
     private var icLogLines: List<String> = emptyList()
     private val compilerExecutionSettings = config.compilerExecutionSettings
+    private val errorsFile = config.errorsFile
+    private val kotlinPluginVersion = config.kotlinPluginVersion
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -119,13 +125,15 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     override fun run() {
         try {
-            val messageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
-            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(messageCollector)
+            val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
+            val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = kotlinPluginVersion)
+            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(gradleMessageCollector)
             if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
                 incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
             }
+            errorsFile?.also { gradleMessageCollector.flush(it) }
 
-            throwGradleExceptionIfError(exitCode, executionStrategy)
+            throwExceptionIfCompilationFailed(exitCode, executionStrategy)
         } finally {
             val taskInfo = TaskExecutionInfo(
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,
@@ -149,6 +157,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             try {
                 return compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
             } catch (e: Throwable) {
+                messageCollector.reportException(e, ExceptionLocation.DAEMON)
                 if (!compilerExecutionSettings.useDaemonFallbackStrategy) {
                     throw RuntimeException(
                         "Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off. " +

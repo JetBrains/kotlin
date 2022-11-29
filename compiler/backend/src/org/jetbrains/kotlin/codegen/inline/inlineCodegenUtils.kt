@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -228,6 +228,19 @@ internal fun isAnonymousClass(internalName: String) =
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =
     MaxStackFrameSizeAndLocalsCalculator(Opcodes.API_VERSION, methodNode.access, methodNode.desc, methodNode)
+
+inline fun newMethodNodeWithCorrectStackSize(block: (InstructionAdapter) -> Unit): MethodNode {
+    val newMethodNode = MethodNode(Opcodes.API_VERSION, "fake", "()V", null, null)
+    val mv = wrapWithMaxLocalCalc(newMethodNode)
+    block(InstructionAdapter(mv))
+
+    // Adding a fake return (and removing it below) to trigger maxStack calculation
+    mv.visitInsn(Opcodes.RETURN)
+    mv.visitMaxs(-1, -1)
+
+    newMethodNode.instructions.apply { remove(last) }
+    return newMethodNode
+}
 
 private fun String.isInteger(radix: Int = 10) = toIntOrNull(radix) != null
 

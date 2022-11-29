@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -73,6 +76,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
@@ -90,6 +94,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedErrorAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
@@ -236,6 +241,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(valueParameter)
     }
 
+    open fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
+        visitElement(receiverParameter)
+    }
+
     open fun visitProperty(property: FirProperty) {
         visitElement(property)
     }
@@ -246,6 +255,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry) {
         visitElement(enumEntry)
+    }
+
+    open fun visitFunctionTypeParameter(functionTypeParameter: FirFunctionTypeParameter) {
+        visitElement(functionTypeParameter)
     }
 
     open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
@@ -290,6 +303,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitFile(file: FirFile) {
         visitElement(file)
+    }
+
+    open fun visitScript(script: FirScript) {
+        visitElement(script)
     }
 
     open fun visitPackageDirective(packageDirective: FirPackageDirective) {
@@ -416,6 +433,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(annotationArgumentMapping)
     }
 
+    open fun visitErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall) {
+        visitElement(errorAnnotationCall)
+    }
+
     open fun visitComparisonExpression(comparisonExpression: FirComparisonExpression) {
         visitElement(comparisonExpression)
     }
@@ -482,6 +503,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
         visitElement(qualifiedAccessExpression)
+    }
+
+    open fun visitQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression) {
+        visitElement(qualifiedErrorAccessExpression)
     }
 
     open fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
@@ -772,6 +797,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitValueParameter(valueParameter)
     }
 
+    final override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: Nothing?) {
+        visitReceiverParameter(receiverParameter)
+    }
+
     final override fun visitProperty(property: FirProperty, data: Nothing?) {
         visitProperty(property)
     }
@@ -782,6 +811,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
         visitEnumEntry(enumEntry)
+    }
+
+    final override fun visitFunctionTypeParameter(functionTypeParameter: FirFunctionTypeParameter, data: Nothing?) {
+        visitFunctionTypeParameter(functionTypeParameter)
     }
 
     final override fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: Nothing?) {
@@ -826,6 +859,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitFile(file: FirFile, data: Nothing?) {
         visitFile(file)
+    }
+
+    final override fun visitScript(script: FirScript, data: Nothing?) {
+        visitScript(script)
     }
 
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: Nothing?) {
@@ -952,6 +989,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitAnnotationArgumentMapping(annotationArgumentMapping)
     }
 
+    final override fun visitErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: Nothing?) {
+        visitErrorAnnotationCall(errorAnnotationCall)
+    }
+
     final override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Nothing?) {
         visitComparisonExpression(comparisonExpression)
     }
@@ -1018,6 +1059,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {
         visitQualifiedAccessExpression(qualifiedAccessExpression)
+    }
+
+    final override fun visitQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression, data: Nothing?) {
+        visitQualifiedErrorAccessExpression(qualifiedErrorAccessExpression)
     }
 
     final override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?) {

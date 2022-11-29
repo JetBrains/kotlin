@@ -8,5 +8,5 @@ fun <T> foo(a : T, b : Collection<T>, c : Int) {
 
 fun <T> arrayListOf(vararg values: T): ArrayList<T> = throw Exception("$values")
 
-val bar = foo("", arrayListOf(), <!NO_VALUE_FOR_PARAMETER!>)<!>
-val bar2 = foo<String>("", arrayListOf(), <!NO_VALUE_FOR_PARAMETER!>)<!>
+val bar = foo("", <!NO_VALUE_FOR_PARAMETER!>arrayListOf(), )<!>
+val bar2 = foo<String>("", <!NO_VALUE_FOR_PARAMETER!>arrayListOf(), )<!>

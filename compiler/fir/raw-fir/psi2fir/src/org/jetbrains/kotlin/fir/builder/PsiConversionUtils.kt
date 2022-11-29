@@ -72,17 +72,14 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
-    var firCondition: FirExpression? = null
-    for (condition in this) {
-        val firConditionElement = condition.toFirWhenCondition(subject, convert, toFirOrErrorTypeRef)
-        firCondition = when (firCondition) {
-            null -> firConditionElement
-            else -> firCondition.generateLazyLogicalOperation(
-                firConditionElement, false, condition.toKtPsiSourceElement(KtFakeSourceElementKind.WhenCondition),
-            )
-        }
+    val conditions = this.map { condition ->
+        condition.toFirWhenCondition(subject, convert, toFirOrErrorTypeRef)
     }
-    return firCondition!!
+
+    require(conditions.isNotEmpty())
+    // We build balanced tree of OR expressions to ensure we won't run out of stack
+    // while processing huge conditions
+    return buildBalancedOrExpressionTree(conditions)
 }
 
 internal fun generateTemporaryVariable(

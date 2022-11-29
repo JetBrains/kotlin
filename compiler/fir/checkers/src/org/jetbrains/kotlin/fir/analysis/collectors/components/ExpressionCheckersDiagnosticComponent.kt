@@ -41,7 +41,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: CheckerContext) {
-        checkers.allQualifiedAccessExpressionCheckers.check(propertyAccessExpression, data)
+        checkers.allPropertyAccessExpressionCheckers.check(propertyAccessExpression, data)
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: CheckerContext) {

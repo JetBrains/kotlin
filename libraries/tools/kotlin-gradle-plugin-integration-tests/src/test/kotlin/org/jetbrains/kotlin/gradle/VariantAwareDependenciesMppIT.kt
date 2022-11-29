@@ -41,17 +41,17 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
                 subproject = innerProject.projectName,
                 options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
             ) {
-                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.jar")
+                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
             }
 
-            gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
+            gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.LEGACY))
 
             testResolveAllConfigurations(
                 subproject = innerProject.projectName,
                 skipSetup = true,
                 options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
             ) {
-                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
+                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.jar")
             }
         }
     }
@@ -119,7 +119,13 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
 
         with(outerProject) {
             embedProject(innerProject)
-            gradleBuildScript(innerProject.projectName).appendText("\ndependencies { implementation rootProject }")
+            gradleBuildScript(innerProject.projectName).modify {
+                """
+                ${it.replace("kotlinOptions.jvmTarget = \"1.7\"", "kotlinOptions.jvmTarget = \"11\"")}
+                
+                dependencies { implementation rootProject }
+                """.trimIndent()
+            }
 
             testResolveAllConfigurations(innerProject.projectName)
         }
@@ -402,16 +408,6 @@ internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, rena
         tempDir.copyRecursively(projectDir.resolve(embeddedModuleName))
     } finally {
         check(tempDir.deleteRecursively())
-    }
-    if (projectName == other.projectName) {
-        val embeddedModuleDir = projectDir.resolve(embeddedModuleName)
-        embeddedModuleDir.walk().forEach {
-            if (it.name.contains("build.gradle")) {
-                it.modify { string ->
-                    string.lines().dropLast(5).joinToString(separator = "\n")
-                }
-            }
-        }
     }
     testCase.apply {
         gradleSettingsScript().appendText("\ninclude(\"$embeddedModuleName\")")

@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
+import org.jetbrains.kotlin.gradle.plugin.mpp.GradleKpmDefaultCInteropSettingsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -29,35 +30,24 @@ abstract class GradleKpmNativeVariantInternal(
     ),
     GradleKpmSingleMavenPublishedModuleHolder by GradleKpmDefaultSingleMavenPublishedModuleHolder(containingModule, fragmentName) {
 
+    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
     override var enableEndorsedLibraries: Boolean = false
 
     override val gradleVariantNames: Set<String>
         get() = listOf(apiElementsConfiguration.name).flatMap { listOf(it, publishedConfigurationName(it)) }.toSet()
 
-    val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
-        project.objects.newInstance(DefaultCInteropSettings::class.java, project, cinteropName, compilationData)
+    val cinterops by lazy {
+        project.container(
+            DefaultCInteropSettings::class.java, GradleKpmDefaultCInteropSettingsFactory(compilationData)
+        )
     }
 
     override val compilationData by lazy { GradleKpmNativeVariantCompilationData(this) }
 }
 
-interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
+interface GradleKpmNativeCompilationData<T : KotlinCommonOptions> : GradleKpmCompilationData<T> {
     val konanTarget: KonanTarget
+
+    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
     val enableEndorsedLibs: Boolean
-}
-
-internal class KotlinMappedNativeCompilationFactory(
-    target: KotlinNativeTarget,
-    private val variantClass: Class<out GradleKpmNativeVariantInternal>
-) : KotlinNativeCompilationFactory(target) {
-    override fun create(name: String): KotlinNativeCompilation {
-        val module = target.project.kpmModules.maybeCreate(name)
-        val variant = module.fragments.create(target.name, variantClass)
-
-        return target.project.objects.newInstance(
-            KotlinNativeCompilation::class.java,
-            target.konanTarget,
-            VariantMappedCompilationDetails<KotlinCommonOptions>(variant, target)
-        )
-    }
 }

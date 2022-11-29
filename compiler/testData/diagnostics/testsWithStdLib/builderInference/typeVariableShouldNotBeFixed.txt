@@ -1,0 +1,29 @@
+package
+
+package spr {
+    public fun </*0*/ C> context(/*0*/ p: spr.Processor<in C>, /*1*/ exec: spr.Exec<C>): kotlin.Unit
+    private fun foo(/*0*/ model: spr.Model): kotlin.Unit
+    public fun </*0*/ M> materialize(): spr.Processor<M>
+
+    public interface Exec</*0*/ E : kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun run(/*0*/ @org.jetbrains.annotations.NotNull model: spr.Model, /*1*/ @org.jetbrains.annotations.NotNull params: spr.Processor<in E!>): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class Model {
+        public constructor Model()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class Processor</*0*/ P> {
+        public constructor Processor</*0*/ P>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun process(/*0*/ t: P): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

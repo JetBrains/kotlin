@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
+import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsAstUtils
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.defineProperty
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.prototypeOf
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsElementAccess
-import org.jetbrains.kotlin.ir.backend.js.utils.IrNamer
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -19,13 +20,19 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 
 class ExportModelToJsStatements(
-    private val namer: IrNamer,
+    private val namer: JsStaticContext,
     private val declareNewNamespace: (String) -> String
 ) {
     private val namespaceToRefMap = mutableMapOf<String, JsNameRef>()
 
-    fun generateModuleExport(module: ExportedModule, internalModuleName: JsName): List<JsStatement> {
-        return module.declarations.flatMap { generateDeclarationExport(it, JsNameRef(internalModuleName), esModules = false) }
+    fun generateModuleExport(
+        module: ExportedModule,
+        internalModuleName: JsName?,
+        esModules: Boolean
+    ): List<JsStatement> {
+        return module.declarations.flatMap {
+            generateDeclarationExport(it, internalModuleName?.makeRef(), esModules)
+        }
     }
 
     fun generateDeclarationExport(
@@ -67,17 +74,12 @@ class ExportModelToJsStatements(
 
             is ExportedFunction -> {
                 val name = namer.getNameForStaticDeclaration(declaration.ir)
-                if (esModules) {
-                    listOf(JsExport(name, alias = JsName(declaration.name, false)))
-                } else {
-                    if (namespace != null) {
-                        listOf(
-                            jsAssignment(
-                                jsElementAccess(declaration.name, namespace),
-                                JsNameRef(name)
-                            ).makeStmt()
-                        )
-                    } else emptyList()
+                when {
+                    namespace != null ->
+                        listOf(jsAssignment(jsElementAccess(declaration.name, namespace), JsNameRef(name)).makeStmt())
+
+                    esModules -> listOf(JsExport(name, alias = JsName(declaration.name, false)))
+                    else -> emptyList()
                 }
             }
 
@@ -85,40 +87,77 @@ class ExportModelToJsStatements(
             is ExportedConstructSignature -> emptyList()
 
             is ExportedProperty -> {
-                require(namespace != null) { "Only namespaced properties are allowed" }
-                val getter = declaration.irGetter?.let { JsNameRef(namer.getNameForStaticDeclaration(it)) }
-                val setter = declaration.irSetter?.let { JsNameRef(namer.getNameForStaticDeclaration(it)) }
-                listOf(defineProperty(namespace, declaration.name, getter, setter).makeStmt())
+                require(namespace != null || esModules) { "Only namespaced properties are allowed" }
+                val getter = declaration.irGetter?.let { namer.getNameForStaticDeclaration(it) }
+                val setter = declaration.irSetter?.let { namer.getNameForStaticDeclaration(it) }
+                if (namespace == null) {
+                    val property = JsVars.JsVar(
+                        JsName(declaration.name, false),
+                        JsObjectLiteral(false).apply {
+                            getter?.let {
+                                val fieldName = when (declaration.irGetter.origin) {
+                                    JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION -> "getInstance"
+                                    else -> "get"
+                                }
+                                propertyInitializers += JsPropertyInitializer(JsStringLiteral(fieldName), it.makeRef())
+                            }
+                            setter?.let { propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), it.makeRef()) }
+                        }
+                    )
+                    listOf(
+                        JsVars(property),
+                        JsExport(property.name, JsName(declaration.name, false))
+                    )
+                } else {
+                    listOf(defineProperty(namespace, declaration.name, getter?.makeRef(), setter?.makeRef(), namer).makeStmt())
+                }
             }
 
             is ErrorDeclaration -> emptyList()
 
             is ExportedObject -> {
-                require(namespace != null) { "Only namespaced properties are allowed" }
-                val newNameSpace = jsElementAccess(declaration.name, namespace)
-                val getter = JsNameRef(namer.getNameForStaticDeclaration(declaration.irGetter))
+                require(namespace != null || esModules) { "Only namespaced properties are allowed" }
+                val newNameSpace = when {
+                    namespace != null -> jsElementAccess(declaration.name, namespace)
+                    else ->
+                        jsElementAccess(Namer.PROTOTYPE_NAME, namer.getNameForClass(declaration.ir).makeRef())
+                }
                 val staticsExport = declaration.nestedClasses.flatMap { generateDeclarationExport(it, newNameSpace, esModules) }
-                listOf(defineProperty(namespace, declaration.name, getter, null).makeStmt()) + staticsExport
+
+                val objectExport = when (namespace) {
+                    null -> generateDeclarationExport(
+                        ExportedProperty(declaration.name, ExportedType.Primitive.Any, irGetter = declaration.irGetter),
+                        namespace,
+                        esModules
+                    )
+
+                    else -> listOf(
+                        defineProperty(
+                            namespace,
+                            declaration.name,
+                            namer.getNameForStaticDeclaration(declaration.irGetter).makeRef(),
+                            null,
+                            namer
+                        ).makeStmt()
+                    )
+                }
+
+                objectExport + staticsExport
             }
 
             is ExportedRegularClass -> {
                 if (declaration.isInterface) return emptyList()
-                val newNameSpace = if (namespace != null)
-                    jsElementAccess(declaration.name, namespace)
-                else
-                    JsNameRef(Namer.PROTOTYPE_NAME, namer.getNameForClass(declaration.ir).makeRef())
                 val name = namer.getNameForStaticDeclaration(declaration.ir)
-                val klassExport =
-                    if (esModules) {
-                        JsExport(name, alias = JsName(declaration.name, false))
-                    } else {
-                        if (namespace != null) {
-                            jsAssignment(
-                                newNameSpace,
-                                JsNameRef(name)
-                            ).makeStmt()
-                        } else null
-                    }
+                val newNameSpace = when {
+                    namespace != null -> jsElementAccess(declaration.name, namespace)
+                    esModules -> name.makeRef()
+                    else -> prototypeOf(namer.getNameForClass(declaration.ir).makeRef(), namer)
+                }
+                val klassExport = when {
+                    namespace != null -> jsAssignment(newNameSpace, JsNameRef(name)).makeStmt()
+                    esModules -> JsExport(name, alias = JsName(declaration.name, false))
+                    else -> null
+                }
 
                 // These are only used when exporting secondary constructors annotated with @JsName
                 val staticFunctions = declaration.members
@@ -173,14 +212,15 @@ class ExportModelToJsStatements(
         blockStatements.add(JsReturn(bindConstructor.makeRef()))
 
         return defineProperty(
-            prototypeOf(outerClassRef),
+            prototypeOf(outerClassRef, namer),
             name,
             JsFunction(
                 emptyScope,
                 JsBlock(*blockStatements.toTypedArray()),
                 "inner class '$name' getter"
             ),
-            null
+            null,
+            namer
         ).makeStmt()
     }
 

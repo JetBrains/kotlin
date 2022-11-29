@@ -180,7 +180,7 @@ internal class KtFirScopeProvider(
         return KtCompositeTypeScope(
             listOfNotNull(
                 convertToKtTypeScope(firTypeScope),
-                FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(firSession, firTypeScope)?.let { convertToKtTypeScope(it) }
+                FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(firSession, type.coneType, firTypeScope)?.let { convertToKtTypeScope(it) }
             ),
             token
         )
@@ -236,7 +236,7 @@ internal class KtFirScopeProvider(
             project,
             builder,
             token,
-            analysisSession.useSiteAnalisisScope,
+            analysisSession.useSiteAnalysisScope,
             analysisSession.useSiteScopeDeclarationProvider,
             analysisSession.targetPlatform
         )

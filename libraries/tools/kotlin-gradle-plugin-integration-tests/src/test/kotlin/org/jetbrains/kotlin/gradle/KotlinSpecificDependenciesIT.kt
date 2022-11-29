@@ -110,7 +110,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -132,7 +131,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -201,14 +199,15 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 
-                dependencies { implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") }
+                dependencies { implementation("org.jetbrains.kotlin:kotlin-stdlib") }
                 """.trimIndent()
             )
 
             // Check that the explicit stdlib overrides the plugin's choice of stdlib-jdk8
             checkTaskCompileClasspath(
                 "compileKotlin",
-                listOf("kotlin-stdlib-jdk8-${defaultBuildOptions.kotlinVersion}")
+                listOf("kotlin-stdlib-${defaultBuildOptions.kotlinVersion}"),
+                listOf("kotlin-stdlib-jdk8")
             )
         }
     }
@@ -298,7 +297,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -325,7 +323,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -545,7 +542,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
             checkTaskCompileClasspath(
                 "compileTestKotlin",
-                listOf("kotlin-stdlib-jdk8-", "kotlin-reflect-", "kotlin-test-").map { it + customVersion }
+                listOf("kotlin-stdlib-", "kotlin-reflect-", "kotlin-test-").map { it + customVersion }
             )
         }
     }

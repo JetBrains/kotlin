@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
-    public open fun getSymbol(psi: KtDeclaration): KtSymbol = when (psi) {
+    public open fun getSymbol(psi: KtDeclaration): KtDeclarationSymbol = when (psi) {
         is KtParameter -> getParameterSymbol(psi)
         is KtNamedFunction -> getFunctionLikeSymbol(psi)
         is KtConstructor<*> -> getConstructorSymbol(psi)
@@ -26,7 +26,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         is KtProperty -> getVariableSymbol(psi)
         is KtClassOrObject -> {
             val literalExpression = (psi as? KtObjectDeclaration)?.parent as? KtObjectLiteralExpression
-            literalExpression?.let(::getAnonymousObjectSymbol) ?: getClassOrObjectSymbol(psi)
+            literalExpression?.let(::getAnonymousObjectSymbol) ?: getClassOrObjectSymbol(psi)!!
         }
         is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
         is KtClassInitializer -> getClassInitializerSymbol(psi)
@@ -45,7 +45,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     public abstract fun getAnonymousFunctionSymbol(psi: KtFunctionLiteral): KtAnonymousFunctionSymbol
     public abstract fun getVariableSymbol(psi: KtProperty): KtVariableSymbol
     public abstract fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol
-    public abstract fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol
+    public abstract fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol?
     public abstract fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol?
     public abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
     public abstract fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol
@@ -55,14 +55,14 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
 
-    public abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol>
+    public abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol>
 
     @Suppress("PropertyName")
     public abstract val ROOT_PACKAGE_SYMBOL: KtPackageSymbol
 }
 
 public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtDeclaration.getSymbol(): KtSymbol =
+    public fun KtDeclaration.getSymbol(): KtDeclarationSymbol =
         withValidityAssertion { analysisSession.symbolProvider.getSymbol(this) }
 
     /**
@@ -115,10 +115,11 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtObjectLiteralExpression.getAnonymousObjectSymbol(): KtAnonymousObjectSymbol =
         withValidityAssertion { analysisSession.symbolProvider.getAnonymousObjectSymbol(this) }
 
-    public fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol =
+    /** Returns a symbol for a given [KtClassOrObject]. Returns `null` for `KtEnumEntry` declarations. */
+    public fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol? =
         withValidityAssertion { analysisSession.symbolProvider.getClassOrObjectSymbol(this) }
 
-    /** Gets the corresponding class or object symbol or null if the given [KtClassOrObject] is an enum entry. */
+    /** Returns a symbol for a given named [KtClassOrObject]. Returns `null` for `KtEnumEntry` declarations and object literals. */
     public fun KtClassOrObject.getNamedClassOrObjectSymbol(): KtNamedClassOrObjectSymbol? =
         withValidityAssertion { analysisSession.symbolProvider.getNamedClassOrObjectSymbol(this) }
 
@@ -138,11 +139,17 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     /**
      * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
      */
-    public fun ClassId.getCorrespondingToplevelClassOrObjectSymbol(): KtClassOrObjectSymbol? =
-        withValidityAssertion { analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(this) }
+    public fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol? =
+        withValidityAssertion { analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(classId) }
 
-    public fun FqName.getContainingCallableSymbolsWithName(name: Name): Sequence<KtSymbol> =
-        withValidityAssertion { analysisSession.symbolProvider.getTopLevelCallableSymbols(this, name) }
+    /**
+     * @return list of top-level functions and properties which are visible from current use-site module
+     *
+     * @param packageFqName package name in which callable symbols should be declared
+     * @param name callable symbol name
+     */
+    public fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol> =
+        withValidityAssertion { analysisSession.symbolProvider.getTopLevelCallableSymbols(packageFqName, name) }
 
     /**
      * @return symbol corresponding to the local variable introduced by individual destructuring declaration entries.

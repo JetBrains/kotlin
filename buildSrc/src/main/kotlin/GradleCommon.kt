@@ -8,8 +8,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.*
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
@@ -114,7 +113,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName(kotlinStdlib())
-            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:7.2")
+            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:7.5")
             if (this@createGradleCommonSourceSet.name != "kotlin-gradle-plugin-api" &&
                 this@createGradleCommonSourceSet.name != "android-test-fixes"
             ) {
@@ -139,6 +138,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
     // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
     // files clash
     tasks.named<KotlinCompile>("compile${commonSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+        @Suppress("DEPRECATION")
         kotlinOptions {
             moduleName = "${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}"
         }
@@ -318,9 +318,8 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
             }
         }
 
-        val javaComponent = project.components["java"] as AdhocComponentWithVariants
-
         // Workaround for https://youtrack.jetbrains.com/issue/KT-52987
+        val javaComponent = project.components["java"] as AdhocComponentWithVariants
         listOf(
             runtimeElementsConfigurationName,
             apiElementsConfigurationName
@@ -353,7 +352,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                             }
 
                         plugins.withType<JavaPlugin> {
-                            tasks.named<JavaCompile>(compileJavaTaskName) {
+                            tasks.named<JavaCompile>(compileJavaTaskName).get().apply {
                                 attribute(
                                     TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE,
                                     targetCompatibility.toInt()
@@ -362,12 +361,28 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                         }
                     }
 
+                    val expectedAttributes = setOf(
+                        Category.CATEGORY_ATTRIBUTE,
+                        Bundling.BUNDLING_ATTRIBUTE,
+                        Usage.USAGE_ATTRIBUTE,
+                        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+                        TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                        TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE
+                    )
+                    if (attributes.keySet() != expectedAttributes) {
+                        error("Wrong set of attributes:\n" +
+                                      "  Expected: ${expectedAttributes.joinToString(", ")}\n" +
+                                      "  Actual: ${attributes.keySet().joinToString(", ") { "${it.name}=${attributes.getAttribute(it)}" }}")
+                    }
+
                     javaComponent.addVariantsFromConfiguration(this) {
-                        if (originalConfiguration.name.startsWith("api")) {
-                            mapToMavenScope("compile")
-                        } else {
-                            mapToMavenScope("runtime")
-                        }
+                        mapToMavenScope(
+                            when (originalConfiguration.name) {
+                                runtimeElementsConfigurationName -> "runtime"
+                                apiElementsConfigurationName -> "compile"
+                                else -> error("Unsupported configuration name")
+                            }
+                        )
                     }
 
                     // Make original configuration unpublishable and not visible
@@ -479,6 +494,7 @@ fun Project.createGradlePluginVariant(
 
     // KT-52138: Make module name the same for all variants, so KSP could access internal methods/properties
     tasks.named<KotlinCompile>("compile${variantSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+        @Suppress("DEPRECATION")
         kotlinOptions {
             moduleName = this@createGradlePluginVariant.name
         }
@@ -515,6 +531,7 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
 }
 
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
+    @Suppress("DEPRECATION")
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions.languageVersion = "1.4"
         kotlinOptions.apiVersion = "1.4"

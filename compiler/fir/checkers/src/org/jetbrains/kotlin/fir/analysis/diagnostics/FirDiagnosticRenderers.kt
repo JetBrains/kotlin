@@ -101,6 +101,9 @@ object FirDiagnosticRenderers {
         t.renderReadableWithFqNames()
     }
 
+    // TODO: properly implement
+    val RENDER_TYPE_WITH_ANNOTATIONS = RENDER_TYPE
+
     val FQ_NAMES_IN_TYPES = Renderer { symbol: FirBasedSymbol<*> ->
         @OptIn(SymbolInternals::class)
         FirRenderer(

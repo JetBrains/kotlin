@@ -90,6 +90,10 @@ class DummyJavaClassType(
     override val classifier: JavaClass,
     override val typeArguments: List<JavaType?>
 ) : JavaClassifierType {
+    companion object {
+        val ObjectType = DummyJavaClassType(JavaClasses.Object, typeArguments = emptyList())
+    }
+
     override val annotations: Collection<JavaAnnotation>
         get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean

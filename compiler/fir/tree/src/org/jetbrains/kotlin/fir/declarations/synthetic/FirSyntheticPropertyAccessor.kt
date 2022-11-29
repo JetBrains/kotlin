@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class FirSyntheticPropertyAccessor(
     val delegate: FirSimpleFunction,
-    override val isGetter: Boolean
+    override val isGetter: Boolean,
+    override val propertySymbol: FirPropertySymbol,
 ) : FirPropertyAccessor() {
     override val source: KtSourceElement?
         get() = delegate.source
@@ -47,7 +48,7 @@ class FirSyntheticPropertyAccessor(
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = delegate.dispatchReceiverType
 
-    override val receiverTypeRef: FirTypeRef?
+    override val receiverParameter: FirReceiverParameter?
         get() = null
     
     override val deprecationsProvider: DeprecationsProvider
@@ -78,9 +79,6 @@ class FirSyntheticPropertyAccessor(
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()
 
-    // NB: unused
-    override val propertySymbol: FirPropertySymbol? = null
-
     override val controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     override val contractDescription: FirContractDescription = FirEmptyContractDescription
@@ -105,7 +103,7 @@ class FirSyntheticPropertyAccessor(
         throw AssertionError("Transformation of synthetic property accessor isn't supported")
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         throw AssertionError("Transformation of synthetic property accessor isn't supported")
     }
 
@@ -141,7 +139,7 @@ class FirSyntheticPropertyAccessor(
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 

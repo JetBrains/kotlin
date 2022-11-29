@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: SuperClass.java
 
 import lombok.*;

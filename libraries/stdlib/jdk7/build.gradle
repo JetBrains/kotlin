@@ -11,7 +11,6 @@ configureJavadocJar()
 sourceSets {
     main {
         kotlin {
-            srcDir 'src'
         }
     }
     test {
@@ -48,6 +47,10 @@ dependencies {
 jar {
     manifestAttributes(manifest, project, 'Main', true)
     from sourceSets.java9.output
+}
+
+sourcesJar {
+    from sourceSets.java9.allSource
 }
 
 

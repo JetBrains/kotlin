@@ -1,6 +1,8 @@
 // !SKIP_JAVAC
 // !LANGUAGE: +InlineClasses
+// ALLOW_KOTLIN_PACKAGE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
+// FIR_IDENTICAL
 
 package kotlin.jvm
 

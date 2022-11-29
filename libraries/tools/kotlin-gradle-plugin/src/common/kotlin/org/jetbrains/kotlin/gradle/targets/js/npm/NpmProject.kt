@@ -70,13 +70,6 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
     val main: String
         get() = "$DIST_FOLDER${File.separator}$name$extension"
 
-    val externalsDirRoot by lazy {
-        project.buildDir.resolve("externals").resolve(name)
-    }
-
-    val externalsDir: File
-        get() = externalsDirRoot.resolve("src")
-
     val publicPackageJsonTaskName: String
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
 

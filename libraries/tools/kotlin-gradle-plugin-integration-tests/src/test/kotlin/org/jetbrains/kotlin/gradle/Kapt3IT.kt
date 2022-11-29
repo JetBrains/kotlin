@@ -33,11 +33,11 @@ import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.appendText
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
 
-@OtherGradlePluginTests
 abstract class Kapt3BaseIT : KGPBaseTest() {
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
@@ -90,6 +90,10 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
     }
 
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testKt33847(gradleVersion: GradleVersion) {
+    }
+
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
         project("annotationProcessorAsFqName".withPrefix, gradleVersion) {
             //classloaders caching is not compatible with includeCompileClasspath
@@ -112,6 +116,7 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 }
 
 @DisplayName("Kapt base checks")
+@OtherGradlePluginTests
 open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
@@ -124,7 +129,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("Kapt is working with newer JDKs")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_10, JavaVersion.VERSION_11, JavaVersion.VERSION_16])
+    @JdkVersions(versions = [JavaVersion.VERSION_1_10, JavaVersion.VERSION_11, JavaVersion.VERSION_16, JavaVersion.VERSION_17])
     @GradleWithJdkTest
     fun doTestSimpleWithCustomJdk(
         gradleVersion: GradleVersion,
@@ -135,6 +140,17 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildJdk = jdk.location
         ) {
+            //language=Groovy
+            buildGradle.appendText(
+                """
+                |
+                |java {
+                |    sourceCompatibility = JavaVersion.VERSION_1_8
+                |    targetCompatibility = JavaVersion.VERSION_1_8
+                |}
+                """.trimMargin()
+            )
+
             build("assemble") {
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin")
                 // Check added because of https://youtrack.jetbrains.com/issue/KT-33056.
@@ -812,6 +828,38 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
+    @DisplayName("KT33847: Kapt does not included Filer-generated class files on compilation classpath")
+    @GradleTest
+    open fun testKt33847(gradleVersion: GradleVersion) {
+        project("kt33847".withPrefix, gradleVersion) {
+
+            build("build") {
+                val processorSubproject = subProject("processor")
+                processorSubproject
+                    .assertFileInProjectExists("build/tmp/kapt3/classes/main/META-INF/services/javax.annotation.processing.Processor")
+
+                val processorJar = processorSubproject.projectPath.resolve("build/libs/processor.jar")
+                assertFileExists(processorJar)
+
+                ZipFile(processorJar.toFile()).use { zip ->
+                    assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null) {
+                        "Generated annotation processor jar file does not contain processor service entry!"
+                    }
+                }
+
+                assertTasksExecuted(
+                    ":api:compileKotlin",
+                    ":processor:compileKotlin",
+                    ":library:kaptGenerateStubsKotlin",
+                    ":library:kaptKotlin",
+                    ":library:compileKotlin",
+                    ":app:compileKotlin",
+                )
+                assertKaptSuccessful()
+            }
+        }
+    }
+
     @DisplayName("Dependency on kapt module should not resolve all configurations")
     @GradleTest
     fun testDependencyOnKaptModule(gradleVersion: GradleVersion) {
@@ -893,16 +941,11 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("Works with JPMS on JDK 9+")
-    @JdkVersions(versions = [JavaVersion.VERSION_11])
-    @GradleWithJdkTest
-    fun testJpmsModule(
-        gradleVersion: GradleVersion,
-        jdk: JdkVersions.ProvidedJdk
-    ) {
+    @GradleTest
+    fun testJpmsModule(gradleVersion: GradleVersion, ) {
         project(
             "jpms-module".withPrefix,
             gradleVersion,
-            buildJdk = jdk.location
         ) {
             build("assemble") {
                 assertTasksExecuted(":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileJava")

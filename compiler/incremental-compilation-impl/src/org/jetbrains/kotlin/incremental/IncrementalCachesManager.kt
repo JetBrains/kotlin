@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.google.common.io.Closer
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.storage.IncrementalFileToPathConverter
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import java.io.Closeable
 import java.io.File
-
 
 abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache<*>>(
     cachesRootDir: File,
@@ -30,16 +30,15 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     protected val reporter: ICReporter,
     storeFullFqNamesInLookupCache: Boolean = false,
     trackChangesInLookupCache: Boolean = false
-) {
+) : Closeable {
     val pathConverter = IncrementalFileToPathConverter(rootProjectDir)
     private val caches = arrayListOf<BasicMapsOwner>()
 
-    var isClosed = false
-    var isSuccessfulyClosed = false
+    private var isClosed = false
 
     @Synchronized
     protected fun <T : BasicMapsOwner> T.registerCache() {
-        assert(!isClosed) { "Attempted to add new cache into closed storage." }
+        check(!isClosed) { "This cache storage has already been closed" }
         caches.add(this)
     }
 
@@ -51,33 +50,29 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
         LookupStorage(lookupCacheDir, pathConverter, storeFullFqNamesInLookupCache, trackChangesInLookupCache).apply { registerCache() }
     abstract val platformCache: PlatformCache
 
+    @Suppress("UnstableApiUsage")
     @Synchronized
-    fun close(flush: Boolean = false): Boolean {
-        if (isClosed) {
-            return isSuccessfulyClosed
-        }
-        isSuccessfulyClosed = true
-        for (cache in caches) {
-            if (flush) {
-                try {
-                    cache.flush(false)
-                } catch (e: Throwable) {
-                    isSuccessfulyClosed = false
-                    reporter.info { "Exception when flushing cache ${cache.javaClass}: $e" }
-                }
-            }
+    override fun close() {
+        check(!isClosed) { "This cache storage has already been closed" }
 
-            try {
-                cache.close()
-            } catch (e: Throwable) {
-                isSuccessfulyClosed = false
-                reporter.info { "Exception when closing cache ${cache.javaClass}: $e" }
-            }
+        val closer = Closer.create()
+        caches.forEach {
+            closer.register(CacheCloser(it))
         }
+        closer.close()
 
         isClosed = true
-        return isSuccessfulyClosed
     }
+
+    private class CacheCloser(private val cache: BasicMapsOwner) : Closeable {
+
+        override fun close() {
+            // It's important to flush the cache when closing (see KT-53168)
+            cache.flush(memoryCachesOnly = false)
+            cache.close()
+        }
+    }
+
 }
 
 class IncrementalJvmCachesManager(

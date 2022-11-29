@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirAbstractContractResolveTransformerDispatcher
 
 /**
  * Transform designation into CONTRACTS declaration. Affects only for target declaration and it's children
@@ -25,18 +25,19 @@ internal class LLFirDesignatedContractsResolveTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
-) : LLFirLazyTransformer, FirContractResolveTransformer(session, scopeSession) {
+) : LLFirLazyTransformer, FirAbstractContractResolveTransformerDispatcher(session, scopeSession) {
 
     private val ideDeclarationTransformer = LLFirDeclarationTransformer(designation)
 
-    override val declarationsTransformer: FirDeclarationsResolveTransformer = object : FirDeclarationsContractResolveTransformer(this) {
-        override fun transformDeclarationContent(firClass: FirClass, data: ResolutionMode) {
-            ideDeclarationTransformer.transformDeclarationContent(this, firClass, data) {
-                super.transformDeclarationContent(firClass, data)
-                firClass
+    override val contractDeclarationsTransformer: FirDeclarationsContractResolveTransformer
+        get() = object : FirDeclarationsContractResolveTransformer() {
+            override fun transformDeclarationContent(firClass: FirClass, data: ResolutionMode) {
+                ideDeclarationTransformer.transformDeclarationContent(this, firClass, data) {
+                    super.transformDeclarationContent(firClass, data)
+                    firClass
+                }
             }
         }
-    }
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {

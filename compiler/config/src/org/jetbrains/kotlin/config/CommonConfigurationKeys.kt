@@ -54,7 +54,7 @@ object CommonConfigurationKeys {
     val USE_FIR = CompilerConfigurationKey.create<Boolean>("front-end IR")
 
     @JvmField
-    val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expext/actual linker")
+    val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expect/actual linker")
 
     @JvmField
     val USE_FIR_EXTENDED_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extended checkers")
@@ -70,6 +70,10 @@ object CommonConfigurationKeys {
     @JvmField
     val KLIB_NORMALIZE_ABSOLUTE_PATH =
         CompilerConfigurationKey.create<Boolean>("Normalize absolute paths in klib (replace file separator with '/')")
+
+    @JvmField
+    val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS =
+        CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
 
     @JvmField
     val INCREMENTAL_COMPILATION =

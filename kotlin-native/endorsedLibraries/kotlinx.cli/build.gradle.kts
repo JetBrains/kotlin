@@ -46,7 +46,7 @@ kotlin {
 
             compilations.all {
                 kotlinOptions {
-                    freeCompilerArgs = listOf("-opt-in=kotlinx.cli.ExperimentalCli", "-opt-in=kotlin.RequiresOptIn")
+                    freeCompilerArgs += listOf("-opt-in=kotlinx.cli.ExperimentalCli")
                     suppressWarnings = true
                 }
             }

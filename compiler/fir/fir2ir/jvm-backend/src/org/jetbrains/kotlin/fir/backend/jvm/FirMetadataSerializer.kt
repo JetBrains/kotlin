@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,17 +17,14 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
-import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
+import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -39,7 +36,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -189,23 +185,21 @@ internal fun makeElementSerializer(
         else -> null
     }
 
-internal class TypeApproximatorForMetadataSerializer(session: FirSession) :
-    AbstractTypeApproximator(session.typeContext, session.languageVersionSettings) {
-
-    override fun createErrorType(debugName: String): SimpleTypeMarker {
-        return ConeErrorType(ConeIntermediateDiagnostic(debugName))
-    }
-}
-
 private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeApproximator): FirAnonymousFunction {
     val function = this
     return buildAnonymousFunction {
         val typeParameterSet = function.typeParameters.filterIsInstanceTo(mutableSetOf<FirTypeParameter>())
+        annotations += function.annotations
         moduleData = function.moduleData
         origin = FirDeclarationOrigin.Source
         symbol = FirAnonymousFunctionSymbol()
         returnTypeRef = function.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
-        receiverTypeRef = function.receiverTypeRef?.approximated(approximator, typeParameterSet, toSuper = false)
+        receiverParameter = function.receiverParameter?.let { receiverParameter ->
+            buildReceiverParameterCopy(receiverParameter) {
+                typeRef = receiverParameter.typeRef.approximated(approximator, typeParameterSet, toSuper = false)
+            }
+        }
+
         isLambda = (function as? FirAnonymousFunction)?.isLambda == true
         hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
         valueParameters.addAll(function.valueParameters.map {
@@ -217,7 +211,10 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
     }
 }
 
-private fun FirPropertyAccessor.copyToFreeAccessor(approximator: AbstractTypeApproximator): FirPropertyAccessor {
+private fun FirPropertyAccessor.copyToFreeAccessor(
+    approximator: AbstractTypeApproximator,
+    newPropertySymbol: FirPropertySymbol,
+): FirPropertyAccessor {
     val accessor = this
     return buildPropertyAccessor {
         val typeParameterSet = accessor.typeParameters.toMutableSet()
@@ -225,6 +222,7 @@ private fun FirPropertyAccessor.copyToFreeAccessor(approximator: AbstractTypeApp
         origin = FirDeclarationOrigin.Source
         returnTypeRef = accessor.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         symbol = FirPropertyAccessorSymbol()
+        propertySymbol = newPropertySymbol
         isGetter = accessor.isGetter
         status = accessor.status
         accessor.valueParameters.mapTo(valueParameters) {
@@ -243,17 +241,23 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         val typeParameterSet = property.typeParameters.toMutableSet()
         moduleData = property.moduleData
         origin = FirDeclarationOrigin.Source
-        symbol = FirPropertySymbol(property.symbol.callableId)
+
+        val newPropertySymbol = FirPropertySymbol(property.symbol.callableId)
+        symbol = newPropertySymbol
         returnTypeRef = property.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
-        receiverTypeRef = property.receiverTypeRef?.approximated(approximator, typeParameterSet, toSuper = false)
+        receiverParameter = property.receiverParameter?.let { receiverParameter ->
+            buildReceiverParameterCopy(receiverParameter) {
+                typeRef = receiverParameter.typeRef.approximated(approximator, typeParameterSet, toSuper = false)
+            }
+        }
         name = property.name
         initializer = property.initializer
         delegate = property.delegate
         delegateFieldSymbol = property.delegateFieldSymbol?.let {
             FirDelegateFieldSymbol(it.callableId)
         }
-        getter = property.getter?.copyToFreeAccessor(approximator)
-        setter = property.setter?.copyToFreeAccessor(approximator)
+        getter = property.getter?.copyToFreeAccessor(approximator, newPropertySymbol)
+        setter = property.setter?.copyToFreeAccessor(approximator, newPropertySymbol)
         isVar = property.isVar
         isLocal = property.isLocal
         status = property.status
@@ -272,9 +276,9 @@ internal fun FirTypeRef.approximated(
     toSuper: Boolean
 ): FirTypeRef {
     val approximatedType = if (toSuper)
-        approximator.approximateToSuperType(coneType, TypeApproximatorConfiguration.PublicDeclaration)
+        approximator.approximateToSuperType(coneType, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
     else
-        approximator.approximateToSubType(coneType, TypeApproximatorConfiguration.PublicDeclaration)
+        approximator.approximateToSubType(coneType, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
     return withReplacedConeType(approximatedType as? ConeKotlinType).apply { coneType.collectTypeParameters(typeParameterSet) }
 }
 

@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Context, ResultTypeResolver.Context {
     abstract val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
@@ -33,7 +35,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     abstract fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, position: FixVariableConstraintPosition<*>)
 
     abstract fun couldBeResolvedWithUnrestrictedBuilderInference(): Boolean
-    abstract fun processForkConstraints()
+    abstract fun resolveForkPointsConstraints()
 
     fun <A : PostponedResolvedAtomMarker> analyzeArgumentWithFixedParameterTypes(
         languageVersionSettings: LanguageVersionSettings,

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 
@@ -16,13 +17,13 @@ open class KotlinReferenceProvidersService {
         private val NO_REFERENCES_SERVICE = KotlinReferenceProvidersService()
 
         @JvmStatic
-        fun getInstance(): KotlinReferenceProvidersService {
-            return ServiceManager.getService(KotlinReferenceProvidersService::class.java) ?: NO_REFERENCES_SERVICE
+        fun getInstance(project: Project): KotlinReferenceProvidersService {
+            return project.getService(KotlinReferenceProvidersService::class.java) ?: NO_REFERENCES_SERVICE
         }
 
         @JvmStatic
         fun getReferencesFromProviders(psiElement: PsiElement): Array<PsiReference> {
-            return getInstance().getReferences(psiElement)
+            return getInstance(psiElement.project).getReferences(psiElement)
         }
     }
 }

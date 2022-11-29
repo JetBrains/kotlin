@@ -14,7 +14,7 @@ annotation class B1 {
 }
 annotation class D1(val value: Array<B1>)
 
-@Repeatable
+<!REDUNDANT_REPEATABLE_ANNOTATION!>@Repeatable<!>
 @java.lang.annotation.Repeatable(D2::class)
 annotation class B2 {
     class Container

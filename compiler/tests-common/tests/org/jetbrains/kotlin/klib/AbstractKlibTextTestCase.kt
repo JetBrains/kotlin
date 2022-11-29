@@ -11,8 +11,10 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -171,7 +173,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         ).toByteArray()
 
 
-        val serializedMetadata = metadataSerializer.serializedMetadata(
+        val serializedMetadata = makeSerializedKlibMetadata(
             compiledKotlinFiles.groupBy { it.irData.fqName }
                 .map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap(),
             header
@@ -223,7 +225,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val typeTranslator =
             TypeTranslatorImpl(symbolTable, myEnvironment.configuration.languageVersionSettings, testDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(testDescriptor.builtIns, typeTranslator, symbolTable)
-        val irLinker = JsIrLinker(null, IrMessageLogger.None, irBuiltIns, symbolTable, null)
+        val irLinker = JsIrLinker(null, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
         val testModule = irLinker.deserializeIrModuleHeader(testDescriptor, klib, { DeserializationStrategy.ALL })
         irLinker.init(null, emptyList())
@@ -257,12 +259,21 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         return md
     }
 
-    private fun generateIrModule(stdlib: KotlinLibrary, ignoreErrors: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>): Pair<IrModuleFragment, BindingContext> {
+    private fun generateIrModule(
+        stdlib: KotlinLibrary,
+        ignoreErrors: Boolean,
+        expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>
+    ): Pair<IrModuleFragment, BindingContext> {
         val stdlibDescriptor = getModuleDescriptor(stdlib)
 
         val ktFiles = myFiles.psiFiles
 
-        val psi2Ir = Psi2IrTranslator(myEnvironment.configuration.languageVersionSettings, Psi2IrConfiguration(ignoreErrors))
+        val messageLogger = IrMessageLogger.None
+        val psi2Ir = Psi2IrTranslator(
+            myEnvironment.configuration.languageVersionSettings,
+            Psi2IrConfiguration(ignoreErrors),
+            myEnvironment.configuration::checkNoUnboundSymbols
+        )
         val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(
             ktFiles, myEnvironment.project, myEnvironment.configuration,
             moduleDescriptors = listOf(stdlibDescriptor),
@@ -280,7 +291,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT)
         val context = psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
         val irBuiltIns = context.irBuiltIns
-        val irLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, null)
+        val irLinker = JsIrLinker(moduleDescriptor, messageLogger, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
 
         return psi2Ir.generateModuleFragment(context, ktFiles, listOf(irLinker), emptyList(), expectActualSymbols) to bindingContext

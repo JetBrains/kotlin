@@ -52,7 +52,9 @@ val nodeModules by configurations.registering {
     }
 }
 
-val compileTestDevelopmentExecutableKotlinJs = tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinJs")
+val compileTestDevelopmentExecutableKotlinJs = tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinJs") {
+    kotlinOptions.outputFile = buildDir.resolve("compileSync/js/test/testDevelopmentExecutable/kotlin/kotlin-kotlin-test-js-ir-it-test.js").normalize().absolutePath
+}
 
 val populateNodeModules = tasks.register<Copy>("populateNodeModules") {
     dependsOn("compileTestDevelopmentExecutableKotlinJs")

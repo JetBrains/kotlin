@@ -1,6 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: not supported in JVM
 // IGNORE_BACKEND: JVM_IR, JS_IR
+// FIR status: not supported in JVM
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JVM, JS, NATIVE
 // IGNORE_BACKEND: WASM

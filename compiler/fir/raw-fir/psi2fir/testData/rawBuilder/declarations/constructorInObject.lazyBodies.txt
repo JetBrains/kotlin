@@ -4,8 +4,7 @@ FILE: constructorInObject.kt
             super<R|kotlin/Any|>()
         }
 
-        init {
-        }
+        init { LAZY_BLOCK }
 
     }
     public? final? enum class B : R|kotlin/Enum<B>| {
@@ -13,17 +12,7 @@ FILE: constructorInObject.kt
             super<R|kotlin/Enum<B>|>()
         }
 
-        public final static enum entry X: R|B| = object : R|B| {
-            private constructor(): R|<anonymous>| {
-                super<R|B|>()
-            }
-
-            public? constructor(): R|<anonymous>| {
-                super<R|B|>()
-            }
-
-        }
-
+        public final static enum entry X: R|B| = LAZY_EXPRESSION
         public final static fun values(): R|kotlin/Array<B>| {
         }
 

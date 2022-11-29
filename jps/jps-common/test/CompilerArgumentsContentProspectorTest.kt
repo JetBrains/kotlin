@@ -140,7 +140,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::noReflect,
             K2JVMCompilerArguments::javaParameters,
             K2JVMCompilerArguments::useIR,
-            K2JVMCompilerArguments::useOldBackend,
             K2JVMCompilerArguments::allowUnstableDependencies,
             K2JVMCompilerArguments::doNotClearBindingContext,
             K2JVMCompilerArguments::noCallAssertions,
@@ -231,7 +230,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JSCompilerArguments::typedArrays,
             K2JSCompilerArguments::friendModulesDisabled,
             K2JSCompilerArguments::metadataOnly,
-            K2JSCompilerArguments::enableJsScripting,
             K2JSCompilerArguments::fakeOverrideValidator,
             K2JSCompilerArguments::wasm
         )

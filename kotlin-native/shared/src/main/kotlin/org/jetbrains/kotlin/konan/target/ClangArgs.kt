@@ -54,8 +54,9 @@ sealed class ClangArgs(
                     "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
                     "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
                     "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
-                    "NEAD_SMALL_BINARY".takeIf { target.needSmallBinary() },
+                    "NEED_SMALL_BINARY".takeIf { target.needSmallBinary() },
                     "TARGET_HAS_ADDRESS_DEPENDENCY".takeIf { target.hasAddressDependencyInMemoryModel() },
+                    "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
             ).map { "KONAN_$it=1" }
             val otherOptions = listOfNotNull(
                     "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },
@@ -65,7 +66,10 @@ sealed class ClangArgs(
                     "USE_PE_COFF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.PE_COFF },
                     "UNICODE".takeIf { target.family == Family.MINGW },
                     "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
-                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
+                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() },
+                    // Clang 11 does not support this attribute. We don't need to handle it properly,
+                    // so just undefine it.
+                    "NS_FORMAT_ARGUMENT(A)=".takeIf { target.family.isAppleFamily },
             )
             val customOptions = target.customArgsForKonanSources()
             return (konanOptions + otherOptions + customOptions).map { "-D$it" }

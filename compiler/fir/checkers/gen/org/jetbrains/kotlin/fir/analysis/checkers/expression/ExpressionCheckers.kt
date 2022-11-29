@@ -22,6 +22,7 @@ abstract class ExpressionCheckers {
     open val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = emptySet()
     open val callCheckers: Set<FirCallChecker> = emptySet()
     open val functionCallCheckers: Set<FirFunctionCallChecker> = emptySet()
+    open val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = emptySet()
     open val integerLiteralOperatorCallCheckers: Set<FirIntegerLiteralOperatorCallChecker> = emptySet()
     open val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = emptySet()
     open val tryExpressionCheckers: Set<FirTryExpressionChecker> = emptySet()
@@ -54,6 +55,7 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allQualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> by lazy { qualifiedAccessExpressionCheckers + basicExpressionCheckers + qualifiedAccessCheckers }
     @CheckersComponentInternal internal val allCallCheckers: Set<FirCallChecker> by lazy { callCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allFunctionCallCheckers: Set<FirFunctionCallChecker> by lazy { functionCallCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers + qualifiedAccessCheckers + callCheckers }
+    @CheckersComponentInternal internal val allPropertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> by lazy { propertyAccessExpressionCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers + qualifiedAccessCheckers }
     @CheckersComponentInternal internal val allIntegerLiteralOperatorCallCheckers: Set<FirIntegerLiteralOperatorCallChecker> by lazy { integerLiteralOperatorCallCheckers + functionCallCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers + qualifiedAccessCheckers + callCheckers }
     @CheckersComponentInternal internal val allVariableAssignmentCheckers: Set<FirVariableAssignmentChecker> by lazy { variableAssignmentCheckers + qualifiedAccessCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allTryExpressionCheckers: Set<FirTryExpressionChecker> by lazy { tryExpressionCheckers + basicExpressionCheckers }

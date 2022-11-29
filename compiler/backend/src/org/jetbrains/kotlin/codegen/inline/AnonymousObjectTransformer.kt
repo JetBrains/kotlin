@@ -70,15 +70,22 @@ class AnonymousObjectTransformer(
             }
 
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                if (desc == JvmAnnotationNames.METADATA_DESC) {
-                    // Empty inner class info because no inner classes are used in kotlin.Metadata and its arguments
-                    val innerClassesInfo = FileBasedKotlinClass.InnerClassesInfo()
-                    return FileBasedKotlinClass.convertAnnotationVisitor(metadataReader, desc, innerClassesInfo)
-                } else if (desc == DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor) {
-                    debugMetadataAnnotation = AnnotationNode(desc)
-                    return debugMetadataAnnotation
+                when (desc) {
+                    JvmAnnotationNames.METADATA_DESC -> {
+                        // Empty inner class info because no inner classes are used in kotlin.Metadata and its arguments
+                        val innerClassesInfo = FileBasedKotlinClass.InnerClassesInfo()
+                        return FileBasedKotlinClass.convertAnnotationVisitor(metadataReader, desc, innerClassesInfo)
+                    }
+                    DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor -> {
+                        debugMetadataAnnotation = AnnotationNode(desc)
+                        return debugMetadataAnnotation
+                    }
+                    JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC -> {
+                        // The new value of @SourceDebugExtension will be written along with the new SMAP via ClassBuilder.visitSMAP.
+                        return null
+                    }
+                    else -> return classBuilder.newAnnotation(desc, visible)
                 }
-                return classBuilder.newAnnotation(desc, visible)
             }
 
             override fun visitMethod(
@@ -221,7 +228,7 @@ class AnonymousObjectTransformer(
         if (continuationClassName == transformationInfo.oldClassName) {
             coroutineTransformer.registerClassBuilder(continuationClassName)
         } else {
-            classBuilder.done()
+            classBuilder.done(state.generateSmapCopyToAnnotation)
         }
 
         return transformationResult

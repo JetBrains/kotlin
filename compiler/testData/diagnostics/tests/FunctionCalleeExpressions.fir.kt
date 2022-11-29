@@ -28,8 +28,8 @@ fun <T> fooT2() : (t : T) -> T {
 
 fun main(args : Array<String>) {
     args.foo()()
-    args.foo1(<!NO_VALUE_FOR_PARAMETER{PSI}!>)<!>(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
-    <!UNRESOLVED_REFERENCE!>a<!>.foo1(<!NO_VALUE_FOR_PARAMETER{PSI}!>)<!>(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+    <!NO_VALUE_FOR_PARAMETER!>args.foo1()()<!>
+    <!NO_VALUE_FOR_PARAMETER!><!UNRESOLVED_REFERENCE!>a<!>.foo1()()<!>
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     args.foo1()(1)
@@ -76,8 +76,8 @@ fun main1() {
 }
 
 fun test() {
-    {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
-    (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    <!NO_VALUE_FOR_PARAMETER!>{x : Int -> 1}()<!>;
+    <!NO_VALUE_FOR_PARAMETER!>(fun Int.() = 1)()<!>
     <!ARGUMENT_TYPE_MISMATCH!>"sd"<!>.(fun Int.() = 1)()
     val i : Int? = null
     <!ARGUMENT_TYPE_MISMATCH!>i<!>.(fun Int.() = 1)();

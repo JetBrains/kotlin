@@ -41,10 +41,16 @@ class JvmIrLinker(
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler,
     private val enableIdSignatures: Boolean,
-) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList(), partialLinkageEnabled = false) {
 
-    // TODO: provide friend modules
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmIrMangler, typeSystem, emptyMap())
+    override val fakeOverrideBuilder = FakeOverrideBuilder(
+        linker = this,
+        symbolTable = symbolTable,
+        mangler = JvmIrMangler,
+        typeSystem = typeSystem,
+        friendModules = emptyMap(), // TODO: provide friend modules
+        partialLinkageEnabled = false
+    )
 
     private val javaName = Name.identifier("java")
 

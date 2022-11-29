@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -93,13 +93,6 @@ public class StandaloneAnalysisAPISessionBuilder(
         )
     }
 
-    private fun registerApplicationServices() {
-        kotlinCoreProjectEnvironment.environment.application.apply {
-            registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
-            registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
-        }
-    }
-
     public fun <T : Any> registerApplicationService(serviceInterface: Class<T>, serviceImplementation: T) {
         kotlinCoreProjectEnvironment.environment.application.apply {
             registerService(serviceInterface, serviceImplementation)
@@ -124,7 +117,14 @@ public class StandaloneAnalysisAPISessionBuilder(
 
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(ktFiles))
-            registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(ktFiles))
+            registerService(
+                KotlinDeclarationProviderFactory::class.java,
+                KotlinStaticDeclarationProviderFactory(
+                    this,
+                    ktFiles,
+                    kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
+                )
+            )
             registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(ktFiles))
 
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
@@ -139,14 +139,14 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(LLFirBuiltinsSessionFactory::class.java, LLFirBuiltinsSessionFactory(this))
             RegisterComponentService.registerLLFirLibrarySessionFactory(this)
             RegisterComponentService.registerLLFirNonUnderContentRootSessionFactory(this)
+
+            registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
+            registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
+
             RegisterComponentService.registerLLFirResolveSessionService(this)
             registerService(
                 PackagePartProviderFactory::class.java,
-                object : PackagePartProviderFactory() {
-                    override fun createPackagePartProviderForLibrary(scope: GlobalSearchScope): PackagePartProvider {
-                        return packagePartProvider(scope)
-                    }
-                }
+                KotlinStaticPackagePartProviderFactory(packagePartProvider)
             )
 
             registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
@@ -160,16 +160,13 @@ public class StandaloneAnalysisAPISessionBuilder(
         PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(project))
     }
 
-    private fun registerPsiDeclarationFromBinaryModuleProvider(
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-    ) {
+    private fun registerPsiDeclarationFromBinaryModuleProvider() {
         val ktModuleProviderImpl = projectStructureProvider as KtModuleProviderImpl
         kotlinCoreProjectEnvironment.project.apply {
             registerService(
                 KotlinPsiDeclarationProviderFactory::class.java,
                 KotlinStaticPsiDeclarationProviderFactory(
                     this,
-                    packagePartProvider,
                     ktModuleProviderImpl.binaryModules,
                     kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 )
@@ -202,8 +199,6 @@ public class StandaloneAnalysisAPISessionBuilder(
             allSourceFiles,
         )
 
-        registerApplicationServices()
-
         val project = kotlinCoreProjectEnvironment.project
         val ktFiles = allSourceFiles.filterIsInstance<KtFile>()
         val libraryRoots = StandaloneProjectFactory.getAllBinaryRoots(modules, kotlinCoreProjectEnvironment)
@@ -217,7 +212,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             createPackagePartProvider,
         )
         if (withPsiDeclarationFromBinaryModuleProvider) {
-            registerPsiDeclarationFromBinaryModuleProvider(createPackagePartProvider)
+            registerPsiDeclarationFromBinaryModuleProvider()
         }
 
         return StandaloneAnalysisAPISession(

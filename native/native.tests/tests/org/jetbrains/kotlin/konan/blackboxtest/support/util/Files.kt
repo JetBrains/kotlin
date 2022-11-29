@@ -32,12 +32,12 @@ internal fun computeGeneratedSourcesDir(testDataBaseDir: File, testDataFile: Fil
         .resolve(testDataFile.nameWithoutExtension)
 }
 
-internal fun generateBoxFunctionLauncher(entryPointFunctionFQN: String): String =
+internal fun generateBoxFunctionLauncher(entryPointFunctionFQN: String, expectedResult: String = "OK"): String =
     """
         @kotlin.test.Test
         fun runTest() {
             val result = @Suppress("OPT_IN_USAGE_ERROR") $entryPointFunctionFQN()
-            kotlin.test.assertEquals("OK", result, "Test failed with: ${'$'}result")
+            kotlin.test.assertEquals("$expectedResult", result, "Test failed with: ${'$'}result")
         }
         
     """.trimIndent()

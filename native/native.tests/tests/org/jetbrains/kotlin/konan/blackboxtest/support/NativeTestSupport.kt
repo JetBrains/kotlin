@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -83,7 +81,7 @@ private object NativeTestSupport {
                 computeNativeClassLoader(),
                 computeBaseDirs()
             )
-        }.cast()
+        } as TestProcessSettings
 
     private fun computeNativeHome(): KotlinNativeHome = KotlinNativeHome(File(ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue()))
 
@@ -193,6 +191,7 @@ private object NativeTestSupport {
         output += sanitizer
         output += CacheMode::class to cacheMode
         output += computeTestMode(enforcedProperties)
+        output += computeCustomKlibs(enforcedProperties)
         output += computeForcedStandaloneTestKind(enforcedProperties)
         output += computeForcedNoopTestRunner(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
@@ -262,6 +261,15 @@ private object NativeTestSupport {
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
         ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.TWO_STAGE_MULTI_MODULE)
 
+    private fun computeCustomKlibs(enforcedProperties: EnforcedProperties): CustomKlibs =
+        CustomKlibs(
+            ClassLevelProperty.CUSTOM_KLIBS.readValue(
+                enforcedProperties,
+                { it.split(':', ';').mapToSet(::File) },
+                default = emptySet()
+            )
+        )
+
     private fun computeForcedStandaloneTestKind(enforcedProperties: EnforcedProperties): ForcedStandaloneTestKind =
         ForcedStandaloneTestKind(
             ClassLevelProperty.FORCE_STANDALONE.readValue(
@@ -318,7 +326,7 @@ private object NativeTestSupport {
             }
 
             TestClassSettings(parent = testProcessSettings, settings)
-        }.cast()
+        } as TestClassSettings
 
     private fun computeTestConfiguration(enclosingTestClass: Class<*>): ComputedTestConfiguration {
         val findTestConfiguration: Class<*>.() -> ComputedTestConfiguration? = {
@@ -396,7 +404,7 @@ private object NativeTestSupport {
             .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale generated sources.
 
         val sharedSourcesDir = testSourcesDir
-            .resolve("__shared_modules__")
+            .resolve(SHARED_MODULES_DIR_NAME)
             .ensureExistsAndIsEmptyDirectory()
 
         return GeneratedSources(testSourcesDir, sharedSourcesDir)
@@ -409,10 +417,14 @@ private object NativeTestSupport {
             .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale artifacts.
 
         val sharedBinariesDir = testBinariesDir
-            .resolve("__shared_modules__")
+            .resolve(SHARED_MODULES_DIR_NAME)
             .ensureExistsAndIsEmptyDirectory()
 
-        return Binaries(testBinariesDir, sharedBinariesDir)
+        val givenBinariesDir = testBinariesDir
+            .resolve(GIVEN_MODULES_DIR_NAME)
+            .ensureExistsAndIsEmptyDirectory()
+
+        return Binaries(testBinariesDir, sharedBinariesDir, givenBinariesDir)
     }
 
     /*************** Test class settings (simplified) ***************/
@@ -423,7 +435,7 @@ private object NativeTestSupport {
                 parent = getOrCreateTestProcessSettings(),
                 buildList { addCommonTestClassSettingsTo(enclosingTestClass, this) }
             )
-        }.cast()
+        } as SimpleTestClassSettings
 
     /*************** Test run settings (for black box tests only) ***************/
 
@@ -435,7 +447,8 @@ private object NativeTestSupport {
             parent = getOrCreateTestClassSettings(),
             listOfNotNull(
                 testInstances,
-                ExternalSourceTransformersProvider::class to testInstances.enclosingTestInstance.safeAs<ExternalSourceTransformersProvider>()
+                (testInstances.enclosingTestInstance as? ExternalSourceTransformersProvider)
+                    ?.let { ExternalSourceTransformersProvider::class to it }
             )
         )
     }
@@ -478,7 +491,7 @@ private object NativeTestSupport {
         root.getStore(NAMESPACE).getOrComputeIfAbsent(testClassKeyFor<TestRunProvider>()) {
             val testCaseGroupProvider = createTestCaseGroupProvider(getOrCreateTestClassSettings().get())
             TestRunProvider(testCaseGroupProvider)
-        }.cast()
+        } as TestRunProvider
 
     private fun createTestCaseGroupProvider(computedTestConfiguration: ComputedTestConfiguration): TestCaseGroupProvider {
         val (testConfiguration: TestConfiguration, testConfigurationAnnotation: Annotation) = computedTestConfiguration
@@ -498,7 +511,7 @@ private object NativeTestSupport {
             }
         }
 
-        return constructor.call(*arguments.toTypedArray()).cast()
+        return constructor.call(*arguments.toTypedArray())
     }
 
     private fun KParameter.hasTypeOf(clazz: KClass<*>): Boolean = (type.classifier as? KClass<*>)?.qualifiedName == clazz.qualifiedName

@@ -73,7 +73,8 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
                 this,
                 components,
                 project.createDeclarationProvider(contentScope),
-                project.createPackageProvider(contentScope)
+                project.createPackageProvider(contentScope),
+                canContainKotlinPackage = true,
             )
 
             register(FirProvider::class, provider)

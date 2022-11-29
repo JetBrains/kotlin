@@ -9,9 +9,7 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KpmGradleModuleVariantResolver
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.allDependencyModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -52,11 +50,6 @@ interface GradleKpmVariantCompilationDataInternal<T : KotlinCommonOptions> : Gra
         }
 
     override val moduleName: String
-        get() = // TODO accurate module names that don't rely on all variants having a main counterpart
-            owner.containingModule.project.kpmModules
-                .getByName(GradleKpmModule.MAIN_MODULE_NAME).variants.findByName(owner.name)?.ownModuleName() ?: ownModuleName
-
-    override val ownModuleName: String
         get() = owner.ownModuleName()
 
     private fun resolveFriendVariants(): Iterable<GradleKpmVariant> {
@@ -80,9 +73,4 @@ interface GradleKpmVariantCompilationDataInternal<T : KotlinCommonOptions> : Gra
             .filterIsInstance<KpmVariantResolution.KpmVariantMatch>()
             .mapNotNull { variantMatch -> variantMatch.chosenVariant as? GradleKpmVariant }
     }
-}
-
-fun KotlinCompilationData<*>.isMainCompilationData(): Boolean = when (this) {
-    is KotlinCompilation<*> -> isMain()
-    else -> compilationPurpose == GradleKpmModule.MAIN_MODULE_NAME
 }

@@ -23,6 +23,7 @@ operator fun MutableMap<String, String>.set(key: DependenciesResolverOptionsName
  */
 enum class DependenciesResolverOptionsName(optionName: String? = null) {
     TRANSITIVE,
+    PARTIAL_RESOLUTION,
     SCOPE,
     USERNAME,
     PASSWORD,
@@ -36,6 +37,13 @@ enum class DependenciesResolverOptionsName(optionName: String? = null) {
 
 val ExternalDependenciesResolver.Options.transitive
     get() = flag(DependenciesResolverOptionsName.TRANSITIVE)
+
+/**
+ * Enables partial resolution of transitive dependencies.
+ * When this flag is enabled, resolver ignores [transitive] flag.
+ */
+val ExternalDependenciesResolver.Options.partialResolution
+    get() = flag(DependenciesResolverOptionsName.PARTIAL_RESOLUTION)
 
 val ExternalDependenciesResolver.Options.dependencyScopes
     get() = value(DependenciesResolverOptionsName.SCOPE)?.split(",")

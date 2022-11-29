@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
@@ -133,9 +136,11 @@ class ExpressionsConverter(
         val valueParameterList = mutableListOf<ValueParameter>()
         var block: LighterASTNode? = null
         var hasArrow = false
+
+        val functionSymbol = FirAnonymousFunctionSymbol()
         lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it, ValueParameterDeclaration.LAMBDA)
+                VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it, functionSymbol, ValueParameterDeclaration.LAMBDA)
                 BLOCK -> block = it
                 ARROW -> hasArrow = true
             }
@@ -148,8 +153,8 @@ class ExpressionsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = implicitType
-            receiverTypeRef = implicitType
-            symbol = FirAnonymousFunctionSymbol()
+            receiverParameter = implicitType.asReceiverParameter()
+            symbol = functionSymbol
             isLambda = true
             hasExplicitParameterList = hasArrow
             label = context.getLastLabel(lambdaExpression) ?: context.calleeNamesForLambda.lastOrNull()?.let {
@@ -167,6 +172,7 @@ class ExpressionsConverter(
                     val name = SpecialNames.DESTRUCT
                     val multiParameter = buildValueParameter {
                         source = valueParameter.firValueParameter.source
+                        containingFunctionSymbol = functionSymbol
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = valueParameter.firValueParameter.returnTypeRef
@@ -555,6 +561,18 @@ class ExpressionsConverter(
             }
 
             result = convertFirSelector(it, dotQualifiedExpression.toFirSourceElement(), firReceiver!!) as? FirExpression
+        }
+
+        val receiver = firReceiver
+        if (receiver != null) {
+            (firSelector as? FirErrorExpression)?.let { errorExpression ->
+                return buildQualifiedErrorAccessExpression {
+                    this.receiver = receiver
+                    this.selector = errorExpression
+                    source = dotQualifiedExpression.toFirSourceElement()
+                    diagnostic = ConeSimpleDiagnostic("Qualified expression with unexpected selector", DiagnosticKind.Syntax)
+                }
+            }
         }
 
         return result ?: buildErrorExpression {
@@ -1059,7 +1077,7 @@ class ExpressionsConverter(
         var blockNode: LighterASTNode? = null
         forLoop.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER -> parameter = declarationsConverter.convertValueParameter(it, ValueParameterDeclaration.FOR_LOOP)
+                VALUE_PARAMETER -> parameter = declarationsConverter.convertValueParameter(it, null, ValueParameterDeclaration.FOR_LOOP)
                 LOOP_RANGE -> rangeExpression = getAsFirExpression(it, "No range in for loop")
                 BODY -> blockNode = it
             }
@@ -1108,8 +1126,8 @@ class ExpressionsConverter(
                     val multiDeclaration = valueParameter.destructuringDeclaration
                     val firLoopParameter = generateTemporaryVariable(
                         baseModuleData,
-                        valueParameter.firValueParameter.source,
-                        if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.firValueParameter.name,
+                        valueParameter.source,
+                        if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.name,
                         buildFunctionCall {
                             source = fakeSource
                             calleeReference = buildSimpleNamedReference {
@@ -1118,7 +1136,7 @@ class ExpressionsConverter(
                             }
                             explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
                         },
-                        valueParameter.firValueParameter.returnTypeRef
+                        valueParameter.returnTypeRef
                     )
                     if (multiDeclaration != null) {
                         val destructuringBlock = generateDestructuringBlock(
@@ -1186,7 +1204,20 @@ class ExpressionsConverter(
             for ((parameter, block) in catchClauses) {
                 if (parameter == null) continue
                 catches += buildCatch {
-                    this.parameter = parameter.firValueParameter
+                    this.parameter = buildProperty {
+                        source = parameter.source
+                        moduleData = baseModuleData
+                        origin = FirDeclarationOrigin.Source
+                        returnTypeRef = parameter.returnTypeRef
+                        isVar = false
+                        status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                        isLocal = true
+                        this.name = parameter.name
+                        symbol = FirPropertySymbol(CallableId(name))
+                        annotations += parameter.annotations
+                    }.also {
+                        it.isCatchParameter = true
+                    }
                     this.block = block
                 }
             }
@@ -1201,7 +1232,7 @@ class ExpressionsConverter(
         var blockNode: LighterASTNode? = null
         catchClause.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it, ValueParameterDeclaration.CATCH)
+                VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it, FirAnonymousFunctionSymbol()/*TODO*/, ValueParameterDeclaration.CATCH)
                     .firstOrNull() ?: return null
                 BLOCK -> blockNode = it
             }

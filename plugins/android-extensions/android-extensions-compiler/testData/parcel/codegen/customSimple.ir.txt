@@ -11,10 +11,9 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
         LABEL (L0)
         LINENUMBER (10)
           ALOAD (0)
-          CHECKCAST
           ILOAD (1)
           INVOKESTATIC (kotlinx/android/parcel/Parceler$DefaultImpls, newArray, (Lkotlinx/android/parcel/Parceler;I)[Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST ([LUser;)
           ARETURN
         LABEL (L1)
     }
@@ -61,7 +60,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
     public final User[] newArray(int size) {
         LABEL (L0)
           ILOAD (1)
-          ANEWARRAY
+          ANEWARRAY (User)
           ARETURN
         LABEL (L1)
     }

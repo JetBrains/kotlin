@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.internal.processLogMessage
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -63,7 +64,7 @@ class KotlinKarma(
     private var configDirectory: File by property {
         defaultConfigDirectory
     }
-    private val isTeamCity by lazy { project.isTeamCity }
+    private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
@@ -145,7 +146,7 @@ class KotlinKarma(
                     {
                         type: 'kotlin-test-js-runner/tc-log-appender.js',
                         //default layout
-                        layout: { type: 'pattern', pattern: '%[%d{DATE}:%p [%c]: %]%m' }
+                        layout: { type: 'pattern', pattern: '%[%d{DATETIME}:%p [%c]: %]%m' }
                     }
                 ]
             """.trimIndent()
@@ -240,6 +241,7 @@ class KotlinKarma(
     }
 
     private fun useWebpack() {
+        config.frameworks.add("webpack")
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(
             webpackMajorVersion.choose(
@@ -352,26 +354,6 @@ class KotlinKarma(
         }
     }
 
-    private fun createAdapterJs(
-        file: String,
-        debug: Boolean
-    ): File {
-        val adapterJs = npmProject.dir.resolve("adapter-browser.js")
-        adapterJs.printWriter().use { writer ->
-            val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
-            // It is necessary for debugger attaching (--inspect-brk analogue)
-            if (debug) {
-                writer.println("debugger;")
-            }
-
-            writer.println("require(${karmaRunner.jsQuoted()})")
-
-            writer.println("module.exports = require(${file.jsQuoted()})")
-        }
-
-        return adapterJs
-    }
-
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
@@ -380,9 +362,8 @@ class KotlinKarma(
     ): TCServiceMessagesTestExecutionSpec {
         val file = task.inputFileProperty.get().asFile.toString()
 
-        val adapterJs = createAdapterJs(file, debug)
-
-        config.files.add(adapterJs.canonicalPath)
+        config.files.add(npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js"))
+        config.files.add(file)
 
         if (debug) {
             config.singleRun = false
@@ -414,7 +395,7 @@ class KotlinKarma(
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity
+            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         config.basePath = npmProject.nodeModulesDir.absolutePath

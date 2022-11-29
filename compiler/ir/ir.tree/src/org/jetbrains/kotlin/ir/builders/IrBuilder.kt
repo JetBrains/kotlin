@@ -54,6 +54,10 @@ abstract class IrStatementsBuilder<out T : IrElement>(
         addStatement(this)
     }
 
+    operator fun List<IrStatement>.unaryPlus() {
+        forEach(::addStatement)
+    }
+
     protected abstract fun addStatement(irStatement: IrStatement)
     abstract fun doBuild(): T
 }

@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Foundation Security darwin posix
 language = Objective-C
 package = platform.JavaScriptCore
 modules = JavaScriptCore

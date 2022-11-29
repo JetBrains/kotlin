@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // !API_VERSION: 1.4
+// ALLOW_KOTLIN_PACKAGE
 
 package kotlin
 

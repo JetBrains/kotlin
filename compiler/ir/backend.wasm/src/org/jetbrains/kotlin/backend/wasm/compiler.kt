@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
@@ -35,7 +35,7 @@ fun compileToLoweredIr(
 ): Pair<List<IrModuleFragment>, WasmBackendContext> {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
-    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(
+    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = loadIr(
         depsDescriptors,
         irFactory,
         verifySignatures = false,
@@ -52,15 +52,15 @@ fun compileToLoweredIr(
 
     // Load declarations referenced during `context` initialization
     allModules.forEach {
-        ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     }
 
     // Create stubs
-    ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     allModules.forEach { it.patchDeclarationParents() }
 
-    deserializer.postProcess()
-    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
+    irLinker.postProcess()
+    irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     for (module in allModules)
         for (file in module.files)
@@ -108,9 +108,15 @@ fun compileWasm(
 fun WasmCompiledModuleFragment.generateJs(): String {
     //language=js
     val runtime = """
-    
     const externrefBoxes = new WeakMap();
-    """.trimIndent()
+    // ref must be non-null
+    function tryGetOrSetExternrefBox(ref, ifNotCached) {
+        if (typeof ref !== 'object') return ifNotCached;
+        const cachedBox = externrefBoxes.get(ref);
+        if (cachedBox !== void 0) return cachedBox;
+        externrefBoxes.set(ref, ifNotCached);
+        return ifNotCached;
+    }    """.trimIndent()
 
     val jsCodeBody = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
     val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
@@ -134,13 +140,14 @@ fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
     let wasmInstance;
     let require; // Placed here to give access to it from externals (js_code)
     if (isNodeJs) {
-      const module = await import('node:module');
-      require = module.createRequire(import.meta.url);
+      const module = await import(/* webpackIgnore: true */'node:module');
+      require = module.default.createRequire(import.meta.url);
       const fs = require('fs');
       const path = require('path');
       const url = require('url');
-      const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-      const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './$wasmFilePath'));
+      const filepath = url.fileURLToPath(import.meta.url);
+      const dirpath = path.dirname(filepath);
+      const wasmBuffer = fs.readFileSync(path.resolve(dirpath, '$wasmFilePath'));
       const wasmModule = new WebAssembly.Module(wasmBuffer);
       wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
     }

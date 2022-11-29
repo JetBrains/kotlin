@@ -133,6 +133,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> NO_UNIFIED_NULL_CHECKS =
             CompilerConfigurationKey.create("Use pre-1.4 exception types in null checks instead of java.lang.NPE");
 
+    public static final CompilerConfigurationKey<Boolean> NO_SOURCE_DEBUG_EXTENSION =
+            CompilerConfigurationKey.create("Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP");
+
     public static final CompilerConfigurationKey<Boolean> USE_OLD_INLINE_CLASSES_MANGLING_SCHEME =
             CompilerConfigurationKey.create("Use old, 1.4 version of inline classes mangling scheme");
 

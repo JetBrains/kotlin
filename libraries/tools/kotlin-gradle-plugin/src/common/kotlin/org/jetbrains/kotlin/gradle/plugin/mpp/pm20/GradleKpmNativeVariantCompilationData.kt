@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeCompileOptions
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal class GradleKpmNativeVariantCompilationData(
     val variant: GradleKpmNativeVariantInternal
-) : GradleKpmVariantCompilationDataInternal<KotlinCommonOptions>, KotlinNativeCompilationData<KotlinCommonOptions> {
+) : GradleKpmVariantCompilationDataInternal<KotlinCommonOptions>, GradleKpmNativeCompilationData<KotlinCommonOptions> {
     override val konanTarget: KonanTarget
         get() = variant.konanTarget
 
+    @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
+    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
     override val enableEndorsedLibs: Boolean
         get() = variant.enableEndorsedLibraries
 
@@ -25,5 +28,12 @@ internal class GradleKpmNativeVariantCompilationData(
     override val owner: GradleKpmNativeVariant
         get() = variant
 
-    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { variant.languageSettings }
+    override val compilerOptions: HasCompilerOptions<KotlinCommonCompilerOptions> = NativeCompilerOptions(project)
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))
+    override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
+        override val options: KotlinCommonCompilerOptions
+            get() = compilerOptions.options
+    }
 }

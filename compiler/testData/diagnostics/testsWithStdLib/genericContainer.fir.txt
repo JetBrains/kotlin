@@ -1,0 +1,3 @@
+FILE: test.kt
+    public final val container: R|GenericContainer<out ft<GenericContainer<*>, GenericContainer<*>?>>| = R|/GenericContainer.GenericContainer|<R|CapturedType(*)|>(String(nginx))
+        public get(): R|GenericContainer<out ft<GenericContainer<*>, GenericContainer<*>?>>|

@@ -199,8 +199,8 @@ public:
     }
 
     std_support::vector<ObjHeader*> Sweep() {
-        gc::SweepExtraObjects<SweepTraits>(extraObjectFactory_);
-        auto finalizers = gc::Sweep<SweepTraits>(objectFactory_);
+        gc::SweepExtraObjects<SweepTraits>(gc::GCHandle::getByEpoch(0), extraObjectFactory_);
+        auto finalizers = gc::Sweep<SweepTraits>(gc::GCHandle::getByEpoch(0), objectFactory_);
         std_support::vector<ObjHeader*> objects;
         for (auto node : finalizers.IterForTests()) {
             objects.push_back(node.GetObjHeader());

@@ -200,11 +200,9 @@ std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     return objects;
 }
 
-using Color = gc::SameThreadMarkAndSweep::ObjectData::Color;
-
-Color GetColor(ObjHeader* objHeader) {
+bool IsMarked(ObjHeader* objHeader) {
     auto nodeRef = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(objHeader);
-    return nodeRef.ObjectData().color();
+    return nodeRef.ObjectData().marked();
 }
 
 WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location) {
@@ -246,12 +244,12 @@ TEST_F(SameThreadMarkAndSweepTest, RootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
-        ASSERT_THAT(GetColor(global1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(global2.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(global3.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack2.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack3.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(global1.header()), false);
+        ASSERT_THAT(IsMarked(global2.header()), false);
+        ASSERT_THAT(IsMarked(global3.header()), false);
+        ASSERT_THAT(IsMarked(stack1.header()), false);
+        ASSERT_THAT(IsMarked(stack2.header()), false);
+        ASSERT_THAT(IsMarked(stack3.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
 
@@ -259,12 +257,12 @@ TEST_F(SameThreadMarkAndSweepTest, RootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
-        EXPECT_THAT(GetColor(global1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(global2.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(global3.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack2.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack3.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global1.header()), false);
+        EXPECT_THAT(IsMarked(global2.header()), false);
+        EXPECT_THAT(IsMarked(global3.header()), false);
+        EXPECT_THAT(IsMarked(stack1.header()), false);
+        EXPECT_THAT(IsMarked(stack2.header()), false);
+        EXPECT_THAT(IsMarked(stack3.header()), false);
     });
 }
 
@@ -292,12 +290,12 @@ TEST_F(SameThreadMarkAndSweepTest, InterconnectedRootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
-        ASSERT_THAT(GetColor(global1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(global2.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(global3.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack2.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack3.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(global1.header()), false);
+        ASSERT_THAT(IsMarked(global2.header()), false);
+        ASSERT_THAT(IsMarked(global3.header()), false);
+        ASSERT_THAT(IsMarked(stack1.header()), false);
+        ASSERT_THAT(IsMarked(stack2.header()), false);
+        ASSERT_THAT(IsMarked(stack3.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
 
@@ -305,12 +303,12 @@ TEST_F(SameThreadMarkAndSweepTest, InterconnectedRootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
-        EXPECT_THAT(GetColor(global1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(global2.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(global3.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack2.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack3.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global1.header()), false);
+        EXPECT_THAT(IsMarked(global2.header()), false);
+        EXPECT_THAT(IsMarked(global3.header()), false);
+        EXPECT_THAT(IsMarked(stack1.header()), false);
+        EXPECT_THAT(IsMarked(stack2.header()), false);
+        EXPECT_THAT(IsMarked(stack3.header()), false);
     });
 }
 
@@ -320,8 +318,8 @@ TEST_F(SameThreadMarkAndSweepTest, FreeObjects) {
         auto& object2 = AllocateObject(threadData);
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), object2.header()));
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object2.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(object2.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
 
@@ -335,8 +333,8 @@ TEST_F(SameThreadMarkAndSweepTest, FreeObjectsWithFinalizers) {
         auto& object2 = AllocateObjectWithFinalizer(threadData);
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), object2.header()));
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object2.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(object2.header()), false);
 
         EXPECT_CALL(finalizerHook(), Call(object1.header()));
         EXPECT_CALL(finalizerHook(), Call(object2.header()));
@@ -355,8 +353,8 @@ TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeak) {
         })();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), weak1.header()));
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(weak1.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(weak1.header()), false);
         ASSERT_THAT(weak1->referred, object1.header());
 
         threadData.gc().ScheduleAndWaitFullGC();
@@ -372,14 +370,14 @@ TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithHoldedWeak) {
         auto& weak1 = InstallWeakCounter(threadData, object1.header(), &stack->field1);
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), weak1.header(), stack.header()));
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(weak1.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(weak1.header()), false);
         ASSERT_THAT(weak1->referred, object1.header());
 
         threadData.gc().ScheduleAndWaitFullGC();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(weak1.header(), stack.header()));
-        EXPECT_THAT(GetColor(weak1.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(weak1.header()), false);
         EXPECT_THAT(weak1->referred, nullptr);
     });
 }
@@ -402,12 +400,12 @@ TEST_F(SameThreadMarkAndSweepTest, ObjectReferencedFromRootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        ASSERT_THAT(GetColor(global.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object2.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object3.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object4.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(global.header()), false);
+        ASSERT_THAT(IsMarked(stack.header()), false);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(object2.header()), false);
+        ASSERT_THAT(IsMarked(object3.header()), false);
+        ASSERT_THAT(IsMarked(object4.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
 
@@ -415,12 +413,12 @@ TEST_F(SameThreadMarkAndSweepTest, ObjectReferencedFromRootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object2.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object3.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object4.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global.header()), false);
+        EXPECT_THAT(IsMarked(stack.header()), false);
+        EXPECT_THAT(IsMarked(object1.header()), false);
+        EXPECT_THAT(IsMarked(object2.header()), false);
+        EXPECT_THAT(IsMarked(object3.header()), false);
+        EXPECT_THAT(IsMarked(object4.header()), false);
     });
 }
 
@@ -449,14 +447,14 @@ TEST_F(SameThreadMarkAndSweepTest, ObjectsWithCycles) {
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header(),
                         object5.header(), object6.header()));
-        ASSERT_THAT(GetColor(global.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object2.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object3.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object4.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object5.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object6.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(global.header()), false);
+        ASSERT_THAT(IsMarked(stack.header()), false);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(object2.header()), false);
+        ASSERT_THAT(IsMarked(object3.header()), false);
+        ASSERT_THAT(IsMarked(object4.header()), false);
+        ASSERT_THAT(IsMarked(object5.header()), false);
+        ASSERT_THAT(IsMarked(object6.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
 
@@ -464,12 +462,12 @@ TEST_F(SameThreadMarkAndSweepTest, ObjectsWithCycles) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object2.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object3.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object4.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global.header()), false);
+        EXPECT_THAT(IsMarked(stack.header()), false);
+        EXPECT_THAT(IsMarked(object1.header()), false);
+        EXPECT_THAT(IsMarked(object2.header()), false);
+        EXPECT_THAT(IsMarked(object3.header()), false);
+        EXPECT_THAT(IsMarked(object4.header()), false);
     });
 }
 
@@ -498,14 +496,14 @@ TEST_F(SameThreadMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header(),
                         object5.header(), object6.header()));
-        ASSERT_THAT(GetColor(global.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object2.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object3.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object4.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object5.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object6.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(global.header()), false);
+        ASSERT_THAT(IsMarked(stack.header()), false);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(object2.header()), false);
+        ASSERT_THAT(IsMarked(object3.header()), false);
+        ASSERT_THAT(IsMarked(object4.header()), false);
+        ASSERT_THAT(IsMarked(object5.header()), false);
+        ASSERT_THAT(IsMarked(object6.header()), false);
 
         EXPECT_CALL(finalizerHook(), Call(object5.header()));
         EXPECT_CALL(finalizerHook(), Call(object6.header()));
@@ -515,12 +513,12 @@ TEST_F(SameThreadMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object2.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object3.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object4.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global.header()), false);
+        EXPECT_THAT(IsMarked(stack.header()), false);
+        EXPECT_THAT(IsMarked(object1.header()), false);
+        EXPECT_THAT(IsMarked(object2.header()), false);
+        EXPECT_THAT(IsMarked(object3.header()), false);
+        EXPECT_THAT(IsMarked(object4.header()), false);
     });
 }
 
@@ -537,18 +535,18 @@ TEST_F(SameThreadMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
         object2->field1 = stack.header();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), stack.header(), object1.header(), object2.header()));
-        ASSERT_THAT(GetColor(global.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object2.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(global.header()), false);
+        ASSERT_THAT(IsMarked(stack.header()), false);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(object2.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), stack.header(), object1.header(), object2.header()));
-        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object2.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global.header()), false);
+        EXPECT_THAT(IsMarked(stack.header()), false);
+        EXPECT_THAT(IsMarked(object1.header()), false);
+        EXPECT_THAT(IsMarked(object2.header()), false);
     });
 }
 
@@ -577,14 +575,14 @@ TEST_F(SameThreadMarkAndSweepTest, RunGCTwice) {
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header(),
                         object5.header(), object6.header()));
-        ASSERT_THAT(GetColor(global.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(stack.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object2.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object3.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object4.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object5.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object6.header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(global.header()), false);
+        ASSERT_THAT(IsMarked(stack.header()), false);
+        ASSERT_THAT(IsMarked(object1.header()), false);
+        ASSERT_THAT(IsMarked(object2.header()), false);
+        ASSERT_THAT(IsMarked(object3.header()), false);
+        ASSERT_THAT(IsMarked(object4.header()), false);
+        ASSERT_THAT(IsMarked(object5.header()), false);
+        ASSERT_THAT(IsMarked(object6.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
         threadData.gc().ScheduleAndWaitFullGC();
@@ -593,12 +591,12 @@ TEST_F(SameThreadMarkAndSweepTest, RunGCTwice) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(stack.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object1.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object2.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object3.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object4.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global.header()), false);
+        EXPECT_THAT(IsMarked(stack.header()), false);
+        EXPECT_THAT(IsMarked(object1.header()), false);
+        EXPECT_THAT(IsMarked(object2.header()), false);
+        EXPECT_THAT(IsMarked(object3.header()), false);
+        EXPECT_THAT(IsMarked(object4.header()), false);
     });
 }
 
@@ -615,12 +613,12 @@ TEST_F(SameThreadMarkAndSweepTest, PermanentObjects) {
         global2->field1 = global1.header();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
-        EXPECT_THAT(GetColor(global2.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global2.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
-        EXPECT_THAT(GetColor(global2.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global2.header()), false);
     });
 }
 
@@ -634,14 +632,14 @@ TEST_F(SameThreadMarkAndSweepTest, SameObjectInRootSet) {
 
         ASSERT_THAT(global.header(), stack.header());
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), object.header()));
-        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global.header()), false);
+        EXPECT_THAT(IsMarked(object.header()), false);
 
         threadData.gc().ScheduleAndWaitFullGC();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), object.header()));
-        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
-        EXPECT_THAT(GetColor(object.header()), Color::kWhite);
+        EXPECT_THAT(IsMarked(global.header()), false);
+        EXPECT_THAT(IsMarked(object.header()), false);
     });
 }
 
@@ -1098,13 +1096,14 @@ TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
         auto& object1_local = AllocateObject(threadData);
         object1 = &object1_local;
         global1->field1 = object1_local.header();
-        while (weak.load() == nullptr);
+        while (weak.load() == nullptr)
+            ;
         threadData.gc().ScheduleAndWaitFullGC();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1_local.header(), weak.load()->header(), global1.header()));
-        ASSERT_THAT(GetColor(global1.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(object1_local.header()), Color::kWhite);
-        ASSERT_THAT(GetColor(weak.load()->header()), Color::kWhite);
+        ASSERT_THAT(IsMarked(global1.header()), false);
+        ASSERT_THAT(IsMarked(object1_local.header()), false);
+        ASSERT_THAT(IsMarked(weak.load()->header()), false);
         ASSERT_THAT((*weak.load())->referred, object1_local.header());
 
         global1->field1 = nullptr;

@@ -41,6 +41,10 @@ public fun kotlin.text.StringBuilder.append(vararg value: kotlin.Any?): kotlin.t
 
 public fun kotlin.text.StringBuilder.append(vararg value: kotlin.String?): kotlin.text.StringBuilder
 
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use appendRange instead.", replaceWith = kotlin.ReplaceWith(expression = "this.appendRange(str, offset, offset + len)", imports = {}))
+@kotlin.internal.InlineOnly
+public inline fun kotlin.text.StringBuilder.append(str: kotlin.CharArray, offset: kotlin.Int, len: kotlin.Int): kotlin.text.StringBuilder
+
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.text.Appendable.appendLine(): kotlin.text.Appendable
@@ -1486,9 +1490,6 @@ public final class StringBuilder : kotlin.text.Appendable, kotlin.CharSequence {
 
     public open override fun append(value: kotlin.CharSequence?, startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.StringBuilder
 
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided for binary compatibility.")
-    public final fun append(value: kotlin.String): kotlin.text.StringBuilder
-
     @kotlin.SinceKotlin(version = "1.3")
     public final fun append(value: kotlin.String?): kotlin.text.StringBuilder
 
@@ -1548,9 +1549,6 @@ public final class StringBuilder : kotlin.text.Appendable, kotlin.CharSequence {
     @kotlin.SinceKotlin(version = "1.4")
     @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final fun insert(index: kotlin.Int, value: kotlin.CharSequence?): kotlin.text.StringBuilder
-
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided for binary compatibility.")
-    public final fun insert(index: kotlin.Int, value: kotlin.String): kotlin.text.StringBuilder
 
     @kotlin.SinceKotlin(version = "1.4")
     @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})

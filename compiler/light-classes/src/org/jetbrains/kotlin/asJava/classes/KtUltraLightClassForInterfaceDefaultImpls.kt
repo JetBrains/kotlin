@@ -14,6 +14,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -59,7 +60,7 @@ class KtUltraLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject, 
     override fun setName(name: String): PsiElement =
         throw IncorrectOperationException("Impossible to rename ${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}")
 
-    override fun getContainingClass(): KtLightClassForSourceDeclaration? = KotlinLightClassFactory.createClass(classOrObject)
+    override fun getContainingClass(): KtLightClass? = classOrObject.toLightClass()
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
     override fun getOwnMethods(): List<KtLightMethod> = _ownMethods.value

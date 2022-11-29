@@ -1,6 +1,12 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     namespace foo {
+        interface OptionalFieldsInterface {
+            readonly required: number;
+            readonly notRequired?: Nullable<number>;
+        }
+    }
+    namespace foo {
         interface TestInterface {
             readonly value: string;
             getOwnerName(): string;
@@ -24,5 +30,6 @@ declare namespace JS_TESTS {
             readonly __doNotUseOrImplementIt: foo.TestInterfaceImpl["__doNotUseOrImplementIt"] & foo.AnotherExportedInterface["__doNotUseOrImplementIt"];
         }
         function processInterface(test: foo.TestInterface): string;
+        function processOptionalInterface(a: foo.OptionalFieldsInterface): string;
     }
 }

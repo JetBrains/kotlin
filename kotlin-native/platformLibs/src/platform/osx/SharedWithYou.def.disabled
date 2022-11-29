@@ -1,0 +1,9 @@
+depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security SharedWithYouCore UniformTypeIdentifiers cups darwin libkern osx posix
+language = Objective-C
+package = platform.SharedWithYou
+
+modules = SharedWithYou
+compilerOpts = -framework SharedWithYou
+linkerOpts = -framework SharedWithYou
+
+# Not available in Xcode 14 RC.

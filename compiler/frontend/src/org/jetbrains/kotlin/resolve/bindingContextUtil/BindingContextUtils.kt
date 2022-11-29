@@ -146,13 +146,13 @@ fun getEnclosingDescriptor(context: BindingContext, element: KtElement): Declara
     val declaration =
         element.getParentOfTypeCodeFragmentAware(KtNamedDeclaration::class.java)
             ?: throw KotlinExceptionWithAttachments("No parent KtNamedDeclaration for of type ${element.javaClass}")
-                .withAttachment("element.kt", element.text)
+                .withPsiAttachment("element.kt", element)
     return if (declaration is KtFunctionLiteral) {
         getEnclosingDescriptor(context, declaration)
     } else {
         context.get(DECLARATION_TO_DESCRIPTOR, declaration)
             ?: throw KotlinExceptionWithAttachments("No descriptor for named declaration of type ${declaration.javaClass}")
-                .withAttachment("declaration.kt", declaration.text)
+                .withPsiAttachment("declaration.kt", declaration)
     }
 }
 
@@ -197,7 +197,7 @@ fun isInlineableFunctionLiteral(expression: KtExpression, context: BindingContex
         val parameter = resolvedCall.valueArguments.entries.find { (_, valueArgument) ->
             valueArgument.arguments.any { it.asElement() == argument }
         }?.key ?: return false
-        return !parameter.isNoinline
+        return !parameter.isNoinline && !parameter.isCrossinline
     }
 
     return false

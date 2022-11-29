@@ -1716,6 +1716,10 @@ public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the collection contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
@@ -3141,26 +3145,17 @@ public operator fun <T> Iterable<T>.minus(element: T): List<T> {
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.
- * 
- * Before Kotlin 1.6, the [elements] array may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
- * a correct and stable implementation of `hashCode()` that didn't change between successive invocations.
- * On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
  */
 public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
     if (elements.isEmpty()) return this.toList()
-    val other = elements.convertToSetForSetOperation()
-    return this.filterNot { it in other }
+    return this.filterNot { it in elements }
 }
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.
- * 
- * Before Kotlin 1.6, the [elements] collection may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
- * a correct and stable implementation of `hashCode()` that didn't change between successive invocations.
- * On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
  */
 public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
-    val other = elements.convertToSetForSetOperationWith(this)
+    val other = elements.convertToListIfNotCollection()
     if (other.isEmpty())
         return this.toList()
     return this.filterNot { it in other }
@@ -3168,13 +3163,9 @@ public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.
- * 
- * Before Kotlin 1.6, the [elements] sequence may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
- * a correct and stable implementation of `hashCode()` that didn't change between successive invocations.
- * On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
  */
 public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
-    val other = elements.convertToSetForSetOperation()
+    val other = elements.toList()
     if (other.isEmpty())
         return this.toList()
     return this.filterNot { it in other }

@@ -6,7 +6,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           ALOAD (1)
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (User)
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readStrongBinder, ()Landroid/os/IBinder;)
@@ -14,7 +14,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           INVOKEVIRTUAL (android/os/Parcel, createBinderArray, ()[Landroid/os/IBinder;)
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, createBinderArrayList, ()Ljava/util/ArrayList;)
-          CHECKCAST
+          CHECKCAST (java/util/List)
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, createBinderArrayList, ()Ljava/util/ArrayList;)
           INVOKESPECIAL (User, <init>, (Landroid/os/IBinder;[Landroid/os/IBinder;Ljava/util/List;Ljava/util/ArrayList;)V)
@@ -81,7 +81,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           ALOAD (0)
           GETFIELD (User, binderArrayList, Ljava/util/ArrayList;)
-          CHECKCAST
+          CHECKCAST (java/util/List)
           INVOKEVIRTUAL (android/os/Parcel, writeBinderList, (Ljava/util/List;)V)
           RETURN
         LABEL (L1)

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.wasm.ir.*
 
 internal class WasmUsefulDeclarationProcessor(
     override val context: WasmBackendContext,
@@ -32,6 +31,19 @@ internal class WasmUsefulDeclarationProcessor(
             else -> Unit
         }
 
+        override fun visitVariable(declaration: IrVariable, data: IrDeclaration) {
+            declaration.type.enqueueType(data, "local variable type")
+            super.visitVariable(declaration, data)
+        }
+
+        override fun visitVararg(expression: IrVararg, data: IrDeclaration) {
+            expression.type.getClass()!!
+                .constructors
+                .firstOrNull { it.hasWasmPrimitiveConstructorAnnotation() }
+                ?.enqueue(data, "implicit vararg constructor")
+            super.visitVararg(expression, data)
+        }
+
         private fun tryToProcessIntrinsicCall(from: IrDeclaration, call: IrCall): Boolean = when (call.symbol) {
             context.wasmSymbols.unboxIntrinsic -> {
                 val fromType = call.getTypeArgument(0)
@@ -46,7 +58,7 @@ internal class WasmUsefulDeclarationProcessor(
 
             context.wasmSymbols.wasmClassId,
             context.wasmSymbols.wasmInterfaceId,
-            context.wasmSymbols.refCast,
+            context.wasmSymbols.refCastNull,
             context.wasmSymbols.refTest,
             context.wasmSymbols.boxIntrinsic,
             context.wasmSymbols.wasmArrayCopy -> {
@@ -85,11 +97,7 @@ internal class WasmUsefulDeclarationProcessor(
         context.irBuiltIns.byteType,
         context.irBuiltIns.shortType,
         context.irBuiltIns.charType,
-        context.irBuiltIns.booleanType,
-        context.irBuiltIns.byteType,
-        context.irBuiltIns.shortType,
         context.irBuiltIns.intType,
-        context.irBuiltIns.charType,
         context.irBuiltIns.longType,
         context.irBuiltIns.floatType,
         context.irBuiltIns.doubleType,

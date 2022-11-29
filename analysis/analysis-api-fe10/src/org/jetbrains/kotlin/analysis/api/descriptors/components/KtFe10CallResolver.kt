@@ -124,6 +124,10 @@ internal class KtFe10CallResolver(
             Errors.UNRESOLVED_REFERENCE,
         )
 
+        private val syntaxErrors = setOf(
+            Errors.ASSIGNMENT_IN_EXPRESSION_CONTEXT,
+        )
+
         val diagnosticWithResolvedCallsAtPosition1 = setOf(
             Errors.OVERLOAD_RESOLUTION_AMBIGUITY,
             Errors.NONE_APPLICABLE,
@@ -145,7 +149,7 @@ internal class KtFe10CallResolver(
         get() = analysisSession.token
 
     override fun resolveCall(psi: KtElement): KtCallInfo? = with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
-        if (psi.isNotResolvable()) return null
+        if (!canBeResolvedAsCall(psi)) return null
 
         val parentBinaryExpression = psi.parentOfType<KtBinaryExpression>()
         val lhs = KtPsiUtil.deparenthesize(parentBinaryExpression?.left)
@@ -177,7 +181,7 @@ internal class KtFe10CallResolver(
 
     override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> =
         with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
-            if (psi.isNotResolvable()) return emptyList()
+            if (!canBeResolvedAsCall(psi)) return emptyList()
 
             val resolvedKtCallInfo = resolveCall(psi)
             val bestCandidateDescriptors =
@@ -640,6 +644,7 @@ internal class KtFe10CallResolver(
         diagnostics: Diagnostics = context.diagnostics
     ) = diagnostics.firstOrNull { diagnostic ->
         if (diagnostic.severity != Severity.ERROR) return@firstOrNull false
+        if (diagnostic.factory in syntaxErrors) return@firstOrNull true
         val isResolutionError = diagnostic.factory in resolutionFailureErrors
         val isCallArgError = diagnostic.factory in callArgErrors
         val reportedPsi = diagnostic.psiElement

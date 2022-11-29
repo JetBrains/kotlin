@@ -1,0 +1,15 @@
+FILE fqName:<root> fileName:/box.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun foo (filter: kotlin.Function1<kotlin.String, kotlin.Boolean>?): kotlin.String declared in <root>' type=kotlin.String origin=null
+          filter: CONST Null type=kotlin.Nothing? value=null
+  FUN name:foo visibility:public modality:FINAL <> (filter:kotlin.Function1<kotlin.String, kotlin.Boolean>?) returnType:kotlin.String
+    VALUE_PARAMETER name:filter index:0 type:kotlin.Function1<kotlin.String, kotlin.Boolean>?
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CONSTRUCTOR_CALL 'public constructor <init> (filter: @[FlexibleNullability] <root>.Condition<in @[FlexibleNullability] kotlin.String?>?) declared in <root>.J' type=<root>.J origin=null
+          filter: TYPE_OP type=@[FlexibleNullability] <root>.Condition<@[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.Condition<@[FlexibleNullability] kotlin.String?>?
+            GET_VAR 'filter: kotlin.Function1<kotlin.String, kotlin.Boolean>? declared in <root>.foo' type=kotlin.Function1<kotlin.String, kotlin.Boolean>? origin=null
+      RETURN type=kotlin.Nothing from='public final fun foo (filter: kotlin.Function1<kotlin.String, kotlin.Boolean>?): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

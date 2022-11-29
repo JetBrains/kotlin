@@ -24,9 +24,3 @@ dependencies {
     implementation project(":kotlin-native:Interop:Indexer")
     implementation project(":kotlin-native:Interop:StubGenerator")
 }
-
-compileKotlin {
-    kotlinOptions {
-        allWarningsAsErrors=true
-    }
-}

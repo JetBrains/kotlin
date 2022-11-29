@@ -46,7 +46,11 @@ kotlin {
         }
     }
 
-    js('nodeJs')
+    js('nodeJs') {
+        nodejs {
+
+        }
+    }
 
     wasm()
 

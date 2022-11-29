@@ -1,6 +1,6 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xcache-directories=<path> A path to cache directories
+  -Xcache-directory=<path>   A path to cache directory
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
   -Xenable-extension-functions-in-externals
@@ -9,6 +9,7 @@ where advanced options include:
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
+  -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
   -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.
   -Xir-base-class-in-metadata Write base class into metadata
   -Xir-build-cache           Use compiler to build cache
@@ -19,6 +20,7 @@ where advanced options include:
                              Enable runtime diagnostics when performing DCE instead of removing declarations
   -Xir-generate-inline-anonymous-functions
                              Lambda expressions that capture values are translated into in-line anonymous JavaScript functions
+  -Xir-keep                  Comma-separated list of fully-qualified names to not be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
   -Xir-minimized-member-names Perform minimization for names of members
   -Xir-module-name=<name>    Specify a compilation module name for IR backend
   -Xir-new-ir2js             New fragment-based ir2js
@@ -35,11 +37,14 @@ where advanced options include:
   -Xir-safe-external-boolean Safe access via Boolean() to Boolean properties in externals to safely cast falsy values.
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when access safely to boolean in external declarations
+  -Xlegacy-deprecated-no-warn Disable warnings of deprecation of legacy compiler
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xpartial-linkage          Allow unlinked symbols
   -Xrepositories=<path>      Paths to additional places where libraries could be found
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only.
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
+  -Xuse-deprecated-legacy-compiler
+                             Use deprecated legacy compiler without error
   -Xwasm                     Use experimental WebAssembly compiler backend
   -Xwasm-debug-info          Add debug info to WebAssembly compiled module
   -Xwasm-enable-array-range-checks
@@ -67,6 +72,8 @@ where advanced options include:
   -Xeffect-system            Enable experimental language feature: effect system
   -Xenable-builder-inference Use the builder inference by default, for all calls with lambdas which can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
+  -Xklib-enable-signature-clash-checks
+                             Enable the checks on uniqueness of signatures
   -Xexpect-actual-linker     Enable experimental expect/actual linker
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.

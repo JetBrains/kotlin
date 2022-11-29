@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.internalName
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.DescriptorFactory
@@ -57,8 +56,12 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ST
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UNKNOWN_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.packageFqName
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.objectSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.polymorphicSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.sealedSerializerId
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -90,11 +93,11 @@ internal val serializationExceptionName = "kotlinx/serialization/$SERIAL_EXC"
 internal val serializationExceptionMissingFieldName = "kotlinx/serialization/$MISSING_FIELD_EXC"
 internal val serializationExceptionUnknownIndexName = "kotlinx/serialization/$UNKNOWN_FIELD_EXC"
 
-private val annotationType = Type.getObjectType("java/lang/annotation/Annotation")
-private val annotationArrayType = Type.getObjectType("[${annotationType.descriptor}")
-private val doubleAnnotationArrayType = Type.getObjectType("[${annotationArrayType.descriptor}")
-private val stringType = AsmTypes.JAVA_STRING_TYPE
-private val stringArrayType = Type.getObjectType("[${stringType.descriptor}")
+internal val annotationType = Type.getObjectType("java/lang/annotation/Annotation")
+internal val annotationArrayType = Type.getObjectType("[${annotationType.descriptor}")
+internal val doubleAnnotationArrayType = Type.getObjectType("[${annotationArrayType.descriptor}")
+internal val stringType = AsmTypes.JAVA_STRING_TYPE
+internal val stringArrayType = Type.getObjectType("[${stringType.descriptor}")
 
 internal val descriptorGetterName = JvmAbi.getterName(SERIAL_DESC_FIELD)
 internal val getLazyValueName = JvmAbi.getterName("value")
@@ -535,7 +538,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
 
     property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
     findAddOnSerializer(property.type, property.module)?.let { return SerializableInfo(it) }
-    property.type.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
+    property.type.overriddenSerializer(property.module)?.toClassDescriptor?.let { return SerializableInfo(it) }
 
     if (property.type.isTypeParameter()) return JVMSerialTypeInfo(
         property,
@@ -759,7 +762,7 @@ internal fun createSingletonLambda(
     }
 
     writeSyntheticClassMetadata(lambdaClassBuilder, lambdaCodegen.state, false)
-    lambdaClassBuilder.done()
+    lambdaClassBuilder.done(lambdaCodegen.state.generateSmapCopyToAnnotation)
 
     return lambdaType
 }

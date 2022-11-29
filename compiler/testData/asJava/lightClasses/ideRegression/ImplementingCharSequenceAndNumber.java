@@ -35,3 +35,4 @@ public static final class MyNumber /* p1.Container.MyNumber*/ extends java.lang.
   public int getLength();//  getLength()
 
 }}
+

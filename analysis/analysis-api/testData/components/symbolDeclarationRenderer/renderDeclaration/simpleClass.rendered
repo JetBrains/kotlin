@@ -1,17 +1,19 @@
 interface SomeInterface {
-  val bar: Boolean
-
   fun foo(x: Int, y: String): String
+
+  val bar: Boolean
 }
 
 class SomeClass : SomeInterface {
-  override var bar: Boolean
-
-  private val baz: Int
-
   lateinit var fau: Double
 
   override fun foo(x: Int, y: String): String
+
+  override var bar: Boolean
+    get()
+    set(value: Boolean)
+
+  private val baz: Int
 }
 
 inline class InlineClass

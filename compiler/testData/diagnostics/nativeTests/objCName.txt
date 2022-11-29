@@ -1,5 +1,10 @@
 package
 
+@kotlin.native.ObjCName(name = "validName", swiftName = " ") public val blankObjCNameA: kotlin.Int = 0
+@kotlin.native.ObjCName(name = " ", swiftName = "validName") public val blankObjCNameB: kotlin.Int = 0
+@kotlin.native.ObjCName(name = "", swiftName = "") public val emptyObjCNameA: kotlin.Int = 0
+@kotlin.native.ObjCName(name = "validName", swiftName = "") public val emptyObjCNameB: kotlin.Int = 0
+@kotlin.native.ObjCName(name = "", swiftName = "validName") public val emptyObjCNameC: kotlin.Int = 0
 private const val exact: kotlin.Boolean = false
 @kotlin.native.ObjCName(exact = "not a boolean", name = "invalidArgsObjC", swiftName = false) public val invalidArgs: kotlin.Int = 0
 @kotlin.native.ObjCName(name = "validName", swiftName = "invalid.name") public val invalidCharactersObjCNameA: kotlin.Int = 0
@@ -9,6 +14,8 @@ private const val exact: kotlin.Boolean = false
 @kotlin.native.ObjCName public val invalidObjCName: kotlin.Int = 0
 @kotlin.native.ObjCName(exact = false, name = "nonLiteralArgsObjC", swiftName = "nonLiteralArgsSwift") public val nonLiteralArgs: kotlin.Int = 0
 private const val objcName: kotlin.String = "nonLiteralArgsObjC"
+@kotlin.native.ObjCName(name = "validName") public val validObjCNameA: kotlin.Int = 0
+@kotlin.native.ObjCName(swiftName = "validName") public val validObjCNameB: kotlin.Int = 0
 
 public open class Base {
     public constructor Base()

@@ -1,1 +1,1 @@
-include 'app-common', 'app-jvm', 'app-js'
+include 'app-common', 'app-jvm'

@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
@@ -17,15 +18,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.Assume
 import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ErrorCollector
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -101,6 +101,7 @@ private fun BaseGradleIT.Project.configureSingleNativeTarget(preset: String = Ho
         }
 }
 
+@OptIn(InternalKotlinGradlePluginApi::class)
 class GeneralNativeIT : BaseGradleIT() {
 
     val nativeHostTargetName = MPPNativeTargets.current
@@ -373,15 +374,24 @@ class GeneralNativeIT : BaseGradleIT() {
             frameworkPaths.forEach { assertFileExists(it) }
 
             assertTrue(fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported"))
+            val xcodeMajorVersion = Xcode!!.currentVersion.split(".")[0].toInt()
 
             // Check that by default release frameworks have bitcode embedded.
             withNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
-                assertTrue("-Xembed-bitcode" in arguments)
+                if (xcodeMajorVersion < 14) {
+                    assertTrue("-Xembed-bitcode" in arguments)
+                } else {
+                    assertFalse("-Xembed-bitcode" in arguments)
+                }
                 assertTrue("-opt" in arguments)
             }
             // Check that by default debug frameworks have bitcode marker embedded.
             withNativeCommandLineArguments(":linkMainDebugFrameworkIos") { arguments ->
-                assertTrue("-Xembed-bitcode-marker" in arguments)
+                if (xcodeMajorVersion < 14) {
+                    assertTrue("-Xembed-bitcode-marker" in arguments)
+                } else {
+                    assertFalse("-Xembed-bitcode-marker" in arguments)
+                }
                 assertTrue("-g" in arguments)
             }
             // Check that bitcode can be disabled by setting custom compiler options
@@ -941,20 +951,20 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertNotContains(NO_NATIVE_STDLIB_PROPERTY_WARNING)
             }
 
-            build("tasks", "-Pkotlin.native.version=1.5.20-dev-5613") {
+            build("tasks", "-Pkotlin.native.version=1.5.20") {
                 assertSuccessful()
                 assertContainsRegex(
-                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20-dev-5613"
+                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20"
                         .toRegex()
                 )
                 assertNotContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
             }
 
             // Deprecated property
-            build("tasks", "-Porg.jetbrains.kotlin.native.version=1.5.20-dev-5613") {
+            build("tasks", "-Porg.jetbrains.kotlin.native.version=1.5.20") {
                 assertSuccessful()
                 assertContainsRegex(
-                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20-dev-5613"
+                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20"
                         .toRegex()
                 )
                 assertContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
@@ -965,7 +975,7 @@ class GeneralNativeIT : BaseGradleIT() {
         // MPP plugin uses this API to download K/N if Gradle version is >= 5.0.
         // Check this too (see KT-30258).
         with(Project("native-libraries")) {
-            build("tasks", "-Pkotlin.native.version=1.3.50-eap-11606") {
+            build("tasks", "-Pkotlin.native.version=1.3.50") {
                 assertSuccessful()
                 assertTrue(output.contains("Kotlin/Native distribution: "))
                 assertFalse(output.contains("Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0."))
@@ -985,6 +995,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testIgnoreDisabledNativeTargets() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
+        hostHaveUnsupportedTarget()
         build {
             assertSuccessful()
             assertEquals(1, output.lines().count { DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX in it })
@@ -1134,6 +1145,10 @@ class GeneralNativeIT : BaseGradleIT() {
                 """.trimIndent()
             )
 
+            gradleProperties().modify {
+                it.replace("cacheRedirectorEnabled=true", "cacheRedirectorEnabled=false")
+            }
+
             build(
                 "build",
                 options = defaultBuildOptions().copy(
@@ -1159,6 +1174,29 @@ class GeneralNativeIT : BaseGradleIT() {
             assertSuccessful()
             assertDirectoryExists("build/mydir/bin/host/debugExecutable")
             assertNoSuchFile("build/bin")
+        }
+    }
+
+    // KT-54439
+    @Test
+    fun testLanguageSettingsSyncToNativeTasks() = with(transformNativeTestProjectWithPluginDsl("native-kotlin-options")) {
+        gradleBuildScript().modify {
+            """
+            |${it.substringBefore("kotlin {")}
+            |
+            |kotlin {
+            |    ${HostManager.host.presetName}("host") {
+            |        compilations.named("main").configure { 
+            |            kotlinOptions.freeCompilerArgs += ["-Xverbose-phases=Linker"] 
+            |        }
+            |    }
+            |}
+            """.trimMargin()
+        }
+
+        build("assemble") {
+            assertSuccessful()
+            assertContains("-Xverbose-phases=Linker")
         }
     }
 

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.linkerissues
 
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialConflictKind.*
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialConflictKind.Companion.mostSignificantConflictKind
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialConflictReason.Companion.mostSignificantConflictReasons
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.name.Name
@@ -18,12 +20,50 @@ import org.jetbrains.kotlin.utils.ResolvedDependencyId
 import org.jetbrains.kotlin.utils.ResolvedDependencyVersion
 import kotlin.Comparator
 
-abstract class KotlinIrLinkerIssue {
+/**
+ * TODO: Currently, [KotlinIrLinkerInternalException] is only needed to show the stacktrace to the user.
+ *  If stacktrace is not needed it's enough to throw [CompilationErrorException] to interrupt the compilation process.
+ *  But, probably, we don't even need to show the stacktrace, so we could probably get rid of [KotlinIrLinkerInternalException] at all.
+ */
+abstract class KotlinIrLinkerIssue(private val needStacktrace: Boolean) {
     protected abstract val errorMessage: String
 
-    fun raiseIssue(messageLogger: IrMessageLogger): KotlinIrLinkerInternalException {
+    fun raiseIssue(messageLogger: IrMessageLogger): Nothing {
         messageLogger.report(IrMessageLogger.Severity.ERROR, errorMessage, null)
-        throw KotlinIrLinkerInternalException()
+        throw if (needStacktrace) KotlinIrLinkerInternalException() else CompilationErrorException()
+    }
+}
+
+class UnexpectedUnboundIrSymbols(unboundSymbols: Set<IrSymbol>, whenDetected: String) : KotlinIrLinkerIssue(needStacktrace = false) {
+    override val errorMessage = buildString {
+        // cause:
+        append("There ").append(
+            when (val count = unboundSymbols.size) {
+                1 -> "is still an unbound symbol"
+                else -> "are still $count unbound symbols"
+            }
+        ).append(" ").append(whenDetected).append(":\n")
+        unboundSymbols.joinTo(this, separator = "\n")
+
+        // explanation:
+        append("\n\nThis could happen if there are two libraries, where one library was compiled against the different version")
+        append(" of the other library than the one currently used in the project.")
+
+        // action items:
+        append(" Please check that the project configuration is correct and has consistent versions of dependencies.")
+        if (unboundSymbols.any { looksLikeEnumEntries(it.signature) }) {
+            append("\n\nAnother possible reason is that some parts of the project are compiled with EnumEntries language feature enabled,")
+            append(" but other parts or used libraries are compiled with EnumEntries language feature disabled.")
+        }
+    }
+
+    companion object {
+        fun looksLikeEnumEntries(signature: IdSignature?) : Boolean = when (signature) {
+            is IdSignature.AccessorSignature -> looksLikeEnumEntries(signature.propertySignature)
+            is IdSignature.CompositeSignature -> looksLikeEnumEntries(signature.inner)
+            is IdSignature.CommonSignature -> signature.shortName == "entries"
+            else -> false
+        }
     }
 }
 
@@ -32,7 +72,7 @@ class SignatureIdNotFoundInModuleWithDependencies(
     private val problemModuleDeserializer: IrModuleDeserializer,
     private val allModuleDeserializers: Collection<IrModuleDeserializer>,
     private val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
-) : KotlinIrLinkerIssue() {
+) : KotlinIrLinkerIssue(needStacktrace = false) {
     override val errorMessage = try {
         computeErrorMessage()
     } catch (e: Throwable) {
@@ -89,7 +129,7 @@ class SignatureIdNotFoundInModuleWithDependencies(
     }
 }
 
-class NoDeserializerForModule(moduleName: Name, idSignature: IdSignature?) : KotlinIrLinkerIssue() {
+class NoDeserializerForModule(moduleName: Name, idSignature: IdSignature?) : KotlinIrLinkerIssue(needStacktrace = false) {
     override val errorMessage = buildString {
         append("Could not load module ${moduleName.asString()}")
         if (idSignature != null) append(" in an attempt to find deserializer for symbol ${idSignature.render()}.")
@@ -100,7 +140,7 @@ class SymbolTypeMismatch(
     private val cause: IrSymbolTypeMismatchException,
     private val allModuleDeserializers: Collection<IrModuleDeserializer>,
     private val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
-) : KotlinIrLinkerIssue() {
+) : KotlinIrLinkerIssue(needStacktrace = true) {
     override val errorMessage = try {
         computeErrorMessage()
     } catch (e: Throwable) {

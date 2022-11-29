@@ -210,6 +210,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val ONLY_IR_DCE by directive(
+        description = "Disable non DCE build",
+        applicability = DirectiveApplicability.Global
+    )
+
     val RUN_IC by directive(
         description = "",
         applicability = DirectiveApplicability.Global
@@ -240,15 +245,15 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val RUN_NEW_IR_2_JS by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val NO_COMMON_FILES by directive(
         """
             Don't added helper files to prevent linking issues.
         """.trimIndent(),
         applicability = DirectiveApplicability.Global,
+    )
+
+    val KEEP by stringDirective(
+        description = "Keep declarations",
+        applicability = DirectiveApplicability.Global
     )
 }

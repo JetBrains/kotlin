@@ -1,0 +1,14 @@
+FILE: getterWithEarlyReturn.kt
+    public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val R|SomeClass|.lore: R|kotlin/collections/List<kotlin/String>|
+        public get(): R|kotlin/collections/List<kotlin/String>| {
+            this@R|/lore|.R|kotlin/apply|<R|SomeClass|>(<L> = apply@fun R|SomeClass|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ R|kotlin/collections/emptyList|<R|kotlin/String|>()
+            }
+            )
+        }

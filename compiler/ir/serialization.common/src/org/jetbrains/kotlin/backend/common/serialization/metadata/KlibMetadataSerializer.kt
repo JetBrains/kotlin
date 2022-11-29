@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
@@ -65,30 +66,6 @@ abstract class KlibMetadataSerializer(
         return with(serializerContext, block)
     }
 
-
-    private fun SerializerContext.buildFragment(
-        packageProto: ProtoBuf.Package,
-        classesProto: List<Pair<ProtoBuf.Class, Int>>,
-        fqName: FqName,
-        isEmpty: Boolean
-    ): ProtoBuf.PackageFragment {
-
-        val (stringTableProto, nameTableProto) = serializerExtension.stringTable.buildProto()
-
-        return ProtoBuf.PackageFragment.newBuilder()
-            .setPackage(packageProto)
-            .addAllClass_(classesProto.map { it.first })
-            .setStrings(stringTableProto)
-            .setQualifiedNames(nameTableProto)
-            .also { packageFragment ->
-                classesProto.forEach {
-                    packageFragment.addExtension(KlibMetadataProtoBuf.className, it.second )
-                }
-                packageFragment.setExtension(KlibMetadataProtoBuf.isEmpty, isEmpty)
-                packageFragment.setExtension(KlibMetadataProtoBuf.fqName, fqName.asString())
-            }
-            .build()
-    }
 
     private fun serializeClass(packageName: FqName,
                                classDescriptor: ClassDescriptor): List<Pair<ProtoBuf.Class, Int>> {
@@ -169,11 +146,12 @@ abstract class KlibMetadataSerializer(
                     else
                         buildPackageProto(fqName, nonCassDescriptors)
 
-                    buildFragment(
+                    buildKlibPackageFragment(
                         packageProto,
                         serializeClasses(fqName, classifierDescriptors),
                         fqName,
-                        topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty()
+                        topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty(),
+                        serializerExtension.stringTable
                     )
                 }
             )
@@ -195,33 +173,36 @@ abstract class KlibMetadataSerializer(
                     if (typeAliases.isNotEmpty()) buildPackageProto(fqName, typeAliases)
                     else emptyPackageProto()
 
-                buildFragment(
+                buildKlibPackageFragment(
                     packageProto,
                     classesProto,
                     fqName,
-                    descriptors.isEmpty()
+                    descriptors.isEmpty(),
+                    serializerExtension.stringTable
                 )
             }
         }
 
         result += topLevelDescriptors.maybeChunked(TOP_LEVEL_DECLARATION_COUNT_PER_FILE) { descriptors ->
             withNewContext {
-                buildFragment(
+                buildKlibPackageFragment(
                     buildPackageProto(fqName, descriptors),
                     emptyList(),
                     fqName,
-                    descriptors.isEmpty()
+                    descriptors.isEmpty(),
+                    serializerExtension.stringTable
                 )
             }
         }
 
         if (result.isEmpty()) {
             result += withNewContext {
-                buildFragment(
+                buildKlibPackageFragment(
                     emptyPackageProto(),
                     emptyList(),
                     fqName,
-                    true
+                    true,
+                    serializerExtension.stringTable
                 )
             }
         }
@@ -253,22 +234,7 @@ abstract class KlibMetadataSerializer(
         fragmentNames: List<String>,
         emptyPackages: List<String>
     ): KlibMetadataProtoBuf.Header {
-        val header = KlibMetadataProtoBuf.Header.newBuilder()
-
-        header.moduleName = moduleDescriptor.name.asString()
-
-        if (languageVersionSettings.isPreRelease()) {
-            header.flags = 1
-        }
-
-        fragmentNames.forEach {
-            header.addPackageFragmentName(it)
-        }
-        emptyPackages.forEach {
-            header.addEmptyPackage(it)
-        }
-
-        return header.build()
+        return serializeKlibHeader(languageVersionSettings, moduleDescriptor, fragmentNames, emptyPackages)
     }
 
     // For platform libraries we get HUGE files.
@@ -276,6 +242,30 @@ abstract class KlibMetadataSerializer(
     // So we split them into chunks.
     abstract protected val TOP_LEVEL_DECLARATION_COUNT_PER_FILE: Int?
     abstract protected val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE: Int?
+}
+
+fun serializeKlibHeader(
+    languageVersionSettings: LanguageVersionSettings,
+    moduleDescriptor: ModuleDescriptor,
+    fragmentNames: List<String>,
+    emptyPackages: List<String>
+): KlibMetadataProtoBuf.Header {
+    val header = KlibMetadataProtoBuf.Header.newBuilder()
+
+    header.moduleName = moduleDescriptor.name.asString()
+
+    if (languageVersionSettings.isPreRelease()) {
+        header.flags = 1
+    }
+
+    fragmentNames.forEach {
+        header.addPackageFragmentName(it)
+    }
+    emptyPackages.forEach {
+        header.addEmptyPackage(it)
+    }
+
+    return header.build()
 }
 
 fun DeclarationDescriptor.extractFileId(): Int? = when (this) {
@@ -288,3 +278,29 @@ fun DeclarationDescriptor.extractFileId(): Int? = when (this) {
 internal val ModuleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies: PackageFragmentProvider
     get() = (this as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
         ?: error("Can't get a module content package fragments, it's not a ${ModuleDescriptorImpl::class.simpleName}.")
+
+fun buildKlibPackageFragment(
+    packageProto: ProtoBuf.Package,
+    classesProto: List<Pair<ProtoBuf.Class, Int>>,
+    fqName: FqName,
+    isEmpty: Boolean,
+    stringTable: SerializableStringTable,
+): ProtoBuf.PackageFragment {
+
+    val (stringTableProto, nameTableProto) = stringTable.buildProto()
+
+    return ProtoBuf.PackageFragment.newBuilder()
+        .setPackage(packageProto)
+        .addAllClass_(classesProto.map { it.first })
+        .setStrings(stringTableProto)
+        .setQualifiedNames(nameTableProto)
+        .also { packageFragment ->
+            classesProto.forEach {
+                packageFragment.addExtension(KlibMetadataProtoBuf.className, it.second )
+            }
+            packageFragment.setExtension(KlibMetadataProtoBuf.isEmpty, isEmpty)
+            packageFragment.setExtension(KlibMetadataProtoBuf.fqName, fqName.asString())
+        }
+        .build()
+}
+

@@ -5,7 +5,6 @@ import org.gradle.kotlin.dsl.support.serviceOf
 
 description = "Shaded Maven dependencies resolver"
 
-val JDK_18: String by rootProject.extra
 val jarBaseName = property("archivesBaseName") as String
 
 val embedded by configurations

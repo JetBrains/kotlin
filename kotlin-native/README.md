@@ -29,13 +29,20 @@ and [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
 
 On macOS Kotlin/Native requires Xcode 12.5 or newer.
 
+## Contributing
+
+You can contribute to Kotlin/Native in many ways.
+See the relevant page [on the website](https://kotlinlang.org/docs/contribute.html).
+
+See also the general [contribution guidelines](../docs/contributing.md) for this repository.
+
 ## Building from source
 
 Prerequisites:
 *   configure Kotlin build as [specified in main readme](../ReadMe.md#build-environment-requirements)
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
-*   macOS: Xcode 13.1 or newer
+*   macOS: Xcode 14.0 or newer
 *   Linux: glibc 2.23 or newer
 *   Windows:
     * Microsoft C++ build tools for Visual Studio 2019 14.29 or newer
@@ -89,3 +96,8 @@ See the [documentation](https://kotlinlang.org/docs/native-c-interop.html) for m
 For tests, use `./gradlew :native:native.tests:codegenBoxTest` and `./gradlew :kotlin-native:backend.native:tests:run`.
 
 For more details see [Testing](HACKING.md#Testing).
+
+## More tips and tricks
+
+More tips and tricks that might be useful when developing or debugging Kotlin/Native
+can be found in [HACKING.md](HACKING.md)

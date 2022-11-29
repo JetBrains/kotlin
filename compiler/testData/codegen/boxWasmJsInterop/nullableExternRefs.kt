@@ -37,6 +37,16 @@ external fun getJsNullAsNonNullable(): EI
 @JsFun("() => undefined")
 external fun getJsUndefinedAsNonNullable(): EI
 
+inline fun checkNPE(body: () -> Unit) {
+    var throwed = false
+    try {
+        body()
+    } catch (e: NullPointerException) {
+        throwed = true
+    }
+    assertTrue(throwed)
+}
+
 fun box(): String {
     val jsNull = getNull()
     val jsUndefined = getUndefined()
@@ -53,13 +63,9 @@ fun box(): String {
     assertTrue(isJsNull(jsNull))
 
     assertFalse(isJsUndefined(null))
-    assertTrue(isJsUndefined(jsUndefined))
 
-    // TODO: Should these fail?
-    val n2 = getJsNullAsNonNullable()
-    val ud2 = getJsUndefinedAsNonNullable()
-    assertTrue(isJsNull(n2))
-    assertTrue(isJsUndefined(ud2))
+    checkNPE(::getJsNullAsNonNullable)
+    checkNPE(::getJsUndefinedAsNonNullable)
 
     return "OK"
 }

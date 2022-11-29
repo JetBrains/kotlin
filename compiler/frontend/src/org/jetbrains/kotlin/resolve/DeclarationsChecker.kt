@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.types.typeUtil.constituentTypes
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class DeclarationsCheckerBuilder(
     private val descriptorResolver: DescriptorResolver,
@@ -415,7 +414,7 @@ class DeclarationsChecker(
                 declaration
             }
 
-            if (descriptor.containingDeclaration.safeAs<MemberDescriptor>()?.isInlineOnly() == true) return
+            if ((descriptor.containingDeclaration as? MemberDescriptor)?.isInlineOnly() == true) return
 
             trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(reportOn))
         }
@@ -496,7 +495,7 @@ class DeclarationsChecker(
         for (parameter in declaration.valueParameters) {
             trace.get(PRIMARY_CONSTRUCTOR_PARAMETER, parameter)?.let {
                 modifiersChecker.checkModifiersForDeclaration(parameter, it)
-                LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, parameter, it)
+                LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, parameter, it, languageVersionSettings)
             }
         }
 
@@ -536,6 +535,12 @@ class DeclarationsChecker(
             val typeParameterDescriptor = trace.get(TYPE_PARAMETER, typeParameter) ?: continue
             checkSupertypesForConsistency(typeParameterDescriptor, typeParameter)
             checkOnlyOneTypeParameterBound(typeParameterDescriptor, typeParameter, typeParameterListOwner)
+        }
+
+        for (constraint in constraints) {
+            constraint.annotationEntries.forEach {
+                trace.report(ANNOTATION_IN_WHERE_CLAUSE_WARNING.on(it))
+            }
         }
     }
 
@@ -605,7 +610,7 @@ class DeclarationsChecker(
         if (containingDeclaration is ClassDescriptor) {
             checkMemberProperty(property, propertyDescriptor, containingDeclaration)
         }
-        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, property, propertyDescriptor)
+        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, property, propertyDescriptor, languageVersionSettings)
         checkPropertyInitializer(property, propertyDescriptor)
         checkAccessors(property, propertyDescriptor)
         checkTypeParameterConstraints(property)

@@ -15,14 +15,32 @@ KtFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
   ]
   valueParameters: [
-    KtValueParameterSymbol(element)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: T
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
@@ -48,7 +66,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
@@ -76,14 +94,32 @@ KtFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
   ]
   valueParameters: [
-    KtValueParameterSymbol(elements)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: true
+      name: elements
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: T
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotation
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.ClassId
 
@@ -29,7 +30,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
         }
 
 
-    override fun containsAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
         firSymbol.resolvedAnnotationClassIds.contains(classId)
     }
 
@@ -50,7 +51,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
             useSiteSession: FirSession,
             token: KtLifetimeToken,
         ): KtAnnotationsList {
-            return if (firSymbol.annotations.isEmpty()) {
+            return if (firSymbol.resolvedAnnotationsWithArguments.isEmpty()) {
                 KtEmptyAnnotationsList(token)
             } else {
                 KtFirAnnotationListForDeclaration(firSymbol, useSiteSession, token)

@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependencyImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedMetadataLibraryDirectoryForIde
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule.Companion.moduleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleDependency
-import org.jetbrains.kotlin.gradle.utils.withTemporaryDirectory
+import org.jetbrains.kotlin.gradle.plugin.mpp.read
 
 internal class IdeaKpmMetadataBinaryDependencyResolver(
     private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory
@@ -32,41 +36,30 @@ internal class IdeaKpmMetadataBinaryDependencyResolver(
         /* Project to project metadata dependencies shall be resolved as source dependencies, somewhere else */
         val metadataProvider = when (resolution.metadataProvider) {
             is ProjectMetadataProvider -> return emptySet()
-            is JarMetadataProvider -> resolution.metadataProvider
+            is ArtifactMetadataProvider -> resolution.metadataProvider
         }
-        return resolution.allVisibleSourceSetNames.mapNotNull { visibleFragmentName ->
-            val binaryFile = withTemporaryDirectory("metadataBinaryDependencyResolver") { temporaryDirectory ->
-                val sourceBinaryFile = metadataProvider.getSourceSetCompiledMetadata(
-                    sourceSetName = visibleFragmentName,
-                    outputDirectory = temporaryDirectory,
-                    materializeFile = true
+
+        return metadataProvider.read { artifactContent ->
+            resolution.allVisibleSourceSetNames.mapNotNull { visibleFragmentName ->
+                val sourceSetContent = artifactContent.findSourceSet(visibleFragmentName) ?: return@mapNotNull null
+                val metadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
+
+                val libraryFile = fragment.project.kotlinTransformedMetadataLibraryDirectoryForIde
+                    .resolve(metadataBinary.relativeFile)
+                    .apply { if (!isFile) metadataBinary.copyTo(this) }
+
+                IdeaKpmResolvedBinaryDependencyImpl(
+                    binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
+                    binaryFile = libraryFile,
+                    coordinates = IdeaKpmBinaryCoordinatesImpl(
+                        group = gradleModuleIdentifier.group,
+                        module = gradleModuleIdentifier.module,
+                        version = gradleModuleIdentifier.version,
+                        kotlinModuleName = kotlinModuleIdentifier.moduleName,
+                        kotlinFragmentName = visibleFragmentName
+                    )
                 )
-
-                if (!sourceBinaryFile.isFile)
-                    return@mapNotNull null
-
-                fragment.project.rootDir
-                    .resolve(".gradle").resolve("kotlin").resolve("transformedKotlinMetadata")
-                    .resolve(gradleModuleIdentifier.group)
-                    .resolve(gradleModuleIdentifier.module)
-                    .resolve(gradleModuleIdentifier.version)
-                    .resolve(kotlinModuleIdentifier.moduleName)
-                    .resolve(visibleFragmentName)
-                    .resolve(sourceBinaryFile.name)
-                    .apply { if (!isFile) sourceBinaryFile.copyTo(this) }
             }
-
-            IdeaKpmResolvedBinaryDependencyImpl(
-                binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
-                binaryFile = binaryFile,
-                coordinates = IdeaKpmBinaryCoordinatesImpl(
-                    group = gradleModuleIdentifier.group,
-                    module = gradleModuleIdentifier.module,
-                    version = gradleModuleIdentifier.version,
-                    kotlinModuleName = kotlinModuleIdentifier.moduleName,
-                    kotlinFragmentName = visibleFragmentName
-                )
-            )
         }
     }
 }

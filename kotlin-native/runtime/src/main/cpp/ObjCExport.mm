@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
 
 #import "Types.h"
@@ -61,57 +50,8 @@ inline T* konanAllocArray(size_t length) {
 
 }
 
-struct ObjCToKotlinMethodAdapter {
-  const char* selector;
-  const char* encoding;
-  IMP imp;
-};
-
-struct KotlinToObjCMethodAdapter {
-  const char* selector;
-  ClassId interfaceId;
-  int itableSize;
-  int itableIndex;
-  int vtableIndex;
-  const void* kotlinImpl;
-};
-
-struct ObjCTypeAdapter {
-  const TypeInfo* kotlinTypeInfo;
-
-  const void * const * kotlinVtable;
-  int kotlinVtableSize;
-
-  const InterfaceTableRecord* kotlinItable;
-  int kotlinItableSize;
-
-  const char* objCName;
-
-  const ObjCToKotlinMethodAdapter* directAdapters;
-  int directAdapterNum;
-
-  const ObjCToKotlinMethodAdapter* classAdapters;
-  int classAdapterNum;
-
-  const ObjCToKotlinMethodAdapter* virtualAdapters;
-  int virtualAdapterNum;
-
-  const KotlinToObjCMethodAdapter* reverseAdapters;
-  int reverseAdapterNum;
-};
-
 typedef id (*convertReferenceToRetainedObjC)(ObjHeader* obj);
 typedef OBJ_GETTER((*convertReferenceFromObjC), id obj);
-
-struct TypeInfoObjCExportAddition {
-  /*convertReferenceToRetainedObjC*/ void* convertToRetained;
-  Class objCClass;
-  const ObjCTypeAdapter* typeAdapter;
-};
-
-struct WritableTypeInfo {
-  TypeInfoObjCExportAddition objCExport;
-};
 
 
 static char associatedTypeInfoKey;
@@ -454,43 +394,7 @@ static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd) {
   RETURN_RESULT_OF(Kotlin_boxBoolean, self.boolValue);
 }
 
-struct Block_descriptor_1;
-
-// Based on https://clang.llvm.org/docs/Block-ABI-Apple.html and libclosure source.
-struct Block_literal_1 {
-    void *isa; // initialized to &_NSConcreteStackBlock or &_NSConcreteGlobalBlock
-    int flags;
-    int reserved;
-    void (*invoke)(void *, ...);
-    struct Block_descriptor_1  *descriptor; // IFF (1<<25)
-    // Or:
-    // struct Block_descriptor_1_without_helpers* descriptor // if hasn't (1<<25).
-
-    // imported variables
-};
-
 struct Block_literal_1 exportBlockLiteral;
-
-struct Block_descriptor_1 {
-    unsigned long int reserved;         // NULL
-    unsigned long int size;             // sizeof(struct Block_literal_1)
-
-    // optional helper functions
-    void (*copy_helper)(void *dst, void *src);
-    void (*dispose_helper)(void *src);
-    // required ABI.2010.3.16
-    const char *signature;                         // IFF (1<<30)
-    const void* layout;                            // IFF (1<<31)
-};
-
-struct Block_descriptor_1_without_helpers {
-    unsigned long int reserved;         // NULL
-    unsigned long int size;             // sizeof(struct Block_literal_1)
-
-    // required ABI.2010.3.16
-    const char *signature;                         // IFF (1<<30)
-    const void* layout;                            // IFF (1<<31)
-};
 
 static const char* getBlockEncoding(id block) {
   Block_literal_1* literal = reinterpret_cast<Block_literal_1*>(block);
@@ -757,10 +661,12 @@ static const TypeInfo* createTypeInfo(
     if ((superType->flags_ & TF_IMMUTABLE) != 0) {
       result->flags_ |= TF_IMMUTABLE;
     }
+    result->processObjectInMark = superType->processObjectInMark;
   } else {
     result->instanceSize_ = fieldsInfo->instanceSize_;
     result->objOffsets_ = fieldsInfo->objOffsets_;
     result->objOffsetsCount_ = fieldsInfo->objOffsetsCount_;
+    result->processObjectInMark = fieldsInfo->processObjectInMark;
   }
 
   result->classId_ = superType->classId_;

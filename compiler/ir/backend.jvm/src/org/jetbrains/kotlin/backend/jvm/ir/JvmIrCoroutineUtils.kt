@@ -67,6 +67,7 @@ private val BRIDGE_ORIGINS = setOf(
     JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE,
     IrDeclarationOrigin.BRIDGE,
     IrDeclarationOrigin.BRIDGE_SPECIAL,
+    IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION,
 )
 
 // These functions contain a single `suspend` tail call, the value of which should be returned as is

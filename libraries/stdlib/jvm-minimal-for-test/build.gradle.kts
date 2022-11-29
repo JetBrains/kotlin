@@ -44,7 +44,7 @@ val copySources by task<Sync> {
                  "kotlin/internal/Annotations.kt",
                  "kotlin/contracts/ContractBuilder.kt",
                  "kotlin/contracts/Effect.kt",
-                 "kotlin/annotations/Experimental.kt")
+                 "kotlin/annotations/WasExperimental.kt")
     into(File(buildDir, "src"))
 }
 

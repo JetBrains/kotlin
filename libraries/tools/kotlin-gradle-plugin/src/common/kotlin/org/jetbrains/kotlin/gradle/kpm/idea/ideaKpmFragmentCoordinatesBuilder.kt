@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragmentCoordinates
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmFragmentCoordinatesImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 
 internal fun IdeaKpmFragmentCoordinates(fragment: GradleKpmFragment): IdeaKpmFragmentCoordinates {

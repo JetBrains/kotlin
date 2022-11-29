@@ -138,6 +138,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
     };
 
     this.onBrowserLog = (browser, log, type) => {
+        this.checkBrowserResult(browser)
         const browserResult = this.browserResults[browser.id];
 
         if (log.startsWith(END_KOTLIN_TEST)) {
@@ -153,6 +154,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
     };
 
     this.specSuccess = function (browser, result) {
+        this.checkBrowserResult(browser)
         const log = this.getLog(browser, result)
         const testName = result.description
 
@@ -165,6 +167,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
     }
 
     this.specFailure = function (browser, result) {
+        this.checkBrowserResult(browser)
         const log = this.getLog(browser, result)
         const testName = result.description
 
@@ -184,6 +187,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
     }
 
     this.specSkipped = function (browser, result) {
+        this.checkBrowserResult(browser)
         const log = this.getLog(browser, result)
         const testName = result.description
 
@@ -201,6 +205,12 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
             self.flushLogs(browserResult)
         })
         self.write(formatMessage(BLOCK_CLOSED, 'JavaScript Unit Tests'))
+    }
+
+    this.checkBrowserResult = function(browser) {
+        if (!this.browserResults[browser.id]) {
+            initializeBrowser(browser)
+        }
     }
 
     this.getLog = function (browser, result) {

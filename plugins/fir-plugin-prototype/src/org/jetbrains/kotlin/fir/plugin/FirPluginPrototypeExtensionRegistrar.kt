@@ -19,6 +19,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::AllOpenStatusTransformer
         +::AllPublicVisibilityTransformer
         +::SomeAdditionalSupertypeGenerator
+        +::SupertypeWithArgumentGenerator
         +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension
         +::AlgebraReceiverInjector

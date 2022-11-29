@@ -33,7 +33,10 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.BuildServiceRegistry
 import org.gradle.internal.component.model.AttributeConfigurationSelector
-import org.jetbrains.kotlin.gradle.plugin.forEachVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.nio.file.Path
@@ -126,7 +129,7 @@ object AndroidDependencyResolver {
         return versions[0].toInt() >= 4 || versions[0].toInt() >= 3 && versions[1].toInt() >= 6
     }
 
-    private data class SourceSetConfigs(val implConfig: Configuration, val compileConfigs: MutableList<Configuration> = ArrayList())
+    private data class SourceSetConfigs(val implConfigs: List<Configuration>, val compileConfigs: MutableList<Configuration> = ArrayList())
 
     fun getAndroidSourceSetDependencies(project: Project): Map<String, List<AndroidDependency>?> {
         val androidPluginVersions = getAndroidPluginVersions() ?: return emptyMap()
@@ -136,13 +139,16 @@ object AndroidDependencyResolver {
         val sourceSet2Impl = HashMap<String, SourceSetConfigs>()
         val allImplConfigs = HashSet<Configuration>()
 
-        project.forEachVariant { variant ->
+        project.forAllAndroidVariants { variant ->
             val compileConfig = variant.compileConfiguration
-            variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map {
-                val implConfig = project.configurations.getByName(it.implementationConfigurationName)
-                allImplConfigs.add(implConfig)
+            variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map { androidSourceSet ->
+                val implConfigs = listOf(project.configurations.getByName(androidSourceSet.implementationConfigurationName)) +
+                        project.findKotlinSourceSet(androidSourceSet)?.internal?.compilations.orEmpty().map { compilation ->
+                            compilation.internal.configurations.implementationConfiguration
+                        }
+                allImplConfigs.addAll(implConfigs)
                 val sourceSetConfigs =
-                    sourceSet2Impl.computeIfAbsent(lowerCamelCaseName("android", it.name)) { SourceSetConfigs(implConfig) }
+                    sourceSet2Impl.computeIfAbsent(lowerCamelCaseName("android", androidSourceSet.name)) { SourceSetConfigs(implConfigs) }
                 // The same sourceset can be included into multiple variants (e.g. androidMain)
                 sourceSetConfigs.compileConfigs.add(compileConfig)
             }
@@ -179,7 +185,6 @@ object AndroidDependencyResolver {
         }.toMap()
     }
 
-    @Suppress("UnstableApiUsage")
     private fun collectDependencies(
         dependencies: List<ExternalModuleDependency>,
         compileClasspathConfigs: List<Configuration>
@@ -224,7 +229,6 @@ object AndroidDependencyResolver {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     private tailrec fun doCollectDependencies(
         modules: List<ModuleIdentifier>,
         resolutionResults: Map<ModuleIdentifier, ResolvedComponentResult>,
@@ -246,7 +250,7 @@ object AndroidDependencyResolver {
         val attributes = sourceSetConfigs.compileConfigs.first().attributes
 
         return HashSet<Dependency>().also {
-            doFindDependencies(implConfigs, listOf(sourceSetConfigs.implConfig), attributes, attributesSchema, it)
+            doFindDependencies(implConfigs, sourceSetConfigs.implConfigs, attributes, attributesSchema, it)
         }
     }
 

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTransformer) :
+class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
     FirPartialBodyResolveTransformer(transformer) {
 
     private val syntheticCallGenerator: FirSyntheticCallGenerator get() = components.syntheticCallGenerator
@@ -249,7 +249,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         if (result.rhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNothing == true) {
             val lhsType = result.lhs.typeRef.coneTypeSafe<ConeKotlinType>()
             if (lhsType != null) {
-                val newReturnType = lhsType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+                // Converting to non-raw type is necessary to preserver the K1 semantics (see KT-54526)
+                val newReturnType =
+                    lhsType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+                        .convertToNonRawVersion()
                 result.replaceTypeRef(result.typeRef.resolvedTypeFromPrototype(newReturnType))
                 isLhsNotNull = true
             }

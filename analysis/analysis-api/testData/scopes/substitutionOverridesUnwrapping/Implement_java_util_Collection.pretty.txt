@@ -6,9 +6,9 @@ operator fun contains(p0: kotlin.Any!): kotlin.Boolean
 
 abstract operator fun iterator(): kotlin.collections.MutableIterator<test.SomeClass!>
 
-fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+fun toArray(): (kotlin.Array<kotlin.Any!>..kotlin.Array<out kotlin.Any!>?)
 
-fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) (T!!..T?)>!): kotlin.Array<(out) (T!!..T?)>!
+fun <T : kotlin.Any!> toArray(p0: (kotlin.Array<(T & kotlin.Any..T?)>..kotlin.Array<out (T & kotlin.Any..T?)>?)): (kotlin.Array<(T & kotlin.Any..T?)>..kotlin.Array<out (T & kotlin.Any..T?)>?)
 
 abstract fun add(p0: test.SomeClass!): kotlin.Boolean
 

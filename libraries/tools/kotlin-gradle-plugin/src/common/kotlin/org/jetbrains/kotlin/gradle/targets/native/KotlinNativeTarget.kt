@@ -10,16 +10,14 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isNativeShared
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.variantsContainingFragment
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.*
-import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
@@ -64,6 +62,8 @@ abstract class KotlinNativeTarget @Inject constructor(
                 val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) { metadataJar ->
                     metadataJar.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
                     metadataJar.archiveClassifier.set("metadata")
+                    metadataJar.group = BasePlugin.BUILD_GROUP
+                    metadataJar.description = "Assembles Kotlin metadata of target '${name}'."
 
                     val publishable = this@KotlinNativeTarget.publishable
                     metadataJar.onlyIf { publishable }
@@ -175,23 +175,37 @@ internal fun getHostSpecificFragments(
 )
 
 internal fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
-    val compilationsBySourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project).mapValues { (_, compilations) ->
-        compilations.filter { it !is KotlinMetadataCompilation<*> }
-    }
-
     return getHostSpecificElements(
         project.kotlinExtension.sourceSets,
-        isNativeShared = { sourceSet ->
-            val compilations = compilationsBySourceSet[sourceSet].orEmpty()
-            compilations.isNotEmpty() && compilations.all { it.platformType == KotlinPlatformType.native }
-        },
+        isNativeShared = { sourceSet -> isNativeSourceSet(sourceSet) },
         getKonanTargets = { sourceSet ->
-            compilationsBySourceSet[sourceSet].orEmpty()
+            sourceSet.internal.compilations
                 .filterIsInstance<KotlinNativeCompilation>()
                 .mapTo(mutableSetOf()) { it.konanTarget }
         }
     )
 }
+
+/**
+ * Returns all host-specific source sets that will be compiled to two or more targets
+ */
+internal fun getHostSpecificMainSharedSourceSets(project: Project): Set<KotlinSourceSet> {
+    fun KotlinSourceSet.testOnly(): Boolean = internal.compilations.all { it.isTest() }
+
+    fun KotlinSourceSet.isCompiledToSingleTarget(): Boolean {
+        return internal
+            .compilations
+            // if for some reason [it.target] is not a [KotlinNativeTarget] then assume that it is not a host-specific source set
+            .distinctBy { (it.target as? KotlinNativeTarget)?.konanTarget ?: return false }
+            .size == 1
+    }
+
+    return getHostSpecificSourceSets(project)
+        .filterNot { it.testOnly() }
+        .filterNot { it.isCompiledToSingleTarget() }
+        .toSet()
+}
+
 
 abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(
     project: Project,

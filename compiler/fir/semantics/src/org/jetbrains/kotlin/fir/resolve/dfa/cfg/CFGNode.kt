@@ -303,6 +303,20 @@ class AnonymousObjectExpressionExitNode(owner: ControlFlowGraph, override val fi
     }
 }
 
+// ----------------------------------- Scripts ------------------------------------------
+
+class ScriptEnterNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitScriptEnterNode(this, data)
+    }
+}
+
+class ScriptExitNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int, id: Int) : CFGNode<FirScript>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitScriptExitNode(this, data)
+    }
+}
+
 // ----------------------------------- Initialization -----------------------------------
 
 class PartOfClassInitializationNode(owner: ControlFlowGraph, override val fir: FirControlFlowGraphOwner, level: Int, id: Int) : CFGNodeWithCfgOwner<FirControlFlowGraphOwner>(owner, level, id) {
@@ -761,27 +775,13 @@ class VariableAssignmentNode(owner: ControlFlowGraph, override val fir: FirVaria
     }
 }
 
-class EnterContractNode(owner: ControlFlowGraph, override val fir: FirQualifiedAccess, level: Int, id: Int) : CFGNode<FirQualifiedAccess>(owner, level, id),
-    EnterNodeMarker {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitEnterContractNode(this, data)
-    }
-}
-class ExitContractNode(owner: ControlFlowGraph, override val fir: FirQualifiedAccess, level: Int, id: Int) : CFGNode<FirQualifiedAccess>(owner, level, id),
-    ExitNodeMarker {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitExitContractNode(this, data)
-    }
-}
-
 class EnterSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallExpression, level: Int, id: Int) : CFGNode<FirSafeCallExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitEnterSafeCallNode(this, data)
     }
 }
 class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallExpression, level: Int, id: Int) : CFGNode<FirSafeCallExpression>(owner, level, id) {
-    val lastPreviousNode: CFGNode<*> get() = previousNodes.last()
-    val secondPreviousNode: CFGNode<*>? get() = previousNodes.getOrNull(1)
+    val lastNodeInNotNullCase: CFGNode<*>? get() = previousNodes.getOrNull(1)
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitExitSafeCallNode(this, data)

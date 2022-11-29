@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.isEquals
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -32,11 +34,11 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
-    private val reservedFunctionNames = setOf("box", "unbox", "equals", "hashCode")
+    private val boxAndUnboxNames = setOf("box", "unbox")
+    private val equalsAndHashCodeNames = setOf("equals", "hashCode")
     private val javaLangFqName = FqName("java.lang")
     private val cloneableFqName = FqName("Cloneable")
 
-    @Suppress("NAME_SHADOWING")
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.symbol.isInlineOrValueClass()) {
             return
@@ -84,20 +86,26 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         }
                     }
                 }
+
                 is FirRegularClass -> {
                     if (innerDeclaration.isInner) {
                         reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
                     }
                 }
+
                 is FirSimpleFunction -> {
                     val functionName = innerDeclaration.name.asString()
 
-                    if (functionName in reservedFunctionNames) {
+                    if (functionName in boxAndUnboxNames
+                        || (functionName in equalsAndHashCodeNames
+                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
+                    ) {
                         reporter.reportOn(
                             innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
                         )
                     }
                 }
+
                 is FirField -> {
                     if (innerDeclaration.isSynthetic) {
                         val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol()
@@ -114,6 +122,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         )
                     }
                 }
+
                 is FirProperty -> {
                     if (innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name])) {
                         primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
@@ -136,6 +145,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         }
                     }
                 }
+
                 else -> {}
             }
         }
@@ -164,20 +174,25 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         context
                     )
 
+                !context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                        primaryConstructorParameter.returnTypeRef.coneType.let {
+                            it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter()
+                        } -> {
+                    reporter.reportOn(
+                        primaryConstructorParameter.returnTypeRef.source,
+                        FirErrors.UNSUPPORTED_FEATURE,
+                        LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings,
+                        context
+                    )
+                }
+
                 primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
-                    val inlineClassHasGenericUnderlyingType = primaryConstructorParameter.returnTypeRef.coneType.let {
-                        (it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter())
-                    }
-                    if (!(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                                inlineClassHasGenericUnderlyingType)
-                    ) {
-                        reporter.reportOn(
-                            primaryConstructorParameter.returnTypeRef.source,
-                            FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                            primaryConstructorParameter.returnTypeRef.coneType,
-                            context
-                        )
-                    }
+                    reporter.reportOn(
+                        primaryConstructorParameter.returnTypeRef.source,
+                        FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                        primaryConstructorParameter.returnTypeRef.coneType,
+                        context
+                    )
                 }
 
                 primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) -> {
@@ -186,6 +201,35 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         context
                     )
                 }
+            }
+        }
+
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
+            var equalsFromAnyOverriding: FirSimpleFunction? = null
+            var typedEquals: FirSimpleFunction? = null
+            declaration.declarations.forEach {
+                if (it !is FirSimpleFunction) {
+                    return@forEach
+                }
+                if (it.isEquals()) equalsFromAnyOverriding = it
+                if (it.isTypedEqualsInInlineClass(context.session)) typedEquals = it
+            }
+
+            if (typedEquals?.typeParameters?.isNotEmpty() == true) {
+                reporter.reportOn(
+                    typedEquals!!.source,
+                    FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
+                    context
+                )
+            }
+
+            if (equalsFromAnyOverriding != null && typedEquals == null) {
+                reporter.reportOn(
+                    equalsFromAnyOverriding!!.source,
+                    FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+                    declaration.defaultType().replaceArgumentsWithStarProjections(),
+                    context
+                )
             }
         }
     }
@@ -202,7 +246,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
     }
 
     private fun FirTypeRef.isInapplicableParameterType() =
-        isUnit || isNothing || coneType is ConeTypeParameterType || coneType.isGenericArrayOfTypeParameter()
+        isUnit || isNothing
 
     private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
         if (this.typeArguments.firstOrNull() is ConeStarProjection || !isPotentiallyArray())
@@ -213,7 +257,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 arrayElementType.isGenericArrayOfTypeParameter()
     }
 
-    private fun ConeKotlinType.isRecursiveInlineClassType(session: FirSession) =
+    fun ConeKotlinType.isRecursiveInlineClassType(session: FirSession) =
         isRecursiveInlineClassType(hashSetOf(), session)
 
     private fun ConeKotlinType.isRecursiveInlineClassType(visited: HashSet<ConeKotlinType>, session: FirSession): Boolean {
@@ -239,5 +283,5 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
     private fun ClassId.isCloneableId(): Boolean =
         relativeClassName == cloneableFqName &&
-                packageFqName == StandardClassIds.BASE_KOTLIN_PACKAGE || packageFqName == javaLangFqName
+                (packageFqName == StandardClassIds.BASE_KOTLIN_PACKAGE || packageFqName == javaLangFqName)
 }

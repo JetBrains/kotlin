@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.findSourceSetsDependingOn
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -72,19 +72,19 @@ class ResolveKotlinSourceSetsTest {
         macosMain.dependsOn(nativeMain)
 
         assertEquals(
-            setOf(nativeMain, commonMain), linuxMain.dependsOnClosure
+            setOf(nativeMain, commonMain), linuxMain.internal.dependsOnClosure
         )
 
         assertEquals(
-            setOf(commonMain), nativeMain.dependsOnClosure
+            setOf(commonMain), nativeMain.internal.dependsOnClosure
         )
 
         assertEquals(
-            emptySet(), commonMain.dependsOnClosure
+            emptySet(), commonMain.internal.dependsOnClosure
         )
 
         assertEquals(
-            setOf(commonMain), jvmMain.dependsOnClosure
+            setOf(commonMain), jvmMain.internal.dependsOnClosure
         )
     }
 }

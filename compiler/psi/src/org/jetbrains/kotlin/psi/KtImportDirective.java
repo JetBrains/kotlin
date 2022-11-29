@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 import org.jetbrains.kotlin.resolve.ImportPath;
 
 public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveStub> implements KtImportInfo {
@@ -47,7 +48,7 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
     @Nullable
     @IfNotParsed
     public KtExpression getImportedReference() {
-        KtExpression[] references = getStubOrPsiChildren(KtStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
+        KtExpression[] references = getStubOrPsiChildren(KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
         if (references.length > 0) {
             return references[0];
         }
@@ -81,12 +82,6 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         KtExpression reference = getImportedReference();
         if (reference == null) return null;
         return new ImportContent.ExpressionBased(reference);
-    }
-
-    @Nullable
-    @Override
-    public Name getImportedName() {
-        return KtImportInfo.DefaultImpls.getImportedName(this);
     }
 
     @Override

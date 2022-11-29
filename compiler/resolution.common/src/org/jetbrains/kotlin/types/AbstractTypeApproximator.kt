@@ -179,8 +179,8 @@ abstract class AbstractTypeApproximator(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
-        return AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor).first()
-            .withNullability(type.isMarkedNullable())
+        return AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor).firstOrNull()
+            ?.withNullability(type.isMarkedNullable())
     }
 
     private fun isIntersectionTypeEffectivelyNothing(constructor: IntersectionTypeConstructorMarker): Boolean {

@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-multiplatform'
-apply plugin: 'kotlin-android-extensions'
 
 group 'com.example'
 version '1.0'

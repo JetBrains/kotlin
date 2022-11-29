@@ -27,6 +27,27 @@ internal interface KotlinAndroidSourceSetConfigurator {
     ) = Unit
 }
 
+internal fun KotlinAndroidSourceSetConfigurator.onlyIf(
+    condition: (target: KotlinAndroidTarget) -> Boolean
+): KotlinAndroidSourceSetConfigurator {
+    return KotlinAndroidSourceSetConfigurationWithCondition(this, condition)
+}
+
+/* Conditional implementation */
+private class KotlinAndroidSourceSetConfigurationWithCondition(
+    private val underlying: KotlinAndroidSourceSetConfigurator,
+    private val condition: (KotlinAndroidTarget) -> Boolean
+) : KotlinAndroidSourceSetConfigurator {
+    override fun configure(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
+        if (condition(target)) underlying.configure(target, kotlinSourceSet, androidSourceSet)
+    }
+
+    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant) {
+        if (condition(target)) underlying.configureWithVariant(target, kotlinSourceSet, variant)
+    }
+}
+
+
 /* Composite implementation */
 
 internal fun KotlinAndroidSourceSetConfigurator(

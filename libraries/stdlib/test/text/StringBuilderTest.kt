@@ -5,6 +5,7 @@
 
 package test.text
 
+import test.testOnJvm
 import kotlin.random.Random
 import kotlin.test.*
 import kotlin.text.*
@@ -30,6 +31,23 @@ class StringBuilderTest {
         assertEquals("em", buildString {
             appendRange("element", 2, 4)
         })
+    }
+
+    // KT-52336
+    @Test
+    @Suppress("DEPRECATION_ERROR")
+    fun deprecatedAppend() {
+        val chars = charArrayOf('a', 'b', 'c', 'd')
+        val sb = StringBuilder()
+        testOnJvm {
+            sb.append(chars, 1, 2) // Should fail after KT-15220 gets fixed
+            assertEquals("bc", sb.toString())
+        }
+        if (sb.isEmpty()) {
+            assertFailsWith<NotImplementedError> {
+                sb.append(chars, 1, 2)
+            }
+        }
     }
 
     @Test fun asCharSequence() {

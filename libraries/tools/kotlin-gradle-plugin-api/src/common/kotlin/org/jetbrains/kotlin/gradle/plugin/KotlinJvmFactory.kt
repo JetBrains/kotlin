@@ -2,14 +2,16 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtensionConfig
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.Kapt
@@ -23,8 +25,18 @@ interface KotlinJvmFactory {
     /** Instance of DSL object that should be used to configure Kotlin compilation pipeline. */
     val kotlinExtension: KotlinTopLevelExtensionConfig
 
-    /** Creates instance of DSL object that should be used to configure JVM/android specific compilation. */
-    fun createKotlinJvmOptions(): KotlinJvmOptions
+    /**
+     * Creates instance of DSL object that should be used to configure JVM/android specific compilation.
+     *
+     * Note: [CompilerJvmOptions] instance inside [KotlinJvmOptions] is not the same as returned by [createCompilerJvmOptions]
+     */
+    @Deprecated(
+        message = "Replaced by compilerJvmOptions",
+        replaceWith = ReplaceWith("createCompilerJvmOptions()")
+    )
+    fun createKotlinJvmOptions(): KotlinJvmOptionsDeprecated
+
+    fun createCompilerJvmOptions(): KotlinJvmCompilerOptions
 
     /** Creates a Kotlin compile task. */
     fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile>

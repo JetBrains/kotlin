@@ -36,7 +36,7 @@ public static final class Nested /* Outer.Nested*/ {
 
 public abstract class A /* A*/ {
   @org.jetbrains.annotations.Nullable()
-  private final java.lang.String x;
+  private final java.lang.String x = null /* initializer type: null */;
 
   @org.jetbrains.annotations.Nullable()
   public final java.lang.String getX();//  getX()

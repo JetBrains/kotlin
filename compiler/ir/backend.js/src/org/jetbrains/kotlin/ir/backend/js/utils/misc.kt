@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isMethodOfAny
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
@@ -38,7 +37,6 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
 
     if (
         origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
-        origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
         origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
         origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR
     ) {

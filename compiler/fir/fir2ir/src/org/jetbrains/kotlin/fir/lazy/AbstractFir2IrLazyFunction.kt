@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -86,17 +89,19 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
 
-    protected fun shouldHaveDispatchReceiver(
-        containingClass: IrClass,
-        staticOwner: FirCallableDeclaration
-    ): Boolean {
-        return !staticOwner.isStatic && !containingClass.isFacadeClass &&
-                (!containingClass.isObject || containingClass.isCompanion || !staticOwner.hasAnnotation(JVM_STATIC_CLASS_ID))
+    protected fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
+        return !fir.isStatic && !containingClass.isFacadeClass &&
+                (!containingClass.isObject || containingClass.isCompanion || !hasJvmStaticAnnotation())
     }
 
-    protected fun createThisReceiverParameter(thisType: IrType): IrValueParameter {
+    private fun hasJvmStaticAnnotation(): Boolean {
+        return fir.hasAnnotation(JVM_STATIC_CLASS_ID) ||
+                (fir as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(JVM_STATIC_CLASS_ID) == true
+    }
+
+    protected fun createThisReceiverParameter(thisType: IrType, explicitReceiver: FirReceiverParameter? = null): IrValueParameter {
         declarationStorage.enterScope(this)
-        return declareThisReceiverParameter(thisType, origin).apply {
+        return declareThisReceiverParameter(thisType, origin, explicitReceiver = explicitReceiver).apply {
             declarationStorage.leaveScope(this@AbstractFir2IrLazyFunction)
         }
     }

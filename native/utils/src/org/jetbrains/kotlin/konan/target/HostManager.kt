@@ -73,6 +73,7 @@ open class HostManager(
         WATCHOS_X86,
         WATCHOS_X64,
         WATCHOS_SIMULATOR_ARM64,
+        WATCHOS_DEVICE_ARM64,
         TVOS_ARM64,
         TVOS_X64,
         TVOS_SIMULATOR_ARM64,

@@ -32,9 +32,9 @@ fun test() {
     <!DEPRECATION_ERROR!>v3<!>
     v3 = ""
     v4
-    <!UNRESOLVED_REFERENCE!>v4<!> = ""
+    <!DEPRECATION_ERROR!>v4<!> = ""
     <!DEPRECATION_ERROR!>v5<!>
-    <!UNRESOLVED_REFERENCE!>v5<!> = ""
+    <!DEPRECATION_ERROR!>v5<!> = ""
     <!UNRESOLVED_REFERENCE!>v6<!>
     <!UNRESOLVED_REFERENCE!>v6<!> = ""
 }

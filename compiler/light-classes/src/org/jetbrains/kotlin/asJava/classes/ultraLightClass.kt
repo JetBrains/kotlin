@@ -18,6 +18,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
@@ -142,8 +144,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 //Add java supertype
                 listBuilder.addReference(mappedToNoCollectionAsIs)
                 //Add marker interface
-                superType.tryResolveMarkerInterfaceFQName()?.let { marker ->
-                    listBuilder.addReference(marker)
+                superType.constructor.declarationDescriptor.classId?.let { classId ->
+                    listBuilder.addMarkerInterfaceIfNeeded(classId)
                 }
             }
         }
@@ -442,7 +444,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun defaultConstructor(): KtUltraLightMethod {
         val visibility =
             when {
-                classOrObject is KtObjectDeclaration || classOrObject.hasModifier(SEALED_KEYWORD) || isEnum -> PsiModifier.PRIVATE
+                classOrObject is KtObjectDeclaration || isEnum -> PsiModifier.PRIVATE
+                classOrObject.hasModifier(SEALED_KEYWORD) -> PsiModifier.PROTECTED
                 classOrObject is KtEnumEntry -> PsiModifier.PACKAGE_LOCAL
                 else -> PsiModifier.PUBLIC
             }
@@ -484,11 +487,11 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         val containingBody = classOrObject.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
-        containingClass?.let { return KotlinLightClassFactory.createClass(it) }
+        containingClass?.let { return it.toLightClass() }
 
         val containingBlock = classOrObject.parent as? KtBlockExpression
         val containingScript = containingBlock?.parent as? KtScript
-        containingScript?.let { return KotlinLightClassFactory.createScript(it) }
+        containingScript?.let { return it.toLightClass() }
 
         return null
     }

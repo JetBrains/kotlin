@@ -50,7 +50,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             initializer
         }
 
-        return ConstantValueFactory.createConstantValue(normalizedValue)
+        return ConstantValueFactory.createConstantValue(normalizedValue, module)
     }
 
     override fun transformToUnsignedConstant(constant: ConstantValue<*>): ConstantValue<*>? {
@@ -216,7 +216,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
     }
 
     private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
-        return ConstantValueFactory.createConstantValue(value)
+        return ConstantValueFactory.createConstantValue(value, module)
             ?: ErrorValue.create("Unsupported annotation argument: $name")
     }
 

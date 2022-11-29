@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOperatorsWithSignedArgument
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -46,6 +47,7 @@ class FirIntegerConstantOperatorScope(
         if (!isUnaryOperator && !isBinaryOperator) {
             return baseScope.processFunctionsByName(name, processor)
         }
+        val requiresUnsignedOperand = isUnsigned && name !in binaryOperatorsWithSignedArgument
         val wrappedSymbol = mappedFunctions.getOrPut(name) {
             val allFunctions = baseScope.getFunctions(name)
             val functionSymbol = allFunctions.first {
@@ -53,7 +55,7 @@ class FirIntegerConstantOperatorScope(
                 if (isUnaryOperator) return@first true
 
                 val coneType = it.fir.valueParameters.first().returnTypeRef.coneType
-                if (isUnsigned) {
+                if (requiresUnsignedOperand) {
                     coneType.isUInt
                 } else {
                     coneType.isInt

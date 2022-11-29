@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
-import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis.irCoerce
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongArrayList
+import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -65,50 +65,60 @@ internal object DevirtualizationAnalysis {
         }
 
         val entryPoint = context.ir.symbols.entryPoint?.owner
-        val exportedFunctions =
-                if (entryPoint != null)
-                    listOf(moduleDFG.symbolTable.mapFunction(entryPoint).resolved())
-                else {
-                    // In a library every public function and every function accessible via virtual call belongs to the rootset.
-                    moduleDFG.symbolTable.functionMap.values.filter {
-                        it is DataFlowIR.FunctionSymbol.Public
-                                || (it as? DataFlowIR.FunctionSymbol.External)?.isExported == true
-                    } +
-                            moduleDFG.symbolTable.classMap.values
-                                    .filterIsInstance<DataFlowIR.Type.Declared>()
-                                    .flatMap { it.vtable + it.itable.values.flatten() }
-                                    .filterIsInstance<DataFlowIR.FunctionSymbol.Declared>()
-                                    .filter { moduleDFG.functions.containsKey(it) }
-                }
+        val exported = if (entryPoint != null)
+            listOf(moduleDFG.symbolTable.mapFunction(entryPoint).resolved())
+        else {
+            // In a library every public function and every function accessible via virtual call belongs to the rootset.
+            moduleDFG.symbolTable.functionMap.values.filter {
+                it is DataFlowIR.FunctionSymbol.Public
+                        || (it as? DataFlowIR.FunctionSymbol.External)?.isExported == true
+            } +
+                    moduleDFG.symbolTable.classMap.values
+                            .filterIsInstance<DataFlowIR.Type.Declared>()
+                            .flatMap { it.vtable + it.itable.values.flatten() }
+                            .filterIsInstance<DataFlowIR.FunctionSymbol.Declared>()
+                            .filter { moduleDFG.functions.containsKey(it) }
+        }
+
         // TODO: Are globals initializers always called whether they are actually reachable from roots or not?
         // TODO: With the changed semantics of global initializers this is no longer the case - rework.
         val globalInitializers =
-                moduleDFG.symbolTable.functionMap.values.filter { it.isTopLevelFieldInitializer || it.isGlobalInitializer } +
-                externalModulesDFG.functionDFGs.keys.filter { it.isTopLevelFieldInitializer || it.isGlobalInitializer }
+                moduleDFG.symbolTable.functionMap.values.filter { it.isStaticFieldInitializer } +
+                        externalModulesDFG.functionDFGs.keys.filter { it.isStaticFieldInitializer  }
 
-        val explicitlyExportedFunctions =
+        val explicitlyExported =
                 moduleDFG.symbolTable.functionMap.values.filter { it.explicitlyExported } +
-                externalModulesDFG.functionDFGs.keys.filter { it.explicitlyExported }
+                        externalModulesDFG.functionDFGs.keys.filter { it.explicitlyExported }
 
         // Conservatively assume each associated object could be called.
         // Note: for constructors there is additional parameter (<this>) and its type will be added
         // to instantiating classes since all objects are final types.
-        val associatedObjects = mutableListOf<DataFlowIR.FunctionSymbol>()
-        context.irModule!!.acceptChildrenVoid(object: IrElementVisitorVoid {
+        val associatedObjectConstructors = mutableListOf<DataFlowIR.FunctionSymbol>()
+        // At this point all function references are lowered except those leaking to the native world.
+        // Conservatively assume them belonging of the root set.
+        val leakingThroughFunctionReferences = mutableListOf<DataFlowIR.FunctionSymbol>()
+        context.irModule!!.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
             override fun visitClass(declaration: IrClass) {
+                declaration.acceptChildrenVoid(this)
+
                 context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
-                    assert (it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
-                    associatedObjects += moduleDFG.symbolTable.mapFunction(it.constructors.single())
+                    assert(it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
+                    associatedObjectConstructors += moduleDFG.symbolTable.mapFunction(context.getObjectClassInstanceFunction(it))
                 }
-                super.visitClass(declaration)
+            }
+
+            override fun visitFunctionReference(expression: IrFunctionReference) {
+                expression.acceptChildrenVoid(this)
+
+                leakingThroughFunctionReferences.add(moduleDFG.symbolTable.mapFunction(expression.symbol.owner))
             }
         })
 
-        return (exportedFunctions + globalInitializers + explicitlyExportedFunctions + associatedObjects).distinct()
+        return (exported + globalInitializers + explicitlyExported + associatedObjectConstructors + leakingThroughFunctionReferences).distinct()
     }
 
     fun BitSet.format(allTypes: Array<DataFlowIR.Type.Declared>): String {
@@ -1446,9 +1456,7 @@ internal object DevirtualizationAnalysis {
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val function = expression.symbol.owner
-                val type = if (callee.isSuspend)
-                               context.irBuiltIns.anyNType
-                           else function.returnType
+                val type = function.returnType
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
                 irBuilder.run {
                     val dispatchReceiver = expression.dispatchReceiver!!

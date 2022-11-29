@@ -64,6 +64,9 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 error("Unknown external element ${element::class}")
             }
 
+            override fun visitTypeParameter(declaration: IrTypeParameter) {
+            }
+
             override fun visitValueParameter(declaration: IrValueParameter) {
             }
 
@@ -186,21 +189,22 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         )
     }
 
-    fun processFunctionOrConstructor(
+    private val IrFunction.isSetOperator get() =
+        (this is IrSimpleFunction) && isOperator && name.asString() == "set"
+
+    private val IrFunction.isGetOperator get() =
+        (this is IrSimpleFunction) && isOperator && name.asString() == "get"
+
+    private fun createJsCodeForFunction(
         function: IrFunction,
-        name: Name,
-        returnType: IrType,
+        numDefaultParameters: Int,
         isConstructor: Boolean,
         jsFunctionReference: String
-    ) {
+    ): String {
         val dispatchReceiver = function.dispatchReceiverParameter
         val numValueParameters = function.valueParameters.size
 
-
-        val numDefaultParameters =
-            numDefaultParametersForExternalFunction(function)
-
-        val jsCode = buildString {
+        return buildString {
             append("(")
             if (dispatchReceiver != null) {
                 append("_this, ")
@@ -238,6 +242,26 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             }
             append(")")
         }
+    }
+
+    fun processFunctionOrConstructor(
+        function: IrFunction,
+        name: Name,
+        returnType: IrType,
+        isConstructor: Boolean,
+        jsFunctionReference: String
+    ) {
+        val dispatchReceiver = function.dispatchReceiverParameter
+
+        val numDefaultParameters =
+            numDefaultParametersForExternalFunction(function)
+
+        val jsCode = when {
+            function.isSetOperator -> "(_this, i, value) => _this[i] = value"
+            function.isGetOperator -> "(_this, i) => _this[i]"
+            else -> createJsCodeForFunction(function, numDefaultParameters, isConstructor, jsFunctionReference)
+        }
+
         val res = createExternalJsFunction(
             name,
             "_\$external_fun",

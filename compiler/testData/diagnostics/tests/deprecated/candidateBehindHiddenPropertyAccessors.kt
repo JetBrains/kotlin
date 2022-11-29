@@ -44,9 +44,9 @@ fun test(c: C) {
         <!DEPRECATION_ERROR!>v3<!>  // DEPRECATION_ERROR in FE 1.0, see KT-48799
         v3 = ""
         v4
-        <!UNRESOLVED_REFERENCE!>v4<!> = ""  // DEPRECATION_ERROR in FE 1.0, see KT-48799
+        <!DEPRECATION_ERROR!>v4<!> = ""  // DEPRECATION_ERROR in FE 1.0, see KT-48799
         <!DEPRECATION_ERROR!>v5<!>  // DEPRECATION_ERROR in FE 1.0, see KT-48799
-        <!UNRESOLVED_REFERENCE!>v5<!> = ""  // DEPRECATION_ERROR in FE 1.0, see KT-48799
+        <!DEPRECATION_ERROR!>v5<!> = ""  // DEPRECATION_ERROR in FE 1.0, see KT-48799
         v6
         v6 = ""
     }

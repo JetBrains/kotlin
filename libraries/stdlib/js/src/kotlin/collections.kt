@@ -260,5 +260,3 @@ internal actual fun mapCapacity(expectedSize: Int) = expectedSize
 internal fun checkBuilderCapacity(capacity: Int) {
     require(capacity >= 0) { "capacity must be non-negative." }
 }
-
-internal actual fun brittleContainsOptimizationEnabled(): Boolean = false

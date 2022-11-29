@@ -53,11 +53,13 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
     nameHint: String? = null,
     irType: IrType = value?.type!!, // either value or irType should be supplied at callsite
     isMutable: Boolean = false,
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
 ): IrVariable {
     val temporary = scope.createTemporaryVariableDeclaration(
         irType, nameHint, isMutable,
         startOffset = startOffset,
-        endOffset = endOffset
+        endOffset = endOffset,
+        origin = origin,
     )
     value?.let { temporary.initializer = it }
     +temporary
@@ -149,8 +151,8 @@ fun IrBuilderWithScope.irSet(variable: IrValueSymbol, value: IrExpression, origi
 fun IrBuilderWithScope.irSet(variable: IrValueDeclaration, value: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQ) =
     irSet(variable.symbol, value, origin)
 
-fun IrBuilderWithScope.irGetField(receiver: IrExpression?, field: IrField) =
-    IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type, receiver)
+fun IrBuilderWithScope.irGetField(receiver: IrExpression?, field: IrField, type: IrType = field.type) =
+    IrGetFieldImpl(startOffset, endOffset, field.symbol, type, receiver)
 
 fun IrBuilderWithScope.irSetField(receiver: IrExpression?, field: IrField, value: IrExpression, origin: IrStatementOrigin? = null) =
     IrSetFieldImpl(startOffset, endOffset, field.symbol, receiver, value, context.irBuiltIns.unitType, origin = origin)
@@ -160,6 +162,17 @@ fun IrBuilderWithScope.irGetObjectValue(type: IrType, classSymbol: IrClassSymbol
 
 fun IrBuilderWithScope.irEqeqeq(arg1: IrExpression, arg2: IrExpression) =
     context.eqeqeq(startOffset, endOffset, arg1, arg2)
+
+fun IrBuilderWithScope.irEqeqeqWithoutBox(arg1: IrExpression, arg2: IrExpression) =
+    primitiveOp2(
+        startOffset,
+        endOffset,
+        context.irBuiltIns.eqeqeqSymbol,
+        context.irBuiltIns.booleanType,
+        IrStatementOrigin.SYNTHETIC_NOT_AUTOBOXED_CHECK,
+        arg1,
+        arg2
+    )
 
 fun IrBuilderWithScope.irNull() =
     irNull(context.irBuiltIns.nothingNType)

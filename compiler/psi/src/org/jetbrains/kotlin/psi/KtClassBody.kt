@@ -23,8 +23,9 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.*
-import java.util.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS_BODY
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.MODIFIER_LIST
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets.DECLARATION_TYPES
 
 class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDeclarationContainer {
     private val lBraceTokenSet = TokenSet.create(KtTokens.LBRACE)

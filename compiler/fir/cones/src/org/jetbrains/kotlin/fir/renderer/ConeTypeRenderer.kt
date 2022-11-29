@@ -15,12 +15,6 @@ open class ConeTypeRenderer() {
     lateinit var builder: StringBuilder
     lateinit var idRenderer: ConeIdRenderer
 
-    constructor(builder: StringBuilder, idRenderer: ConeIdRenderer) : this() {
-        this.builder = builder
-        this.idRenderer = idRenderer
-        idRenderer.builder = builder
-    }
-
     open fun renderAsPossibleFunctionType(
         type: ConeKotlinType, renderType: ConeTypeProjection.() -> Unit = { render() }
     ) {
@@ -83,30 +77,38 @@ open class ConeTypeRenderer() {
                 builder.append(type.lookupTag.name)
                 builder.append(")")
             }
+
             is ConeDefinitelyNotNullType -> {
                 render(type.original)
                 builder.append(" & Any")
             }
+
             is ConeErrorType -> {
                 builder.append("ERROR CLASS: ${type.diagnostic.reason}")
             }
+
             is ConeCapturedType -> {
                 builder.append("CapturedType(")
                 type.constructor.projection.render()
                 builder.append(")")
             }
+
             is ConeClassLikeType -> {
                 type.render()
             }
+
             is ConeLookupTagBasedType -> {
                 builder.append(type.lookupTag.name.asString())
             }
+
             is ConeDynamicType -> {
                 builder.append("dynamic")
             }
+
             is ConeFlexibleType -> {
-                type.render()
+                render(type)
             }
+
             is ConeIntersectionType -> {
                 builder.append("it(")
                 for ((index, intersected) in type.intersectedTypes.withIndex()) {
@@ -117,18 +119,23 @@ open class ConeTypeRenderer() {
                 }
                 builder.append(")")
             }
+
             is ConeStubTypeForSyntheticFixation -> {
                 builder.append("Stub (fixation): ${type.constructor.variable}")
             }
+
             is ConeStubTypeForChainInference -> {
                 builder.append("Stub (chain inference): ${type.constructor.variable}")
             }
+
             is ConeStubType -> {
                 builder.append("Stub (subtyping): ${type.constructor.variable}")
             }
+
             is ConeIntegerLiteralConstantType -> {
                 builder.append("ILT: ${type.value}")
             }
+
             is ConeIntegerConstantOperatorType -> {
                 builder.append("IOT")
             }
@@ -151,9 +158,7 @@ open class ConeTypeRenderer() {
         builder.append(">")
     }
 
-    private fun ConeFlexibleType.render() {
-        val lowerBound = lowerBound
-        val upperBound = upperBound
+    private fun ConeFlexibleType.renderForSameLookupTags(): Boolean {
         if (lowerBound is ConeLookupTagBasedType && upperBound is ConeLookupTagBasedType &&
             lowerBound.lookupTag == upperBound.lookupTag &&
             lowerBound.nullability == ConeNullability.NOT_NULL && upperBound.nullability == ConeNullability.NULLABLE
@@ -162,14 +167,21 @@ open class ConeTypeRenderer() {
                 if (upperBound !is ConeClassLikeType || upperBound.typeArguments.isEmpty()) {
                     render(lowerBound)
                     builder.append("!")
-                    return
+                    return true
                 }
             }
         }
+        return false
+    }
+
+    protected open fun render(flexibleType: ConeFlexibleType) {
+        if (flexibleType.renderForSameLookupTags()) {
+            return
+        }
         builder.append("ft<")
-        render(lowerBound)
+        render(flexibleType.lowerBound)
         builder.append(", ")
-        render(upperBound)
+        render(flexibleType.upperBound)
         builder.append(">")
     }
 
@@ -183,18 +195,22 @@ open class ConeTypeRenderer() {
             ConeStarProjection -> {
                 builder.append("*")
             }
+
             is ConeKotlinTypeConflictingProjection -> {
                 builder.append("CONFLICTING-PROJECTION ")
                 render(type)
             }
+
             is ConeKotlinTypeProjectionIn -> {
                 builder.append("in ")
                 render(type)
             }
+
             is ConeKotlinTypeProjectionOut -> {
                 builder.append("out ")
                 render(type)
             }
+
             is ConeKotlinType -> {
                 render(this)
             }

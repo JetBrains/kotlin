@@ -15,12 +15,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_SUBPLUGIN_ID
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
-import org.jetbrains.kotlin.gradle.internal.KotlinJvmCompilerArgumentsContributor
-import org.jetbrains.kotlin.gradle.internal.buildKaptSubpluginOptions
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -31,24 +30,28 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStubsTask> {
 
-    constructor(compilation: KotlinCompilationData<*>, kotlinTaskProvider: TaskProvider<KotlinCompile>) : super(compilation) {
+    constructor(
+        compilation: KotlinCompilation<*>,
+        kotlinTaskProvider: TaskProvider<KotlinCompile>,
+        kaptClassesDir: File
+    ) : super(KotlinCompilationInfo(compilation)) {
         configureFromExtension(project.extensions.getByType(KaptExtension::class.java))
         configureTask { task ->
             val kotlinCompileTask = kotlinTaskProvider.get()
             task.useModuleDetection.value(kotlinCompileTask.useModuleDetection).disallowChanges()
             task.moduleName.value(kotlinCompileTask.moduleName).disallowChanges()
-            task.libraries.from({ kotlinCompileTask.libraries })
+            task.libraries.from({ kotlinCompileTask.libraries - project.files(kaptClassesDir) })
             task.compileKotlinArgumentsContributor.set(providers.provider { kotlinCompileTask.compilerArgumentsContributor })
             task.pluginOptions.addAll(kotlinCompileTask.pluginOptions)
             // KotlinCompile will also have as input output from KaptGenerateStubTask and KaptTask
             // We are filtering them to avoid failed UP-TO-DATE checks
             val kaptJavaSourcesDir = Kapt3GradleSubplugin.getKaptGeneratedSourcesDir(
                 project,
-                compilation.compilationPurpose
+                compilation.compilationName
             )
             val kaptKotlinSourcesDir = Kapt3GradleSubplugin.getKaptGeneratedKotlinSourcesDir(
                 project,
-                compilation.compilationPurpose
+                compilation.compilationName
             )
             val destinationDirectory = task.destinationDirectory
             val stubsDir = task.stubsDir
@@ -90,7 +93,8 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         }
     }
 
-    private fun isIncludeCompileClasspath(kaptExtension: KaptExtension) = kaptExtension.includeCompileClasspath ?: project.isIncludeCompileClasspath()
+    private fun isIncludeCompileClasspath(kaptExtension: KaptExtension) =
+        kaptExtension.includeCompileClasspath ?: project.isIncludeCompileClasspath()
 
     private fun buildOptions(kaptExtension: KaptExtension, task: KaptGenerateStubsTask): Provider<CompilerPluginOptions> {
         val javacOptions = project.provider { kaptExtension.getJavacOptions() }
@@ -138,9 +142,8 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
     }
 
     private val shouldUseFileTreeKaptFilter
-        get() = isGradleVersionAtLeast(7, 5) || !isConfigurationCacheAvailable(project.gradle) && isGradleVersionAtLeast(6, 8)
+        get() = isGradleVersionAtLeast(7, 5) || !isConfigurationCacheAvailable(project.gradle)
 
-    // Filtering through FileTree and PatternFilterable works faster, but adds empty directories which is the problem for Gradle 6.7
     private class FileTreeKaptInputsFilter(val spec: KaptFilterSpec) : CachingKaptInputsFilter() {
         override fun filtered(fileCollection: FileCollection): FileCollection {
             return fileCollection.asFileTree.matching { it.include { elem -> isSatisfiedBy(elem.file) } }

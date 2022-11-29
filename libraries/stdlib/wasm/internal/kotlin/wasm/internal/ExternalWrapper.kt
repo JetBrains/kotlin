@@ -9,7 +9,7 @@ import kotlin.wasm.internal.reftypes.anyref
 
 internal external interface ExternalInterfaceType
 
-internal class JsExternalBox(val ref: ExternalInterfaceType) {
+internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: ExternalInterfaceType) {
     override fun toString(): String =
         externrefToString(ref)
 
@@ -20,8 +20,13 @@ internal class JsExternalBox(val ref: ExternalInterfaceType) {
             false
         }
 
-    override fun hashCode(): Int =
-        externrefHashCode(ref)
+    override fun hashCode(): Int {
+        var hashCode = _hashCode
+        if (hashCode != 0) return hashCode
+        hashCode = externrefHashCode(ref)
+        _hashCode = hashCode
+        return hashCode
+    }
 }
 
 //language=js
@@ -81,53 +86,77 @@ private external fun externrefHashCode(ref: ExternalInterfaceType): Int
 @JsFun("ref => String(ref)")
 private external fun externrefToString(ref: ExternalInterfaceType): String
 
+@JsFun("ref => Number(ref)")
+private external fun externrefToInt(ref: ExternalInterfaceType): Int
+
+@JsFun("ref => Number(ref)")
+private external fun externrefToLong(ref: ExternalInterfaceType): Long
+
+@JsFun("ref => Boolean(ref)")
+private external fun externrefToBoolean(ref: ExternalInterfaceType): Boolean
+
+@JsFun("ref => Number(ref)")
+private external fun externrefToFloat(ref: ExternalInterfaceType): Float
+
+@JsFun("ref => Number(ref)")
+private external fun externrefToDouble(ref: ExternalInterfaceType): Double
+
+@JsFun("x => x")
+private external fun intToExternref(x: Int): ExternalInterfaceType
+
+@JsFun("x => x")
+private external fun longToExternref(x: Long): ExternalInterfaceType
+
+@JsFun("x => x")
+private external fun booleanToExternref(x: Boolean): ExternalInterfaceType
+
+@JsFun("x => x")
+private external fun floatToExternref(x: Float): ExternalInterfaceType
+
+@JsFun("x => x")
+private external fun doubleToExternref(x: Double): ExternalInterfaceType
+
 @JsFun("(lhs, rhs) => lhs === rhs")
 private external fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceType): Boolean
 
-@JsFun("(ref) => (typeof ref !== 'object' || ref === null) ? null : (externrefBoxes.get(ref) ?? null)")
-private external fun getExternrefBoxOrNull(ref: ExternalInterfaceType): JsExternalBox?
-
-@JsFun("(ref, box) => { if (typeof ref === 'object' && ref !== null) { externrefBoxes.set(ref, box); } }")
-private external fun setExternrefBox(ref: ExternalInterfaceType, box: JsExternalBox)
+private external fun tryGetOrSetExternrefBox(ref: ExternalInterfaceType, ifNotCached: JsExternalBox): JsExternalBox?
 
 @WasmNoOpCast
 @Suppress("unused")
-internal fun Any?.asWasmAnyref(): anyref =
+private fun Any?.asWasmAnyref(): anyref =
     implementedAsIntrinsic
 
-@WasmNoOpCast
-@Suppress("unused")
-internal fun ExternalInterfaceType.externAsWasmAnyref(): anyref =
+@WasmOp(WasmOp.EXTERN_INTERNALIZE)
+private fun ExternalInterfaceType.externAsWasmAnyref(): anyref =
     implementedAsIntrinsic
 
-@WasmNoOpCast
-@Suppress("unused")
-internal fun Any?.asWasmExternRef(): ExternalInterfaceType =
+@WasmOp(WasmOp.EXTERN_EXTERNALIZE)
+private fun Any.asWasmExternRef(): ExternalInterfaceType =
     implementedAsIntrinsic
-
 
 @JsFun("(ref) => ref == null")
-internal external fun isNullish(ref: ExternalInterfaceType): Boolean
+internal external fun isNullish(ref: ExternalInterfaceType?): Boolean
 
 internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
-    // If ref is an instance of kotlin class -- return it cased to Any
+    // TODO rewrite it so to get something like:
+    // block {
+    //     refAsAnyref
+    //     br_on_cast_fail null 0 $kotlin.Any
+    //     return
+    // }
+    // If ref is an instance of kotlin class -- return it casted to Any
     val refAsAnyref = ref.externAsWasmAnyref()
-    if (wasm_ref_is_data(refAsAnyref)) {
-        val refAsDataRef = wasm_ref_as_data(refAsAnyref)
-        if (wasm_ref_test<Any>(refAsDataRef)) {
-            return wasm_ref_cast<Any>(refAsDataRef)
+    if (wasm_ref_is_data_deprecated(refAsAnyref)) {
+        val refAsDataRef = wasm_ref_as_data_deprecated(refAsAnyref)
+        if (wasm_ref_test_deprecated<Any>(refAsDataRef)) {
+            return wasm_ref_cast_deprecated<Any>(refAsDataRef)
         }
     }
 
-    if (isNullish(ref))
-        return null
-
+    // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
-    // otherwise -- create a new box and remember it.
-    return getExternrefBoxOrNull(ref)
-        ?: JsExternalBox(ref).also {
-            setExternrefBox(ref, it)
-        }
+    // otherwise -- remember new box and return it.
+    return tryGetOrSetExternrefBox(ref, JsExternalBox(ref))
 }
 
 
@@ -155,7 +184,7 @@ internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
     // Using nullable String to represent default value
     // for parameters with default values
     if (x == null) return null
-    if (x.isEmpty()) return jsEmptyString()
+    if (x.isEmpty()) return jsEmptyString
 
     val srcArray = x.chars
     val stringLength = srcArray.len()
@@ -174,6 +203,9 @@ internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
     unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, stringLength - srcStartIndex, memBuffer)
     return importStringFromWasm(memBuffer, stringLength - srcStartIndex, result)
 }
+
+internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
+    x.takeIf { !isNullish(it) }
 
 // js string to kotlin string import
 // TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
@@ -197,7 +229,7 @@ internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     val stringLength = stringLength(x)
     val dstArray = WasmCharArray(stringLength)
     if (stringLength == 0) {
-        return String.unsafeFromCharArray(dstArray)
+        return dstArray.createString()
     }
     val maxStringLength = unsafeGetScratchRawMemorySize() / CHAR_SIZE_BYTES
 
@@ -212,28 +244,69 @@ internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
 
     jsExportStringToWasm(x, srcStartIndex, stringLength - srcStartIndex, memBuffer)
     unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, stringLength - srcStartIndex, dstArray)
-    return String.unsafeFromCharArray(dstArray)
+    return dstArray.createString()
 }
 
 
 @JsFun("() => ''")
-internal external fun jsEmptyString(): ExternalInterfaceType
+private external fun getJsEmptyString(): ExternalInterfaceType
 
 @JsFun("() => true")
-internal external fun jsTrue(): ExternalInterfaceType
+private external fun getJsTrue(): ExternalInterfaceType
 
 @JsFun("() => false")
-internal external fun jsFalse(): ExternalInterfaceType
+private external fun getJsFalse(): ExternalInterfaceType
 
-internal fun kotlinToJsBooleanAdapter(x: Boolean): ExternalInterfaceType =
-    if (x) jsTrue() else jsFalse()
+private val jsEmptyString by lazy(::getJsEmptyString)
+private val jsTrue by lazy(::getJsTrue)
+private val jsFalse by lazy(::getJsFalse)
 
-internal fun kotlinToJsAnyAdapter(x: Any): ExternalInterfaceType =
-    anyToExternRef(x)
+internal fun kotlinToJsAnyAdapter(x: Any?): ExternalInterfaceType? =
+    if (x == null) null else anyToExternRef(x)
 
-internal fun jsToKotlinAnyAdapter(x: ExternalInterfaceType): Any? =
-    externRefToAny(x)
+internal fun jsToKotlinAnyAdapter(x: ExternalInterfaceType?): Any? =
+    if (x == null) null else externRefToAny(x)
 
 internal fun jsToKotlinByteAdapter(x: Int): Byte = x.toByte()
 internal fun jsToKotlinShortAdapter(x: Int): Short = x.toShort()
 internal fun jsToKotlinCharAdapter(x: Int): Char = x.toChar()
+
+internal fun externRefToKotlinIntAdapter(x: ExternalInterfaceType): Int =
+    externrefToInt(x)
+
+internal fun externRefToKotlinBooleanAdapter(x: ExternalInterfaceType): Boolean =
+    externrefToBoolean(x)
+
+internal fun externRefToKotlinLongAdapter(x: ExternalInterfaceType): Long =
+    externrefToLong(x)
+
+internal fun externRefToKotlinFloatAdapter(x: ExternalInterfaceType): Float =
+    externrefToFloat(x)
+
+internal fun externRefToKotlinDoubleAdapter(x: ExternalInterfaceType): Double =
+    externrefToDouble(x)
+
+
+internal fun kotlinIntToExternRefAdapter(x: Int): ExternalInterfaceType =
+    intToExternref(x)
+
+internal fun kotlinBooleanToExternRefAdapter(x: Boolean): ExternalInterfaceType =
+    if (x) jsTrue else jsFalse
+
+internal fun kotlinLongToExternRefAdapter(x: Long): ExternalInterfaceType =
+    longToExternref(x)
+
+internal fun kotlinFloatToExternRefAdapter(x: Float): ExternalInterfaceType =
+    floatToExternref(x)
+
+internal fun kotlinDoubleToExternRefAdapter(x: Double): ExternalInterfaceType =
+    doubleToExternref(x)
+
+internal fun kotlinByteToExternRefAdapter(x: Byte): ExternalInterfaceType =
+    intToExternref(x.toInt())
+
+internal fun kotlinShortToExternRefAdapter(x: Short): ExternalInterfaceType =
+    intToExternref(x.toInt())
+
+internal fun kotlinCharToExternRefAdapter(x: Char): ExternalInterfaceType =
+    intToExternref(x.toInt())

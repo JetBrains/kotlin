@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.jvm
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -20,7 +18,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 
 open class KotlinJvmTargetConfigurator :
-    KotlinOnlyTargetConfigurator<KotlinJvmCompilation, KotlinJvmTarget>(true, true),
+    KotlinOnlyTargetConfigurator<KotlinJvmCompilation, KotlinJvmTarget>(true),
     KotlinTargetWithTestsConfigurator<KotlinJvmTestRun, KotlinJvmTarget> {
 
     override fun configurePlatformSpecificModel(target: KotlinJvmTarget) {
@@ -74,6 +72,6 @@ open class KotlinJvmTargetConfigurator :
 
     override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider()
-        return Kotlin2JvmSourceSetProcessor(tasksProvider, compilation)
+        return Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
     }
 }

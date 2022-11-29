@@ -45,17 +45,16 @@ class DescriptorByIdSignatureFinderImpl(
 
     override fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? =
         when (signature) {
-            is IdSignature.AccessorSignature -> findDescriptorForAccessorSignature(signature)
-            is IdSignature.CommonSignature -> findDescriptorForPublicSignature(signature)
+            is IdSignature.AccessorSignature -> resolveAccessorSignature(signature)
+            is IdSignature.CommonSignature -> resolveCommonSignature(signature)
             is IdSignature.CompositeSignature -> resolveCompositeSignature(signature)
-            else -> error("only PublicSignature or AccessorSignature should reach this point, got $signature")
+            else -> error("Unexpected signature kind: $signature")
         }
 
     private fun resolveCompositeSignature(signature: IdSignature.CompositeSignature): DeclarationDescriptor? {
-        val container = findDescriptorBySignature(signature.nearestPublicSig())
-        val inner = signature.inner
-        if (inner is IdSignature.LocalSignature) {
+        val container = findDescriptorBySignature(signature.nearestPublicSig()) ?: return null
 
+        (signature.inner as? IdSignature.LocalSignature)?.let { inner ->
             fun isTypeParameterSig(fqn: String): Boolean =
                 fqn == MangleConstant.TYPE_PARAMETER_MARKER_NAME || fqn == MangleConstant.TYPE_PARAMETER_MARKER_NAME_SETTER
 
@@ -69,14 +68,17 @@ class DescriptorByIdSignatureFinderImpl(
                 }
             }
         }
+
         return container
     }
 
-    private fun findDescriptorForAccessorSignature(signature: IdSignature.AccessorSignature): DeclarationDescriptor? {
-        val propertyDescriptor = findDescriptorBySignature(signature.propertySignature) as? PropertyDescriptor
-            ?: return null
-        val shortName = signature.accessorSignature.shortName
-        return propertyDescriptor.accessors.singleOrNull { it.name.asString() == shortName }
+    private fun resolveAccessorSignature(signature: IdSignature.AccessorSignature): DeclarationDescriptor? {
+        val propertyDescriptor = findDescriptorBySignature(signature.propertySignature) as? PropertyDescriptor ?: return null
+        return when (signature.accessorSignature.shortName) {
+            propertyDescriptor.getter?.name?.asString() -> propertyDescriptor.getter
+            propertyDescriptor.setter?.name?.asString() -> propertyDescriptor.setter
+            else -> null
+        }
     }
 
     private fun isConstructorName(n: Name) = n.isSpecial && n.asString() == "<init>"
@@ -97,14 +99,15 @@ class DescriptorByIdSignatureFinderImpl(
         return result
     }
 
-    private fun performLookup(nameSegments: List<String>, packageFqName: FqName): Collection<DeclarationDescriptor> {
+    private fun lookupTopLevelDescriptors(nameSegments: List<String>, packageFqName: FqName): Collection<DeclarationDescriptor> {
         val declarationName = nameSegments[0]
         val isLeaf = nameSegments.size == 1
         return when (lookupMode) {
             LookupMode.MODULE_WITH_DEPENDENCIES -> {
                 moduleDescriptor
                     .getPackage(packageFqName)
-                    .memberScope.loadDescriptors(declarationName, isLeaf)
+                    .memberScope
+                    .loadDescriptors(declarationName, isLeaf)
             }
             LookupMode.MODULE_ONLY -> {
                 (moduleDescriptor as ModuleDescriptorImpl)
@@ -115,9 +118,9 @@ class DescriptorByIdSignatureFinderImpl(
         }
     }
 
-    private fun findDescriptorForPublicSignature(signature: IdSignature.CommonSignature): DeclarationDescriptor? {
+    private fun resolveCommonSignature(signature: IdSignature.CommonSignature): DeclarationDescriptor? {
         val nameSegments = signature.nameSegments
-        val toplevelDescriptors = performLookup(nameSegments, signature.packageFqName())
+        val toplevelDescriptors = lookupTopLevelDescriptors(nameSegments, signature.packageFqName())
             .ifEmpty { return null }
 
         var acc = toplevelDescriptors

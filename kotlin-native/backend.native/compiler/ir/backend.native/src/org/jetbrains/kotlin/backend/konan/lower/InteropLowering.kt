@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
@@ -47,10 +46,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 
-internal class InteropLowering(context: Context) : FileLoweringPass {
+internal class InteropLowering(generationState: NativeGenerationState) : FileLoweringPass {
     // TODO: merge these lowerings.
-    private val part1 = InteropLoweringPart1(context)
-    private val part2 = InteropLoweringPart2(context)
+    private val part1 = InteropLoweringPart1(generationState)
+    private val part2 = InteropLoweringPart2(generationState)
 
     override fun lower(irFile: IrFile) {
         part1.lower(irFile)
@@ -58,7 +57,9 @@ internal class InteropLowering(context: Context) : FileLoweringPass {
     }
 }
 
-private abstract class BaseInteropIrTransformer(private val context: Context) : IrBuildingTransformer(context) {
+private abstract class BaseInteropIrTransformer(
+        private val generationState: NativeGenerationState
+) : IrBuildingTransformer(generationState.context) {
 
     protected inline fun <T> generateWithStubs(element: IrElement? = null, block: KotlinStubs.() -> T): T =
             createKotlinStubs(element).block()
@@ -82,6 +83,9 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
         }
 
         return object : KotlinStubs {
+            private val context = generationState.context
+            private val cStubsManager = generationState.cStubsManager
+
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.ir.symbols
             override val typeSystem: IrTypeSystemContext get() = context.typeSystem
@@ -98,14 +102,14 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
             }
 
             override fun addC(lines: List<String>) {
-                context.cStubsManager.addStub(location, lines, language)
+                cStubsManager.addStub(location, lines, language)
             }
 
             override fun getUniqueCName(prefix: String) =
-                    "$uniquePrefix${context.cStubsManager.getUniqueName(prefix)}"
+                    "$uniquePrefix${cStubsManager.getUniqueName(prefix)}"
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
-                    "$prefix${context.functionReferenceCount++}"
+                    generationState.fileLowerState.getFunctionReferenceImplUniqueName(prefix)
 
             override val target get() = context.config.target
 
@@ -125,7 +129,8 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
     protected abstract fun addTopLevel(declaration: IrDeclaration)
 }
 
-private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransformer(context), FileLoweringPass {
+private class InteropLoweringPart1(val generationState: NativeGenerationState) : BaseInteropIrTransformer(generationState), FileLoweringPass {
+    private val context = generationState.context
 
     private val symbols get() = context.ir.symbols
 
@@ -538,7 +543,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
     ): IrExpression = generateWithStubs(call) {
         if (method.parent !is IrClass) {
             // Category-provided.
-            this@InteropLoweringPart1.context.llvmImports.add(method.llvmSymbolOrigin)
+            generationState.llvmImports.add(method.llvmSymbolOrigin)
         }
 
         this.generateObjCCall(
@@ -745,9 +750,9 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 /**
  * Lowers some interop intrinsic calls.
  */
-private class InteropLoweringPart2(val context: Context) : FileLoweringPass {
+private class InteropLoweringPart2(val generationState: NativeGenerationState) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformer(context, irFile)
+        val transformer = InteropTransformer(generationState, irFile)
         irFile.transformChildrenVoid(transformer)
 
         while (transformer.newTopLevelDeclarations.isNotEmpty()) {
@@ -764,7 +769,11 @@ private class InteropLoweringPart2(val context: Context) : FileLoweringPass {
     }
 }
 
-private class InteropTransformer(val context: Context, override val irFile: IrFile) : BaseInteropIrTransformer(context) {
+private class InteropTransformer(
+        val generationState: NativeGenerationState,
+        override val irFile: IrFile
+) : BaseInteropIrTransformer(generationState) {
+    private val context = generationState.context
 
     val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
 
@@ -1002,7 +1011,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     private fun generateCCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
 
-        context.llvmImports.add(function.llvmSymbolOrigin)
+        generationState.llvmImports.add(function.llvmSymbolOrigin)
         val exceptionMode = ForeignExceptionMode.byValue(
                 function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )

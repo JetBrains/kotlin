@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -29,6 +30,7 @@ internal class LLFirProvider(
     private val moduleComponents: LLFirModuleResolveComponents,
     private val declarationProvider: KotlinDeclarationProvider,
     packageProvider: KotlinPackageProvider,
+    canContainKotlinPackage: Boolean,
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
@@ -37,6 +39,7 @@ internal class LLFirProvider(
         moduleComponents.firFileBuilder,
         declarationProvider,
         packageProvider,
+        canContainKotlinPackage,
     )
 
     override val isPhasedFirAllowed: Boolean get() = true
@@ -64,8 +67,8 @@ internal class LLFirProvider(
 
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
-        symbol.fir.originalForSubstitutionOverride?.symbol?.let {
-            return getFirCallableContainerFile(it)
+        symbol.fir.originalForSubstitutionOverride?.symbol?.let { originalSymbol ->
+            return originalSymbol.moduleData.session.firProvider.getFirCallableContainerFile(originalSymbol)
         }
         val fir = symbol.fir
         return when {

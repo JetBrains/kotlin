@@ -42,6 +42,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtAnnotationEntry> JVM_SYNTHETIC_ON_DELEGATE = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory1<KtExpression, DeclarationDescriptor> SYNTHETIC_SETTER_PROJECTED_OUT = DiagnosticFactory1.create(WARNING);
+
     DiagnosticFactory0<KtAnnotationEntry> STRICTFP_ON_CLASS = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<KtAnnotationEntry> VOLATILE_ON_VALUE = DiagnosticFactory0.create(ERROR);
@@ -209,6 +211,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactoryForDeprecation0<PsiElement> ENUM_DECLARING_CLASS_DEPRECATED =
             DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitEnumDeclaringClass);
+
+    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REDUNDANT_REPEATABLE_ANNOTATION = DiagnosticFactory2.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

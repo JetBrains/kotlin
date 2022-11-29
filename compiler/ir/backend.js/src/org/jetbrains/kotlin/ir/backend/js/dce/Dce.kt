@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun eliminateDeadDeclarations(
     modules: Iterable<IrModuleFragment>,
@@ -56,6 +57,7 @@ private fun IrDeclaration.addRootsTo(
             getter?.addRootsTo(nestedVisitor, context)
             setter?.addRootsTo(nestedVisitor, context)
         }
+
         isEffectivelyExternal() -> {
             val correspondingProperty = when (this) {
                 is IrField -> correspondingPropertySymbol?.owner
@@ -67,15 +69,18 @@ private fun IrDeclaration.addRootsTo(
                 acceptVoid(nestedVisitor)
             }
         }
+
         isExported(context) -> {
             acceptVoid(nestedVisitor)
         }
+
         this is IrField -> {
             // TODO: simplify
             if ((initializer != null && !isKotlinPackage() || correspondingPropertySymbol?.owner?.isExported(context) == true) && !isConstant()) {
                 acceptVoid(nestedVisitor)
             }
         }
+
         this is IrSimpleFunction -> {
             val correspondingProperty = correspondingPropertySymbol?.owner ?: return
             if (correspondingProperty.isExported(context)) {
@@ -116,6 +121,7 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         }
     }
 
+    addIfNotNull(context.intrinsics.void.owner.backingField)
     addAll(context.testFunsPerFile.values)
     addAll(context.additionalExportedDeclarations)
 }

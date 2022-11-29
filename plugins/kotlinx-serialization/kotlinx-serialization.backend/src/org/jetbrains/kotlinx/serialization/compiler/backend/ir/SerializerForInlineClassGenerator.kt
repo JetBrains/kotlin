@@ -53,7 +53,7 @@ class SerializerForInlineClassGenerator(
                 encoderClass.functionByName("${CallingConventions.encode}${it.elementMethodPrefix}")
             val args = if (it.elementMethodPrefix != "Unit") listOf(value) else emptyList()
             f to args
-        })
+        }, null)
 
         val actualEncodeCall = irIfNull(compilerContext.irBuiltIns.unitType, irGet(inlineEncoder), irNull(), elementCall)
         +actualEncodeCall
@@ -77,7 +77,7 @@ class SerializerForInlineClassGenerator(
             decoderClass.functionByName( "${CallingConventions.decode}${sti.elementMethodPrefix}SerializableValue") to listOf(innerSerial)
         }, {
             decoderClass.functionByName("${CallingConventions.decode}${it.elementMethodPrefix}") to listOf()
-        }, returnTypeHint = inlinedType)
+        }, null, returnTypeHint = inlinedType)
         val value = coerceToBox(actualCall, loadFunc.returnType)
         +irReturn(value)
     }

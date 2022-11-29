@@ -1239,4 +1239,128 @@ digraph boundSmartcastsInBranches_kt {
     477 -> {478};
     478 -> {479};
 
+    subgraph cluster_90 {
+        color=red
+        480 [label="Enter function test_9" style="filled" fillcolor=red];
+        subgraph cluster_91 {
+            color=blue
+            481 [label="Enter block"];
+            482 [label="Const: Null(null)"];
+            483 [label="Variable declaration: lvar a: R|kotlin/String?|"];
+            484 [label="Variable declaration: lval b: R|kotlin/String?|"];
+            subgraph cluster_92 {
+                color=blue
+                485 [label="Enter when"];
+                subgraph cluster_93 {
+                    color=blue
+                    486 [label="Enter when branch condition "];
+                    487 [label="Access variable R|<local>/a|"];
+                    488 [label="Const: Null(null)"];
+                    489 [label="Equality operator !="];
+                    490 [label="Exit when branch condition"];
+                }
+                subgraph cluster_94 {
+                    color=blue
+                    491 [label="Enter when branch condition else"];
+                    492 [label="Exit when branch condition"];
+                }
+                493 [label="Enter when branch result"];
+                subgraph cluster_95 {
+                    color=blue
+                    494 [label="Enter block"];
+                    495 [label="Access variable R|<local>/a|"];
+                    496 [label="Smart cast: R|<local>/a|"];
+                    497 [label="Assignment: R|<local>/b|"];
+                    498 [label="Exit block"];
+                }
+                499 [label="Exit when branch result"];
+                500 [label="Enter when branch result"];
+                subgraph cluster_96 {
+                    color=blue
+                    501 [label="Enter block"];
+                    502 [label="Access variable R|<local>/a|"];
+                    503 [label="Smart cast: R|<local>/a|"];
+                    504 [label="Assignment: R|<local>/b|"];
+                    505 [label="Exit block"];
+                }
+                506 [label="Exit when branch result"];
+                507 [label="Exit when"];
+            }
+            508 [label="Access variable R|<local>/b|"];
+            509 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            subgraph cluster_97 {
+                color=blue
+                510 [label="Enter when"];
+                subgraph cluster_98 {
+                    color=blue
+                    511 [label="Enter when branch condition "];
+                    512 [label="Access variable R|<local>/a|"];
+                    513 [label="Const: Null(null)"];
+                    514 [label="Equality operator !="];
+                    515 [label="Exit when branch condition"];
+                }
+                516 [label="Synthetic else branch"];
+                517 [label="Enter when branch result"];
+                subgraph cluster_99 {
+                    color=blue
+                    518 [label="Enter block"];
+                    519 [label="Access variable R|<local>/b|"];
+                    520 [label="Smart cast: R|<local>/b|"];
+                    521 [label="Access variable R|kotlin/String.length|"];
+                    522 [label="Exit block"];
+                }
+                523 [label="Exit when branch result"];
+                524 [label="Exit when"];
+            }
+            525 [label="Exit block"];
+        }
+        526 [label="Exit function test_9" style="filled" fillcolor=red];
+    }
+    480 -> {481};
+    481 -> {482};
+    482 -> {483};
+    483 -> {484};
+    484 -> {485};
+    485 -> {486};
+    486 -> {487};
+    487 -> {488};
+    488 -> {489};
+    489 -> {490};
+    490 -> {500 491};
+    491 -> {492};
+    492 -> {493};
+    493 -> {494};
+    494 -> {495};
+    495 -> {496};
+    496 -> {497};
+    497 -> {498};
+    498 -> {499};
+    499 -> {507};
+    500 -> {501};
+    501 -> {502};
+    502 -> {503};
+    503 -> {504};
+    504 -> {505};
+    505 -> {506};
+    506 -> {507};
+    507 -> {508};
+    508 -> {509};
+    509 -> {510};
+    510 -> {511};
+    511 -> {512};
+    512 -> {513};
+    513 -> {514};
+    514 -> {515};
+    515 -> {517 516};
+    516 -> {524};
+    517 -> {518};
+    518 -> {519};
+    519 -> {520};
+    520 -> {521};
+    521 -> {522};
+    522 -> {523};
+    523 -> {524};
+    524 -> {525};
+    525 -> {526};
+
 }

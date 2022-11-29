@@ -1,4 +1,5 @@
-
+// IGNORE_FIR
+// Ignored due to KT-53573
 import kotlin.reflect.KProperty
 
 class Foo(a: Int, val b:Foo, var c:Boolean, private val d: List, protected val e: Long = 2) {

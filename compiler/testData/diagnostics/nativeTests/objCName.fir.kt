@@ -24,30 +24,51 @@ open class KotlinClass {
 
 @ObjCName("ObjCSubClass", "SwiftSubClass")
 class KotlinSubClass: KotlinClass() {
-    @ObjCName("objCProperty")
+    <!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCProperty")<!>
     override var kotlinProperty: Int = 1
-    @ObjCName(swiftName = "swiftFunction")
-    override fun @receiver:ObjCName("objCReceiver") Int.kotlinFunction(
-        @ObjCName("objCParam") kotlinParam: Int
+    <!INAPPLICABLE_OBJC_NAME!>@ObjCName(swiftName = "swiftFunction")<!>
+    override fun <!INAPPLICABLE_OBJC_NAME!>@receiver:ObjCName("objCReceiver")<!> Int.kotlinFunction(
+        <!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCParam")<!> kotlinParam: Int
     ): Int = this + kotlinParam * 2
 }
 
-@ObjCName()
+<!INVALID_OBJC_NAME!>@ObjCName()<!>
 val invalidObjCName: Int = 0
 
-@ObjCName("validName", "invalid.name")
+<!EMPTY_OBJC_NAME!>@ObjCName("", "")<!>
+val emptyObjCNameA: Int = 0
+
+<!EMPTY_OBJC_NAME!>@ObjCName("validName", "")<!>
+val emptyObjCNameB: Int = 0
+
+<!EMPTY_OBJC_NAME!>@ObjCName("", "validName")<!>
+val emptyObjCNameC: Int = 0
+
+@ObjCName("validName")
+val validObjCNameA: Int = 0
+
+@ObjCName(swiftName = "validName")
+val validObjCNameB: Int = 0
+
+<!INVALID_OBJC_NAME_CHARS!>@ObjCName("validName", "invalid.name")<!>
 val invalidCharactersObjCNameA: Int = 0
 
-@ObjCName("invalid.name", "validName")
+<!INVALID_OBJC_NAME_CHARS!>@ObjCName("invalid.name", "validName")<!>
 val invalidCharactersObjCNameB: Int = 0
 
-@ObjCName("validName1", "1validName")
+<!INVALID_OBJC_NAME_FIRST_CHAR!>@ObjCName("validName1", "1validName")<!>
 val invalidFirstCharacterObjCNameA: Int = 0
 
-@ObjCName("1validName", "validName1")
+<!INVALID_OBJC_NAME_FIRST_CHAR!>@ObjCName("1validName", "validName1")<!>
 val invalidFirstCharacterObjCNameB: Int = 0
 
-@ObjCName(swiftName = "SwiftMissingExactName", exact = true)
+<!INVALID_OBJC_NAME_CHARS, INVALID_OBJC_NAME_FIRST_CHAR!>@ObjCName("validName", " ")<!>
+val blankObjCNameA: Int = 0
+
+<!INVALID_OBJC_NAME_CHARS, INVALID_OBJC_NAME_FIRST_CHAR!>@ObjCName(" ", "validName")<!>
+val blankObjCNameB: Int = 0
+
+<!MISSING_EXACT_OBJC_NAME!>@ObjCName(swiftName = "SwiftMissingExactName", exact = true)<!>
 class MissingExactName
 
 interface KotlinInterfaceA {
@@ -118,32 +139,32 @@ interface KotlinInterfaceB {
 
 class KotlinOverrideClass: KotlinInterfaceA, KotlinInterfaceB {
     override var kotlinPropertyA: Int = 0
-    override var kotlinPropertyB: Int = 0
-    override var kotlinPropertyC: Int = 0
-    override var kotlinPropertyD: Int = 0
-    override var kotlinPropertyE: Int = 0
+    <!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>override var kotlinPropertyB: Int = 0<!>
+    <!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>override var kotlinPropertyC: Int = 0<!>
+    <!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>override var kotlinPropertyD: Int = 0<!>
+    <!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>override var kotlinPropertyE: Int = 0<!>
     override var kotlinPropertyF: Int = 0
 
     override fun Int.kotlinFunctionA(kotlinParam: Int): Int = this + kotlinParam
-    override fun Int.kotlinFunctionB(kotlinParam: Int): Int = this + kotlinParam
-    override fun Int.kotlinFunctionC(kotlinParam: Int): Int = this + kotlinParam
-    override fun Int.kotlinFunctionD(kotlinParam: Int): Int = this + kotlinParam
-    override fun Int.kotlinFunctionE(kotlinParam: Int): Int = this + kotlinParam
+    <!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>override fun Int.kotlinFunctionB(kotlinParam: Int): Int = this + kotlinParam<!>
+    <!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>override fun Int.kotlinFunctionC(kotlinParam: Int): Int = this + kotlinParam<!>
+    <!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>override fun Int.kotlinFunctionD(kotlinParam: Int): Int = this + kotlinParam<!>
+    <!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>override fun Int.kotlinFunctionE(kotlinParam: Int): Int = this + kotlinParam<!>
 }
 
 @ObjCName("ObjCExactChecks", exact = true)
 class ExactChecks {
-    @ObjCName("objCProperty", exact = true)
+    <!INAPPLICABLE_EXACT_OBJC_NAME!>@ObjCName("objCProperty", exact = true)<!>
     var property: Int = 0
-    @ObjCName("objCFunction", exact = true)
-    fun @receiver:ObjCName("objCReceiver", exact = true) Int.function(
-        @ObjCName("objCParam", exact = true) param: Int
+    <!INAPPLICABLE_EXACT_OBJC_NAME!>@ObjCName("objCFunction", exact = true)<!>
+    fun <!INAPPLICABLE_EXACT_OBJC_NAME!>@receiver:ObjCName("objCReceiver", exact = true)<!> Int.function(
+        <!INAPPLICABLE_EXACT_OBJC_NAME!>@ObjCName("objCParam", exact = true)<!> param: Int
     ): Int = this * param
 }
 
 @ObjCName("ObjCEnumExactChecks", exact = true)
 enum class EnumExactChecks {
-    @ObjCName("objCEntryOne", exact = true)
+    <!INAPPLICABLE_EXACT_OBJC_NAME!>@ObjCName("objCEntryOne", exact = true)<!>
     ENTRY_ONE,
     @ObjCName("objCEntryTwo")
     ENTRY_TWO
@@ -159,7 +180,7 @@ interface I {
     fun foo()
 }
 
-open class Derived : Base(), I
+<!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>open class Derived : Base(), I<!>
 
 open class Derived2 : Derived() {
     override fun foo() {}
@@ -168,11 +189,11 @@ open class Derived2 : Derived() {
 private const val exact = false
 private const val objcName = "nonLiteralArgsObjC"
 
-@ObjCName(
-    objcName,
-    "nonLiteralArgs" + "Swift",
-    exact
-)
+<!INVALID_OBJC_NAME!>@ObjCName(
+    <!NON_LITERAL_OBJC_NAME_ARG!>objcName<!>,
+    <!NON_LITERAL_OBJC_NAME_ARG!>"nonLiteralArgs" + "Swift"<!>,
+    <!NON_LITERAL_OBJC_NAME_ARG!>exact<!>
+)<!>
 val nonLiteralArgs: Int = 0
 
 @ObjCName("invalidArgsObjC", <!ARGUMENT_TYPE_MISMATCH!>false<!>, <!ARGUMENT_TYPE_MISMATCH!>"not a boolean"<!>)

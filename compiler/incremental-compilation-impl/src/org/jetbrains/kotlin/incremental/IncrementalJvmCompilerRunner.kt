@@ -88,7 +88,13 @@ fun makeIncrementally(
         val compiler =
             if (args.useK2 && args.useFirIC && args.useFirLT /* TODO: move LT check into runner */ )
                 IncrementalFirJvmCompilerRunner(
-                    cachesDir, buildReporter, buildHistoryFile, emptyList(), EmptyModulesApiHistory, kotlinExtensions, ClasspathSnapshotDisabled
+                    cachesDir,
+                    buildReporter,
+                    buildHistoryFile,
+                    outputDirs = null,
+                    EmptyModulesApiHistory,
+                    kotlinExtensions,
+                    ClasspathSnapshotDisabled
                 )
             else
                 IncrementalJvmCompilerRunner(
@@ -96,14 +102,14 @@ fun makeIncrementally(
                     buildReporter,
                     // Use precise setting in case of non-Gradle build
                     usePreciseJavaTracking = !args.useK2, // TODO: add fir-based java classes tracker when available and set this to true
-                    outputFiles = emptyList(),
                     buildHistoryFile = buildHistoryFile,
+                    outputDirs = null,
                     modulesApiHistory = EmptyModulesApiHistory,
                     kotlinSourceFilesExtensions = kotlinExtensions,
                     classpathChanges = ClasspathSnapshotDisabled
                 )
         //TODO set properly
-        compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
+        compiler.compile(sourceFiles, args, messageCollector, changedFiles = null)
     }
 }
 
@@ -127,7 +133,7 @@ open class IncrementalJvmCompilerRunner(
     reporter: BuildReporter,
     private val usePreciseJavaTracking: Boolean,
     buildHistoryFile: File,
-    outputFiles: Collection<File>,
+    outputDirs: Collection<File>?,
     private val modulesApiHistory: ModulesApiHistory,
     override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     private val classpathChanges: ClasspathChanges,
@@ -136,8 +142,8 @@ open class IncrementalJvmCompilerRunner(
     workingDir,
     "caches-jvm",
     reporter,
-    additionalOutputFiles = outputFiles,
     buildHistoryFile = buildHistoryFile,
+    outputDirs = outputDirs,
     withAbiSnapshot = withAbiSnapshot
 ) {
     override fun createCacheManager(args: K2JVMCompilerArguments, projectDir: File?): IncrementalJvmCachesManager =
@@ -181,7 +187,7 @@ open class IncrementalJvmCompilerRunner(
         else
             null
 
-    override fun calculateSourcesToCompileImpl(
+    override fun calculateSourcesToCompile(
         caches: IncrementalJvmCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments,
@@ -189,7 +195,7 @@ open class IncrementalJvmCompilerRunner(
         classpathAbiSnapshots: Map<String, AbiSnapshot>
     ): CompilationMode {
         return try {
-            calculateSourcesToCompileImpl(caches, changedFiles, args, classpathAbiSnapshots, withAbiSnapshot)
+            calculateSourcesToCompileImpl(caches, changedFiles, args, messageCollector, classpathAbiSnapshots, withAbiSnapshot)
         } finally {
             psiFileProvider.messageCollector.flush(messageCollector)
             psiFileProvider.messageCollector.clear()
@@ -199,9 +205,8 @@ open class IncrementalJvmCompilerRunner(
     //TODO can't use the same way as for build-history files because abi-snapshot for all dependencies should be stored into last-build
     // and not only changed one
     // (but possibly we dont need to read it all and may be it is possible to update only those who was changed)
-    override fun setupJarDependencies(args: K2JVMCompilerArguments, withSnapshot: Boolean, reporter: BuildReporter): Map<String, AbiSnapshot> {
+    override fun setupJarDependencies(args: K2JVMCompilerArguments, reporter: BuildReporter): Map<String, AbiSnapshot> {
         //fill abiSnapshots
-        if (!withSnapshot) return emptyMap()
         val abiSnapshots = HashMap<String, AbiSnapshot>()
         args.classpathAsList
             .filter { it.extension.equals("jar", ignoreCase = true) }
@@ -209,7 +214,12 @@ open class IncrementalJvmCompilerRunner(
                 modulesApiHistory.abiSnapshot(it).let { result ->
                     if (result is Either.Success<Set<File>>) {
                         result.value.forEach { file ->
-                            AbiSnapshotImpl.read(file, reporter)?.also { abiSnapshot -> abiSnapshots[it.absolutePath] = abiSnapshot }
+                            if (file.exists()) {
+                                abiSnapshots[it.absolutePath] = AbiSnapshotImpl.read(file)
+                            } else {
+                                // FIXME: We should throw an exception here
+                                reporter.warn { "Snapshot file does not exist: ${file.path}. Continue anyway." }
+                            }
                         }
                     }
                 }
@@ -228,7 +238,8 @@ open class IncrementalJvmCompilerRunner(
         caches: IncrementalJvmCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments,
-        abiSnapshots: Map<String, AbiSnapshot> = HashMap(),
+        messageCollector: MessageCollector,
+        abiSnapshots: Map<String, AbiSnapshot>,
         withAbiSnapshot: Boolean
     ): CompilationMode {
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
@@ -263,7 +274,10 @@ open class IncrementalJvmCompilerRunner(
                     // workingDir as workingDir is an @OutputDirectory, so the files must be present in an incremental build.)
                     return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
                 }
-                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+                if (!lastBuildInfoFile.exists()) {
+                    return CompilationMode.Rebuild(BuildAttribute.NO_LAST_BUILD_INFO)
+                }
+                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
                 reporter.debug { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
@@ -370,11 +384,11 @@ open class IncrementalJvmCompilerRunner(
         return result
     }
 
-    override fun preBuildHook(args: K2JVMCompilerArguments, compilationMode: CompilationMode) {
+    override fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: K2JVMCompilerArguments) {
+        super.performWorkBeforeCompilation(compilationMode, args)
+
         if (compilationMode is CompilationMode.Incremental) {
-            val destinationDir = args.destinationAsFile
-            destinationDir.mkdirs()
-            args.classpathAsList = listOf(destinationDir) + args.classpathAsList
+            args.classpathAsList = listOf(args.destinationAsFile) + args.classpathAsList
         }
     }
 
@@ -478,12 +492,15 @@ open class IncrementalJvmCompilerRunner(
         return exitCode to sourcesToCompile
     }
 
-    override fun performWorkAfterSuccessfulCompilation(caches: IncrementalJvmCachesManager, wasIncremental: Boolean) {
-        if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+    override fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: IncrementalJvmCachesManager) {
+        super.performWorkAfterCompilation(compilationMode, exitCode, caches)
+
+        // No need to shrink and save classpath snapshot if exitCode != ExitCode.OK as the task will fail anyway
+        if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled && exitCode == ExitCode.OK) {
             reporter.measure(BuildTime.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
                 shrinkAndSaveClasspathSnapshot(
-                    wasIncremental, classpathChanges, caches.lookupCache, currentClasspathSnapshot,
-                    shrunkCurrentClasspathAgainstPreviousLookups, ClasspathSnapshotBuildReporter(reporter)
+                    compilationWasIncremental = compilationMode is CompilationMode.Incremental, classpathChanges, caches.lookupCache,
+                    currentClasspathSnapshot, shrunkCurrentClasspathAgainstPreviousLookups, ClasspathSnapshotBuildReporter(reporter)
                 )
             }
         }

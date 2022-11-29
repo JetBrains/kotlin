@@ -65,6 +65,11 @@
                         <goals>
                             <goal>js</goal>
                         </goals>
+                        <configuration>
+                            <args>
+                                <arg>-Xuse-deprecated-legacy-compiler</arg>
+                            </args>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
@@ -104,7 +109,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <jvm>${env.JDK_18}/bin/java</jvm>
+                    <jvm>${jdk_1_8}/bin/java</jvm>
                 </configuration>
             </plugin>
 

@@ -2,9 +2,9 @@ package com.example.databinding
 
 import android.content.Context
 import android.content.res.Resources
-import android.databinding.*
-import android.databinding.adapters.AdapterViewBindingAdapter
-import android.support.annotation.IntegerRes
+import androidx.databinding.*
+import androidx.databinding.adapters.AdapterViewBindingAdapter
+import androidx.annotation.IntegerRes
 import android.util.Log
 import android.view.*
 import android.widget.*

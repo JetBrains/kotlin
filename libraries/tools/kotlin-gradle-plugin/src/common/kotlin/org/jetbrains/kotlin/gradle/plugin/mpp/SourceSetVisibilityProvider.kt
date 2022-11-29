@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import java.io.File
 
 internal data class SourceSetVisibilityResult(
@@ -54,7 +55,7 @@ internal class SourceSetVisibilityProvider(
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Project?
     ): SourceSetVisibilityResult {
-        val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(visibleFrom)
+        val compilations = visibleFrom.internal.compilations
 
         val component = resolvedRootMppDependency ?: resolvedMetadataDependency
         val mppModuleIdentifier = component.toSingleKpmModuleIdentifier()

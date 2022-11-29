@@ -5,198 +5,95 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.types.ConeInferenceContext
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.canBeNull
-import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
+import org.jetbrains.kotlin.fir.types.*
 
 abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceContext) {
-    // ------------------------------- Flow operations -------------------------------
-
+    // --------------------------- Flow graph constructors ---------------------------
     abstract fun createEmptyFlow(): FLOW
     abstract fun forkFlow(flow: FLOW): FLOW
     abstract fun joinFlow(flows: Collection<FLOW>): FLOW
     abstract fun unionFlow(flows: Collection<FLOW>): FLOW
 
-    abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement)
-
+    // -------------------------------- Flow mutators --------------------------------
+    // Returns all known information about the variable, or null if unchanged by this statement:
+    abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement): TypeStatement?
+    abstract fun addTypeStatements(flow: FLOW, statements: TypeStatements): List<TypeStatement>
     abstract fun addImplication(flow: FLOW, implication: Implication)
-
-    fun removeAllAboutVariable(flow: FLOW, variable: RealVariable?) {
-        if (variable == null) return
-        removeTypeStatementsAboutVariable(flow, variable)
-        removeLogicStatementsAboutVariable(flow, variable)
-        removeAliasInformationAboutVariable(flow, variable)
-    }
-
-    abstract fun removeTypeStatementsAboutVariable(flow: FLOW, variable: RealVariable)
-    abstract fun removeLogicStatementsAboutVariable(flow: FLOW, variable: DataFlowVariable)
-    abstract fun removeAliasInformationAboutVariable(flow: FLOW, variable: RealVariable)
+    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
+    abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
+    abstract fun removeAllAboutVariable(flow: FLOW, variable: RealVariable)
+    abstract fun copyAllInformation(from: FLOW, to: FLOW)
+    abstract fun isSameValueIn(a: FLOW, b: FLOW, variable: RealVariable): Boolean
 
     abstract fun translateVariableFromConditionInStatements(
         flow: FLOW,
         originalVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
-        shouldRemoveOriginalStatements: Boolean,
-        filter: (Implication) -> Boolean = { true },
+        shouldRemoveOriginalStatements: Boolean = originalVariable.isSynthetic(),
         transform: (Implication) -> Implication? = { it },
     )
 
-    abstract fun approveStatementsInsideFlow(
+    // This does *not* commit the results to the flow (but it does mutate the flow if removeApprovedOrImpossible=true)
+    abstract fun approveOperationStatement(
         flow: FLOW,
         approvedStatement: OperationStatement,
-        shouldForkFlow: Boolean,
-        shouldRemoveSynthetics: Boolean,
-    ): FLOW
-
-    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariableAndType)
-    abstract fun removeLocalVariableAlias(flow: FLOW, alias: RealVariable)
-
-    abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
-
-    protected abstract fun getImplicationsWithVariable(flow: FLOW, variable: DataFlowVariable): Collection<Implication>
+        removeApprovedOrImpossible: Boolean = false
+    ): TypeStatements
 
     protected abstract fun ConeKotlinType.isAcceptableForSmartcast(): Boolean
 
-    // ------------------------------- Callbacks for updating implicit receiver stack -------------------------------
-
-    abstract fun processUpdatedReceiverVariable(flow: FLOW, variable: RealVariable)
-    abstract fun updateAllReceivers(flow: FLOW)
-
     // ------------------------------- Public TypeStatement util functions -------------------------------
 
-    data class InfoForBooleanOperator(
-        val conditionalFromLeft: Collection<Implication>,
-        val conditionalFromRight: Collection<Implication>,
-        val knownFromRight: TypeStatements,
-    )
-
-    abstract fun collectInfoForBooleanOperator(
-        leftFlow: FLOW,
-        leftVariable: DataFlowVariable,
-        rightFlow: FLOW,
-        rightVariable: DataFlowVariable,
-    ): InfoForBooleanOperator
-
-    abstract fun approveStatementsTo(
-        destination: MutableTypeStatements,
-        flow: FLOW,
-        approvedStatement: OperationStatement,
-        statements: Collection<Implication>,
-    )
-
-    /**
-     * Recursively collects all TypeStatements approved by [approvedStatement] and all predicates
-     *   that has been implied by it
-     *   TODO: or not recursively?
-     */
-    fun approveOperationStatement(flow: FLOW, approvedStatement: OperationStatement): Collection<TypeStatement> {
-        val statements = getImplicationsWithVariable(flow, approvedStatement.variable)
-        return approveOperationStatement(flow, approvedStatement, statements).values
-    }
-
-    fun orForTypeStatements(
-        left: TypeStatements,
-        right: TypeStatements,
-    ): MutableTypeStatements {
-        if (left.isNullOrEmpty() || right.isNullOrEmpty()) return mutableMapOf()
-        val map = mutableMapOf<RealVariable, MutableTypeStatement>()
-        for (variable in left.keys.intersect(right.keys)) {
-            val leftStatement = left.getValue(variable)
-            val rightStatement = right.getValue(variable)
-            map[variable] = or(listOf(leftStatement, rightStatement))
-        }
-        return map
-    }
-
-    // ------------------------------- Util functions -------------------------------
-
-    // TODO
-    protected fun <E> Collection<Collection<E>>.intersectSets(): Set<E> {
-        if (isEmpty()) return emptySet()
-        val iterator = iterator()
-        val result = LinkedHashSet<E>(iterator.next())
-        while (iterator.hasNext()) {
-            result.retainAll(iterator.next())
-        }
-        return result
-    }
-
-    private inline fun manipulateTypeStatements(
-        statements: Collection<TypeStatement>,
-        op: (Collection<Set<ConeKotlinType>>) -> MutableSet<ConeKotlinType>
-    ): MutableTypeStatement {
-        require(statements.isNotEmpty())
-        statements.singleOrNull()?.let { return it as MutableTypeStatement }
-        val variable = statements.first().variable
-        assert(statements.all { it.variable == variable })
-        val exactType = op.invoke(statements.map { it.exactType })
-        val exactNotType = op.invoke(statements.map { it.exactNotType })
-        return MutableTypeStatement(variable, exactType, exactNotType)
-    }
-
-    protected fun or(statements: Collection<TypeStatement>): MutableTypeStatement =
-        manipulateTypeStatements(statements, ::orForTypes)
-
-    private fun orForTypes(types: Collection<Set<ConeKotlinType>>): MutableSet<ConeKotlinType> {
-        if (types.any { it.isEmpty() }) return mutableSetOf()
-        val intersectedTypes = types.map {
-            if (it.size > 1) {
-                context.intersectTypes(it.toList())
-            } else {
-                assert(it.size == 1) { "We've already checked each set of types is not empty." }
-                it.single()
+    fun orForTypeStatements(left: TypeStatements, right: TypeStatements): TypeStatements = when {
+        left.isEmpty() -> left
+        right.isEmpty() -> right
+        else -> buildMap {
+            for ((variable, leftStatement) in left) {
+                put(variable, or(listOf(leftStatement, right[variable] ?: continue))!!)
             }
         }
-        val result = mutableSetOf<ConeKotlinType>()
-        context.commonSuperTypeOrNull(intersectedTypes)?.let {
-            if (it.isAcceptableForSmartcast()) {
-                result.add(it)
-            } else if (!it.canBeNull) {
-                result.add(context.anyType())
+    }
+
+    fun andForTypeStatements(left: TypeStatements, right: TypeStatements): TypeStatements = when {
+        left.isEmpty() -> right
+        right.isEmpty() -> left
+        else -> left.toMutableMap().apply {
+            for ((variable, rightStatement) in right) {
+                put(variable, { rightStatement }, { and(listOf(it, rightStatement))!! })
             }
-            Unit
         }
-        return result
     }
 
-    protected fun and(statements: Collection<TypeStatement>): MutableTypeStatement =
-        manipulateTypeStatements(statements, ::andForTypes)
+    private inline fun Collection<TypeStatement>.singleOrNew(exactType: () -> MutableSet<ConeKotlinType>): TypeStatement? =
+        when (size) {
+            0 -> null
+            1 -> first()
+            else -> {
+                val variable = first().variable
+                assert(all { it.variable == variable }) { "folding statements for different variables" }
+                MutableTypeStatement(variable, exactType())
+            }
+        }
 
-    private fun andForTypes(types: Collection<Set<ConeKotlinType>>): MutableSet<ConeKotlinType> {
-        return types.flatMapTo(mutableSetOf()) { it }
+    private fun unifyTypes(types: Collection<Set<ConeKotlinType>>): ConeKotlinType? {
+        if (types.any { it.isEmpty() }) return null
+        val intersected = types.map { ConeTypeIntersector.intersectTypes(context, it.toList()) }
+        val unified = context.commonSuperTypeOrNull(intersected) ?: return null
+        return when {
+            unified.isNullableAny -> null
+            unified.isAcceptableForSmartcast() -> unified
+            unified.canBeNull -> null
+            else -> context.anyType()
+        }
     }
-}
 
-fun <FLOW : Flow> LogicSystem<FLOW>.approveOperationStatement(
-    flow: FLOW,
-    approvedStatement: OperationStatement,
-    statements: Collection<Implication>,
-): MutableTypeStatements {
-    return mutableMapOf<RealVariable, MutableTypeStatement>().apply {
-        approveStatementsTo(this, flow, approvedStatement, statements)
+    protected operator fun MutableTypeStatement.plusAssign(other: TypeStatement) {
+        exactType += other.exactType
     }
-}
 
-/*
- *  used for:
- *   1. val b = x is String
- *   2. b = x is String
- *   3. !b | b.not()   for Booleans
- */
-fun <F : Flow> LogicSystem<F>.replaceVariableFromConditionInStatements(
-    flow: F,
-    originalVariable: DataFlowVariable,
-    newVariable: DataFlowVariable,
-    filter: (Implication) -> Boolean = { true },
-    transform: (Implication) -> Implication = { it },
-) {
-    translateVariableFromConditionInStatements(
-        flow,
-        originalVariable,
-        newVariable,
-        shouldRemoveOriginalStatements = true,
-        filter,
-        transform,
-    )
+    protected fun and(statements: Collection<TypeStatement>): TypeStatement? =
+        statements.singleOrNew { statements.flatMapTo(mutableSetOf()) { it.exactType } }
+
+    protected fun or(statements: Collection<TypeStatement>): TypeStatement? =
+        statements.singleOrNew { unifyTypes(statements.map { it.exactType })?.let { mutableSetOf(it) } ?: mutableSetOf() }
 }

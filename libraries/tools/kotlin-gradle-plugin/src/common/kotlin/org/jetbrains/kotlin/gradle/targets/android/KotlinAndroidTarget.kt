@@ -15,6 +15,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import javax.inject.Inject
@@ -29,10 +30,8 @@ abstract class KotlinAndroidTarget @Inject constructor(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.androidJvm
 
-    internal val compilationFactory = KotlinJvmAndroidCompilationFactory(project, this)
-
     override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
-        project.container(compilationFactory.itemClass, compilationFactory)
+        project.container(KotlinJvmAndroidCompilation::class.java)
 
     /** Names of the Android library variants that should be published from the target's project within the default publications which are
      * set up if the `maven-publish` Gradle plugin is applied.
@@ -68,7 +67,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     private fun checkPublishLibraryVariantsExist() {
         fun AndroidProjectHandler.getLibraryVariantNames() =
             mutableSetOf<String>().apply {
-                project.forEachVariant {
+                project.forAllAndroidVariants {
                     if (getLibraryOutputTask(it) != null)
                         add(getVariantName(it))
                 }
@@ -101,7 +100,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     private fun AndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
 
         val publishableVariants = mutableListOf<BaseVariant>()
-            .apply { project.forEachVariant { add(it) } }
+            .apply { project.forAllAndroidVariants { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
             .filter { getLibraryOutputTask(it) != null }
 

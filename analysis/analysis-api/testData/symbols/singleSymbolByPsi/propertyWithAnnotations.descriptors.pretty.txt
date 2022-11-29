@@ -1,0 +1,6 @@
+@PropertyAnnotation
+var prop: kotlin.Int
+  @GetAnnotation
+  get()
+  @SetAnnotation
+  set(@SetparamAnnotation value: kotlin.Int)

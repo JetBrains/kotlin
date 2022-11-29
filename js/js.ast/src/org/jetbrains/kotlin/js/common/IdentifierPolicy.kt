@@ -51,9 +51,11 @@ fun String.isValidES5Identifier(): Boolean {
     return true
 }
 
-val RESERVED_KEYWORDS: Set<String> = setOf(
+val SPECIAL_KEYWORDS: Set<String> = setOf("default")
+
+val RESERVED_KEYWORDS: Set<String> = SPECIAL_KEYWORDS + setOf(
     // keywords
-    "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",
+    "await", "break", "case", "catch", "continue", "debugger", "delete", "do", "else", "finally", "for", "function", "if",
     "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with",
 
     // future reserved words

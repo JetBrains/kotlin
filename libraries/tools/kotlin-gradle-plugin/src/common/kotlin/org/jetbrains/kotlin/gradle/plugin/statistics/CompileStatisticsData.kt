@@ -72,6 +72,8 @@ data class BuildFinishStatisticsData(
     val finishTime: Long,
     val timestamp: String = formatter.format(finishTime),
     val hostName: String? = "Unset",
+    val tags: List<String>,
+    val gitBranch: String = "Unset"
 )
 
 

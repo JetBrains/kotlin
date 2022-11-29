@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -34,7 +35,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         return klass.functions.single { it.isEqualsInheritedFromAny() }
     }
 
-    fun transformCall(
+    private fun transformCall(
         call: IrCall,
         builder: DeclarationIrBuilder
     ): IrExpression {
@@ -51,47 +52,59 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 }
                 return irCall(call, symbols.floatEqualityFunctions.getValue(irBuiltins.doubleType))
             }
-            irBuiltins.eqeqSymbol -> {
+            irBuiltins.eqeqSymbol,
+            irBuiltins.eqeqeqSymbol -> {
+                fun callRefIsNull(expr: IrExpression): IrCall {
+                    val refIsNull = if (expr.type.erasedUpperBound?.isExternal == true) symbols.externRefIsNull else symbols.refIsNull
+                    return builder.irCall(refIsNull).apply { putValueArgument(0, expr) }
+                }
+
                 val lhs = call.getValueArgument(0)!!
                 val rhs = call.getValueArgument(1)!!
+
+                if (lhs.isNullConst()) return callRefIsNull(rhs)
+
+                if (rhs.isNullConst()) return callRefIsNull(lhs)
+
                 val lhsType = lhs.type
                 val rhsType = rhs.type
+
                 if (lhsType == rhsType) {
-                    val newSymbol = symbols.equalityFunctions[lhsType]
+                    val newSymbol =
+                        symbols.equalityFunctions[lhsType]
+                            // For eqeqeqSymbol try to use more efficient comparison if type is Double or Float.
+                            // But for eqeqSymbol we have to use generic comparison for floating point numbers.
+                            ?: if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.floatEqualityFunctions[lhsType] else null
+
                     if (newSymbol != null) {
                         return irCall(call, newSymbol)
                     }
                 }
-                if (lhs.isNullConst()) {
-                    return builder.irCall(symbols.refIsNull).apply { putValueArgument(0, rhs) }
-                }
-                if (rhs.isNullConst()) {
-                    return builder.irCall(symbols.refIsNull).apply { putValueArgument(0, lhs) }
-                }
-                if (!lhsType.isNullable()) {
+
+                // For eqeqSymbol use overridden `Any.equals(Any?)` if there is any.
+                if (call.symbol === irBuiltins.eqeqSymbol && !lhsType.isNullable()) {
                     return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
                 }
-                return irCall(call, symbols.nullableEquals)
-            }
 
-            irBuiltins.eqeqeqSymbol -> {
-                val type = call.getValueArgument(0)!!.type
-                val newSymbol = symbols.equalityFunctions[type] ?: symbols.floatEqualityFunctions[type] ?: symbols.refEq
-                return irCall(call, newSymbol)
+                val fallbackEqFun = if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.refEq else symbols.nullableEquals
+                return irCall(call, fallbackEqFun)
             }
 
             irBuiltins.checkNotNullSymbol -> {
+                val arg = call.getValueArgument(0)!!
 
-                // Workaround: v8 doesnt support ref.cast-ing unreachable very well.
-                run {
-                    val arg = call.getValueArgument(0)!!
-                    if (arg.isNullConst()) {
-                        return builder.irCall(symbols.wasmUnreachable, irBuiltins.nothingType)
-                    }
+                if (arg.isNullConst()) {
+                    return builder.irCall(symbols.throwNullPointerException)
                 }
 
-                return irCall(call, symbols.ensureNotNull).also {
-                    it.putTypeArgument(0, call.type)
+                return builder.irComposite {
+                    val temporary = irTemporary(arg)
+                    +builder.irIfNull(
+                        type = arg.type.makeNotNull(),
+                        subject = irGet(temporary),
+                        thenPart = builder.irCall(symbols.throwNullPointerException),
+                        elsePart = irGet(temporary)
+                    )
                 }
             }
             in symbols.comparisonBuiltInsToWasmIntrinsics.keys -> {

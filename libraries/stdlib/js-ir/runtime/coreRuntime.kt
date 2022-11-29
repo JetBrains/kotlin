@@ -90,8 +90,8 @@ internal fun captureStack(instance: Throwable, constructorFunction: Any) {
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
     throwable.message = if (isUndefined(message)) {
-        if (isUndefined(cause)) message else cause?.toString() ?: undefined
-    } else message ?: undefined
+        if (isUndefined(cause)) message else cause?.toString() ?: VOID
+    } else message ?: VOID
     throwable.cause = cause
     throwable.name = "Throwable"
     return throwable.unsafeCast<Throwable>()
@@ -109,10 +109,10 @@ internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, 
             @Suppress("SENSELESS_COMPARISON")
             if (message !== null) {
                 // undefined
-                cause?.toString() ?: undefined
+                cause?.toString() ?: VOID
             } else {
                 // real null
-                undefined
+                VOID
             }
         } else message
     }
@@ -135,7 +135,19 @@ internal fun errorCode(description: String): Nothing {
 }
 
 @Suppress("SENSELESS_COMPARISON")
-internal fun isUndefined(value: dynamic): Boolean = value === undefined
+internal fun isUndefined(value: dynamic): Boolean = value === VOID
 
 internal fun <T, R> boxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
 internal fun <T, R> unboxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
+
+@Suppress("UNUSED_PARAMETER")
+internal fun protoOf(constructor: Any) =
+    js("constructor.prototype")
+
+@Suppress("UNUSED_PARAMETER")
+internal fun <T> objectCreate(proto: T?) =
+    js("Object.create(proto)")
+
+@Suppress("UNUSED_PARAMETER")
+internal fun defineProp(obj: Any, name: String, getter: Any?, setter: Any?) =
+    js("Object.defineProperty(obj, name, { configurable: true, get: getter, set: setter })")

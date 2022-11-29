@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -64,15 +64,17 @@ object FirClassVarianceChecker : FirClassChecker() {
             if (member is FirProperty && member.isVar) Variance.INVARIANT else Variance.OUT_VARIANCE
 
         var returnSource = member.returnTypeRef.source
-        if (returnSource != null && memberSource != null) {
-            if (returnSource.kind is KtFakeSourceElementKind && memberSource.kind !is KtFakeSourceElementKind) {
+        if (returnSource != null) {
+            if (memberSource != null && returnSource.kind is KtFakeSourceElementKind && memberSource.kind !is KtFakeSourceElementKind) {
                 returnSource = memberSource
             }
+        } else {
+            returnSource = memberSource
         }
 
         checkVarianceConflict(member.returnTypeRef, returnTypeVariance, context, reporter, returnSource)
 
-        val receiverTypeRef = member.receiverTypeRef
+        val receiverTypeRef = member.receiverParameter?.typeRef
         if (receiverTypeRef != null) {
             checkVarianceConflict(receiverTypeRef, Variance.IN_VARIANCE, context, reporter)
         }

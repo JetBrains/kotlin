@@ -31,8 +31,9 @@ class IrCompileTimeChecker(
     }
 
     private fun <R> IrCall.saveContext(block: () -> R): R {
+        val oldContext = contextExpression
         contextExpression = this
-        return block().apply { contextExpression = null }
+        return block().apply { contextExpression = oldContext }
     }
 
     override fun visitElement(element: IrElement, data: Nothing?) = false
@@ -53,10 +54,13 @@ class IrCompileTimeChecker(
 
     private fun visitConstructor(expression: IrFunctionAccessExpression): Boolean {
         return when {
-            !visitValueParameters(expression, null) || !mode.canEvaluateFunction(expression.symbol.owner, contextExpression) -> false
-            mode.canEvaluateBody(expression.symbol.owner) -> expression.symbol.owner.body?.accept(this, null) != false
-            else -> true
+            !visitValueArguments(expression, null) || !mode.canEvaluateFunction(expression.symbol.owner, contextExpression) -> false
+            else -> expression.symbol.owner.visitBodyIfNeeded()
         }
+    }
+
+    private fun IrFunction.visitBodyIfNeeded(): Boolean {
+        return this.asVisited { !mode.mustCheckBodyOf(this) || (this.body?.accept(this@IrCompileTimeChecker, null) ?: true) }
     }
 
     override fun visitCall(expression: IrCall, data: Nothing?): Boolean {
@@ -66,8 +70,8 @@ class IrCompileTimeChecker(
         return expression.saveContext {
             val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
             val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
-            if (!visitValueParameters(expression, null)) return@saveContext false
-            val bodyComputable = owner.asVisited { if (mode.canEvaluateBody(owner)) owner.body?.accept(this, null) ?: true else true }
+            if (!visitValueArguments(expression, null)) return@saveContext false
+            val bodyComputable = owner.visitBodyIfNeeded()
             return@saveContext dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
         }
     }
@@ -76,7 +80,7 @@ class IrCompileTimeChecker(
         return declaration.initializer?.accept(this, data) ?: true
     }
 
-    private fun visitValueParameters(expression: IrFunctionAccessExpression, data: Nothing?): Boolean {
+    private fun visitValueArguments(expression: IrFunctionAccessExpression, data: Nothing?): Boolean {
         return (0 until expression.valueArgumentsCount)
             .map { expression.getValueArgument(it) }
             .none { it?.accept(this, data) == false }
@@ -126,7 +130,19 @@ class IrCompileTimeChecker(
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): Boolean {
-        return expression.arguments.all { it.accept(this, data) }
+        return expression.arguments.all { arg ->
+            when (arg) {
+                is IrGetObjectValue -> {
+                    val toString = arg.symbol.owner.declarations
+                        .filterIsInstance<IrSimpleFunction>()
+                        .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
+
+                    mode.canEvaluateFunction(toString, null) && toString.visitBodyIfNeeded()
+                }
+
+                else -> arg.accept(this, data)
+            }
+        }
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): Boolean {
@@ -136,7 +152,11 @@ class IrCompileTimeChecker(
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): Boolean {
         if (!mode.canEvaluateEnumValue(expression, contextExpression)) return false
-        return expression.symbol.owner.initializerExpression?.accept(this, data) == true
+        // we want to avoid recursion in cases like "enum class E(val srt: String) { OK(OK.name) }"
+        if (visitedStack.contains(expression)) return true
+        return expression.asVisited {
+            expression.symbol.owner.initializerExpression?.accept(this, data) == true
+        }
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {
@@ -218,7 +238,7 @@ class IrCompileTimeChecker(
 
         if (!mode.canEvaluateFunction(owner, contextExpression)) return false
 
-        val bodyComputable = owner.asVisited { if (mode.canEvaluateBody(owner)) owner.body?.accept(this, null) ?: true else true }
+        val bodyComputable = owner.visitBodyIfNeeded()
         return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
     }
 

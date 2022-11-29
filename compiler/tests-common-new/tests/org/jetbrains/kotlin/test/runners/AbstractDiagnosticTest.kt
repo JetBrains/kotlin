@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.classic.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -82,7 +83,10 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
             )
         }
 
-        useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
+        useAfterAnalysisCheckers(
+            ::FirTestDataConsistencyHandler,
+            ::ClassicFrontendFailingTestSuppressor
+        )
 
         forTestsMatching("compiler/testData/diagnostics/testsWithStdLib/*") {
             defaultDirectives {

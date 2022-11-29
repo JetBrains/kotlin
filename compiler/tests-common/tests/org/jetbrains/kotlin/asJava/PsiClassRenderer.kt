@@ -191,9 +191,16 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiEnumConstant.renderEnumConstant(): String {
-        val initializingClass = initializingClass ?: return name
+        val annotations = this@renderEnumConstant.annotations
+            .map { it.renderAnnotation() }
+            .filter { it.isNotBlank() }
+            .joinToString(separator = " ", postfix = " ")
+            .takeIf { it.isNotBlank() }
+            ?: ""
+        val initializingClass = initializingClass ?: return "$annotations$name"
 
         return buildString {
+            append(annotations)
             appendLine("$name {")
             append(initializingClass.renderMembers())
             append("}")

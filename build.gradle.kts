@@ -3,23 +3,6 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 
 buildscript {
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
-    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
-
-    repositories {
-        bootstrapKotlinRepo?.let(::maven)
-
-        if (cacheRedirectorEnabled) {
-            maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
-            maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2")
-
-        } else {
-            maven("https://plugins.gradle.org/m2")
-            mavenCentral()
-        }
-    }
-
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
     // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
     // see also configureCompilerClasspath@
@@ -29,8 +12,6 @@ buildscript {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-        classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
-        classpath(kotlin("serialization", bootstrapKotlinVersion))
     }
 
     val versionPropertiesFile = project.rootProject.projectDir.resolve("gradle/versions.properties")
@@ -54,14 +35,18 @@ plugins {
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
     id("org.gradle.crypto.checksum") version "1.2.0"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.0" apply false
     signing
+    id("org.jetbrains.kotlin.jvm") apply false
+    id("org.jetbrains.kotlin.plugin.serialization") apply false
 }
 
 pill {
     excludedDirs(
         "out",
         "buildSrc/build",
-        "buildSrc/prepare-deps/intellij-sdk/build"
+        "buildSrc/prepare-deps/intellij-sdk/build",
+        "intellij"
     )
 }
 
@@ -127,7 +112,7 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.8.0-dev-1808"
+    extra["versions.kotlin-native"] = "1.8.20-dev-2933"
 }
 
 val irCompilerModules = arrayOf(
@@ -146,6 +131,7 @@ val commonCompilerModules = arrayOf(
     ":analysis:light-classes-base",
     ":compiler:frontend.common",
     ":compiler:util",
+    ":compiler:config",
     ":compiler:config.jvm",
     ":compiler:cli-common",
     ":compiler:resolution.common",
@@ -201,7 +187,6 @@ val fe10CompilerModules = arrayOf(
     ":compiler:resolution",
     ":compiler:serialization",
     ":compiler:frontend",
-    ":compiler:config",
     ":compiler:container",
     ":compiler:cli-common",
     ":core:deserialization",
@@ -302,6 +287,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:assignment-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-backend-native-for-ide".takeIf { kotlinBuildProperties.isKotlinNativeEnabled },
@@ -369,23 +355,65 @@ val coreLibProjects by extra {
 val projectsWithEnabledContextReceivers by extra {
     listOf(
         ":core:descriptors.jvm",
+        ":compiler:frontend.common",
+        ":compiler:fir:resolve",
         ":compiler:fir:fir2ir",
         ":kotlin-lombok-compiler-plugin.k1",
+        ":kotlinx-serialization-compiler-plugin.k2",
+        ":plugins:fir-plugin-prototype"
+    )
+}
+
+val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
+    listOf(
+        ":analysis:analysis-api-fe10",
+        ":analysis:analysis-api-fir",
+        ":analysis:decompiled:light-classes-for-decompiled",
+        ":analysis:symbol-light-classes",
+        ":compiler",
+        ":compiler:backend",
+        ":compiler:backend.js",
+        ":compiler:backend.jvm",
+        ":compiler:backend.jvm.codegen",
+        ":compiler:backend.jvm.entrypoint",
+        ":compiler:backend.jvm.lower",
+        ":compiler:ir.backend.common",
+        ":compiler:ir.psi2ir",
+        ":compiler:ir.serialization.jvm",
+        ":compiler:ir.tree",
+        ":compiler:light-classes",
+        ":core:reflection.jvm",
+        ":jps:jps-common",
+        ":jps:jps-common",
+        ":js:js.tests",
+        ":kotlin-build-common",
+        ":kotlin-gradle-plugin",
+        ":kotlin-reflect-api",
+        ":kotlin-scripting-jvm-host-test",
+        ":native:kotlin-klib-commonizer",
+        ":plugins:android-extensions-compiler",
+        ":plugins:jvm-abi-gen",
+        ":plugins:parcelize:parcelize-compiler:parcelize.k1",
+        ":plugins:parcelize:parcelize-compiler:parcelize.backend",
+        ":kotlinx-serialization-compiler-plugin.backend",
     )
 }
 
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
     ":kotlin-gradle-plugin-api",
+    ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin-kpm-android",
+    ":kotlin-gradle-plugin-tcs-android",
     ":kotlin-allopen",
     ":kotlin-annotation-processing-gradle",
     ":kotlin-noarg",
     ":kotlin-sam-with-receiver",
     ":kotlin-parcelize-compiler",
-    ":kotlin-lombok"
+    ":kotlin-lombok",
+    ":kotlin-assignment"
 )
 
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
@@ -463,18 +491,6 @@ allprojects {
 
         mirrorRepo?.let(::maven)
 
-        internalBootstrapRepo?.let(::maven)?.apply {
-            content {
-                includeGroup("org.jetbrains.kotlin")
-            }
-        }
-
-        bootstrapKotlinRepo?.let(::maven)?.apply {
-            content {
-                includeGroup("org.jetbrains.kotlin")
-            }
-        }
-
         maven(intellijRepo)
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 
@@ -490,10 +506,13 @@ allprojects {
 
 apply {
     from("libraries/commonConfiguration.gradle")
-    if (extra.has("isDeployStagingRepoGenerationRequired") && project.extra["isDeployStagingRepoGenerationRequired"] as Boolean) {
-        logger.info("Applying configuration for sonatype release")
-        from("libraries/prepareSonatypeStaging.gradle")
-    }
+}
+
+if (extra.has("isDeployStagingRepoGenerationRequired") &&
+    project.extra["isDeployStagingRepoGenerationRequired"] as Boolean == true
+) {
+    logger.info("Applying configuration for sonatype release")
+    project.apply { from("libraries/prepareSonatypeStaging.gradle") }
 }
 
 gradle.taskGraph.whenReady {
@@ -561,7 +580,7 @@ tasks {
             ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlinx-metadata-jvm",
             ":tools:binary-compatibility-validator",
-            ":kotlin-stdlib-wasm",
+            //":kotlin-stdlib-wasm",
         )).forEach {
             dependsOn("$it:check")
         }
@@ -669,7 +688,6 @@ tasks {
 
     register("scriptingTest") {
         dependsOn("scriptingJvmTest")
-        dependsOn(":kotlin-scripting-js-test:test")
     }
 
     register("compilerTest") {
@@ -750,6 +768,10 @@ tasks {
         dependsOn(":kotlin-annotation-processing:testJdk11")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
+    }
+
+    register("codebaseTests") {
+        dependsOn(":repo:codebase-tests:test")
     }
 
     register("test") {
@@ -869,7 +891,8 @@ configure<IdeaModel> {
             ".gradle",
             "dependencies",
             "dist",
-            "tmp"
+            "tmp",
+            "intellij"
         ).toSet()
     }
 }

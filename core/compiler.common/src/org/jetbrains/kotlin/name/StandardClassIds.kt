@@ -157,10 +157,13 @@ object StandardClassIds {
         val JvmField = "JvmField".jvmId()
         val JvmDefault = "JvmDefault".jvmId()
         val JvmRepeatable = "JvmRepeatable".jvmId()
+        val JvmRecord = "JvmRecord".jvmId()
 
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
+
+        val OnlyInputTypes = "OnlyInputTypes".internalId()
 
         val RestrictsSuspension = "RestrictsSuspension".coroutinesId()
 
@@ -201,6 +204,26 @@ object StandardClassIds {
         val clone = "clone".callableId(Cloneable)
 
         val not = "not".callableId(Boolean)
+    }
+
+    object Java {
+        val Record = "Record".javaLangId()
+    }
+
+    object Collections {
+        val baseCollectionToMutableEquivalent: Map<ClassId, ClassId> = mapOf(
+            StandardClassIds.Iterable to StandardClassIds.MutableIterable,
+            StandardClassIds.Iterator to StandardClassIds.MutableIterator,
+            StandardClassIds.ListIterator to StandardClassIds.MutableListIterator,
+            StandardClassIds.List to StandardClassIds.MutableList,
+            StandardClassIds.Collection to StandardClassIds.MutableCollection,
+            StandardClassIds.Set to StandardClassIds.MutableSet,
+            StandardClassIds.Map to StandardClassIds.MutableMap,
+            StandardClassIds.MapEntry to StandardClassIds.MutableMapEntry
+        )
+
+         val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
+             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
 }
 

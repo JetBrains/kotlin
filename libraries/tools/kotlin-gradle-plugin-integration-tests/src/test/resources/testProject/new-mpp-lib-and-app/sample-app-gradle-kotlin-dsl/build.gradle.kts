@@ -19,7 +19,9 @@ kotlin {
         attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
 		compilations["main"].kotlinOptions.jvmTarget = "1.8"
 	}
-	val nodeJs = js("nodeJs")
+	val nodeJs = js("nodeJs") {
+        nodejs()
+    }
 	val linux64 = linuxX64("linux64")
 
     wasm {

@@ -124,24 +124,35 @@ public:
 
     const std_support::unordered_set<ObjHeader*>& marked() const { return marked_; }
 
-    static bool isEmpty(const MarkQueue& queue) noexcept {
-        return queue.empty();
-    }
-
     static void clear(MarkQueue& queue) noexcept {
         queue.clear();
     }
 
-    static ObjHeader* dequeue(MarkQueue& queue) noexcept {
+    static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
+        if (queue.empty()) return nullptr;
         auto top = queue.back();
         queue.pop_back();
         return top;
     }
 
-    static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+    static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
         auto result = instance_->marked_.insert(object);
         if (result.second) {
             queue.push_back(object);
+        }
+        return result.second;
+    }
+
+    static bool tryMark(ObjHeader* object) noexcept {
+        auto result = instance_->marked_.insert(object);
+        return result.second;
+    }
+
+    static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+        if (object->type_info() == theArrayTypeInfo) {
+            gc::internal::processArrayInMark<ScopedMarkTraits>(static_cast<void*>(&markQueue), object->array());
+        } else {
+            gc::internal::processObjectInMark<ScopedMarkTraits>(static_cast<void*>(&markQueue), object);
         }
     }
 
@@ -166,13 +177,19 @@ public:
         return testing::UnorderedElementsAreArray(objects);
     }
 
-    gc::MarkStats Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
+    gc::MemoryUsage Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
         std_support::vector<ObjHeader*> objects;
-        for (auto& object : graySet) ScopedMarkTraits::enqueue(objects, object.get().GetObjHeader());
-        return gc::Mark<ScopedMarkTraits>(objects);
+        for (auto& object : graySet) ScopedMarkTraits::tryEnqueue(objects, object.get().GetObjHeader());
+        auto handle = gc::GCHandle::create(epoch_++);
+        gc::Mark<ScopedMarkTraits>(handle, objects);
+        handle.finished();
+        return handle.getMarked();
     }
 
+    ~MarkAndSweepUtilsMarkTest() { mm::GlobalData::Instance().gc().ClearForTests(); }
+
 private:
+    uint64_t epoch_ = 0;
     kotlin::ScopedMemoryInit memoryInit;
     ScopedMarkTraits markTraits_;
 };
@@ -188,8 +205,8 @@ size_t GetObjectsSize(std::initializer_list<std::reference_wrapper<BaseObject>> 
 #define EXPECT_MARKED(stats, ...) \
     do { \
         std::initializer_list<std::reference_wrapper<BaseObject>> objects = {__VA_ARGS__}; \
-        EXPECT_THAT(stats.aliveHeapSet, objects.size()); \
-        EXPECT_THAT(stats.aliveHeapSetBytes, GetObjectsSize(objects)); \
+        EXPECT_THAT(stats.objectsCount, objects.size()); \
+        EXPECT_THAT(stats.totalObjectsSize, GetObjectsSize(objects)); \
         EXPECT_THAT(marked(), MarkedMatcher(objects)); \
     } while (false)
 
@@ -227,7 +244,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArray) {
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFields) {
     Object object;
-    object->field1 = kInitializingSingleton;
+    object->field1 = nullptr;
 
     auto stats = Mark({object});
 
@@ -236,7 +253,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFields) {
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithInvalidFields) {
     ObjectArray array;
-    array.elements()[0] = kInitializingSingleton;
+    array.elements()[0] = nullptr;
 
     auto stats = Mark({array});
 
@@ -317,7 +334,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithWeakCounter) {
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFieldsWithWeakCounter) {
     Object weakCounter;
     Object object;
-    object->field1 = kInitializingSingleton;
+    object->field1 = nullptr;
     weakCounter->field1 = object.header();
     object.InstallWeakCounter(weakCounter);
 
@@ -329,7 +346,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFieldsWithWeakCount
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithInvalidFieldsWithWeakCounter) {
     Object weakCounter;
     ObjectArray array;
-    array.elements()[0] = kInitializingSingleton;
+    array.elements()[0] = nullptr;
     weakCounter->field1 = array.header();
     array.InstallWeakCounter(weakCounter);
 

@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.incremental.AbiSnapshotImpl.Companion.readAbiSnapshot
 import org.jetbrains.kotlin.incremental.AbiSnapshotImpl.Companion.writeAbiSnapshot
+import org.jetbrains.kotlin.incremental.util.ExceptionLocation
+import org.jetbrains.kotlin.incremental.util.reportException
 import java.io.*
 
 data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String, AbiSnapshot> = mapOf()) : Serializable {
@@ -43,10 +46,16 @@ data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String,
             }
         }
 
-        fun read(file: File): BuildInfo =
-            ObjectInputStream(FileInputStream(file)).use {
-                it.readBuildInfo()
+        fun read(file: File, messageCollector: MessageCollector): BuildInfo? {
+            return try {
+                ObjectInputStream(FileInputStream(file)).use {
+                    it.readBuildInfo()
+                }
+            } catch (e: Exception) {
+                messageCollector.reportException(e, ExceptionLocation.INCREMENTAL_COMPILATION)
+                null
             }
+        }
 
         fun write(buildInfo: BuildInfo, file: File) {
             ObjectOutputStream(FileOutputStream(file)).use {

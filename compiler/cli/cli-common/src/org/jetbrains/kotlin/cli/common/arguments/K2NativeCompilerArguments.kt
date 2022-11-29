@@ -153,9 +153,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xemit-lazy-objc-header", description = "")
     var emitLazyObjCHeader: String? = null
 
-    @Argument(value = "-Xenable", deprecatedName = "--enable", valueDescription = "<Phase>", description = "Enable backend phase")
-    var enablePhases: Array<String>? = null
-
     @Argument(
         value = "-Xexport-library",
         valueDescription = "<path>",
@@ -219,7 +216,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         description = "Path to file to cache",
         delimiter = ""
     )
-    var fileToCache: String? = null
+    var filesToCache: Array<String>? = null
 
     @Argument(value = "-Xmake-per-file-cache", description = "Force compiler to produce per-file cache")
     var makePerFileCache: Boolean = false
@@ -233,17 +230,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xcheck-state-at-external-calls", description = "Check all calls of possibly long external functions are done in Native state")
     var checkExternalCalls: Boolean = false
 
-    @Argument(value = "-Xprint-descriptors", deprecatedName = "--print_descriptors", description = "Print descriptor tree")
-    var printDescriptors: Boolean = false
-
     @Argument(value = "-Xprint-ir", deprecatedName = "--print_ir", description = "Print IR")
     var printIr: Boolean = false
-
-    @Argument(value = "-Xprint-ir-with-descriptors", deprecatedName = "--print_ir_with_descriptors", description = "Print IR with descriptors")
-    var printIrWithDescriptors: Boolean = false
-
-    @Argument(value = "-Xprint-locations", deprecatedName = "--print_locations", description = "Print locations")
-    var printLocations: Boolean = false
 
     @Argument(value = "-Xprint-files", description = "Print files")
     var printFiles: Boolean = false
@@ -292,6 +280,16 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         description = "Paths to friend modules"
     )
     var friendModules: String? = null
+
+    /**
+     * @see K2MetadataCompilerArguments.refinesPaths
+     */
+    @Argument(
+        value = "-Xrefines-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for refined modules (whose expects this module can actualize)"
+    )
+    var refinesPaths: Array<String>? = null
 
     @Argument(value = "-Xdebug-info-version", description = "generate debug info of given version (1, 2)")
     var debugInfoFormatVersion: String = "1" /* command line parser doesn't accept kotlin.Int type */
@@ -392,6 +390,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling framework")
     var omitFrameworkBinary: Boolean = false
+
+    @Argument(value = "-Xforce-compiler-driver", description = "Force compiler to use specific compiler driver: static or dynamic")
+    var forceCompilerDriver: String? = null
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {

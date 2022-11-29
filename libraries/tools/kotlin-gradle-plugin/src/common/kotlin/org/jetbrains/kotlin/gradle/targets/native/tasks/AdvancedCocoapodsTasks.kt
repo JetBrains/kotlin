@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingCocoapodsMess
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingSpecReposMessage
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrievePods
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrieveSpecRepos
+import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -89,14 +90,15 @@ open class PodInstallTask : CocoapodsTask() {
             val podInstallCommand = listOf("pod", "install")
 
             runCommand(podInstallCommand,
-                       project.logger,
+                       logger,
                        errorHandler = { returnCode, output, _ ->
                            CocoapodsErrorHandlingUtil.handlePodInstallError(
                                podInstallCommand.joinToString(" "),
                                returnCode,
                                output,
                                project,
-                               frameworkName.get())
+                               frameworkName.get()
+                           )
                        },
                        exceptionHandler = { e: IOException ->
                            CocoapodsErrorHandlingUtil.handle(e, podInstallCommand)
@@ -112,69 +114,6 @@ open class PodInstallTask : CocoapodsTask() {
             }
         }
     }
-}
-
-private fun runCommand(
-    command: List<String>,
-    logger: Logger,
-    errorHandler: ((retCode: Int, output: String, process: Process) -> String?)? = null,
-    exceptionHandler: ((ex: IOException) -> Unit)? = null,
-    processConfiguration: ProcessBuilder.() -> Unit = { }
-): String {
-    var process: Process? = null
-    try {
-        process = ProcessBuilder(command)
-            .apply {
-                this.processConfiguration()
-            }.start()
-    } catch (e: IOException) {
-        if (exceptionHandler != null) exceptionHandler(e) else throw e
-    }
-
-    if (process == null) {
-        throw IllegalStateException("Failed to run command ${command.joinToString(" ")}")
-    }
-
-    var inputText = ""
-    var errorText = ""
-
-    val inputThread = thread {
-        inputText = process.inputStream.use {
-            it.reader().readText()
-        }
-    }
-
-    val errorThread = thread {
-        errorText = process.errorStream.use {
-            it.reader().readText()
-        }
-    }
-
-    inputThread.join()
-    errorThread.join()
-
-    val retCode = process.waitFor()
-    logger.info(
-        """
-            |Information about "${command.joinToString(" ")}" call:
-            |
-            |${inputText}
-        """.trimMargin()
-    )
-
-    check(retCode == 0) {
-        errorHandler?.invoke(retCode, inputText.ifBlank { errorText }, process)
-            ?: """
-                |Executing of '${command.joinToString(" ")}' failed with code $retCode and message: 
-                |
-                |$inputText
-                |
-                |$errorText
-                |
-                """.trimMargin()
-    }
-
-    return inputText
 }
 
 /**
@@ -298,6 +237,20 @@ open class PodGenTask : CocoapodsTask() {
                 }
             }.forEach { appendLine("\t$it") }
             appendLine("end\n")
+            //disable signing for all synthetic pods KT-54314
+            append(
+                """
+                post_install do |installer|
+                  installer.pods_project.targets.each do |target|
+                    target.build_configurations.each do |config|
+                      config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ""
+                      config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"
+                      config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"
+                    end
+                  end
+                end
+                """.trimIndent()
+            )
         }
 }
 

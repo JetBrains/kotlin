@@ -5,21 +5,97 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.gradle.api.InvalidUserDataException
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.ir.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 internal open class KotlinJsIrLinkConfig(
-    compilation: KotlinJsIrCompilation
-) : BaseKotlin2JsCompileConfig<KotlinJsIrLink>(compilation) {
+    private val binary: JsIrBinary
+) : BaseKotlin2JsCompileConfig<KotlinJsIrLink>(KotlinCompilationInfo(binary.compilation)) {
+
+    private val compilation
+        get() = binary.compilation
 
     init {
         configureTask { task ->
             // Link tasks are not affected by compiler plugin, so set to empty
             task.pluginClasspath.setFrom(objectFactory.fileCollection())
 
-            task.entryModule.fileProvider(compilation.output.classesDirs.elements.map { it.single().asFile }).disallowChanges()
+            task.dependsOn(compilation.compileTaskProvider)
+            task.dependsOn(compilation.output.classesDirs)
+            task.entryModule.fileProvider(
+                compilation.output.classesDirs.elements.flatMap {
+                    task.project.providers.provider {
+                        it.single().asFile
+                    }
+                }
+            ).disallowChanges()
             task.compilation = compilation
-            task.destinationDirectory.fileProvider(task.outputFileProperty.map { it.parentFile })
+            task.destinationDirectory.convention(
+                project.layout.buildDirectory
+                    .dir(COMPILE_SYNC)
+                    .map { it.dir(if (compilation.platformType == KotlinPlatformType.wasm) "wasm" else "js") }
+                    .map { it.dir(compilation.name) }
+                    .map { it.dir(binary.name) }
+                    .map { it.dir(NpmProject.DIST_FOLDER) }
+            )
+            task.compilerOptions.moduleName.convention(project.provider { compilation.npmProject.name })
+        }
+    }
+
+    override fun configureAdditionalFreeCompilerArguments(
+        task: KotlinJsIrLink,
+        compilation: KotlinCompilationInfo
+    ) {
+        task.enhancedFreeCompilerArgs.value(
+            task.compilerOptions.freeCompilerArgs.zip(task.modeProperty) { freeArgs, mode ->
+                freeArgs.toMutableList().apply {
+                    commonJsAdditionalCompilerFlags(compilation)
+
+                    when (mode) {
+                        KotlinJsBinaryMode.PRODUCTION -> {
+                            configureOptions(
+                                compilation,
+                                ENABLE_DCE,
+                                MINIMIZED_MEMBER_NAMES
+                            )
+                        }
+
+                        KotlinJsBinaryMode.DEVELOPMENT -> {
+                            configureOptions(
+                                compilation
+                            )
+                        }
+                        else -> throw InvalidUserDataException(
+                            "Unknown KotlinJsBinaryMode to configure the build: $mode"
+                        )
+                    }
+
+                    val alreadyDefinedOutputMode = any { it.startsWith(PER_MODULE) }
+                    if (!alreadyDefinedOutputMode) {
+                        add(task.outputGranularity.toCompilerArgument())
+                    }
+                }
+            }
+        ).disallowChanges()
+    }
+
+    private fun MutableList<String>.configureOptions(
+        compilation: KotlinCompilationInfo,
+        vararg additionalCompilerArgs: String
+    ) {
+        additionalCompilerArgs.forEach { arg ->
+            if (none { it.startsWith(arg) }) add(arg)
+        }
+
+        add(PRODUCE_JS)
+
+        if (compilation.platformType == KotlinPlatformType.wasm) {
+            add(WASM_BACKEND)
         }
     }
 }

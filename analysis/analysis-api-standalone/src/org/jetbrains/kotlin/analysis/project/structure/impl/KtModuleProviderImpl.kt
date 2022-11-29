@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory.findJvmRootsForJavaFiles
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 internal class KtModuleProviderImpl(
+    private val platform: TargetPlatform,
+    private val project: Project,
     internal val mainModules: List<KtModule>,
 ) : ProjectStructureProvider() {
     private val ktNotUnderContentRootModuleWithoutPsiFile by lazy {
@@ -23,6 +29,10 @@ internal class KtModuleProviderImpl(
     }
 
     private val notUnderContentRootModuleCache = ContainerUtil.createConcurrentWeakMap<PsiFile, KtNotUnderContentRootModule>()
+
+    private val builtinsModule: KtBuiltinsModule by lazy {
+        LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform).ktModule as KtBuiltinsModule
+    }
 
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         val containingFileAsPsiFile = element.containingFile
@@ -37,6 +47,10 @@ internal class KtModuleProviderImpl(
                     psiFile = containingFileAsPsiFile
                 )
             }
+
+        if (containingFileAsVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+            return builtinsModule
+        }
 
         return mainModules.first { module ->
             containingFileAsVirtualFile in module.contentScope

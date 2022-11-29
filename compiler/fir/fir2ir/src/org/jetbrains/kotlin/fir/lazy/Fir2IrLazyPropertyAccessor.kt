@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -61,15 +61,14 @@ class Fir2IrLazyPropertyAccessor(
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
-        if (containingClass != null && shouldHaveDispatchReceiver(containingClass, firParentProperty)
-        ) {
+        if (containingClass != null && shouldHaveDispatchReceiver(containingClass)) {
             createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
         } else null
     }
 
     override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        firParentProperty.receiverTypeRef?.let {
-            createThisReceiverParameter(it.toIrType(typeConverter, conversionTypeContext))
+        firParentProperty.receiverParameter?.let {
+            createThisReceiverParameter(it.typeRef.toIrType(typeConverter, conversionTypeContext), it)
         }
     }
 

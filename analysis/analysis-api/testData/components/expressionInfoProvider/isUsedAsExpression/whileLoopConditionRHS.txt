@@ -1,0 +1,3 @@
+expression: INTEGER_CONSTANT
+text: 100
+isUsedAsExpression: true

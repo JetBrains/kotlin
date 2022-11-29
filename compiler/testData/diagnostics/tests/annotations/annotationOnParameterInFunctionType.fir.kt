@@ -31,7 +31,7 @@ fun (@TypeAnn A).extFun(@Ann a: @TypeAnn A): @TypeAnn A? = null
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnnWithArg(val arg: String)
 
-fun badArgs(a: (@TypeAnnWithArg(<!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = ""<!NO_VALUE_FOR_PARAMETER!>)<!> Int) -> Unit) {}
+fun badArgs(a: (@TypeAnnWithArg(<!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = "")<!> Int) -> Unit) {}
 
 typealias BadArgsInTypeAlias = (<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int) -> Unit
 fun badArgsInTypeAlias(a: BadArgsInTypeAlias) {}

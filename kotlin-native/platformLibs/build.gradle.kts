@@ -43,7 +43,7 @@ fun defFileToLibName(target: String, name: String) = "$target-$name"
 // endregion
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
-    project.configureJvmToolchain(JdkMajorVersion.JDK_17)
+    project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
 val konanTargetList: List<KonanTarget> by project
@@ -83,11 +83,7 @@ konanTargetList.forEach { target ->
             dependsOn(df.config.depends.map { defFileToLibName(targetName, it) })
             dependsOn(":kotlin-native:${targetName}CrossDist")
 
-            enableParallel = if (project.hasProperty("kotlin.native.platformLibs.parallel")) {
-                project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: false
-            } else {
-                (HostManager.host != KonanTarget.MACOS_ARM64)
-            }
+            enableParallel = project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true
         }
 
         val klibInstallTask = tasks.register(libName, KonanKlibInstallTask::class.java) {

@@ -11,8 +11,8 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigur
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -32,7 +29,7 @@ import org.jetbrains.kotlin.project.model.KpmFragment
 import java.util.concurrent.Callable
 
 internal fun setupFragmentsMetadataForKpmModules(project: Project) {
-    project.kpmModules.all { module ->
+    project.pm20Extension.modules.all { module ->
         configureMetadataResolutionAndBuild(module)
         configureMetadataExposure(module)
     }
@@ -73,9 +70,11 @@ private fun configureMetadataExposure(module: GradleKpmModule) {
     val sourcesArtifactAppendix = dashSeparatedName(module.moduleClassifier, "all", "sources")
     val sourcesArtifact = sourcesJarTaskNamed(
         module.disambiguateName("allSourcesJar"),
+        module.name,
         project,
         lazy { GradleKpmFragmentSourcesProvider().getAllFragmentSourcesAsMap(module).entries.associate { it.key.fragmentName to it.value.get() } },
-        sourcesArtifactAppendix
+        sourcesArtifactAppendix,
+        "module",
     )
     DocumentationVariantConfigurator().createSourcesElementsConfiguration(
         project, sourceElementsConfigurationName(module),
@@ -181,7 +180,7 @@ private fun createCommonMetadataCompilation(
     val project = module.project
 
     val metadataCompilationData =
-        KotlinCommonFragmentMetadataCompilationDataImpl(
+        GradleKpmCommonFragmentMetadataCompilationDataImpl(
             project,
             fragment,
             module,
@@ -202,7 +201,7 @@ private fun createNativeMetadataCompilation(
     val project = module.project
 
     val metadataCompilationData =
-        KotlinNativeFragmentMetadataCompilationDataImpl(
+        GradleKpmNativeFragmentMetadataCompilationDataImpl(
             project,
             fragment,
             module,
@@ -217,12 +216,9 @@ private fun createNativeMetadataCompilation(
 private class GradleKpmMetadataCompilationTasksConfigurator(project: Project) : GradleKpmCompilationTaskConfigurator(project) {
     fun createKotlinCommonCompilationTask(
         fragment: GradleKpmFragment,
-        compilationData: KotlinCommonFragmentMetadataCompilationData
+        compilationData: GradleKpmCommonFragmentMetadataCompilationData
     ) {
-        KotlinCommonSourceSetProcessor(
-            compilationData,
-            KotlinTasksProvider()
-        ).run()
+        KotlinCommonSourceSetProcessor(KotlinCompilationInfo.KPM(compilationData), KotlinTasksProvider()).run()
         val allSources = getSourcesForFragmentCompilation(fragment)
         val commonSources = getCommonSourcesForFragmentCompilation(fragment)
 
@@ -236,7 +232,7 @@ private class GradleKpmMetadataCompilationTasksConfigurator(project: Project) : 
 
     fun createKotlinNativeMetadataCompilationTask(
         fragment: GradleKpmFragment,
-        compilationData: KotlinNativeFragmentMetadataCompilationData
+        compilationData: GradleKpmNativeFragmentMetadataCompilationData
     ): TaskProvider<KotlinNativeCompile> = createKotlinNativeCompilationTask(fragment, compilationData) {
         kotlinPluginData = project.compilerPluginProviderForNativeMetadata(fragment, compilationData)
     }
@@ -253,7 +249,7 @@ private class GradleKpmMetadataCompilationTasksConfigurator(project: Project) : 
 private fun resolvedMetadataProviders(fragment: GradleKpmFragment) =
     fragment.withRefinesClosure.map {
         FragmentResolvedMetadataProvider(
-            fragment.project.tasks.withType<TransformKotlinGranularMetadataForFragment>().named(transformFragmentMetadataTaskName(it))
+            fragment.project.tasks.withType<GradleKpmMetadataDependencyTransformationTask>().named(transformFragmentMetadataTaskName(it))
         )
     }
 
@@ -264,7 +260,7 @@ private fun createExtractMetadataTask(
 ) {
     project.tasks.register(
         transformFragmentMetadataTaskName(fragment),
-        TransformKotlinGranularMetadataForFragment::class.java,
+        GradleKpmMetadataDependencyTransformationTask::class.java,
         fragment,
         transformation
     ).configure { task ->
@@ -280,7 +276,7 @@ private fun createExtractMetadataTask(
 
 // FIXME: use this function once more than one platform is supported
 private fun disableMetadataCompilationIfNotYetSupported(
-    metadataCompilationData: AbstractKotlinFragmentMetadataCompilationData<*>
+    metadataCompilationData: GradleKpmAbstractFragmentMetadataCompilationData<*>
 ) {
     val fragment = metadataCompilationData.fragment
     val platforms = fragment.containingVariants.map { it.platformType }.toSet()

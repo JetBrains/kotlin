@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -17,11 +16,11 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 
 class KotlinJvmWithJavaTargetPreset(
     private val project: Project
-) : KotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions>> {
+) : KotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>> {
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createTarget(name: String): KotlinWithJavaTarget<KotlinJvmOptions> {
+    override fun createTarget(name: String): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> {
         SingleWarningPerBuild.show(
             project,
             DEPRECATION_WARNING
@@ -29,21 +28,32 @@ class KotlinJvmWithJavaTargetPreset(
 
         project.plugins.apply(JavaPlugin::class.java)
 
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "DEPRECATION")
         val target = (project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,
             KotlinPlatformType.jvm,
             name,
-            { KotlinJvmOptionsImpl() }
-        ) as KotlinWithJavaTarget<KotlinJvmOptions>)
+            {
+                object : HasCompilerOptions<KotlinJvmCompilerOptions> {
+                    override val options: KotlinJvmCompilerOptions =
+                        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+                }
+            },
+            { compilerOptions: KotlinJvmCompilerOptions ->
+                object : KotlinJvmOptions {
+                    override val options: KotlinJvmCompilerOptions
+                        get() = compilerOptions
+                }
+            }
+        ) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>)
             .apply {
                 disambiguationClassifier = name
                 preset = this@KotlinJvmWithJavaTargetPreset
             }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
-            Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilation)
+            Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationInfo(compilation))
         }
 
         target.compilations.getByName("test").run {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class C {
     companion object {
         val X = 1

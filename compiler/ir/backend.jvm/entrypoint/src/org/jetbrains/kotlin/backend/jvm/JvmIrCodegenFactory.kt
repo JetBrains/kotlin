@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
@@ -113,15 +115,16 @@ open class JvmIrCodegenFactory(
                 val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
                 mangler to symbolTable
             }
+        val messageLogger = input.configuration.irMessageLogger
         val psi2ir = Psi2IrTranslator(
             input.languageVersionSettings,
             Psi2IrConfiguration(
                 input.ignoreErrors,
-                allowUnboundSymbols = false,
-                input.skipBodies,
-            )
+                partialLinkageEnabled = false,
+                input.skipBodies
+            ),
+            messageLogger::checkNoUnboundSymbols
         )
-        val messageLogger = input.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
         val psi2irContext = psi2ir.createGeneratorContext(
             input.module,
             input.bindingContext,
@@ -158,31 +161,31 @@ open class JvmIrCodegenFactory(
             enableIdSignatures,
         )
 
-        val pluginContext by lazy {
-            psi2irContext.run {
-                IrPluginContextImpl(
-                    moduleDescriptor,
-                    bindingContext,
-                    languageVersionSettings,
-                    symbolTable,
-                    typeTranslator,
-                    irBuiltIns,
-                    irLinker,
-                    messageLogger
-                )
-            }
-        }
-
         SourceDeclarationsPreprocessor(psi2irContext).run(input.files)
 
-        for (extension in pluginExtensions) {
-            psi2ir.addPostprocessingStep { module ->
-                val old = stubGenerator.unboundSymbolGeneration
-                try {
-                    stubGenerator.unboundSymbolGeneration = true
-                    extension.generate(module, pluginContext)
-                } finally {
-                    stubGenerator.unboundSymbolGeneration = old
+        if (pluginExtensions.isNotEmpty()) {
+            // The plugin context contains unbound symbols right after construction and has to be
+            // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
+            val pluginContext = IrPluginContextImpl(
+                psi2irContext.moduleDescriptor,
+                psi2irContext.bindingContext,
+                psi2irContext.languageVersionSettings,
+                symbolTable,
+                psi2irContext.typeTranslator,
+                psi2irContext.irBuiltIns,
+                irLinker,
+                messageLogger
+            )
+
+            for (extension in pluginExtensions) {
+                psi2ir.addPostprocessingStep { module ->
+                    val old = stubGenerator.unboundSymbolGeneration
+                    try {
+                        stubGenerator.unboundSymbolGeneration = true
+                        extension.generate(module, pluginContext)
+                    } finally {
+                        stubGenerator.unboundSymbolGeneration = old
+                    }
                 }
             }
         }
@@ -284,8 +287,12 @@ open class JvmIrCodegenFactory(
         if (evaluatorFragmentInfoForPsi2Ir != null) {
             context.localDeclarationsLoweringData = mutableMapOf()
         }
+        val generationExtensions = IrGenerationExtension.getInstances(state.project)
+            .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }
         val intrinsics by lazy { IrIntrinsicMethods(irModuleFragment.irBuiltins, context.ir.symbols) }
-        context.getIntrinsic = { symbol: IrFunctionSymbol -> intrinsics.getIntrinsic(symbol) }
+        context.getIntrinsic = { symbol: IrFunctionSymbol ->
+            intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.getIntrinsic(symbol) }
+        }
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
@@ -299,11 +306,14 @@ open class JvmIrCodegenFactory(
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
         val (state, context, module, notifyCodegenStart) = input as JvmIrCodegenInput
 
-        if ((state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true) return
+        fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
+
+        if (hasErrors()) return
 
         notifyCodegenStart()
         jvmCodegenPhases.invokeToplevel(PhaseConfig(jvmCodegenPhases), context, module)
 
+        if (hasErrors()) return
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`
         state.afterIndependentPart()

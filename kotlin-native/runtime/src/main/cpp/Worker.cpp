@@ -32,6 +32,7 @@
 #include "Memory.h"
 #include "Natives.h"
 #include "ObjCMMAPI.h"
+#include "ObjectAlloc.hpp"
 #include "Runtime.h"
 #include "Types.h"
 #include "Worker.h"
@@ -239,6 +240,7 @@ KNativePtr transfer(ObjHolder* holder, KInt mode) {
 }
 
 void waitInNativeState(pthread_cond_t* cond, pthread_mutex_t* mutex) {
+    kotlin::compactObjectPoolInCurrentThread();
     CallWithThreadState<ThreadState::kNative>(pthread_cond_wait, cond, mutex);
 }
 
@@ -246,6 +248,7 @@ void waitInNativeState(pthread_cond_t* cond,
           pthread_mutex_t* mutex,
           uint64_t timeoutNanoseconds,
           uint64_t* microsecondsPassed = nullptr) {
+    kotlin::compactObjectPoolInCurrentThread();
     CallWithThreadState<ThreadState::kNative>(WaitOnCondVar, cond, mutex, timeoutNanoseconds, microsecondsPassed);
 }
 

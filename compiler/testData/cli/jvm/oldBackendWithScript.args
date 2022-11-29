@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/hello.kts
+-d
+$TEMP_DIR$
+-Xuse-old-backend
+-script

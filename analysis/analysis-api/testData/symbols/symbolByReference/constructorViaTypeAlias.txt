@@ -6,16 +6,34 @@ KtConstructorSymbol:
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
-  origin: SUBSTITUTION_OVERRIDE
-  receiverType: null
+  origin: JAVA
+  receiverParameter: null
   returnType: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER
   typeParameters: [
     KtTypeParameterSymbol(E)
   ]
   valueParameters: [
-    KtValueParameterSymbol(c)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: c
+      origin: JAVA
+      receiverParameter: null
+      returnType: ft<kotlin/collections/MutableCollection<out ft<E & Any, E?>>, kotlin/collections/Collection<out ft<E & Any, E?>>?>
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtSdkModule "SDK jdk"
+      deprecationStatus: null
   ]
   visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null

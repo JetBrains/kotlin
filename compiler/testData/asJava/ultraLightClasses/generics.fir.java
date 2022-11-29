@@ -33,7 +33,7 @@ public abstract class C /* C*/<T>  {
   public final java.util.List<java.lang.CharSequence> getConstructorParam();//  getConstructorParam()
 
   @org.jetbrains.annotations.Nullable()
-  public final <T extends java.lang.Comparable<T>> T max(@org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>);// <T extends java.lang.Comparable<T>>  max(java.util.Collection<? extends T>)
+  public final <T extends java.lang.Comparable<? super T>> T max(@org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>);// <T extends java.lang.Comparable<? super T>>  max(java.util.Collection<? extends T>)
 
   @org.jetbrains.annotations.Nullable()
   public final java.util.HashSet<java.lang.String> getSHashSetProp();//  getSHashSetProp()
@@ -52,9 +52,9 @@ public abstract class C /* C*/<T>  {
 
   public  C(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence>);//  .ctor(java.util.List<? extends java.lang.CharSequence>)
 
-  public final <V, U extends V> T foo(V, @org.jetbrains.annotations.NotNull() C<V>, @org.jetbrains.annotations.NotNull() kotlin.sequences.Sequence<? extends V>);// <V, U extends V>  foo(V, C<V>, kotlin.sequences.Sequence<? extends V>)
+  public final <Q extends T> Q getW(@org.jetbrains.annotations.NotNull() Q);// <Q extends T>  getW(Q)
 
-  public final Q getW(Q);//  getW(Q)
+  public final <V, U extends V> T foo(V, @org.jetbrains.annotations.NotNull() C<V>, @org.jetbrains.annotations.NotNull() kotlin.sequences.Sequence<? extends V>);// <V, U extends V>  foo(V, C<V>, kotlin.sequences.Sequence<? extends V>)
 
   public final void setConstructorParam(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence>);//  setConstructorParam(java.util.List<? extends java.lang.CharSequence>)
 
@@ -70,7 +70,7 @@ public abstract class C /* C*/<T>  {
 
 }
 
-public class K /* K*/<T extends K<T>>  {
+public class K /* K*/<T extends K<? extends T>>  {
   public  K();//  .ctor()
 
 }

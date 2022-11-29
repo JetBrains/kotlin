@@ -75,7 +75,7 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <version>${project.version}</version>
         <configuration>
-          <jdkHome>${env.JDK_18}</jdkHome>
+          <jdkHome>${jdk_1_8}</jdkHome>
           <annotationPaths>
             <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
           </annotationPaths>
@@ -130,7 +130,7 @@
         </file>
       </activation>
       <properties>
-        <toolsjar>${env.JDK_18}/lib/tools.jar</toolsjar>
+        <toolsjar>${jdk_1_8}/lib/tools.jar</toolsjar>
       </properties>
       <dependencies>
         <dependency>

@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.native.internal
 
-import kotlin.time.Duration
+import kotlin.native.internal.gc.GCInfo
+import kotlin.time.*
 import kotlin.time.Duration.Companion.microseconds
 
 /**
@@ -13,7 +14,7 @@ import kotlin.time.Duration.Companion.microseconds
  *
  * Kotlin/Native uses tracing garbage collector (GC) that is executed periodically to collect objects
  * that are not reachable from the "roots", like local and global variables.
- * See [documentation](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md) to learn more about
+ * See [documentation](https://kotlinlang.org/docs/native-memory-manager.html) to learn more about
  * Kotlin/Native memory management.
  *
  * This object provides a set of functions and properties that allows to tune garbage collector.
@@ -42,6 +43,12 @@ object GC {
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_collect")
     external fun collect()
+
+    /**
+     * Trigger new collection without waiting for its completion.
+     */
+     @GCUnsafeCall("Kotlin_native_internal_GC_schedule")
+     external fun schedule()
 
     /**
      * Deprecated and unused.
@@ -269,6 +276,18 @@ object GC {
     @GCUnsafeCall("Kotlin_native_internal_GC_detectCycles")
     @Deprecated("No-op in modern GC implementation")
     external fun detectCycles(): Array<Any>?
+
+    /**
+     * Returns statistics of the last finished garbage collection run.
+     * This information is supposed to be used for testing and debugging purposes only
+     *
+     * Can return null, if there was no garbage collection runs yet.
+     *
+     * Legacy MM: Always returns null
+     */
+    @ExperimentalStdlibApi
+    val lastGCInfo: GCInfo?
+        get() = GCInfo.lastGCInfo
 
     /**
      * Deprecated and unused. Always returns null.

@@ -1,7 +1,5 @@
 @Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
-annotation class A {
-  constructor(value: Int)
-
+annotation class A(value: Int) {
   val value: Int
 }
 

@@ -1,10 +1,11 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: questionable bytecode listing difference (open/final methods in final class)
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 
 import helpers.*
 import kotlin.coroutines.*

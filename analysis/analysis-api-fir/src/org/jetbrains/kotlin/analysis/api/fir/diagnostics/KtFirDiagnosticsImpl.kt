@@ -201,6 +201,11 @@ internal class WrongLongSuffixImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.WrongLongSuffix(), KtAbstractFirDiagnostic<KtElement>
 
+internal class UnsignedLiteralWithoutDeclarationsOnClasspathImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.UnsignedLiteralWithoutDeclarationsOnClasspath(), KtAbstractFirDiagnostic<KtElement>
+
 internal class DivisionByZeroImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
@@ -827,6 +832,11 @@ internal class WrongExtensionFunctionTypeWarningImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.WrongExtensionFunctionTypeWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
+internal class AnnotationInWhereClauseErrorImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.AnnotationInWhereClauseError(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
@@ -1213,6 +1223,12 @@ internal class TypeMismatchImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.TypeMismatch(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class TypeInferenceOnlyInputTypesErrorImpl(
+    override val typeParameter: KtTypeParameterSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.TypeInferenceOnlyInputTypesError(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class ThrowableTypeMismatchImpl(
     override val actualType: KtType,
@@ -1631,6 +1647,16 @@ internal class ReturnTypeMismatchImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ReturnTypeMismatch(), KtAbstractFirDiagnostic<KtExpression>
+
+internal class ImplicitNothingReturnTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ImplicitNothingReturnType(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class ImplicitNothingPropertyTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ImplicitNothingPropertyType(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class CyclicGenericUpperBoundImpl(
     override val firDiagnostic: KtPsiDiagnostic,
@@ -2391,6 +2417,11 @@ internal class LocalVariableWithTypeParametersImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.LocalVariableWithTypeParameters(), KtAbstractFirDiagnostic<KtProperty>
+
+internal class ExplicitTypeArgumentsInPropertyAccessImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExplicitTypeArgumentsInPropertyAccess(), KtAbstractFirDiagnostic<KtExpression>
 
 internal class ExpectedDeclarationWithBodyImpl(
     override val firDiagnostic: KtPsiDiagnostic,
@@ -3256,6 +3287,12 @@ internal class RedundantInlineSuspendFunctionTypeImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.RedundantInlineSuspendFunctionType(), KtAbstractFirDiagnostic<KtElement>
 
+internal class InefficientEqualsOverridingInInlineClassImpl(
+    override val type: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InefficientEqualsOverridingInInlineClass(), KtAbstractFirDiagnostic<KtNamedFunction>
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     override val firDiagnostic: KtPsiDiagnostic,
@@ -3508,6 +3545,13 @@ internal class PositionedValueArgumentForJavaAnnotationImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.PositionedValueArgumentForJavaAnnotation(), KtAbstractFirDiagnostic<KtExpression>
+
+internal class RedundantRepeatableAnnotationImpl(
+    override val kotlinRepeatable: FqName,
+    override val javaRepeatable: FqName,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.RedundantRepeatableAnnotation(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
 internal class LocalJvmRecordImpl(
     override val firDiagnostic: KtPsiDiagnostic,

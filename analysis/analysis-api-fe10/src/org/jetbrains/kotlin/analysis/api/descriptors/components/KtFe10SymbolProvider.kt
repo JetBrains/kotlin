@@ -87,8 +87,10 @@ internal class KtFe10SymbolProvider(
         return KtFe10PsiAnonymousObjectSymbol(psi.objectDeclaration, analysisContext)
     }
 
-    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol {
-        return if (psi is KtObjectDeclaration && psi.isObjectLiteral()) {
+    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol? {
+        return if (psi is KtEnumEntry) {
+            null
+        } else if (psi is KtObjectDeclaration && psi.isObjectLiteral()) {
             KtFe10PsiAnonymousObjectSymbol(psi, analysisContext)
         } else {
             KtFe10PsiNamedClassOrObjectSymbol(psi, analysisContext)
@@ -120,7 +122,7 @@ internal class KtFe10SymbolProvider(
         return descriptor.toKtClassSymbol(analysisContext)
     }
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol> {
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol> {
         val packageViewDescriptor = analysisContext.resolveSession.moduleDescriptor.getPackage(packageFqName)
         return packageViewDescriptor.memberScope.getContributedDescriptors(DescriptorKindFilter.ALL, nameFilter = { it == name })
             .asSequence()

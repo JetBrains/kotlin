@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.kotlin.*
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -48,7 +50,9 @@ class JvmClassFileBasedSymbolProvider(
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
-) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
+) : AbstractFirDeserializedSymbolProvider(
+    session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
+) {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
@@ -80,7 +84,7 @@ class JvmClassFileBasedSymbolProvider(
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, moduleData,
                     JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, byteContent),
-                    FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
+                    FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass, BuiltInSerializerProtocol),
                     source
                 ),
             )
@@ -97,24 +101,25 @@ class JvmClassFileBasedSymbolProvider(
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
         get() = classHeader.isPreRelease
 
-    private fun loadJavaClass(classId: ClassId, content: ByteArray?): ClassMetadataFindResult? {
-        val javaClass = javaFacade.findClass(classId, content) ?: return null
-        return ClassMetadataFindResult.NoMetadata { symbol ->
-            javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
-        }
-    }
-
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         // Kotlin classes are annotated Java classes, so this check also looks for them.
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
 
         val result = kotlinClassFinder.findKotlinClassOrContent(classId)
-        val kotlinClass = when (result) {
-            is KotlinClassFinder.Result.KotlinClass -> result.kotlinJvmBinaryClass
-            is KotlinClassFinder.Result.ClassFileContent -> return loadJavaClass(classId, result.content)
-            null -> return loadJavaClass(classId, null)
+        if (result !is KotlinClassFinder.Result.KotlinClass) {
+            if (parentContext != null || (classId.isNestedClass && getClass(classId.outermostClassId)?.fir !is FirJavaClass)) {
+                // Nested class of Kotlin class should have been a Kotlin class.
+                return null
+            }
+            val knownContent = (result as? KotlinClassFinder.Result.ClassFileContent)?.content
+            val javaClass = javaFacade.findClass(classId, knownContent) ?: return null
+            return ClassMetadataFindResult.NoMetadata { symbol ->
+                javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
+            }
         }
-        if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+
+        val kotlinClass = result.kotlinJvmBinaryClass
+        if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS || kotlinClass.classId != classId) return null
         val data = kotlinClass.classHeader.data ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
         val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)

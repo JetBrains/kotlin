@@ -227,7 +227,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         getAllSuperclasses().any { it.fqNameWhenAvailable == javaIoSerializableFqn }
 
     private fun IrClass.requiresDelegationToDefaultImpls(): Boolean {
-        for (irMemberFun in functions) {
+        val functionsAndAccessors = functions + properties.mapNotNull { it.getter } + properties.mapNotNull { it.setter }
+        for (irMemberFun in functionsAndAccessors) {
             if (irMemberFun.modality == Modality.ABSTRACT)
                 continue
             val irImplFun =
@@ -259,7 +260,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val fakeClass = context.irFactory.buildClass { name = Name.special("<fake>") }
         fakeClass.parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
         val fakeInstanceMethod = buildFakeOverrideMember(samType, samMethod, fakeClass) as IrSimpleFunction
-        (fakeInstanceMethod as IrFakeOverrideFunction).acquireSymbol(IrSimpleFunctionSymbolImpl())
+        (fakeInstanceMethod as IrFunctionWithLateBinding).acquireSymbol(IrSimpleFunctionSymbolImpl())
         fakeInstanceMethod.overriddenSymbols = listOf(samMethod.symbol)
 
         // Compute signature adaptation constraints for a fake instance method signature against all relevant overrides.
@@ -445,7 +446,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         var newParameterIndex = 0
 
         newValueParameters.add(
-            oldExtensionReceiver.copy(lambda, newParameterIndex++, Name.identifier("\$receiver")).also {
+            oldExtensionReceiver.copy(lambda, newParameterIndex++, oldExtensionReceiver.name).also {
                 oldToNew[oldExtensionReceiver] = it
             }
         )

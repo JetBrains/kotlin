@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -34,6 +35,9 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -41,19 +45,19 @@ import org.jetbrains.kotlin.fir.resolve.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -248,8 +252,9 @@ internal class KtSymbolByFirBuilder constructor(
 
         fun buildConstructorSymbol(firSymbol: FirConstructorSymbol): KtFirConstructorSymbol {
             val originalFirSymbol = firSymbol.fir.originalConstructorIfTypeAlias?.symbol ?: firSymbol
-            return symbolsCache.cache(originalFirSymbol) {
-                KtFirConstructorSymbol(originalFirSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
+            val unwrapped = originalFirSymbol.originalIfFakeOverride() ?: originalFirSymbol
+            return symbolsCache.cache(unwrapped) {
+                KtFirConstructorSymbol(unwrapped, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
 
@@ -424,7 +429,7 @@ internal class KtSymbolByFirBuilder constructor(
         }
 
         fun buildExtensionReceiverSymbol(firCallableSymbol: FirCallableSymbol<*>): KtReceiverParameterSymbol? {
-            if (firCallableSymbol.fir.receiverTypeRef == null) return null
+            if (firCallableSymbol.fir.receiverParameter == null) return null
             return extensionReceiverSymbolsCache.cache(firCallableSymbol) {
                 KtFirReceiverParameterSymbol(firCallableSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
@@ -441,11 +446,20 @@ internal class KtSymbolByFirBuilder constructor(
         fun buildKtType(coneType: ConeKotlinType): KtType {
             return when (coneType) {
                 is ConeClassLikeTypeImpl -> {
-                    if (hasFunctionalClassId(coneType)) KtFirFunctionalType(coneType, token, this@KtSymbolByFirBuilder)
-                    else KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
+                    when {
+                        coneType.lookupTag.toSymbol(rootSession) == null -> {
+                            KtFirClassErrorType(coneType, ConeUnresolvedSymbolError(coneType.lookupTag.classId), token, this@KtSymbolByFirBuilder)
+                        }
+                        hasFunctionalClassId(coneType) -> KtFirFunctionalType(coneType, token, this@KtSymbolByFirBuilder)
+                        else -> KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
+                    }
                 }
                 is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this@KtSymbolByFirBuilder)
-                is ConeErrorType -> KtFirClassErrorType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeErrorType -> when (val diagnostic = coneType.diagnostic) {
+                    is ConeUnresolvedError, is ConeUnmatchedTypeArgumentsError ->
+                        KtFirClassErrorType(coneType, diagnostic, token, this@KtSymbolByFirBuilder)
+                    else -> KtFirTypeErrorType(coneType, token, this@KtSymbolByFirBuilder)
+                }
                 is ConeDynamicType -> KtFirDynamicType(coneType, token, this@KtSymbolByFirBuilder)
                 is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this@KtSymbolByFirBuilder)
                 is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
@@ -482,8 +496,8 @@ internal class KtSymbolByFirBuilder constructor(
             return buildKtType(coneType.coneType)
         }
 
-        fun buildTypeArgument(coneType: ConeTypeProjection): KtTypeArgument = when (coneType) {
-            is ConeStarProjection -> KtStarProjectionTypeArgument(token)
+        fun buildTypeProjection(coneType: ConeTypeProjection): KtTypeProjection = when (coneType) {
+            is ConeStarProjection -> KtStarTypeProjection(token)
             is ConeKotlinTypeProjection -> KtTypeArgumentWithVariance(
                 buildKtType(coneType.type),
                 coneType.kind.toVariance(),
@@ -628,7 +642,7 @@ private class BuilderCache<From, To : KtSymbol> {
     inline fun <reified S : To> cache(key: From, calculation: () -> S): S {
         val value = cache.getOrPut(key, calculation)
         return value as? S
-            ?: error("Cannot cast ${value::class} to ${S::class}\n${DebugSymbolRenderer.render(value)}")
+            ?: error("Cannot cast ${value::class} to ${S::class}\n${value}")
     }
 }
 
@@ -652,7 +666,7 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
             simpleFunction.typeParameters.forEach { it.accept(this) }
 
-            simpleFunction.receiverTypeRef?.accept(this)
+            simpleFunction.receiverParameter?.accept(this)
             simpleFunction.valueParameters.forEach { it.returnTypeRef.accept(this) }
             simpleFunction.returnTypeRef.accept(this)
         }
@@ -660,8 +674,12 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
         override fun visitProperty(property: FirProperty) {
             property.typeParameters.forEach { it.accept(this) }
 
-            property.receiverTypeRef?.accept(this)
+            property.receiverParameter?.accept(this)
             property.returnTypeRef.accept(this)
+        }
+
+        override fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
+            receiverParameter.typeRef.accept(this)
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {

@@ -31,62 +31,61 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
 
 
     protected open val dependencyProviders by lazy {
-        val moduleData = session.nullableModuleData ?: return@lazy emptyList()
+        val moduleData =
+            session.nullableModuleData ?: error("FirDependenciesSymbolProvider should not be created if there are no dependencies")
+        val visited = mutableSetOf<FirSymbolProvider>()
         (moduleData.dependencies + moduleData.friendDependencies + moduleData.dependsOnDependencies)
             .mapNotNull { session.sessionProvider?.getSession(it) }
-            .sortedBy { it.kind }
-            .map {
-                if (it.kind == FirSession.Kind.Source) {
-                    it.symbolProvider.loadTransitiveSourceProvides()
-                } else {
-                    listOf(it.symbolProvider)
-                }
-            }
-            .flatten()
+            .map { it.symbolProvider }
+            .flatMap { it.flatten(visited, collectSourceProviders = it.session.kind == FirSession.Kind.Source) }
+            .sortedBy { it.session.kind }
     }
 
-    private fun FirSymbolProvider.loadTransitiveSourceProvides(): List<FirSymbolProvider> {
+    /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
+    *  To prevent duplications and resolving errors, library or source providers from other modules should be filtered out during flattening.
+    *  It depends on the session's kind of the top-level provider */
+    private fun FirSymbolProvider.flatten(
+        visited: MutableSet<FirSymbolProvider>,
+        collectSourceProviders: Boolean
+    ): List<FirSymbolProvider> {
         val result = mutableListOf<FirSymbolProvider>()
-        val visited = hashSetOf<FirSymbolProvider>()
 
-        fun loadTransitiveSourceProvides(provider: FirSymbolProvider) {
-            if (!visited.add(provider)) {
-                return
-            }
-
+        fun FirSymbolProvider.collectProviders() {
+            if (!visited.add(this)) return
             when {
-                provider is FirDependenciesSymbolProviderImpl -> {
-                    for (p in provider.dependencyProviders) {
-                        loadTransitiveSourceProvides(p)
+                this is FirDependenciesSymbolProviderImpl -> {
+                    for (provider in dependencyProviders) {
+                        provider.collectProviders()
                     }
                 }
-                provider is FirCompositeSymbolProvider -> {
-                    for (p in provider.providers) {
-                        loadTransitiveSourceProvides(p)
+                this is FirCompositeSymbolProvider -> {
+                    for (provider in providers) {
+                        provider.collectProviders()
                     }
                 }
-                provider.session.kind == FirSession.Kind.Source -> {
-                    result.add(provider)
+                collectSourceProviders && session.kind == FirSession.Kind.Source ||
+                        !collectSourceProviders && session.kind == FirSession.Kind.Library -> {
+                    result.add(this)
                 }
             }
         }
 
-        loadTransitiveSourceProvides(this)
+        collectProviders()
 
         return result
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelCallables(callableId: CallableId): List<FirCallableSymbol<*>> = buildList {
         dependencyProviders.forEach { it.getTopLevelCallableSymbolsTo(this, callableId.packageName, callableId.callableName) }
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> = buildList {
         dependencyProviders.forEach { it.getTopLevelFunctionSymbolsTo(this, callableId.packageName, callableId.callableName) }
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelProperties(callableId: CallableId): List<FirPropertySymbol> = buildList {
         dependencyProviders.forEach { it.getTopLevelPropertySymbolsTo(this, callableId.packageName, callableId.callableName) }
     }

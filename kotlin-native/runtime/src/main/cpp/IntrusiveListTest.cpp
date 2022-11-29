@@ -45,8 +45,22 @@ public:
     int& operator*() { return value_; }
     const int& operator*() const { return value_; }
 
+    void clearNext() noexcept { next_ = nullptr; }
+
 private:
     friend struct DefaultIntrusiveForwardListTraits<Node>;
+
+    Node* next() const noexcept { return next_; }
+    void setNext(Node* next) noexcept {
+        RuntimeAssert(next, "next cannot be nullptr");
+        next_ = next;
+    }
+    bool trySetNext(Node* next) noexcept {
+        RuntimeAssert(next, "next cannot be nullptr");
+        if (next_) return false;
+        next_ = next;
+        return true;
+    }
 
     int value_;
     // Use non-null marker to make sure inserting into the list properly updates this value.
@@ -68,16 +82,8 @@ MATCHER_P(isEmpty, expected, (expected == !negation) ? "is empty" : "is not empt
     return expected == actual;
 }
 
-size_t getSize(const std::forward_list<Element>& list) {
-    return std::distance(list.begin(), list.end());
-}
-
-size_t getSize(const intrusive_forward_list<Node>& list) {
-    return list.size();
-}
-
 MATCHER_P(hasSize, expected, "") {
-    size_t actual = getSize(arg);
+    size_t actual = std::distance(arg.begin(), arg.end());
     *result_listener << "of size " << actual;
     return expected == actual;
 }
@@ -621,4 +627,73 @@ TYPED_TEST(ForwardListTest, EraseAfterEmptyRangeFront) {
     auto result = list.erase_after(list.before_begin(), list.begin());
     EXPECT_THAT(result, list.begin());
     EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
+}
+
+TEST(InstrusiveForwardListTest, TryPushFrontSuccess) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+    typename List::value_type value(5);
+    value.clearNext();
+    auto result = list.try_push_front(value);
+    EXPECT_TRUE(result);
+    EXPECT_ELEMENTS_ARE(list, 5, 1, 2, 3, 4);
+}
+
+TEST(InstrusiveForwardListTest, TryPushFrontFailure) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+    typename List::value_type value(5);
+    auto result = list.try_push_front(value);
+    EXPECT_FALSE(result);
+    EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
+}
+
+TEST(InstrusiveForwardListTest, TryPushFrontEmptySuccess) {
+    using List = intrusive_forward_list<Node>;
+    List list;
+    typename List::value_type value(5);
+    value.clearNext();
+    auto result = list.try_push_front(value);
+    EXPECT_TRUE(result);
+    EXPECT_ELEMENTS_ARE(list, 5);
+}
+
+TEST(InstrusiveForwardListTest, TryPushFrontEmptyFailure) {
+    using List = intrusive_forward_list<Node>;
+    List list;
+    typename List::value_type value(5);
+    auto result = list.try_push_front(value);
+    EXPECT_FALSE(result);
+    EXPECT_ELEMENTS_ARE(list);
+}
+
+TEST(IntrusiveForwardListTest, TryPopFront) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+    auto& front = list.front();
+    auto result = list.try_pop_front();
+    EXPECT_THAT(result, &front);
+    EXPECT_ELEMENTS_ARE(list, 2, 3, 4);
+}
+
+TEST(IntrusiveForwardListTest, TryPopFrontIntoEmpty) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1});
+    List list(values.begin(), values.end());
+    auto& front = list.front();
+    auto result = list.try_pop_front();
+    EXPECT_THAT(result, &front);
+    EXPECT_ELEMENTS_ARE(list);
+}
+
+TEST(IntrusiveForwardListTest, TryPopFrontFromEmpty) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({});
+    List list(values.begin(), values.end());
+    auto result = list.try_pop_front();
+    EXPECT_THAT(result, nullptr);
+    EXPECT_ELEMENTS_ARE(list);
 }

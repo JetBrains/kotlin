@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrClassModel
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 
 
 class JsStaticContext(
@@ -21,9 +20,6 @@ class JsStaticContext(
 ) : IrNamer by irNamer {
     val intrinsics = JsIntrinsicTransformers(backendContext)
     val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
-    val coroutineImplDeclaration = backendContext.ir.symbols.coroutineImpl.owner
 
     val initializerBlock = JsCompositeBlock()
-
-    val genSourcemaps = backendContext.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
 }

@@ -9,7 +9,7 @@
 @file:BenchmarkProject(
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
-    gitCommitSha = "675de063cf065416536711a701eaee40b18f3e05"
+    gitCommitSha = "3fe69bf6db9a3650b026630d857862f3cee6485b"
 )
 
 import java.io.File
@@ -23,15 +23,26 @@ val currentReleasePatch = {
 
 runAllBenchmarks(
     suite {
-        // Disabled due to the possible error "No space left on device"
-        // Kotlin/Js/Ir trashes /tmp directory with files that are not reused
-        // Check https://youtrack.jetbrains.com/issue/KT-52176/Kotlin-JS-Ir-compilation-creates-build-files-in-system-temp-dire
-//        scenario {
-//            title = "Build Js IR clean build"
-//
-//            runTasks("jsIrJar")
-//            runCleanupTasks("clean")
-//        }
+        scenario {
+            title = "Build Js IR clean build"
+
+            runTasks("jsIrJar")
+            runCleanupTasks("clean")
+        }
+
+        scenario {
+            title = "Build Js IR with ABI change in ObservableList"
+
+            runTasks("jsIrJar")
+            applyAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
+        }
+
+        scenario {
+            title = "Build Js IR with non-ABI change in ObservableList"
+
+            runTasks("jsIrJar")
+            applyNonAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
+        }
 
         scenario {
             title = "Build Js Legacy clean build"
@@ -53,9 +64,31 @@ runAllBenchmarks(
             runTasks("jsLegacyJar")
             applyNonAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
         }
+
+        scenario {
+            title = "Dry run configuration time"
+            useGradleArgs("-m")
+
+            iterations = 20
+            runTasks("jsIrJar")
+        }
+
+        scenario {
+            title = "No-op configuration time"
+
+            iterations = 20
+            runTasks("help")
+        }
+
+        scenario {
+            title = "UP-TO-DATE configuration time"
+
+            iterations = 20
+            runTasks("jsIrJar")
+        }
     },
     mapOf(
-        "1.7.10" to null,
-        "1.7.20" to  currentReleasePatch
+        "1.7.20" to null,
+        "1.8.0" to currentReleasePatch
     )
 )

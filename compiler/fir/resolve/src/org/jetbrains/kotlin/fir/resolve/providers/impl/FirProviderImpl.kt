@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -22,8 +23,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
-        symbol.originalIfFakeOverride()?.let {
-            return getFirCallableContainerFile(it)
+        symbol.originalIfFakeOverride()?.let { originalSymbol ->
+            return originalSymbol.moduleData.session.firProvider.getFirCallableContainerFile(originalSymbol)
         }
         if (symbol is FirBackingFieldSymbol) {
             return getFirCallableContainerFile(symbol.fir.propertySymbol)

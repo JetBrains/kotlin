@@ -13,11 +13,10 @@ import com.android.builder.model.SourceProvider
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.applyMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.plugin.forEachVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.AndroidCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.sources.android.*
 import org.jetbrains.kotlin.gradle.setMultiplatformAndroidSourceSetLayoutVersion
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -186,7 +185,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
     fun `test - kotlin source directories - are in sync between KotlinSourceSet and AndroidSourceSet`() {
         kotlin.android()
 
-        forEachVariant(project) { variant ->
+        project.forAllAndroidVariants { variant ->
             variant.sourceSets.forEach { androidSourceSet ->
                 androidSourceSet as SourceProvider
 
@@ -214,7 +213,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
     fun `test - kotlin source directories - supports AGP default location`() {
         kotlin.android()
 
-        forEachVariant(project) { variant ->
+        project.forAllAndroidVariants { variant ->
             variant.sourceSets.forEach { androidSourceSet ->
                 val kotlinSourceSet = project.getKotlinSourceSetOrFail(androidSourceSet)
                 assertTrue(
@@ -271,11 +270,12 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         project.evaluate()
 
         kotlin.android().compilations.all { compilation ->
-            val compilationDetails = compilation.compilationDetails as AndroidCompilationDetails
-            val defaultKotlinSourceSetName = multiplatformAndroidSourceSetLayoutV2.naming.defaultKotlinSourceSetName(compilationDetails)
+            val defaultKotlinSourceSetName = multiplatformAndroidSourceSetLayoutV2.naming
+                .defaultKotlinSourceSetName(kotlin.android(), compilation.androidVariant)
+
             assertNotNull(
                 defaultKotlinSourceSetName,
-                "Expected non-null 'defaultKotlinSourceSetName' for compilation ${compilationDetails.compilation.name}"
+                "Expected non-null 'defaultKotlinSourceSetName' for compilation ${compilation.name}"
             )
 
             val kotlinSourceSet = kotlin.sourceSets.getByName(defaultKotlinSourceSetName)

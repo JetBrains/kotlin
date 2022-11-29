@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.i
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -52,13 +51,24 @@ internal class KtFirTypeProvider(
 ) : KtTypeProvider(), KtFirAnalysisSessionComponent {
     override val builtinTypes: KtBuiltinTypes = KtFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
 
-    override fun approximateToSuperPublicDenotableType(type: KtType): KtType? {
+    override fun approximateToSuperPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
         require(type is KtFirType)
         val coneType = type.coneType
         val approximatedConeType = PublicTypeApproximator.approximateTypeToPublicDenotable(
             coneType,
             rootModuleSession,
-            approximateLocalTypes = true,
+            approximateLocalTypes = approximateLocalTypes,
+        )
+
+        return approximatedConeType?.asKtType()
+    }
+
+    override fun approximateToSubPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
+        require(type is KtFirType)
+        val coneType = type.coneType
+        val approximatedConeType = rootModuleSession.typeApproximator.approximateToSubType(
+            coneType,
+            PublicTypeApproximator.PublicApproximatorConfiguration(localTypes = approximateLocalTypes),
         )
 
         return approximatedConeType?.asKtType()
@@ -147,9 +157,9 @@ internal class KtFirTypeProvider(
         val session = analysisSession.firResolveSession.useSiteFirSession
         val symbol = lookupTag.toSymbol(session)
         val superTypes = when (symbol) {
-            is FirAnonymousObjectSymbol -> symbol.superConeTypes
-            is FirRegularClassSymbol -> symbol.superConeTypes
-            is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.superConeTypes ?: return emptySequence()
+            is FirAnonymousObjectSymbol -> symbol.resolvedSuperTypes
+            is FirRegularClassSymbol -> symbol.resolvedSuperTypes
+            is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.resolvedSuperTypes ?: return emptySequence()
             is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.type }
             else -> return emptySequence()
         }

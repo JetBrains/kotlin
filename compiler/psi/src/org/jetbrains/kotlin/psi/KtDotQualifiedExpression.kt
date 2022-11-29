@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDotQualifiedExpression>>, KtQualifiedExpression {
@@ -72,7 +72,7 @@ class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDo
                 LOG.error(
                     KotlinExceptionWithAttachments(
                         "Invalid stub structure. DOT_QUALIFIED_EXPRESSION must have one or two children. Was: ${expressions.size}\n"
-                    ).withAttachment("file.kt", containingFile.text)
+                    ).withPsiAttachment("file.kt", containingFile)
                 )
                 return null
             }

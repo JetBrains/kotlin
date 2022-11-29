@@ -31,7 +31,7 @@ fun main1(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A<Int?><!>) {}
 fun main2(x: A2<Int?>) {}
 fun main3(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!>) {}
 fun main3() {
-    val x = <!UPPER_BOUND_VIOLATED!>A3<Int?>()<!> // TODO: support reporting errors on typealias constructor calls
+    val x = <!UPPER_BOUND_VIOLATED!>A3<Int?>()<!>
     val x2 = <!UPPER_BOUND_VIOLATED!>A<Int?>()<!>
     val y: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!> = <!UPPER_BOUND_VIOLATED!>A3<Int?>()<!>
 }

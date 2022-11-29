@@ -119,16 +119,21 @@ extern "C" KInt Kotlin_NSSetAsKSet_getSize(KRef thiz) {
   return objCSizeToKotlinOrThrow(set.count);
 }
 
-NO_EXTERNAL_CALLS_CHECK
 extern "C" KBoolean Kotlin_NSSetAsKSet_contains(KRef thiz, KRef element) {
   NSSet* set = (NSSet*) GetAssociatedObject(thiz);
-  return [set containsObject:refToObjCOrNSNull(element)];
+  id objCElement = refToObjCOrNSNull(element);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+  return [set containsObject:objCElement];
 }
 
-NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSSetAsKSet_getElement, KRef thiz, KRef element) {
   NSSet* set = (NSSet*) GetAssociatedObject(thiz);
-  id res = [set member:refToObjCOrNSNull(element)];
+  id objCElement = refToObjCOrNSNull(element);
+  id res;
+  {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    res = [set member:objCElement];
+  }
   RETURN_RESULT_OF(refFromObjCOrNSNull, res);
 }
 
@@ -148,16 +153,17 @@ extern "C" KInt Kotlin_NSDictionaryAsKMap_getSize(KRef thiz) {
   return objCSizeToKotlinOrThrow(dict.count);
 }
 
-NO_EXTERNAL_CALLS_CHECK
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsKey(KRef thiz, KRef key) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
-  return [dict objectForKey:refToObjCOrNSNull(key)] != nullptr;
+  id objCKey = refToObjCOrNSNull(key);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+  return [dict objectForKey:objCKey] != nullptr;
 }
 
-NO_EXTERNAL_CALLS_CHECK
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsValue(KRef thiz, KRef value) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   id objCValue = refToObjCOrNSNull(value);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
   for (id key in dict) {
     if ([[dict objectForKey:key] isEqual:objCValue]) {
       return true;
@@ -167,17 +173,25 @@ extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsValue(KRef thiz, KRef valu
   return false;
 }
 
-NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_get, KRef thiz, KRef key) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
-  id value = [dict objectForKey:refToObjCOrNSNull(key)];
+  id objCKey = refToObjCOrNSNull(key);
+  id value;
+  {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    value = [dict objectForKey:objCKey];
+  }
   RETURN_RESULT_OF(refFromObjCOrNSNull, value);
 }
 
-NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_getOrThrowConcurrentModification, KRef thiz, KRef key) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
-  id value = [dict objectForKey:refToObjCOrNSNull(key)];
+  id objCKey = refToObjCOrNSNull(key);
+  id value;
+  {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    value = [dict objectForKey:objCKey];
+  }
   if (value == nullptr) {
     Kotlin_ObjCExport_ThrowCollectionConcurrentModification();
   }
@@ -185,10 +199,12 @@ extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_getOrThrowConcurrentModification
   RETURN_RESULT_OF(refFromObjCOrNSNull, value);
 }
 
-NO_EXTERNAL_CALLS_CHECK
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsEntry(KRef thiz, KRef key, KRef value) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
-  return [refToObjCOrNSNull(value) isEqual:[dict objectForKey:refToObjCOrNSNull(key)]];
+  id objCValue = refToObjCOrNSNull(value);
+  id objCKey = refToObjCOrNSNull(key);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+  return [objCValue isEqual:[dict objectForKey:objCKey]];
 }
 
 NO_EXTERNAL_CALLS_CHECK

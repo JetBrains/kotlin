@@ -10,5 +10,6 @@ interface B {
 
 val c: Int
   get(<this>: A, <this>: B): Int {
-    return <this>.a().plus(other = <this> /*as B */.b())
+    return <this>.a().plus(other = <this>.b())
   }
+

@@ -155,29 +155,6 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
                     //   val score = ... <!>common<!>
                     // }
                     reporter.reportOn(source, FirErrors.UNINITIALIZED_VARIABLE, calleeSymbol, context)
-                } else {
-                    // enum class EnumCompanion2(...) {
-                    //   INSTANCE(<!>foo<!>())
-                    //   companion object {
-                    //     fun foo() = ...
-                    //   }
-                    // }
-                    // <!>Companion<!>.foo() v.s. <!>foo<!>()
-                    if ((expression.explicitReceiver as? FirResolvedQualifier)?.symbol == enumClassSymbol.companionObjectSymbol) {
-                        reporter.reportOn(
-                            expression.explicitReceiver!!.source,
-                            FirErrors.UNINITIALIZED_ENUM_COMPANION,
-                            enumClassSymbol,
-                            context
-                        )
-                    } else {
-                        reporter.reportOn(
-                            expression.calleeReference.source,
-                            FirErrors.UNINITIALIZED_ENUM_COMPANION,
-                            enumClassSymbol,
-                            context
-                        )
-                    }
                 }
             }
         }

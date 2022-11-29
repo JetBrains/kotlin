@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
+import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import java.io.File
 
 internal typealias Kotlin2JsCompileConfig = BaseKotlin2JsCompileConfig<Kotlin2JsCompile>
 
 internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
-    compilation: KotlinCompilationData<*>
+    compilation: KotlinCompilationInfo
 ) : AbstractKotlinCompileConfig<TASK>(compilation) {
 
     init {
@@ -27,18 +27,86 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             task.incremental = propertiesProvider.incrementalJs ?: true
             task.incrementalJsKlib = propertiesProvider.incrementalJsKlib ?: true
 
-            task.outputFileProperty.value(task.project.provider {
-                val extensionName = if (compilation.platformType == KotlinPlatformType.wasm) ".mjs" else ".js"
-                task.kotlinOptions.outputFile?.let(::File)
-                    ?: task.destinationDirectory.locationOnly.get().asFile.resolve("${compilation.ownModuleName}$extensionName")
-            }).disallowChanges()
+            configureAdditionalFreeCompilerArguments(task, compilation)
 
-            task.optionalOutputFile.fileProvider(task.outputFileProperty.flatMap { outputFile ->
-                task.project.provider {
-                    outputFile.takeUnless { task.kotlinOptions.isProduceUnzippedKlib() }
+            task.compilerOptions.moduleName.convention(compilation.moduleName)
+
+            @Suppress("DEPRECATION")
+            task.outputFileProperty.value(
+                task.destinationDirectory.flatMap { dir ->
+                    if (task.compilerOptions.outputFile.orNull != null) {
+                        task.compilerOptions.outputFile.map { File(it) }
+                    } else {
+                        task.compilerOptions.moduleName.map { name ->
+                            dir.file(name + compilation.platformType.fileExtension).asFile
+                        }
+                    }
                 }
-            }).disallowChanges()
+            )
+
+            if (propertiesProvider.useK2 == true) {
+                task.kotlinOptions.useK2 = true
+            }
+
+            task.destinationDirectory
+                .convention(
+                    project.objects.directoryProperty().fileProvider(
+                        task.defaultDestinationDirectory.map {
+                            val freeArgs = task.enhancedFreeCompilerArgs.get()
+                            if (task.compilerOptions.outputFile.orNull != null) {
+                                if (freeArgs.contains(PRODUCE_UNZIPPED_KLIB)) {
+                                    val file = File(task.compilerOptions.outputFile.get())
+                                    if (file.extension == "") file else file.parentFile
+                                } else {
+                                    File(task.compilerOptions.outputFile.get()).parentFile
+                                }
+                            } else {
+                                it.asFile
+                            }
+                        }
+                    )
+                )
+
             task.libraryCache.set(libraryCacheService).also { task.libraryCache.disallowChanges() }
+        }
+    }
+
+    protected open fun configureAdditionalFreeCompilerArguments(
+        task: TASK,
+        compilation: KotlinCompilationInfo
+    ) {
+        task.enhancedFreeCompilerArgs.value(
+            task.compilerOptions.freeCompilerArgs.map { freeArgs ->
+                freeArgs.toMutableList().apply {
+                    commonJsAdditionalCompilerFlags(compilation)
+                }
+            }
+        ).disallowChanges()
+    }
+
+    protected fun MutableList<String>.commonJsAdditionalCompilerFlags(
+        compilation: KotlinCompilationInfo
+    ) {
+        if (contains(DISABLE_PRE_IR) &&
+            !contains(PRODUCE_UNZIPPED_KLIB) &&
+            !contains(PRODUCE_ZIPPED_KLIB)
+        ) {
+            add(PRODUCE_UNZIPPED_KLIB)
+        }
+
+        if (contains(PRODUCE_JS) ||
+            contains(PRODUCE_UNZIPPED_KLIB) ||
+            contains(PRODUCE_ZIPPED_KLIB)
+        ) {
+            // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
+            val baseName = if (compilation.isMain) {
+                project.name
+            } else {
+                "${project.name}_${compilation.compilationName}"
+            }
+            if (none { it.startsWith(KLIB_MODULE_NAME) }) {
+                add("$KLIB_MODULE_NAME=${project.klibModuleName(baseName)}")
+            }
         }
     }
 }

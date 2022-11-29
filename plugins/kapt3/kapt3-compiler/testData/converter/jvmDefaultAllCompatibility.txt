@@ -11,6 +11,9 @@ public abstract interface Foo {
 
     public abstract void bar();
 
+    private void privateMethodWithDefault() {
+    }
+
     @kotlin.Metadata()
     public static final class DefaultImpls {
 

@@ -6,10 +6,10 @@ plugins {
 }
 
 dependencies {
-    embedded(project(":kotlin-lombok-compiler-plugin.common"))
-    embedded(project(":kotlin-lombok-compiler-plugin.k1"))
-    embedded(project(":kotlin-lombok-compiler-plugin.k2"))
-    embedded(project(":kotlin-lombok-compiler-plugin.cli"))
+    embedded(project(":kotlin-lombok-compiler-plugin.common")) { isTransitive = false }
+    embedded(project(":kotlin-lombok-compiler-plugin.k1")) { isTransitive = false }
+    embedded(project(":kotlin-lombok-compiler-plugin.k2")) { isTransitive = false }
+    embedded(project(":kotlin-lombok-compiler-plugin.cli")) { isTransitive = false }
 
     testImplementation(intellijCore())
     testImplementation(project(":kotlin-lombok-compiler-plugin.common"))
@@ -38,7 +38,7 @@ dependencies {
 
     testApi(commonDependency("junit:junit"))
 
-
+    testRuntimeOnly(commonDependency("com.google.guava:guava"))
     testRuntimeOnly(toolsJar())
 }
 
@@ -52,8 +52,19 @@ sourceSets {
     }
 }
 
-projectTest(parallel = true) {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
     workingDir = rootDir
+
+    doFirst {
+        project.configurations
+            .testRuntimeClasspath.get()
+            .files
+            .find { "guava" in it.name }
+            ?.absolutePath
+            ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
+
+    }
 }
 
 runtimeJar()

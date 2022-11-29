@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.alwaysTrue
 import java.util.*
 
@@ -76,8 +75,7 @@ class LazyJavaPackageScope(
                         request.javaClass ?: c.components.finder.findClass(
                             JavaClassFinder.Request(
                                 requestClassId,
-                                kotlinClassOrClassFileContent?.safeAs<KotlinClassFinder.Result.ClassFileContent>()
-                                    ?.content
+                                (kotlinClassOrClassFileContent as? KotlinClassFinder.Result.ClassFileContent)?.content
                             )
                         )
 

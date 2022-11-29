@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -136,7 +136,7 @@ class FirSamResolverImpl(
         val (functionSymbol, functionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
         val classId = firRegularClass.classId
-        val symbol = FirSyntheticFunctionSymbol(
+        val syntheticFunctionSymbol = FirSyntheticFunctionSymbol(
             CallableId(
                 classId.packageFqName,
                 classId.relativeClassName.parent().takeIf { !it.isRoot },
@@ -156,7 +156,7 @@ class FirSamResolverImpl(
                 variance = Variance.INVARIANT
                 isReified = false
                 annotations += declaredTypeParameter.annotations
-                containingDeclarationSymbol = symbol
+                containingDeclarationSymbol = syntheticFunctionSymbol
             }
         }
 
@@ -202,7 +202,7 @@ class FirSamResolverImpl(
                 isSuspend = false
                 isTailRec = false
             }
-            this.symbol = symbol
+            this.symbol = syntheticFunctionSymbol
             typeParameters += newTypeParameters.map { it.build() }
 
             val substitutedFunctionType = substitutor.substituteOrSelf(functionType)
@@ -218,6 +218,7 @@ class FirSamResolverImpl(
 
             valueParameters += buildValueParameter {
                 moduleData = session.moduleData
+                containingFunctionSymbol = syntheticFunctionSymbol
                 origin = FirDeclarationOrigin.SamConstructor
                 returnTypeRef = buildResolvedTypeRef {
                     source = firRegularClass.source
@@ -389,7 +390,7 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagB
 
     return createFunctionalType(
         parameterTypes,
-        receiverType = receiverTypeRef?.coneType,
+        receiverType = receiverParameter?.typeRef?.coneType,
         rawReturnType = returnTypeRef.coneType,
         isSuspend = this.isSuspend
     )

@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.classes.KtDescriptorBasedFakeLightClass
+import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.load.java.components.FilesByFacadeFqNameIndexer
 import org.jetbrains.kotlin.name.FqName
@@ -35,11 +40,15 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
 
     override fun KtFile.findModule(): KtFile = this
 
-    override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>, module: KtFile): KtLightClassForFacade? {
+    override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
         error("Should not be called")
     }
 
-    override fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>, module: KtFile): KtLightClassForFacade {
+    override fun librariesTracker(element: PsiElement): ModificationTracker {
+        error("Should not be called")
+    }
+
+    override fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade {
         return LightClassGenerationSupport.getInstance(files.first().project).createUltraLightClassForFacade(facadeFqName, files)
     }
 
@@ -94,9 +103,9 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
         ).mapNotNull { member -> (member as? PackageViewDescriptor)?.fqName }
     }
 
-    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? = KotlinLightClassFactory.createClass(classOrObject)
-
-    override fun getLightClassForScript(script: KtScript): KtLightClassForScript? = KotlinLightClassFactory.createScript(script)
+    override fun createInstanceOfLightScript(script: KtScript): KtLightClass {
+        return LightClassGenerationSupport.getInstance(script.project).createUltraLightClassForScript(script)
+    }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
         return ResolveSessionUtils.getClassDescriptorsByFqName(traceHolder.module, fqName).mapNotNull {
@@ -114,4 +123,9 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
     }
 
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade = error("Should not be called")
+    override fun declarationLocation(file: KtFile): DeclarationLocation = DeclarationLocation.ProjectSources
+    override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject): KtLightClass = error("Should not be called")
+    override fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass {
+        return LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)
+    }
 }

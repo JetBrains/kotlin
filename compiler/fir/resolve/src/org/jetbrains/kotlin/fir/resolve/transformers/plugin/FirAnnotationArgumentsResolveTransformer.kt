@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,30 +11,27 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 
 open class FirAnnotationArgumentsResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
     outerBodyResolveContext: BodyResolveContext? = null
-) : FirBodyResolveTransformer(
+) : FirAbstractBodyResolveTransformerDispatcher(
     session,
     resolvePhase,
     implicitTypeOnly = false,
     scopeSession,
     outerBodyResolveContext = outerBodyResolveContext
 ) {
-    override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionsResolveTransformerForSpecificAnnotations(this)
+    final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionsResolveTransformerForSpecificAnnotations(this)
 
-    override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsResolveTransformerForArgumentAnnotations(this)
+    final override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsResolveTransformerForArgumentAnnotations(this)
 }
 
 private class FirDeclarationsResolveTransformerForArgumentAnnotations(
-    transformer: FirBodyResolveTransformer
+    transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirDeclarationsResolveTransformer(transformer) {
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
         regularClass.transformAnnotations(this, data)
@@ -62,7 +59,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     ): FirSimpleFunction {
         simpleFunction
             .transformReturnTypeRef(transformer, data)
-            .transformReceiverTypeRef(transformer, data)
+            .transformReceiverParameter(transformer, data)
             .transformValueParameters(transformer, data)
             .transformAnnotations(transformer, data)
         return simpleFunction
@@ -71,7 +68,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         constructor
             .transformReturnTypeRef(transformer, data)
-            .transformReceiverTypeRef(transformer, data)
+            .transformReceiverParameter(transformer, data)
             .transformValueParameters(transformer, data)
             .transformAnnotations(transformer, data)
         return constructor
@@ -87,7 +84,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
         property
             .transformAnnotations(transformer, data)
-            .transformReceiverTypeRef(transformer, data)
+            .transformReceiverParameter(transformer, data)
             .transformReturnTypeRef(transformer, data)
             .transformGetter(transformer, data)
             .transformSetter(transformer, data)
@@ -102,7 +99,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
         propertyAccessor
             .transformValueParameters(transformer, data)
             .transformReturnTypeRef(transformer, data)
-            .transformReceiverTypeRef(transformer, data)
+            .transformReceiverParameter(transformer, data)
             .transformReturnTypeRef(transformer, data)
             .transformAnnotations(transformer, data)
         return propertyAccessor
@@ -116,11 +113,15 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
         context.forEnumEntry {
             enumEntry
                 .transformAnnotations(transformer, data)
-                .transformReceiverTypeRef(transformer, data)
+                .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
                 .transformTypeParameters(transformer, data)
         }
         return enumEntry
+    }
+
+    override fun transformReceiverParameter(receiverParameter: FirReceiverParameter, data: ResolutionMode): FirReceiverParameter {
+        return receiverParameter.transformAnnotations(transformer, data).transformTypeRef(transformer, data)
     }
 
     override fun transformField(field: FirField, data: ResolutionMode): FirField {
@@ -131,10 +132,14 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
         typeAlias.transformAnnotations(transformer, data)
         return typeAlias
     }
+
+    override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
+        return script
+    }
 }
 
 private class FirExpressionsResolveTransformerForSpecificAnnotations(
-    transformer: FirBodyResolveTransformer
+    transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirExpressionsResolveTransformer(transformer) {
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
@@ -146,6 +151,10 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
         return transformAnnotation(annotationCall, data)
+    }
+
+    override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
+        return transformAnnotation(errorAnnotationCall, data)
     }
 
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): FirStatement {

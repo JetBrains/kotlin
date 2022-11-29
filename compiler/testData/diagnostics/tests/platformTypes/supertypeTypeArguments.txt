@@ -33,13 +33,13 @@ public final class HashMapEx</*0*/ K, /*1*/ V> : java.util.HashMap<K, V>, ExtMap
     invisible_fake open override /*1*/ /*fake_override*/ fun capacity(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public open override /*2*/ /*fake_override*/ fun containsKey(/*0*/ key: K!): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun containsKey(/*0*/ key: K): kotlin.Boolean
     invisible_fake open override /*1*/ /*fake_override*/ fun containsNullValue(): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun containsValue(/*0*/ value: V!): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun containsValue(/*0*/ value: V): kotlin.Boolean
     invisible_fake open override /*1*/ /*fake_override*/ fun createEntry(/*0*/ hash: kotlin.Int, /*1*/ key: K!, /*2*/ value: V!, /*3*/ bucketIndex: kotlin.Int): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun entrySet0(): kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun get(/*0*/ key: K!): V?
+    public open override /*2*/ /*fake_override*/ fun get(/*0*/ key: K): V?
     invisible_fake final override /*1*/ /*fake_override*/ fun getEntry(/*0*/ key: kotlin.Any!): java.util.HashMap.Entry<K!, V!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun getForNullKey(): V!
     invisible_fake final override /*1*/ /*fake_override*/ fun hash(/*0*/ k: kotlin.Any!): kotlin.Int
@@ -58,7 +58,7 @@ public final class HashMapEx</*0*/ K, /*1*/ V> : java.util.HashMap<K, V>, ExtMap
     invisible_fake open override /*1*/ /*fake_override*/ fun putForCreate(/*0*/ key: K!, /*1*/ value: V!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun putForNullKey(/*0*/ value: V!): V!
     invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ s: java.io.ObjectInputStream!): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: K!): V?
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: K): V?
     invisible_fake final override /*1*/ /*fake_override*/ fun removeEntryForKey(/*0*/ key: kotlin.Any!): java.util.HashMap.Entry<K!, V!>!
     invisible_fake final override /*1*/ /*fake_override*/ fun removeMapping(/*0*/ o: kotlin.Any!): java.util.HashMap.Entry<K!, V!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun resize(/*0*/ newCapacity: kotlin.Int): kotlin.Unit
@@ -66,3 +66,4 @@ public final class HashMapEx</*0*/ K, /*1*/ V> : java.util.HashMap<K, V>, ExtMap
     invisible_fake open override /*1*/ /*fake_override*/ fun transfer(/*0*/ newTable: kotlin.Array<(out) java.util.HashMap.Entry<(raw) kotlin.Any!, (raw) kotlin.Any!>!>!, /*1*/ rehash: kotlin.Boolean): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ s: java.io.ObjectOutputStream!): kotlin.Unit
 }
+

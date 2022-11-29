@@ -24,12 +24,12 @@ func testKotlin2Objc() throws {
 
 func testCompanionObject() throws {
     let trace = Foo.companion.trace
-    try assertTrue(trace[6].contains("objc2kotlin_kclass:Foo#companion"))
+    try assertTrue(trace[8].contains("objc2kotlin_kclass:Foo#companion"))
 }
 
 func testStandaloneObject() throws {
     let trace = Object.shared.trace
-    try assertTrue(trace[6].contains("objc2kotlin_kclass:Object#shared"))
+    try assertTrue(trace[8].contains("objc2kotlin_kclass:Object#shared"))
 }
 
 func testEnumEntry() throws {

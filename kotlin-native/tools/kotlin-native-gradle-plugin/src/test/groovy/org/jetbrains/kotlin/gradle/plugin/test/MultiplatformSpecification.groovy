@@ -32,9 +32,8 @@ class MultiplatformSpecification extends BaseKonanSpecification {
                   url = '$KOTLIN_REPO'
                 }
                 maven {
-                   url = 'https://cache-redirector.jetbrains.com/jcenter'
+                   url = 'https://cache-redirector.jetbrains.com/maven-central'
                 }
-                jcenter()
             }
             dependencies {
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
@@ -48,9 +47,8 @@ class MultiplatformSpecification extends BaseKonanSpecification {
                url = '$KOTLIN_REPO'
             }
             maven {
-               url = 'https://cache-redirector.jetbrains.com/jcenter'
+               url = 'https://cache-redirector.jetbrains.com/maven-central'
             }
-            jcenter()
         }
 
         dependencies {

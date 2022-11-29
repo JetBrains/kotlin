@@ -33,6 +33,17 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
     DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY("kotlin.daemon.socket.backlog.size"),
     DAEMON_RMI_SOCKET_CONNECT_ATTEMPTS_PROPERTY("kotlin.daemon.socket.connect.attempts"),
     DAEMON_RMI_SOCKET_CONNECT_INTERVAL_PROPERTY("kotlin.daemon.socket.connect.interval"),
+
+    /**
+     * Only specify that property if you want to avoid multiple initializations/disposals of KotlinCoreApplicationEnvironment
+     *
+     * **If not specified**, KotlinCoreApplicationEnvironment **WILL dispose** after all concurrent compilations finish,
+     * and will be re-initialized when starting new compilation
+     *
+     * If specified, KotlinCoreApplicationEnvironment will **NOT dispose** after all concurrent compilations finished
+     * and will be pinned with hard-reference
+     * **THIS LEAKS MEMORY**
+     * */
     KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
     COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM("kotlin.incremental.useClasspathSnapshot"),

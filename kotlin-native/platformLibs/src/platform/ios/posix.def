@@ -2,7 +2,7 @@ depends =
 package = platform.posix
 headers = alloca.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcntl.h \
     fenv.h float.h fnmatch.h fts.h ftw.h getopt.h grp.h inttypes.h libgen.h limits.h \
-    locale.h math.h memory.h netdb.h paths.h poll.h \
+    locale.h math.h memory.h netdb.h paths.h poll.h ptrauth.h \
     pthread.h pwd.h regex.h resolv.h sched.h search.h semaphore.h setjmp.h signal.h \
     stdatomic.h stdint.h stdio.h stdlib.h string.h strings.h syslog.h termios.h \
     time.h ucontext.h unistd.h utime.h wchar.h wctype.h xlocale.h \
@@ -20,8 +20,9 @@ excludedFunctions = acl_valid_link_np add_profil pfctlinput profil unwhiteout zo
                     in6addr_linklocal_allv2routers
 excludedFunctions.ios_arm32 = longjmperror
 excludedFunctions.ios_arm64 = longjmperror
-excludedFunctions.ios_simulator_arm64 = longjmperror
-excludedFunctions.ios_x64 = pthread_jit_write_protect_np pthread_jit_write_protect_supported_np
+excludedFunctions.ios_simulator_arm64 = longjmperror \
+    openat_dprotected_np mkfifoat mknodat openat_authenticated_np
+excludedFunctions.ios_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np
 
 ---
 // Wrapper to access errno variable.

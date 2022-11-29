@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
 // !LANGUAGE: +FunctionTypesWithBigArity
 
 // Implementing function interface is prohibited in JavaScript

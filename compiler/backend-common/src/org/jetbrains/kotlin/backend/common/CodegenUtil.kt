@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
@@ -236,6 +237,7 @@ object CodegenUtil {
         // CompilationException (the only KotlinExceptionWithAttachments possible here) is already supposed
         // to have all information about the context.
         if (exception is KotlinExceptionWithAttachments) throw exception
+        if (exception is ProcessCanceledException) throw exception
         throw BackendException(
             getExceptionMessage("Backend", "Exception during $phase", exception, location) +
                     additionalMessage?.let { "\n" + it }.orEmpty(),

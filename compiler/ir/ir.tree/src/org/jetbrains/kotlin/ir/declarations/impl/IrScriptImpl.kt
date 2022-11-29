@@ -24,9 +24,9 @@ class IrScriptImpl(
     override val symbol: IrScriptSymbol,
     override var name: Name,
     override val factory: IrFactory,
+    override val startOffset: Int,
+    override val endOffset: Int,
 ) : IrScript() {
-    override val startOffset: Int get() = UNDEFINED_OFFSET
-    override val endOffset: Int get() = UNDEFINED_OFFSET
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
 
     private var _parent: IrDeclarationParent? = null
@@ -43,9 +43,9 @@ class IrScriptImpl(
 
     override var metadata: MetadataSource? = null
 
-    override lateinit var thisReceiver: IrValueParameter
+    override var thisReceiver: IrValueParameter? = null
+    override var baseClass: IrType? = null
 
-    override lateinit var baseClass: IrType
     override lateinit var explicitCallParameters: List<IrValueParameter>
     override lateinit var implicitReceiversParameters: List<IrValueParameter>
     override lateinit var providedProperties: List<IrPropertySymbol>

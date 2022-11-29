@@ -15,7 +15,6 @@ import kotlin.jdk7.test.PathTreeWalkTest.Companion.createTestFiles
 import kotlin.jdk7.test.PathTreeWalkTest.Companion.referenceFilenames
 import kotlin.jdk7.test.PathTreeWalkTest.Companion.referenceFilesOnly
 import kotlin.jdk7.test.PathTreeWalkTest.Companion.testVisitedFiles
-import kotlin.jdk7.test.PathTreeWalkTest.Companion.tryCreateSymbolicLinkTo
 import kotlin.test.*
 
 class FileVisitorBuilderTest : AbstractPathTest() {

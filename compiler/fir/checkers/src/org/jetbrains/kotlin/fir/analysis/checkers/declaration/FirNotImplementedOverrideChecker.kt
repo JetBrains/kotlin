@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
@@ -19,7 +18,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRAC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -92,6 +92,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                     symbol.isVisibleInClass(classSymbol) -> notImplementedSymbols.add(symbol)
                     else -> invisibleSymbols.add(symbol)
                 }
+
                 else -> {
                     // nothing to do
                 }
@@ -104,7 +105,8 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         }
 
         if (!canHaveAbstractDeclarations && notImplementedSymbols.isNotEmpty()) {
-            val notImplemented = notImplementedSymbols.first().unwrapFakeOverrides()
+            val notImplemented = (notImplementedSymbols.firstOrNull { !it.isFromInterfaceOrEnum(context) } ?: notImplementedSymbols.first())
+                .unwrapFakeOverrides()
             if (notImplemented.isFromInterfaceOrEnum(context)) {
                 reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplemented, context)
             } else {
@@ -142,20 +144,23 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
 
         if (manyImplementationsDelegationSymbols.isEmpty() && notImplementedIntersectionSymbols.isNotEmpty()) {
             val notImplementedIntersectionSymbol = notImplementedIntersectionSymbols.first()
-            val intersections = (notImplementedIntersectionSymbol as FirIntersectionCallableSymbol).intersections
-            if (intersections.any {
-                    (it.containingClass()?.toSymbol(context.session) as? FirRegularClassSymbol)?.classKind == ClassKind.CLASS
+            val (abstractIntersections, implIntersections) =
+                (notImplementedIntersectionSymbol as FirIntersectionCallableSymbol).intersections.partition {
+                    it.modality == Modality.ABSTRACT
+                }
+            if (implIntersections.any {
+                    (it.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol)?.classKind == ClassKind.CLASS
                 }
             ) {
                 reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
             } else {
-                reporter.reportOn(
-                    source,
-                    FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
-                    classSymbol,
-                    notImplementedIntersectionSymbol,
-                    context
-                )
+                if (canHaveAbstractDeclarations && abstractIntersections.any {
+                        (it.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol)?.classKind == ClassKind.CLASS
+                    }
+                ) {
+                    return
+                }
+                reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
             }
         }
     }

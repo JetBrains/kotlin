@@ -17,6 +17,7 @@ import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
 import kotlin.script.experimental.dependencies.impl.*
 import kotlin.script.experimental.dependencies.maven.impl.AetherResolveSession
+import kotlin.script.experimental.dependencies.maven.impl.ResolutionKind
 import kotlin.script.experimental.dependencies.maven.impl.mavenCentral
 
 @Deprecated(
@@ -58,15 +59,20 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
 
         return try {
             val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
-            val transitive = options.transitive ?: true
+            val kind = when (options.partialResolution) {
+                true -> ResolutionKind.TRANSITIVE_PARTIAL
+                false, null -> when(options.transitive) {
+                    true, null -> ResolutionKind.TRANSITIVE
+                    false -> ResolutionKind.NON_TRANSITIVE
+                }
+            }
             val classifier = options.classifier
             val extension = options.extension
-            val deps = AetherResolveSession(
+            AetherResolveSession(
                 null, remoteRepositories()
             ).resolve(
-                artifactId, dependencyScopes.joinToString(","), transitive, null, classifier, extension
+                artifactId, dependencyScopes.joinToString(","), kind, null, classifier, extension
             )
-            ResultWithDiagnostics.Success(deps.map { it.file })
         } catch (e: RepositoryException) {
             makeResolveFailureResult(e, sourceCodeLocation)
         }

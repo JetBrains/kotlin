@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
 object JsIrBuilder {
@@ -45,6 +46,36 @@ object JsIrBuilder {
         }
     }
 
+    fun buildConstructorCall(
+        target: IrConstructorSymbol,
+        type: IrType? = null,
+        typeArguments: List<IrType>? = null,
+        constructorTypeArguments: List<IrType>? = null,
+        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
+    ): IrConstructorCall {
+        val owner = target.owner
+        val parent = owner.parentAsClass
+        return IrConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            type ?: owner.returnType,
+            target,
+            typeArgumentsCount = parent.typeParameters.size,
+            valueArgumentsCount = owner.valueParameters.size,
+            constructorTypeArgumentsCount = owner.typeParameters.size,
+            origin = origin
+        ).apply {
+            typeArguments?.let {
+                assert(typeArguments.size == typeArgumentsCount)
+                it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
+            }
+            constructorTypeArguments?.let {
+                assert(constructorTypeArguments.size == constructorTypeArgumentsCount)
+                it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
+            }
+        }
+    }
+
     fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression, type: IrType) =
         IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol, value)
 
@@ -63,6 +94,9 @@ object JsIrBuilder {
 
     fun buildGetValue(symbol: IrValueSymbol) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+
+    fun buildSetValue(symbol: IrValueSymbol, value: IrExpression) =
+        IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
 
     fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
         IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
@@ -123,9 +157,29 @@ object JsIrBuilder {
     fun buildBreak(type: IrType, loop: IrLoop) = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
     fun buildContinue(type: IrType, loop: IrLoop) = IrContinueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
 
-    fun buildIfElse(type: IrType, cond: IrExpression, thenBranch: IrExpression, elseBranch: IrExpression? = null): IrWhen = buildIfElse(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, cond, thenBranch, elseBranch, JsStatementOrigins.SYNTHESIZED_STATEMENT
-    )
+    fun buildIfElse(
+        type: IrType,
+        cond: IrExpression,
+        thenBranch: IrExpression,
+        elseBranch: IrExpression? = null,
+        thenBranchStartOffset: Int = cond.startOffset,
+        thenBranchEndOffset: Int = thenBranch.endOffset,
+        elseBranchStartOffset: Int = UNDEFINED_OFFSET,
+        elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
+    ): IrWhen =
+        buildIfElse(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = type,
+            cond = cond,
+            thenBranch = thenBranch,
+            elseBranch = elseBranch,
+            origin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+            thenBranchStartOffset = thenBranchStartOffset,
+            thenBranchEndOffset = thenBranchEndOffset,
+            elseBranchStartOffset = elseBranchStartOffset,
+            elseBranchEndOffset = elseBranchEndOffset
+        )
 
     fun buildIfElse(
         startOffset: Int,
@@ -134,13 +188,17 @@ object JsIrBuilder {
         cond: IrExpression,
         thenBranch: IrExpression,
         elseBranch: IrExpression? = null,
-        origin: IrStatementOrigin? = null
+        origin: IrStatementOrigin? = null,
+        thenBranchStartOffset: Int = cond.startOffset,
+        thenBranchEndOffset: Int = thenBranch.endOffset,
+        elseBranchStartOffset: Int = UNDEFINED_OFFSET,
+        elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
     ): IrWhen {
         val element = IrIfThenElseImpl(startOffset, endOffset, type, origin)
-        element.branches.add(IrBranchImpl(cond, thenBranch))
+        element.branches.add(IrBranchImpl(thenBranchStartOffset, thenBranchEndOffset, cond, thenBranch))
         if (elseBranch != null) {
-            val irTrue = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, cond.type, true)
-            element.branches.add(IrElseBranchImpl(irTrue, elseBranch))
+            val irTrue = IrConstImpl.constTrue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, cond.type)
+            element.branches.add(IrElseBranchImpl(elseBranchStartOffset, elseBranchEndOffset, irTrue, elseBranch))
         }
 
         return element
