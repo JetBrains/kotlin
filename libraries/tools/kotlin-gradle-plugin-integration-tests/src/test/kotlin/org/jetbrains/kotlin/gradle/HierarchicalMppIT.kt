@@ -729,7 +729,7 @@ class HierarchicalMppIT : KGPBaseTest() {
     @DisplayName("Test sources publication of a multiplatform library")
     fun testSourcesPublication(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         project(
-            "mpp-sources-publication",
+            "mpp-sources-publication/producer",
             gradleVersion = gradleVersion,
             localRepoDir = tempDir
         ).run {
