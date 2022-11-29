@@ -166,30 +166,35 @@ class FirCallCompleter(
         mayBeCoercionToUnitApplied: Boolean
     ) {
         val expectedType = expectedTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
-        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker)
 
         val system = candidate.system
         when {
-            !shouldEnforceExpectedType -> {
-                system.addSubtypeConstraintIfCompatible(initialType, expectedType, expectedTypeConstraintPosition)
+            // If type mismatch is assumed to be reported in the checker, we should not add a subtyping constraint that leads to error.
+            // Because it might make resulting type correct while, it's hopefully would be more clear if we let the call be inferred without
+            // the expected type, and then would report diagnostic in the checker.
+            // It's assumed to be safe & sound, because if constraint system has contradictions when expected type is added,
+            // the resulting expression type cannot be inferred to something that is a subtype of `expectedType`,
+            // thus the diagnostic should be reported.
+            !shouldEnforceExpectedType || expectedTypeMismatchIsReportedInChecker -> {
+                system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
             isFromCast -> {
                 if (candidate.isFunctionForExpectTypeFromCastFeature()) {
                     system.addSubtypeConstraint(
                         initialType, expectedType,
-                        ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker = false),
+                        ConeExpectedTypeConstraintPosition,
                     )
                 }
             }
             !expectedType.isUnitOrFlexibleUnit || (!mayBeCoercionToUnitApplied && !expectedTypeMismatchIsReportedInChecker) -> {
-                system.addSubtypeConstraint(initialType, expectedType, expectedTypeConstraintPosition)
+                system.addSubtypeConstraint(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
             system.notFixedTypeVariables.isEmpty() -> return
             expectedType.isUnit -> {
-                system.addEqualityConstraintIfCompatible(initialType, expectedType, expectedTypeConstraintPosition)
+                system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
             else -> {
-                system.addSubtypeConstraintIfCompatible(initialType, expectedType, expectedTypeConstraintPosition)
+                system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
         }
     }

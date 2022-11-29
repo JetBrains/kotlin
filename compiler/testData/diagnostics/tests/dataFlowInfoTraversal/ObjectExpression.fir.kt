@@ -6,6 +6,6 @@ fun foo() {
 
     val a = object {
         fun baz() = bar(if (x == null) 0 else x)
-        fun quux(): Int = if (x == null) x else x
+        fun quux(): Int = <!RETURN_TYPE_MISMATCH!>if (x == null) x else x<!>
     }
 }

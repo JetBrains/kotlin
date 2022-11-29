@@ -6561,6 +6561,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("incorrectElvis.kt")
+            public void testIncorrectElvis() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/incorrectElvis.kt");
+            }
+
+            @Test
             @TestMetadata("jumpAcrossFunctionBoundary.kt")
             public void testJumpAcrossFunctionBoundary() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/jumpAcrossFunctionBoundary.kt");
