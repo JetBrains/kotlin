@@ -797,6 +797,63 @@ class HierarchicalMppIT : KGPBaseTest() {
                 actualSourcePublicationLayoutBySourcesFile.stringifyForBeautifulDiff()
             )
         }
+
+        project(
+            "mpp-sources-publication/consumer",
+            gradleVersion = gradleVersion,
+            localRepoDir = tempDir
+        ) {
+            buildGradleKts.appendText("""
+                testResolutionToSourcesVariant(
+                    "common",
+                    KotlinPlatformType.common,
+                    includeDisambiguation = false
+                )
+
+                testResolutionToSourcesVariant(
+                    "jvm",
+                    KotlinPlatformType.jvm
+                )
+
+                testResolutionToSourcesVariant(
+                    "jvm2",
+                    KotlinPlatformType.jvm
+                )
+
+                testResolutionToSourcesVariant(
+                    "linuxX64",
+                    KotlinPlatformType.native,
+                    nativePlatform = "linux_x64"
+                )
+            """.trimIndent())
+
+            val expectedReports = mapOf(
+                "common" to SourcesVariantResolutionReport(
+                    files = listOf("lib-kotlin-1.0-sources.jar"),
+                    dependencyToVariant = mapOf("test:lib:1.0" to "metadataSourcesElements")
+                ),
+                "jvm" to SourcesVariantResolutionReport(
+                    files = listOf("lib-jvm-1.0-sources.jar"),
+                    dependencyToVariant = mapOf("test:lib:1.0" to "jvmSourcesElements-published",
+                                                "test:lib-jvm:1.0" to "jvmSourcesElements-published")
+                ),
+                "jvm2" to SourcesVariantResolutionReport(
+                    files = listOf("lib-jvm2-1.0-sources.jar"),
+                    dependencyToVariant = mapOf("test:lib:1.0" to "jvm2SourcesElements-published",
+                                                "test:lib-jvm2:1.0" to "jvm2SourcesElements-published")
+                ),
+                "linuxX64" to SourcesVariantResolutionReport(
+                    files = listOf("lib-linuxx64-1.0-sources.jar"),
+                    dependencyToVariant = mapOf("test:lib:1.0" to "linuxX64SourcesElements-published",
+                                                "test:lib-linuxx64:1.0" to "linuxX64SourcesElements-published")
+                ),
+            )
+
+            build("help") { // evaluate only
+                val actualReports = SourcesVariantResolutionReport.parse(output, expectedReports.keys)
+                assertEquals(expectedReports, actualReports)
+            }
+        }
     }
 
     @GradleTest
@@ -1081,6 +1138,45 @@ class HierarchicalMppIT : KGPBaseTest() {
                     useFiles.split(TEST_OUTPUT_ITEMS_SEPARATOR).map { File(it) }
                 )
             }
+        }
+    }
+
+    private data class SourcesVariantResolutionReport(
+        val files: List<String>,
+        val dependencyToVariant: Map<String, String>
+    ) {
+        companion object {
+            fun parse(output: String, targetNames: Iterable<String>): Map<String, SourcesVariantResolutionReport> {
+                val lines = output.lines()
+                return targetNames.associateWith { targetName -> lines.parseForTarget(targetName) }
+            }
+
+            private fun List<String>.parseForTarget(targetName: String) = SourcesVariantResolutionReport(
+                files = parseFiles(targetName),
+                dependencyToVariant = parseResolvedDependencies(targetName)
+            )
+
+            private fun List<String>.betweenMarkers(
+                start: String,
+                end: String
+            ): List<String> {
+                val startPos = indexOf(start)
+                val endPos = indexOf(end)
+
+                return subList(startPos + 1, endPos)
+            }
+
+            private fun List<String>.parseFiles(targetName: String): List<String> =
+                betweenMarkers(
+                    "<RESOLVED SOURCES FILE $targetName>",
+                    "</RESOLVED SOURCES FILE $targetName>"
+                )
+
+            private fun List<String>.parseResolvedDependencies(targetName: String): Map<String, String> =
+                betweenMarkers(
+                    "<RESOLVED DEPENDENCIES OF $targetName>",
+                    "</RESOLVED DEPENDENCIES OF $targetName>"
+                ).associate { it.split(" => ").let { it[0] to it[1] } }
         }
     }
 }

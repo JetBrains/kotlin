@@ -196,6 +196,19 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
+        val androidSourcesElementsAttributes = arrayOf(
+            "org.gradle.category" to "documentation",
+            "org.gradle.dependency.bundling" to "external",
+            "org.gradle.docstype" to "sources",
+            "org.gradle.libraryelements" to "jar",
+            "org.gradle.usage" to "java-runtime",
+            "org.jetbrains.kotlin.platform.type" to "androidJvm",
+
+            // user-specific attributes that added manually in build script
+            "com.example.compilation" to "release",
+            "com.example.target" to "androidLib",
+        )
+
         project(
             "new-mpp-android",
             gradleVersion,
@@ -222,6 +235,12 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             build("publish") {
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.aar"))
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-sources.jar"))
+                assertGradleVariant(
+                    groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.module"),
+                    "releaseSourcesElements-published"
+                ) {
+                    assertAttributesEquals(*androidSourcesElementsAttributes)
+                }
                 assertFileInProjectNotExists("$groupDir/lib-androidlib-debug")
             }
             groupDir.deleteRecursively()
@@ -237,8 +256,24 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             build("publish") {
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.aar"))
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-sources.jar"))
+                assertGradleVariant(
+                    groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.module"),
+                    "releaseSourcesElements-published"
+                ) {
+                    assertAttributesEquals(*androidSourcesElementsAttributes)
+                }
                 assertFileExists(groupDir.resolve("lib-androidlib-debug/1.0/lib-androidlib-debug-1.0.aar"))
                 assertFileExists(groupDir.resolve("lib-androidlib-debug/1.0/lib-androidlib-debug-1.0-sources.jar"))
+                assertGradleVariant(
+                    groupDir.resolve("lib-androidlib-debug/1.0/lib-androidlib-debug-1.0.module"),
+                    "debugSourcesElements-published"
+                ) {
+                    assertAttributesEquals(
+                        *androidSourcesElementsAttributes,
+                        "com.example.compilation" to "debug",
+                        "com.android.build.api.attributes.BuildTypeAttr" to "debug"
+                    )
+                }
             }
             groupDir.deleteRecursively()
 
@@ -255,6 +290,22 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-sources.jar"))
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-debug.aar"))
                 assertFileExists(groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-debug-sources.jar"))
+                assertGradleVariant(
+                    groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.module"),
+                    "releaseSourcesElements-published"
+                ) {
+                    assertAttributesEquals(*androidSourcesElementsAttributes)
+                }
+                assertGradleVariant(
+                    groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.module"),
+                    "debugSourcesElements-published"
+                ) {
+                    assertAttributesEquals(
+                        *androidSourcesElementsAttributes,
+                        "com.example.compilation" to "debug",
+                        "com.android.build.api.attributes.BuildTypeAttr" to "debug"
+                    )
+                }
             }
             groupDir.deleteRecursively()
 
@@ -267,11 +318,45 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 """.trimIndent()
             )
             build("publish") {
-                listOf("foobar", "foobaz").forEach { flavor ->
+                listOf("fooBar", "fooBaz").forEach { flavorName ->
+                    val flavor = flavorName.lowercase()
+
+                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) >= AGPVersion.v7_0_0) {
+                        arrayOf(
+                            "foo" to flavorName,
+                            "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
+                        )
+                    } else {
+                        arrayOf(
+                            "foo" to flavorName
+                        )
+                    }
+
                     assertFileExists(groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0.aar"))
                     assertFileExists(groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-sources.jar"))
                     assertFileExists(groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-debug.aar"))
                     assertFileExists(groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-debug-sources.jar"))
+                    assertGradleVariant(
+                        groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0.module"),
+                        "${flavorName}ReleaseSourcesElements-published"
+                    ) {
+                        assertAttributesEquals(
+                            *androidSourcesElementsAttributes,
+                            *flavorAttributes,
+                            "com.example.compilation" to "${flavorName}Release",
+                        )
+                    }
+                    assertGradleVariant(
+                        groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0.module"),
+                        "${flavorName}DebugSourcesElements-published"
+                    ) {
+                        assertAttributesEquals(
+                            *androidSourcesElementsAttributes,
+                            *flavorAttributes,
+                            "com.example.compilation" to "${flavorName}Debug",
+                            "com.android.build.api.attributes.BuildTypeAttr" to "debug"
+                        )
+                    }
                 }
             }
             groupDir.deleteRecursively()
@@ -285,10 +370,46 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 """.trimIndent()
             )
             build("publish") {
-                listOf("foobar", "foobaz").forEach { flavor ->
+                listOf("fooBar", "fooBaz").forEach { flavorName ->
+                    val flavor = flavorName.lowercase()
+
+                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) >= AGPVersion.v7_0_0) {
+                        arrayOf(
+                            "foo" to flavorName,
+                            "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
+                        )
+                    } else {
+                        arrayOf(
+                            "foo" to flavorName
+                        )
+                    }
+
                     listOf("-debug", "").forEach { buildType ->
                         assertFileExists(groupDir.resolve("lib-androidlib-$flavor$buildType/1.0/lib-androidlib-$flavor$buildType-1.0.aar"))
                         assertFileExists(groupDir.resolve("lib-androidlib-$flavor$buildType/1.0/lib-androidlib-$flavor$buildType-1.0-sources.jar"))
+                    }
+
+                    assertGradleVariant(
+                        groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0.module"),
+                        "${flavorName}ReleaseSourcesElements-published"
+                    ) {
+                        assertAttributesEquals(
+                            *androidSourcesElementsAttributes,
+                            *flavorAttributes,
+                            "com.example.compilation" to "${flavorName}Release",
+                        )
+                    }
+
+                    assertGradleVariant(
+                        groupDir.resolve("lib-androidlib-$flavor-debug/1.0/lib-androidlib-$flavor-debug-1.0.module"),
+                        "${flavorName}DebugSourcesElements-published"
+                    ) {
+                        assertAttributesEquals(
+                            *androidSourcesElementsAttributes,
+                            *flavorAttributes,
+                            "com.example.compilation" to "${flavorName}Debug",
+                            "com.android.build.api.attributes.BuildTypeAttr" to "debug"
+                        )
                     }
                 }
             }
