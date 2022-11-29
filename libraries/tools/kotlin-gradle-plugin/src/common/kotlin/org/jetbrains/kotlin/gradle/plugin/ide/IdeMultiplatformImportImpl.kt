@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Companion.logger
 import org.jetbrains.kotlin.tooling.core.Extras
 
 
@@ -42,24 +43,6 @@ internal class IdeMultiplatformImportImpl(
         val context = createSerializationContext()
         return context.extrasSerializationExtension.serializer(key)?.serialize(context, value)
     }
-
-    private data class RegisteredDependencyResolver(
-        val resolver: IdeDependencyResolver,
-        val constraint: SourceSetConstraint,
-        val phase: DependencyResolutionPhase,
-        val level: DependencyResolutionLevel,
-    )
-
-    private data class RegisteredDependencyTransformer(
-        val transformer: IdeDependencyTransformer,
-        val constraint: SourceSetConstraint,
-        val phase: DependencyTransformationPhase
-    )
-
-    private data class RegisteredDependencyEffect(
-        val effect: IdeDependencyEffect,
-        val constraint: SourceSetConstraint,
-    )
 
     private val registeredDependencyResolvers = mutableListOf<RegisteredDependencyResolver>()
     private val registeredDependencyTransformers = mutableListOf<RegisteredDependencyTransformer>()
@@ -116,7 +99,7 @@ internal class IdeMultiplatformImportImpl(
 
         /* Find resolvers in the highest resolution level and only consider those */
         DependencyResolutionLevel.values().reversed().forEach { level ->
-            val resolvers = applicableResolvers[level].orEmpty().map { it.resolver }
+            val resolvers = applicableResolvers[level].orEmpty()
             if (resolvers.isNotEmpty()) {
                 return@resolve IdeDependencyResolver(resolvers).resolve(sourceSet)
             }
@@ -154,5 +137,40 @@ internal class IdeMultiplatformImportImpl(
             logger = extension.project.logger,
             extrasSerializationExtensions = registeredExtrasSerializationExtensions.toList()
         )
+    }
+
+    private data class RegisteredDependencyTransformer(
+        val transformer: IdeDependencyTransformer,
+        val constraint: SourceSetConstraint,
+        val phase: DependencyTransformationPhase
+    )
+
+    private data class RegisteredDependencyEffect(
+        val effect: IdeDependencyEffect,
+        val constraint: SourceSetConstraint,
+    )
+
+    private class RegisteredDependencyResolver(
+        private val resolver: IdeDependencyResolver,
+        val constraint: SourceSetConstraint,
+        val phase: DependencyResolutionPhase,
+        val level: DependencyResolutionLevel,
+    ) : IdeDependencyResolver {
+
+        override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
+            return runCatching { resolver.resolve(sourceSet) }
+                .onFailure { error -> reportError(sourceSet, error) }
+                .onSuccess { dependencies -> reportSuccess(sourceSet, dependencies) }
+                .getOrNull().orEmpty()
+        }
+
+        private fun reportError(sourceSet: KotlinSourceSet, error: Throwable) {
+            logger.error("e: ${resolver::class.java.name} failed on ${IdeaKotlinSourceCoordinates(sourceSet)}", error)
+        }
+
+        private fun reportSuccess(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
+            if (!logger.isDebugEnabled) return
+            logger.debug("${resolver::class.java.name} resolved on ${IdeaKotlinSourceCoordinates(sourceSet)}: $dependencies")
+        }
     }
 }

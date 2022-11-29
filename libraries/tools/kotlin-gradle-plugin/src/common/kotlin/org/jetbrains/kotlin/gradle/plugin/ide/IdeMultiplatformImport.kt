@@ -7,6 +7,8 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -159,6 +161,8 @@ interface IdeMultiplatformImport {
     }
 
     companion object {
+        internal val logger: Logger = Logging.getLogger(IdeMultiplatformImport::class.java)
+
         @JvmStatic
         fun instance(project: Project): IdeMultiplatformImport {
             return project.extraProperties.getOrPut(IdeMultiplatformImport::class.java.name) {
