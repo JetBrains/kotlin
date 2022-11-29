@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.ArtifactView
+import org.gradle.api.artifacts.component.LibraryBinaryIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -95,6 +96,19 @@ internal class IdePlatformDependencyResolver(
                         binaryFile = artifact.file,
                     )
                 }
+
+                is LibraryBinaryIdentifier -> {
+                    IdeaKotlinResolvedBinaryDependency(
+                        binaryType = binaryType,
+                        coordinates = IdeaKotlinBinaryCoordinates(
+                            group = componentId.projectPath + "(${componentId.variant})",
+                            module = componentId.libraryName,
+                            version = null, sourceSetName = null
+                        ),
+                        binaryFile = artifact.file
+                    )
+                }
+
 
                 is OpaqueComponentArtifactIdentifier -> {
                     /* Such dependencies *would* require implementing a resolver */

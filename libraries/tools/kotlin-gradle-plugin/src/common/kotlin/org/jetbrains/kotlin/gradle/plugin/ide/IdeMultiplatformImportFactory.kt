@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.kpm.idea.kotlinDebugKey
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 
-fun IdeMultiplatformImport(extension: KotlinMultiplatformExtension): IdeMultiplatformImport {
+internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {
 
         registerDependencyResolver(

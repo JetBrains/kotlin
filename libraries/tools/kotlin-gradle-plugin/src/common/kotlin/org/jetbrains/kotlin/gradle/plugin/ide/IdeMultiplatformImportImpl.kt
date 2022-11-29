@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.toByteArray
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.tooling.core.Extras
 
 
 internal class IdeMultiplatformImportImpl(
-    private val extension: KotlinMultiplatformExtension
+    private val extension: KotlinProjectExtension
 ) : IdeMultiplatformImport {
 
     override fun resolveDependencies(sourceSetName: String): Set<IdeaKotlinDependency> {
