@@ -169,18 +169,24 @@ class FirCallCompleter(
         mayBeCoercionToUnitApplied: Boolean
     ) {
         val expectedType = expectedTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
-        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker)
+        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition()
 
         val system = candidate.system
         when {
-            !shouldEnforceExpectedType -> {
+            // If type mismatch is assumed to be reported in the checker, we should not add a subtyping constraint that leads to error.
+            // Because it might make resulting type correct while, it's hopefully would be more clear if we let the call be inferred without
+            // the expected type, and then would report diagnostic in the checker.
+            // It's assumed to be safe & sound, because if constraint system has contradictions when expected type is added,
+            // the resulting expression type cannot be inferred to something that is a subtype of `expectedType`,
+            // thus the diagnostic should be reported.
+            !shouldEnforceExpectedType || expectedTypeMismatchIsReportedInChecker -> {
                 system.addSubtypeConstraintIfCompatible(initialType, expectedType, expectedTypeConstraintPosition)
             }
             isFromCast -> {
                 if (candidate.isFunctionForExpectTypeFromCastFeature()) {
                     system.addSubtypeConstraint(
                         initialType, expectedType,
-                        ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker = false),
+                        ConeExpectedTypeConstraintPosition(),
                     )
                 }
             }
