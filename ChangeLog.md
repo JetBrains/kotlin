@@ -1,3 +1,9 @@
+##debug msg 
+
+###1.8.20
+
+- [`KTI-1016`](https://youtrack.jetbrains.com/issue/KTI-1016) Atomicfu to 
+aggregate 
 ## 1.7.20
 
 ### Analysis API
