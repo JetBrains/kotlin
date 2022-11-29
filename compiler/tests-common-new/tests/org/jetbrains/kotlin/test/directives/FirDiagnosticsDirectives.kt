@@ -73,4 +73,8 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Directive must contain description of ignoring in argument
         """.trimIndent()
     )
+
+    val FORCE_RENDER_ARGUMENTS by directive(
+        description = "Render diagnostics arguments"
+    )
 }
