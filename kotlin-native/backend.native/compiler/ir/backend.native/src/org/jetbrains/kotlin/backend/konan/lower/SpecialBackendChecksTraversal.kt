@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -35,14 +37,26 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 
-internal class SpecialBackendChecksTraversal(val context: Context) : FileLoweringPass {
-    override fun lower(irFile: IrFile) = irFile.acceptChildrenVoid(BackendChecker(context, irFile))
+/**
+ * Kotlin/Native-specific language checks. Most importantly, it checks C/Objective-C interop restrictions.
+ * TODO: Should be moved to compiler frontend after K2.
+ */
+internal class SpecialBackendChecksTraversal(
+        private val context: PhaseContext,
+        private val interop: InteropBuiltIns,
+        private val symbols: KonanSymbols,
+        private val irBuiltIns: IrBuiltIns,
+) : FileLoweringPass {
+    override fun lower(irFile: IrFile) = irFile.acceptChildrenVoid(BackendChecker(context, interop, symbols, irBuiltIns, irFile))
 }
 
-private class BackendChecker(val context: Context, val irFile: IrFile) : IrElementVisitorVoid {
-    val interop = context.interopBuiltIns
-    val symbols = context.ir.symbols
-    val irBuiltIns = context.irBuiltIns
+private class BackendChecker(
+        private val context: PhaseContext,
+        val interop: InteropBuiltIns,
+        val symbols: KonanSymbols,
+        val irBuiltIns: IrBuiltIns,
+        private val irFile: IrFile,
+) : IrElementVisitorVoid {
     val target = context.config.target
 
     fun reportError(location: IrElement, message: String): Nothing =
@@ -95,7 +109,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
     }
 
     private fun IrConstructor.isOverrideInit() =
-            this.annotations.hasAnnotation(context.interopBuiltIns.objCOverrideInit.fqNameSafe)
+            this.annotations.hasAnnotation(interop.objCOverrideInit.fqNameSafe)
 
     private fun checkCanGenerateOverrideInit(irClass: IrClass, constructor: IrConstructor) {
         val superClass = irClass.getSuperClassNotAny()!!
@@ -104,7 +118,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
         }.toList()
 
         val superConstructor = superConstructors.singleOrNull() ?: run {
-            val annotation = context.interopBuiltIns.objCOverrideInit.name
+            val annotation = interop.objCOverrideInit.name
             if (superConstructors.isEmpty())
                 reportError(constructor,
                         """
@@ -122,7 +136,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
         // Remove fake overrides of this init method, also check for explicit overriding:
         irClass.declarations.forEach {
             if (it is IrSimpleFunction && initMethod.symbol in it.overriddenSymbols && it.isReal) {
-                val annotation = context.interopBuiltIns.objCOverrideInit.name
+                val annotation = interop.objCOverrideInit.name
                 reportError(constructor,
                         "constructor with @$annotation overrides initializer that is already overridden explicitly"
                 )
@@ -138,7 +152,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
                     }
 
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
-        val action = "@${context.interopBuiltIns.objCAction.name}"
+        val action = "@${interop.objCAction.name}"
 
         function.extensionReceiverParameter?.let {
             reportError(it, "$action method must not have extension receiver")
@@ -162,7 +176,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
     private fun checkCanGenerateOutletSetterImp(property: IrProperty) {
         val descriptor = property.descriptor
 
-        val outlet = "@${context.interopBuiltIns.objCOutlet.name}"
+        val outlet = "@${interop.objCOutlet.name}"
 
         if (!descriptor.isVar)
             reportError(property, "$outlet property must be var")
@@ -243,7 +257,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
         if (!hasObjCClassSupertype)
             reportError(irClass, "Kotlin implementation of Objective-C protocol must have Objective-C superclass (e.g. NSObject)")
 
-        val methodsOfAny = context.ir.symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
+        val methodsOfAny = symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
 
         irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isReal }.forEach { method ->
             val overriddenMethodOfAny = method.allOverriddenFunctions.firstOrNull {
@@ -318,7 +332,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
         }
 
         if (callee.returnType.isNativePointed(symbols) &&
-            !callee.hasCCallAnnotation("CppClassConstructor"))
+                !callee.hasCCallAnnotation("CppClassConstructor"))
             reportError(expression, "Native interop types constructors must not be called directly")
     }
 
@@ -341,7 +355,7 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
         else ", but captures at:\n    ${captures.joinToString("\n    ") {
             val location = it.getCompilerMessageLocation(irFile)!!
             val relativePath = File(location.path).descendantRelativeTo(cwd).path
-            val capturedValueName = if (it is IrGetValue) ": ${it.symbol.owner.name.asString()}" else "" 
+            val capturedValueName = if (it is IrGetValue) ": ${it.symbol.owner.name.asString()}" else ""
             "$relativePath:${location.line}:${location.column}$capturedValueName"
         }}"
 

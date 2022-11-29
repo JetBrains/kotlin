@@ -45,7 +45,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.useContext(FrontendContextImpl(config)) { it.runFrontend(environment) }
-        if (frontendOutput is FrontendPhaseOutput.ShouldNotGenerateCode) {
+        if (frontendOutput == FrontendPhaseOutput.ShouldNotGenerateCode) {
             return
         }
         require(frontendOutput is FrontendPhaseOutput.Full)
@@ -55,8 +55,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
             val psiToIrOutput = engine.useContext(psiToIrContext) { psiToIrEngine ->
                 val output = psiToIrEngine.runPsiToIr(frontendOutput, isProducingLibrary = true)
+                psiToIrEngine.runSpecialBackendChecks(output)
                 output
             }
+            engine.runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule)
             psiToIrOutput
         }
         val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
