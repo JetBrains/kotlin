@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
@@ -1179,11 +1178,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val lhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.lhs) ?: return
         if (isLhsNotNull) {
             flow.commitOperationStatement(lhsVariable notEq null)
-        } else if (
-            components.session.languageVersionSettings.supportsFeature(LanguageFeature.BooleanElvisBoundSmartCasts) &&
-            rhs is FirConstExpression<*> &&
-            rhs.kind == ConstantValueKind.Boolean
-        ) {
+        } else if (rhs is FirConstExpression<*> && rhs.kind == ConstantValueKind.Boolean) {
             // (a ?: x) != x -> a != null. The logic system can only handle cases where x is Boolean.
             // Or null...but nobody would write that, right?
             val elvisVariable = variableStorage.createSynthetic(elvisExpression)
