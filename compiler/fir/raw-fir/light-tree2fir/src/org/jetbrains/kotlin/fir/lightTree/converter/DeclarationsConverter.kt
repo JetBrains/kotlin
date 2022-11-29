@@ -525,12 +525,11 @@ class DeclarationsConverter(
                     when {
                         modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) && superTypeRefs.all { !it.isEnum } -> {
                             delegatedSuperTypeRef = buildResolvedTypeRef {
-                                val superType = if (isSafeExternalEnumOn && modifiers.hasExternal()) implicitExternalEnumType else implicitEnumType
-                                type = ConeClassLikeTypeImpl(
-                                    superType.type.lookupTag,
-                                    runIf(superType.type.typeArguments.isNotEmpty()) { arrayOf(selfType.type) } ?: emptyArray(),
-                                    isNullable = false
-                                )
+                                val (superType, typeArguments) = when {
+                                    isSafeExternalEnumOn && modifiers.hasExternal() -> implicitExternalEnumType to emptyArray()
+                                    else -> implicitEnumType to arrayOf(selfType.type)
+                                }
+                                type = ConeClassLikeTypeImpl(superType.type.lookupTag, typeArguments, isNullable = false)
                             }
                             superTypeRefs += delegatedSuperTypeRef
                         }

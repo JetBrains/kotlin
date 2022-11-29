@@ -882,17 +882,12 @@ open class RawFirBuilder(
                      *   for correct resolve of super constructor call or just call kotlin.Any constructor
                      *   and convert it to right call at backend, because of it doesn't affects frontend work
                      */
-                    val superType =
-                        if (isSafeExternalEnumOn && modifierList?.hasExpectModifier() == true) implicitExternalEnumType else implicitEnumType
+                    val (superType, typeArguments) = when {
+                        isSafeExternalEnumOn && modifierList?.hasExpectModifier() == true -> implicitExternalEnumType to emptyArray()
+                        else -> implicitEnumType to arrayOf(delegatedSelfTypeRef?.coneType!!)
+                    }
                     delegatedSuperTypeRef = buildResolvedTypeRef {
-                        type = ConeClassLikeTypeImpl(
-                            superType.type.lookupTag,
-                            delegatedSelfTypeRef
-                                ?.takeIf { superType.type.typeArguments.isNotEmpty() }
-                                ?.coneType
-                                ?.let { arrayOf(it) } ?: emptyArray(),
-                            isNullable = false,
-                        )
+                        type = ConeClassLikeTypeImpl(superType.type.lookupTag, typeArguments,isNullable = false)
                     }
                     container.superTypeRefs += delegatedSuperTypeRef!!
                 }
