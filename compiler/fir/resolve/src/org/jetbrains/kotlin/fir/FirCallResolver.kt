@@ -407,18 +407,6 @@ class FirCallResolver(
         }
 
         val chosenCandidate = reducedCandidates.single()
-        if (!resolvedCallableReferenceAtom.hasBeenPostponed &&
-            expectedType is ConeTypeVariableType &&
-            chosenCandidate.symbol.fir.let { func ->
-                func is FirSimpleFunction && func.valueParameters.any { param ->
-                    param.defaultValue != null
-                }
-            }
-        ) {
-            resolvedCallableReferenceAtom.hasBeenPostponed = true
-            return applicability to true
-        }
-
 
         constraintSystemBuilder.runTransaction {
             chosenCandidate.outerConstraintBuilderEffect!!(this)

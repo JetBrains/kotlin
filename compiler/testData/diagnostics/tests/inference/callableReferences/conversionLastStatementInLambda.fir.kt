@@ -1,5 +1,5 @@
 // SKIP_TXT
-// ISSUE: KT-55729
+// ISSUE: KT-55729, KT-55931, KT-55936
 
 fun main(b: Boolean) {
     callWithLambda {
@@ -9,16 +9,16 @@ fun main(b: Boolean) {
 
     callWithLambda {
         // Unit conversion should work (for K2 see KT-55936)
-        <!ARGUMENT_TYPE_MISMATCH!>if (b) ::test1 else ::test2<!>
+        if (b) ::test1 else ::test2
     }
 
     callWithLambda {
-        // That hasn't been working ever in K1 nor K2
-        <!ARGUMENT_TYPE_MISMATCH!>if (b) {
+        // Doesn't work in K1, but does in K2 (see KT-55931)
+        if (b) {
             ::test1
         } else {
             ::test2
-        }<!>
+        }
     }
 
     callWithLambda {
