@@ -44,7 +44,7 @@ internal class SymbolLightFieldForObject private constructor(
         objectSymbolPointer = with(ktAnalysisSession) { objectSymbol.createPointer() },
     )
 
-    private fun <T> withObjectDeclarationSymbol(action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
+    private inline fun <T> withObjectDeclarationSymbol(crossinline action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
         objectSymbolPointer.withSymbol(ktModule, action)
 
     override fun getName(): String = name

@@ -58,7 +58,7 @@ internal class SymbolLightFieldForProperty private constructor(
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
     )
 
-    private fun <T> withPropertySymbol(action: context (KtAnalysisSession) (KtPropertySymbol) -> T): T {
+    private inline fun <T> withPropertySymbol(crossinline action: context (KtAnalysisSession) (KtPropertySymbol) -> T): T {
         return propertySymbolPointer.withSymbol(ktModule, action)
     }
 

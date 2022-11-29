@@ -61,7 +61,8 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
         kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
     )
 
-    protected fun <T> withFunctionSymbol(action: KtAnalysisSession.(FType) -> T): T = functionSymbolPointer.withSymbol(ktModule, action)
+    protected inline fun <T> withFunctionSymbol(crossinline action: KtAnalysisSession.(FType) -> T): T =
+        functionSymbolPointer.withSymbol(ktModule, action)
 
     private val _isVarArgs: Boolean by lazyPub {
         functionDeclaration?.valueParameters?.any { it.isVarArg } ?: withFunctionSymbol { functionSymbol ->

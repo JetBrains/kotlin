@@ -59,7 +59,7 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override val kotlinOrigin: KtClassOrObject? get() = classOrObjectDeclaration
 
-    protected fun <T> withClassOrObjectSymbol(action: KtAnalysisSession.(SType) -> T): T =
+    internal inline fun <T> withClassOrObjectSymbol(crossinline action: KtAnalysisSession.(SType) -> T): T =
         classOrObjectSymbolPointer.withSymbol(ktModule, action)
 
     override val isTopLevel: Boolean by lazyPub {

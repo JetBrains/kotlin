@@ -26,9 +26,10 @@ internal class SymbolLightFieldForEnumEntry(
     private val enumEntryName: String,
     containingClass: SymbolLightClassForClassOrObject,
 ) : SymbolLightField(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
-    internal fun <T> withEnumEntrySymbol(action: KtAnalysisSession.(KtEnumEntrySymbol) -> T): T = analyzeForLightClasses(ktModule) {
-        action(enumEntry.getEnumEntrySymbol())
-    }
+    internal inline fun <T> withEnumEntrySymbol(crossinline action: KtAnalysisSession.(KtEnumEntrySymbol) -> T): T =
+        analyzeForLightClasses(ktModule) {
+            action(enumEntry.getEnumEntrySymbol())
+        }
 
     private val _modifierList by lazyPub {
         SymbolLightMemberModifierList(
