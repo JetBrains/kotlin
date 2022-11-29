@@ -10,7 +10,7 @@ fun dump(dumpStrategy: String) {
 
     val f0: Function0<String> = <!INAPPLICABLE_CANDIDATE!>returnAdapter<!>(::<!UNRESOLVED_REFERENCE!>foo<!>)
     val f1: Function0<String> = ::foo
-    val f2: Function0<String> = if (dumpStrategy == "KotlinLike") ::<!UNRESOLVED_REFERENCE!>foo<!> else ::<!UNRESOLVED_REFERENCE!>bar<!>
+    val f2: Function0<String> = if (dumpStrategy == "KotlinLike") ::foo else ::bar
 }
 
 fun returnAdapter(a: kotlin.reflect.KFunction0<String>) = a
