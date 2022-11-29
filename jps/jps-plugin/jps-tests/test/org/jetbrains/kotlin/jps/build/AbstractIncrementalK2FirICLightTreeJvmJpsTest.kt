@@ -26,5 +26,5 @@ abstract class AbstractIncrementalK2FirICLightTreeJvmJpsTest(
     }
 
     override val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isJpsBuild = true/*, isFirEnabled = true*/) //TODO: add flags
+        get() = BuildLogFinder(isJpsBuild = true, isFirEnabled = true)
 }
