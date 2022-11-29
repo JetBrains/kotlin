@@ -3077,6 +3077,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestDataPath("$PROJECT_ROOT")
             public class Adapted {
                 @Test
+                @TestMetadata("adaptationByExpectTypeOutsideCall.kt")
+                public void testAdaptationByExpectTypeOutsideCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/adapted/adaptationByExpectTypeOutsideCall.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInAdapted() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }

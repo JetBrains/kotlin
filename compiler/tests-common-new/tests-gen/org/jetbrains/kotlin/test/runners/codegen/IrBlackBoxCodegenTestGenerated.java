@@ -18188,12 +18188,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
-        @TestMetadata("cannotCastToFunction.kt")
-        public void testCannotCastToFunction() throws Exception {
-            runTest("compiler/testData/codegen/box/fir/cannotCastToFunction.kt");
-        }
-
-        @Test
         @TestMetadata("cannotCastToFunctionInIf.kt")
         public void testCannotCastToFunctionInIf() throws Exception {
             runTest("compiler/testData/codegen/box/fir/cannotCastToFunctionInIf.kt");
