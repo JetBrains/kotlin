@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
@@ -21,14 +20,13 @@ import java.util.*
 internal class SymbolLightConstructor(
     ktAnalysisSession: KtAnalysisSession,
     constructorSymbol: KtConstructorSymbol,
-    lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     argumentsSkipMask: BitSet? = null,
 ) : SymbolLightMethod<KtConstructorSymbol>(
     ktAnalysisSession = ktAnalysisSession,
     functionSymbol = constructorSymbol,
-    lightMemberOrigin = lightMemberOrigin,
+    lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = methodIndex,
     argumentsSkipMask = argumentsSkipMask,

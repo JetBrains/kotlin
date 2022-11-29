@@ -118,7 +118,6 @@ internal fun SymbolLightClassForClassLike<*>.createConstructors(
             SymbolLightConstructor(
                 ktAnalysisSession = this@KtAnalysisSession,
                 constructorSymbol = constructor,
-                lightMemberOrigin = null,
                 containingClass = this@createConstructors,
                 methodIndex = METHOD_INDEX_BASE
             )
@@ -128,7 +127,6 @@ internal fun SymbolLightClassForClassLike<*>.createConstructors(
             SymbolLightConstructor(
                 ktAnalysisSession = this@KtAnalysisSession,
                 constructorSymbol = constructor,
-                lightMemberOrigin = null,
                 containingClass = this@createConstructors,
                 methodIndex = methodIndex,
                 argumentsSkipMask = argumentSkipMask
