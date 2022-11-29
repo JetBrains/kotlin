@@ -73,7 +73,13 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                         whenExpression.resultType = whenExpression.branches.first().result.resultType
                     }
                     else -> {
-                        whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextDependent)
+                        whenExpression = whenExpression.transformBranches(
+                            transformer,
+                            data.takeIf {
+                                val expectedType = it.expectedType
+                                expectedType != null && expectedType !is FirImplicitTypeRef
+                            } ?: ResolutionMode.ContextDependent,
+                        )
 
                         whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext) ?: run {
                             whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)

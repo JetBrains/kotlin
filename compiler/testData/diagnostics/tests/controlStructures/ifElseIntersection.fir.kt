@@ -26,7 +26,7 @@ fun <T> bind2(r: Option<T>): Option<T> {
 fun <T, R> bind3(r: Option<T>): Option<T> {
     return <!RETURN_TYPE_MISMATCH!>if (r is Some) {
         // Diagnoses an error correctly
-        if (true) None<R>() else r
+        <!TYPE_MISMATCH!>if (true) <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>None<R>()<!> else r<!>
     }
     else r<!>
 }
