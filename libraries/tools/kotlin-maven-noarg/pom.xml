@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <maven.version>3.0.5</maven.version>
         <noarg.common.src>${basedir}/../../../plugins/noarg/noarg.common/src</noarg.common.src>
         <noarg.k1.src>${basedir}/../../../plugins/noarg/noarg.k1/src</noarg.k1.src>
         <noarg.k2.src>${basedir}/../../../plugins/noarg/noarg.k2/src</noarg.k2.src>

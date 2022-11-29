@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <maven.version>3.0.5</maven.version>
         <lombok.common.src>${basedir}/../../../plugins/lombok/lombok.common/src</lombok.common.src>
         <lombok.k1.src>${basedir}/../../../plugins/lombok/lombok.k1/src</lombok.k1.src>
         <lombok.k2.src>${basedir}/../../../plugins/lombok/lombok.k2/src</lombok.k2.src>

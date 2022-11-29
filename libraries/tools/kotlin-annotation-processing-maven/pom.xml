@@ -5,7 +5,6 @@
 
   <modelVersion>4.0.0</modelVersion>
   <properties>
-    <maven.version>3.0.4</maven.version>
     <annotation-processing.src>${basedir}/../../../plugins/kapt3/kapt3-compiler/src</annotation-processing.src>
     <annotation-processing.cli.src>${basedir}/../../../plugins/kapt3/kapt3-cli/src</annotation-processing.cli.src>
     <annotation-processing.resources>${basedir}/../../../plugins/kapt3/kapt3-compiler/resources</annotation-processing.resources>

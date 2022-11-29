@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <maven.version>3.0.5</maven.version>
         <allopen.common.src>${basedir}/../../../plugins/allopen/allopen.common/src</allopen.common.src>
         <allopen.k1.src>${basedir}/../../../plugins/allopen/allopen.k1/src</allopen.k1.src>
         <allopen.k2.src>${basedir}/../../../plugins/allopen/allopen.k2/src</allopen.k2.src>

@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <maven.version>3.0.5</maven.version>
         <sam.common.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.common/src</sam.common.src>
         <sam.k1.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.k1/src</sam.k1.src>
         <sam.k2.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.k2/src</sam.k2.src>
