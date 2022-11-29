@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
@@ -162,7 +162,7 @@ interface IdeMultiplatformImport {
         @JvmStatic
         fun instance(project: Project): IdeMultiplatformImport {
             return project.extraProperties.getOrPut(IdeMultiplatformImport::class.java.name) {
-                IdeMultiplatformImport(project.multiplatformExtension)
+                IdeMultiplatformImport(project.kotlinExtension)
             }
         }
     }
