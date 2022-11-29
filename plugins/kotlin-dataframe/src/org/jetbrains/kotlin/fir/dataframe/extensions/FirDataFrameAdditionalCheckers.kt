@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacadeImpl
@@ -27,8 +28,14 @@ class Checker : FirFunctionCallChecker() {
     }
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         with(KotlinTypeFacadeImpl(context.session)) {
-            analyzeRefinedCallShape(expression, reporter = { call, message ->
-                reporter.reportOn(call.source, ERROR, message, context)
+            analyzeRefinedCallShape(expression, reporter = object : InterpretationErrorReporter {
+                override var errorReported: Boolean = false
+
+                override fun reportInterpretationError(call: FirFunctionCall, message: String) {
+                    call.calleeReference.source
+                    reporter.reportOn(call.source, ERROR, message, context)
+                    errorReported = true
+                }
             })
         }
     }
