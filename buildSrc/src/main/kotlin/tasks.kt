@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.tasks.TaskProvider
@@ -333,8 +334,9 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
 
     testTask.configure {
         dependsOn(firPluginAnnotations)
+        val localFirPluginAnnotations: FileCollection = firPluginAnnotations
         doFirst {
-            systemProperty("firPluginAnnotations.path", firPluginAnnotations.singleFile.canonicalPath)
+            systemProperty("firPluginAnnotations.path", localFirPluginAnnotations.singleFile.canonicalPath)
         }
     }
 }
