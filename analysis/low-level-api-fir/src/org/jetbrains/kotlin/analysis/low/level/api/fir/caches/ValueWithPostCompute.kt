@@ -62,36 +62,18 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                     return stateSnapshot.value as VALUE
                 } else {
                     synchronized(this) { // wait until other thread which holds the lock now computes the value
-                        return value as VALUE
+                        if (value == ValueIsNotComputed) {
+                            // if we have a PCE during value computation, then we will enter the critical section with `value == ValueIsNotComputed`
+                            // in this case, we should try to recalculate the value
+                            return computeValueWithoutLock()
+                        } else {
+                            return value as VALUE
+                        }
                     }
                 }
             }
             ValueIsNotComputed -> synchronized(this) {
-                // if we entered synchronized section that's mean that the value is not yet calculated and was not started to be calculated
-                // or the some other thread calculated the value while we were waiting to acquire the lock
-
-                if (value != ValueIsNotComputed) { // some other thread calculated our value
-                    return value as VALUE
-                }
-                val calculatedValue = try {
-                    val (calculated, data) = recursiveGuarded {
-                        _calculate!!(key)
-                    }
-                    value = ValueIsPostComputingNow(calculated, Thread.currentThread().id) // only current thread may see the value
-                    _postCompute!!(key, calculated, data)
-                    calculated
-                } catch (e: Throwable) {
-                    if (exceptionShouldBeSavedInCache(e)) {
-                        value = ExceptionWasThrownDuringValueComputation(e)
-                    } else {
-                        value = ValueIsNotComputed
-                    }
-                    throw e
-                }
-                _calculate = null
-                _postCompute = null
-                value = calculatedValue
-                return calculatedValue
+                return computeValueWithoutLock()
             }
             is ExceptionWasThrownDuringValueComputation -> {
                 throw stateSnapshot.error
@@ -100,6 +82,36 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                 return stateSnapshot as VALUE
             }
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    // should be called under a synchronized section
+    private fun computeValueWithoutLock(): VALUE {
+        // if we entered synchronized section that's mean that the value is not yet calculated and was not started to be calculated
+        // or the some other thread calculated the value while we were waiting to acquire the lock
+
+        if (value != ValueIsNotComputed) { // some other thread calculated our value
+            return value as VALUE
+        }
+        val calculatedValue = try {
+            val (calculated, data) = recursiveGuarded {
+                _calculate!!(key)
+            }
+            value = ValueIsPostComputingNow(calculated, Thread.currentThread().id) // only current thread may see the value
+            _postCompute!!(key, calculated, data)
+            calculated
+        } catch (e: Throwable) {
+            if (exceptionShouldBeSavedInCache(e)) {
+                value = ExceptionWasThrownDuringValueComputation(e)
+            } else {
+                value = ValueIsNotComputed
+            }
+            throw e
+        }
+        _calculate = null
+        _postCompute = null
+        value = calculatedValue
+        return calculatedValue
     }
 
     private fun exceptionShouldBeSavedInCache(exception: Throwable): Boolean =
