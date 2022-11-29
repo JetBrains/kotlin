@@ -37,10 +37,10 @@ digraph delegateWithAnonymousObject_kt {
     5 -> {6};
     6 -> {7};
     7 -> {8};
-    8 -> {13}    [label=onUncaughtException];
+    8 -> {13} [label="onUncaughtException"];
     8 -> {9} [style=dotted];
     9 -> {10} [style=dotted];
-    10 -> {13 11} [style=dotted];
+    10 -> {11 13} [style=dotted];
     11 -> {12} [style=dotted];
     12 -> {13} [style=dotted];
 
@@ -104,8 +104,8 @@ digraph delegateWithAnonymousObject_kt {
     26 -> {27};
     27 -> {28};
     27 -> {35 38 45} [color=red];
-    28 -> {29} [color=red];
     28 -> {33} [color=green];
+    28 -> {29} [color=red];
     28 -> {33} [style=dashed];
     29 -> {30};
     29 -> {35 38 45} [color=green];
@@ -231,8 +231,8 @@ digraph delegateWithAnonymousObject_kt {
     71 -> {72};
     72 -> {73 74};
     72 -> {26} [style=dashed];
-    73 -> {77} [color=red];
     73 -> {74} [color=green];
+    73 -> {77} [color=red];
     74 -> {75};
     75 -> {76};
     76 -> {77};
@@ -246,8 +246,8 @@ digraph delegateWithAnonymousObject_kt {
         81 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
     }
     79 -> {80} [color=green];
-    80 -> {81} [style=dotted];
     80 -> {71} [color=green];
+    80 -> {81} [style=dotted];
     80 -> {71} [style=dashed];
 
 }

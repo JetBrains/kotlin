@@ -180,14 +180,14 @@ digraph safeCalls_kt {
     49 -> {50};
     50 -> {51};
     51 -> {52};
-    52 -> {62 53};
+    52 -> {53 62};
     53 -> {54};
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {63 58};
+    57 -> {58 63};
     58 -> {59};
-    59 -> {60 69 61};
+    59 -> {60 61 69};
     59 -> {69} [style=dashed];
     60 -> {61};
     61 -> {64};
@@ -227,7 +227,7 @@ digraph safeCalls_kt {
     77 -> {78};
     78 -> {79 83};
     79 -> {80};
-    80 -> {83 81};
+    80 -> {81 83};
     81 -> {82};
     82 -> {84};
     83 -> {84};
@@ -295,9 +295,9 @@ digraph safeCalls_kt {
     97 -> {98 99} [style=dotted];
     97 -> {112} [style=dashed];
     98 -> {99} [style=dotted];
+    99 -> {111} [style=dotted label="onUncaughtException"];
     99 -> {100} [style=dotted];
-    99 -> {111} [style=dotted]    [label=onUncaughtException];
-    100 -> {106 101} [style=dotted];
+    100 -> {101 106} [style=dotted];
     101 -> {102} [style=dotted];
     102 -> {103} [style=dotted];
     103 -> {104} [style=dotted];

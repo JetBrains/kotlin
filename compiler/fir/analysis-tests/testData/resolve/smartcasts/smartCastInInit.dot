@@ -40,10 +40,10 @@ digraph smartCastInInit_kt {
     }
     6 -> {7};
     7 -> {8};
-    8 -> {13}    [label=onUncaughtException];
+    8 -> {13} [label="onUncaughtException"];
     8 -> {9} [style=dotted];
     9 -> {10} [style=dotted];
-    10 -> {13 11} [style=dotted];
+    10 -> {11 13} [style=dotted];
     11 -> {12} [style=dotted];
     12 -> {13} [style=dotted];
 
@@ -88,8 +88,8 @@ digraph smartCastInInit_kt {
         28 [label="Exit class Main" style="filled" fillcolor=red];
     }
     26 -> {27} [color=green];
-    27 -> {28} [style=dotted];
     27 -> {17} [color=green];
+    27 -> {28} [style=dotted];
     27 -> {17} [style=dashed];
 
 }

@@ -101,11 +101,11 @@ finally {
     11 -> {12};
     12 -> {13};
     13 -> {14};
-    13 -> {22}    [label=onUncaughtException];
+    13 -> {22} [label="onUncaughtException"];
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    17 -> {18 31 19};
+    17 -> {18 19 31};
     17 -> {31} [style=dashed];
     18 -> {19};
     18 -> {17} [color=green style=dashed];
@@ -116,7 +116,7 @@ finally {
     23 -> {24};
     24 -> {25};
     25 -> {26};
-    25 -> {30}    [label=onUncaughtException];
+    25 -> {30} [label="onUncaughtException"];
     26 -> {27};
     27 -> {30};
     27 -> {28} [style=dotted];
@@ -191,11 +191,11 @@ finally {
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    38 -> {47}    [label=onUncaughtException];
+    38 -> {47} [label="onUncaughtException"];
     39 -> {40};
     40 -> {41};
     41 -> {42};
-    42 -> {43 56 44};
+    42 -> {43 44 56};
     42 -> {56} [style=dashed];
     43 -> {44};
     44 -> {45};
@@ -205,7 +205,7 @@ finally {
     48 -> {49};
     49 -> {50};
     50 -> {51};
-    50 -> {55}    [label=onUncaughtException];
+    50 -> {55} [label="onUncaughtException"];
     51 -> {52};
     52 -> {55};
     52 -> {53} [style=dotted];

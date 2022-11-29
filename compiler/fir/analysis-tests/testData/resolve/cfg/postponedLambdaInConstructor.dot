@@ -53,11 +53,11 @@ digraph postponedLambdaInConstructor_kt {
     }
     5 -> {6};
     6 -> {7};
-    7 -> {12 9};
+    7 -> {9 12};
     7 -> {8} [style=dotted];
     7 -> {12} [style=dashed];
-    8 -> {10} [color=red];
     8 -> {9} [color=green];
+    8 -> {10} [color=red];
     9 -> {10};
     10 -> {11};
     12 -> {13};
@@ -104,8 +104,8 @@ digraph postponedLambdaInConstructor_kt {
         32 [label="Exit class B" style="filled" fillcolor=red];
     }
     30 -> {31} [color=green];
-    31 -> {32} [style=dotted];
     31 -> {22} [color=green];
+    31 -> {32} [style=dotted];
     31 -> {22} [style=dashed];
 
 }

@@ -26,17 +26,6 @@ class FirControlFlowGraphRenderVisitor(
         private const val BLUE = "blue"
 
         private val DIGIT_REGEX = """\d""".toRegex()
-
-        private val EDGE_STYLE = EnumMap(
-            mapOf(
-                EdgeKind.Forward to "",
-                EdgeKind.DeadForward to "[style=dotted]",
-                EdgeKind.CfgForward to "[color=green]",
-                EdgeKind.DfgForward to "[color=red]",
-                EdgeKind.CfgBackward to "[color=green style=dashed]",
-                EdgeKind.DeadBackward to "[color=green style=dotted]"
-            )
-        )
     }
 
     private val printer = Printer(builder)
@@ -116,56 +105,35 @@ class FirControlFlowGraphRenderVisitor(
         }
     }
 
+    private val Edge.style: String?
+        get() = listOfNotNull(
+            when {
+                !kind.usedInDfa && !kind.usedInDeadDfa -> "color=green"
+                !kind.usedInCfa -> "color=red"
+                else -> null
+            },
+            when {
+                kind.isDead -> "style=dotted"
+                kind.isBack -> "style=dashed"
+                else -> null
+            },
+            label.label?.let { "label=\"$it\"" }
+        ).ifEmpty { null }?.joinToString(prefix = "[", separator = " ", postfix = "]")
+
     private fun Printer.renderEdges(graph: ControlFlowGraph) {
         for (node in graph.nodes) {
-            if (node.followingNodes.isEmpty()) continue
-
-            fun renderEdges(kind: EdgeKind) {
-                val edges = node.followingNodes.filter { node.outgoingEdges.getValue(it).kind == kind }
-                if (edges.isEmpty()) return
-
-                fun renderEdgesWithoutLabel(edges: List<CFGNode<*>>) {
-                    print(
-                        indices.getValue(node),
-                        EDGE,
-                        edges.joinToString(prefix = "{", postfix = "}", separator = " ") { indices.getValue(it).toString() }
-                    )
-                    EDGE_STYLE.getValue(kind).takeIf { it.isNotBlank() }?.let { printWithNoIndent(" $it") }
-                    printlnWithNoIndent(";")
-                }
-
-                if (edges.any { node.outgoingEdges[it]?.label?.label != null }) {
-                    val edgeGroups = edges.groupBy { node.outgoingEdges[it]?.label?.label != null }
-                    edgeGroups[false]?.let { renderEdgesWithoutLabel(it) }
-                    for (edge in edgeGroups[true]!!) {
-                        print(
-                            indices.getValue(node),
-                            EDGE,
-                            "{", indices.getValue(edge), "}"
-                        )
-                        EDGE_STYLE.getValue(kind).takeIf { it.isNotBlank() }?.let { printWithNoIndent(" $it") }
-                        print("[label=${node.outgoingEdges[edge]!!.label}]")
-                        printlnWithNoIndent(";")
-                    }
-                } else {
-                    renderEdgesWithoutLabel(edges)
-                }
-            }
-
-            for (kind in EdgeKind.values()) {
-                renderEdges(kind)
+            for ((style, group) in node.followingNodes.groupBy { node.outgoingEdges.getValue(it).style }.entries.sortedBy { it.key }) {
+                val mappedGroup = group.map { indices.getValue(it) }.sorted()
+                print(indices.getValue(node), EDGE, mappedGroup.joinToString(prefix = "{", postfix = "}", separator = " "))
+                style?.let { printWithNoIndent(" $it") }
+                printlnWithNoIndent(";")
             }
 
             if (node is CFGNodeWithSubgraphs<*>) {
-                val subNodes = node.subGraphs
+                val subNodes = node.subGraphs.mapNotNull { indices[it.enterNode] }.sorted()
                 if (subNodes.isNotEmpty()) {
-                    print(
-                        indices.getValue(node),
-                        EDGE,
-                        subNodes.mapNotNull { indices[it.enterNode] }.joinToString(prefix = "{", postfix = "}", separator = " ")
-                    )
-                    printWithNoIndent(" [style=dashed]")
-                    printlnWithNoIndent(";")
+                    print(indices.getValue(node), EDGE, subNodes.joinToString(prefix = "{", postfix = "}", separator = " "))
+                    printlnWithNoIndent(" [style=dashed];")
                 }
             }
         }

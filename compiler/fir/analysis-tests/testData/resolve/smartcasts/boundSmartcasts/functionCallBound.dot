@@ -45,8 +45,8 @@ digraph functionCallBound_kt {
         13 [label="Exit class Sub" style="filled" fillcolor=red];
     }
     11 -> {12} [color=green];
-    12 -> {13} [style=dotted];
     12 -> {8} [color=green];
+    12 -> {13} [style=dotted];
     12 -> {8} [style=dashed];
 
     subgraph cluster_5 {
@@ -141,7 +141,7 @@ digraph functionCallBound_kt {
     29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {40 33};
+    32 -> {33 40};
     33 -> {34};
     34 -> {35};
     35 -> {36};

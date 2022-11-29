@@ -21,10 +21,10 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     0 -> {1};
     1 -> {2};
     2 -> {3};
-    3 -> {8}    [label=onUncaughtException];
+    3 -> {8} [label="onUncaughtException"];
     3 -> {4} [style=dotted];
     4 -> {5} [style=dotted];
-    5 -> {8 6} [style=dotted];
+    5 -> {6 8} [style=dotted];
     6 -> {7} [style=dotted];
     7 -> {8} [style=dotted];
 
@@ -89,7 +89,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     11 -> {12};
     12 -> {13};
     13 -> {14};
-    14 -> {22 15};
+    14 -> {15 22};
     15 -> {16};
     16 -> {17};
     17 -> {18};
@@ -99,11 +99,11 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     21 -> {29};
     22 -> {23};
     23 -> {24};
-    24 -> {33 26};
+    24 -> {26 33};
     24 -> {25} [style=dotted];
     24 -> {33} [style=dashed];
-    25 -> {29} [color=red];
     25 -> {26} [color=green];
+    25 -> {29} [color=red];
     26 -> {27};
     27 -> {28};
     28 -> {29};
@@ -173,16 +173,16 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     40 -> {41 48};
     41 -> {42};
     42 -> {43};
-    43 -> {58 45};
+    43 -> {45 58};
     43 -> {44} [style=dotted];
     43 -> {58} [style=dashed];
-    44 -> {54} [color=red];
     44 -> {45} [color=green];
+    44 -> {54} [color=red];
     45 -> {46};
     46 -> {47};
-    47 -> {54 48};
+    47 -> {48 54};
     48 -> {49};
-    48 -> {57}    [label=onUncaughtException];
+    48 -> {57} [label="onUncaughtException"];
     49 -> {50};
     50 -> {51};
     51 -> {52};
@@ -225,11 +225,11 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     }
     63 -> {64};
     64 -> {65};
-    65 -> {72 67};
+    65 -> {67 72};
     65 -> {66} [style=dotted];
     65 -> {72} [style=dashed];
-    66 -> {68} [color=red];
     66 -> {67} [color=green];
+    66 -> {68} [color=red];
     67 -> {68};
     68 -> {69};
     69 -> {70};

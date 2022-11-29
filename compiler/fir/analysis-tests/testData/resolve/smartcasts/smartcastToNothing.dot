@@ -21,10 +21,10 @@ digraph smartcastToNothing_kt {
     0 -> {1};
     1 -> {2};
     2 -> {3};
-    3 -> {8}    [label=onUncaughtException];
+    3 -> {8} [label="onUncaughtException"];
     3 -> {4} [style=dotted];
     4 -> {5} [style=dotted];
-    5 -> {8 6} [style=dotted];
+    5 -> {6 8} [style=dotted];
     6 -> {7} [style=dotted];
     7 -> {8} [style=dotted];
 
@@ -109,10 +109,10 @@ digraph smartcastToNothing_kt {
     30 -> {31};
     31 -> {32};
     32 -> {33};
-    33 -> {38}    [label=onUncaughtException];
+    33 -> {38} [label="onUncaughtException"];
     33 -> {34} [style=dotted];
     34 -> {35} [style=dotted];
-    35 -> {38 36} [style=dotted];
+    35 -> {36 38} [style=dotted];
     36 -> {37} [style=dotted];
     37 -> {38} [style=dotted];
 
@@ -153,11 +153,11 @@ digraph smartcastToNothing_kt {
         51 [label="Exit class A" style="filled" fillcolor=red];
     }
     48 -> {49} [color=green];
-    49 -> {50} [style=dotted];
     49 -> {42} [color=green];
+    49 -> {50} [style=dotted];
     49 -> {42} [style=dashed];
-    50 -> {51} [style=dotted];
     50 -> {45} [color=green];
+    50 -> {51} [style=dotted];
     50 -> {45} [style=dashed];
 
     subgraph cluster_14 {
@@ -262,29 +262,29 @@ digraph smartcastToNothing_kt {
     61 -> {62};
     62 -> {63};
     63 -> {64};
-    64 -> {90 65};
+    64 -> {65 90};
     65 -> {66};
     66 -> {67};
     67 -> {68};
-    68 -> {99}    [label=onUncaughtException];
+    68 -> {99} [label="onUncaughtException"];
     68 -> {69} [style=dotted];
     69 -> {70} [style=dotted];
     70 -> {71} [style=dotted];
+    71 -> {99} [style=dotted label="onUncaughtException"];
     71 -> {72} [style=dotted];
-    71 -> {99} [style=dotted]    [label=onUncaughtException];
     72 -> {73} [style=dotted];
     73 -> {74} [style=dotted];
     74 -> {75} [style=dotted];
     75 -> {76} [style=dotted];
+    76 -> {99} [style=dotted label="onUncaughtException"];
     76 -> {77} [style=dotted];
-    76 -> {99} [style=dotted]    [label=onUncaughtException];
     77 -> {78} [style=dotted];
     78 -> {79} [style=dotted];
-    79 -> {81 80} [style=dotted];
+    79 -> {80 81} [style=dotted];
     80 -> {87} [style=dotted];
     81 -> {82} [style=dotted];
     82 -> {83} [style=dotted];
-    83 -> {90 84} [style=dotted];
+    83 -> {84 90} [style=dotted];
     84 -> {85} [style=dotted];
     85 -> {86} [style=dotted];
     86 -> {87} [style=dotted];
@@ -295,7 +295,7 @@ digraph smartcastToNothing_kt {
     91 -> {92};
     92 -> {93 97};
     93 -> {94};
-    94 -> {100 96};
+    94 -> {96 100};
     94 -> {95} [style=dotted];
     94 -> {100} [style=dashed];
     95 -> {96};
@@ -376,7 +376,7 @@ digraph smartcastToNothing_kt {
     109 -> {110};
     110 -> {111};
     111 -> {112};
-    112 -> {114 113};
+    112 -> {113 114};
     113 -> {124};
     114 -> {115};
     115 -> {116};
@@ -393,12 +393,12 @@ digraph smartcastToNothing_kt {
     126 -> {127};
     127 -> {128};
     128 -> {129};
-    129 -> {131 130};
+    129 -> {130 131};
     130 -> {140};
     131 -> {132};
     132 -> {133};
     133 -> {134};
-    134 -> {142}    [label=onUncaughtException];
+    134 -> {142} [label="onUncaughtException"];
     134 -> {135} [style=dotted];
     135 -> {136} [style=dotted];
     136 -> {137} [style=dotted];

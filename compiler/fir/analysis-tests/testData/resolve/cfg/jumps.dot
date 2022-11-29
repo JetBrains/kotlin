@@ -63,7 +63,7 @@ digraph jumps_kt {
     4 -> {5};
     5 -> {6};
     6 -> {7};
-    7 -> {16 8};
+    7 -> {8 16};
     8 -> {9};
     9 -> {10};
     10 -> {11};
@@ -75,7 +75,7 @@ digraph jumps_kt {
     16 -> {17};
     17 -> {18};
     18 -> {19};
-    19 -> {31}    [label=onUncaughtException];
+    19 -> {31} [label="onUncaughtException"];
     19 -> {20} [style=dotted];
     20 -> {21} [style=dotted];
     21 -> {22} [style=dotted];
@@ -145,7 +145,7 @@ digraph jumps_kt {
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    39 -> {48 40};
+    39 -> {40 48};
     40 -> {41};
     41 -> {42};
     42 -> {43};
@@ -278,8 +278,8 @@ digraph jumps_kt {
     90 -> {91} [style=dotted];
     91 -> {92} [style=dotted];
     92 -> {93} [style=dotted];
-    93 -> {94} [style=dotted];
     93 -> {83} [color=green style=dotted];
+    93 -> {94} [style=dotted];
     94 -> {95};
     95 -> {96};
     96 -> {97};
@@ -343,18 +343,18 @@ digraph jumps_kt {
     102 -> {103};
     103 -> {104};
     104 -> {105};
-    105 -> {122 106};
+    105 -> {106 122};
     106 -> {107};
     107 -> {108};
     108 -> {109};
     109 -> {110};
     110 -> {111};
-    111 -> {113 112};
+    111 -> {112 113};
     112 -> {119};
     113 -> {114};
     114 -> {115};
-    115 -> {116} [style=dotted];
     115 -> {103} [color=green style=dashed];
+    115 -> {116} [style=dotted];
     116 -> {117} [style=dotted];
     117 -> {118} [style=dotted];
     118 -> {119} [style=dotted];
@@ -407,7 +407,7 @@ digraph jumps_kt {
     }
     130 -> {131};
     131 -> {132};
-    132 -> {133 137 134};
+    132 -> {133 134 137};
     132 -> {137} [style=dashed];
     133 -> {134};
     133 -> {132} [color=green style=dashed];
