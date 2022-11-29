@@ -11,7 +11,7 @@ FILE: class.kt
             private [BODY_RESOLVE] get(): <ERROR TYPE REF: Symbol not found for C>
 
         public final [BODY_RESOLVE] fun foo([BODY_RESOLVE] a: <ERROR TYPE REF: Symbol not found for A>): <ERROR TYPE REF: Cannot infer argument for type parameter R> {
-            ^foo R|kotlin/with<CS errors: kotlin/with>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(R|<local>/a|, <L> = [BODY_RESOLVE] with@fun <ERROR TYPE REF: Cannot infer argument for type parameter T>.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^foo R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(R|<local>/a|, <L> = [BODY_RESOLVE] with@fun <ERROR TYPE REF: Cannot infer argument for type parameter T>.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Unknown, kind=EXACTLY_ONCE>  {
                 ^ <Unresolved name: bar>#(String(a), this@R|/B|.R|/B.y|)
             }
             )
