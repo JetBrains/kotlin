@@ -44,7 +44,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.useContext(FrontendContextImpl(config)) { it.runFrontend(environment) }
-        if (frontendOutput is FrontendPhaseOutput.ShouldNotGenerateCode) {
+        if (frontendOutput == FrontendPhaseOutput.ShouldNotGenerateCode) {
             return
         }
         require(frontendOutput is FrontendPhaseOutput.Full)
