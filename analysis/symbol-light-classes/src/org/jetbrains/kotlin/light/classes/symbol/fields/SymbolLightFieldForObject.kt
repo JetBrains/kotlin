@@ -56,12 +56,12 @@ internal class SymbolLightFieldForObject private constructor(
             }
         }
 
-        val lazyAnnotations = lazyPub {
-            val notNullAnnotation = SymbolLightSimpleAnnotation(NotNull::class.java.name, this)
-            listOf(notNullAnnotation)
+        SymbolLightMemberModifierList(
+            containingDeclaration = this,
+            lazyModifiers = lazyModifiers,
+        ) { modifierList ->
+            listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
         }
-
-        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     private val _isDeprecated: Boolean by lazyPub {

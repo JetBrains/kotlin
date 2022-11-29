@@ -129,13 +129,15 @@ internal class SymbolLightAccessorMethod private constructor(
     //TODO Fix it when SymbolConstructorValueParameter be ready
     private val isParameter: Boolean get() = containingPropertyDeclaration == null || containingPropertyDeclaration is KtParameter
 
-    private fun computeAnnotations(isPrivate: Boolean): List<PsiAnnotation> = analyzeForLightClasses(ktModule) {
-        val nullabilityApplicable = isGetter && !isPrivate && !(isParameter && containingClass.isAnnotationType)
+    private fun computeAnnotations(modifierList: PsiModifierList): List<PsiAnnotation> = analyzeForLightClasses(ktModule) {
+        val nullabilityApplicable = isGetter &&
+                !modifierList.hasModifierProperty(PsiModifier.PRIVATE) &&
+                !(isParameter && containingClass.isAnnotationType)
 
         val propertySymbol = propertySymbol()
         val nullabilityType = if (nullabilityApplicable) getTypeNullability(propertySymbol.returnType) else NullabilityType.Unknown
         val annotationsFromProperty = propertySymbol.computeAnnotations(
-            parent = this@SymbolLightAccessorMethod,
+            modifierList = modifierList,
             nullability = nullabilityType,
             annotationUseSiteTarget = accessorSite,
             includeAnnotationsWithoutSite = false,
@@ -143,7 +145,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
         val propertyAccessorSymbol = propertyAccessorSymbol()
         val annotationsFromAccessor = propertyAccessorSymbol.computeAnnotations(
-            parent = this@SymbolLightAccessorMethod,
+            modifierList = modifierList,
             nullability = NullabilityType.Unknown,
             annotationUseSiteTarget = accessorSite,
         )
@@ -184,9 +186,11 @@ internal class SymbolLightAccessorMethod private constructor(
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val lazyModifiers = lazyPub { computeModifiers() }
-        val lazyAnnotations = lazyPub { computeAnnotations(PsiModifier.PRIVATE in lazyModifiers.value) }
-        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
+        SymbolLightMemberModifierList(
+            containingDeclaration = this,
+            lazyModifiers = lazyPub { computeModifiers() },
+            annotationsComputer = ::computeAnnotations,
+        )
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

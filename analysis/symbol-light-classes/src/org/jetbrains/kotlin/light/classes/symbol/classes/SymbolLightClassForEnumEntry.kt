@@ -48,8 +48,7 @@ internal class SymbolLightClassForEnumEntry(
         SymbolLightClassModifierList(
             containingDeclaration = this,
             lazyModifiers = lazyOf(setOf(PsiModifier.STATIC, PsiModifier.FINAL)),
-            lazyAnnotations = lazyOf(emptyList()),
-        )
+        ) { emptyList() }
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

@@ -67,10 +67,11 @@ internal class SymbolLightSimpleMethod(
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
-    context(KtAnalysisSession)
-    private fun computeAnnotations(functionSymbol: KtFunctionSymbol, isPrivate: Boolean): List<PsiAnnotation> {
+    private fun computeAnnotations(
+        modifierList: PsiModifierList,
+    ): List<PsiAnnotation> = withFunctionSymbol { functionSymbol ->
         val nullability = when {
-            isPrivate -> NullabilityType.Unknown
+            modifierList.hasModifierProperty(PsiModifier.PRIVATE) -> NullabilityType.Unknown
             functionSymbol.isSuspend -> /* Any? */ NullabilityType.Nullable
             else -> {
                 val returnType = functionSymbol.returnType
@@ -78,8 +79,8 @@ internal class SymbolLightSimpleMethod(
             }
         }
 
-        return functionSymbol.computeAnnotations(
-            parent = this@SymbolLightSimpleMethod,
+        functionSymbol.computeAnnotations(
+            modifierList = modifierList,
             nullability = nullability,
             annotationUseSiteTarget = null,
         )
@@ -126,13 +127,11 @@ internal class SymbolLightSimpleMethod(
             }
         }
 
-        val lazyAnnotations = lazyPub {
-            withFunctionSymbol { functionSymbol ->
-                computeAnnotations(functionSymbol, PsiModifier.PRIVATE in lazyModifiers.value)
-            }
-        }
-
-        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
+        SymbolLightMemberModifierList(
+            containingDeclaration = this,
+            lazyModifiers = lazyModifiers,
+            annotationsComputer = ::computeAnnotations,
+        )
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

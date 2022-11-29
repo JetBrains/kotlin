@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
-import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
@@ -28,24 +27,21 @@ internal class SymbolLightParameter(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
+        SymbolLightClassModifierList(containingDeclaration = this, lazyModifiers = lazyOf(emptySet())) { modifierList ->
             val annotationSite = isConstructorParameterSymbol.ifTrue {
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
             }
 
             parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
                 val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
-
                 parameterSymbol.computeAnnotations(
-                    parent = this@SymbolLightParameter,
+                    modifierList = modifierList,
                     nullability = nullability,
                     annotationUseSiteTarget = annotationSite,
                     includeAnnotationsWithoutSite = true,
                 )
             }
         }
-
-        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
     private val isVararg: Boolean by lazyPub {

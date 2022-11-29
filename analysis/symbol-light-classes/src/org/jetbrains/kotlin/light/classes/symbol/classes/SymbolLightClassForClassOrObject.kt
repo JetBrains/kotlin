@@ -98,17 +98,18 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             }
         }
 
-        val lazyAnnotations = lazyPub {
+        SymbolLightClassModifierList(
+            containingDeclaration = this,
+            lazyModifiers = lazyModifiers,
+        ) { modifierList ->
             withClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
-                    parent = this@SymbolLightClassForClassOrObject,
+                    modifierList = modifierList,
                     nullability = NullabilityType.Unknown,
                     annotationUseSiteTarget = null,
                 )
             }
         }
-
-        SymbolLightClassModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList

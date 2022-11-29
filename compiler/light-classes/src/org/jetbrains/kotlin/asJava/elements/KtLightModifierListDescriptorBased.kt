@@ -33,6 +33,7 @@ abstract class KtLightModifierListDescriptorBased<out T : KtLightElement<KtModif
         val annotationsForEntries = owner.givenAnnotations ?: lightAnnotationsForEntries(this)
         //TODO: Hacky way to update wrong parents for annotations
         annotationsForEntries.forEach {
+            @Suppress("DEPRECATION_ERROR")
             it.parent = this
         }
         val modifierListOwner = parent

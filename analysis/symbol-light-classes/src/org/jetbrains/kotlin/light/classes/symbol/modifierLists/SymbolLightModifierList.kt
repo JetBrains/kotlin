@@ -11,13 +11,18 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.classes.cannotModify
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
+import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
-    protected val owner: T
+    protected val owner: T,
+    protected val lazyModifiers: Lazy<Set<String>>,
+    annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
 ) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
     override val kotlinOrigin: KtModifierList? get() = owner.kotlinOrigin?.modifierList
     override fun getParent() = owner
@@ -29,6 +34,16 @@ internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifie
     override fun isEquivalentTo(another: PsiElement?) = another is SymbolLightModifierList<*> && owner == another.owner
     override fun isWritable() = false
     override fun toString() = "Light modifier list of $owner"
-    abstract override fun equals(other: Any?): Boolean
-    abstract override fun hashCode(): Int
+
+    override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
+    private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
+        annotationsComputer(this)
+    }
+
+    override fun getAnnotations(): Array<out PsiAnnotation> = lazyAnnotations.value.toTypedArray()
+    override fun findAnnotation(qualifiedName: String): PsiAnnotation? =
+        lazyAnnotations.value.firstOrNull { it.qualifiedName == qualifiedName }
+
+    override fun equals(other: Any?): Boolean = this === other
+    override fun hashCode(): Int = kotlinOrigin.hashCode()
 }

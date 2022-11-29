@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAbstractAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeNullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
@@ -69,18 +68,16 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val lazyAnnotations: Lazy<List<SymbolLightAbstractAnnotation>> = lazyPub {
+        SymbolLightClassModifierList(containingDeclaration = this, lazyModifiers = lazyOf(emptySet())) { modifierList ->
             withReceiverSymbol { receiver ->
                 buildList {
-                    receiver.type.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let(::add)
+                    receiver.type.nullabilityType.computeNullabilityAnnotation(modifierList)?.let(::add)
                     receiver.annotations.mapTo(this) {
-                        SymbolLightAnnotationForAnnotationCall(it, this@SymbolLightParameterForReceiver)
+                        SymbolLightAnnotationForAnnotationCall(it, modifierList)
                     }
                 }
             }
         }
-
-        SymbolLightClassModifierList(this, lazyOf(emptySet()), lazyAnnotations)
     }
 
     private val _type: PsiType by lazyPub {

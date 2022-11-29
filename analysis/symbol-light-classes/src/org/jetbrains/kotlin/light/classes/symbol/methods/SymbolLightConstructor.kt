@@ -42,16 +42,6 @@ internal class SymbolLightConstructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
-            withFunctionSymbol { constructorSymbol ->
-                constructorSymbol.computeAnnotations(
-                    parent = this@SymbolLightConstructor,
-                    nullability = NullabilityType.Unknown,
-                    annotationUseSiteTarget = null,
-                )
-            }
-        }
-
         val lazyModifiers: Lazy<Set<String>> = lazyPub {
             // FIR treats an enum entry as an anonymous object w/ its own ctor (not default one).
             // On the other hand, FE 1.0 doesn't add anything; then ULC adds default ctor w/ package local visibility.
@@ -65,7 +55,15 @@ internal class SymbolLightConstructor(
                 }
         }
 
-        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
+        SymbolLightMemberModifierList(containingDeclaration = this, lazyModifiers = lazyModifiers) { modifierList ->
+            withFunctionSymbol { constructorSymbol ->
+                constructorSymbol.computeAnnotations(
+                    modifierList = modifierList,
+                    nullability = NullabilityType.Unknown,
+                    annotationUseSiteTarget = null,
+                )
+            }
+        }
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

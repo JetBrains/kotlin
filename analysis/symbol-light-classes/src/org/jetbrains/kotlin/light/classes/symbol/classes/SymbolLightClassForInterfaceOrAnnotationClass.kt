@@ -77,17 +77,15 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
             }
         }
 
-        val lazyAnnotations = lazyPub {
+        SymbolLightClassModifierList(containingDeclaration = this, lazyModifiers = lazyModifiers) { modifierList ->
             withClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
-                    parent = this@SymbolLightClassForInterfaceOrAnnotationClass,
+                    modifierList = modifierList,
                     nullability = NullabilityType.Unknown,
                     annotationUseSiteTarget = null,
                 )
             }
         }
-
-        SymbolLightClassModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun isInterface(): Boolean = true

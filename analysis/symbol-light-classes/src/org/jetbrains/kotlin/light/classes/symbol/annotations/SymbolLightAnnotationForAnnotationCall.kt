@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiAnnotationMemberValue
-import com.intellij.psi.PsiAnnotationParameterList
-import com.intellij.psi.PsiElement
+import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -17,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class SymbolLightAnnotationForAnnotationCall(
     private val annotationCall: KtAnnotationApplication,
-    parent: PsiElement,
+    parent: PsiModifierList,
 ) : SymbolLightAbstractAnnotation(parent) {
 
     override fun findAttributeValue(attributeName: String?): PsiAnnotationMemberValue? =

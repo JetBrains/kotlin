@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.CommonClassNames.JAVA_LANG_ANNOTATION_RETENTION
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiModifierList
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
@@ -91,7 +91,7 @@ internal fun KtAnnotatedSymbol.hasAnnotation(fqName: FqName, annotationUseSiteTa
         it.useSiteTarget == annotationUseSiteTarget && it.classId?.asSingleFqName() == fqName
     }
 
-internal fun NullabilityType.computeNullabilityAnnotation(parent: PsiElement): SymbolLightSimpleAnnotation? {
+internal fun NullabilityType.computeNullabilityAnnotation(parent: PsiModifierList): SymbolLightSimpleAnnotation? {
     return when (this) {
         NullabilityType.NotNull -> NotNull::class.java
         NullabilityType.Nullable -> Nullable::class.java
@@ -102,27 +102,26 @@ internal fun NullabilityType.computeNullabilityAnnotation(parent: PsiElement): S
 }
 
 internal fun KtAnnotatedSymbol.computeAnnotations(
-    parent: PsiElement,
+    modifierList: PsiModifierList,
     nullability: NullabilityType,
     annotationUseSiteTarget: AnnotationUseSiteTarget?,
     includeAnnotationsWithoutSite: Boolean = true
 ): List<PsiAnnotation> {
-
-    val nullabilityAnnotation = nullability.computeNullabilityAnnotation(parent)
-
+    val parent = modifierList.parent
+    val nullabilityAnnotation = nullability.computeNullabilityAnnotation(modifierList)
     val parentIsAnnotation = (parent as? PsiClass)?.isAnnotationType == true
 
     val result = mutableListOf<PsiAnnotation>()
 
     if (parent is SymbolLightMethod<*>) {
         if (parent.isDelegated || parent.isOverride()) {
-            result.add(SymbolLightSimpleAnnotation(java.lang.Override::class.java.name, parent))
+            result.add(SymbolLightSimpleAnnotation(java.lang.Override::class.java.name, modifierList))
         }
     }
 
     if (annotations.isEmpty()) {
         if (parentIsAnnotation) {
-            result.add(createRetentionRuntimeAnnotation(parent))
+            result.add(createRetentionRuntimeAnnotation(modifierList))
         }
 
         if (nullabilityAnnotation != null) {
@@ -139,7 +138,7 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
         if ((includeAnnotationsWithoutSite && siteTarget == null) ||
             siteTarget == annotationUseSiteTarget
         ) {
-            result.add(SymbolLightAnnotationForAnnotationCall(annotation, parent))
+            result.add(SymbolLightAnnotationForAnnotationCall(annotation, modifierList))
         }
     }
 
@@ -151,7 +150,7 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
             ?.firstOrNull { it.name.asString() == "value" }
             ?.expression
         val kotlinRetentionName = (argumentWithKotlinRetention as? KtEnumEntryAnnotationValue)?.callableId?.callableName?.asString()
-        result.add(createRetentionRuntimeAnnotation(parent, kotlinRetentionName))
+        result.add(createRetentionRuntimeAnnotation(modifierList, kotlinRetentionName))
     }
 
     if (nullabilityAnnotation != null) {
@@ -161,19 +160,19 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     return result
 }
 
-private fun createRetentionRuntimeAnnotation(parent: PsiElement, retentionName: String? = null): PsiAnnotation =
+private fun createRetentionRuntimeAnnotation(modifierList: PsiModifierList, retentionName: String? = null): PsiAnnotation =
     SymbolLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_RETENTION,
-        parent,
+        modifierList,
         listOf(
             KtNamedAnnotationValue(
                 name = DEFAULT_VALUE_PARAMETER,
                 expression = KtEnumEntryAnnotationValue(
                     callableId = CallableId(
                         ClassId.fromString(RETENTION_POLICY_ENUM.asString()),
-                        Name.identifier(retentionName ?: AnnotationRetention.RUNTIME.name)
+                        Name.identifier(retentionName ?: AnnotationRetention.RUNTIME.name),
                     ),
-                    sourcePsi = null
+                    sourcePsi = null,
                 )
             )
         )

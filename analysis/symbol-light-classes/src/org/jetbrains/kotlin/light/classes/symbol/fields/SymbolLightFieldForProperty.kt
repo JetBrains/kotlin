@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
@@ -119,22 +122,25 @@ internal class SymbolLightFieldForProperty private constructor(
         }
     }
 
-    private fun computeAnnotations(): List<PsiAnnotation> = withPropertySymbol { propertySymbol ->
-        val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
-            getTypeNullability(propertySymbol.returnType)
-        } else NullabilityType.Unknown
-
-        propertySymbol.computeAnnotations(
-            parent = this@SymbolLightFieldForProperty,
-            nullability = nullability,
-            annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
-        )
-    }
-
     private val _modifierList: PsiModifierList by lazyPub {
-        val lazyModifiers = lazyPub { computeModifiers() }
-        val lazyAnnotations = lazyPub { computeAnnotations() }
-        SymbolLightMemberModifierList(this, lazyModifiers, lazyAnnotations)
+        SymbolLightMemberModifierList(
+            containingDeclaration = this,
+            lazyModifiers = lazyPub { computeModifiers() },
+        ) { modifierList ->
+            withPropertySymbol { propertySymbol ->
+                val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
+                    getTypeNullability(propertySymbol.returnType)
+                } else {
+                    NullabilityType.Unknown
+                }
+
+                propertySymbol.computeAnnotations(
+                    modifierList = modifierList,
+                    nullability = nullability,
+                    annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
+                )
+            }
+        }
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

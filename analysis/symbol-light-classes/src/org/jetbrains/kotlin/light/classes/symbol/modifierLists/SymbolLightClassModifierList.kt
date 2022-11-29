@@ -6,32 +6,15 @@
 package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
-import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 internal class SymbolLightClassModifierList<T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     containingDeclaration: T,
-    private val lazyModifiers: Lazy<Set<String>>,
-    lazyAnnotations: Lazy<List<PsiAnnotation>>,
-) : SymbolLightModifierList<T>(containingDeclaration) {
-    private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
-        lazyAnnotations.value.onEach { (it as? KtLightElementBase)?.parent = this }
-    }
-
+    lazyModifiers: Lazy<Set<String>>,
+    annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
+) : SymbolLightModifierList<T>(containingDeclaration, lazyModifiers, annotationsComputer) {
     override fun hasModifierProperty(name: String): Boolean = name in lazyModifiers.value
-
-    override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
-
-    override fun getAnnotations(): Array<out PsiAnnotation> = lazyAnnotations.value.toTypedArray()
-    override fun findAnnotation(qualifiedName: String): PsiAnnotation? =
-        lazyAnnotations.value.firstOrNull { it.qualifiedName == qualifiedName }
-
-    override fun equals(other: Any?): Boolean = this === other
-
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
 }

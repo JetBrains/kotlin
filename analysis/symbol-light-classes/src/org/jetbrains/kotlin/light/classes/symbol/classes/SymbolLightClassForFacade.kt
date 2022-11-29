@@ -70,20 +70,18 @@ class SymbolLightClassForFacade(
 
         val lazyModifiers = lazyOf(setOf(PsiModifier.PUBLIC, PsiModifier.FINAL))
 
-        val lazyAnnotations = lazyPub {
+        SymbolLightClassModifierList(containingDeclaration = this, lazyModifiers = lazyModifiers) { modifierList ->
             withFileSymbols { fileSymbols ->
                 fileSymbols.flatMap {
                     it.computeAnnotations(
-                        this@SymbolLightClassForFacade,
-                        NullabilityType.Unknown,
-                        AnnotationUseSiteTarget.FILE,
+                        modifierList = modifierList,
+                        nullability = NullabilityType.Unknown,
+                        annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
                         includeAnnotationsWithoutSite = false,
                     )
                 }
             }
         }
-
-        SymbolLightClassModifierList(this, lazyModifiers, lazyAnnotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
