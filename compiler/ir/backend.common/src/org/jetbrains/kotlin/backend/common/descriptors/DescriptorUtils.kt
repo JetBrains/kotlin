@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.explicitParameters as _explicitParameters
 
 val String.synthesizedName: Name get() = Name.identifier(this.synthesizedString)
 
@@ -33,7 +34,14 @@ val CallableDescriptor.isSuspend: Boolean
 @Suppress("unused")
 val CallableDescriptor.allParameters: List<ParameterDescriptor>
     get() = if (this is ConstructorDescriptor) {
-        listOf(this.constructedClass.thisAsReceiverParameter) + explicitParameters
+        listOf(this.constructedClass.thisAsReceiverParameter) + _explicitParameters
     } else {
-        explicitParameters
+        _explicitParameters
     }
+
+@Deprecated(
+    message = "Please use org.jetbrains.kotlin.descriptors.explicitParameters",
+    ReplaceWith("explicitParameters", "org.jetbrains.kotlin.descriptors.explicitParameters")
+)
+val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
+    get() = _explicitParameters
