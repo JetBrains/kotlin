@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 
-import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.project.IndexNotReadyException
-import com.intellij.openapi.diagnostic.ControlFlowException
 import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 
 /**
@@ -62,12 +59,20 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                     return stateSnapshot.value as VALUE
                 } else {
                     synchronized(this) { // wait until other thread which holds the lock now computes the value
-                        if (value == ValueIsNotComputed) {
-                            // if we have a PCE during value computation, then we will enter the critical section with `value == ValueIsNotComputed`
-                            // in this case, we should try to recalculate the value
-                            return computeValueWithoutLock()
-                        } else {
-                            return value as VALUE
+                        when (val newStateSnapshot = value) {
+                            ValueIsNotComputed -> {
+                                // if we have a PCE during value computation, then we will enter the critical section with `value == ValueIsNotComputed`
+                                // in this case, we should try to recalculate the value
+                                return computeValueWithoutLock()
+                            }
+                            is ExceptionWasThrownDuringValueComputation -> {
+                                // if some other thread tried to compute the value but failed with the exception
+                                throw newStateSnapshot.error
+                            }
+                            else -> {
+                                // other thread computed the value for us
+                                return value as VALUE
+                            }
                         }
                     }
                 }
@@ -87,12 +92,24 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     @Suppress("UNCHECKED_CAST")
     // should be called under a synchronized section
     private fun computeValueWithoutLock(): VALUE {
+        require(Thread.holdsLock(this))
         // if we entered synchronized section that's mean that the value is not yet calculated and was not started to be calculated
         // or the some other thread calculated the value while we were waiting to acquire the lock
 
-        if (value != ValueIsNotComputed) { // some other thread calculated our value
-            return value as VALUE
+        when (val newStateSnapshot = value) {
+            ValueIsNotComputed -> {
+                // will be computed next
+            }
+            is ExceptionWasThrownDuringValueComputation -> {
+                // if some other thread tried to compute the value but failed with the exception
+                throw newStateSnapshot.error
+            }
+            else -> {
+                // other thread computed the value for us
+                return value as VALUE
+            }
         }
+
         val calculatedValue = try {
             val (calculated, data) = recursiveGuarded {
                 _calculate!!(key)
