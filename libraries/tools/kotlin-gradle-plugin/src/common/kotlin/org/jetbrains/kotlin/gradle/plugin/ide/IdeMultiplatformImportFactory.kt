@@ -96,6 +96,11 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
         )
 
+        registerDependencyEffect(
+            effect = IdeDependencyLogger,
+            constraint = SourceSetConstraint.unconstrained
+        )
+
         registerExtrasSerializationExtension {
             register(kotlinDebugKey, IdeaKotlinExtrasSerializer.javaIoSerializable())
         }
