@@ -1816,7 +1816,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         return when (value) {
             is IrConstantPrimitive -> {
                 val constructedType = value.value.type
-                if (context.ir.symbols.getTypeConversion(constructedType, value.type) != null) {
+                if (context.getTypeConversion(constructedType, value.type) != null) {
                     if (value.value.kind == IrConstKind.Null) {
                         Zero(value.type.toLLVMType(llvm))
                     } else {
@@ -1846,7 +1846,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
                 val constructedType = value.constructor.owner.constructedClassType
                 val constructedClass = constructedType.getClass()!!
                 val needUnBoxing = constructedType.getInlinedClassNative() != null &&
-                        context.ir.symbols.getTypeConversion(constructedType, value.type) == null
+                        context.getTypeConversion(constructedType, value.type) == null
                 if (needUnBoxing) {
                     val unboxed = value.valueArguments.singleOrNull()
                             ?: error("Inlined class should have exactly one constructor argument")

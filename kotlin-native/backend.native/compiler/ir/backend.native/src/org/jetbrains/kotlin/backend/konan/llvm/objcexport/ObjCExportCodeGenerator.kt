@@ -408,7 +408,7 @@ internal class ObjCExportCodeGenerator(
             resultLifetime: Lifetime
     ): LLVMValueRef {
 
-        val conversion = symbols.getTypeConversion(actualType, expectedType)
+        val conversion = context.getTypeConversion(actualType, expectedType)
                 ?: return genValue(resultLifetime)
 
         val value = genValue(Lifetime.ARGUMENT)

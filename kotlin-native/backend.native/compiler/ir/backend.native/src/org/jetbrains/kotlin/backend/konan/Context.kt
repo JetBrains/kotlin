@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrOutput
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
@@ -66,13 +67,27 @@ internal class Context(
         config: KonanConfig,
         val environment: KotlinCoreEnvironment,
         val frontendServices: FrontendServices,
-        var bindingContext: BindingContext,
+        override var bindingContext: BindingContext,
         val moduleDescriptor: ModuleDescriptor,
-) : KonanBackendContext(config), ConfigChecks {
+) : KonanBackendContext(config), PsiToIrContext {
+
+    fun populateAfterPsiToIr(
+            psiToIrOutput: PsiToIrOutput
+    ) {
+        irModules = psiToIrOutput.irModules
+        irModule = psiToIrOutput.irModule
+        expectDescriptorToSymbol = psiToIrOutput.expectDescriptorToSymbol
+        ir = KonanIr(this, psiToIrOutput.irModule)
+        ir.symbols = psiToIrOutput.symbols
+        if (psiToIrOutput.irLinker is KonanIrLinker) {
+            irLinker = psiToIrOutput.irLinker
+        }
+    }
+
     /**
      * Valid from [createSymbolTablePhase] until [destroySymbolTablePhase].
      */
-    var symbolTable: SymbolTable? = null
+    override var symbolTable: SymbolTable? = null
 
     lateinit var cAdapterGenerator: CAdapterGenerator
 
@@ -102,7 +117,7 @@ internal class Context(
     val enumsSupport by lazy { EnumsSupport(mapping, irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
 
-    val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
+    override val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
     }
 
@@ -162,7 +177,7 @@ internal class Context(
     override val typeSystem: IrTypeSystemContext
         get() = IrTypeSystemContextImpl(irBuiltIns)
 
-    val interopBuiltIns by lazy {
+    override val interopBuiltIns by lazy {
         InteropBuiltIns(this.builtIns)
     }
 
@@ -202,7 +217,7 @@ internal class Context(
 
     var referencedFunctions: Set<IrFunction>? = null
 
-    internal val stdlibModule
+    override val stdlibModule
         get() = this.builtIns.any.module
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
@@ -222,6 +237,8 @@ internal class Context(
             }
         }
     }
+
+    override fun dispose() {}
 }
 
 internal class ContextLogger(val context: LoggingContext) {

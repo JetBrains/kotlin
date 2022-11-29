@@ -1472,7 +1472,7 @@ internal object DevirtualizationAnalysis {
                                         })
                             }
                             // Insert proper unboxing (unreachable code):
-                            +irCoerce(throwExpr, symbols.getTypeConversion(throwExpr.type, type))
+                            +irCoerce(throwExpr, context.getTypeConversion(throwExpr.type, type))
                         }
 
                         optimize && possibleCallees.size == 1 -> { // Monomorphic callsite.
