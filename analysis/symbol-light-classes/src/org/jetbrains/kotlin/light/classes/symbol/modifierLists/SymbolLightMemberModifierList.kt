@@ -17,9 +17,10 @@ import org.jetbrains.kotlin.psi.psiUtil.hasBody
 
 internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
     containingDeclaration: T,
-    lazyModifiers: Lazy<Set<String>>,
+    staticModifiers: Set<String> = emptySet(),
+    lazyModifiers: Lazy<Set<String>>? = null,
     annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
-) : SymbolLightModifierList<T>(containingDeclaration, lazyModifiers, annotationsComputer) {
+) : SymbolLightModifierList<T>(containingDeclaration, staticModifiers, lazyModifiers, annotationsComputer) {
     override fun hasModifierProperty(name: String): Boolean = when {
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
         // Pretend this method behaves like a `default` method

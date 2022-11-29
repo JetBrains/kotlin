@@ -41,7 +41,7 @@ internal class SymbolLightSetterParameter(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(containingDeclaration = this, lazyModifiers = lazyOf(emptySet())) { modifierList ->
+        SymbolLightClassModifierList(containingDeclaration = this) { modifierList ->
             analyzeForLightClasses(ktModule) {
                 val annotationsFromSetter = parameterSymbolPointer.restoreSymbolOrThrowIfDisposed().computeAnnotations(
                     modifierList = modifierList,

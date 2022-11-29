@@ -65,11 +65,11 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
     )
 
     private val _modifierList: PsiModifierList? by lazyPub {
+        val staticModifiers = setOf(PsiModifier.ABSTRACT)
         val lazyModifiers = lazyPub {
             withClassOrObjectSymbol { classOrObjectSymbol ->
                 buildSet {
                     add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
-                    add(PsiModifier.ABSTRACT)
                     if (!isTopLevel && !classOrObjectSymbol.isInner) {
                         add(PsiModifier.STATIC)
                     }
@@ -77,7 +77,11 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
             }
         }
 
-        SymbolLightClassModifierList(containingDeclaration = this, lazyModifiers = lazyModifiers) { modifierList ->
+        SymbolLightClassModifierList(
+            containingDeclaration = this,
+            staticModifiers = staticModifiers,
+            lazyModifiers = lazyModifiers,
+        ) { modifierList ->
             withClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
                     modifierList = modifierList,

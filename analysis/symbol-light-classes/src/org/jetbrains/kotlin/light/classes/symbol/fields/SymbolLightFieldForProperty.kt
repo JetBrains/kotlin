@@ -91,7 +91,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun getName(): String = fieldName
 
-    private fun computeModifiers(): Set<String> = withPropertySymbol { propertySymbol ->
+    private fun computeLazyModifiers(): Set<String> = withPropertySymbol { propertySymbol ->
         buildSet {
             val suppressFinal = !propertySymbol.isVal
 
@@ -101,12 +101,9 @@ internal class SymbolLightFieldForProperty private constructor(
                 result = this
             )
 
-            if (forceStatic) {
-                add(PsiModifier.STATIC)
+            if (takePropertyVisibility) {
+                add(propertySymbol.toPsiVisibilityForMember())
             }
-
-            val visibility = if (takePropertyVisibility) propertySymbol.toPsiVisibilityForMember() else PsiModifier.PRIVATE
-            add(visibility)
 
             if (!suppressFinal) {
                 add(PsiModifier.FINAL)
@@ -123,9 +120,17 @@ internal class SymbolLightFieldForProperty private constructor(
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
+        val staticModifiers = setOfNotNull(
+            PsiModifier.PRIVATE.takeUnless { takePropertyVisibility },
+            PsiModifier.STATIC.takeIf { forceStatic },
+        )
+
+        val lazyModifiers = lazyPub { computeLazyModifiers() }
+
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            lazyModifiers = lazyPub { computeModifiers() },
+            staticModifiers = staticModifiers,
+            lazyModifiers = lazyModifiers,
         ) { modifierList ->
             withPropertySymbol { propertySymbol ->
                 val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {

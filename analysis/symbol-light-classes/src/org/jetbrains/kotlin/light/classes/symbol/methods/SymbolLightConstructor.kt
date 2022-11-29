@@ -42,20 +42,25 @@ internal class SymbolLightConstructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val lazyModifiers: Lazy<Set<String>> = lazyPub {
-            // FIR treats an enum entry as an anonymous object w/ its own ctor (not default one).
-            // On the other hand, FE 1.0 doesn't add anything; then ULC adds default ctor w/ package local visibility.
-            // Technically, an enum entry should not be instantiated anywhere else, and thus FIR's modeling makes sense.
-            // But, to be backward compatible, we manually force the visibility of enum entry ctor to be package private.
-            if (containingClass is SymbolLightClassForEnumEntry)
-                setOf(PsiModifier.PACKAGE_LOCAL)
-            else
+        val (staticModifiers, lazyModifiers) = if (containingClass is SymbolLightClassForEnumEntry) {
+            setOf(PsiModifier.PACKAGE_LOCAL) to null
+        } else {
+            emptySet<String>() to lazyPub {
+                // FIR treats an enum entry as an anonymous object w/ its own ctor (not default one).
+                // On the other hand, FE 1.0 doesn't add anything; then ULC adds default ctor w/ package local visibility.
+                // Technically, an enum entry should not be instantiated anywhere else, and thus FIR's modeling makes sense.
+                // But, to be backward compatible, we manually force the visibility of enum entry ctor to be package private.
                 withFunctionSymbol { constructorSymbol ->
                     setOf(constructorSymbol.toPsiVisibilityForMember())
                 }
+            }
         }
 
-        SymbolLightMemberModifierList(containingDeclaration = this, lazyModifiers = lazyModifiers) { modifierList ->
+        SymbolLightMemberModifierList(
+            containingDeclaration = this,
+            staticModifiers = staticModifiers,
+            lazyModifiers = lazyModifiers,
+        ) { modifierList ->
             withFunctionSymbol { constructorSymbol ->
                 constructorSymbol.computeAnnotations(
                     modifierList = modifierList,

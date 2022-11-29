@@ -50,14 +50,16 @@ internal class SymbolLightFieldForObject private constructor(
     override fun getName(): String = name
 
     private val _modifierList: PsiModifierList by lazyPub {
+        val staticModifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL)
         val lazyModifiers = lazyPub {
             withObjectDeclarationSymbol { objectSymbol ->
-                setOf(objectSymbol.toPsiVisibilityForMember(), PsiModifier.STATIC, PsiModifier.FINAL)
+                setOf(objectSymbol.toPsiVisibilityForMember())
             }
         }
 
         SymbolLightMemberModifierList(
             containingDeclaration = this,
+            staticModifiers = staticModifiers,
             lazyModifiers = lazyModifiers,
         ) { modifierList ->
             listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))

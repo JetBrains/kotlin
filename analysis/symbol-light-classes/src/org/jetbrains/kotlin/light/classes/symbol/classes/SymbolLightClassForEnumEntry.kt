@@ -47,7 +47,7 @@ internal class SymbolLightClassForEnumEntry(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            lazyModifiers = lazyOf(setOf(PsiModifier.STATIC, PsiModifier.FINAL)),
+            staticModifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL),
         ) { emptyList() }
     }
 

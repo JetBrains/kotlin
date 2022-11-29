@@ -34,7 +34,7 @@ internal class SymbolLightFieldForEnumEntry(
     private val _modifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            lazyModifiers = lazyOf(setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)),
+            staticModifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
         ) { modifierList ->
             withEnumEntrySymbol { enumEntrySymbol ->
                 enumEntrySymbol.computeAnnotations(

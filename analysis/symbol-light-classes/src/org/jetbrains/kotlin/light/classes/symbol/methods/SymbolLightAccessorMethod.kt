@@ -178,16 +178,17 @@ internal class SymbolLightAccessorMethod private constructor(
             modifiers.add(PsiModifier.STATIC)
         }
 
-        if (isInterfaceMethod) {
-            modifiers.add(PsiModifier.ABSTRACT)
-        }
-
         modifiers
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
+        val staticModifiers = setOfNotNull(
+            PsiModifier.ABSTRACT.takeIf { containingClass.isInterface },
+        )
+
         SymbolLightMemberModifierList(
             containingDeclaration = this,
+            staticModifiers = staticModifiers,
             lazyModifiers = lazyPub { computeModifiers() },
             annotationsComputer = ::computeAnnotations,
         )

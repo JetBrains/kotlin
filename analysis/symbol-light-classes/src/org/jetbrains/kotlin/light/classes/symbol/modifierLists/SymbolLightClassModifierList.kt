@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 internal class SymbolLightClassModifierList<T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     containingDeclaration: T,
-    lazyModifiers: Lazy<Set<String>>,
+    staticModifiers: Set<String> = emptySet(),
+    lazyModifiers: Lazy<Set<String>>? = null,
     annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
-) : SymbolLightModifierList<T>(containingDeclaration, lazyModifiers, annotationsComputer)
+) : SymbolLightModifierList<T>(containingDeclaration, staticModifiers, lazyModifiers, annotationsComputer)

@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     protected val owner: T,
-    private val lazyModifiers: Lazy<Set<String>>,
+    private val staticModifiers: Set<String>,
+    private val lazyModifiers: Lazy<Set<String>>?,
     annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
 ) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
     override val kotlinOrigin: KtModifierList? get() = owner.kotlinOrigin?.modifierList
@@ -48,5 +49,5 @@ internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifie
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 
     override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
-    override fun hasModifierProperty(name: String): Boolean = name in lazyModifiers.value
+    override fun hasModifierProperty(name: String): Boolean = name in staticModifiers || lazyModifiers?.value?.contains(name) == true
 }
