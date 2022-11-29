@@ -305,7 +305,8 @@ internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeFo
 
 internal fun <T : KtSymbol> compareSymbolPointers(ktModule: KtModule, left: KtSymbolPointer<T>, right: KtSymbolPointer<T>): Boolean {
     return left === right || analyzeForLightClasses(ktModule) {
-        left.restoreSymbol() == right.restoreSymbol()
+        val leftSymbol = left.restoreSymbol()
+        leftSymbol != null && leftSymbol == right.restoreSymbol()
     }
 }
 
