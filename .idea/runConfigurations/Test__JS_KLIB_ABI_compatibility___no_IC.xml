@@ -12,7 +12,7 @@
         <list>
           <option value=":js:js.tests:test" />
           <option value="--tests" />
-          <option value="&quot;org.jetbrains.kotlin.js.test.JsKLibABINoICTestCaseGenerated&quot;" />
+          <option value="&quot;org.jetbrains.kotlin.js.test.ir.JsKLibABINoICTestCaseGenerated&quot;" />
         </list>
       </option>
       <option name="vmOptions" />
