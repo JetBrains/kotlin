@@ -58,7 +58,7 @@ object FirDiagnosticsCompilerResultsReporter {
                         else -> {
                             // TODO: bring KtSourceFile and KtSourceFileLinesMapping here and rewrite reporting via it to avoid code duplication
                             // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
-                            // on the the appropriate sorting above
+                            // on the appropriate sorting above
                             // Also the end offset is ignored, as it is irrelevant for the CLI reporting
                             positionFinder?.findNextPosition(DiagnosticUtils.firstRange(diagnostic.textRanges).startOffset)?.let { pos ->
                                 MessageUtil.createMessageLocation(filePath, pos.lineContent, pos.line, pos.column, -1, -1)

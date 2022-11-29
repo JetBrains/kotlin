@@ -796,7 +796,7 @@ public class DefaultErrorMessages {
         MAP.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "Value class cannot extend classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive");
         MAP.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
-        MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
+        MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, "Secondary constructors with bodies are reserved for future releases");
         MAP.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");

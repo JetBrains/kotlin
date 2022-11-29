@@ -2284,7 +2284,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         if (withContextReceiver && !wasFunctionTypeParsed) {
-            errorWithRecovery("Function type expected expected",
+            errorWithRecovery("Function type expected",
                               TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
                                              TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
                                              extraRecoverySet));

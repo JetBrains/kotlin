@@ -1106,7 +1106,7 @@
 ### Tools. JPS
 
 - [`KTIJ-17280`](https://youtrack.jetbrains.com/issue/KTIJ-17280) JPS: don't use java.io.File.createTempFile as it is not working sometimes
-- [`KTIJ-20954`](https://youtrack.jetbrains.com/issue/KTIJ-20954) NPE at at org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil.readNameResolver on compiling by JPS with LV > 1.7
+- [`KTIJ-20954`](https://youtrack.jetbrains.com/issue/KTIJ-20954) NPE at org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil.readNameResolver on compiling by JPS with LV > 1.7
 
 ### Tools. Kapt
 

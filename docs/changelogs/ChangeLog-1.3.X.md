@@ -1535,7 +1535,7 @@
 #### New Features
 
 - [`KT-29915`](https://youtrack.jetbrains.com/issue/KT-29915) Implement `typeOf` on JVM
-- [`KT-30467`](https://youtrack.jetbrains.com/issue/KT-30467) Provide a way to to save compiled script(s) as a jar
+- [`KT-30467`](https://youtrack.jetbrains.com/issue/KT-30467) Provide a way to save compiled script(s) as a jar
 
 #### Performance Improvements
 
@@ -2876,7 +2876,7 @@
 - [`KT-27611`](https://youtrack.jetbrains.com/issue/KT-27611) Calling a suspending function of a JS library causes "Uncaught ReferenceError: CoroutineImpl is not defined"
 - [`KT-28207`](https://youtrack.jetbrains.com/issue/KT-28207) Finally block loops forever for specific code shape
 - [`KT-28215`](https://youtrack.jetbrains.com/issue/KT-28215) JS: inline suspend function not usable in non-inlined form
-- [`KT-29003`](https://youtrack.jetbrains.com/issue/KT-29003) KotlinJS: Size of String in stdlib is limited if the the Constructor String(chars: CharArray) gets used
+- [`KT-29003`](https://youtrack.jetbrains.com/issue/KT-29003) KotlinJS: Size of String in stdlib is limited if the Constructor String(chars: CharArray) gets used
 
 ### Libraries
 

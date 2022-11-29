@@ -221,7 +221,7 @@ class ShadowedDeclarationsFilter(
             for (i in parameters1.indices) {
                 val p1 = parameters1[i]
                 val p2 = parameters2[i]
-                if (p1.varargElementType != p2.varargElementType) return false // both should be vararg or or both not
+                if (p1.varargElementType != p2.varargElementType) return false // both should be vararg or both not
                 if (p1.type != p2.type) return false
             }
 

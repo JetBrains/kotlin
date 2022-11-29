@@ -186,7 +186,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
                 hasErrors = true
                 messageCollector.report(
                     ERROR,
-                    "-Xcompiler-plugin argument is allowed only for for K2 compiler. Please use -Xplugin argument or enable -Xuse-k2"
+                    "-Xcompiler-plugin argument is allowed only for K2 compiler. Please use -Xplugin argument or enable -Xuse-k2"
                 )
             }
             if (pluginClasspaths.isNotEmpty() || pluginOptions.isNotEmpty()) {

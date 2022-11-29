@@ -40,7 +40,7 @@ class ClassConstructorCommonizer(
 
     override fun doCommonizeWith(next: CirClassConstructor): Boolean {
         return !next.containingClass.kind.isSingleton // don't commonize constructors for objects and enum entries
-                && next.containingClass.modality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
+                && next.containingClass.modality != Modality.SEALED // don't commonize constructors for sealed classes (not their subclasses)
                 && isPrimary == next.isPrimary
                 && visibility.commonizeWith(next)
                 && typeParameterListCommonizer.commonizeWith(next.typeParameters)

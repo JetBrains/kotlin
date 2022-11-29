@@ -1279,7 +1279,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
         map.put(
             SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS,
-            "Secondary constructors with bodies are reserved for for future releases"
+            "Secondary constructors with bodies are reserved for future releases"
         )
         map.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes")
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable")

@@ -57,7 +57,7 @@ final class LineBuffer {
      * for smooth operation of getLine(), this should be greater than
      * the length of any expected line.  Currently, 256 is 3% slower
      * than 4096 for large compiles, but seems safer given evaluateString.
-     * Strings for the scanner are are built with StringBuffers
+     * Strings for the scanner are built with StringBuffers
      * instead of directly out of the buffer whenever a string crosses
      * a buffer boundary, so small buffer sizes will mean that more
      * objects are created.

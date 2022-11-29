@@ -254,7 +254,7 @@ class MavenResolverTest : ResolversTestBase() {
             filesWithDependsOnFirst.any { it.name.startsWith("kotlin-shell-core-") && it.extension == "jar" }
         )
 
-        // Test that the the same files are resolved regardless of annotation order
+        // Test that the same files are resolved regardless of annotation order
         assertEquals(filesWithReposFirst.map { it.name }.sorted(), filesWithDependsOnFirst.map { it.name }.sorted())
     }
 }

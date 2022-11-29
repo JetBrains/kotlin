@@ -1593,7 +1593,7 @@ unit_addrs_compare (const void *v1, const void *v2)
 }
 
 /* Compare a PC against a unit_addrs for bsearch.  We always allocate
-   an entry entry at the end of the vector, so that this routine can
+   an entry at the end of the vector, so that this routine can
    safely look at the next entry.  Note that if there are multiple
    ranges containing PC, which one will be returned is unpredictable.
    We compensate for that in dwarf_fileline.  */

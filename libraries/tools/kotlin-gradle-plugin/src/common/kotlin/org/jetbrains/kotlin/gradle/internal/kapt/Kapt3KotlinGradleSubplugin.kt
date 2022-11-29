@@ -465,7 +465,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             options.compilerArgs = newCompilerArgs as List<String>
 
             // Filter out the argument providers that are related to annotation processing and therefore already used by Kapt.
-            // This is done to avoid outputs intersections between Kapt and and javaCompile and make the up-to-date check for
+            // This is done to avoid outputs intersections between Kapt and javaCompile and make the up-to-date check for
             // javaCompile more granular as it does not perform annotation processing:
             KaptWithAndroid.androidVariantData(this)?.let { androidVariantData ->
                 options.compilerArgumentProviders.removeAll(androidVariantData.annotationProcessorOptionProviders)

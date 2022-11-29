@@ -13,4 +13,4 @@ Individual tests can:
 Tests for changing version of **global** lookups cache for each modification step.
 Note that `build.log` file for this test case is named as `data-container-version-build.log`.
 
-Individual tests can can skip changing the version at any step by adding files like `module1_do-not-change-cache-versions.new.2`.
+Individual tests can skip changing the version at any step by adding files like `module1_do-not-change-cache-versions.new.2`.

@@ -452,7 +452,7 @@ ALWAYS_INLINE ThreadState SwitchThreadState(MemoryState* thread, ThreadState new
 ALWAYS_INLINE void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
 ALWAYS_INLINE void AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept;
 
-// Asserts that the current thread is in the the given state.
+// Asserts that the current thread is in the given state.
 ALWAYS_INLINE inline void AssertThreadState(ThreadState expected) noexcept {
     // Avoid redundant TLS access in GetMemoryState if runtime asserts are disabled.
     if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {

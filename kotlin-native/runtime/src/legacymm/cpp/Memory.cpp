@@ -2910,7 +2910,7 @@ void ensureNeverFrozen(ObjHeader* object) {
    auto* container = containerFor(object);
    if (container == nullptr || container->frozen())
       ThrowFreezingException(object, object);
-   // TODO: note, that this API could not not be called on frozen objects, so no need to care much about concurrency,
+   // TODO: note, that this API could not be called on frozen objects, so no need to care much about concurrency,
    // although there's subtle race with case, where other thread freezes the same object after check.
    object->meta_object()->flags_ |= MF_NEVER_FROZEN;
 }

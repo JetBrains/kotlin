@@ -35,7 +35,7 @@ private inline fun Any.computeHash(shift: Int) = ((hashCode() * MAGIC) ushr shif
 /**
  * The main ideas that might lead to better locality:
  * - Storing values in the same array as keys
- * - Using linear probes to avoid jumping to to new random indices
+ * - Using linear probes to avoid jumping to new random indices
  *
  * This Map implementation is not intended to follow some of the maps' contracts:
  * - `put` doesn't returns previous value

@@ -2398,7 +2398,7 @@
 - [`KT-12684`](https://youtrack.jetbrains.com/issue/KT-12684) A problem with reified type-parameters and smart-casts
 - [`KT-12833`](https://youtrack.jetbrains.com/issue/KT-12833) 'it' does not work in typed containers of lambdas
 - [`KT-13002`](https://youtrack.jetbrains.com/issue/KT-13002) "Error type encountered: UninferredParameterTypeConstructor" with elvis and when
-- [`KT-13028`](https://youtrack.jetbrains.com/issue/KT-13028) cast with star on on type with contravariant generic parameter makes the compiler crash
+- [`KT-13028`](https://youtrack.jetbrains.com/issue/KT-13028) cast with star on type with contravariant generic parameter makes the compiler crash
 - [`KT-13339`](https://youtrack.jetbrains.com/issue/KT-13339) Type inference failed for synthetic Java property call on implicit smart cast receiver
 - [`KT-13398`](https://youtrack.jetbrains.com/issue/KT-13398) "Type T is not a subtype of Any"
 - [`KT-13683`](https://youtrack.jetbrains.com/issue/KT-13683) Type inference incorporation error when passed null into not-null parameter

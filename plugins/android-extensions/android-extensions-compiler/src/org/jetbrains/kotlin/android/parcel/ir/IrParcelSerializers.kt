@@ -374,7 +374,7 @@ class IrListParcelSerializer(
 
     private fun listSymbols(symbols: AndroidSymbols): Pair<IrConstructorSymbol, IrSimpleFunctionSymbol> {
         // If the IrClass refers to a concrete type, try to find a constructor with capactiy or fall back
-        // the the default constructor if none exist.
+        // the default constructor if none exist.
         if (!irClass.isJvmInterface) {
             val constructor = irClass.constructors.find { constructor ->
                 constructor.valueParameters.size == 1 && constructor.valueParameters.single().type.isInt()
@@ -467,7 +467,7 @@ class IrMapParcelSerializer(
 
     private fun mapSymbols(symbols: AndroidSymbols): Pair<IrConstructorSymbol, IrSimpleFunctionSymbol> {
         // If the IrClass refers to a concrete type, try to find a constructor with capactiy or fall back
-        // the the default constructor if none exist.
+        // the default constructor if none exist.
         if (!irClass.isJvmInterface) {
             val constructor = irClass.constructors.find { constructor ->
                 constructor.valueParameters.size == 1 && constructor.valueParameters.single().type.isInt()

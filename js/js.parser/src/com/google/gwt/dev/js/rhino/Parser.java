@@ -671,7 +671,7 @@ public class Parser {
                     //
                     pn.addChildToBack(statement(ts));
 
-                    // depend on decompiling lookahead to guess that that
+                    // depend on decompiling lookahead to guess that
                     // last name was a label.
                     return pn;
                 }

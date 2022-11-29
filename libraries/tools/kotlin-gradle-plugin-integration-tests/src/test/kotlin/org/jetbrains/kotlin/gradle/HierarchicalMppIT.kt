@@ -960,12 +960,12 @@ class HierarchicalMppIT : KGPBaseTest() {
                         "Intermediate transformation should contain commonMain in all visible source sets, but it doesn't for target: $targetName"
                     }
                     assert(leafReport.allVisibleSourceSets.isEmpty()) {
-                        "All visible source sets for leaf platform source set should should be empty, but for target $targetName found: ${
+                        "All visible source sets for leaf platform source set should be empty, but for target $targetName found: ${
                             leafReport.allVisibleSourceSets.joinToString(prefix = "[", postfix = "]", separator = "; ")
                         }"
                     }
                     assert(intermediateReport.newVisibleSourceSets.isEmpty()) {
-                        "New visible source sets for intermediate source set should should be empty, but for target $targetName found: ${
+                        "New visible source sets for intermediate source set should be empty, but for target $targetName found: ${
                             leafReport.newVisibleSourceSets.joinToString(prefix = "[", postfix = "]", separator = "; ")
                         }"
                     }

@@ -43,7 +43,7 @@ internal class KotlinGradleFinishBuildHandler {
             val sessionFiles = sessionsDir.listFiles()
 
             // it is expected that only one session file per build exists
-            // afaik is is not possible to run multiple gradle builds in one project since gradle locks some dirs
+            // afaik it is not possible to run multiple gradle builds in one project since gradle locks some dirs
             if (sessionFiles.size > 1) {
                 log.warn("w: Detected multiple Kotlin daemon sessions at ${sessionsDir.relativeOrCanonical(projectCacheDir)}")
             }

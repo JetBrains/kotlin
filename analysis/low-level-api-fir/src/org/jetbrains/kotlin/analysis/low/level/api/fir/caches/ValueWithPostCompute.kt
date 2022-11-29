@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRet
  * assuming that postCompute may try to read that value inside current thread,
  * So in the period then value is calculated but post compute was not finished,
  * only thread that initiated the calculating may see the value,
- * other threads will have to wait wait until that value is calculated
+ * other threads will have to wait until that value is calculated
  */
 internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     /**
