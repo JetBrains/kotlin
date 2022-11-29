@@ -96,16 +96,3 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
 
 public fun KtElement.symbolPointer(): KtSymbolPointer<KtSymbol> = KtPsiBasedSymbolPointer(this, KtSymbol::class)
 public inline fun <reified S : KtSymbol> KtElement.symbolPointerOfType(): KtSymbolPointer<S> = KtPsiBasedSymbolPointer(this, S::class)
-
-public fun KtFile.symbolPointer(): KtSymbolPointer<KtFileSymbol> = symbolPointerOfType()
-public fun KtParameter.symbolPointer(): KtSymbolPointer<KtVariableLikeSymbol> = symbolPointerOfType()
-public fun KtTypeAlias.symbolPointer(): KtSymbolPointer<KtTypeAliasSymbol> = symbolPointerOfType()
-public fun KtEnumEntry.symbolPointer(): KtSymbolPointer<KtEnumEntrySymbol> = symbolPointerOfType()
-public fun KtProperty.symbolPointer(): KtSymbolPointer<KtVariableSymbol> = symbolPointerOfType()
-public fun KtNamedFunction.symbolPointer(): KtSymbolPointer<KtFunctionLikeSymbol> = symbolPointerOfType()
-public fun KtConstructor<*>.symbolPointer(): KtSymbolPointer<KtConstructorSymbol> = symbolPointerOfType()
-public fun KtTypeParameter.symbolPointer(): KtSymbolPointer<KtTypeParameterSymbol> = symbolPointerOfType()
-public fun KtFunctionLiteral.symbolPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = symbolPointerOfType()
-public fun KtObjectLiteralExpression.symbolPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = symbolPointerOfType()
-public fun KtPropertyAccessor.symbolPointer(): KtSymbolPointer<KtPropertyAccessorSymbol> = symbolPointerOfType()
-public fun KtClassOrObject.symbolPointer(): KtSymbolPointer<KtClassOrObjectSymbol> = symbolPointerOfType()
