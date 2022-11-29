@@ -490,6 +490,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
+        @TestMetadata("ManyDIfferentTypeMismatches.kt")
+        public void testManyDIfferentTypeMismatches() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/ManyDIfferentTypeMismatches.kt");
+        }
+
+        @Test
         @TestMetadata("MultilineStringTemplates.kt")
         public void testMultilineStringTemplates() throws Exception {
             runTest("compiler/testData/diagnostics/tests/MultilineStringTemplates.kt");

@@ -1,0 +1,63 @@
+package
+
+public val testPropertyInitializerInt: kotlin.String = 6
+public val testPropertyInitializerNull: kotlin.String = null
+public val testPropertyInitializerSelect: kotlin.String
+public val testPropertyInitializerSelectWithNull: kotlin.String
+public fun </*0*/ T> select(/*0*/ a: T, /*1*/ b: T): T
+public fun testAssignment(): kotlin.Unit
+public fun testAssignmentWithArray(): kotlin.Unit
+public fun testFunctionNonLocalReturnInt(): kotlin.String
+public fun testFunctionNonLocalReturnSelect(): kotlin.String
+public fun testFunctionReturnIntWithBlock(): kotlin.String
+public fun testFunctionReturnSelectWithBlock(): kotlin.String
+public fun testPlusAssignAssignment(): kotlin.Unit
+public fun testPlusAssignment(): kotlin.Unit
+public fun testPlusAssignmentWithArray(): kotlin.Unit
+public fun testSetterProjectedOut(/*0*/ it: MyHolder<*>): kotlin.Unit
+public fun testWithMyThingWithIncString(): kotlin.Unit
+public fun testWithMyThingWithIncUnit(): kotlin.Unit
+
+public final class MyHolder</*0*/ T> {
+    public constructor MyHolder</*0*/ T>(/*0*/ value: T)
+    public final var value: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MyThingWithIncString {
+    public constructor MyThingWithIncString(/*0*/ name: kotlin.String)
+    private final val name: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun inc(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MyThingWithIncUnit {
+    public constructor MyThingWithIncUnit(/*0*/ name: kotlin.String)
+    private final val name: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun inc(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MyThingWithPlus {
+    public constructor MyThingWithPlus(/*0*/ name: kotlin.String)
+    private final val name: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plus(/*0*/ other: kotlin.String): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MyThingWithPlusAssign {
+    public constructor MyThingWithPlusAssign(/*0*/ name: kotlin.String)
+    private final val name: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plusAssign(/*0*/ other: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

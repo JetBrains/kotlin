@@ -62,6 +62,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         val diagnosticsPerFile = info.firAnalyzerFacade.runCheckers()
         val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in module.directives
         val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in module.directives
+        val forceRenderArguments = FirDiagnosticsDirectives.FORCE_RENDER_ARGUMENTS in module.directives
 
         for (file in module.files) {
             val firFile = info.firFiles[file] ?: continue
@@ -86,7 +87,8 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     file,
                     globalMetadataInfoHandler,
                     lightTreeEnabled,
-                    lightTreeComparingModeEnabled
+                    lightTreeComparingModeEnabled,
+                    forceRenderArguments,
                 )
             }
             globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
