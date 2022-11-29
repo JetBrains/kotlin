@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.resolvedBy
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Companion.logger
 import org.jetbrains.kotlin.tooling.core.Extras
@@ -161,6 +162,7 @@ internal class IdeMultiplatformImportImpl(
             return runCatching { resolver.resolve(sourceSet) }
                 .onFailure { error -> reportError(sourceSet, error) }
                 .onSuccess { dependencies -> reportSuccess(sourceSet, dependencies) }
+                .onSuccess { dependencies -> attachResolvedByExtra(dependencies) }
                 .getOrNull().orEmpty()
         }
 
@@ -172,5 +174,12 @@ internal class IdeMultiplatformImportImpl(
             if (!logger.isDebugEnabled) return
             logger.debug("${resolver::class.java.name} resolved on ${IdeaKotlinSourceCoordinates(sourceSet)}: $dependencies")
         }
+
+        private fun attachResolvedByExtra(dependencies: Iterable<IdeaKotlinDependency>) {
+            dependencies.forEach { dependency ->
+                if (dependency.resolvedBy == null) dependency.resolvedBy = resolver
+            }
+        }
     }
+
 }

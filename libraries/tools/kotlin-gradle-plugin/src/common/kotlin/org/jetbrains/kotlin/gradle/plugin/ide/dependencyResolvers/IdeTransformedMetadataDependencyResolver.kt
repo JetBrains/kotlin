@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedMetadataLibraryDirectoryForIde
@@ -26,7 +25,6 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
 
     private fun resolve(sourceSet: KotlinSourceSet, resolution: ChooseVisibleSourceSets): Iterable<IdeaKotlinDependency> {
         val metadataProvider = resolution.metadataProvider as? ArtifactMetadataProvider ?: return emptySet()
-
         return metadataProvider.read { artifactContent ->
             resolution.allVisibleSourceSetNames.mapNotNull { visibleSourceSet ->
                 val sourceSetContent = artifactContent.findSourceSet(visibleSourceSet) ?: return@mapNotNull null

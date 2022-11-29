@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
@@ -119,7 +120,7 @@ internal class IdePlatformDependencyResolver(
                     logger.warn("Unhandled componentId: ${componentId.javaClass}")
                     null
                 }
-            }
+            }?.also { dependency -> dependency.gradleArtifact = artifact }
         }.toSet()
 
         return resolvedDependencies + unresolvedDependencies

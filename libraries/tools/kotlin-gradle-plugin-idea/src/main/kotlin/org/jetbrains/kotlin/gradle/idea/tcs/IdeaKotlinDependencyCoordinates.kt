@@ -49,6 +49,10 @@ data class IdeaKotlinProjectArtifactCoordinates(
     val artifactFile: File
 ) : IdeaKotlinDependencyCoordinates {
 
+    override fun toString(): String {
+        return "$project${File.pathSeparator}$artifactFile"
+    }
+
     internal companion object {
         const val serialVersionUID = 0L
     }
