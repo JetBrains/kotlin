@@ -382,10 +382,6 @@ private fun ConstraintSystemError.toDiagnostic(
 
             when (position) {
                 is ConeExpectedTypeConstraintPosition -> {
-                    if (position.expectedTypeMismatchIsReportedInChecker) {
-                        errorsToIgnore.add(this)
-                        return null
-                    }
                     val inferredType =
                         if (!lowerConeType.isNullableNothing)
                             lowerConeType
