@@ -47,6 +47,11 @@ internal class ExternalKotlinTargetComponent(
     override val defaultArtifactId: String
         get() = dashSeparatedName(target.project.name, target.name.toLowerCase())
 
+    @Deprecated(
+        message = "Sources artifacts are now published as separate variant " +
+                "use target.sourcesElementsConfigurationName to obtain necessary information",
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
+    )
     override val sourcesArtifacts: Set<PublishArtifact>
         get() = emptySet()
 

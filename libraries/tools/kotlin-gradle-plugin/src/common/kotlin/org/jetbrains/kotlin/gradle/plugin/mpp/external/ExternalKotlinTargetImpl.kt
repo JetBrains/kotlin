@@ -28,8 +28,10 @@ internal class ExternalKotlinTargetImpl internal constructor(
     val defaultConfiguration: Configuration,
     val apiElementsConfiguration: Configuration,
     val runtimeElementsConfiguration: Configuration,
+    val sourcesElementsConfiguration: Configuration,
     val apiElementsPublishedConfiguration: Configuration,
     val runtimeElementsPublishedConfiguration: Configuration,
+    val sourcesElementsPublishedConfiguration: Configuration,
     val kotlinTargetComponent: ExternalKotlinTargetComponent,
     private val artifactsTaskLocator: ArtifactsTaskLocator,
 ) : InternalKotlinTarget {
@@ -64,6 +66,9 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     override val runtimeElementsConfigurationName: String
         get() = runtimeElementsConfiguration.name
+
+    override val sourcesElementsConfigurationName: String
+        get() = sourcesElementsConfiguration.name
 
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> = setOf(kotlinTargetComponent)
