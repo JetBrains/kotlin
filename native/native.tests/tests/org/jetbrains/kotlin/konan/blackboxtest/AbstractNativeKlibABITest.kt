@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.klib.KlibABITestUtils
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
@@ -47,6 +48,21 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
             this@AbstractNativeKlibABITest.buildBinaryAndRun(dependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
+
+        // TODO: KT-54330 Temporarily mute tests.
+        //  'testChangeFunctionVisibility': The signature of Container.publicToPrivateFunction() remains that same, but the binary symbol is not exported. This leads to errors during ld-linkage.
+        //  'testChangePropertyVisibility': Same for signature of Container.publicToPrivateProperty1 and Container.publicToPrivateProperty2.
+        override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
+            if (super.isIgnoredTest(projectInfo)) return true
+
+            if (testRunSettings.get<CacheMode>().staticCacheRequiredForEveryLibrary
+                && (projectInfo.name == "changeFunctionVisibility" || projectInfo.name == "changePropertyVisibility" || projectInfo.name == "changeClassVisibility")
+            ) {
+                return true
+            }
+
+            return false
+        }
 
         override fun onIgnoredTest() = throw TestAbortedException()
     }
