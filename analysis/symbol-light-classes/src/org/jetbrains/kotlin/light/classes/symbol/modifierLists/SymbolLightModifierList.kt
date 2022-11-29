@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     protected val owner: T,
-    protected val lazyModifiers: Lazy<Set<String>>,
+    private val lazyModifiers: Lazy<Set<String>>,
     annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
 ) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
     override val kotlinOrigin: KtModifierList? get() = owner.kotlinOrigin?.modifierList
     override fun getParent() = owner
-    override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
     override fun setModifierProperty(name: String, value: Boolean) = cannotModify()
     override fun checkSetModifierProperty(name: String, value: Boolean) = throw IncorrectOperationException()
     override fun addAnnotation(qualifiedName: String): PsiAnnotation = cannotModify()
@@ -36,6 +35,7 @@ internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifie
     override fun toString() = "Light modifier list of $owner"
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
+
     private val lazyAnnotations: Lazy<List<PsiAnnotation>> = lazyPub {
         annotationsComputer(this)
     }
@@ -46,4 +46,7 @@ internal abstract class SymbolLightModifierList<out T : KtLightElement<KtModifie
 
     override fun equals(other: Any?): Boolean = this === other
     override fun hashCode(): Int = kotlinOrigin.hashCode()
+
+    override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
+    override fun hasModifierProperty(name: String): Boolean = name in lazyModifiers.value
 }

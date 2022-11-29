@@ -15,6 +15,4 @@ internal class SymbolLightClassModifierList<T : KtLightElement<KtModifierListOwn
     containingDeclaration: T,
     lazyModifiers: Lazy<Set<String>>,
     annotationsComputer: (PsiModifierList) -> List<PsiAnnotation>,
-) : SymbolLightModifierList<T>(containingDeclaration, lazyModifiers, annotationsComputer) {
-    override fun hasModifierProperty(name: String): Boolean = name in lazyModifiers.value
-}
+) : SymbolLightModifierList<T>(containingDeclaration, lazyModifiers, annotationsComputer)

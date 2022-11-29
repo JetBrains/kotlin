@@ -25,7 +25,7 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
         // Pretend this method behaves like a `default` method
         name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
         // TODO: FINAL && isPossiblyAffectedByAllOpen
-        else -> name in lazyModifiers.value
+        else -> super.hasModifierProperty(name)
     }
 
     private fun isImplementationInInterface(): Boolean {
