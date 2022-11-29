@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetCo
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.metadata.isSinglePlatformTypeSourceSet
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.tooling.core.Extras
 
@@ -143,7 +144,9 @@ interface IdeMultiplatformImport {
         companion object {
             val unconstrained = SourceSetConstraint { true }
 
-            val isNative = SourceSetConstraint { sourceSet -> isNativeSourceSet(sourceSet) }
+            val isNative = SourceSetConstraint { isNativeSourceSet(it) }
+
+            val isSinglePlatformType = SourceSetConstraint { isSinglePlatformTypeSourceSet(it) }
 
             val isLeaf = SourceSetConstraint { sourceSet ->
                 (sourceSet.project.multiplatformExtensionOrNull ?: return@SourceSetConstraint true).sourceSets

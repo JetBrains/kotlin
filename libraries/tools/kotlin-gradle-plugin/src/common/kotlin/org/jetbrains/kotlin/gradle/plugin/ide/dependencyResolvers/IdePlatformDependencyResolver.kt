@@ -17,6 +17,7 @@ import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifi
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
@@ -42,7 +43,8 @@ internal class IdePlatformDependencyResolver(
          * @param setupArtifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for resolving the dependencies.
          */
         data class Compilation(
-            internal val compilationSelector: (Set<KotlinCompilation<*>>) -> KotlinCompilation<*>? = { it.singleOrNull() },
+            internal val compilationSelector: (Set<KotlinCompilation<*>>) -> KotlinCompilation<*>? =
+                { compilations -> compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {}
         ) : ArtifactResolutionStrategy()
 

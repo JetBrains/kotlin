@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevelKey
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistributionKey
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlibKey
 import org.jetbrains.kotlin.gradle.kpm.idea.kotlinDebugKey
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
     return IdeMultiplatformImportImpl(extension).apply {
@@ -77,7 +79,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdePlatformDependencyResolver(),
-            constraint = SourceSetConstraint.isLeaf,
+            constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
@@ -99,6 +101,12 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             constraint = SourceSetConstraint.isAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
+        )
+
+        registerDependencyTransformer(
+            transformer = IdePlatformStdlibCommonDependencyFilter,
+            constraint = SourceSetConstraint.isSinglePlatformType,
+            phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
         )
 
         registerDependencyEffect(

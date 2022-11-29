@@ -570,6 +570,11 @@ internal fun isNativeSourceSet(sourceSet: KotlinSourceSet): Boolean {
     return compilations.isNotEmpty() && compilations.all { it.platformType == KotlinPlatformType.native }
 }
 
+internal fun isSinglePlatformTypeSourceSet(sourceSet: KotlinSourceSet): Boolean {
+    val platformCompilations = sourceSet.internal.compilations.filterNot { it.platformType == KotlinPlatformType.common }
+    return platformCompilations.map { it.platformType }.toSet().size == 1
+}
+
 internal fun dependsOnClosureWithInterCompilationDependencies(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
     sourceSet.internal.dependsOnClosure.toMutableSet().apply {
         addAll(getVisibleSourceSetsFromAssociateCompilations(sourceSet))

@@ -188,6 +188,7 @@ class IdeResolveSourceDependenciesTest {
             enableDefaultStdlibDependency(false)
             applyMultiplatformPlugin()
             multiplatformExtension.jvm()
+            multiplatformExtension.linuxX64()
             multiplatformExtension.sourceSets.getByName("commonMain").dependencies {
                 implementation(project(":producer"))
             }
