@@ -1,7 +1,28 @@
 ================ Step #1 =================
 
+After chunkBuildStarted. Marked as dirty by Kotlin:
+  src/A.kt
+Cleaning output files:
+  out/production/module/A$Companion.class
+  out/production/module/A.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
 Compiling files:
   src/A.kt
+End of files
+After build round. Marked as dirty by Kotlin:
+  src/companionExtension.kt
+  src/companionReferenceExplicit.kt
+  src/companionReferenceImplicit.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/CompanionExtensionKt.class
+  out/production/module/CompanionReferenceExplicitKt.class
+  out/production/module/CompanionReferenceImplicitKt.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
   src/companionExtension.kt
   src/companionReferenceExplicit.kt
   src/companionReferenceImplicit.kt
@@ -9,13 +30,13 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Unresolved reference: A.Companion
-Unresolved reference: x
-Unresolved reference: Companion
-Unresolved reference: x
 
 ================ Step #2 =================
 
+Cleaning output files:
+  out/production/module/A$AA.class
+  out/production/module/A.class
+End of files
 Compiling files:
   src/A.kt
   src/companionExtension.kt
@@ -23,4 +44,4 @@ Compiling files:
   src/companionReferenceImplicit.kt
 End of files
 Exit code: OK
-
+------------------------------------------
