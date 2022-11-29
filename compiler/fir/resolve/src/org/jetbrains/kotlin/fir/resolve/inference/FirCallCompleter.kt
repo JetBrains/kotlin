@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWri
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -45,8 +42,6 @@ import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 class FirCallCompleter(
     private val transformer: FirAbstractBodyResolveTransformerDispatcher,
@@ -169,18 +164,24 @@ class FirCallCompleter(
         mayBeCoercionToUnitApplied: Boolean
     ) {
         val expectedType = expectedTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
-        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker)
+        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition()
 
         val system = candidate.system
         when {
-            !shouldEnforceExpectedType -> {
+            // If type mismatch is assumed to be reported in the checker, we should not add a subtyping constraint that leads to error.
+            // Because it might make resulting type correct while, it's hopefully would be more clear if we let the call be inferred without
+            // the expected type, and then would report diagnostic in the checker.
+            // It's assumed to be safe & sound, because if constraint system has contradictions when expected type is added,
+            // the resulting expression type cannot be inferred to something that is a subtype of `expectedType`,
+            // thus the diagnostic should be reported.
+            !shouldEnforceExpectedType || expectedTypeMismatchIsReportedInChecker -> {
                 system.addSubtypeConstraintIfCompatible(initialType, expectedType, expectedTypeConstraintPosition)
             }
             isFromCast -> {
                 if (candidate.isFunctionForExpectTypeFromCastFeature()) {
                     system.addSubtypeConstraint(
                         initialType, expectedType,
-                        ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker = false),
+                        ConeExpectedTypeConstraintPosition(),
                     )
                 }
             }

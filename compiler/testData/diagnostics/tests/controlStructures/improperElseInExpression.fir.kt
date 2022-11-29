@@ -29,5 +29,5 @@ fun example() {
         return <!INVALID_IF_AS_EXPRESSION!>if<!> (true) true
     }
 
-    return if (true) true else {}
+    return <!RETURN_TYPE_MISMATCH!>if (true) true else {}<!>
 }
