@@ -55,8 +55,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
             val psiToIrOutput = engine.useContext(psiToIrContext) { psiToIrEngine ->
                 val output = psiToIrEngine.runPsiToIr(frontendOutput, isProducingLibrary = true)
+                psiToIrEngine.runSpecialBackendChecks(output)
                 output
             }
+            engine.runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule)
             psiToIrOutput
         }
         val serializerOutput = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
