@@ -13,7 +13,7 @@ class Example {
 
     public fun foo(): String {
         // Smart cast is not possible if property is delegated
-        return if (p != null) p else ""
+        return <!RETURN_TYPE_MISMATCH!>if (p != null) p else ""<!>
     }
 
     public fun bar(): String {
