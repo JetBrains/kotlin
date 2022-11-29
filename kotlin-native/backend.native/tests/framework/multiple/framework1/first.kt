@@ -7,6 +7,8 @@
 
 package multiple
 
+class Bar<T: List<T>>(t: T)
+
 interface I1 {
     fun getFortyTwo(): Int
 }

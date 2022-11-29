@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.util.RecursionGuard
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
@@ -132,7 +133,13 @@ internal object CustomTypeMappers {
                     // Kotlin `null` keys and values are represented as `NSNull` singleton.
                     ObjCIdType
                 } else {
-                    translator.mapReferenceTypeIgnoringNullability(argument, objCExportScope)
+                    try {
+                        RecursionGuard.withBreadcrumb(argument) {
+                            translator.mapReferenceTypeIgnoringNullability(argument, objCExportScope)
+                        }
+                    } catch (e: RecursionGuard.RecursionBreachException) {
+                        ObjCIdType
+                    }
                 }
             }
 
