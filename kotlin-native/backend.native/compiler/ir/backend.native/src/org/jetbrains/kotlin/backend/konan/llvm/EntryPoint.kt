@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -17,7 +19,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
+internal fun findMainEntryPoint(context: PhaseContext, builtIns: KotlinBuiltIns): FunctionDescriptor? {
 
     val config = context.config.configuration
     if (config.get(KonanConfigKeys.PRODUCE) != PROGRAM) return null
@@ -27,7 +29,7 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
     val entryName = entryPoint.shortName()
     val packageName = entryPoint.parent()
 
-    val packageScope = context.builtIns.builtInsModule.getPackage(packageName).memberScope
+    val packageScope = builtIns.builtInsModule.getPackage(packageName).memberScope
 
     val candidates = packageScope.getContributedFunctions(entryName,
         NoLookupLocation.FROM_BACKEND).filter {

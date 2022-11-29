@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.*
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import llvm.LLVMArrayType
+import llvm.LLVMConstInt
+import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.getOrPut
+import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
+import org.jetbrains.kotlin.backend.konan.llvm.StaticData
+import org.jetbrains.kotlin.backend.konan.llvm.constValue
+import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -23,10 +27,11 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.Name
 
-internal fun KonanSymbols.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
+// TODO: Find a better home for this function than Context.
+internal fun Context.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
         getTypeConversionImpl(actualType.getInlinedClassNative(), expectedType.getInlinedClassNative())
 
-private fun KonanSymbols.getTypeConversionImpl(
+private fun Context.getTypeConversionImpl(
         actualInlinedClass: IrClass?,
         expectedInlinedClass: IrClass?
 ): IrSimpleFunctionSymbol? {
@@ -34,8 +39,8 @@ private fun KonanSymbols.getTypeConversionImpl(
 
     return when {
         actualInlinedClass == null && expectedInlinedClass == null -> null
-        actualInlinedClass != null && expectedInlinedClass == null -> context.getBoxFunction(actualInlinedClass)
-        actualInlinedClass == null && expectedInlinedClass != null -> context.getUnboxFunction(expectedInlinedClass)
+        actualInlinedClass != null && expectedInlinedClass == null -> getBoxFunction(actualInlinedClass)
+        actualInlinedClass == null && expectedInlinedClass != null -> getUnboxFunction(expectedInlinedClass)
         else -> error("actual type is ${actualInlinedClass?.fqNameForIrSerialization}, expected ${expectedInlinedClass?.fqNameForIrSerialization}")
     }?.symbol
 }

@@ -134,7 +134,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType): IrExpression {
-        val conversion = symbols.getTypeConversion(actualType, expectedType)
+        val conversion = context.getTypeConversion(actualType, expectedType)
         return if (conversion == null) {
             this
         } else {
