@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
@@ -95,6 +96,7 @@ class IrModuleToJsTransformerTmp(
     private val mainModuleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
     private val sourceMapInfo = SourceMapsInfo.from(backendContext.configuration)
+    private val shouldGenerateTypeScriptDefinitions = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
 
     private class IrAndExportedDeclarations(val fragment: IrModuleFragment, val files: List<Pair<IrFile, List<ExportedDeclaration>>>)
 
@@ -121,7 +123,9 @@ class IrModuleToJsTransformerTmp(
 
     fun generateModule(modules: Iterable<IrModuleFragment>, modes: Set<TranslationMode>, relativeRequirePath: Boolean): CompilerResult {
         val exportData = associateIrAndExport(modules)
-        val dts = ExportedModule(mainModuleName, moduleKind, exportData.flatExportedDeclarations()).toTypeScript()
+        val dts = runIf(shouldGenerateTypeScriptDefinitions) {
+            ExportedModule(mainModuleName, moduleKind, exportData.flatExportedDeclarations()).toTypeScript()
+        }
         doStaticMembersLowering(modules)
 
         val result = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
@@ -141,9 +145,11 @@ class IrModuleToJsTransformerTmp(
         return CompilerResult(result, dts)
     }
 
-    fun makeJsCodeGeneratorAndDts(modules: Iterable<IrModuleFragment>, mode: TranslationMode): Pair<JsCodeGenerator, String> {
+    fun makeJsCodeGeneratorAndDts(modules: Iterable<IrModuleFragment>, mode: TranslationMode): Pair<JsCodeGenerator, String?> {
         val exportData = associateIrAndExport(modules)
-        val dts = ExportedModule(mainModuleName, moduleKind, exportData.flatExportedDeclarations()).toTypeScript()
+        val dts = runIf(shouldGenerateTypeScriptDefinitions) {
+            ExportedModule(mainModuleName, moduleKind, exportData.flatExportedDeclarations()).toTypeScript()
+        }
         doStaticMembersLowering(modules)
 
         if (mode.dce) {

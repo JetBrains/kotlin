@@ -75,7 +75,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         return K2JSCompilerArguments()
     }
 
-    private data class TransformResult(val out: CompilationOutputs, val dts: String)
+    private data class TransformResult(val out: CompilationOutputs, val dts: String?)
 
     private class Ir2JsTransformer(
         val arguments: K2JSCompilerArguments,
@@ -115,7 +115,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
         }
 
-        private fun makeJsCodeGeneratorAndDts(): Pair<JsCodeGenerator, String> {
+        private fun makeJsCodeGeneratorAndDts(): Pair<JsCodeGenerator, String?> {
             val ir = lowerIr()
             val transformer = IrModuleToJsTransformerTmp(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
 
@@ -231,6 +231,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configurationJs.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
         configurationJs.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
         configurationJs.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, arguments.irPropertyLazyInitialization)
+        configurationJs.put(JSConfigurationKeys.GENERATE_DTS, arguments.generateDts)
         configurationJs.put(JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS, arguments.irGenerateInlineAnonymousFunctions)
 
         if (!checkKotlinPackageUsage(environmentForJS.configuration, sourcesFiles)) return ExitCode.COMPILATION_ERROR
@@ -457,7 +458,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 outputs.dependencies.forEach { (name, content) ->
                     outputFile.resolveSibling("$name.js").write(content)
                 }
-                if (arguments.generateDts) {
+                if (tsDefinitions != null) {
                     val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
                     dtsFile.writeText(tsDefinitions)
                 }

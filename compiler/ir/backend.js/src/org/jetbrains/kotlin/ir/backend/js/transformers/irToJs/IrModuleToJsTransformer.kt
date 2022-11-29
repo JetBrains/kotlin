@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.util.*
 
@@ -46,6 +47,7 @@ class IrModuleToJsTransformer(
     private val removeUnusedAssociatedObjects: Boolean = true
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
+    private val shouldGenerateTypeScriptDefinitions = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
 
     fun generateModule(modules: Iterable<IrModuleFragment>): CompilerResult {
         val additionalPackages = with(backendContext) {
@@ -56,7 +58,7 @@ class IrModuleToJsTransformer(
 
         val moduleKind: ModuleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
         val exportedModule = ExportModelGenerator(backendContext, generateNamespacesForPackages = true).generateExport(modules, moduleKind = moduleKind)
-        val dts = exportedModule.toTypeScript()
+        val dts = runIf(shouldGenerateTypeScriptDefinitions) { exportedModule.toTypeScript() }
 
         modules.forEach { module ->
             module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
