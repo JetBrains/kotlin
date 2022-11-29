@@ -13,5 +13,11 @@ interface KotlinTargetComponent : SoftwareComponent {
     val publishable: Boolean
     val publishableOnCurrentHost: Boolean
     val defaultArtifactId: String
+
+    @Deprecated(
+        message = "Sources artifacts are now published as separate variant " +
+                "use target.sourcesElementsConfigurationName to obtain necessary information",
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
+    )
     val sourcesArtifacts: Set<PublishArtifact>
 }

@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Bundling
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
+import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
@@ -14,7 +19,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -41,9 +46,6 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
         from(kotlinSoftwareComponent)
         (this as MavenPublicationInternal).publishWithOriginalFileName()
         kotlinSoftwareComponent.publicationDelegate = this@apply
-        kotlinSoftwareComponent.sourcesArtifacts.forEach { sourceArtifact ->
-            artifact(sourceArtifact)
-        }
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
     }
@@ -82,9 +84,6 @@ private fun InternalKotlinTarget.createMavenPublications(publications: Publicati
                 // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
                 project.whenEvaluated {
                     from(gradleComponent)
-                    kotlinComponent.sourcesArtifacts.forEach { sourceArtifact ->
-                        artifact(sourceArtifact)
-                    }
                 }
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
                 artifactId = kotlinComponent.defaultArtifactId
@@ -144,3 +143,20 @@ private fun dependenciesForPomRewriting(target: InternalKotlinTarget): Provider<
                 commonMainDependencies.map { ModuleCoordinates(it.group, it.name, it.version) }.toSet()
             }
     }
+
+internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinTarget) {
+    val project = target.project
+
+    // In order to be consistent with Java Gradle Plugin, set usage attribute for sources variant
+    // to be either JAVA_RUNTIME (for jvm) or KOTLIN_RUNTIME (for other targets)
+    // the latter isn't a strong requirement since there is no tooling that consume kotlin sources through gradle variants at the moment
+    // so consistency with Java Gradle Plugin seemed most desirable choice.
+    attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
+    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.attributeValueByName(Category.DOCUMENTATION))
+    attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.attributeValueByName(DocsType.SOURCES))
+    // Bundling attribute is about component dependencies, external means that they are provided as separate components
+    // source variants doesn't have any dependencies (at least at the moment) so there is not much sense to use this attribute
+    // however for Java Gradle Plugin compatibility and in order to prevent weird Variant Resolution errors we include this attribute
+    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+    usesPlatformOf(target)
+}

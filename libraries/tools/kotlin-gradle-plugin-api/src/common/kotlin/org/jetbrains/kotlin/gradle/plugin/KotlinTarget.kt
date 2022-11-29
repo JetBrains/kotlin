@@ -34,6 +34,7 @@ interface KotlinTarget : Named, HasAttributes {
     val defaultConfigurationName: String
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
+    val sourcesElementsConfigurationName: String
 
     val publishable: Boolean
 

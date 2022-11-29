@@ -71,19 +71,25 @@ constructor(
             super.kotlinComponents
         else {
             val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
-            val usageContexts = createUsageContexts(mainCompilation) +
-                    irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(MAIN_COMPILATION_NAME))
+            val usageContexts = createUsageContexts(mainCompilation).toMutableSet()
+
+            usageContexts += irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(MAIN_COMPILATION_NAME))
 
             val componentName =
                 if (project.kotlinExtension is KotlinMultiplatformExtension)
                     irTarget?.let { targetName.removeJsCompilerSuffix(LEGACY) } ?: targetName
                 else PRIMARY_SINGLE_COMPONENT_NAME
 
-            val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
-
-            result.sourcesArtifacts = setOf(
-                sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
+            configureSourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
+            usageContexts += DefaultKotlinUsageContext(
+                compilation = mainCompilation,
+                usageScope = KotlinUsageContext.UsageScope.RUNTIME,
+                dependencyConfigurationName = sourcesElementsConfigurationName,
+                includeIntoProjectStructureMetadata = false,
+                includeDependenciesToMavenPublication = false,
             )
+
+            val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
             setOf(result)
         }
