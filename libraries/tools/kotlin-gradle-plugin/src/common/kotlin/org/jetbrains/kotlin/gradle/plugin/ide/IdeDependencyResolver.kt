@@ -5,14 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
+import org.jetbrains.kotlin.tooling.core.getValue
+import org.jetbrains.kotlin.tooling.core.setValue
 
 fun interface IdeDependencyResolver {
     fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency>
 
     object Empty : IdeDependencyResolver {
         override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> = emptySet()
+    }
+
+    companion object {
+        var IdeaKotlinDependency.resolvedBy: IdeDependencyResolver? by extrasKeyOf("resolvedBy")
+        var IdeaKotlinDependency.gradleArtifact: ResolvedArtifactResult? by extrasKeyOf("gradleArtifact")
     }
 }
 
