@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.attributes.Usage
+import org.gradle.api.attributes.*
 import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
@@ -19,12 +17,12 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
-import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.*
+import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
+import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.setProperty
 
 abstract class KotlinSoftwareComponent(
@@ -34,6 +32,8 @@ abstract class KotlinSoftwareComponent(
 ) : SoftwareComponentInternal, ComponentWithVariants {
 
     override fun getName(): String = name
+
+    private val metadataTarget get() = project.multiplatformExtension.metadata()
 
     override fun getVariants(): Set<SoftwareComponent> = kotlinTargets
         .filter { target -> target !is KotlinMetadataTarget }
@@ -47,8 +47,6 @@ abstract class KotlinSoftwareComponent(
         }.toSet()
 
     private val _usages: Set<UsageContext> by lazy {
-        val metadataTarget = project.multiplatformExtension.metadata()
-
         if (!project.isKotlinGranularMetadataEnabled) {
             val metadataCompilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME)
             return@lazy metadataTarget.createUsageContexts(metadataCompilation)
@@ -80,6 +78,14 @@ abstract class KotlinSoftwareComponent(
                     )
                 }
             }
+
+            configureSourcesJarArtifact()
+            this += DefaultKotlinUsageContext(
+                compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
+                dependencyConfigurationName = metadataTarget.sourcesElementsConfigurationName,
+                includeIntoProjectStructureMetadata = false,
+                includeDependenciesToMavenPublication = false
+            )
         }
     }
 
@@ -87,7 +93,7 @@ abstract class KotlinSoftwareComponent(
         return _usages
     }
 
-    val sourcesArtifacts: Set<PublishArtifact> by lazy {
+    private fun configureSourcesJarArtifact(): PublishArtifact {
         fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
                 getHostSpecificMainSharedSourceSets(project)
 
@@ -98,10 +104,10 @@ abstract class KotlinSoftwareComponent(
             lazy { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
             name.toLowerCase()
         )
-        val sourcesJarArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, sourcesJarTask) { sourcesJarArtifact ->
+
+        return project.artifacts.add(metadataTarget.sourcesElementsConfigurationName, sourcesJarTask) { sourcesJarArtifact ->
             sourcesJarArtifact.classifier = "sources"
         }
-        setOf(sourcesJarArtifact)
     }
 
     // This property is declared in the parent type to allow the usages to reference it without forcing the subtypes to load,

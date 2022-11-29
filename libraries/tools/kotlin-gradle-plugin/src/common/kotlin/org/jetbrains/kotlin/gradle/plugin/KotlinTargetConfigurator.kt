@@ -13,9 +13,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
+import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.ArtifactAttributes
@@ -198,6 +196,14 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 runtimeConfiguration?.let { extendsFrom(it) }
                 usesPlatformOf(target)
             }
+        }
+
+        configurations.maybeCreate(target.sourcesElementsConfigurationName).apply {
+            description = "Source files of main compilation of ${target.name}."
+            isVisible = false
+            isCanBeResolved = false
+            isCanBeConsumed = true
+            configureSourcesPublicationAttributes(target)
         }
 
         if (createTestCompilation) {
@@ -389,6 +395,9 @@ internal fun Project.usageByName(usageName: String): Usage =
 
 internal fun Project.categoryByName(categoryName: String): Category =
     objects.named(Category::class.java, categoryName)
+
+internal inline fun <reified T: Named> Project.attributeValueByName(attributeValueName: String): T =
+    objects.named(T::class.java, attributeValueName)
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)

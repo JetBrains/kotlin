@@ -74,8 +74,16 @@ open class KotlinVariant(
     override val publishableOnCurrentHost: Boolean
         get() = publishable && target.publishable
 
-    override var sourcesArtifacts: Set<PublishArtifact> = emptySet()
-        internal set
+    @Deprecated(
+        message = "Sources artifacts are now published as separate variant " +
+                "use target.sourcesElementsConfigurationName to obtain necessary information",
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")    )
+    override val sourcesArtifacts: Set<PublishArtifact> get() = target
+        .project
+        .configurations
+        .findByName(target.sourcesElementsConfigurationName)
+        ?.artifacts
+        ?: emptySet()
 
     internal var defaultArtifactIdSuffix: String? = null
 
@@ -102,8 +110,7 @@ class KotlinVariantWithMetadataVariant(
 class JointAndroidKotlinTargetComponent(
     override val target: KotlinAndroidTarget,
     private val nestedVariants: Set<KotlinVariant>,
-    val flavorNames: List<String>,
-    override val sourcesArtifacts: Set<PublishArtifact>
+    val flavorNames: List<String>
 ) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
 
     override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.filter { it.publishable }.flatMap { it.usages }.toSet()
@@ -124,4 +131,11 @@ class JointAndroidKotlinTargetComponent(
         )
 
     override var publicationDelegate: MavenPublication? = null
+
+    @Deprecated(
+        message = "Sources artifacts are now published as separate variant " +
+                "use target.sourcesElementsConfigurationName to obtain necessary information",
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
+    )
+    override val sourcesArtifacts: Set<PublishArtifact> = emptySet()
 }

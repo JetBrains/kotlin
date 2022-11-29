@@ -11,9 +11,10 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -120,33 +121,18 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 val androidVariantName = getVariantName(androidVariant)
                 val compilation = compilations.getByName(androidVariantName)
 
-                val flavorNames = getFlavorNames(androidVariant)
-                val buildTypeName = getBuildTypeName(androidVariant)
-
-                val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
+                val usageContexts = createAndroidUsageContexts(
+                    variant = androidVariant,
+                    compilation = compilation,
+                    isSingleBuildType = publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1,
+                )
 
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
                     compilation,
-                    createAndroidUsageContexts(
-                        androidVariant,
-                        compilation,
-                        artifactClassifier,
-                        publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1
-                    )
+                    usageContexts,
                 ).apply {
                     publishable = isVariantPublished(androidVariant)
-                    sourcesArtifacts = setOf(
-                        sourcesJarArtifact(
-                            compilation, compilation.disambiguateName(""),
-                            dashSeparatedName(
-                                compilation.target.name.toLowerCase(),
-                                *flavorNames.map { it.toLowerCase() }.toTypedArray(),
-                                buildTypeName.takeIf { it != "release" }?.toLowerCase()
-                            ),
-                            classifierPrefix = artifactClassifier
-                        )
-                    )
 
                     if (!publishLibraryVariantsGroupedByFlavor) {
                         defaultArtifactIdSuffix =
@@ -163,7 +149,6 @@ abstract class KotlinAndroidTarget @Inject constructor(
                     target = this@KotlinAndroidTarget,
                     nestedVariants = nestedVariants,
                     flavorNames = flavorGroupNameParts,
-                    sourcesArtifacts = nestedVariants.filter { it.publishable }.flatMap { it.sourcesArtifacts }.toSet()
                 )
             } else {
                 nestedVariants.single()
@@ -174,9 +159,12 @@ abstract class KotlinAndroidTarget @Inject constructor(
     private fun AndroidProjectHandler.createAndroidUsageContexts(
         variant: BaseVariant,
         compilation: KotlinCompilation<*>,
-        artifactClassifier: String?,
-        isSingleBuildType: Boolean
+        isSingleBuildType: Boolean,
     ): Set<DefaultKotlinUsageContext> {
+        val flavorNames = getFlavorNames(variant)
+        val buildTypeName = getBuildTypeName(variant)
+        val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
+
         val variantName = getVariantName(variant)
         val outputTaskOrProvider = getLibraryOutputTask(variant) ?: return emptySet()
         val artifact = run {
@@ -193,9 +181,46 @@ abstract class KotlinAndroidTarget @Inject constructor(
         val apiElementsConfigurationName = lowerCamelCaseName(variantName, "apiElements")
         val runtimeElementsConfigurationName = lowerCamelCaseName(variantName, "runtimeElements")
 
+        val sourcesElementsConfigurationName = lowerCamelCaseName(variantName, "sourcesElements")
+        val sourcesElementsConfiguration = createSourcesElementsIfNeeded(
+            variantName,
+            apiElementsConfigurationName,
+            sourcesElementsConfigurationName
+        )
+        configureSourcesJarArtifact(
+            compilation,
+            compilation.disambiguateName(""),
+            dashSeparatedName(
+                compilation.target.name.toLowerCase(),
+                *flavorNames.map { it.toLowerCase() }.toTypedArray(),
+                buildTypeName.takeIf { it != "release" }?.toLowerCase()
+            ),
+            classifierPrefix = artifactClassifier,
+            sourcesElementsConfigurationName = sourcesElementsConfigurationName
+        )
+
+        fun AttributeContainer.filterOutAndroidVariantAttributes(): AttributeContainer =
+            HierarchyAttributeContainer(this) {
+                val valueString = run {
+                    val value = getAttribute(it)
+                    (value as? Named)?.name ?: value.toString()
+                }
+                filterOutAndroidVariantAttribute(it) &&
+                        filterOutAndroidBuildTypeAttribute(it, valueString, isSingleBuildType) &&
+                        filterOutAndroidAgpVersionAttribute(it)
+            }
+
+        val sourcesUsageContext = DefaultKotlinUsageContext(
+            compilation = compilation,
+            dependencyConfigurationName = sourcesElementsConfigurationName,
+            overrideConfigurationAttributes = sourcesElementsConfiguration.attributes.filterOutAndroidVariantAttributes(),
+            includeDependenciesToMavenPublication = false,
+            includeIntoProjectStructureMetadata = false
+        )
+
         return listOf(
             apiElementsConfigurationName to KotlinUsageContext.UsageScope.COMPILE,
-            runtimeElementsConfigurationName to KotlinUsageContext.UsageScope.RUNTIME
+            runtimeElementsConfigurationName to KotlinUsageContext.UsageScope.RUNTIME,
         ).mapTo(mutableSetOf()) { (dependencyConfigurationName, mavenScope) ->
             val configuration = project.configurations.getByName(dependencyConfigurationName)
             DefaultKotlinUsageContext(
@@ -203,16 +228,32 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 mavenScope,
                 dependencyConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { listOf(artifact) },
-                overrideConfigurationAttributes = HierarchyAttributeContainer(configuration.attributes) {
-                    val valueString = run {
-                        val value = configuration.attributes.getAttribute(it)
-                        (value as? Named)?.name ?: value.toString()
-                    }
-                    filterOutAndroidVariantAttribute(it) &&
-                            filterOutAndroidBuildTypeAttribute(it, valueString, isSingleBuildType) &&
-                            filterOutAndroidAgpVersionAttribute(it)
-                }
+                overrideConfigurationAttributes = configuration.attributes.filterOutAndroidVariantAttributes()
             )
+        } + sourcesUsageContext
+    }
+
+    /**
+     * TODO: Ask Google about providing such configuration where they could set their attributes and control them.
+     * Just like as they do with apiElements or runtimeElements
+     */
+    private fun createSourcesElementsIfNeeded(
+        variantName: String,
+        apiElementsConfigurationName: String,
+        sourcesElementsConfigurationName: String
+    ): Configuration {
+        val existingConfiguration = project.configurations.findByName(sourcesElementsConfigurationName)
+        if (existingConfiguration != null) return existingConfiguration
+
+        val apiElementsConfiguration = project.configurations.getByName(apiElementsConfigurationName)
+        return project.configurations.create(sourcesElementsConfigurationName).apply {
+            description = "Source files of Android ${variantName}."
+            isVisible = false
+            isCanBeResolved = false
+            isCanBeConsumed = true
+
+            copyAttributes(apiElementsConfiguration.attributes, attributes)
+            configureSourcesPublicationAttributes(this@KotlinAndroidTarget)
         }
     }
 

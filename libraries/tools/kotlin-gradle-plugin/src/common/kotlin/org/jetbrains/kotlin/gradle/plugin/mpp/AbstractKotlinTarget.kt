@@ -50,6 +50,9 @@ abstract class AbstractKotlinTarget(
     override val runtimeElementsConfigurationName: String
         get() = disambiguateName("runtimeElements")
 
+    override val sourcesElementsConfigurationName: String
+        get() = disambiguateName("sourcesElements")
+
     override val artifactsTaskName: String
         get() = disambiguateName("jar")
 
@@ -61,18 +64,24 @@ abstract class AbstractKotlinTarget(
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-        val usageContexts = createUsageContexts(mainCompilation)
+        val usageContexts = createUsageContexts(mainCompilation).toMutableSet()
 
         val componentName =
             if (project.kotlinExtension is KotlinMultiplatformExtension)
                 targetName
             else PRIMARY_SINGLE_COMPONENT_NAME
 
-        val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
+        val sourcesArtifact = configureSourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
+        if (sourcesArtifact != null) {
+            usageContexts += DefaultKotlinUsageContext(
+                compilation = mainCompilation,
+                dependencyConfigurationName = sourcesElementsConfigurationName,
+                includeIntoProjectStructureMetadata = false,
+                includeDependenciesToMavenPublication = false,
+            )
+        }
 
-        result.sourcesArtifacts = setOf(
-            sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
-        )
+        val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
         setOf(result)
     }
@@ -117,28 +126,21 @@ abstract class AbstractKotlinTarget(
         }
     }
 
-    protected fun sourcesJarArtifact(
+    protected fun configureSourcesJarArtifact(
         producingCompilation: KotlinCompilation<*>,
         componentName: String,
         artifactNameAppendix: String,
-        classifierPrefix: String? = null
-    ): PublishArtifact {
-        val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
-        val sourceArtifactConfigurationName = producingCompilation.disambiguateName("sourceArtifacts")
+        classifierPrefix: String? = null,
+        sourcesElementsConfigurationName: String = this.sourcesElementsConfigurationName,
+    ): PublishArtifact? {
+        // If sourcesElements configuration not found, don't create artifact.
+        // This can happen in pure JVM plugin where source publication is delegated to Java Gradle Plugin
+        project.configurations.findByName(sourcesElementsConfigurationName) ?: return null
 
-        return with(producingCompilation.target.project) {
-            (configurations.findByName(sourceArtifactConfigurationName) ?: run {
-                val configuration = configurations.create(sourceArtifactConfigurationName) {
-                    it.isCanBeResolved = false
-                    it.isCanBeConsumed = false
-                }
-                artifacts.add(sourceArtifactConfigurationName, sourcesJarTask)
-                configuration
-            }).artifacts.single().apply {
-                this as ConfigurablePublishArtifact
-                classifier = dashSeparatedName(classifierPrefix, "sources")
-            }
-        }
+        val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
+        val artifact = project.artifacts.add(sourcesElementsConfigurationName, sourcesJarTask) as ConfigurablePublishArtifact
+        artifact.classifier = dashSeparatedName(classifierPrefix, "sources")
+        return artifact
     }
 
     @Suppress("UNCHECKED_CAST")

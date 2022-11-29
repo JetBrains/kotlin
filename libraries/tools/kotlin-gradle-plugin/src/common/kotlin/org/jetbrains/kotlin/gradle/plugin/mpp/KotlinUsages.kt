@@ -61,6 +61,8 @@ object KotlinUsages {
 
     internal fun producerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
         when (platformType) {
+            // This attribute is deprecated in Gradle and additionally to Usage attribute
+            // it implicitly adds `org.gradle.libraryelements=jar`
             in jvmPlatformTypes -> "java-runtime-jars"
             else -> KOTLIN_RUNTIME
         }
