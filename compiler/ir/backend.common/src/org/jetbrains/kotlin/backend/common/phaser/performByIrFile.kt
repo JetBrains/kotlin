@@ -65,8 +65,10 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
                     phase.invoke(phaseConfig, filePhaserState, context, irFile)
                 }
             } catch (e: Throwable) {
-                CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name) {
-                    irFile.fileEntry.getLineNumber(it) to irFile.fileEntry.getColumnNumber(it)
+                CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name) { offset ->
+                    irFile.fileEntry.takeIf { it.supportsDebugInfo }?.let {
+                        it.getLineNumber(offset) to it.getColumnNumber(offset)
+                    }
                 }
             }
         }

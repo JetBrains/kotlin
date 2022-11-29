@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.path
 
 fun CommonBackendContext.reportWarning(message: String, irFile: IrFile?, irElement: IrElement) {
     report(irElement, irFile, message, false)
