@@ -69,6 +69,15 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         }
 
         /*
+        Configure runtimeElements configuration attributes (project to project dependency)
+        In this example we hardcoded AGP version 7.4.0-beta02 as demo
+        */
+        sourcesElements.configure { _, configuration ->
+            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
+        }
+
+        /*
         Configure published configurations (maven publication):
         We override KotlinPlatformType to be androidJvm for now (to be discussed w/ Google later)
          */
@@ -79,6 +88,12 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         }
 
         runtimeElementsPublished.configure { _, configuration ->
+            /* TODO w/ Google: Find a way to deprecate this attribute */
+            configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
+            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+        }
+
+        sourcesElementsPublished.configure { _, configuration ->
             /* TODO w/ Google: Find a way to deprecate this attribute */
             configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
             configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))

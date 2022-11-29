@@ -24,8 +24,10 @@ interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
 
     val apiElements: ExternalKotlinTargetConfigurationDescriptor<T>
     val runtimeElements: ExternalKotlinTargetConfigurationDescriptor<T>
+    val sourcesElements: ExternalKotlinTargetConfigurationDescriptor<T>
     val apiElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>
     val runtimeElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>
+    val sourcesElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>
 
     val configure: ((T) -> Unit)?
     val configureIdeImport: (IdeMultiplatformImport.() -> Unit)?
@@ -50,10 +52,16 @@ class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> i
     val runtimeElements: ExternalKotlinTargetConfigurationDescriptorBuilder<T> =
         ExternalKotlinTargetConfigurationDescriptorBuilder()
 
+    val sourcesElements: ExternalKotlinTargetConfigurationDescriptorBuilder<T> =
+        ExternalKotlinTargetConfigurationDescriptorBuilder()
+
     val apiElementsPublished: ExternalKotlinTargetConfigurationDescriptorBuilder<T> =
         ExternalKotlinTargetConfigurationDescriptorBuilder()
 
     val runtimeElementsPublished: ExternalKotlinTargetConfigurationDescriptorBuilder<T> =
+        ExternalKotlinTargetConfigurationDescriptorBuilder()
+
+    val sourcesElementsPublished: ExternalKotlinTargetConfigurationDescriptorBuilder<T> =
         ExternalKotlinTargetConfigurationDescriptorBuilder()
 
     var configure: ((T) -> Unit)? = null
@@ -78,8 +86,10 @@ class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> i
         targetFactory = targetFactory,
         apiElements = apiElements.build(),
         runtimeElements = runtimeElements.build(),
+        sourcesElements = sourcesElements.build(),
         apiElementsPublished = apiElementsPublished.build(),
         runtimeElementsPublished = runtimeElementsPublished.build(),
+        sourcesElementsPublished = sourcesElementsPublished.build(),
         configure = configure,
         configureIdeImport = configureIdeImport
     )
@@ -91,8 +101,10 @@ private data class ExternalKotlinTargetDescriptorImpl<T : DecoratedExternalKotli
     override val targetFactory: TargetFactory<T>,
     override val apiElements: ExternalKotlinTargetConfigurationDescriptor<T>,
     override val runtimeElements: ExternalKotlinTargetConfigurationDescriptor<T>,
+    override val sourcesElements: ExternalKotlinTargetConfigurationDescriptor<T>,
     override val apiElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>,
     override val runtimeElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>,
+    override val sourcesElementsPublished: ExternalKotlinTargetConfigurationDescriptor<T>,
     override val configure: ((T) -> Unit)?,
     override val configureIdeImport: (IdeMultiplatformImport.() -> Unit)?,
 ) : ExternalKotlinTargetDescriptor<T>

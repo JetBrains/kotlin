@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.markConsumable
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -28,12 +29,16 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     val defaultConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "default"))
     val apiElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "apiElements"))
     val runtimeElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "runtimeElements"))
+    val sourcesElementsConfiguration = project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "sourcesElements"))
 
     val apiElementsPublishedConfiguration =
         project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "apiElements-published"))
 
     val runtimeElementsPublishedConfiguration =
         project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "runtimeElements-published"))
+
+    val sourcesElementsPublishedConfiguration =
+        project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "sourcesElements-published"))
 
     val kotlinTargetComponent = ExternalKotlinTargetComponent(
         ExternalKotlinTargetComponent.TargetProvider.byTargetName(this, descriptor.targetName)
@@ -51,8 +56,10 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         defaultConfiguration = defaultConfiguration,
         apiElementsConfiguration = apiElementsConfiguration,
         runtimeElementsConfiguration = runtimeElementsConfiguration,
+        sourcesElementsConfiguration = sourcesElementsConfiguration,
         apiElementsPublishedConfiguration = apiElementsPublishedConfiguration,
         runtimeElementsPublishedConfiguration = runtimeElementsPublishedConfiguration,
+        sourcesElementsPublishedConfiguration = sourcesElementsPublishedConfiguration,
         kotlinTargetComponent = kotlinTargetComponent,
         artifactsTaskLocator = artifactsTaskLocator
     )
@@ -61,14 +68,19 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     target.setupApiElements(apiElementsPublishedConfiguration)
     target.setupRuntimeElements(runtimeElementsConfiguration)
     target.setupRuntimeElements(runtimeElementsPublishedConfiguration)
+    target.setupSourcesElements(sourcesElementsConfiguration)
+    target.setupSourcesElements(sourcesElementsPublishedConfiguration)
     apiElementsConfiguration.markConsumable()
     runtimeElementsConfiguration.markConsumable()
+    sourcesElementsConfiguration.markConsumable()
 
     /* Those configurations can not be resolved but also not consumed (not suitable for project to proejct dependencies */
     apiElementsPublishedConfiguration.isCanBeConsumed = false
     apiElementsPublishedConfiguration.isCanBeResolved = false
     runtimeElementsPublishedConfiguration.isCanBeResolved = false
     runtimeElementsPublishedConfiguration.isCanBeConsumed = false
+    sourcesElementsPublishedConfiguration.isCanBeResolved = false
+    sourcesElementsPublishedConfiguration.isCanBeConsumed = false
 
     val decorated = descriptor.targetFactory.create(DecoratedExternalKotlinTarget.Delegate(target))
     target.onCreated()
@@ -76,8 +88,10 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     descriptor.configure?.invoke(decorated)
     descriptor.apiElements.configure?.invoke(decorated, apiElementsConfiguration)
     descriptor.runtimeElements.configure?.invoke(decorated, runtimeElementsConfiguration)
+    descriptor.sourcesElements.configure?.invoke(decorated, sourcesElementsConfiguration)
     descriptor.apiElementsPublished.configure?.invoke(decorated, apiElementsPublishedConfiguration)
     descriptor.runtimeElementsPublished.configure?.invoke(decorated, runtimeElementsPublishedConfiguration)
+    descriptor.sourcesElementsPublished.configure?.invoke(decorated, sourcesElementsPublishedConfiguration)
     descriptor.configureIdeImport?.invoke(project.kotlinIdeMultiplatformImport)
 
     targets.add(decorated)
@@ -102,4 +116,8 @@ private fun ExternalKotlinTargetImpl.setupRuntimeElements(configuration: Configu
     configuration.usesPlatformOf(this)
     configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(this))
     configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+}
+
+private fun ExternalKotlinTargetImpl.setupSourcesElements(configuration: Configuration) {
+    configuration.configureSourcesPublicationAttributes(this)
 }
