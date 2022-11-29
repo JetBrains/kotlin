@@ -607,7 +607,6 @@ tasks {
             ":compiler:tests-against-klib:test"
         )
         dependsOn(":plugins:jvm-abi-gen:test")
-        dependsOn(":repo:codebase-tests:test")
     }
 
     register("testsForBootstrapBuildTest") {
