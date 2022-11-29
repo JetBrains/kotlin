@@ -52,7 +52,7 @@ fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     scopeIds: ArrayDeque<ClassId>,
     tokenIds: ArrayDeque<ClassId>,
     tokenState: MutableMap<ClassId, SchemaContext>,
-    reporter: InterpretationErrorReporter = InterpretationErrorReporter { _, _ -> }
+    reporter: InterpretationErrorReporter = InterpretationErrorReporter.DEFAULT
 ): List<ConeKotlinType> {
     val (rootMarker, dataFrameSchema) = analyzeRefinedCallShape(functionCall, reporter) ?: return emptyList()
 
@@ -145,7 +145,9 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
         .let {
             val value = it?.value
             if (value !is PluginDataFrameSchema) {
-                reporter.reportInterpretationError(call, "${processor::class} must return ${PluginDataFrameSchema::class}, but was ${value}")
+                if (!reporter.errorReported) {
+                    reporter.reportInterpretationError(call, "${processor::class} must return ${PluginDataFrameSchema::class}, but was ${value}")
+                }
                 return null
             }
             value

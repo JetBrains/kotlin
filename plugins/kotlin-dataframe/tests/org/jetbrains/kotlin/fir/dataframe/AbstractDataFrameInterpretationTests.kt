@@ -88,7 +88,7 @@ abstract class AbstractDataFrameInterpretationTests : BaseTestRunner() {
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
 
-                    val result = interpret(call, interpreter, reporter = { _, _ -> })?.value ?: return emptyList()
+                    val result = interpret(call, interpreter, reporter = InterpretationErrorReporter.DEFAULT)?.value ?: return emptyList()
 
 //                    withClue(id) {
 //                        result shouldBe expectedResult(id)

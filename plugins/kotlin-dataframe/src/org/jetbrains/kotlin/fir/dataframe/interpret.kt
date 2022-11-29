@@ -33,8 +33,18 @@ import org.jetbrains.kotlinx.dataframe.Marker
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.*
 
-fun interface InterpretationErrorReporter {
+interface InterpretationErrorReporter {
+    val errorReported: Boolean
     fun reportInterpretationError(call: FirFunctionCall, message: String)
+
+    companion object {
+        val DEFAULT = object : InterpretationErrorReporter {
+            override val errorReported: Boolean = false
+            override fun reportInterpretationError(call: FirFunctionCall, message: String) {
+
+            }
+        }
+    }
 }
 
 fun <T> KotlinTypeFacade.interpret(
@@ -128,8 +138,11 @@ fun <T> KotlinTypeFacade.interpret(
                                     }
 
                                     is FirFunctionCall -> {
-                                        val interpreter = result.loadInterpreter() ?: TODO("")
-                                        interpret(result, interpreter, reporter = reporter)?.value
+                                        val interpreter = result.loadInterpreter()
+                                        if (interpreter == null) {
+                                            reporter.reportInterpretationError(result, "Cannot load interpreter")
+                                        }
+                                        interpreter?.let { interpret(result, interpreter, reporter = reporter)?.value }
                                     }
 
                                     else -> TODO(result::class.toString())
