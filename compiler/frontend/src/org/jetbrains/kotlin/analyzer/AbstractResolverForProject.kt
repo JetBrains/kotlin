@@ -37,10 +37,10 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     // Protected by ("projectContext.storageManager.lock")
-    protected val descriptorByModule = mutableMapOf<M, ModuleData>()
+    protected val descriptorByModule = hashMapOf<M, ModuleData>()
 
     // Protected by ("projectContext.storageManager.lock")
-    private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
+    private val moduleInfoByDescriptor = hashMapOf<ModuleDescriptorImpl, M>()
 
     @Suppress("UNCHECKED_CAST")
     private val moduleInfoToResolvableInfo: Map<M, M> =
@@ -81,7 +81,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     // Protected by ("projectContext.storageManager.lock")
-    private val resolverByModuleDescriptor = mutableMapOf<ModuleDescriptor, ResolverForModule>()
+    private val resolverByModuleDescriptor = hashMapOf<ModuleDescriptor, ResolverForModule>()
 
     override val allModules: Collection<M> by lazy {
         this.moduleInfoToResolvableInfo.keys + delegateResolver.allModules
