@@ -1,12 +1,11 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 
 import kotlin.math.abs
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC(val x: Double) {
     operator fun equals(other: IC): Boolean {
         return abs(x - other.x) < 0.1

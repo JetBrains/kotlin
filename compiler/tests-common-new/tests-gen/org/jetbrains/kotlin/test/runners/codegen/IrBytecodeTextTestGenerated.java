@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.runners.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -5804,43 +5803,43 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @Test
         @TestMetadata("conditionalExpressions.kt")
         public void testConditionalExpressions() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/conditionalExpressions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/conditionalExpressions.kt");
         }
 
         @Test
         @TestMetadata("equalsBoxTest.kt")
         public void testEqualsBoxTest() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/equalsBoxTest.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/equalsBoxTest.kt");
         }
 
         @Test
         @TestMetadata("mfvcDeclaration.kt")
         public void testMfvcDeclaration() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/mfvcDeclaration.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/mfvcDeclaration.kt");
         }
 
         @Test
         @TestMetadata("mfvcReassignments.kt")
         public void testMfvcReassignments() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/mfvcReassignments.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/mfvcReassignments.kt");
         }
 
         @Test
         @TestMetadata("passingMFVC2Functions.kt")
         public void testPassingMFVC2Functions() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/passingMFVC2Functions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/passingMFVC2Functions.kt");
         }
 
         @Test
         @TestMetadata("regularClassWithMFVC.kt")
         public void testRegularClassWithMFVC() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/regularClassWithMFVC.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/regularClassWithMFVC.kt");
         }
 
         @Test
         @TestMetadata("tryExpressions.kt")
         public void testTryExpressions() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/tryExpressions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/tryExpressions.kt");
         }
     }
 

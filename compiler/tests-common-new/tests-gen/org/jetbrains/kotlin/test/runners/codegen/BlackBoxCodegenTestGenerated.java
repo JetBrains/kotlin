@@ -20252,7 +20252,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @Test
         @TestMetadata("classLiteralOnInlineClass.kt")
         public void testClassLiteralOnInlineClass() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/classLiteralOnInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/classLiteralOnInlineClass.kt");
         }
 
         @Test
@@ -20300,7 +20300,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @Test
         @TestMetadata("constructorImplVisibilityGeneric.kt")
         public void testConstructorImplVisibilityGeneric() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibilityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibilityGeneric.kt");
         }
 
         @Test
@@ -21002,7 +21002,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @Test
         @TestMetadata("javaPrimitiveTypeIC.kt")
         public void testJavaPrimitiveTypeIC() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeIC.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeIC.kt");
         }
 
         @Test
@@ -21032,13 +21032,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @Test
         @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt")
         public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValue() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt");
         }
 
         @Test
         @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt")
         public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt");
         }
 
         @Test
@@ -21068,7 +21068,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @Test
         @TestMetadata("jvmStaticVarInInlineClassCompanion.kt")
         public void testJvmStaticVarInInlineClassCompanion() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanion.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanion.kt");
         }
 
         @Test
@@ -22136,7 +22136,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @Test
         @TestMetadata("useOfInlineClassWithGenericMethodFromJava.kt")
         public void testUseOfInlineClassWithGenericMethodFromJava() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/useOfInlineClassWithGenericMethodFromJava.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/useOfInlineClassWithGenericMethodFromJava.kt");
         }
 
         @Test

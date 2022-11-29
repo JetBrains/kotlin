@@ -17067,7 +17067,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         @TestMetadata("classLiteralOnInlineClass.kt")
         public void testClassLiteralOnInlineClass() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/classLiteralOnInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/classLiteralOnInlineClass.kt");
         }
 
         @TestMetadata("computablePropertyInsideInlineClass.kt")
@@ -17102,7 +17102,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         @TestMetadata("constructorImplVisibilityGeneric.kt")
         public void testConstructorImplVisibilityGeneric() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibilityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibilityGeneric.kt");
         }
 
         @TestMetadata("correctBoxingForBranchExpressions.kt")
@@ -17647,7 +17647,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         @TestMetadata("javaPrimitiveTypeIC.kt")
         public void testJavaPrimitiveTypeIC() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeIC.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeIC.kt");
         }
 
         @TestMetadata("javaPrimitiveTypeICGeneric.kt")
@@ -17672,12 +17672,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt")
         public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValue() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt");
         }
 
         @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt")
         public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt");
         }
 
         @TestMetadata("jvmStaticFunInInlineClassCompanion.kt")
@@ -17702,7 +17702,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         @TestMetadata("jvmStaticVarInInlineClassCompanion.kt")
         public void testJvmStaticVarInInlineClassCompanion() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanion.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanion.kt");
         }
 
         @TestMetadata("jvmStaticVarInInlineClassCompanionGeneric.kt")
@@ -18442,7 +18442,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         @TestMetadata("useOfInlineClassWithGenericMethodFromJava.kt")
         public void testUseOfInlineClassWithGenericMethodFromJava() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/useOfInlineClassWithGenericMethodFromJava.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            runTest("compiler/testData/codegen/box/inlineClasses/useOfInlineClassWithGenericMethodFromJava.kt");
         }
 
         @TestMetadata("useOfInlineClassWithGenericMethodFromJavaGeneric.kt")

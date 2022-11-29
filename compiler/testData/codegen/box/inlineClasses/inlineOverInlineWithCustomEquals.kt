@@ -1,47 +1,46 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class A(val x: Int) {
     operator fun equals(other: A) = true
 }
 
 class C
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class B1(val x: A)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class B2(val x: A?)
 
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class D1(val x: C) {
     operator fun equals(other: D1) = true
 }
 
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class D2(val x: C?) {
     operator fun equals(other: D2) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class E1(val x: D1)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class E2(val x: D2)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class F<T>(val x: T)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class G<T : D1>(val x: T)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class H<T>(val x: F<T>)
 
 fun box(): String {

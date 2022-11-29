@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
@@ -10,7 +9,7 @@ interface I {
     fun equals(param: MFVC): Boolean
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class MFVC(val value: Int, val y: Int) : I {
     override fun equals(param: MFVC): Boolean {
         return abs(value - param.value) < 2

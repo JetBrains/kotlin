@@ -1,10 +1,9 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class MFVC1<T : Number>(val x: T, val other: Int) {
     fun equals(x: Int, other: Int) = false
     fun equals(other: MFVC1<*>) = true
@@ -12,19 +11,19 @@ value class MFVC1<T : Number>(val x: T, val other: Int) {
 
 class Generic<T, R>(val x: T, val y: R)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class MFVC2<T, R>(val value: Generic<T, R>, val other: Int) {
     fun equals(value: MFVC1<Double>, other: Int) = false
     fun equals(other: MFVC2<*, *>) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class MFVC3<T>(val value: T, val other: Int) {
     fun equals(value: Int, other: Int) = false
     fun equals(other: MFVC3<*>) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class MFVC4<T>(val value: T, val other: Int) {
     fun equals(value: Any, other: Int) = false
     fun equals(other: MFVC4<*>) = true

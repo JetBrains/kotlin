@@ -1,21 +1,20 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
 import java.lang.reflect.Modifier
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC1<T: Int> public constructor(val i: T)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC11<T: Int> internal constructor(val i: T)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC2<T: Int> private constructor(val i: T)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC4<T: Int> protected constructor(val i: T)
 
 fun box(): String {

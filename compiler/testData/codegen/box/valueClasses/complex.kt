@@ -2,7 +2,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND: ANDROID, ANDROID_IR
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +ValueClassesSecondaryConstructorWithBody
 
 @JvmInline

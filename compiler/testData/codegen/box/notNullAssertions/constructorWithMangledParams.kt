@@ -1,6 +1,5 @@
 // WITH_REFLECT
 // FULL_JDK
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 // TARGET_BACKEND: JVM_IR
 
@@ -9,7 +8,7 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.jvm.isAccessible
 
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC(val str: String)
 
 class A(val a: IC, val x : String) {

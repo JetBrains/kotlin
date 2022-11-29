@@ -1,12 +1,11 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 
 import kotlin.math.abs
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC1(val value: Double) {
     fun equals(other: IC1): Boolean {
         return abs(value - other.value) < 0.1
@@ -17,29 +16,29 @@ interface I {
     fun equals(param: IC2): Boolean
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC2(val value: Int) : I {
     override operator fun equals(param: IC2): Boolean {
         return abs(value - param.value) < 2
     }
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC3(val value: Int) {
 
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC4(val value: Int) {
     override fun equals(other: Any?) = TODO()
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC5(val value: Int) {
     operator fun equals(other: IC5): Nothing = TODO()
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC6(val value: Int) {
     override fun equals(other: Any?): Nothing = TODO()
 }

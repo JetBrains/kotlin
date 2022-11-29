@@ -1,46 +1,45 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 
 class A(x: Int)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class B(val a: A) {
     override fun equals(other: Any?) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class C<T>(val t: T) {
     override fun equals(other: Any?) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class D<T : Int>(val t: T) {
     override fun equals(other: Any?) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class E(val d: Double) {
     override fun equals(other: Any?) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class F(val e: E) {
     override fun equals(other: Any?) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class G(val e: Int?) {
     override fun equals(other: Any?) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class H(val e: Any?) {
     override fun equals(other: Any?) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class I(val e: E?) {
     override fun equals(other: Any?) = true
 }

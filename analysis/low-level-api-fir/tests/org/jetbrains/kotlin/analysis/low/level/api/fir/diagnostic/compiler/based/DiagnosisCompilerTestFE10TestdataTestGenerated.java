@@ -33705,7 +33705,7 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @Test
             @TestMetadata("recursiveMultiFieldValueClasses.kt")
             public void testRecursiveMultiFieldValueClasses() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/valueClasses/recursiveMultiFieldValueClasses.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+                runTest("compiler/testData/diagnostics/tests/valueClasses/recursiveMultiFieldValueClasses.kt");
             }
 
             @Test
@@ -33771,7 +33771,7 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @Test
             @TestMetadata("valueClassWithForbiddenUnderlyingTypeMultiField.kt")
             public void testValueClassWithForbiddenUnderlyingTypeMultiField() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassWithForbiddenUnderlyingTypeMultiField.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+                runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassWithForbiddenUnderlyingTypeMultiField.kt");
             }
 
             @Test

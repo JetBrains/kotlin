@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
@@ -7,14 +6,14 @@
 import java.lang.AssertionError
 import kotlin.math.abs
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class MFVC1(val x: Int, val y: Int) {
     fun equals(other: MFVC1): Boolean {
         return abs(x - other.x) < 2 && abs(y - other.y) < 2
     }
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class MFVC2(val x: Int, val y: Int) {
     override fun equals(other: Any?): Boolean {
         if (other !is MFVC2) {

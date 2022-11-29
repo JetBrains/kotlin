@@ -1,6 +1,5 @@
 // !LANGUAGE: +ValueClasses
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
 import kotlin.reflect.KProperty
