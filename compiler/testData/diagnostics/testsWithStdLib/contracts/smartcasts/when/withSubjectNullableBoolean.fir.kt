@@ -12,10 +12,10 @@ fun safeIsString(x: Any?): Boolean? {
 }
 
 fun elseWithNullableResult(x: Any?) {
-    when (safeIsString(x)) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>when (safeIsString(x)) {
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
         else -> x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 
     when (safeIsString(x)) {
         true -> x.length

@@ -33,14 +33,14 @@ fun falseWhenInt(x: Any?): Boolean {
 }
 
 fun truetrue(x: Any?) {
-    if (trueWhenString(x) || trueWhenInt(x)) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (trueWhenString(x) || trueWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         x.<!NONE_APPLICABLE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         x.<!UNRESOLVED_REFERENCE!>inc<!>()
-    }
+    }<!>
 }
 
 fun truefalse(x: Any?) {
@@ -55,14 +55,14 @@ fun truefalse(x: Any?) {
 }
 
 fun falsetrue(x: Any?) {
-    if (falseWhenString(x) || trueWhenInt(x)) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (falseWhenString(x) || trueWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         x.length
         x.<!UNRESOLVED_REFERENCE!>inc<!>()
-    }
+    }<!>
 }
 
 fun falsefalse(x: Any?) {

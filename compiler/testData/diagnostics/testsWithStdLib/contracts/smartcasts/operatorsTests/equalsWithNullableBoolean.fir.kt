@@ -24,21 +24,21 @@ fun equalsTrue(x: Any?) {
 }
 
 fun equalsFalse(x: Any?) {
-    if (safeIsString(x) == false) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (safeIsString(x) == false) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun equalsNull(x: Any?) {
-    if (safeIsString(x) == null) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (safeIsString(x) == null) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun notEqualsTrue(x: Any?) {
@@ -51,19 +51,19 @@ fun notEqualsTrue(x: Any?) {
 }
 
 fun notEqualsFalse(x: Any?) {
-    if (safeIsString(x) != false) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (safeIsString(x) != false) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun notEqualsNull(x: Any?) {
-    if (safeIsString(x) != null) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (safeIsString(x) != null) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
