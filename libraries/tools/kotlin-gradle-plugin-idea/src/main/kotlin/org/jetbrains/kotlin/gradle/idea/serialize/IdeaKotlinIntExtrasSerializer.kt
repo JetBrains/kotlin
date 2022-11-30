@@ -3,13 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.idea.testFixtures.serialize
+package org.jetbrains.kotlin.gradle.idea.serialize
 
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import java.nio.ByteBuffer
 
-object TestIdeaIntKotlinExtrasSerializer : IdeaKotlinExtrasSerializer<Int> {
+object IdeaKotlinIntExtrasSerializer : IdeaKotlinExtrasSerializer<Int> {
     override fun serialize(context: IdeaKotlinSerializationContext, value: Int): ByteArray {
         return ByteBuffer.allocate(Int.SIZE_BYTES).putInt(value).array()
     }

@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.testFixtures.serialize
 
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.*
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.extrasTypeOf
@@ -20,8 +19,9 @@ object TestIdeaExtrasSerializationExtension : IdeaKotlinExtrasSerializationExten
     override fun <T : Any> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? = when {
         key == ignoredStringKey -> null
         key == anySerializableKey -> IdeaKotlinExtrasSerializer.javaIoSerializable<Any>()
-        key.type == extrasTypeOf<String>() -> TestIdeaStringKotlinExtrasSerializer
-        key.type == extrasTypeOf<Int>() -> TestIdeaIntKotlinExtrasSerializer
+        key.type == extrasTypeOf<String>() -> IdeaKotlinStringExtrasSerializer
+        key.type == extrasTypeOf<Int>() -> IdeaKotlinIntExtrasSerializer
+        key.type == extrasTypeOf<Boolean>() -> IdeaKotlinBooleanExtrasSerializer
         else -> null
     } as? IdeaKotlinExtrasSerializer<T>
 }
