@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.bitMaskSlotCount
@@ -38,6 +39,8 @@ class IrPreGenerator(
     }
 
     private fun preGenerateWriteSelfMethodIfNeeded() {
+        // write$Self in K1 is created only on JVM (see SerializationResolveExtension)
+        if (!compilerContext.platform.isJvm()) return
         if (!irClass.isInternalSerializable) return
         val serializerDescriptor = irClass.classSerializer(compilerContext)?.owner ?: return
         if (!irClass.shouldHaveSpecificSyntheticMethods {
