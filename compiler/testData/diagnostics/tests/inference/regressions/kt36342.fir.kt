@@ -18,7 +18,7 @@ fun test() {
         id(<!UNRESOLVED_REFERENCE!>unresolved<!>)
 
     when {
-        true -> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)
+        true -> id(<!UNRESOLVED_REFERENCE!>unresolved<!>)
     }
     id(<!UNRESOLVED_REFERENCE!>unresolved<!>) ?: id(<!UNRESOLVED_REFERENCE!>unresolved<!>)
 }
