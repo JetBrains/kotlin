@@ -46,6 +46,20 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
         )
 
         registerDependencyResolver(
+            resolver = IdeNativeStdlibDependencyResolver,
+            constraint = SourceSetConstraint.isNative,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+        )
+
+        registerDependencyResolver(
+            resolver = IdeNativePlatformDependencyResolver,
+            constraint = SourceSetConstraint.isNative,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+        )
+
+        registerDependencyResolver(
             resolver = IdeTransformedMetadataDependencyResolver,
             constraint = !SourceSetConstraint.isLeaf,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
@@ -75,20 +89,6 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             constraint = SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
-        )
-
-        registerDependencyResolver(
-            resolver = IdeNativePlatformDependencyResolver,
-            constraint = SourceSetConstraint.isNative,
-            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
-        )
-
-        registerDependencyResolver(
-            resolver = IdeNativeStdlibDependencyResolver,
-            constraint = SourceSetConstraint.isNative,
-            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
         )
 
         /* Overwrite android dependencies by empty resolver */
