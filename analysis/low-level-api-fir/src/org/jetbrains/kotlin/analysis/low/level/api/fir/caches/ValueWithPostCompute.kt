@@ -92,6 +92,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     @Suppress("UNCHECKED_CAST")
     // should be called under a synchronized section
     private fun computeValueWithoutLock(): VALUE {
+        require(Thread.holdsLock(this))
         // if we entered synchronized section that's mean that the value is not yet calculated and was not started to be calculated
         // or the some other thread calculated the value while we were waiting to acquire the lock
 
