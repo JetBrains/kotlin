@@ -62,22 +62,6 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects")
-    @TestDataPath("$PROJECT_ROOT")
-    public class DataObjects {
-        @Test
-        public void testAllFilesPresentInDataObjects() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects"), Pattern.compile("^(.+)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
-        }
-
-        @Test
-        @TestMetadata("customReadResolve.kt")
-        public void testCustomReadResolve() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects/customReadResolve.kt");
-        }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     public class DuplicateJvmSignature {
