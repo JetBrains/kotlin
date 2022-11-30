@@ -104,7 +104,7 @@ fun testTwoLambdas() {
             {}
             <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
         } else {
-            {}
+            <!ARGUMENT_TYPE_MISMATCH!>{}<!>
         }
     }
 }

@@ -15,6 +15,6 @@ fun buildTree(segments: List<Interval>): IntervalTree? = TODO()
 fun acquireIntervals(): List<Interval> = TODO()
 
 fun main() {
-    buildTree(acquireIntervals())
-        ?: emptyList()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildTree(acquireIntervals())
+        ?: emptyList()<!>
 }

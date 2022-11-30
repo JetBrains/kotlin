@@ -50,10 +50,10 @@ fun test2(x: Any?) {
 
 fun test3(x: Any?) {
     // condition == false <=> function returned not-null, but we don't know anything about when function returns not-null
-    if (nullWhenNotString(x) == null) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (nullWhenNotString(x) == null) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
