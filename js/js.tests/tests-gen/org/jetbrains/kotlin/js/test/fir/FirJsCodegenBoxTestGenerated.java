@@ -36517,6 +36517,70 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/volatile")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Volatile {
+        @Test
+        public void testAllFilesPresentInVolatile() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/volatile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("volatileBool.kt")
+        public void testVolatileBool() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileBool.kt");
+        }
+
+        @Test
+        @TestMetadata("volatileByte.kt")
+        public void testVolatileByte() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileByte.kt");
+        }
+
+        @Test
+        @TestMetadata("volatileDouble.kt")
+        public void testVolatileDouble() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileDouble.kt");
+        }
+
+        @Test
+        @TestMetadata("volatileFloat.kt")
+        public void testVolatileFloat() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileFloat.kt");
+        }
+
+        @Test
+        @TestMetadata("volatileGeneric.kt")
+        public void testVolatileGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("volatileInt.kt")
+        public void testVolatileInt() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileInt.kt");
+        }
+
+        @Test
+        @TestMetadata("volatileLong.kt")
+        public void testVolatileLong() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileLong.kt");
+        }
+
+        @Test
+        @TestMetadata("volatileShort.kt")
+        public void testVolatileShort() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileShort.kt");
+        }
+
+        @Test
+        @TestMetadata("volatileString.kt")
+        public void testVolatileString() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileString.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/when")
     @TestDataPath("$PROJECT_ROOT")
     public class When {

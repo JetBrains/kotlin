@@ -39776,6 +39776,64 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/volatile")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Volatile extends AbstractLightAnalysisModeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInVolatile() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/volatile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("volatileBool.kt")
+        public void testVolatileBool() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileBool.kt");
+        }
+
+        @TestMetadata("volatileByte.kt")
+        public void testVolatileByte() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileByte.kt");
+        }
+
+        @TestMetadata("volatileDouble.kt")
+        public void testVolatileDouble() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileDouble.kt");
+        }
+
+        @TestMetadata("volatileFloat.kt")
+        public void testVolatileFloat() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileFloat.kt");
+        }
+
+        @TestMetadata("volatileGeneric.kt")
+        public void testVolatileGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileGeneric.kt");
+        }
+
+        @TestMetadata("volatileInt.kt")
+        public void testVolatileInt() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileInt.kt");
+        }
+
+        @TestMetadata("volatileLong.kt")
+        public void testVolatileLong() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileLong.kt");
+        }
+
+        @TestMetadata("volatileShort.kt")
+        public void testVolatileShort() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileShort.kt");
+        }
+
+        @TestMetadata("volatileString.kt")
+        public void testVolatileString() throws Exception {
+            runTest("compiler/testData/codegen/box/volatile/volatileString.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/when")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
