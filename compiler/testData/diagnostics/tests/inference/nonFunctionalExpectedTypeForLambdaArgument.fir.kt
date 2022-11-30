@@ -26,7 +26,7 @@ fun testParam() {
 }
 
 fun testParamCall() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
+    callParam {
         param -> <!UNRESOLVED_REFERENCE!>param<!>()
     }
 }
