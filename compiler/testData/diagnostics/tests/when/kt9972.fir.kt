@@ -10,17 +10,17 @@
  */
 
 fun test1(): Int {
-    val x: String = <!TYPE_MISMATCH!>if (true) {
+    val x: String = if (true) {
         when {
             true -> Any()
             else -> null
         }
-    } else ""<!>
+    } else ""
     return x.hashCode()
 }
 
 fun test2(): Int {
-    val x: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!><!TYPE_MISMATCH!>when {
+    val x: String = <!INITIALIZER_TYPE_MISMATCH!><!TYPE_MISMATCH!>when {
                         true -> Any()
                         else -> null
                     }<!> ?: return 0<!>

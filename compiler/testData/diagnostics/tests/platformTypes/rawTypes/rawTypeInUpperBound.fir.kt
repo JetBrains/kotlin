@@ -28,7 +28,7 @@ public class Test {
 fun foo(x: B<*>) {
     // TODO: In K1, x.foo() now is flexible type instead of raw, because of captured type approximation
     // Works in K2 as expected: x.foo() returns raw `A`, thus it's `getChildrenStubs` has a type `MutableList<Any!>..List<*>?`
-    val q: MutableList<String> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>x.foo().getChildrenStubs()<!>
+    val q: MutableList<String> = <!INITIALIZER_TYPE_MISMATCH!>x.foo().getChildrenStubs()<!>
 
     // Raw(B).field erased to A<Any!>..A<out Any!>?
     Test.rawB.field = A<String>()

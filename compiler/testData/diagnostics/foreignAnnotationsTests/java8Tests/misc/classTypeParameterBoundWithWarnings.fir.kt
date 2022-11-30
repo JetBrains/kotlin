@@ -20,6 +20,6 @@ fun main(x: ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED!>String?<
     val x3 = ClassTypeParameterBoundWithWarnings(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
     val y3 = ClassTypeParameterBoundWithWarnings(b)
 
-    val x4: ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED!>String?<!>> = <!TYPE_MISMATCH!>ClassTypeParameterBoundWithWarnings()<!>
+    val x4: ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED!>String?<!>> = ClassTypeParameterBoundWithWarnings()
     val y4: ClassTypeParameterBoundWithWarnings<String> = ClassTypeParameterBoundWithWarnings()
 }
