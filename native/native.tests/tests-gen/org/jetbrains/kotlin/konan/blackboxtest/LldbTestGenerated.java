@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/lldb")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("lldb")
+@Tag("debugger")
 @UseStandardTestCaseGroupProvider()
 public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
     @Test
@@ -29,39 +29,39 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
     }
 
     @Test
-    @TestMetadata("can_inspect_array_children.kt")
-    public void testCan_inspect_array_children() throws Exception {
-        runTest("native/native.tests/testData/lldb/can_inspect_array_children.kt");
+    @TestMetadata("canInspectArrayChildren.kt")
+    public void testCanInspectArrayChildren() throws Exception {
+        runTest("native/native.tests/testData/lldb/canInspectArrayChildren.kt");
     }
 
     @Test
-    @TestMetadata("can_inspect_arrays.kt")
-    public void testCan_inspect_arrays() throws Exception {
-        runTest("native/native.tests/testData/lldb/can_inspect_arrays.kt");
+    @TestMetadata("canInspectArrays.kt")
+    public void testCanInspectArrays() throws Exception {
+        runTest("native/native.tests/testData/lldb/canInspectArrays.kt");
     }
 
     @Test
-    @TestMetadata("can_inspect_catch_parameter.kt")
-    public void testCan_inspect_catch_parameter() throws Exception {
-        runTest("native/native.tests/testData/lldb/can_inspect_catch_parameter.kt");
+    @TestMetadata("canInspectCatchParameter.kt")
+    public void testCanInspectCatchParameter() throws Exception {
+        runTest("native/native.tests/testData/lldb/canInspectCatchParameter.kt");
     }
 
     @Test
-    @TestMetadata("can_inspect_classes.kt")
-    public void testCan_inspect_classes() throws Exception {
-        runTest("native/native.tests/testData/lldb/can_inspect_classes.kt");
+    @TestMetadata("canInspectClasses.kt")
+    public void testCanInspectClasses() throws Exception {
+        runTest("native/native.tests/testData/lldb/canInspectClasses.kt");
     }
 
     @Test
-    @TestMetadata("can_inspect_values_of_primitive_types.kt")
-    public void testCan_inspect_values_of_primitive_types() throws Exception {
-        runTest("native/native.tests/testData/lldb/can_inspect_values_of_primitive_types.kt");
+    @TestMetadata("canInspectValuesOfPrimitiveTypes.kt")
+    public void testCanInspectValuesOfPrimitiveTypes() throws Exception {
+        runTest("native/native.tests/testData/lldb/canInspectValuesOfPrimitiveTypes.kt");
     }
 
     @Test
-    @TestMetadata("can_step_through_code.kt")
-    public void testCan_step_through_code() throws Exception {
-        runTest("native/native.tests/testData/lldb/can_step_through_code.kt");
+    @TestMetadata("canStepThroughCode.kt")
+    public void testCanStepThroughCode() throws Exception {
+        runTest("native/native.tests/testData/lldb/canStepThroughCode.kt");
     }
 
     @Test
@@ -83,15 +83,15 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
     }
 
     @Test
-    @TestMetadata("kt42208_with_passing_lambda_to_another_function.kt")
-    public void testKt42208_with_passing_lambda_to_another_function() throws Exception {
-        runTest("native/native.tests/testData/lldb/kt42208_with_passing_lambda_to_another_function.kt");
+    @TestMetadata("kt42208WithPassingLambdaToAnotherFunction.kt")
+    public void testKt42208WithPassingLambdaToAnotherFunction() throws Exception {
+        runTest("native/native.tests/testData/lldb/kt42208WithPassingLambdaToAnotherFunction.kt");
     }
 
     @Test
-    @TestMetadata("kt42208_with_variable.kt")
-    public void testKt42208_with_variable() throws Exception {
-        runTest("native/native.tests/testData/lldb/kt42208_with_variable.kt");
+    @TestMetadata("kt42208WithVariable.kt")
+    public void testKt42208WithVariable() throws Exception {
+        runTest("native/native.tests/testData/lldb/kt42208WithVariable.kt");
     }
 
     @Test
@@ -101,8 +101,8 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
     }
 
     @Test
-    @TestMetadata("kt47198_with_body.kt")
-    public void testKt47198_with_body() throws Exception {
-        runTest("native/native.tests/testData/lldb/kt47198_with_body.kt");
+    @TestMetadata("kt47198WithBody.kt")
+    public void testKt47198WithBody() throws Exception {
+        runTest("native/native.tests/testData/lldb/kt47198WithBody.kt");
     }
 }

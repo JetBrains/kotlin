@@ -86,7 +86,7 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "LldbTestGenerated",
-                annotations = listOf(lldb(), provider<UseStandardTestCaseGroupProvider>())
+                annotations = listOf(debugger(), provider<UseStandardTestCaseGroupProvider>())
             ) {
                 model("lldb")
             }
@@ -97,5 +97,5 @@ fun main() {
 private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
 private fun codegen() = annotation(Tag::class.java, "codegen")
-private fun lldb() = annotation(Tag::class.java, "lldb")
+private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")

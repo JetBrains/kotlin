@@ -28,7 +28,7 @@ import java.io.File
 internal object TestDirectives : SimpleDirectivesContainer() {
     val KIND by enumDirective<TestKind>(
         description = """
-            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR]
+            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB]
             Declares the kind of the test:
 
             - REGULAR (the default) - include this test into the shared test binary.
@@ -55,7 +55,7 @@ internal object TestDirectives : SimpleDirectivesContainer() {
     val ENTRY_POINT by stringDirective(
         description = """
             Specify custom program entry point. The default entry point is `main` function in the root package.
-            Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR
+            Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR or // KIND: STANDALONE_LLDB
         """.trimIndent()
     )
 

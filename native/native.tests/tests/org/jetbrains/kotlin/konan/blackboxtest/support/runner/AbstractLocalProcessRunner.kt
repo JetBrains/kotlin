@@ -106,7 +106,18 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
                         }
                     }
                     is TestRunCheck.OutputMatcher -> {
-                        check.match(runResult.processOutput.stdOut.filteredOutput)
+                        try {
+                            verifyExpectation(check.match(runResult.processOutput.stdOut.filteredOutput)) {
+                                "Tested process output has not passed validation."
+                            }
+                        } catch (t: Throwable) {
+                            if (t is Exception || t is AssertionError) {
+                                org.junit.jupiter.api.Assertions.fail<Nothing>(
+                                    getLoggedRun().withErrorMessage("Tested process output has not passed validation:\n\n" + t.message),
+                                    t
+                                )
+                            }
+                        }
                     }
                 }
             }

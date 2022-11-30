@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.util
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 
+private class Step(val command: String, val body: List<String>)
+
 class LldbSessionSpecification private constructor(
-    val commands: List<String>,
-    val patterns: List<List<String>>
+    private val steps: List<Step>,
 ) {
+
 
     fun generateCLIArguments(pp: File): List<String> {
         val args = mutableListOf("-b", "-o", "command script import ${pp.absolutePath}")
-        args.addAll(commands.flatMap { listOf("-o", it) })
+        args.addAll(steps.flatMap { listOf("-o", it.command) })
         return args
     }
 
@@ -23,11 +25,11 @@ class LldbSessionSpecification private constructor(
     fun targetIsHost() = true
 
     fun matchOutput(output: String): Boolean {
-        val blocks = output.split("""(?=\(lldb\))""".toRegex()).filterNot(String::isEmpty)
+        val blocks = output.split(lldbOutputCommand).filterNot(String::isEmpty)
         if (targetIsHost()) {
             check(blocks[0].startsWith("(lldb) target create")) { "Missing block \"target create\". Got: ${blocks[0]}" }
             check(blocks[1].startsWith("(lldb) command script import")) {
-                "Missing block \"command script import\". Got: ${blocks[0]}"
+                "Missing block \"command script import\". Got: ${blocks[1]}"
             }
         }
         val responses = if (targetIsHost())
@@ -35,40 +37,35 @@ class LldbSessionSpecification private constructor(
         else
             blocks.drop(2).dropLast(1)
 
-        val executedCommands = responses.map { it.lines().first() }
-        val bodies = responses.map { it.lines().drop(1) }
-        val responsesMatch = executedCommands.size == commands.size
-                && commands.zip(executedCommands).all { (cmd, h) -> h == "(lldb) $cmd" }
+        val recordedSteps = responses.map { Step(it.lines().first(), it.lines().drop(1)) }
 
-        if (!responsesMatch) {
+        if (recordedSteps.size != steps.size) {
             val message = """
                 |Responses do not match commands.
                 |
-                |COMMANDS: |$commands (${commands.size})
-                |RESPONSES: |$executedCommands (${executedCommands.size})
-                |
-                |FULL SESSION:
-                |$output
+                |COMMANDS: |${steps.map { it.command }} (${steps.size})
+                |RESPONSES: |${recordedSteps.map { it.command }} (${recordedSteps.size})
             """.trimMargin()
-            fail{ message }
+            fail { message }
         }
 
-        for ((patternBody, command) in patterns.zip(bodies).zip(executedCommands)) {
-            val (pattern, body) = patternBody
-            val mismatch = findMismatch(pattern, body)
+        steps.zip(recordedSteps).all { (step, recordedStep) -> recordedStep.command == "(lldb) ${step.command}" }
+
+        for ((step, recordedStep) in steps.zip(recordedSteps)) {
+            check(recordedStep.command == "(lldb) ${step.command}") {
+                "Wrong command in response. Expected: (lldb) ${step.command}. Got: ${recordedStep.command}"
+            }
+            val mismatch = findMismatch(step.body, recordedStep.body)
             if (mismatch != null) {
                 val message = """
                     |Wrong LLDB output.
                     |
-                    |COMMAND: $command
+                    |COMMAND: ${step.command}
                     |PATTERN: $mismatch
                     |OUTPUT:
-                    |${body.joinToString("\n")}
-                    |
-                    |FULL SESSION:
-                    |$output
+                    |${recordedStep.body.joinToString("\n")}
                 """.trimMargin()
-                fail{ message }
+                fail { message }
             }
         }
         return true
@@ -88,7 +85,7 @@ class LldbSessionSpecification private constructor(
     }
 
     private fun match(pattern: String, line: String): Boolean {
-        val chunks = pattern.split("""\s*\[\.\.]\s*""".toRegex())
+        val chunks = pattern.split(wildcard)
             .filter { it.isNotBlank() }
             .map { it.trim() }
         check(chunks.isNotEmpty())
@@ -102,6 +99,9 @@ class LldbSessionSpecification private constructor(
     }
 
     companion object {
+        val lldbOutputCommand = """(?=\(lldb\))""".toRegex()
+        val wildcard = """\s*\[\.\.]\s*""".toRegex()
+
         fun parse(spec: String): LldbSessionSpecification {
             val blocks = spec.trimIndent()
                 .split("(?=^>)".toRegex(RegexOption.MULTILINE))
@@ -109,9 +109,10 @@ class LldbSessionSpecification private constructor(
             for (cmd in blocks) {
                 check(cmd.startsWith(">")) { "Invalid lldb session specification: $cmd" }
             }
-            val commands = blocks.map { it.lines().first().substring(1).trim() }
-            val patterns = blocks.map { it.lines().drop(1).filter { it.isNotBlank() } }
-            return LldbSessionSpecification(commands, patterns)
+            val steps = blocks.map {
+                Step(it.lines().first().substring(1).trim(), it.lines().drop(1).filter { it.isNotBlank() })
+            }
+            return LldbSessionSpecification(steps)
         }
     }
 }

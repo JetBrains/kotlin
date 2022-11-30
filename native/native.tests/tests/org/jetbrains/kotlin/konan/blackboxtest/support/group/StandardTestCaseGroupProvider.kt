@@ -48,6 +48,11 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
             val testCases = includedTestDataFiles.map { testDataFile -> createTestCase(testDataFile, settings) }
 
+            if (!settings.get<DebugUtils>().lldbIsAvailable) {
+                val lldbTests = testCases.filter { it.kind == TestKind.STANDALONE_LLDB }
+                lldbTests.mapTo(disabledTestCaseIds) { it.id }
+            }
+
             TestCaseGroup.Default(disabledTestCaseIds, testCases)
         }
     }

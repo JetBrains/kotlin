@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: can_step_through_code.txt
+// LLDB_TRACE: canStepThroughCode.txt
 fun main(args: Array<String>) {
     var x = 1
     var y = 2

@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: can_inspect_catch_parameter.txt
+// LLDB_TRACE: canInspectCatchParameter.txt
 fun main() {
     try {
         throw Exception("message 1")

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
+import java.io.IOException
 import java.util.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -32,6 +33,17 @@ internal class KotlinNativeHome(val dir: File) {
     val lldbPrettyPrinters: File = dir.resolve("tools/konan_lldb.py")
     val properties: Properties by lazy {
         dir.resolve("konan/konan.properties").inputStream().use { Properties().apply { load(it) } }
+    }
+}
+
+internal class DebugUtils {
+    val lldbIsAvailable: Boolean by lazy {
+        try {
+            val exitCode = ProcessBuilder("lldb", "-version").start().waitFor()
+            exitCode == 0
+        } catch (e: IOException) {
+            false
+        }
     }
 }
 

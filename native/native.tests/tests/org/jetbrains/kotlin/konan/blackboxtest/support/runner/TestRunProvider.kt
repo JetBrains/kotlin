@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.DebugUtils
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
@@ -103,7 +104,13 @@ internal class TestRunProvider(
         fun createTestRun(testRunName: String, testName: TestName?) = createTestRun(testCase, executable, testRunName, testName)
 
         when (testCase.kind) {
-            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
+            TestKind.STANDALONE_LLDB -> {
+                if (!settings.get<DebugUtils>().lldbIsAvailable) TreeNode.oneLevel<TestRun>()
+                val testRunName = testCase.extras<NoTestRunnerExtras>().entryPoint.substringAfterLast('.')
+                val testRun = createTestRun(testRunName, testName = null)
+                TreeNode.oneLevel(testRun)
+            }
+            TestKind.STANDALONE_NO_TR -> {
                 val testRunName = testCase.extras<NoTestRunnerExtras>().entryPoint.substringAfterLast('.')
                 val testRun = createTestRun(testRunName, testName = null)
                 TreeNode.oneLevel(testRun)

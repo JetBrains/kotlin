@@ -1,10 +1,11 @@
 // KIND: STANDALONE_LLDB
-// FREE_COMPILER_ARGS: -XXLanguage:+UnitConversionsOnArbitraryExpressions
-// LLDB_TRACE: kt42208_with_passing_lambda_to_another_function.txt
+// LLDB_TRACE: kt42208WithVariable.txt
 // FILE: kt42208-1.kt
 fun main() {
     val a = foo()
-    bar(a)
+    a()
+    a()
+    a()
 }
 // FILE: kt42208-2.kt
 // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -12,8 +13,4 @@ class A
 val list = mutableListOf<A>()
 inline fun foo() = { ->
     list.add(A())
-}
-// FILE: kt42208-3.kt
-fun bar(v:(()->Unit)) {
-    v()
 }
