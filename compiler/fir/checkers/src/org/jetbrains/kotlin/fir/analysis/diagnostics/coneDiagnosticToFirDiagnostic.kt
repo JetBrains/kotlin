@@ -422,7 +422,12 @@ private fun ConstraintSystemError.toDiagnostic(
                         resolvedSymbol != null && upperConeTypeWithoutTypeVariables.isCapturedTypeWithStarOrOutProjection -> {
                             FirErrors.SETTER_PROJECTED_OUT.createOn(theSource, resolvedSymbol)
                         }
-
+                        position.isFromInitializer -> FirErrors.INITIALIZER_TYPE_MISMATCH.createOn(
+                            theSource,
+                            upperConeTypeWithoutTypeVariables,
+                            inferredTypeWithoutTypeVariables,
+                            typeMismatchDueToNullability,
+                        )
                         position.isFromAssignment -> when (theSource.kind) {
                             is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
                                 val (lValueType, rValueType) = when {
