@@ -19,22 +19,22 @@ fun falseWhenString(x: Any?): Boolean {
 }
 
 fun annotatedTrueOrTrue(x: Any?) {
-    if (trueWhenString(x) || true) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (trueWhenString(x) || true) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         // Unreachable
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun annotatedTrueOrFalse(x: Any?) {
-    if (trueWhenString(x) || false) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (trueWhenString(x) || false) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun annotatedFalseOrTrue(x: Any?) {
