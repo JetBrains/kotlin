@@ -188,22 +188,13 @@ fun <T> KotlinTypeFacade.interpret(
                 val objectWithSchema = it.expression.getSchema()
                 val arg = objectWithSchema.schemaArg
                 val schemaTypeArg = (objectWithSchema.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
-                if (schemaTypeArg.isStarProjection) {
+                val schema = if (schemaTypeArg.isStarProjection) {
                     PluginDataFrameSchema(emptyList())
                 } else {
-                    val declarationSymbols =
-                        ((schemaTypeArg.type as ConeClassLikeType).toSymbol(session) as FirRegularClassSymbol)
-                            .declaredMemberScope(session)
-                            .let { scope ->
-                                val names = scope.getCallableNames()
-                                names.flatMap { scope.getProperties(it) }
-                            }
-                    val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
-                        columnOf(propertySymbol)
-                    }
+                    pluginDataFrameSchema(schemaTypeArg.type as ConeClassLikeType)
+                }
 
-                    PluginDataFrameSchema(columns)
-                }.let { Interpreter.Success(it) }
+                Interpreter.Success(schema)
             }
         }
         value?.let { value1 -> it.name.identifier to value1 }
@@ -231,6 +222,21 @@ fun <T> KotlinTypeFacade.interpret(
     } else {
         return null
     }
+}
+
+internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
+    val declarationSymbols =
+        (coneClassLikeType.toSymbol(session) as FirRegularClassSymbol)
+            .declaredMemberScope(session)
+            .let { scope ->
+                val names = scope.getCallableNames()
+                names.flatMap { scope.getProperties(it) }
+            }
+    val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
+        columnOf(propertySymbol)
+    }
+
+    return PluginDataFrameSchema(columns)
 }
 
 private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): List<ColumnWithPathApproximation> {
