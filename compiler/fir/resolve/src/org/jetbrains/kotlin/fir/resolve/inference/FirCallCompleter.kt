@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.expectedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ExpectedTypeOrigin
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
@@ -64,13 +65,11 @@ class FirCallCompleter(
     fun <T> completeCall(
         call: T,
         expectedTypeRef: FirTypeRef?,
-        returnTargetIfFromReturnType: FirFunction? = null,
-        isFromAssignment: Boolean = false,
-        isFromInitializer: Boolean = false,
+        expectedTypeOrigin: ExpectedTypeOrigin = ExpectedTypeOrigin.Unspecified,
     ): CompletionResult<T> where T : FirResolvable, T : FirStatement =
         completeCall(
             call, expectedTypeRef, mayBeCoercionToUnitApplied = false,
-            returnTargetIfFromReturnType, isFromAssignment, isFromInitializer, isFromCast = false,
+            expectedTypeOrigin, isFromCast = false,
             shouldEnforceExpectedType = true,
         )
 
@@ -79,9 +78,7 @@ class FirCallCompleter(
             call,
             data.expectedType(components, allowFromCast = true),
             (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true,
-            (data as? ResolutionMode.WithExpectedType)?.returnTargetIfFromReturnType,
-            (data as? ResolutionMode.WithExpectedType)?.isFromAssignment == true,
-            (data as? ResolutionMode.WithExpectedType)?.isFromInitializer == true,
+            (data as? ResolutionMode.WithExpectedType)?.expectedTypeOrigin ?: ExpectedTypeOrigin.Unspecified,
             isFromCast = data is ResolutionMode.WithExpectedTypeFromCast,
             shouldEnforceExpectedType = data !is ResolutionMode.WithSuggestedType,
         )
@@ -89,9 +86,7 @@ class FirCallCompleter(
     private fun <T> completeCall(
         call: T, expectedTypeRef: FirTypeRef?,
         mayBeCoercionToUnitApplied: Boolean,
-        returnTargetIfFromReturnType: FirFunction?,
-        isFromAssignment: Boolean,
-        isFromInitializer: Boolean,
+        expectedTypeOrigin: ExpectedTypeOrigin,
         isFromCast: Boolean,
         shouldEnforceExpectedType: Boolean,
     ): CompletionResult<T>
@@ -114,9 +109,7 @@ class FirCallCompleter(
         }
 
         addConstraintFromExpectedType(
-            returnTargetIfFromReturnType,
-            isFromAssignment,
-            isFromInitializer,
+            expectedTypeOrigin,
             expectedTypeRef,
             shouldEnforceExpectedType,
             candidate,
@@ -168,9 +161,7 @@ class FirCallCompleter(
     }
 
     private fun addConstraintFromExpectedType(
-        returnTargetIfFromReturnType: FirFunction?,
-        isFromAssignment: Boolean,
-        isFromInitializer: Boolean,
+        expectedTypeOrigin: ExpectedTypeOrigin,
         expectedTypeRef: FirTypeRef?,
         shouldEnforceExpectedType: Boolean,
         candidate: Candidate,
@@ -179,11 +170,7 @@ class FirCallCompleter(
         mayBeCoercionToUnitApplied: Boolean
     ) {
         val expectedType = expectedTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
-        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(
-            returnTargetIfFromReturnType,
-            isFromAssignment,
-            isFromInitializer,
-        )
+        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeOrigin)
 
         val system = candidate.system
         when {
