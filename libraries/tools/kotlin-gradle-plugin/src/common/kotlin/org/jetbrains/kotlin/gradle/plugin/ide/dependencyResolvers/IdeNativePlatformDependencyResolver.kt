@@ -46,7 +46,7 @@ object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
             )
 
             return IdeaKotlinResolvedBinaryDependency(
-                binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
+                binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
                 binaryFile = file,
                 extras = mutableExtrasOf(),
                 coordinates = IdeaKotlinBinaryCoordinates(
