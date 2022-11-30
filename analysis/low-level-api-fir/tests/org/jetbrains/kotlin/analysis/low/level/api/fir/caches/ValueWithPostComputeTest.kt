@@ -9,11 +9,85 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.ValueWithPostCompute
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 
 class ValueWithPostComputeTest {
+    /**
+     * Tests the following scenario:
+     *  - thread `t1` access the cache and executes `calculate()` and then `postCompute()` under a lock hold
+     *  - while the lock hold  by `t1`, `t2` tries to also access the value and waits for the lock to be released by `t1`
+     *  - t1: during the post compute, some recoverable (e.g., PCE) exception happens inside the `postCompute()` and exception is not saved in the cache and rethrown
+     *  - t1 releases the lock with the `value` set to `ValueIsNotComputed`
+     *  - t2 acquires the lock and should try to recalculate the value in this case
+     */
+    @Test
+    fun testTheSameValueIsComputedFromDifferentThreads() {
+        val valueWithPostCompute = ValueWithPostCompute(
+            key = 1,
+            calculate = { Thread.currentThread().name to Unit },
+            postCompute = { _, _, _ -> }
+        )
+
+        val results = ConcurrentLinkedQueue<String>()
+
+        val threads = (0..9).map { threadIndex ->
+            thread(name = "t${threadIndex}", start = false) {
+                results.offer(valueWithPostCompute.getValue())
+            }
+        }
+        threads.forEach { it.start() }
+        threads.forEach { it.join() }
+
+        val resultsList = results.toList()
+        Assertions.assertEquals(threads.size, results.size)
+
+        Assertions.assertTrue(
+            resultsList.all { it == resultsList[0] },
+            "All results got from ValueWithPostCompute should be equal, but was $resultsList"
+        )
+    }
+
+    @Test
+    fun testPCEIsRethrownAndNotSavedInCache() {
+        val valueWithPostCompute = ValueWithPostCompute(
+            key = 1,
+            calculate = { "value" to Unit },
+            postCompute = { _, _, _ ->
+                throw ProcessCanceledException()
+            }
+        )
+
+        val pceOnFirstAccess = kotlin.runCatching { valueWithPostCompute.getValue() }.exceptionOrNull()
+        Assertions.assertInstanceOf(ProcessCanceledException::class.java, pceOnFirstAccess)
+
+        val pceOnSecondAccess = kotlin.runCatching { valueWithPostCompute.getValue() }.exceptionOrNull()
+        Assertions.assertInstanceOf(ProcessCanceledException::class.java, pceOnSecondAccess)
+
+        Assertions.assertNotEquals(pceOnFirstAccess, pceOnSecondAccess, "different PCE should be thrown on every access")
+    }
+
+    @Test
+    fun testNonRecoverableExceptionISavedInCache() {
+        val valueWithPostCompute = ValueWithPostCompute(
+            key = 1,
+            calculate = { "value" to Unit },
+            postCompute = { _, _, _ ->
+                throw IllegalStateException()
+            }
+        )
+
+        val exceptionOnFirstAccess = kotlin.runCatching { valueWithPostCompute.getValue() }.exceptionOrNull()
+        Assertions.assertInstanceOf(IllegalStateException::class.java, exceptionOnFirstAccess)
+
+        val exceptionOnSecondAccess = kotlin.runCatching { valueWithPostCompute.getValue() }.exceptionOrNull()
+        Assertions.assertInstanceOf(IllegalStateException::class.java, exceptionOnSecondAccess)
+
+        Assertions.assertEquals(exceptionOnFirstAccess, exceptionOnSecondAccess, "the same exception should be thrown on every access")
+    }
+
     /**
      * Tests the following scenario:
      *  - thread `t1` access the cache and executes `calculate()` and then `postCompute()` under a lock hold
