@@ -100,6 +100,10 @@ internal class SymbolLightSimpleMethod(
             result = modifiers
         )
 
+        if (functionSymbol.isExternal) {
+            modifiers.add(PsiModifier.NATIVE)
+        }
+
         modifiers.add(functionSymbol.toPsiVisibilityForMember())
 
         if (!suppressStatic && functionSymbol.hasJvmStaticAnnotation()) {

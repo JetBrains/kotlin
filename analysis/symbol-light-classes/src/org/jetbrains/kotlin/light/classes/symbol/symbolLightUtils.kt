@@ -89,10 +89,6 @@ internal fun KtSymbolWithModality.computeModalityForMethod(
         }
     }
 
-    if (this is KtFunctionSymbol && isExternal) {
-        result.add(PsiModifier.NATIVE)
-    }
-
     if (isTopLevel) {
         result.add(PsiModifier.STATIC)
         val needFinalModifier = when (this) {
