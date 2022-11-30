@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -24,10 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
@@ -386,10 +384,6 @@ private fun ConstraintSystemError.toDiagnostic(
 
             when (position) {
                 is ConeExpectedTypeConstraintPosition -> {
-                    if (position.expectedTypeMismatchIsReportedInChecker) {
-                        errorsToIgnore.add(this)
-                        return null
-                    }
                     val inferredType =
                         if (!lowerConeType.isNullableNothing)
                             lowerConeType
@@ -409,18 +403,50 @@ private fun ConstraintSystemError.toDiagnostic(
                         return null
                     }
 
-                    when (val target = position.returnTargetIfFromReturnType) {
-                        null -> FirErrors.TYPE_MISMATCH.createOn(
-                            qualifiedAccessSource ?: source,
-                            upperConeTypeWithoutTypeVariables,
-                            inferredTypeWithoutTypeVariables,
-                            typeMismatchDueToNullability
-                        )
-                        else -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
-                            qualifiedAccessSource ?: source,
+                    val target = position.returnTargetIfFromReturnType
+                    val theSource = qualifiedAccessSource ?: source
+                    val resolvedSymbol = candidate.dispatchReceiverValue?.receiverExpression
+                        ?.toResolvedCallableSymbol() as? FirPropertySymbol
+
+                    when {
+                        target != null -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
+                            theSource,
                             upperConeTypeWithoutTypeVariables,
                             inferredTypeWithoutTypeVariables,
                             target,
+                            typeMismatchDueToNullability
+                        )
+                        resolvedSymbol != null && upperConeTypeWithoutTypeVariables.isCapturedTypeWithStarOrOutProjection -> {
+                            FirErrors.SETTER_PROJECTED_OUT.createOn(theSource, resolvedSymbol)
+                        }
+
+                        position.isFromAssignment -> when (theSource.kind) {
+                            is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
+                                val (lValueType, rValueType) = when {
+                                    !upperConeTypeWithoutTypeVariables.isNullable && inferredTypeWithoutTypeVariables.isNullable -> {
+                                        upperConeTypeWithoutTypeVariables to inferredTypeWithoutTypeVariables
+                                    }
+                                    else -> {
+                                        inferredTypeWithoutTypeVariables to upperConeTypeWithoutTypeVariables
+                                    }
+                                }
+                                if (lValueType.isUnit) {
+                                    FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT.createOn(theSource)
+                                } else {
+                                    FirErrors.RESULT_TYPE_MISMATCH.createOn(theSource, rValueType, lValueType)
+                                }
+                            }
+                            else -> FirErrors.ASSIGNMENT_TYPE_MISMATCH.createOn(
+                                theSource,
+                                upperConeTypeWithoutTypeVariables,
+                                inferredTypeWithoutTypeVariables,
+                                typeMismatchDueToNullability,
+                            )
+                        }
+                        else -> FirErrors.TYPE_MISMATCH.createOn(
+                            theSource,
+                            upperConeTypeWithoutTypeVariables,
+                            inferredTypeWithoutTypeVariables,
                             typeMismatchDueToNullability
                         )
                     }
@@ -484,6 +510,11 @@ private fun ConstraintSystemError.toDiagnostic(
         else -> null
     }
 }
+
+private val ConeKotlinType.isCapturedTypeWithStarOrOutProjection: Boolean
+    get() = this is ConeCapturedType && constructor.projection.kind.let {
+        it == ProjectionKind.STAR || it == ProjectionKind.OUT
+    }
 
 private val ConeKotlinType.isErrorType: Boolean
     get() = this is ConeErrorType || typeArguments.any { it.type?.isErrorType == true }

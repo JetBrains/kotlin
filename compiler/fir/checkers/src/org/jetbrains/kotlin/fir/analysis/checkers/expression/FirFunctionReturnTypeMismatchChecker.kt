@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
+import org.jetbrains.kotlin.fir.analysis.checkers.isResolvableWithErrorCallee
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULL_FOR_NONNULL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
@@ -105,7 +106,4 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         }
 
     private val FirCallableDeclaration.hasNonRealSourcedTypeRef get() = returnTypeRef.source?.kind != KtRealSourceElementKind
-
-    private val FirExpression.isResolvableWithErrorCallee
-        get() = this is FirResolvable && calleeReference is FirErrorNamedReference
 }

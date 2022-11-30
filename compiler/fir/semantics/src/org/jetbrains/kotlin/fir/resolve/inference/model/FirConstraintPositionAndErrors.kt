@@ -20,8 +20,8 @@ class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVaria
 class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintPosition<FirElement>(argument)
 
 class ConeExpectedTypeConstraintPosition(
-    val expectedTypeMismatchIsReportedInChecker: Boolean,
     val returnTargetIfFromReturnType: FirFunction? = null,
+    val isFromAssignment: Boolean = false,
 ) : ExpectedTypeConstraintPosition<Nothing?>(null)
 
 class ConeExplicitTypeParameterConstraintPosition(

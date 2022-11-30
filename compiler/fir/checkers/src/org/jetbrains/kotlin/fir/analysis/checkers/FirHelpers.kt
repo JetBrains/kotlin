@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -437,6 +438,7 @@ fun checkTypeMismatch(
             // TODO: remove after fix of KT-45989
             return
         }
+        if (assignment?.rValue?.isResolvableWithErrorCallee == true) return
         val resolvedSymbol = assignment?.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol
         when {
             resolvedSymbol != null && lValueType is ConeCapturedType && lValueType.constructor.projection.kind.let {
@@ -644,6 +646,9 @@ private typealias TargetLists = AnnotationTargetLists
 fun FirQualifiedAccess.explicitReceiverIsNotSuperReference(): Boolean {
     return (this.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference !is FirSuperReference
 }
+
+val FirExpression.isResolvableWithErrorCallee
+    get() = this is FirResolvable && calleeReference is FirErrorNamedReference
 
 
 internal val KtSourceElement.defaultValueForParameter: KtSourceElement?

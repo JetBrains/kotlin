@@ -44,7 +44,7 @@ fun test() {
     x().foo().a() checkType { _<A<String, Double, Short, Long>>() }
     x().bar() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<A<String, Double, Short, Char>>() }
 
-    x = <!ASSIGNMENT_TYPE_MISMATCH!>foobar<Int>()<!>
+    x = <!ASSIGNMENT_TYPE_MISMATCH, ASSIGNMENT_TYPE_MISMATCH, ASSIGNMENT_TYPE_MISMATCH!>foobar<Int>()<!>
 
     var y = noParameters()
     y = noParameters()

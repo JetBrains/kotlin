@@ -32,7 +32,7 @@ val testPropertyInitializerInt: String = <!INITIALIZER_TYPE_MISMATCH("kotlin/Str
 fun testAssignment() {
     var it = "test7"
     it = <!ASSIGNMENT_TYPE_MISMATCH("kotlin/String; kotlin/Int")!>7<!>
-    it = select("test7+", 77)
+    it = <!ASSIGNMENT_TYPE_MISMATCH("kotlin/String; ILT: 77")!>select("test7+", 77)<!>
 }
 
 class MyThingWithPlus(private val name: String) {
@@ -107,5 +107,5 @@ class MyHolder<T>(var value: T)
 
 fun testSetterProjectedOut(it: MyHolder<*>) {
     <!SETTER_PROJECTED_OUT("value")!>it.value<!> = "test14"
-    <!SETTER_PROJECTED_OUT("value")!>it.value<!> = select("test14+", throw Exception("test14-"))
+    it.value = <!ASSIGNMENT_TYPE_MISMATCH("CapturedType(*); kotlin/String")!>select("test14+", throw Exception("test14-"))<!>
 }
