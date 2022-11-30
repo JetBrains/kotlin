@@ -58,7 +58,7 @@ public class IncrementalJsKlibCompilerRunnerTestGenerated extends AbstractIncrem
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^sealed.*"), false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^sealed.*)|(.*SinceK2)"), false);
         }
 
         @TestMetadata("annotations")
@@ -644,11 +644,6 @@ public class IncrementalJsKlibCompilerRunnerTestGenerated extends AbstractIncrem
         @TestMetadata("traitClassObjectConstantChanged")
         public void testTraitClassObjectConstantChanged() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/traitClassObjectConstantChanged/");
-        }
-
-        @TestMetadata("typealias")
-        public void testTypealias() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/typealias/");
         }
 
         @TestMetadata("valAddCustomAccessor")

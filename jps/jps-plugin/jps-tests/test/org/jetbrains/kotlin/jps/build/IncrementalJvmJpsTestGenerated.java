@@ -728,7 +728,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile(".*SinceK2"), TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("annotations")
@@ -1349,11 +1349,6 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         @TestMetadata("traitClassObjectConstantChanged")
         public void testTraitClassObjectConstantChanged() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/traitClassObjectConstantChanged/");
-        }
-
-        @TestMetadata("typealias")
-        public void testTypealias() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/typealias/");
         }
 
         @TestMetadata("valAddCustomAccessor")
