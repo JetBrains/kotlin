@@ -641,10 +641,10 @@ abstract class FirDataFlowAnalyzer(
             val newStatement = logicSystem.or(conditionExitAndBreakFlows.map {
                 val atExit = it.getTypeStatement(variable)
                 if (logicSystem.isSameValueIn(conditionEnterFlow, it, variable)) {
-                    if (atExit != null) logicSystem.and(listOf(atExit, toAdd)) else toAdd
+                    logicSystem.and(atExit, toAdd)
                 } else {
-                    atExit
-                } ?: return@forEach
+                    atExit ?: return@forEach
+                }
             }) ?: return@forEach
             flow.addTypeStatement(newStatement)
         }
