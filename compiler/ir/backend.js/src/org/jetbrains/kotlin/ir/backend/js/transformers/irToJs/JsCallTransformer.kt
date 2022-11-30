@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.js.backend.ast.*
 
@@ -61,7 +63,17 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
         }
 
         val syntheticFunction = JsFunction(emptyScope, JsBlock(newStatements), "")
-        return JsInvocation(syntheticFunction).withSource(jsOrJsFuncCall, context)
+        val currentFunction = context.currentFunction
+
+        return if (
+            currentFunction != null &&
+            !currentFunction.isInline &&
+            (currentFunction.dispatchReceiverParameter != null || currentFunction is IrConstructor)
+        ) {
+            JsInvocation(JsNameRef(Namer.CALL_FUNCTION, syntheticFunction), JsThisRef())
+        } else {
+            JsInvocation(syntheticFunction)
+        }.withSource(jsOrJsFuncCall, context)
     }
 
     private fun getJsStatements(): List<JsStatement> {
@@ -77,6 +89,7 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
 
             context.checkIfHasAssociatedJsCode(jsOrJsFuncCall.symbol) ->
                 FunctionWithJsFuncAnnotationInliner(jsOrJsFuncCall, context).generateResultStatement()
+
 
             else -> compilationException("`js` function call or function with @JsFunc annotation expected", jsOrJsFuncCall)
         }

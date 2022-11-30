@@ -64,27 +64,25 @@ fun box() {
 }
 
 // EXPECTATIONS
-// test.kt:41 box:
-// test.kt:42 box: a!="hello":kotlin.String
-// a.kt:11 box: a!="hello":kotlin.String, b!="world":kotlin.String
+// a.kt:11 box:
 // a.kt:6 exclamate: s="hello":kotlin.String
-// a.kt:12 box: a!="hello":kotlin.String, b!="world":kotlin.String
+// a.kt:12 box:
 // a.kt:6 exclamate: s="world":kotlin.String
-// test.kt:43 box: a!="hello":kotlin.String, b!="world":kotlin.String
-// test.kt:45 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String
+// test.kt:43 box:
+// test.kt:45 box: jesse="Jesse":kotlin.String
 // a.kt:6 exclamate: s="Jesse":kotlin.String
-// test.kt:47 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String
+// test.kt:47 box: jesse="Jesse":kotlin.String
 // a.kt:6 exclamate: s="Walter":kotlin.String
-// test.kt:49 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String
+// test.kt:49 box: jesse="Jesse":kotlin.String
 // a.kt:6 exclamate: s="Walter":kotlin.String
-// test.kt:49 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String
+// test.kt:49 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String
 // a.kt:6 exclamate: s="Walter!":kotlin.String
-// test.kt:52 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String
+// test.kt:52 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String
 // a.kt:6 exclamate: s="Jesse":kotlin.String
-// test.kt:52 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
+// test.kt:52 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
 // a.kt:6 exclamate: s="Jesse!":kotlin.String
-// a.kt:29 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
+// a.kt:29 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
 // a.kt:22 value:
-// test.kt:63 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
+// test.kt:63 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
 // test.kt:59 localFun: hello="hello":kotlin.String, world="world":kotlin.String
-// test.kt:64 box: a!="hello":kotlin.String, b!="world":kotlin.String, jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String
+// test.kt:64 box: jesse="Jesse":kotlin.String, walter1="Walter!":kotlin.String, jesse1="Jesse!":kotlin.String

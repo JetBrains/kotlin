@@ -879,6 +879,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("jsCallInsideCoroutine.kt")
+        public void testJsCallInsideCoroutine() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/jsCallInsideCoroutine.kt");
+        }
+
+        @Test
         @TestMetadata("kt54382.kt")
         public void testKt54382() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/kt54382.kt");
