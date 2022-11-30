@@ -44,12 +44,9 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
         if (effects.isNullOrEmpty()) return
 
-        val logicSystem = object : PersistentLogicSystem(context.session.typeContext) {
+        val logicSystem = object : LogicSystem(context.session.typeContext) {
             override val variableStorage: VariableStorageImpl
                 get() = throw IllegalStateException("shouldn't be called")
-
-            override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean =
-                !isNullableNothing
         }
 
         effects.forEach { effect ->
