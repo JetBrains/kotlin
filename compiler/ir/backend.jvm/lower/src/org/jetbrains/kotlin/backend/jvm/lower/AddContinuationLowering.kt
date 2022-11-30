@@ -225,7 +225,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             else
                 JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             isFakeOverride = false,
-            copyMetadata = false
+            copyMetadata = false,
+            typeParametersFromContext = irFunction.parentAsClass.typeParameters,
         )
         static.body = irFunction.moveBodyTo(static)
         // Fixup dispatch parameter to outer class
