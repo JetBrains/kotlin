@@ -222,16 +222,25 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightAccessorMethod || other.ktModule != ktModule || other.isGetter != isGetter) return false
-        if (propertyAccessorDeclaration != null) {
+        if (other !is SymbolLightAccessorMethod ||
+            other.isGetter != isGetter ||
+            other.isTopLevel != isTopLevel ||
+            other.suppressStatic != suppressStatic ||
+            other.ktModule != ktModule
+        ) return false
+
+        if (propertyAccessorDeclaration != null || other.propertyAccessorDeclaration != null) {
             return propertyAccessorDeclaration == other.propertyAccessorDeclaration
         }
 
-        return other.propertyAccessorDeclaration == null &&
-                compareSymbolPointers(ktModule, propertyAccessorSymbolPointer, other.propertyAccessorSymbolPointer)
+        if (containingPropertyDeclaration != null || other.containingPropertyDeclaration != null) {
+            return containingPropertyDeclaration == other.containingPropertyDeclaration
+        }
+
+        return compareSymbolPointers(ktModule, propertyAccessorSymbolPointer, other.propertyAccessorSymbolPointer)
     }
 
-    override fun hashCode(): Int = propertyAccessorDeclaration.hashCode()
+    override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration.hashCode()
 
     private val _parametersList by lazyPub {
         val parameterPopulator: (LightParameterListBuilder) -> Unit = if (!isGetter) {
