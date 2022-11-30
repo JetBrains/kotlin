@@ -581,13 +581,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         fun chooseOperator(): FirStatement {
-            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
-            callCompleter.completeCall(
-                resolvedOperatorCall,
-                lhsVariable?.returnTypeRef ?: noExpectedType,
-                ExpectedTypeOrigin.Assignment,
-            )
-            dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             val assignment =
                 buildVariableAssignment {
                     source = assignmentOperatorStatement.source
@@ -616,6 +609,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     }
                     annotations += assignmentOperatorStatement.annotations
                 }
+            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
+            callCompleter.completeCall(
+                resolvedOperatorCall,
+                lhsVariable?.returnTypeRef ?: noExpectedType,
+                ExpectedTypeOrigin.Assignment(assignment),
+            )
+            dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             return assignment.transform(transformer, ResolutionMode.ContextIndependent)
         }
 
@@ -878,7 +878,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 transformer,
                 withExpectedType(
                     variableAssignment.lValueTypeRef,
-                    ExpectedTypeOrigin.Assignment,
+                    ExpectedTypeOrigin.Assignment(resolvedAssignment),
                 ),
             )
         } else {
@@ -1291,7 +1291,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callCompleter.completeCall(
                 resolvedSetCall,
                 noExpectedType,
-                ExpectedTypeOrigin.Assignment,
+                ExpectedTypeOrigin.Assignment(resolvedSetCall),
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             dataFlowAnalyzer.exitFunctionCall(resolvedSetCall, callCompleted = true)

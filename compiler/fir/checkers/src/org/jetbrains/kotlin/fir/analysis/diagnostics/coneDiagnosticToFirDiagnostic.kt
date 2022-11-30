@@ -11,14 +11,12 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
-import org.jetbrains.kotlin.fir.analysis.checkers.isCapturedTypeWithStarOrOutProjection
 import org.jetbrains.kotlin.fir.analysis.checkers.createDiagnosticForAssignmentTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -408,30 +406,26 @@ private fun ConstraintSystemError.toDiagnostic(
 
                     val origin = position.origin
                     val theSource = qualifiedAccessSource ?: source
-                    val resolvedSymbol = candidate.dispatchReceiverValue?.receiverExpression
-                        ?.toResolvedCallableSymbol() as? FirPropertySymbol
 
-                    when {
-                        origin is ExpectedTypeOrigin.ReturnType -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
+                    when (origin) {
+                        is ExpectedTypeOrigin.ReturnType -> FirErrors.RETURN_TYPE_MISMATCH.createOn(
                             theSource,
                             upperConeTypeWithoutTypeVariables,
                             inferredTypeWithoutTypeVariables,
                             origin.target,
                             typeMismatchDueToNullability
                         )
-                        resolvedSymbol != null && upperConeTypeWithoutTypeVariables.isCapturedTypeWithStarOrOutProjection -> {
-                            FirErrors.SETTER_PROJECTED_OUT.createOn(theSource, resolvedSymbol)
-                        }
-                        origin is ExpectedTypeOrigin.Initializer -> FirErrors.INITIALIZER_TYPE_MISMATCH.createOn(
+                        is ExpectedTypeOrigin.Initializer -> FirErrors.INITIALIZER_TYPE_MISMATCH.createOn(
                             theSource,
                             upperConeTypeWithoutTypeVariables,
                             inferredTypeWithoutTypeVariables,
                             typeMismatchDueToNullability,
                         )
-                        origin is ExpectedTypeOrigin.Assignment -> createDiagnosticForAssignmentTypeMismatch(
+                        is ExpectedTypeOrigin.Assignment -> createDiagnosticForAssignmentTypeMismatch(
                             theSource,
                             upperConeTypeWithoutTypeVariables,
                             inferredTypeWithoutTypeVariables,
+                            origin.assignment,
                             isTypeMismatchDueToNullability = { typeMismatchDueToNullability },
                         )
                         else -> FirErrors.TYPE_MISMATCH.createOn(
