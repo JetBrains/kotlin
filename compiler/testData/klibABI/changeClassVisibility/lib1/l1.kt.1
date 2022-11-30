@@ -1,0 +1,32 @@
+public open class PublicTopLevelClass {
+    override fun toString() = "PublicTopLevelClass"
+
+    internal class PublicToInternalNestedClass { override fun toString() = "PublicTopLevelClass.PublicToInternalNestedClass" }
+    protected class PublicToProtectedNestedClass { override fun toString() = "PublicTopLevelClass.PublicToProtectedNestedClass" }
+    private class PublicToPrivateNestedClass { override fun toString() = "PublicTopLevelClass.PublicToPrivateNestedClass" }
+    internal inner class PublicToInternalInnerClass { override fun toString() = "PublicTopLevelClass.PublicToInternalInnerClass" }
+    protected inner class PublicToProtectedInnerClass { override fun toString() = "PublicTopLevelClass.PublicToProtectedInnerClass" }
+    private inner class PublicToPrivateInnerClass { override fun toString() = "PublicTopLevelClass.PublicToPrivateInnerClass" }
+}
+
+internal open class PublicToInternalTopLevelClass {
+    override fun toString() = "PublicToInternalTopLevelClass"
+
+    internal class PublicToInternalNestedClass { override fun toString() = "PublicToInternalTopLevelClass.PublicToInternalNestedClass" }
+    protected class PublicToProtectedNestedClass { override fun toString() = "PublicToInternalTopLevelClass.PublicToProtectedNestedClass" }
+    private class PublicToPrivateNestedClass { override fun toString() = "PublicToInternalTopLevelClass.PublicToPrivateNestedClass" }
+    internal inner class PublicToInternalInnerClass { override fun toString() = "PublicToInternalTopLevelClass.PublicToInternalInnerClass" }
+    protected inner class PublicToProtectedInnerClass { override fun toString() = "PublicToInternalTopLevelClass.PublicToProtectedInnerClass" }
+    private inner class PublicToPrivateInnerClass { override fun toString() = "PublicToInternalTopLevelClass.PublicToPrivateInnerClass" }
+}
+
+private open class PublicToPrivateTopLevelClass {
+    override fun toString() = "PublicToPrivateTopLevelClass"
+
+    internal class PublicToInternalNestedClass { override fun toString() = "PublicToPrivateTopLevelClass.PublicToInternalNestedClass" }
+    protected class PublicToProtectedNestedClass { override fun toString() = "PublicToPrivateTopLevelClass.PublicToProtectedNestedClass" }
+    private class PublicToPrivateNestedClass { override fun toString() = "PublicToPrivateTopLevelClass.PublicToPrivateNestedClass" }
+    internal inner class PublicToInternalInnerClass { override fun toString() = "PublicToPrivateTopLevelClass.PublicToInternalInnerClass" }
+    protected inner class PublicToProtectedInnerClass { override fun toString() = "PublicToPrivateTopLevelClass.PublicToProtectedInnerClass" }
+    private inner class PublicToPrivateInnerClass { override fun toString() = "PublicToPrivateTopLevelClass.PublicToPrivateInnerClass" }
+}

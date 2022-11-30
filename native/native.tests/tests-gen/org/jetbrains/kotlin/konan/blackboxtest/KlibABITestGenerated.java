@@ -37,6 +37,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("changeClassVisibility")
+    public void testChangeClassVisibility() throws Exception {
+        runTest("compiler/testData/klibABI/changeClassVisibility/");
+    }
+
+    @Test
     @TestMetadata("changeFunctionVisibility")
     public void testChangeFunctionVisibility() throws Exception {
         runTest("compiler/testData/klibABI/changeFunctionVisibility/");
