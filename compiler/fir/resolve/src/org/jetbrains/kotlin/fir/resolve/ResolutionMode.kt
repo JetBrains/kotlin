@@ -33,8 +33,8 @@ sealed class ResolutionMode {
     class WithExpectedType(
         val expectedTypeRef: FirTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
-        val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         val returnTargetIfFromReturnType: FirFunction? = null,
+        val isFromAssignment: Boolean = false,
     ) : ResolutionMode() {
         override fun toString(): String {
             return "WithExpectedType: ${expectedTypeRef.prettyString()}"
@@ -106,11 +106,14 @@ fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast
     else -> null
 }
 
-fun withExpectedType(expectedTypeRef: FirTypeRef?, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode =
+fun withExpectedType(
+    expectedTypeRef: FirTypeRef?,
+    isFromAssignment: Boolean = false,
+): ResolutionMode =
     expectedTypeRef?.let {
         ResolutionMode.WithExpectedType(
             it,
-            expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker
+            isFromAssignment = isFromAssignment,
         )
     } ?: ResolutionMode.ContextDependent
 

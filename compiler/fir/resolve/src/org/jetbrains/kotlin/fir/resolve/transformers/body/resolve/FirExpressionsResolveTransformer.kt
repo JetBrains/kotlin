@@ -584,7 +584,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callCompleter.completeCall(
                 resolvedOperatorCall,
                 lhsVariable?.returnTypeRef ?: noExpectedType,
-                expectedTypeMismatchIsReportedInChecker = true
+                isFromAssignment = true,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             val assignment =
@@ -875,7 +875,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             completeAssignment.transformRValue(
                 transformer,
-                withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true),
+                withExpectedType(
+                    variableAssignment.lValueTypeRef,
+                    isFromAssignment = true,
+                ),
             )
         } else {
             // This can happen in erroneous code only
@@ -1288,7 +1291,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callCompleter.completeCall(
                 resolvedSetCall,
                 noExpectedType,
-                expectedTypeMismatchIsReportedInChecker = true
+                isFromAssignment = true,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
             dataFlowAnalyzer.exitFunctionCall(resolvedSetCall, callCompleted = true)
