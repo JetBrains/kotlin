@@ -53,9 +53,9 @@ fun File.zipDirAs(unixFile: File) {
  * Unpacks the contents of a zip archive located in [this] into the [destinationDirectory].
  *
  * @param destinationDirectory The directory to unpack the contents to.
+ * @param fromSubdirectory A subdirectory inside the archive to unpack. Specify "/" if you need to unpack the whole archive.
  * @param resetTimeAttributes Whether to set the newly created files' time attributes
  * (creation time, last access time, and last modification time) to zero.
- * @param fromSubdirectory A subdirectory inside the archive to unpack. Specify "/" if you need to unpack the whole archive.
  */
 fun File.unzipTo(destinationDirectory: File, fromSubdirectory: File = File("/"), resetTimeAttributes: Boolean = false) {
     withZipFileSystem {
@@ -67,9 +67,9 @@ fun File.unzipTo(destinationDirectory: File, fromSubdirectory: File = File("/"),
  * Unpacks the contents of a zip archive located in [this] into the [destinationDirectory].
  *
  * @param destinationDirectory The directory to unpack the contents to.
+ * @param fromSubdirectory A subdirectory inside the archive to unpack. Specify "/" if you need to unpack the whole archive.
  * @param resetTimeAttributes Whether to set the newly created files' time attributes
  * (creation time, last access time, and last modification time) to zero.
- * @param fromSubdirectory A subdirectory inside the archive to unpack. Specify "/" if you need to unpack the whole archive.
  */
 fun Path.unzipTo(destinationDirectory: Path, fromSubdirectory: Path = Paths.get("/"), resetTimeAttributes: Boolean = false) {
     File(this).unzipTo(File(destinationDirectory), File(fromSubdirectory), resetTimeAttributes)
@@ -81,8 +81,7 @@ fun <T> File.withZipFileSystem(create: Boolean, action: (FileSystem) -> T): T {
 
 fun <T> File.withZipFileSystem(action: (FileSystem) -> T): T = this.withZipFileSystem(false, action)
 
-// TODO: Make this function private after boostrap advance
-fun File.recursiveCopyTo(destination: File, resetTimeAttributes: Boolean = false) {
+private fun File.recursiveCopyTo(destination: File, resetTimeAttributes: Boolean = false) {
     val sourcePath = javaPath
     val destPath = destination.javaPath
     val destFs = destPath.fileSystem

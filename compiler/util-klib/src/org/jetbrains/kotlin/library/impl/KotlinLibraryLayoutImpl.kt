@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.library.impl
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.file
 import org.jetbrains.kotlin.konan.file.unzipTo
-import org.jetbrains.kotlin.konan.file.recursiveCopyTo
 import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -111,19 +110,11 @@ private fun extract(zipFile: File, file: File) = zipFile.withZipFileSystem { zip
 
 fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = extractDir(this.klib, directory)
 
-// TODO: Use this implementation after bootstrap advance
-//private fun extractDir(zipFile: File, directory: File): File {
-//    val temporary = org.jetbrains.kotlin.konan.file.createTempDir(directory.name)
-//    temporary.deleteOnExitRecursively()
-//    zipFile.unzipTo(temporary, fromSubdirectory = directory)
-//    return temporary
-//}
-
-private fun extractDir(zipFile: File, directory: File): File = zipFile.withZipFileSystem { zipFileSystem ->
+private fun extractDir(zipFile: File, directory: File): File {
     val temporary = org.jetbrains.kotlin.konan.file.createTempDir(directory.name)
-    zipFileSystem.file(directory).recursiveCopyTo(temporary)
     temporary.deleteOnExitRecursively()
-    temporary
+    zipFile.unzipTo(temporary, fromSubdirectory = directory)
+    return temporary
 }
 
 open class ExtractingKotlinLibraryLayout(zipped: KotlinLibraryLayoutImpl) : KotlinLibraryLayout {
