@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirSession
@@ -79,12 +80,16 @@ class Fir2IrJsResultsConverter(
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                 ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(module.languageVersionSettings.languageVersion)
 
+        // At this point, checkers will already have been run by a previous test step. `runCheckers` returns the cached diagnostics map.
+        val diagnosticsMap = inputArtifact.firAnalyzerFacade.runCheckers()
+        val hasErrors = diagnosticsMap.any { entry -> entry.value.any { it.severity == Severity.ERROR } }
+
         return IrBackendInput.JsIrBackendInput(
             irModuleFragment,
             sourceFiles,
             icData,
             expectDescriptorToSymbol,
-            hasErrors = false // TODO: implement error check
+            hasErrors,
         ) { file ->
             val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
             serializeSingleFirFile(firFile, components.session, components.scopeSession, metadataVersion)
