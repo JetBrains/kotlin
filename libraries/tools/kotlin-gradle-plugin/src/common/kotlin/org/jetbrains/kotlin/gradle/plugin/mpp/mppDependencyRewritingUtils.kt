@@ -12,14 +12,14 @@ import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.ResolvedDependency
-import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.UsageScope
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope
 import org.jetbrains.kotlin.gradle.utils.getValue
 
 internal data class ModuleCoordinates(
@@ -37,12 +37,13 @@ internal class PomDependenciesRewriter(
 
     // Get the dependencies mapping according to the component's UsageContexts:
     private val dependenciesMappingForEachUsageContext by project.provider {
-        (component as SoftwareComponentInternal).usages.mapNotNull { usage ->
-            if (usage is KotlinUsageContext && usage.includeDependenciesToMavenPublication)
-                associateDependenciesWithActualModuleDependencies(usage)
-                    // We are only interested in dependencies that are mapped to some other dependencies:
-                    .filter { (from, to) -> Triple(from.group, from.name, from.version) != Triple(to.group, to.name, to.version) }
-            else null
+        (component as SoftwareComponentInternal).usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usage ->
+            // When maven scope is not set, we can shortcut immediately here, since no dependencies from that usage context
+            // will be present in maven pom, e.g. from sourcesElements
+            val mavenScope = usage.mavenScope ?: return@mapNotNull null
+            associateDependenciesWithActualModuleDependencies(usage.compilation, mavenScope)
+                // We are only interested in dependencies that are mapped to some other dependencies:
+                .filter { (from, to) -> Triple(from.group, from.name, from.version) != Triple(to.group, to.name, to.version) }
         }
     }
 
@@ -111,9 +112,9 @@ internal class PomDependenciesRewriter(
 }
 
 private fun associateDependenciesWithActualModuleDependencies(
-    usageContext: KotlinUsageContext
+    compilation: KotlinCompilation<*>,
+    mavenScope: MavenScope,
 ): Map<ModuleCoordinates, ModuleCoordinates> {
-    val compilation = usageContext.compilation
     val project = compilation.target.project
 
     val targetDependenciesConfiguration = project.configurations.getByName(
@@ -121,16 +122,14 @@ private fun associateDependenciesWithActualModuleDependencies(
             is KotlinJvmAndroidCompilation -> {
                 // TODO handle Android configuration names in a general way once we drop AGP < 3.0.0
                 val variantName = compilation.name
-                when (usageContext.usageScope) {
-                    UsageScope.COMPILE -> variantName + "CompileClasspath"
-                    UsageScope.RUNTIME -> variantName + "RuntimeClasspath"
-                    null -> error("Usage for usage context is undefined")
+                when (mavenScope) {
+                    MavenScope.COMPILE -> variantName + "CompileClasspath"
+                    MavenScope.RUNTIME -> variantName + "RuntimeClasspath"
                 }
             }
-            else -> when (usageContext.usageScope) {
-                UsageScope.COMPILE -> compilation.compileDependencyConfigurationName
-                UsageScope.RUNTIME -> (compilation as KotlinCompilationToRunnableFiles).runtimeDependencyConfigurationName
-                null -> error("Usage for usage context is undefined")
+            else -> when (mavenScope) {
+                MavenScope.COMPILE -> compilation.compileDependencyConfigurationName
+                MavenScope.RUNTIME -> (compilation as KotlinCompilationToRunnableFiles).runtimeDependencyConfigurationName
             }
         }
     )

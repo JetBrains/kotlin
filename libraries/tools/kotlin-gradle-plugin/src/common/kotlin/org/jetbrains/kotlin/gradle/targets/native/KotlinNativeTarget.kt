@@ -93,7 +93,7 @@ abstract class KotlinNativeTarget @Inject constructor(
                 mutableUsageContexts.add(
                     DefaultKotlinUsageContext(
                         mainCompilation,
-                        KotlinUsageContext.UsageScope.COMPILE,
+                        KotlinUsageContext.MavenScope.COMPILE,
                         metadataConfiguration.name,
                         includeIntoProjectStructureMetadata = false
                     )
@@ -106,7 +106,6 @@ abstract class KotlinNativeTarget @Inject constructor(
             compilation = mainCompilation,
             dependencyConfigurationName = sourcesElementsConfigurationName,
             includeIntoProjectStructureMetadata = false,
-            includeDependenciesToMavenPublication = false,
         )
         mutableUsageContexts += sourcesUsage
 

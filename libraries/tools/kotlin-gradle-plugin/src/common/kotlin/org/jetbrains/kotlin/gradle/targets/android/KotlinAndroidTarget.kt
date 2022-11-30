@@ -214,13 +214,12 @@ abstract class KotlinAndroidTarget @Inject constructor(
             compilation = compilation,
             dependencyConfigurationName = sourcesElementsConfigurationName,
             overrideConfigurationAttributes = sourcesElementsConfiguration.attributes.filterOutAndroidVariantAttributes(),
-            includeDependenciesToMavenPublication = false,
             includeIntoProjectStructureMetadata = false
         )
 
         return listOf(
-            apiElementsConfigurationName to KotlinUsageContext.UsageScope.COMPILE,
-            runtimeElementsConfigurationName to KotlinUsageContext.UsageScope.RUNTIME,
+            apiElementsConfigurationName to KotlinUsageContext.MavenScope.COMPILE,
+            runtimeElementsConfigurationName to KotlinUsageContext.MavenScope.RUNTIME,
         ).mapTo(mutableSetOf()) { (dependencyConfigurationName, mavenScope) ->
             val configuration = project.configurations.getByName(dependencyConfigurationName)
             DefaultKotlinUsageContext(

@@ -83,10 +83,9 @@ constructor(
             configureSourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
             usageContexts += DefaultKotlinUsageContext(
                 compilation = mainCompilation,
-                usageScope = KotlinUsageContext.UsageScope.RUNTIME,
+                mavenScope = KotlinUsageContext.MavenScope.RUNTIME,
                 dependencyConfigurationName = sourcesElementsConfigurationName,
                 includeIntoProjectStructureMetadata = false,
-                includeDependenciesToMavenPublication = false,
             )
 
             val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
@@ -103,7 +102,7 @@ constructor(
         return usageContexts +
                 DefaultKotlinUsageContext(
                     compilation = compilations.getByName(MAIN_COMPILATION_NAME),
-                    usageScope = KotlinUsageContext.UsageScope.COMPILE,
+                    mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
                     overrideConfigurationArtifacts = project.setProperty { emptyList() }
                 )
