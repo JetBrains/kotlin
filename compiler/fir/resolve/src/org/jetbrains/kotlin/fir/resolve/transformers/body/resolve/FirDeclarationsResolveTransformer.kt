@@ -388,7 +388,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             // left in the backingField (witch is always present).
             variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
         } else {
-            val resolutionMode = withExpectedType(variable.returnTypeRef)
+            val resolutionMode = withExpectedType(variable.returnTypeRef, expectedTypeMismatchIsReportedInChecker = true)
             if (variable.initializer != null) {
                 variable.transformInitializer(transformer, resolutionMode)
                 storeVariableReturnType(variable)
@@ -405,7 +405,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     private fun FirProperty.transformChildrenWithoutComponents(returnTypeRef: FirTypeRef): FirProperty {
         val data = withExpectedType(returnTypeRef)
         return transformReturnTypeRef(transformer, data)
-            .transformInitializer(transformer, data)
+            .transformInitializer(transformer, withExpectedType(returnTypeRef, expectedTypeMismatchIsReportedInChecker = true))
             .transformTypeParameters(transformer, data)
             .transformOtherChildren(transformer, data)
     }

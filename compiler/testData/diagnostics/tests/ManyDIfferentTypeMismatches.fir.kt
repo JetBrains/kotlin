@@ -25,7 +25,7 @@ fun testFunctionNonLocalReturnInt() = "test4".also {
     }
 }
 
-val testPropertyInitializerSelect: String = <!TYPE_MISMATCH("kotlin/String; ILT: 5")!>select("test5", 5)<!>
+val testPropertyInitializerSelect: String = select("test5", 5)
 
 val testPropertyInitializerInt: String = <!INITIALIZER_TYPE_MISMATCH("kotlin/String; kotlin/Int")!>6<!>
 
@@ -99,7 +99,7 @@ fun testWithMyThingWithIncString() {
     <!RESULT_TYPE_MISMATCH("MyThingWithIncString; kotlin/String")!>it++<!>
 }
 
-val testPropertyInitializerSelectWithNull: String = <!TYPE_MISMATCH("kotlin/String; kotlin/String?")!>select("test12", null)<!>
+val testPropertyInitializerSelectWithNull: String = select("test12", null)
 
 val testPropertyInitializerNull: String = <!NULL_FOR_NONNULL_TYPE("")!>null<!>
 

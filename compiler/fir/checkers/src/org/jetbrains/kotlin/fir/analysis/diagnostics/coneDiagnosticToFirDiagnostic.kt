@@ -541,14 +541,14 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
 
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun KtDiagnosticFactory0.createOn(
+internal fun KtDiagnosticFactory0.createOn(
     element: KtSourceElement?
 ): KtSimpleDiagnostic? {
     return element?.let { on(it, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A> KtDiagnosticFactory1<A>.createOn(
+internal fun <A> KtDiagnosticFactory1<A>.createOn(
     element: KtSourceElement?,
     a: A
 ): KtDiagnosticWithParameters1<A>? {
@@ -556,7 +556,7 @@ private fun <A> KtDiagnosticFactory1<A>.createOn(
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
+internal fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B
@@ -565,7 +565,7 @@ private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
+internal fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B,
@@ -575,7 +575,7 @@ private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
+internal fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B,

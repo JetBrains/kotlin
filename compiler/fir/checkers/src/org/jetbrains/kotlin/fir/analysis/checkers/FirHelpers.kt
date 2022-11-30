@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.createOn
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.containingClassForLocalAttr
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtParameter
@@ -428,7 +426,7 @@ val Name.isDelegated: Boolean get() = asString().startsWith("\$\$delegate_")
 val ConeTypeProjection.isConflictingOrNotInvariant: Boolean get() = kind != ProjectionKind.INVARIANT || this is ConeKotlinTypeConflictingProjection
 
 fun checkTypeMismatch(
-    lValueOriginalType: ConeKotlinType,
+    lValueType: ConeKotlinType,
     assignment: FirVariableAssignment?,
     rValue: FirExpression,
     context: CheckerContext,
@@ -436,39 +434,15 @@ fun checkTypeMismatch(
     reporter: DiagnosticReporter,
     isInitializer: Boolean
 ) {
-    var lValueType = lValueOriginalType
-    var rValueType = rValue.typeRef.coneType
-    if (source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
-        if (!lValueType.isNullable && rValueType.isNullable) {
-            val tempType = rValueType
-            rValueType = lValueType
-            lValueType = tempType
-        }
-    }
-
+    val rValueType = rValue.typeRef.coneType
     val typeContext = context.session.typeContext
 
     if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
-        if (rValueType is ConeClassLikeType &&
-            rValueType.lookupTag.classId == StandardClassIds.Int &&
-            lValueType.fullyExpandedType(context.session).isIntegerTypeOrNullableIntegerTypeOfAnySize &&
-            rValueType.nullability == ConeNullability.NOT_NULL
-        ) {
-            // val p: Byte = 42 or similar situation
-            // TODO: remove after fix of KT-46047
-            return
-        }
         if (lValueType.isExtensionFunctionType || rValueType.isExtensionFunctionType) {
             // TODO: remove after fix of KT-45989
             return
         }
-        val resolvedSymbol = assignment?.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol
         when {
-            resolvedSymbol != null && lValueType is ConeCapturedType && lValueType.constructor.projection.kind.let {
-                it == ProjectionKind.STAR || it == ProjectionKind.OUT
-            } -> {
-                reporter.reportOn(assignment.source, FirErrors.SETTER_PROJECTED_OUT, resolvedSymbol, context)
-            }
             rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL -> {
                 reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
             }
@@ -482,29 +456,43 @@ fun checkTypeMismatch(
                     context
                 )
             }
-            source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
-                if (!lValueType.isNullable && rValueType.isNullable) {
-                    val tempType = rValueType
-                    rValueType = lValueType
-                    lValueType = tempType
-                }
-                if (rValueType.isUnit) {
-                    reporter.reportOn(source, FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT, context)
-                } else {
-                    reporter.reportOn(source, FirErrors.RESULT_TYPE_MISMATCH, lValueType, rValueType, context)
-                }
-            }
-            else -> {
-                reporter.reportOn(
-                    source,
-                    FirErrors.ASSIGNMENT_TYPE_MISMATCH,
-                    lValueType,
-                    rValueType,
-                    context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType),
-                    context
-                )
-            }
+            assignment != null -> reporter.report(
+                createDiagnosticForAssignmentTypeMismatch(source, lValueType, rValueType, assignment) {
+                    context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)
+                },
+                context,
+            )
         }
+    }
+}
+
+val ConeKotlinType.isCapturedTypeWithStarOrOutProjection: Boolean
+    get() = this is ConeCapturedType && constructor.projection.kind.let {
+        it == ProjectionKind.STAR || it == ProjectionKind.OUT
+    }
+
+fun createDiagnosticForAssignmentTypeMismatch(
+    source: KtSourceElement,
+    expectedType: ConeKotlinType,
+    actualType: ConeKotlinType,
+    assignment: FirResolvable,
+    isTypeMismatchDueToNullability: () -> Boolean,
+): KtDiagnostic? {
+    val resolvedSymbol = assignment.calleeReference.toResolvedCallableSymbol() as? FirPropertySymbol
+    return when {
+        resolvedSymbol != null && expectedType.isCapturedTypeWithStarOrOutProjection -> {
+            FirErrors.SETTER_PROJECTED_OUT.createOn(assignment.source, resolvedSymbol)
+        }
+        source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> when {
+            actualType.isUnit -> FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT.createOn(source)
+            else -> FirErrors.RESULT_TYPE_MISMATCH.createOn(source, expectedType, actualType)
+        }
+        else -> FirErrors.ASSIGNMENT_TYPE_MISMATCH.createOn(
+            source,
+            expectedType,
+            actualType,
+            isTypeMismatchDueToNullability(),
+        )
     }
 }
 
