@@ -15,12 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.bitMaskSlotCount
-import org.jetbrains.kotlinx.serialization.compiler.resolve.hasCompanionObjectAsSerializer
 
 /**
  * Generates only specific declarations, but NOT their bodies.
@@ -41,6 +39,8 @@ class IrPreGenerator(
     }
 
     private fun preGenerateWriteSelfMethodIfNeeded() {
+        // write$Self in K1 is created only on JVM (see SerializationResolveExtension)
+        if (!compilerContext.platform.isJvm()) return
         if (!irClass.isInternalSerializable) return
         val serializerDescriptor = irClass.classSerializer(compilerContext)?.owner ?: return
         if (!irClass.shouldHaveSpecificSyntheticMethods { serializerDescriptor.findPluginGeneratedMethod(SerialEntityNames.SAVE) }) return
