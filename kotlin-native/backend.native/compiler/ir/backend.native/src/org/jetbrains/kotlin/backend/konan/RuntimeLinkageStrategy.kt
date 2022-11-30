@@ -51,7 +51,7 @@ internal sealed class RuntimeLinkageStrategy {
                     throw Error("Failed to link ${it.getName()}")
                 }
             }
-            val config = createLTOPipelineConfigForRuntime(generationState)
+            val config = createLTOPipelineConfigForRuntime(generationState, generationState.llvm.targetTriple)
             LlvmOptimizationPipeline(config, runtimeModule, generationState.context).use {
                 it.run()
             }
@@ -64,7 +64,7 @@ internal sealed class RuntimeLinkageStrategy {
          * Choose runtime linkage strategy based on current compiler configuration and [BinaryOptions.linkRuntime].
          */
         internal fun pick(generationState: NativeGenerationState, runtimeLlvmModules: List<LLVMModuleRef>): RuntimeLinkageStrategy {
-            val config = generationState.context.config
+            val config = generationState.config
             val binaryOption = config.configuration.get(BinaryOptions.linkRuntime)
             return when {
                 binaryOption == RuntimeLinkageStrategyBinaryOption.Raw -> Raw(runtimeLlvmModules)
