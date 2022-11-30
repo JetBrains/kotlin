@@ -9,6 +9,8 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty;
+import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("debugger")
 @UseStandardTestCaseGroupProvider()
+@EnforcedProperty(property = ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
 public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
     @Test
     public void testAllFilesPresentInLldb() throws Exception {

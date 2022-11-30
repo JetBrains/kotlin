@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -86,7 +88,7 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "LldbTestGenerated",
-                annotations = listOf(debugger(), provider<UseStandardTestCaseGroupProvider>())
+                annotations = listOf(debugger(), provider<UseStandardTestCaseGroupProvider>(), debugOnly())
             ) {
                 model("lldb")
             }
@@ -96,6 +98,7 @@ fun main() {
 
 private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
+private fun debugOnly() = annotation(EnforcedProperty::class.java, Pair("property", ClassLevelProperty.OPTIMIZATION_MODE), Pair("propertyValue", "DEBUG"))
 private fun codegen() = annotation(Tag::class.java, "codegen")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
