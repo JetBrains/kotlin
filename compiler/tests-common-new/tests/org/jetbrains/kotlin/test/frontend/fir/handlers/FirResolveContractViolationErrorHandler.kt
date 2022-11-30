@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCompilerLazyDeclarationResolverWithPhaseChecking
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
