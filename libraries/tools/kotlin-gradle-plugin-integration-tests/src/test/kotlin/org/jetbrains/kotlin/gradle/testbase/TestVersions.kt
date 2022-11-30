@@ -18,7 +18,8 @@ interface TestVersions {
         const val G_7_2 = "7.2"
         const val G_7_3 = "7.3.3"
         const val G_7_4 = "7.4.2"
-        const val G_7_5 = "7.5"
+        const val G_7_5 = "7.5.1"
+        const val G_7_6 = "7.6"
         // https://gradle.org/nightly/
         // Retention policy is 3 months
         const val G_8_0 = "8.0-20221126231700+0000"
