@@ -81,6 +81,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
         runTest("testData/diagnostics/selectDuringTyping.kt");
     }
 
+    @Test
+    @TestMetadata("structuralCast.kt")
+    public void testStructuralCast() throws Exception {
+        runTest("testData/diagnostics/structuralCast.kt");
+    }
+
     @Nested
     @TestMetadata("testData/diagnostics/schemaRender")
     @TestDataPath("$PROJECT_ROOT")
