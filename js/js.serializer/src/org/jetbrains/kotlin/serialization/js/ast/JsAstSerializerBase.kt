@@ -255,9 +255,9 @@ abstract class JsAstSerializerBase {
             override fun visitFunction(x: JsFunction) {
                 val functionBuilder = JsAstProtoBuf.Function.newBuilder()
                 x.parameters.forEach { functionBuilder.addParameter(serializeParameter(it)) }
+                x.modifiers.forEach { functionBuilder.addModifier(map(it)) }
                 x.name?.let { functionBuilder.nameId = serialize(it) }
                 functionBuilder.body = serialize(x.body)
-                functionBuilder.static = x.isStatic
                 if (x.isLocal) {
                     functionBuilder.local = true
                 }
@@ -430,6 +430,12 @@ abstract class JsAstSerializerBase {
         unaryBuilder.type = map(x.operator)
         unaryBuilder.postfix = postfix
         return unaryBuilder.build()
+    }
+
+    protected fun map(modifier: JsFunction.Modifier) = when (modifier) {
+        JsFunction.Modifier.STATIC -> JsAstProtoBuf.Function.Modifier.STATIC
+        JsFunction.Modifier.SET -> JsAstProtoBuf.Function.Modifier.SET
+        JsFunction.Modifier.GET -> JsAstProtoBuf.Function.Modifier.GET
     }
 
     protected fun map(op: JsBinaryOperator) = when (op) {

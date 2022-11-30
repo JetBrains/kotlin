@@ -113,7 +113,8 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val functionParams = declaration.valueParameters.map { it to functionContext.getNameForValueDeclaration(it) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
-    val function = JsFunction(emptyScope, body, declaration.isSyntheticEs6Constructor, "member function ${name ?: "annon"}")
+    val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
+        .apply { if (declaration.isSyntheticEs6Constructor) modifiers.add(JsFunction.Modifier.STATIC) }
         .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name

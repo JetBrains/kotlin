@@ -264,12 +264,8 @@ abstract class JsAstDeserializerBase {
 
         JsAstProtoBuf.Expression.ExpressionCase.FUNCTION -> {
             val functionProto = proto.function
-            JsFunction(
-                scope,
-                deserialize(functionProto.body) as JsBlock,
-                functionProto.static,
-                ""
-            ).apply {
+            JsFunction(scope, deserialize(functionProto.body) as JsBlock, "").apply {
+                modifiers += functionProto.modifierList.map(::map)
                 parameters += functionProto.parameterList.map { deserializeParameter(it) }
                 if (functionProto.hasNameId()) {
                     name = deserializeName(functionProto.nameId)
@@ -421,6 +417,12 @@ abstract class JsAstDeserializerBase {
 
 
     protected fun deserializeString(id: Int): String = stringTable[id]
+
+    protected fun map(modifier: JsAstProtoBuf.Function.Modifier) = when (modifier) {
+        JsAstProtoBuf.Function.Modifier.STATIC -> JsFunction.Modifier.STATIC
+        JsAstProtoBuf.Function.Modifier.SET -> JsFunction.Modifier.SET
+        JsAstProtoBuf.Function.Modifier.GET -> JsFunction.Modifier.GET
+    }
 
     protected fun map(op: JsAstProtoBuf.BinaryOperation.Type) = when (op) {
         JsAstProtoBuf.BinaryOperation.Type.MUL -> JsBinaryOperator.MUL

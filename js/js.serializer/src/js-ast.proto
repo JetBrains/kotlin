@@ -116,7 +116,13 @@ message Function {
     optional int32 name_id = 2;
     required Statement body = 3;
     optional bool local = 4 [default = false];
-    optional bool static = 5 [default = false];
+    repeated Modifier modifier = 5;
+
+    enum Modifier {
+        STATIC = 1;
+        GET = 2;
+        SET = 3;
+    }
 }
 
 // Simplified JavaScript class expression

@@ -8750,13 +8750,17 @@ public final class JsAstProtoBuf {
     boolean getLocal();
 
     /**
-     * <code>optional bool static = 5 [default = false];</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
      */
-    boolean hasStatic();
+    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier> getModifierList();
     /**
-     * <code>optional bool static = 5 [default = false];</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
      */
-    boolean getStatic();
+    int getModifierCount();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier getModifier(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Function}
@@ -8840,8 +8844,38 @@ public final class JsAstProtoBuf {
               break;
             }
             case 40: {
-              bitField0_ |= 0x00000008;
-              static_ = input.readBool();
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier value = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier.valueOf(rawValue);
+              if (value == null) {
+                unknownFieldsCodedOutput.writeRawVarint32(tag);
+                unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+                } else {
+                if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                  modifier_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier>();
+                  mutable_bitField0_ |= 0x00000010;
+                }
+                modifier_.add(value);
+              }
+              break;
+            }
+            case 42: {
+              int length = input.readRawVarint32();
+              int oldLimit = input.pushLimit(length);
+              while(input.getBytesUntilLimit() > 0) {
+                int rawValue = input.readEnum();
+                org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier value = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier.valueOf(rawValue);
+                if (value == null) {
+                  unknownFieldsCodedOutput.writeRawVarint32(tag);
+                  unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+                  } else {
+                  if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                    modifier_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier>();
+                    mutable_bitField0_ |= 0x00000010;
+                  }
+                  modifier_.add(value);
+                }
+              }
+              input.popLimit(oldLimit);
               break;
             }
           }
@@ -8854,6 +8888,9 @@ public final class JsAstProtoBuf {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           parameter_ = java.util.Collections.unmodifiableList(parameter_);
+        }
+        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          modifier_ = java.util.Collections.unmodifiableList(modifier_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -8878,6 +8915,71 @@ public final class JsAstProtoBuf {
     @java.lang.Override
     public org.jetbrains.kotlin.protobuf.Parser<Function> getParserForType() {
       return PARSER;
+    }
+
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.serialization.js.ast.Function.Modifier}
+     */
+    public enum Modifier
+        implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+      /**
+       * <code>STATIC = 1;</code>
+       */
+      STATIC(0, 1),
+      /**
+       * <code>GET = 2;</code>
+       */
+      GET(1, 2),
+      /**
+       * <code>SET = 3;</code>
+       */
+      SET(2, 3),
+      ;
+
+      /**
+       * <code>STATIC = 1;</code>
+       */
+      public static final int STATIC_VALUE = 1;
+      /**
+       * <code>GET = 2;</code>
+       */
+      public static final int GET_VALUE = 2;
+      /**
+       * <code>SET = 3;</code>
+       */
+      public static final int SET_VALUE = 3;
+
+
+      public final int getNumber() { return value; }
+
+      public static Modifier valueOf(int value) {
+        switch (value) {
+          case 1: return STATIC;
+          case 2: return GET;
+          case 3: return SET;
+          default: return null;
+        }
+      }
+
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Modifier>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Modifier>
+          internalValueMap =
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<Modifier>() {
+              public Modifier findValueByNumber(int number) {
+                return Modifier.valueOf(number);
+              }
+            };
+
+      private final int value;
+
+      private Modifier(int index, int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.js.ast.Function.Modifier)
     }
 
     private int bitField0_;
@@ -8961,19 +9063,25 @@ public final class JsAstProtoBuf {
       return local_;
     }
 
-    public static final int STATIC_FIELD_NUMBER = 5;
-    private boolean static_;
+    public static final int MODIFIER_FIELD_NUMBER = 5;
+    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier> modifier_;
     /**
-     * <code>optional bool static = 5 [default = false];</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
      */
-    public boolean hasStatic() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier> getModifierList() {
+      return modifier_;
     }
     /**
-     * <code>optional bool static = 5 [default = false];</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
      */
-    public boolean getStatic() {
-      return static_;
+    public int getModifierCount() {
+      return modifier_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier getModifier(int index) {
+      return modifier_.get(index);
     }
 
     private void initFields() {
@@ -8981,7 +9089,7 @@ public final class JsAstProtoBuf {
       nameId_ = 0;
       body_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.getDefaultInstance();
       local_ = false;
-      static_ = false;
+      modifier_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -9022,8 +9130,8 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBool(4, local_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBool(5, static_);
+      for (int i = 0; i < modifier_.size(); i++) {
+        output.writeEnum(5, modifier_.get(i).getNumber());
       }
       output.writeRawBytes(unknownFields);
     }
@@ -9050,9 +9158,14 @@ public final class JsAstProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeBoolSize(4, local_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBoolSize(5, static_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < modifier_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeEnumSizeNoTag(modifier_.get(i).getNumber());
+        }
+        size += dataSize;
+        size += 1 * modifier_.size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -9156,7 +9269,7 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         local_ = false;
         bitField0_ = (bitField0_ & ~0x00000008);
-        static_ = false;
+        modifier_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
@@ -9198,10 +9311,11 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000004;
         }
         result.local_ = local_;
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000008;
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          modifier_ = java.util.Collections.unmodifiableList(modifier_);
+          bitField0_ = (bitField0_ & ~0x00000010);
         }
-        result.static_ = static_;
+        result.modifier_ = modifier_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -9227,8 +9341,15 @@ public final class JsAstProtoBuf {
         if (other.hasLocal()) {
           setLocal(other.getLocal());
         }
-        if (other.hasStatic()) {
-          setStatic(other.getStatic());
+        if (!other.modifier_.isEmpty()) {
+          if (modifier_.isEmpty()) {
+            modifier_ = other.modifier_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            ensureModifierIsMutable();
+            modifier_.addAll(other.modifier_);
+          }
+          
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -9521,34 +9642,74 @@ public final class JsAstProtoBuf {
         return this;
       }
 
-      private boolean static_ ;
-      /**
-       * <code>optional bool static = 5 [default = false];</code>
-       */
-      public boolean hasStatic() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
+      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier> modifier_ =
+        java.util.Collections.emptyList();
+      private void ensureModifierIsMutable() {
+        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+          modifier_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier>(modifier_);
+          bitField0_ |= 0x00000010;
+        }
       }
       /**
-       * <code>optional bool static = 5 [default = false];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
        */
-      public boolean getStatic() {
-        return static_;
+      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier> getModifierList() {
+        return java.util.Collections.unmodifiableList(modifier_);
       }
       /**
-       * <code>optional bool static = 5 [default = false];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
        */
-      public Builder setStatic(boolean value) {
-        bitField0_ |= 0x00000010;
-        static_ = value;
+      public int getModifierCount() {
+        return modifier_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier getModifier(int index) {
+        return modifier_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
+       */
+      public Builder setModifier(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureModifierIsMutable();
+        modifier_.set(index, value);
         
         return this;
       }
       /**
-       * <code>optional bool static = 5 [default = false];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
        */
-      public Builder clearStatic() {
+      public Builder addModifier(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureModifierIsMutable();
+        modifier_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
+       */
+      public Builder addAllModifier(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier> values) {
+        ensureModifierIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, modifier_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
+       */
+      public Builder clearModifier() {
+        modifier_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
-        static_ = false;
         
         return this;
       }

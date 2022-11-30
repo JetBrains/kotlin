@@ -10,43 +10,34 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.*;
 
 public final class JsFunction extends JsLiteral implements HasName {
+    public enum Modifier { STATIC, GET, SET }
+
     @NotNull
     private JsBlock body;
     private List<JsParameter> params;
     @NotNull
     private final JsFunctionScope scope;
     private JsName name;
-    private boolean isStatic;
+    private Set<Modifier> modifiers;
 
     public JsFunction(@NotNull JsScope parentScope, @NotNull String description) {
-        this(parentScope, description, false, null);
+        this(parentScope, description, null);
     }
 
     public JsFunction(@NotNull JsScope parentScope, @NotNull JsBlock body, @NotNull String description) {
-        this(parentScope, body, false, description);
-    }
-
-    public JsFunction(
-            @NotNull JsScope parentScope,
-            @NotNull JsBlock body,
-            boolean isStatic,
-            @NotNull String description
-    ) {
-        this(parentScope, description, isStatic, null);
+        this(parentScope, description, null);
         this.body = body;
     }
 
     private JsFunction(
             @NotNull JsScope parentScope,
             @NotNull String description,
-            boolean isStatic,
             @Nullable JsName name
     ) {
         this.name = name;
-        this.isStatic = isStatic;
         scope = new JsFunctionScope(parentScope, name == null ? description : name.getIdent());
     }
 
@@ -79,7 +70,23 @@ public final class JsFunction extends JsLiteral implements HasName {
     }
 
     public boolean isStatic() {
-        return isStatic;
+        return modifiers != null && modifiers.contains(Modifier.STATIC);
+    }
+
+    public boolean isGetter() {
+        return modifiers != null && modifiers.contains(Modifier.GET);
+    }
+
+    public boolean isSetter() {
+        return modifiers != null && modifiers.contains(Modifier.SET);
+    }
+
+    @NotNull
+    public Set<Modifier> getModifiers() {
+        if (modifiers == null) {
+            modifiers = EnumSet.noneOf(Modifier.class);
+        }
+        return modifiers;
     }
 
     public void setBody(@NotNull JsBlock body) {
@@ -114,15 +121,11 @@ public final class JsFunction extends JsLiteral implements HasName {
     @NotNull
     @Override
     public JsFunction deepCopy() {
-        JsFunction functionCopy = new JsFunction(
-                scope.getParent(),
-                scope.getDescription(),
-                isStatic,
-                name
-        );
+        JsFunction functionCopy = new JsFunction(scope.getParent(), scope.getDescription(), name);
         functionCopy.getScope().copyOwnNames(scope);
         functionCopy.setBody(body.deepCopy());
         functionCopy.params = AstUtil.deepCopy(params);
+        functionCopy.modifiers = modifiers == null ? null : EnumSet.copyOf(modifiers);
 
         return functionCopy.withMetadataFrom(this);
     }

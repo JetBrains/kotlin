@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializerBase
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.OutputStream
 

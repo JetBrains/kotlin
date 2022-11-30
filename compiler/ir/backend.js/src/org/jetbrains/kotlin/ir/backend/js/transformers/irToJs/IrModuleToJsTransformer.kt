@@ -242,8 +242,12 @@ class IrModuleToJsTransformer(
 
         val internalModuleName = ReservedJsNames.makeInternalModuleName().takeIf { !isEsModules }
         val globalNames = NameTable<String>(globalNameScope)
+
+        val statements = result.declarations.statements
+        val fileStatements = fileExports.file.accept(IrFileToJsTransformer(useBareParameterNames = true), staticContext).statements
+
         val exportStatements =
-            ExportModelToJsStatements(staticContext, { globalNames.declareFreshName(it, it) }).generateModuleExport(
+            ExportModelToJsStatements(staticContext, backendContext.es6mode, { globalNames.declareFreshName(it, it) }).generateModuleExport(
                 ExportedModule(mainModuleName, moduleKind, fileExports.exports),
                 internalModuleName,
                 isEsModules
@@ -252,9 +256,6 @@ class IrModuleToJsTransformer(
         result.exports.statements += exportStatements
         result.dts = fileExports.tsDeclarations
 
-        val statements = result.declarations.statements
-
-        val fileStatements = fileExports.file.accept(IrFileToJsTransformer(useBareParameterNames = true), staticContext).statements
         if (fileStatements.isNotEmpty()) {
             var startComment = ""
 

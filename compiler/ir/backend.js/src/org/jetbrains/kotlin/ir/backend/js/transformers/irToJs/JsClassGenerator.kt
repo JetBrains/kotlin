@@ -153,6 +153,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     getterOverridesExternal ||
                     property.getJsName() != null
                 ) {
+                    val propertyName = context.getNameForProperty(property)
 
                     // Use "direct dispatch" for final properties, i. e. instead of this:
                     //     Object.defineProperty(Foo.prototype, 'prop', {
@@ -169,7 +170,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                     val getterForwarder = property.getter
                         .takeIf { it.shouldExportAccessor(context.staticContext.backendContext) }
-                        .getOrGenerateIfFinal {
+                        .getOrGenerateIfFinalOrEs6Mode {
                             propertyAccessorForwarder("getter forwarder") {
                                 JsReturn(JsInvocation(it))
                             }
@@ -177,7 +178,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
                     val setterForwarder = property.setter
                         .takeIf { it.shouldExportAccessor(context.staticContext.backendContext) }
-                        .getOrGenerateIfFinal {
+                        .getOrGenerateIfFinalOrEs6Mode {
                             val setterArgName = JsName("value", false)
                             propertyAccessorForwarder("setter forwarder") {
                                 JsInvocation(it, JsNameRef(setterArgName)).makeStmt()
@@ -186,15 +187,22 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         }
 
-                    classBlock.statements += JsExpressionStatement(
-                        defineProperty(
-                            classPrototypeRef,
-                            context.getNameForProperty(property).ident,
-                            getter = getterForwarder,
-                            setter = setterForwarder,
-                            context.staticContext
+                    if (es6mode) {
+                        jsClass.members += listOfNotNull(
+                            (getterForwarder as? JsFunction)?.apply {
+                                name = propertyName
+                                modifiers.add(JsFunction.Modifier.GET)
+                            },
+                            (setterForwarder as? JsFunction)?.apply {
+                                name = propertyName
+                                modifiers.add(JsFunction.Modifier.SET)
+                            }
                         )
-                    )
+                    } else {
+                        classBlock.statements += JsExpressionStatement(
+                            defineProperty(classPrototypeRef, propertyName.ident, getterForwarder, setterForwarder, context.staticContext)
+                        )
+                    }
                 }
             }
         }
@@ -210,9 +218,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return classBlock
     }
 
-    private inline fun IrSimpleFunction?.getOrGenerateIfFinal(generateFunc: IrSimpleFunction.() -> JsFunction?): JsExpression? {
+    private inline fun IrSimpleFunction?.getOrGenerateIfFinalOrEs6Mode(generateFunc: IrSimpleFunction.() -> JsFunction?): JsExpression? {
         if (this == null) return null
-        return if (modality == Modality.FINAL) accessorRef() else generateFunc()
+        return if (!es6mode && modality == Modality.FINAL) accessorRef() else generateFunc()
     }
 
     private fun IrSimpleFunction.isDefinedInsideExportedInterface(): Boolean {
