@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -237,6 +238,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                         type = kSerializerId.constructClassLikeType(arrayOf(typeParam.toConeType()), false)
                     )
                 }
+            }.also {
+                it.containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(owner.classId)
             }.symbol
         }
         return result
