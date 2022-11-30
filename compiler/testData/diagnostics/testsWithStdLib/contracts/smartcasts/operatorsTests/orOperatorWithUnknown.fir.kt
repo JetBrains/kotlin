@@ -24,12 +24,12 @@ fun unknownFunction(x: Any?) = x == 42
 
 
 fun annotatedTrue(x: Any?) {
-    if (trueWhenString(x) || unknownFunction(x)) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (trueWhenString(x) || unknownFunction(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun annotatedFalse(x: Any?) {
@@ -42,12 +42,12 @@ fun annotatedFalse(x: Any?) {
 }
 
 fun annotatedTrueWithVariable(x: Any?, b: Boolean) {
-    if (trueWhenString(x) || b) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (trueWhenString(x) || b) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun annotatedFalseWithVariable(x: Any?, b: Boolean) {

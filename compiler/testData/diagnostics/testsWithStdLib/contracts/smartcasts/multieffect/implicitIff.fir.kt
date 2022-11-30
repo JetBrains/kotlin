@@ -40,23 +40,23 @@ fun useOnlyTrueInTrueBranch(x: Any?) {
 }
 
 fun useOnlyTrueInFalseBranch(x: Any?) {
-    if (onlyTrue(x !is String)) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (onlyTrue(x !is String)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         // No smartcast here, we don't know that condition is false here
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun useOnlyFalseInTrueBranch(x: Any?) {
-    if (onlyFalse(x is String)) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (onlyFalse(x is String)) {
         // No smartcast here, we don't know that condition is true here
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-    }
+    }<!>
 }
 
 fun useOnlyFalseInFalseBranch(x: Any?) {
