@@ -100,12 +100,7 @@ internal class SymbolLightSimpleMethod(
             result = modifiers
         )
 
-        val visibility: String = functionSymbol.isOverride.ifTrue {
-            tryGetEffectiveVisibility(functionSymbol)
-                ?.toPsiVisibilityForMember()
-        } ?: functionSymbol.toPsiVisibilityForMember()
-
-        modifiers.add(visibility)
+        modifiers.add(functionSymbol.toPsiVisibilityForMember())
 
         if (!suppressStatic && functionSymbol.hasJvmStaticAnnotation()) {
             modifiers.add(PsiModifier.STATIC)

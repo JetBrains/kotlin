@@ -156,21 +156,15 @@ internal class SymbolLightAccessorMethod private constructor(
     private fun computeModifiers(): Set<String> = analyzeForLightClasses(ktModule) {
         val propertySymbol = propertySymbol()
         val propertyAccessorSymbol = propertyAccessorSymbol()
-        val isOverrideMethod = propertyAccessorSymbol.isOverride || propertySymbol.isOverride
-        val isInterfaceMethod = containingClass.isInterface
-
         val modifiers = mutableSetOf<String>()
 
         propertySymbol.computeModalityForMethod(
             isTopLevel = isTopLevel,
-            suppressFinal = isOverrideMethod || isInterfaceMethod,
+            suppressFinal = containingClass.isInterface || propertySymbol.isOverride,
             result = modifiers,
         )
 
-        val visibility = isOverrideMethod.ifTrue {
-            tryGetEffectiveVisibility(propertySymbol)?.toPsiVisibilityForMember()
-        } ?: propertyAccessorSymbol.toPsiVisibilityForMember()
-        modifiers.add(visibility)
+        modifiers.add(propertyAccessorSymbol.toPsiVisibilityForMember())
 
         if (!suppressStatic &&
             (propertySymbol.hasJvmStaticAnnotation() || propertyAccessorSymbol.hasJvmStaticAnnotation(accessorSite))
