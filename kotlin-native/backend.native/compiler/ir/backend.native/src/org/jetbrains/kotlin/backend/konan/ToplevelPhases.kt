@@ -239,6 +239,61 @@ internal val finalizeCachePhase = konanUnitPhase(
         description = "Finalize cache (rename temp to the final dist)"
 )
 
+internal val allLowerings = listOf(
+    createFileLowerStatePhase,
+    removeExpectDeclarationsPhase,
+    stripTypeAliasDeclarationsPhase,
+    lowerBeforeInlinePhase,
+    arrayConstructorPhase,
+    lateinitPhase,
+    sharedVariablesPhase,
+    inventNamesForLocalClasses,
+    extractLocalClassesFromInlineBodies,
+    wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    inlinePhase,
+    provisionalFunctionExpressionPhase,
+    postInlinePhase,
+    contractsDslRemovePhase,
+    annotationImplementationPhase,
+    rangeContainsLoweringPhase,
+    forLoopsPhase,
+    flattenStringConcatenationPhase,
+    foldConstantLoweringPhase,
+    computeStringTrimPhase,
+    stringConcatenationPhase,
+    stringConcatenationTypeNarrowingPhase,
+    enumConstructorsPhase,
+    initializersPhase,
+    localFunctionsPhase,
+    tailrecPhase,
+    defaultParameterExtentPhase,
+    innerClassPhase,
+    dataClassesPhase,
+    ifNullExpressionsFusionPhase,
+    testProcessorPhase,
+    delegationPhase,
+    functionReferencePhase,
+    singleAbstractMethodPhase,
+    enumWhenPhase,
+    builtinOperatorPhase,
+    finallyBlocksPhase,
+    enumClassPhase,
+    enumUsagePhase,
+    interopPhase,
+    varargPhase,
+    kotlinNothingValueExceptionPhase,
+    coroutinesPhase,
+    typeOperatorPhase,
+    expressionBodyTransformPhase,
+    objectClassesPhase,
+    constantInliningPhase,
+    staticInitializersPhase,
+    bridgesPhase,
+    exportInternalAbiPhase,
+    useInternalAbiPhase,
+    autoboxPhase,
+)
+
 internal val allLoweringsPhase = SameTypeNamedCompilerPhase(
         name = "IrLowering",
         description = "IR Lowering",
@@ -246,60 +301,7 @@ internal val allLoweringsPhase = SameTypeNamedCompilerPhase(
         lower = performByIrFile(
                 name = "IrLowerByFile",
                 description = "IR Lowering by file",
-                lower = listOf(
-                        createFileLowerStatePhase,
-                        removeExpectDeclarationsPhase,
-                        stripTypeAliasDeclarationsPhase,
-                        lowerBeforeInlinePhase,
-                        arrayConstructorPhase,
-                        lateinitPhase,
-                        sharedVariablesPhase,
-                        inventNamesForLocalClasses,
-                        extractLocalClassesFromInlineBodies,
-                        wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-                        inlinePhase,
-                        provisionalFunctionExpressionPhase,
-                        postInlinePhase,
-                        contractsDslRemovePhase,
-                        annotationImplementationPhase,
-                        rangeContainsLoweringPhase,
-                        forLoopsPhase,
-                        flattenStringConcatenationPhase,
-                        foldConstantLoweringPhase,
-                        computeStringTrimPhase,
-                        stringConcatenationPhase,
-                        stringConcatenationTypeNarrowingPhase,
-                        enumConstructorsPhase,
-                        initializersPhase,
-                        localFunctionsPhase,
-                        tailrecPhase,
-                        defaultParameterExtentPhase,
-                        innerClassPhase,
-                        dataClassesPhase,
-                        ifNullExpressionsFusionPhase,
-                        testProcessorPhase,
-                        delegationPhase,
-                        functionReferencePhase,
-                        singleAbstractMethodPhase,
-                        enumWhenPhase,
-                        builtinOperatorPhase,
-                        finallyBlocksPhase,
-                        enumClassPhase,
-                        enumUsagePhase,
-                        interopPhase,
-                        varargPhase,
-                        kotlinNothingValueExceptionPhase,
-                        coroutinesPhase,
-                        typeOperatorPhase,
-                        expressionBodyTransformPhase,
-                        objectClassesPhase,
-                        constantInliningPhase,
-                        staticInitializersPhase,
-                        bridgesPhase,
-                        exportInternalAbiPhase,
-                        useInternalAbiPhase,
-                        autoboxPhase,
-                )
+                lower = allLowerings
         ),
         actions = setOf(defaultDumper, ::moduleValidationCallback)
 )
@@ -381,7 +383,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "addEntryPoint",
         description = "Add entry point for program",
         prerequisite = emptySet(),
-        op = { context, _ ->
+        op = { context, module ->
             require(context.config.produce == CompilerOutputKind.PROGRAM)
 
             val entryPoint = context.ir.symbols.entryPoint!!.owner
@@ -390,7 +392,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
             } else {
                 // `main` function is compiled to other LLVM module.
                 // For example, test running support uses `main` defined in stdlib.
-                context.irModule!!.addFile(NaiveSourceBasedFileEntryImpl("entryPointOwner"), FqName("kotlin.native.internal.abi"))
+                module.addFile(NaiveSourceBasedFileEntryImpl("entryPointOwner"), FqName("kotlin.native.internal.abi"))
             }
 
             file.addChild(makeEntryPoint(context.generationState))
@@ -419,7 +421,7 @@ internal val bitcodePhase = SameTypeNamedCompilerPhase(
                 cStubsPhase
 )
 
-private val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
+internal val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
         lower = checkExternalCallsPhase then

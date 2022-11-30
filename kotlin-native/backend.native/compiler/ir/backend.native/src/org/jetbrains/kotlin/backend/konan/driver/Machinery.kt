@@ -45,6 +45,18 @@ internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingCo
     fun dispose()
 }
 
+/**
+ * ChildContext is a temporary solution to speed-up porting some phases from the static driver
+ * to the dynamic one. Such phases depend on Context, but actually should depend on NativeGenerationState.
+ * So we allow running such phases in PhaseEngine<NativeGenerationState> and access Context via [parentContext].
+ * In the future they should be untied from Context and relevant parts of Context should be passed as an explicit input.
+ *
+ * Accessing parent context, while technically valid, smells bad, because it increases code coupling.
+ */
+internal interface ChildContext<T : PhaseContext> : PhaseContext {
+    val parentContext: T
+}
+
 internal open class BasicPhaseContext(
         override val config: KonanConfig,
 ) : PhaseContext {
@@ -80,8 +92,8 @@ internal open class BasicPhaseContext(
  * This way, PhaseEngine forces user to create more specialized contexts that have a limited lifetime.
  */
 internal class PhaseEngine<C : PhaseContext>(
-        private val phaseConfig: PhaseConfigurationService,
-        private val phaserState: PhaserState<Any>,
+        internal val phaseConfig: PhaseConfigurationService,
+        internal val phaserState: PhaserState<Any>,
         val context: C
 ) {
     companion object {
@@ -127,4 +139,26 @@ internal class PhaseEngine<C : PhaseContext>(
         // We lose sticky postconditions here, but it should be ok, since type is changed.
         return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
     }
+
+    fun <Output> runPhase(
+        phase: AbstractNamedCompilerPhase<C, Unit, Output>,
+    ): Output = runPhase(phase, Unit)
 }
+
+
+/**
+ * A bit hacky way to run phase in a parent long-living context.
+ * Useful for porting phases from the old driver where a lot of phases are executed in `Context`.
+ */
+internal fun <Input, Output, C : ChildContext<P>, P : PhaseContext> PhaseEngine<C>.runPhaseInParentContext(
+    phase: AbstractNamedCompilerPhase<P, Input, Output>,
+    input: Input,
+): Output {
+    // We lose sticky postconditions here, but it should be ok, since type is changed.
+    return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), this.context.parentContext, input)
+}
+
+internal fun <Output, C : ChildContext<P>, P : PhaseContext> PhaseEngine<C>.runPhaseInParentContext(
+    phase: AbstractNamedCompilerPhase<P, Unit, Output>,
+): Output =
+    runPhaseInParentContext(phase, Unit)

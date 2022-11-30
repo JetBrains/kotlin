@@ -75,7 +75,11 @@ internal class Context(
             psiToIrOutput: PsiToIrOutput
     ) {
         irModules = psiToIrOutput.irModules
-        irModule = psiToIrOutput.irModule
+        if (config.produce.isCache) {
+            irModule = psiToIrOutput.irModules[config.libraryToCache!!.klib.libraryName]
+        } else {
+            irModule = psiToIrOutput.irModule
+        }
         expectDescriptorToSymbol = psiToIrOutput.expectDescriptorToSymbol
         ir = KonanIr(this, psiToIrOutput.irModule)
         ir.symbols = psiToIrOutput.symbols
