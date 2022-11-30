@@ -160,15 +160,11 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SymbolLightClassForClassLike<*> || other.ktModule != ktModule || other.manager != manager) return false
-        if (classOrObjectDeclaration != null) {
+        if (classOrObjectDeclaration != null || other.classOrObjectDeclaration != null) {
             return other.classOrObjectDeclaration == classOrObjectDeclaration
         }
 
-        return other.classOrObjectDeclaration == null && compareSymbolPointers(
-            ktModule,
-            classOrObjectSymbolPointer,
-            other.classOrObjectSymbolPointer,
-        )
+        return compareSymbolPointers(ktModule, classOrObjectSymbolPointer, other.classOrObjectSymbolPointer)
     }
 
     override fun hashCode(): Int = classOrObjectDeclaration.hashCode()

@@ -132,12 +132,11 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
             other.argumentsSkipMask != argumentsSkipMask
         ) return false
 
-        if (functionDeclaration != null) {
+        if (functionDeclaration != null || other.functionDeclaration != null) {
             return functionDeclaration == other.functionDeclaration
         }
 
-        return other.functionDeclaration == null &&
-                containingClass == other.containingClass &&
+        return containingClass == other.containingClass &&
                 compareSymbolPointers(ktModule, functionSymbolPointer, other.functionSymbolPointer)
     }
 

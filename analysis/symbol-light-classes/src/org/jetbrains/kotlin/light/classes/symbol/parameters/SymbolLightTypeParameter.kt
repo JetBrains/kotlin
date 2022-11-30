@@ -176,12 +176,11 @@ internal class SymbolLightTypeParameter private constructor(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SymbolLightTypeParameter || other.ktModule != ktModule || other.index != index) return false
-        if (typeParameterDeclaration != null) {
+        if (typeParameterDeclaration != null || other.typeParameterDeclaration != null) {
             return other.typeParameterDeclaration == typeParameterDeclaration
         }
 
-        return other.typeParameterDeclaration == null &&
-                other.kotlinOrigin == kotlinOrigin &&
+        return other.kotlinOrigin == kotlinOrigin &&
                 compareSymbolPointers(ktModule, typeParameterSymbolPointer, other.typeParameterSymbolPointer) &&
                 other.parent == parent
     }
