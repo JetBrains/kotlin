@@ -11,9 +11,11 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.KlibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.project
+import org.jetbrains.kotlin.library.*
 
 
 internal fun IdeaKotlinProjectCoordinates(identifier: ProjectComponentIdentifier): IdeaKotlinProjectCoordinates {
@@ -44,5 +46,17 @@ fun IdeaKotlinBinaryCoordinates(identifier: ModuleComponentIdentifier): IdeaKotl
         group = identifier.group,
         module = identifier.module,
         version = identifier.version
+    )
+}
+
+internal fun KlibExtra(library: KotlinLibrary): KlibExtra {
+    return KlibExtra(
+        builtInsPlatform = library.builtInsPlatform,
+        uniqueName = library.uniqueName,
+        shortName = library.shortName,
+        packageFqName = library.packageFqName,
+        nativeTargets = library.nativeTargets,
+        commonizerTarget = library.commonizerTarget,
+        isInterop = library.isInterop
     )
 }

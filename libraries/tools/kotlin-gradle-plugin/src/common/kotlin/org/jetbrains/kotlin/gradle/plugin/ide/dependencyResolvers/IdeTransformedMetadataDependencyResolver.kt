@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevel
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
@@ -49,7 +50,10 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
                         version = metadataProvider.moduleDependencyVersion,
                         sourceSetName = visibleSourceSet
                     )
-                )
+                ).apply {
+                    /* Those libraries are stored in project wide .gradle and are scoped by hash */
+                    isIdeaProjectLevel = true
+                }
             }
         }
     }

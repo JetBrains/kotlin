@@ -11,16 +11,17 @@ import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevel
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.io.File
 
 object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
@@ -48,13 +49,15 @@ object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
             return IdeaKotlinResolvedBinaryDependency(
                 binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
                 binaryFile = file,
-                extras = mutableExtrasOf(),
                 coordinates = IdeaKotlinBinaryCoordinates(
                     group = "org.jetbrains.kotlin.native",
                     module = kotlinLibrary.packageFqName ?: kotlinLibrary.shortName ?: kotlinLibrary.uniqueName,
                     version = project.konanVersion.toString()
                 ),
-            )
+            ).apply {
+                isIdeaProjectLevel = true
+                klibExtra = KlibExtra(kotlinLibrary)
+            }
         } catch (t: Throwable) {
             logger.error("Failed resolving library ${file.path}", t)
             return null
