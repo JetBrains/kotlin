@@ -83,8 +83,8 @@ abstract class FirDataFlowAnalyzer(
                     receiverStack.replaceReceiverType(index, info.smartCastedType(typeContext, originalType))
                 }
 
-                override val logicSystem: PersistentLogicSystem =
-                    object : PersistentLogicSystem(components.session.typeContext) {
+                override val logicSystem: LogicSystem =
+                    object : LogicSystem(components.session.typeContext) {
                         override val variableStorage: VariableStorageImpl
                             get() = dataFlowAnalyzerContext.variableStorage
 
