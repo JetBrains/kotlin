@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.createOn
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -409,37 +410,18 @@ fun checkTypeMismatch(
     reporter: DiagnosticReporter,
     isInitializer: Boolean
 ) {
-    var lValueType = lValueOriginalType
-    var rValueType = rValue.typeRef.coneType
-    if (source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
-        if (!lValueType.isNullable && rValueType.isNullable) {
-            val tempType = rValueType
-            rValueType = lValueType
-            lValueType = tempType
-        }
-    }
-
+    val lValueType = lValueOriginalType
+    val rValueType = rValue.typeRef.coneType
     val typeContext = context.session.typeContext
 
     if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
-        if (rValueType is ConeClassLikeType &&
-            rValueType.lookupTag.classId == StandardClassIds.Int &&
-            lValueType.fullyExpandedType(context.session).isIntegerTypeOrNullableIntegerTypeOfAnySize &&
-            rValueType.nullability == ConeNullability.NOT_NULL
-        ) {
-            // val p: Byte = 42 or similar situation
-            // TODO: remove after fix of KT-46047
-            return
-        }
         if (lValueType.isExtensionFunctionType || rValueType.isExtensionFunctionType) {
             // TODO: remove after fix of KT-45989
             return
         }
         val resolvedSymbol = assignment?.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol
         when {
-            resolvedSymbol != null && lValueType is ConeCapturedType && lValueType.constructor.projection.kind.let {
-                it == ProjectionKind.STAR || it == ProjectionKind.OUT
-            } -> {
+            resolvedSymbol != null && lValueType.isCapturedTypeWithStarOrOutProjection -> {
                 reporter.reportOn(assignment.source, FirErrors.SETTER_PROJECTED_OUT, resolvedSymbol, context)
             }
             rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL -> {
@@ -455,30 +437,37 @@ fun checkTypeMismatch(
                     context
                 )
             }
-            source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
-                if (!lValueType.isNullable && rValueType.isNullable) {
-                    val tempType = rValueType
-                    rValueType = lValueType
-                    lValueType = tempType
-                }
-                if (rValueType.isUnit) {
-                    reporter.reportOn(source, FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT, context)
-                } else {
-                    reporter.reportOn(source, FirErrors.RESULT_TYPE_MISMATCH, lValueType, rValueType, context)
-                }
-            }
-            else -> {
-                reporter.reportOn(
-                    source,
-                    FirErrors.ASSIGNMENT_TYPE_MISMATCH,
-                    lValueType,
-                    rValueType,
-                    context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType),
-                    context
-                )
-            }
+            else -> reporter.report(
+                createDiagnosticForAssignmentTypeMismatch(source, lValueType, rValueType) {
+                    context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)
+                },
+                context,
+            )
         }
     }
+}
+
+val ConeKotlinType.isCapturedTypeWithStarOrOutProjection: Boolean
+    get() = this is ConeCapturedType && constructor.projection.kind.let {
+        it == ProjectionKind.STAR || it == ProjectionKind.OUT
+    }
+
+fun createDiagnosticForAssignmentTypeMismatch(
+    source: KtSourceElement,
+    expectedType: ConeKotlinType,
+    actualType: ConeKotlinType,
+    isTypeMismatchDueToNullability: () -> Boolean,
+) = when (source.kind) {
+    is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> when {
+        actualType.isUnit -> FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT.createOn(source)
+        else -> FirErrors.RESULT_TYPE_MISMATCH.createOn(source, expectedType, actualType)
+    }
+    else -> FirErrors.ASSIGNMENT_TYPE_MISMATCH.createOn(
+        source,
+        expectedType,
+        actualType,
+        isTypeMismatchDueToNullability(),
+    )
 }
 
 internal fun checkCondition(condition: FirExpression, context: CheckerContext, reporter: DiagnosticReporter) {
