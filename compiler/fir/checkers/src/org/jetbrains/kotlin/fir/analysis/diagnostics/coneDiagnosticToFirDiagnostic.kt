@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
+import org.jetbrains.kotlin.fir.analysis.checkers.isCapturedTypeWithStarOrOutProjection
+import org.jetbrains.kotlin.fir.analysis.checkers.createDiagnosticForAssignmentTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
@@ -429,29 +431,12 @@ private fun ConstraintSystemError.toDiagnostic(
                             inferredTypeWithoutTypeVariables,
                             typeMismatchDueToNullability,
                         )
-                        origin is ExpectedTypeOrigin.Assignment -> when (theSource.kind) {
-                            is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
-                                val (lValueType, rValueType) = when {
-                                    !upperConeTypeWithoutTypeVariables.isNullable && inferredTypeWithoutTypeVariables.isNullable -> {
-                                        upperConeTypeWithoutTypeVariables to inferredTypeWithoutTypeVariables
-                                    }
-                                    else -> {
-                                        inferredTypeWithoutTypeVariables to upperConeTypeWithoutTypeVariables
-                                    }
-                                }
-                                if (lValueType.isUnit) {
-                                    FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT.createOn(theSource)
-                                } else {
-                                    FirErrors.RESULT_TYPE_MISMATCH.createOn(theSource, rValueType, lValueType)
-                                }
-                            }
-                            else -> FirErrors.ASSIGNMENT_TYPE_MISMATCH.createOn(
-                                theSource,
-                                upperConeTypeWithoutTypeVariables,
-                                inferredTypeWithoutTypeVariables,
-                                typeMismatchDueToNullability,
-                            )
-                        }
+                        origin is ExpectedTypeOrigin.Assignment -> createDiagnosticForAssignmentTypeMismatch(
+                            theSource,
+                            upperConeTypeWithoutTypeVariables,
+                            inferredTypeWithoutTypeVariables,
+                            isTypeMismatchDueToNullability = { typeMismatchDueToNullability },
+                        )
                         else -> FirErrors.TYPE_MISMATCH.createOn(
                             theSource,
                             upperConeTypeWithoutTypeVariables,
@@ -519,11 +504,6 @@ private fun ConstraintSystemError.toDiagnostic(
         else -> null
     }
 }
-
-private val ConeKotlinType.isCapturedTypeWithStarOrOutProjection: Boolean
-    get() = this is ConeCapturedType && constructor.projection.kind.let {
-        it == ProjectionKind.STAR || it == ProjectionKind.OUT
-    }
 
 private val ConeKotlinType.isErrorType: Boolean
     get() = this is ConeErrorType || typeArguments.any { it.type?.isErrorType == true }
@@ -603,14 +583,14 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
 
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun KtDiagnosticFactory0.createOn(
+internal fun KtDiagnosticFactory0.createOn(
     element: KtSourceElement?
 ): KtSimpleDiagnostic? {
     return element?.let { on(it, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A> KtDiagnosticFactory1<A>.createOn(
+internal fun <A> KtDiagnosticFactory1<A>.createOn(
     element: KtSourceElement?,
     a: A
 ): KtDiagnosticWithParameters1<A>? {
@@ -618,7 +598,7 @@ private fun <A> KtDiagnosticFactory1<A>.createOn(
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
+internal fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B
@@ -627,7 +607,7 @@ private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
+internal fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B,
@@ -637,7 +617,7 @@ private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
+internal fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B,
