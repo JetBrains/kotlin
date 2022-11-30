@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -22,7 +23,7 @@ class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintP
 sealed class ExpectedTypeOrigin {
     object Unspecified : ExpectedTypeOrigin()
     class ReturnType(val target: FirFunction) : ExpectedTypeOrigin()
-    object Assignment : ExpectedTypeOrigin()
+    class Assignment(val assignment: FirResolvable) : ExpectedTypeOrigin()
     object Initializer : ExpectedTypeOrigin()
 }
 

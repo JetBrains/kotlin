@@ -427,7 +427,7 @@ val Name.isDelegated: Boolean get() = asString().startsWith("<\$\$delegate_")
 val ConeTypeProjection.isConflictingOrNotInvariant: Boolean get() = kind != ProjectionKind.INVARIANT || this is ConeKotlinTypeConflictingProjection
 
 fun checkTypeMismatch(
-    lValueOriginalType: ConeKotlinType,
+    lValueType: ConeKotlinType,
     assignment: FirVariableAssignment?,
     rValue: FirExpression,
     context: CheckerContext,
@@ -435,16 +435,11 @@ fun checkTypeMismatch(
     reporter: DiagnosticReporter,
     isInitializer: Boolean
 ) {
-    val lValueType = lValueOriginalType
     val rValueType = rValue.typeRef.coneType
     val typeContext = context.session.typeContext
 
     if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
-        val resolvedSymbol = assignment?.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol
         when {
-            resolvedSymbol != null && lValueType.isCapturedTypeWithStarOrOutProjection -> {
-                reporter.reportOn(assignment.source, FirErrors.SETTER_PROJECTED_OUT, resolvedSymbol, context)
-            }
             rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL -> {
                 reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
             }
@@ -458,8 +453,8 @@ fun checkTypeMismatch(
                     context
                 )
             }
-            else -> reporter.report(
-                createDiagnosticForAssignmentTypeMismatch(source, lValueType, rValueType) {
+            assignment != null -> reporter.report(
+                createDiagnosticForAssignmentTypeMismatch(source, lValueType, rValueType, assignment) {
                     context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)
                 },
                 context,
@@ -477,18 +472,25 @@ fun createDiagnosticForAssignmentTypeMismatch(
     source: KtSourceElement,
     expectedType: ConeKotlinType,
     actualType: ConeKotlinType,
+    assignment: FirResolvable,
     isTypeMismatchDueToNullability: () -> Boolean,
-) = when (source.kind) {
-    is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> when {
-        actualType.isUnit -> FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT.createOn(source)
-        else -> FirErrors.RESULT_TYPE_MISMATCH.createOn(source, expectedType, actualType)
+): KtDiagnostic? {
+    val resolvedSymbol = assignment.calleeReference.toResolvedCallableSymbol() as? FirPropertySymbol
+    return when {
+        resolvedSymbol != null && expectedType.isCapturedTypeWithStarOrOutProjection -> {
+            FirErrors.SETTER_PROJECTED_OUT.createOn(assignment.source, resolvedSymbol)
+        }
+        source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> when {
+            actualType.isUnit -> FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT.createOn(source)
+            else -> FirErrors.RESULT_TYPE_MISMATCH.createOn(source, expectedType, actualType)
+        }
+        else -> FirErrors.ASSIGNMENT_TYPE_MISMATCH.createOn(
+            source,
+            expectedType,
+            actualType,
+            isTypeMismatchDueToNullability(),
+        )
     }
-    else -> FirErrors.ASSIGNMENT_TYPE_MISMATCH.createOn(
-        source,
-        expectedType,
-        actualType,
-        isTypeMismatchDueToNullability(),
-    )
 }
 
 internal fun checkCondition(condition: FirExpression, context: CheckerContext, reporter: DiagnosticReporter) {
