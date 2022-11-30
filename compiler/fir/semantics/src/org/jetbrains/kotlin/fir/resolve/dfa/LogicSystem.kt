@@ -278,7 +278,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         right.isEmpty() -> right
         else -> buildMap {
             for ((variable, leftStatement) in left) {
-                put(variable, or(listOf(leftStatement, right[variable] ?: continue))!!)
+                put(variable, or(listOf(leftStatement, right[variable] ?: continue)) ?: continue)
             }
         }
     }
@@ -288,31 +288,8 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         right.isEmpty() -> left
         else -> left.toMutableMap().apply {
             for ((variable, rightStatement) in right) {
-                this[variable] = this[variable]?.let { and(listOf(it, rightStatement))!! } ?: rightStatement
+                this[variable] = and(this[variable], rightStatement)
             }
-        }
-    }
-
-    private inline fun Collection<TypeStatement>.singleOrNew(exactType: () -> MutableSet<ConeKotlinType>): TypeStatement? =
-        when (size) {
-            0 -> null
-            1 -> first()
-            else -> {
-                val variable = first().variable
-                assert(all { it.variable == variable }) { "folding statements for different variables" }
-                MutableTypeStatement(variable, exactType())
-            }
-        }
-
-    private fun unifyTypes(types: Collection<Set<ConeKotlinType>>): ConeKotlinType? {
-        if (types.any { it.isEmpty() }) return null
-        val intersected = types.map { ConeTypeIntersector.intersectTypes(context, it.toList()) }
-        val unified = context.commonSuperTypeOrNull(intersected) ?: return null
-        return when {
-            unified.isNullableAny -> null
-            unified.isAcceptableForSmartcast() -> unified
-            unified.canBeNull -> null
-            else -> context.anyType()
         }
     }
 
@@ -320,16 +297,51 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         exactType += other.exactType
     }
 
-    fun and(statements: Collection<TypeStatement>): TypeStatement? =
-        statements.singleOrNew { statements.flatMapTo(mutableSetOf()) { it.exactType } }
+    fun and(a: TypeStatement?, b: TypeStatement): TypeStatement =
+        a?.toMutable()?.apply { this += b } ?: b
 
-    fun or(statements: Collection<TypeStatement>): TypeStatement? =
-        statements.singleOrNew { unifyTypes(statements.map { it.exactType })?.let { mutableSetOf(it) } ?: mutableSetOf() }
+    fun and(statements: Collection<TypeStatement>): TypeStatement? {
+        when (statements.size) {
+            0 -> return null
+            1 -> return statements.first()
+        }
+        val iterator = statements.iterator()
+        val result = iterator.next().toMutable()
+        while (iterator.hasNext()) {
+            result += iterator.next()
+        }
+        return result
+    }
+
+    fun or(statements: Collection<TypeStatement>): TypeStatement? {
+        when (statements.size) {
+            0 -> return null
+            1 -> return statements.first()
+        }
+        val variable = statements.first().variable
+        assert(statements.all { it.variable == variable }) { "folding statements for different variables" }
+        if (statements.any { it.isEmpty }) return null
+        val intersected = statements.map { ConeTypeIntersector.intersectTypes(context, it.exactType.toList()) }
+        val unified = context.commonSuperTypeOrNull(intersected) ?: return null
+        val result = when {
+            unified.isNullableAny -> return null
+            unified.isAcceptableForSmartcast() -> unified
+            unified.canBeNull -> return null
+            else -> context.anyType()
+        }
+        return PersistentTypeStatement(variable, persistentSetOf(result))
+    }
 }
 
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
     is PersistentTypeStatement -> this
+    // If this statement was obtained via `toMutable`, `toPersistentSet` will call `build`.
     else -> PersistentTypeStatement(variable, exactType.toPersistentSet())
+}
+
+private fun TypeStatement.toMutable(): MutableTypeStatement = when (this) {
+    is PersistentTypeStatement -> MutableTypeStatement(variable, exactType.builder())
+    else -> MutableTypeStatement(variable, LinkedHashSet(exactType))
 }
 
 @JvmName("replaceVariableInStatements")

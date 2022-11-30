@@ -21,9 +21,7 @@ data class PersistentTypeStatement(
 class MutableTypeStatement(
     override val variable: RealVariable,
     override val exactType: MutableSet<ConeKotlinType> = linkedSetOf(),
-) : TypeStatement() {
-    fun copy(): MutableTypeStatement = MutableTypeStatement(variable, LinkedHashSet(exactType))
-}
+) : TypeStatement()
 
 // --------------------------------------- Aliases ---------------------------------------
 
